@@ -1,9 +1,10 @@
 Legend: production dependency, optional only, dev only
 
-terminal-t0@0.1.0 /home/daz/workarea/terminal (PRIVATE)
+terminal-t0@0.1.0 /home/daz/workarea/iqterminal (PRIVATE)
 
 dependencies:
 dockview-core 8.4.1
+openalgo-charts 2.6.0
 
 devDependencies:
 @playwright/test 1.64.0

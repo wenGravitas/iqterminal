@@ -23,7 +23,7 @@ dock=createDockview(root,{
 });
 let restored=false;try{const l=restoreValue(localStorage.getItem(STORAGE_KEY));if(l){dock.fromJSON(l);restored=true;}}catch{dock.clear();}
 if(!restored)defaults();restoring=false;
-const listeners:{dispose():void}[]=[dock.onDidLayoutChange(()=>{save();add.disabled=dock.totalPanels>=PANEL_BUDGET;add.title=add.disabled?`Maximum ${PANEL_BUDGET} charts / WebGL contexts`:'Add a chart to the right of the active group';})];
+const listeners:{dispose():void}[]=[dock.onDidLayoutChange(()=>{save();add.disabled=dock.totalPanels>=PANEL_BUDGET;add.title=add.disabled?`Maximum ${PANEL_BUDGET} charts`:'Add a chart to the right of the active group';})];
 const abort=new AbortController();add.addEventListener('click',()=>addChart(),{signal:abort.signal});reset.addEventListener('click',()=>{defaults();save();},{signal:abort.signal});
 window.addEventListener('online',()=>feed.send({type:'online',online:true}),{signal:abort.signal});window.addEventListener('offline',()=>feed.send({type:'online',online:false}),{signal:abort.signal});
 const timer=setInterval(()=>{if(document.hidden)return;document.querySelector('#clock')!.textContent=new Date().toISOString().slice(11,19);const states=(['binance','hyperliquid'] as const).map(v=>{const statuses=[...panels.values()].map(p=>p.diagnostics()).filter(p=>p.series.venue===v).map(p=>p.status);const s=statuses.find(s=>s.state!=='live')??statuses[0];return `${v==='binance'?'Binance':'Hyperliquid'}: ${s?.state??'idle'}`;});document.querySelector('#venue-states')!.textContent=states.join('  ·  ');},1000);

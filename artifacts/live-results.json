@@ -1,30 +1,33 @@
 {
   "mode": "REAL direct browser exchange smoke, no fixtures",
   "browser": "154.0.8037.92",
-  "started": "2026-10-09T16:08:29.367Z",
+  "started": "2026-10-09T18:43:51.960Z",
   "intervals": [
     {
       "interval": "1m",
       "ready": true,
       "before": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 82218.375,
+          "max": 82773.625,
           "renderer": {
             "draws": 6,
-            "uploads": 4,
-            "bytes": 6640,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562117383
+            "lastUpdate": 1791571437154
           },
           "series": {
             "venue": "binance",
@@ -32,34 +35,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791562080000,
-            "o": 82867.8,
-            "h": 82867.9,
-            "l": 82839.7,
-            "c": 82858.6,
-            "v": 13.999,
-            "revision": 0,
-            "closed": false
+            "t": 1791571380000,
+            "o": 82406.4,
+            "h": 82430.7,
+            "l": 82403.3,
+            "c": 82430.7,
+            "v": 88.232
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 82195.5,
+          "max": 82770.5,
           "renderer": {
-            "draws": 4,
-            "uploads": 2,
-            "bytes": 3320,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 5,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562117691
+            "lastUpdate": 1791571436847
           },
           "series": {
             "venue": "hyperliquid",
@@ -67,36 +71,37 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791562080000,
-            "o": 82873,
-            "h": 82873,
-            "l": 82839,
-            "c": 82855,
-            "v": 0.7569,
-            "revision": 0,
-            "closed": false
+            "t": 1791571380000,
+            "o": 82394,
+            "h": 82428,
+            "l": 82393,
+            "c": 82428,
+            "v": 17.48519
           }
         }
       ],
       "after": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
-          "bars": 1000,
+          "bars": 1001,
           "right": 1004,
-          "spacing": 7,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 82218.375,
+          "max": 82773.625,
           "renderer": {
             "draws": 16,
-            "uploads": 14,
-            "bytes": 7040,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562121489
+            "lastUpdate": 1791571440953
           },
           "series": {
             "venue": "binance",
@@ -104,34 +109,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791562080000,
-            "o": 82867.8,
-            "h": 82867.9,
-            "l": 82839.7,
-            "c": 82858.5,
-            "v": 14.282,
-            "revision": 0,
-            "closed": false
+            "t": 1791571440000,
+            "o": 82430.7,
+            "h": 82430.7,
+            "l": 82430.6,
+            "c": 82430.6,
+            "v": 0.137
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
-          "bars": 1001,
+          "bars": 1002,
           "right": 1005,
+          "range": {
+            "from": 920.5714285714286,
+            "to": 1005
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 82195.5,
+          "max": 82770.5,
           "renderer": {
-            "draws": 7,
-            "uploads": 5,
-            "bytes": 3440,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 10,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562121183
+            "lastUpdate": 1791571441057
           },
           "series": {
             "venue": "hyperliquid",
@@ -139,14 +145,12 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791562080000,
-            "o": 82873,
-            "h": 82873,
-            "l": 82839,
-            "c": 82854,
-            "v": 0.76525,
-            "revision": 0,
-            "closed": false
+            "t": 1791571440000,
+            "o": 82428,
+            "h": 82428,
+            "l": 82427,
+            "c": 82427,
+            "v": 0.14079
           }
         }
       ],
@@ -172,23 +176,26 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 82135.66249999999,
+          "max": 83518.0375,
           "renderer": {
-            "draws": 24,
-            "uploads": 21,
-            "bytes": 13800,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 22,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562126737
+            "lastUpdate": 1791571445308
           },
           "series": {
             "venue": "binance",
@@ -196,34 +203,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561900000,
-            "o": 82810.4,
-            "h": 82897.8,
-            "l": 82810.3,
-            "c": 82858.6,
-            "v": 170.152,
-            "revision": 0,
-            "closed": false
+            "t": 1791571200000,
+            "o": 82344,
+            "h": 82430.7,
+            "l": 82344,
+            "c": 82430.7,
+            "v": 271.945
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 82109.5,
+          "max": 83544.5,
           "renderer": {
-            "draws": 10,
-            "uploads": 7,
-            "bytes": 6760,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 12,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562126991
+            "lastUpdate": 1791571445905
           },
           "series": {
             "venue": "hyperliquid",
@@ -231,36 +239,37 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561900000,
-            "o": 82802,
-            "h": 82891,
-            "l": 82802,
-            "c": 82854,
-            "v": 9.26647,
-            "revision": 0,
-            "closed": false
+            "t": 1791571200000,
+            "o": 82338,
+            "h": 82428,
+            "l": 82333,
+            "c": 82428,
+            "v": 55.15508
           }
         }
       ],
       "after": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 82135.66249999999,
+          "max": 83518.0375,
           "renderer": {
-            "draws": 33,
-            "uploads": 30,
-            "bytes": 14160,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 32,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562130883
+            "lastUpdate": 1791571449856
           },
           "series": {
             "venue": "binance",
@@ -268,34 +277,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561900000,
-            "o": 82810.4,
-            "h": 82897.8,
-            "l": 82810.3,
-            "c": 82858.5,
-            "v": 170.567,
-            "revision": 0,
-            "closed": false
+            "t": 1791571200000,
+            "o": 82344,
+            "h": 82430.7,
+            "l": 82344,
+            "c": 82430.6,
+            "v": 275.676
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 82109.5,
+          "max": 83544.5,
           "renderer": {
-            "draws": 12,
-            "uploads": 9,
-            "bytes": 6840,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 15,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562129501
+            "lastUpdate": 1791571447595
           },
           "series": {
             "venue": "hyperliquid",
@@ -303,14 +313,12 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561900000,
-            "o": 82802,
-            "h": 82891,
-            "l": 82802,
-            "c": 82855,
-            "v": 9.26772,
-            "revision": 0,
-            "closed": false
+            "t": 1791571200000,
+            "o": 82338,
+            "h": 82428,
+            "l": 82333,
+            "c": 82428,
+            "v": 55.24565
           }
         }
       ],
@@ -336,23 +344,26 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 81330.45,
+          "max": 83740.95,
           "renderer": {
-            "draws": 36,
-            "uploads": 32,
-            "bytes": 20720,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 37,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562133954
+            "lastUpdate": 1791571452268
           },
           "series": {
             "venue": "binance",
@@ -360,34 +371,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82858.6,
-            "v": 529.107,
-            "revision": 0,
-            "closed": false
+            "t": 1791570600000,
+            "o": 82466.1,
+            "h": 82487.9,
+            "l": 82273.9,
+            "c": 82430.6,
+            "v": 1889.672
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 81309.625,
+          "max": 83743.375,
           "renderer": {
-            "draws": 15,
-            "uploads": 11,
-            "bytes": 10160,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 18,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562133883
+            "lastUpdate": 1791571452269
           },
           "series": {
             "venue": "hyperliquid",
@@ -395,36 +407,37 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82855,
-            "v": 165.44614,
-            "revision": 0,
-            "closed": false
+            "t": 1791570600000,
+            "o": 82456,
+            "h": 82465,
+            "l": 82253,
+            "c": 82428,
+            "v": 332.7572
           }
         }
       ],
       "after": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 81330.45,
+          "max": 83740.95,
           "renderer": {
             "draws": 45,
-            "uploads": 41,
-            "bytes": 21080,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562137583
+            "lastUpdate": 1791571456160
           },
           "series": {
             "venue": "binance",
@@ -432,34 +445,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82867.9,
-            "v": 531.793,
-            "revision": 0,
-            "closed": false
+            "t": 1791570600000,
+            "o": 82466.1,
+            "h": 82487.9,
+            "l": 82273.9,
+            "c": 82438.5,
+            "v": 1904.215
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 81309.625,
+          "max": 83743.375,
           "renderer": {
-            "draws": 18,
-            "uploads": 14,
-            "bytes": 10280,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 21,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562137436
+            "lastUpdate": 1791571455104
           },
           "series": {
             "venue": "hyperliquid",
@@ -467,14 +481,12 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82862,
-            "v": 165.57509,
-            "revision": 0,
-            "closed": false
+            "t": 1791570600000,
+            "o": 82456,
+            "h": 82465,
+            "l": 82253,
+            "c": 82427,
+            "v": 332.99726
           }
         }
       ],
@@ -500,23 +512,26 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79554.7875,
+          "max": 87454.91249999999,
           "renderer": {
             "draws": 48,
-            "uploads": 43,
-            "bytes": 27640,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562140708
+            "lastUpdate": 1791571459355
           },
           "series": {
             "venue": "binance",
@@ -524,34 +539,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82867.9,
-            "v": 531.793,
-            "revision": 0,
-            "closed": false
+            "t": 1791568800000,
+            "o": 82680.1,
+            "h": 82702.2,
+            "l": 82273.9,
+            "c": 82430.7,
+            "v": 3392.262
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 79561.125,
+          "max": 87459.875,
           "renderer": {
-            "draws": 21,
-            "uploads": 16,
-            "bytes": 13600,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 25,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562140533
+            "lastUpdate": 1791571459361
           },
           "series": {
             "venue": "hyperliquid",
@@ -559,36 +575,37 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82862,
-            "v": 165.57965,
-            "revision": 0,
-            "closed": false
+            "t": 1791568800000,
+            "o": 82683,
+            "h": 82702,
+            "l": 82253,
+            "c": 82428,
+            "v": 659.18265
           }
         }
       ],
       "after": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79554.7875,
+          "max": 87454.91249999999,
           "renderer": {
             "draws": 58,
-            "uploads": 53,
-            "bytes": 28040,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562144633
+            "lastUpdate": 1791571463013
           },
           "series": {
             "venue": "binance",
@@ -596,34 +613,35 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82867.9,
-            "v": 533.507,
-            "revision": 0,
-            "closed": false
+            "t": 1791568800000,
+            "o": 82680.1,
+            "h": 82702.2,
+            "l": 82273.9,
+            "c": 82438.6,
+            "v": 3410.506
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
           "spacing": 7,
+          "autoPrice": true,
+          "min": 79561.125,
+          "max": 87459.875,
           "renderer": {
-            "draws": 21,
-            "uploads": 16,
-            "bytes": 13600,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 30,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562140515
+            "lastUpdate": 1791571462623
           },
           "series": {
             "venue": "hyperliquid",
@@ -631,14 +649,12 @@
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82862,
-            "v": 165.57965,
-            "revision": 0,
-            "closed": false
+            "t": 1791568800000,
+            "o": 82683,
+            "h": 82702,
+            "l": 82253,
+            "c": 82428,
+            "v": 659.19888
           }
         }
       ],
@@ -654,8 +670,8 @@
           "venue": "hyperliquid",
           "historyLoaded": true,
           "live": true,
-          "currentChanged": false,
-          "freshnessAdvanced": false
+          "currentChanged": true,
+          "freshnessAdvanced": true
         }
       ]
     },
@@ -664,23 +680,26 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79481.7,
+          "max": 88112.70000000001,
           "renderer": {
-            "draws": 62,
-            "uploads": 56,
-            "bytes": 34640,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 63,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562147338
+            "lastUpdate": 1791571466164
           },
           "series": {
             "venue": "binance",
@@ -690,32 +709,33 @@
           "last": {
             "t": 1791561600000,
             "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82872.1,
-            "v": 535.67,
-            "revision": 0,
-            "closed": false
+            "h": 82980,
+            "l": 82273.9,
+            "c": 82443.1,
+            "v": 10702.188
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
-          "spacing": 7,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79490.5,
+          "max": 88095.5,
           "renderer": {
-            "draws": 24,
-            "uploads": 18,
-            "bytes": 16920,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 34,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562147242
+            "lastUpdate": 1791571466312
           },
           "series": {
             "venue": "hyperliquid",
@@ -725,34 +745,35 @@
           "last": {
             "t": 1791561600000,
             "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82864,
-            "v": 165.58715,
-            "revision": 0,
-            "closed": false
+            "h": 82970,
+            "l": 82253,
+            "c": 82435,
+            "v": 2488.57856
           }
         }
       ],
       "after": [
         {
-          "id": "chart-98c2db57-f7ea-4acd-99c7-4dfab32420a2",
+          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
           "visible": true,
           "bars": 1000,
-          "right": 1004,
-          "spacing": 7,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79481.7,
+          "max": 88112.70000000001,
           "renderer": {
-            "draws": 67,
-            "uploads": 61,
-            "bytes": 34840,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 68,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562150590
+            "lastUpdate": 1791571469854
           },
           "series": {
             "venue": "binance",
@@ -762,32 +783,33 @@
           "last": {
             "t": 1791561600000,
             "o": 82839.5,
-            "h": 82897.8,
-            "l": 82731.3,
-            "c": 82872,
-            "v": 536.007,
-            "revision": 0,
-            "closed": false
+            "h": 82980,
+            "l": 82273.9,
+            "c": 82443.1,
+            "v": 10703.425
           }
         },
         {
-          "id": "chart-ec901172-e30c-47c0-af41-3ca7461b44fe",
+          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
           "visible": true,
           "bars": 1001,
-          "right": 1005,
-          "spacing": 7,
+          "right": 1004,
+          "range": {
+            "from": 919.5714285714286,
+            "to": 1004
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 79490.5,
+          "max": 88095.5,
           "renderer": {
-            "draws": 26,
-            "uploads": 20,
-            "bytes": 17000,
-            "contexts": 1,
-            "restores": 0,
-            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+            "draws": 37,
+            "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791562149639
+            "lastUpdate": 1791571469658
           },
           "series": {
             "venue": "hyperliquid",
@@ -797,12 +819,10 @@
           "last": {
             "t": 1791561600000,
             "o": 82844,
-            "h": 82891,
-            "l": 82725,
-            "c": 82868,
-            "v": 165.59152,
-            "revision": 0,
-            "closed": false
+            "h": 82970,
+            "l": 82253,
+            "c": 82435,
+            "v": 2489.07944
           }
         }
       ],
