@@ -14,7 +14,8 @@
     "smoke:live": "node scripts/live.mjs"
   },
   "dependencies": {
-    "dockview-core": "8.4.1"
+    "dockview-core": "8.4.1",
+    "openalgo-charts": "2.6.0"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",
