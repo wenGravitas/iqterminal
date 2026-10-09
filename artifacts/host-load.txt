@@ -1,0 +1,6 @@
+Read-only host observation after final benchmark (2026-10-09):
+Raspberry Pi ARM64, 4 logical cores, Broadcom V3D hardware WebGL.
+Load average: 12.45, 10.48, 6.43.
+Several Node and Turbo processes from other work were active; they were not modified.
+Thermal zone 0: 82050 millidegrees C (82.05 C).
+This is shared-host evidence, not attribution of every frame stall to external load.

@@ -1,0 +1,668 @@
+{
+  "mode": "SYNTHETIC candle path, production bundle with explicit diagnostic build flag",
+  "browser": "154.0.8037.92",
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "viewport": [
+      1366,
+      768
+    ],
+    "dpr": 1,
+    "cores": 4
+  },
+  "errors": [],
+  "two": {
+    "label": "Two default visible charts, explicit deterministic fixtures, no synthetic burst",
+    "durationMs": 6143,
+    "interactions": 3,
+    "shellPanelIdentityPreserved": true,
+    "drawDeltas": [
+      {
+        "draws": 64,
+        "uploads": 64
+      },
+      {
+        "draws": 2,
+        "uploads": 2
+      }
+    ],
+    "stats": {
+      "panels": [
+        {
+          "id": "chart-1d67723d-ab5b-4fda-877c-49758d9d2c47",
+          "visible": true,
+          "bars": 5000,
+          "right": 4995.304986502779,
+          "spacing": 6.397518296898597,
+          "renderer": {
+            "draws": 67,
+            "uploads": 65,
+            "bytes": 240280,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "stale",
+            "message": "History loaded · waiting for live update",
+            "lastUpdate": 0
+          },
+          "series": {
+            "venue": "binance",
+            "interval": "1m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83529.047829294,
+            "h": 83547.047829294,
+            "l": 83496.97673352211,
+            "c": 83518.97673352211,
+            "v": 4,
+            "revision": 0,
+            "closed": false
+          }
+        },
+        {
+          "id": "chart-20ff4630-3df0-4086-b381-3b87f19b247d",
+          "visible": true,
+          "bars": 5000,
+          "right": 5004,
+          "spacing": 7,
+          "renderer": {
+            "draws": 5,
+            "uploads": 3,
+            "bytes": 10040,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "stale",
+            "message": "History loaded · waiting for live update",
+            "lastUpdate": 0
+          },
+          "series": {
+            "venue": "hyperliquid",
+            "interval": "1m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83547.047829294,
+            "h": 83565.047829294,
+            "l": 83514.97673352211,
+            "c": 83536.97673352211,
+            "v": 4,
+            "revision": 0,
+            "closed": false
+          }
+        }
+      ],
+      "feed": {
+        "series": 2,
+        "subscriptions": 2,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 0
+      },
+      "longTasks": [
+        64,
+        151,
+        81,
+        85
+      ],
+      "domPanels": 2
+    },
+    "memory": {
+      "used": 7914839,
+      "total": 11884487
+    },
+    "frameMs": {
+      "samples": 212,
+      "p50": 16.699999999999818,
+      "p95": 83.30000000000109,
+      "p99": 183.29999999999927,
+      "max": 600
+    }
+  },
+  "four": {
+    "label": "Four visible charts / three shared series, 5000 bars each; 1000 synthetic wire messages/s total through worker normalization/reconciliation",
+    "durationMs": 11183,
+    "interactions": 5,
+    "shellPanelIdentityPreserved": true,
+    "drawDeltas": [
+      {
+        "draws": 194,
+        "uploads": 109
+      },
+      {
+        "draws": 168,
+        "uploads": 168
+      },
+      {
+        "draws": 168,
+        "uploads": 168
+      },
+      {
+        "draws": 168,
+        "uploads": 168
+      }
+    ],
+    "stats": {
+      "panels": [
+        {
+          "id": "chart-1d67723d-ab5b-4fda-877c-49758d9d2c47",
+          "visible": true,
+          "bars": 5000,
+          "right": 4982.655672635381,
+          "spacing": 5.846891479878904,
+          "renderer": {
+            "draws": 265,
+            "uploads": 175,
+            "bytes": 446120,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "live",
+            "message": "Native candle stream",
+            "lastUpdate": 1791562044657
+          },
+          "series": {
+            "venue": "binance",
+            "interval": "1m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83552.96367286272,
+            "v": 12049,
+            "revision": 0,
+            "closed": false
+          }
+        },
+        {
+          "id": "chart-20ff4630-3df0-4086-b381-3b87f19b247d",
+          "visible": true,
+          "bars": 5000,
+          "right": 5004,
+          "spacing": 7,
+          "renderer": {
+            "draws": 177,
+            "uploads": 175,
+            "bytes": 19640,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "live",
+            "message": "Native candle stream",
+            "lastUpdate": 1791562044657
+          },
+          "series": {
+            "venue": "hyperliquid",
+            "interval": "1m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83570.59668069228,
+            "v": 12050,
+            "revision": 0,
+            "closed": false
+          }
+        },
+        {
+          "id": "chart-7eed0f2b-e611-4835-99ab-8b71e070e280",
+          "visible": true,
+          "bars": 5000,
+          "right": 5004,
+          "spacing": 7,
+          "renderer": {
+            "draws": 173,
+            "uploads": 172,
+            "bytes": 9600,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "live",
+            "message": "Native candle stream",
+            "lastUpdate": 1791562044657
+          },
+          "series": {
+            "venue": "binance",
+            "interval": "1m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83552.96367286272,
+            "v": 12049,
+            "revision": 0,
+            "closed": false
+          }
+        },
+        {
+          "id": "chart-62acf1e7-90f6-482b-b4ce-9d6b28d84eac",
+          "visible": true,
+          "bars": 5000,
+          "right": 5004,
+          "spacing": 7,
+          "renderer": {
+            "draws": 173,
+            "uploads": 172,
+            "bytes": 9600,
+            "contexts": 1,
+            "restores": 0,
+            "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+          },
+          "status": {
+            "state": "live",
+            "message": "Native candle stream",
+            "lastUpdate": 1791562044657
+          },
+          "series": {
+            "venue": "hyperliquid",
+            "interval": "5m",
+            "type": "candle"
+          },
+          "last": {
+            "t": 1791558000000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83571.3210990146,
+            "v": 12048,
+            "revision": 0,
+            "closed": false
+          }
+        }
+      ],
+      "feed": {
+        "series": 3,
+        "subscriptions": 4,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 2,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:BTC:5m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 11900
+      },
+      "longTasks": [
+        113,
+        208,
+        80,
+        53,
+        51,
+        212,
+        57,
+        50,
+        80,
+        67,
+        63,
+        51,
+        66,
+        55,
+        77,
+        302,
+        57,
+        190,
+        72,
+        64,
+        52,
+        154,
+        53,
+        175,
+        71
+      ],
+      "domPanels": 4
+    },
+    "memory": {
+      "used": 10360969,
+      "total": 12515145
+    },
+    "frameMs": {
+      "samples": 259,
+      "p50": 33.29999999999927,
+      "p95": 100,
+      "p99": 266.6999999999971,
+      "max": 283.3000000000011
+    }
+  },
+  "deduplicatedPanelsAgree": true,
+  "hidden": {
+    "id": "chart-1d67723d-ab5b-4fda-877c-49758d9d2c47",
+    "drawDelta": 0,
+    "uploadDelta": 0
+  },
+  "lifecycle": [
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 11140148
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 12200251
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 13394162
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 15174705
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 17085624
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 17139308
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 18077313
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 8191399
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 9931092
+    },
+    {
+      "panels": 4,
+      "contexts": 4,
+      "memory": 11702977
+    }
+  ],
+  "final": {
+    "panels": [
+      {
+        "id": "chart-1d67723d-ab5b-4fda-877c-49758d9d2c47",
+        "visible": true,
+        "bars": 5000,
+        "right": 4982.655672635381,
+        "spacing": 5.846891479878904,
+        "renderer": {
+          "draws": 304,
+          "uploads": 176,
+          "bytes": 448760,
+          "contexts": 1,
+          "restores": 0,
+          "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791562051592
+        },
+        "series": {
+          "venue": "binance",
+          "interval": "1m",
+          "type": "candle"
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83529.047829294,
+          "h": 83579.047829294,
+          "l": 83479.047829294,
+          "c": 83529.31427286776,
+          "v": 18850,
+          "revision": 0,
+          "closed": false
+        }
+      },
+      {
+        "id": "chart-20ff4630-3df0-4086-b381-3b87f19b247d",
+        "visible": true,
+        "bars": 5000,
+        "right": 5004,
+        "spacing": 7,
+        "renderer": {
+          "draws": 228,
+          "uploads": 226,
+          "bytes": 23600,
+          "contexts": 1,
+          "restores": 0,
+          "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791562051592
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "1m",
+          "type": "candle"
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83547.047829294,
+          "h": 83597.047829294,
+          "l": 83497.047829294,
+          "c": 83546.11442703215,
+          "v": 18848,
+          "revision": 0,
+          "closed": false
+        }
+      },
+      {
+        "id": "chart-7eed0f2b-e611-4835-99ab-8b71e070e280",
+        "visible": false,
+        "bars": 5000,
+        "right": 5004,
+        "spacing": 7,
+        "renderer": {
+          "draws": 186,
+          "uploads": 185,
+          "bytes": 13400,
+          "contexts": 1,
+          "restores": 0,
+          "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791562051592
+        },
+        "series": {
+          "venue": "binance",
+          "interval": "1m",
+          "type": "candle"
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83529.047829294,
+          "h": 83579.047829294,
+          "l": 83479.047829294,
+          "c": 83529.31427286776,
+          "v": 18850,
+          "revision": 0,
+          "closed": false
+        }
+      },
+      {
+        "id": "chart-62acf1e7-90f6-482b-b4ce-9d6b28d84eac",
+        "visible": true,
+        "bars": 5000,
+        "right": 5004,
+        "spacing": 7,
+        "renderer": {
+          "draws": 224,
+          "uploads": 223,
+          "bytes": 13560,
+          "contexts": 1,
+          "restores": 0,
+          "gpu": "ANGLE (Broadcom, V3D 7.1.7.0, OpenGL ES 3.1)"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791562051592
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "5m",
+          "type": "candle"
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83547.047829294,
+          "h": 83597.047829294,
+          "l": 83497.047829294,
+          "c": 83546.71428324297,
+          "v": 18849,
+          "revision": 0,
+          "closed": false
+        }
+      }
+    ],
+    "feed": {
+      "series": 3,
+      "subscriptions": 4,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:BTC:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:BTC:5m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 0
+        }
+      ],
+      "inactiveCaches": 0,
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 18850
+    },
+    "frameIntervals": [],
+    "longTasks": [
+      113,
+      208,
+      80,
+      53,
+      51,
+      212,
+      57,
+      50,
+      80,
+      67,
+      63,
+      51,
+      66,
+      55,
+      77,
+      302,
+      57,
+      190,
+      72,
+      64,
+      52,
+      154,
+      53,
+      175,
+      71,
+      125,
+      78,
+      130,
+      53,
+      91,
+      72,
+      116,
+      50,
+      166,
+      550,
+      109,
+      169,
+      186,
+      57,
+      241,
+      79,
+      56,
+      188,
+      51,
+      54,
+      170,
+      152,
+      224,
+      128,
+      73,
+      509,
+      137
+    ],
+    "domPanels": 4
+  }
+}

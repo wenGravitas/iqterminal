@@ -1,0 +1,2 @@
+import{launch,url}from'./browser.mjs';const b=await launch(false),p=await b.newPage();await p.goto(url);await p.waitForFunction(()=>window.__terminal?.stats().panels.every(p=>p.bars>0&&p.status.state==='live'),{},{timeout:35000});
+for(const [width,height]of[[1920,1080],[1366,768]]){await p.setViewportSize({width,height});await p.waitForTimeout(250);await p.screenshot({path:`artifacts/live-${width}x${height}.png`});}await b.close();

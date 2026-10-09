@@ -1,0 +1,30 @@
+# Dependencies, builds, and tool caches
+node_modules/
+dist/
+coverage/
+.vite/
+.cache/
+.pnpm-store/
+*.tsbuildinfo
+
+# Browser test output and transient profiling traces
+test-results/
+playwright-report/
+/artifacts/browser-results.json
+/artifacts/profile.json
+*.log
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+*.pem
+*.key
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Keep the lockfile, reference image, and curated verification artifacts tracked.

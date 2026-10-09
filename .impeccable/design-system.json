@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T16:03:02Z",
+  "title": "Design System: Basis Terminal",
+  "extensions": {
+    "layout": {
+      "commandStrip": "34px fixed at viewport bottom",
+      "dockTabRow": "26px",
+      "chartToolbar": "31px",
+      "plotInset": "5px 4px 0",
+      "compactBreakpoint": "900px; hide brand and instrument metadata, tighten venue status, allow selector shrink"
+    },
+    "focus": "Buttons, selects, and canvas use a 1px solid #aaa focus-visible outline with -2px offset.",
+    "disabled": "Disabled buttons use 0.45 opacity."
+  }
+}
