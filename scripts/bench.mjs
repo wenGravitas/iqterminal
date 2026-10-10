@@ -1,5 +1,6 @@
 import { launch, url } from './browser.mjs';
 import { writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
 
 const browser = await launch(false);
 const page = await browser.newPage({ viewport: { width: 1366, height: 768 }, deviceScaleFactor: 1 });
@@ -33,16 +34,29 @@ async function setPanels(count) {
       terminal.addChart(index === 1 ? { venue: 'hyperliquid', interval: '1m' } : extraSeries[index - 2]);
     }
     for (let index = 2; index < count; index++) {
-      dock.panels[index].api.moveTo({ group: dock.panels[index - 2].api.group, position: 'below' });
+      dock.panels[index].api.moveTo({ group: dock.panels[index - 2].api.group, position: 'bottom' });
+    }
+    if (count === 8) {
+      const rowHeight = document.querySelector('#workspace').clientHeight / 4;
+      for (const group of new Set(dock.panels.map(panel => panel.api.group))) {
+        group.api.setSize({ height: rowHeight });
+      }
     }
     terminal.feed.send({ type: 'fixture', rate: 1000 });
   }, count);
   await page.waitForFunction(count => window.__terminal.stats().panels.length === count && window.__terminal.stats().panels.every(panel => panel.bars === 5000), count);
   await page.waitForTimeout(700);
+  const geometry = await page.locator('.chart-stage').evaluateAll(stages => stages.map(stage => {
+    const rect = stage.getBoundingClientRect();
+    return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, inViewport: rect.width > 0 && rect.height > 0 && rect.left >= -1 && rect.top >= -1 && rect.right <= innerWidth + 1 && rect.bottom <= innerHeight + 1 };
+  }));
+  assert.equal(geometry.length, count);
+  assert.ok(geometry.every(stage => stage.inViewport), `Every measured chart must fit in the viewport: ${JSON.stringify(geometry)}`);
+  return geometry;
 }
 
 async function measure(label, count, seconds) {
-  await setPanels(count);
+  const viewportGeometry = await setPanels(count);
   let cpuProfileTop = null;
   let profiler;
   if (profileEnabled && count === 8) {
@@ -134,6 +148,7 @@ async function measure(label, count, seconds) {
       memory: performance.memory ? { used: performance.memory.usedJSHeapSize, total: performance.memory.totalJSHeapSize } : null,
     };
   }, label);
+  run.viewportGeometry = viewportGeometry;
 
   const percentile = (values, p) => {
     const sorted = [...values].sort((a, b) => a - b);

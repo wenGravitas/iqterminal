@@ -1,0 +1,1042 @@
+{
+  "mode": "SYNTHETIC candle path, OpenAlgo renderer=canvas2d, production bundle with explicit diagnostic build flag",
+  "interactionMode": "fixed-count",
+  "browser": "154.0.8037.92",
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "viewport": [
+      1366,
+      768
+    ],
+    "dpr": 1,
+    "cores": 4
+  },
+  "errors": [],
+  "one": {
+    "label": "One visible chart, 5,000-bar deterministic fixtures; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      146
+    ],
+    "panels": [
+      {
+        "id": "chart-3a1fd48d-39d1-4365-b6d3-a6e72632f7fe",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 153,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639970606
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 1,
+      "subscriptions": 1,
+      "sockets": 1,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 12250
+    },
+    "longTasks": [
+      111,
+      58,
+      72,
+      76,
+      54,
+      52,
+      51
+    ],
+    "memory": {
+      "used": 11111488,
+      "total": 19355564
+    },
+    "durationMs": 11572,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 5413,
+    "stressWindowMs": 6000,
+    "visiblePanels": 1,
+    "frameMs": {
+      "samples": 153,
+      "p50": 66.70000000000073,
+      "p95": 133.30000000000018,
+      "p99": 200.10000000000036,
+      "max": 350
+    }
+  },
+  "two": {
+    "label": "Two visible charts on native BTC perpetuals, 5,000 bars each; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      156,
+      149
+    ],
+    "panels": [
+      {
+        "id": "chart-3a1fd48d-39d1-4365-b6d3-a6e72632f7fe",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 323,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639980942
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-8c512d1c-b6ac-47dc-bf40-1df214250c26",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 164,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639980943
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 2,
+      "subscriptions": 2,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 22450
+    },
+    "longTasks": [
+      59,
+      51,
+      151,
+      53,
+      64,
+      54,
+      57
+    ],
+    "memory": {
+      "used": 18941479,
+      "total": 28282395
+    },
+    "durationMs": 9136,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 2992,
+    "stressWindowMs": 6000,
+    "visiblePanels": 2,
+    "frameMs": {
+      "samples": 295,
+      "p50": 16.700000000000728,
+      "p95": 83.30000000000291,
+      "p99": 150.10000000000218,
+      "max": 466.7000000000007
+    }
+  },
+  "eight": {
+    "label": "Eight visible charts, 5,000 bars each, four shared series; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      251,
+      243,
+      243,
+      243,
+      243,
+      243,
+      243,
+      243
+    ],
+    "panels": [
+      {
+        "id": "chart-3a1fd48d-39d1-4365-b6d3-a6e72632f7fe",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 583,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997343
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-8c512d1c-b6ac-47dc-bf40-1df214250c26",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 416,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997343
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-1e5fe5ce-09b5-4cdd-b13f-a105f9de7166",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997347
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "5m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-ee63835d-0132-4ac9-85c1-ca4ca9255166",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997348
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "5m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-1e78450c-5850-45d9-ae9e-c91b3a2e1b73",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997343
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-acaaff8a-1925-457f-9bd1-b09420129e81",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997344
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-2863203e-f63f-4a50-839d-9f8ea90b7f29",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997347
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "5m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      },
+      {
+        "id": "chart-bf7d5a5d-fa47-4b4e-ab8d-b2458980712f",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 253,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791639997348
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "5m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 4,
+      "subscriptions": 8,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 38600
+    },
+    "longTasks": [
+      70,
+      67,
+      72,
+      89,
+      148,
+      181,
+      74,
+      89,
+      69,
+      64,
+      71,
+      57,
+      52,
+      78,
+      52,
+      127,
+      77,
+      52,
+      59,
+      57,
+      83,
+      51,
+      103,
+      58,
+      60,
+      63,
+      69,
+      50,
+      50,
+      87,
+      69,
+      52,
+      56
+    ],
+    "memory": {
+      "used": 28694011,
+      "total": 54030707
+    },
+    "durationMs": 14860,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 4724,
+    "stressWindowMs": 10000,
+    "visiblePanels": 8,
+    "frameMs": {
+      "samples": 486,
+      "p50": 16.69999999999709,
+      "p95": 100,
+      "p99": 149.90000000000146,
+      "max": 200.10000000000218
+    }
+  },
+  "hidden": {
+    "id": "chart-bf7d5a5d-fa47-4b4e-ab8d-b2458980712f",
+    "visibleBefore": false,
+    "visibleAfter": false,
+    "drawsBefore": 254,
+    "drawsAfter": 254,
+    "drawDelta": 0,
+    "syntheticMessagesBefore": 39050,
+    "syntheticMessagesAfter": 39850,
+    "hiddenCandleCloseBefore": 83554.66078073441,
+    "hiddenCandleCloseAfter": 83572.21820750434,
+    "hiddenCandleChanged": true
+  },
+  "lifecycle": [
+    {
+      "panels": 2,
+      "memory": 14033534
+    },
+    {
+      "panels": 2,
+      "memory": 15790316
+    },
+    {
+      "panels": 2,
+      "memory": 17663310
+    },
+    {
+      "panels": 2,
+      "memory": 19545355
+    },
+    {
+      "panels": 2,
+      "memory": 21488703
+    },
+    {
+      "panels": 2,
+      "memory": 23188917
+    },
+    {
+      "panels": 2,
+      "memory": 15675237
+    },
+    {
+      "panels": 2,
+      "memory": 17396428
+    },
+    {
+      "panels": 2,
+      "memory": 19303761
+    },
+    {
+      "panels": 2,
+      "memory": 21138242
+    }
+  ],
+  "final": {
+    "panels": [
+      {
+        "id": "chart-3a1fd48d-39d1-4365-b6d3-a6e72632f7fe",
+        "visible": false,
+        "bars": 5000,
+        "right": 4973.642504977969,
+        "range": {
+          "from": 4955.562147835112,
+          "to": 4973.642504977969
+        },
+        "spacing": 6.9999999999999964,
+        "autoPrice": false,
+        "min": 82266.25690483532,
+        "max": 84150.1287889094,
+        "renderer": {
+          "draws": 611,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791640001742
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83529.047829294,
+          "h": 83579.047829294,
+          "l": 83479.047829294,
+          "c": 83499.06902705043,
+          "v": 42649
+        },
+        "footprint": {
+          "bars": 0,
+          "latest": null,
+          "status": {
+            "state": "loading",
+            "message": "Waiting for Binance USD-M aggTrade observations",
+            "lastUpdate": 0,
+            "tickSize": null,
+            "rowSize": null,
+            "firstTradeAt": null,
+            "lastTradeAt": null,
+            "eventTime": null,
+            "outages": 0,
+            "lateRecords": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "coverage": "waiting",
+            "retentionStart": null
+          },
+          "needsSync": false,
+          "initialViewSet": false,
+          "primitiveSets": 1,
+          "hover": null
+        },
+        "studies": {
+          "context": {
+            "symbol": "BTCUSDT",
+            "exchange": "Binance USD-M",
+            "interval": "1m"
+          },
+          "attached": 0,
+          "workers": 0,
+          "depthBands": [],
+          "statuses": []
+        }
+      },
+      {
+        "id": "chart-bf7d5a5d-fa47-4b4e-ab8d-b2458980712f",
+        "visible": true,
+        "bars": 5000,
+        "right": 5003,
+        "range": {
+          "from": 4820.714285714285,
+          "to": 5003
+        },
+        "spacing": 7,
+        "autoPrice": true,
+        "min": 82153.84698629471,
+        "max": 83882.85874912466,
+        "renderer": {
+          "draws": 306,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791640001742
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "market": "perpetual",
+          "interval": "5m",
+          "type": "candle",
+          "rowTicks": 10,
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "showPoc": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "studies": []
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83547.047829294,
+          "h": 83597.047829294,
+          "l": 83497.047829294,
+          "c": 83517.0975725248,
+          "v": 42650
+        },
+        "footprint": {
+          "bars": 0,
+          "latest": null,
+          "status": {
+            "state": "loading",
+            "message": "Waiting for Binance USD-M aggTrade observations",
+            "lastUpdate": 0,
+            "tickSize": null,
+            "rowSize": null,
+            "firstTradeAt": null,
+            "lastTradeAt": null,
+            "eventTime": null,
+            "outages": 0,
+            "lateRecords": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "coverage": "waiting",
+            "retentionStart": null
+          },
+          "needsSync": false,
+          "initialViewSet": false,
+          "primitiveSets": 1,
+          "hover": null
+        },
+        "studies": {
+          "context": {
+            "symbol": "BTC",
+            "exchange": "Hyperliquid",
+            "interval": "5m"
+          },
+          "attached": 0,
+          "workers": 0,
+          "depthBands": [],
+          "statuses": []
+        }
+      }
+    ],
+    "feed": {
+      "series": 2,
+      "subscriptions": 2,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:5m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 0
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 42650
+    },
+    "frameIntervals": [],
+    "longTasks": [
+      70,
+      67,
+      72,
+      89,
+      148,
+      181,
+      74,
+      89,
+      69,
+      64,
+      71,
+      57,
+      52,
+      78,
+      52,
+      127,
+      77,
+      52,
+      59,
+      57,
+      83,
+      51,
+      103,
+      58,
+      60,
+      63,
+      69,
+      50,
+      50,
+      87,
+      69,
+      52,
+      56,
+      106,
+      66,
+      56
+    ],
+    "domPanels": 2
+  }
+}

@@ -2,6 +2,7 @@
 import { parseLive } from './adapters';
 import { MarketService } from './service';
 import { BinanceDepthService } from './depth-service';
+import { BinanceFootprintService } from './footprint-service';
 import { fixtureBars } from './fixtures';
 import { duration, type Command, type Event, type Series } from './protocol';
 const scope=self as unknown as DedicatedWorkerGlobalScope;
@@ -22,6 +23,7 @@ const fixtureOptions = () => ({
 });
 let service=new MarketService((e:Event)=>scope.postMessage(e));
 const depth=new BinanceDepthService((e:Event)=>scope.postMessage(e));
+const footprint=new BinanceFootprintService((e:Event)=>scope.postMessage(e), undefined, {}, import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS==='1');
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
@@ -40,7 +42,8 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='depth-subscribe'){depth.subscribe(c.id,c.bandPercent);return;}
   if(c.type==='depth-unsubscribe'){depth.unsubscribe(c.id);return;}
   if(c.type==='depth-retry'){depth.retry();return;}
-  if(c.type==='online'){depth.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),depth:depth.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='footprint-subscribe'||c.type==='footprint-unsubscribe'||c.type==='footprint-retry'||c.type==='footprint-ack'){footprint.command(c);return;}
+  if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),depth:depth.diagnostics(),footprint:footprint.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

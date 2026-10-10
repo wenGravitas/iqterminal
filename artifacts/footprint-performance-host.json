@@ -1,0 +1,10 @@
+{
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "architecture": "arm64",
+  "cpuFrequencySnapshotKHz": 2400000,
+  "temperatureSnapshotC": 70.3,
+  "getThrottledSnapshot": "0x80000",
+  "interpretation": "Historical soft-temperature-limit flag; no current low-bit throttle flags in this snapshot. This observation cannot establish conditions during earlier benchmark frames or their cause.",
+  "source": "https://www.raspberrypi.com/documentation/computers/os.html#get_throttled",
+  "measurementScope": "Shared active desktop host; background applications were left intact. IQTerminal browser/build benchmarks were not run concurrently with one another."
+}

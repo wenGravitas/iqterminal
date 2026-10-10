@@ -1,0 +1,1109 @@
+{
+  "mode": "explicit diagnostic fixture only; synthetic 100 aggregate trades every 100 ms for 5 s; production feed is not used",
+  "sameMachine": true,
+  "browserVersion": "154.0.8037.92",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "results": [
+    {
+      "panels": 1,
+      "fixture": "synthetic Binance USD-M aggTrade in the real worker, IPC acknowledgement, FeedClient, chart primitive and RAF",
+      "schedule": {
+        "scheduledBatches": 50,
+        "observations": 5000,
+        "elapsedMs": 4901.29999999702,
+        "intervalMs": 100
+      },
+      "aggregation": {
+        "messages": 5000,
+        "accepted": 5000,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 1,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 50,
+        "aggregationObservations": 5000,
+        "aggregationTotalMs": 22.400000020861626,
+        "aggregationMaxMs": 3.7000000029802322
+      },
+      "groups": [
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+          "cells": 11
+        }
+      ],
+      "workerMeasurements": {
+        "sent": 5000,
+        "socketCount": 1,
+        "socketCloseCalls": 0,
+        "batchCount": 50,
+        "sendBatchMsP50": 0.7000000029802322,
+        "sendBatchMsP95": 1.7999999970197678
+      },
+      "browser": {
+        "visiblePanels": 1,
+        "worker": {
+          "subscribers": 1,
+          "groups": [
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+              "clients": 1,
+              "bars": 1,
+              "cells": 11,
+              "rowTicks": 10,
+              "maxBars": 300,
+              "rowSize": 1,
+              "firstTradeAt": 1791651070000,
+              "lastTradeAt": 1791651074999,
+              "collectionStartedAt": 1791651110534,
+              "generation": 1,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            }
+          ],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 5000,
+          "lastTradeId": 5000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791651074999,
+          "lastEventTime": 1791651075000,
+          "counters": {
+            "messages": 5000,
+            "accepted": 5000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 1,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 50,
+            "aggregationObservations": 5000,
+            "aggregationTotalMs": 22.400000020861626,
+            "aggregationMaxMs": 3.7000000029802322
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "panels": [
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 11,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 56
+          }
+        ],
+        "frameMs": {
+          "samples": 320,
+          "p50": 16.699999999999818,
+          "p95": 16.700000000000728,
+          "max": 33.40000000000009
+        },
+        "ipcToNextDrawMs": {
+          "samples": 50,
+          "p50": 32.20000000298023,
+          "p95": 37.899999998509884,
+          "max": 54.899999998509884
+        },
+        "longTasksMs": [],
+        "errors": []
+      },
+      "teardown": {
+        "sockets": 1,
+        "closeCalls": 1,
+        "ready": [
+          3
+        ]
+      }
+    },
+    {
+      "panels": 2,
+      "fixture": "synthetic Binance USD-M aggTrade in the real worker, IPC acknowledgement, FeedClient, chart primitive and RAF",
+      "schedule": {
+        "scheduledBatches": 50,
+        "observations": 5000,
+        "elapsedMs": 4900.10000000149,
+        "intervalMs": 100
+      },
+      "aggregation": {
+        "messages": 5000,
+        "accepted": 5000,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 1,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 50,
+        "aggregationObservations": 5000,
+        "aggregationTotalMs": 24.799999944865704,
+        "aggregationMaxMs": 10.300000004470348
+      },
+      "groups": [
+        {
+          "clients": 2,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+          "cells": 11
+        }
+      ],
+      "workerMeasurements": {
+        "sent": 5000,
+        "socketCount": 1,
+        "socketCloseCalls": 0,
+        "batchCount": 50,
+        "sendBatchMsP50": 0.6000000014901161,
+        "sendBatchMsP95": 1.2000000029802322
+      },
+      "browser": {
+        "visiblePanels": 2,
+        "worker": {
+          "subscribers": 2,
+          "groups": [
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+              "clients": 2,
+              "bars": 1,
+              "cells": 11,
+              "rowTicks": 10,
+              "maxBars": 300,
+              "rowSize": 1,
+              "firstTradeAt": 1791651070000,
+              "lastTradeAt": 1791651074999,
+              "collectionStartedAt": 1791651118498,
+              "generation": 1,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            }
+          ],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 5000,
+          "lastTradeId": 5000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791651074999,
+          "lastEventTime": 1791651075000,
+          "counters": {
+            "messages": 5000,
+            "accepted": 5000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 1,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 50,
+            "aggregationObservations": 5000,
+            "aggregationTotalMs": 24.799999944865704,
+            "aggregationMaxMs": 10.300000004470348
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "panels": [
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 11,
+            "latestRevision": 5000,
+            "primitiveSets": 50,
+            "draws": 56
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 11,
+            "latestRevision": 5000,
+            "primitiveSets": 50,
+            "draws": 56
+          }
+        ],
+        "frameMs": {
+          "samples": 316,
+          "p50": 16.699999999999818,
+          "p95": 16.799999999999727,
+          "max": 33.40000000000009
+        },
+        "ipcToNextDrawMs": {
+          "samples": 50,
+          "p50": 17.600000001490116,
+          "p95": 43.30000000447035,
+          "max": 56.79999999701977
+        },
+        "longTasksMs": [],
+        "errors": []
+      },
+      "teardown": {
+        "sockets": 1,
+        "closeCalls": 1,
+        "ready": [
+          3
+        ]
+      }
+    },
+    {
+      "panels": 8,
+      "fixture": "synthetic Binance USD-M aggTrade in the real worker, IPC acknowledgement, FeedClient, chart primitive and RAF",
+      "schedule": {
+        "scheduledBatches": 50,
+        "observations": 5000,
+        "elapsedMs": 4900.30000000447,
+        "intervalMs": 100
+      },
+      "aggregation": {
+        "messages": 5000,
+        "accepted": 5000,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 1,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 50,
+        "aggregationObservations": 5000,
+        "aggregationTotalMs": 37.79999992996454,
+        "aggregationMaxMs": 10.600000001490116
+      },
+      "groups": [
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r1",
+          "cells": 101
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r2",
+          "cells": 51
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r5",
+          "cells": 21
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+          "cells": 11
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r20",
+          "cells": 6
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r50",
+          "cells": 3
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:r1",
+          "cells": 101
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:r2",
+          "cells": 51
+        }
+      ],
+      "workerMeasurements": {
+        "sent": 5000,
+        "socketCount": 1,
+        "socketCloseCalls": 0,
+        "batchCount": 50,
+        "sendBatchMsP50": 0.5,
+        "sendBatchMsP95": 3
+      },
+      "browser": {
+        "visiblePanels": 8,
+        "worker": {
+          "subscribers": 8,
+          "groups": [
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r1",
+              "clients": 1,
+              "bars": 1,
+              "cells": 101,
+              "rowTicks": 1,
+              "maxBars": 300,
+              "rowSize": 0.1,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126855,
+              "generation": 1,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r2",
+              "clients": 1,
+              "bars": 1,
+              "cells": 51,
+              "rowTicks": 2,
+              "maxBars": 300,
+              "rowSize": 0.2,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126885,
+              "generation": 2,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r5",
+              "clients": 1,
+              "bars": 1,
+              "cells": 21,
+              "rowTicks": 5,
+              "maxBars": 300,
+              "rowSize": 0.5,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126900,
+              "generation": 3,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+              "clients": 1,
+              "bars": 1,
+              "cells": 11,
+              "rowTicks": 10,
+              "maxBars": 300,
+              "rowSize": 1,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126914,
+              "generation": 4,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r20",
+              "clients": 1,
+              "bars": 1,
+              "cells": 6,
+              "rowTicks": 20,
+              "maxBars": 300,
+              "rowSize": 2,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126930,
+              "generation": 5,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r50",
+              "clients": 1,
+              "bars": 1,
+              "cells": 3,
+              "rowTicks": 50,
+              "maxBars": 300,
+              "rowSize": 5,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126948,
+              "generation": 6,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:5m:r1",
+              "clients": 1,
+              "bars": 1,
+              "cells": 101,
+              "rowTicks": 1,
+              "maxBars": 300,
+              "rowSize": 0.1,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126975,
+              "generation": 7,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:5m:r2",
+              "clients": 1,
+              "bars": 1,
+              "cells": 51,
+              "rowTicks": 2,
+              "maxBars": 300,
+              "rowSize": 0.2,
+              "firstTradeAt": 1791651130000,
+              "lastTradeAt": 1791651134999,
+              "collectionStartedAt": 1791651126986,
+              "generation": 8,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            }
+          ],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 5000,
+          "lastTradeId": 5000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791651134999,
+          "lastEventTime": 1791651135000,
+          "counters": {
+            "messages": 5000,
+            "accepted": 5000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 1,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 50,
+            "aggregationObservations": 5000,
+            "aggregationTotalMs": 37.79999992996454,
+            "aggregationMaxMs": 10.600000001490116
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "panels": [
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 101,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 56
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 51,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 57
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 21,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 11,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 6,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 3,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 101,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 51,
+            "latestRevision": 5000,
+            "primitiveSets": 51,
+            "draws": 54
+          }
+        ],
+        "frameMs": {
+          "samples": 283,
+          "p50": 16.699999999999818,
+          "p95": 33.30000000000018,
+          "max": 100
+        },
+        "ipcToNextDrawMs": {
+          "samples": 400,
+          "p50": 33.70000000298023,
+          "p95": 65.10000000149012,
+          "max": 143.70000000298023
+        },
+        "longTasksMs": [
+          105,
+          55,
+          57,
+          54
+        ],
+        "errors": []
+      },
+      "lifecycle": {
+        "screenshot": "artifacts/performance-footprint-browser-8panels.png",
+        "visual": [
+          {
+            "id": "chart-ec434610-d918-4be0-a8a1-172a8e8bd70d",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 1,
+              "y": 27,
+              "width": 679,
+              "height": 153,
+              "right": 680,
+              "bottom": 180
+            },
+            "green": 2882,
+            "red": 1819
+          },
+          {
+            "id": "chart-b7058913-a2a6-45f5-9483-2cf76b28afee",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 686,
+              "y": 27,
+              "width": 679,
+              "height": 153,
+              "right": 1365,
+              "bottom": 180
+            },
+            "green": 2882,
+            "red": 1841
+          },
+          {
+            "id": "chart-3c1f8bf9-090e-40a0-808c-d7fb012143ec",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 1,
+              "y": 212,
+              "width": 679,
+              "height": 153,
+              "right": 680,
+              "bottom": 365
+            },
+            "green": 2877,
+            "red": 1832
+          },
+          {
+            "id": "chart-33abe78c-b513-45b0-8656-b79c88798277",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 686,
+              "y": 212,
+              "width": 679,
+              "height": 153,
+              "right": 1365,
+              "bottom": 365
+            },
+            "green": 2777,
+            "red": 1733
+          },
+          {
+            "id": "chart-ffdc096e-e352-49ab-b1be-b444fce4165f",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 1,
+              "y": 397,
+              "width": 679,
+              "height": 152,
+              "right": 680,
+              "bottom": 549
+            },
+            "green": 2742,
+            "red": 1594
+          },
+          {
+            "id": "chart-89b4c62d-0bd6-466f-aa5b-2ccb8811d5b3",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 686,
+              "y": 397,
+              "width": 679,
+              "height": 152,
+              "right": 1365,
+              "bottom": 549
+            },
+            "green": 2680,
+            "red": 1695
+          },
+          {
+            "id": "chart-c00ee7bb-d5b8-4c34-a62a-6595a31dec19",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 1,
+              "y": 581,
+              "width": 679,
+              "height": 152,
+              "right": 680,
+              "bottom": 733
+            },
+            "green": 2820,
+            "red": 1788
+          },
+          {
+            "id": "chart-91289e06-0839-4816-8107-00f1c6a7d165",
+            "visible": true,
+            "mode": "footprint",
+            "rect": {
+              "x": 686,
+              "y": 581,
+              "width": 679,
+              "height": 152,
+              "right": 1365,
+              "bottom": 733
+            },
+            "green": 2850,
+            "red": 1813
+          }
+        ],
+        "nativeCells": [
+          {
+            "id": "chart-ec434610-d918-4be0-a8a1-172a8e8bd70d",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.049000000000000016,
+              "askVol": 0.07200000000000004
+            },
+            "x": 511,
+            "y": 10.084158415841582,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.049000000000000016,
+                "askVol": 0.07200000000000004
+              }
+            }
+          },
+          {
+            "id": "chart-b7058913-a2a6-45f5-9483-2cf76b28afee",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.09700000000000006,
+              "askVol": 0.1480000000000001
+            },
+            "x": 511,
+            "y": 10.460784313725485,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.09700000000000006,
+                "askVol": 0.1480000000000001
+              }
+            }
+          },
+          {
+            "id": "chart-3c1f8bf9-090e-40a0-808c-d7fb012143ec",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.1480000000000001,
+              "askVol": 0.22000000000000017
+            },
+            "x": 511,
+            "y": 11.54761904761905,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.1480000000000001,
+                "askVol": 0.22000000000000017
+              }
+            }
+          },
+          {
+            "id": "chart-33abe78c-b513-45b0-8656-b79c88798277",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.2930000000000002,
+              "askVol": 0.44200000000000034
+            },
+            "x": 511,
+            "y": 13.227272727272727,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.2930000000000002,
+                "askVol": 0.44200000000000034
+              }
+            }
+          },
+          {
+            "id": "chart-ffdc096e-e352-49ab-b1be-b444fce4165f",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.5400000000000004,
+              "askVol": 0.8080000000000006
+            },
+            "x": 511,
+            "y": 15.999999999999996,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.5400000000000004,
+                "askVol": 0.8080000000000006
+              }
+            }
+          },
+          {
+            "id": "chart-89b4c62d-0bd6-466f-aa5b-2ccb8811d5b3",
+            "time": 1791651120,
+            "cell": {
+              "price": 84010,
+              "bidVol": 1.272999999999986,
+              "askVol": 1.9120000000000015
+            },
+            "x": 511,
+            "y": 22.399999999999995,
+            "hover": {
+              "time": 1791651120,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 1.272999999999986,
+                "askVol": 1.9120000000000015
+              }
+            }
+          },
+          {
+            "id": "chart-c00ee7bb-d5b8-4c34-a62a-6595a31dec19",
+            "time": 1791651000,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.049000000000000016,
+              "askVol": 0.07200000000000004
+            },
+            "x": 511,
+            "y": 9.980198019801978,
+            "hover": {
+              "time": 1791651000,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.049000000000000016,
+                "askVol": 0.07200000000000004
+              }
+            }
+          },
+          {
+            "id": "chart-91289e06-0839-4816-8107-00f1c6a7d165",
+            "time": 1791651000,
+            "cell": {
+              "price": 84010,
+              "bidVol": 0.09700000000000006,
+              "askVol": 0.1480000000000001
+            },
+            "x": 511,
+            "y": 10.352941176470583,
+            "hover": {
+              "time": 1791651000,
+              "price": 84010,
+              "cell": {
+                "price": 84010,
+                "bidVol": 0.09700000000000006,
+                "askVol": 0.1480000000000001
+              }
+            }
+          }
+        ],
+        "hidden": {
+          "before": {
+            "draws": 54,
+            "revision": 5000
+          },
+          "after": {
+            "visible": false,
+            "draws": 54,
+            "revision": 6000
+          },
+          "addedObservations": 1000
+        },
+        "addCloseCycles": [
+          {
+            "iteration": 1,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 2,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 3,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 4,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 5,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 6,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 7,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 8,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 9,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          },
+          {
+            "iteration": 10,
+            "panelsAfterAdd": 8,
+            "panelsAfterClose": 7,
+            "subscribers": 7,
+            "groups": 7
+          }
+        ],
+        "postGc": {
+          "before": {
+            "heapBytes": 18806792,
+            "domNodes": 1143
+          },
+          "after": {
+            "heapBytes": 17846954,
+            "domNodes": 1035
+          },
+          "heapDeltaBytes": -959838,
+          "domNodeDelta": -108
+        }
+      },
+      "teardown": {
+        "sockets": 1,
+        "closeCalls": 1,
+        "ready": [
+          3
+        ]
+      }
+    }
+  ],
+  "limitation": "IPC-to-next-draw is sampled at the next RAF after chart draw counters advance; this is an end-to-end browser scheduling measure, not a device-wide performance acceptance claim."
+}

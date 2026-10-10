@@ -28,3 +28,23 @@ dialog.indicator-picker,dialog.indicator-settings{width:min(520px,calc(100vw - 2
 .tab-cycle-form>footer button{height:24px}
 .tab-cycle-form>footer .primary{border-color:#555;background:#282828}
 .tab-cycle-form button[hidden]{display:none!important}
+.chart-toolbar .chart-type-select{width:92px;min-width:92px;max-width:92px;flex:none}
+.chart-toolbar .footprint-row-control{display:flex;align-items:center;gap:4px;height:23px;color:var(--muted);font-size:10px;white-space:nowrap}
+.chart-toolbar .footprint-row-prefix{color:var(--muted);margin-left:1px}
+.chart-toolbar .footprint-row-price{width:64px;min-width:64px;height:23px;padding:2px 4px;border:1px solid var(--divider);border-radius:0;background:#0d0d0d;color:var(--text);font:inherit}
+.chart-toolbar .footprint-row-control[hidden]{display:none!important}
+.chart-toolbar{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#444 transparent}
+.chart-toolbar>*{flex:0 0 auto}
+.chart-toolbar .footprint-settings-button{display:grid;place-items:center;width:25px;min-width:25px;padding:0}
+.chart-toolbar .footprint-settings-button svg{display:block}
+dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
+.footprint-settings-hint{margin:0;padding:0 11px 8px;color:var(--muted);font-size:10px;line-height:1.4}
+.chart-toolbar-wrap{position:relative;flex:0 0 auto;height:31px;min-width:0}
+.chart-toolbar-wrap>.chart-toolbar{width:100%;height:31px}
+.toolbar-overflow-cue{position:absolute;z-index:5;top:3px;right:3px;display:grid;place-items:center;width:22px;height:23px;padding:0;border:1px solid #363636;background:#1a1a1af2;color:var(--text);font-size:14px;line-height:1;box-shadow:-7px 0 8px #111}
+.toolbar-overflow-cue:hover{background:#303030}
+.toolbar-overflow-cue[hidden],button.footprint-settings-button[hidden]{display:none!important}
+.ohlc[data-mode=footprint]{right:82px;width:min(520px,calc(100% - 96px));height:auto;max-height:76px;overflow:auto;padding:2px 4px;border:1px solid #252525;background:#090909ed;line-height:12px;white-space:pre-line;overflow-wrap:anywhere}
+.chart-toolbar .footprint-units-button{min-width:43px;padding:2px 5px}
+.chart-toolbar .footprint-units-button[aria-pressed=true]{color:var(--up)}
+.chart-toolbar .footprint-units-button[hidden]{display:none!important}

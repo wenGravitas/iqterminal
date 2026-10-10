@@ -1,0 +1,79 @@
+[
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 12,
+    "snippet": "Undocumented color #000b is outside DESIGN.md colors",
+    "ignoreValue": "#000b"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 12,
+    "snippet": "Undocumented color #000a is outside DESIGN.md colors",
+    "ignoreValue": "#000a"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 12,
+    "snippet": "Undocumented color #555 is outside DESIGN.md colors",
+    "ignoreValue": "#555"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 19,
+    "snippet": "Undocumented color #000b is outside DESIGN.md colors",
+    "ignoreValue": "#000b"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 29,
+    "snippet": "Undocumented color #555 is outside DESIGN.md colors",
+    "ignoreValue": "#555"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 44,
+    "snippet": "Undocumented color #363636 is outside DESIGN.md colors",
+    "ignoreValue": "#363636"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/home/daz/workarea/iqterminal/src/style.css",
+    "line": 45,
+    "snippet": "Undocumented color #303030 is outside DESIGN.md colors",
+    "ignoreValue": "#303030"
+  }
+]

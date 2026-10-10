@@ -1,0 +1,155 @@
+{
+  "scenario": "two aggTrade observations at 83000.1 and 83000.2; one 1 USDT ladder row centered at 83000.0",
+  "attachedStudies": 0,
+  "observationCount": 2,
+  "footprintOptions": {
+    "font": 9,
+    "devicePixelRatio": 1
+  },
+  "row": {
+    "price": 83000,
+    "bid": 0.143,
+    "ask": 0.147,
+    "rowSize": 1
+  },
+  "nativeRange": {
+    "min": 82979.6875,
+    "max": 83020.3125
+  },
+  "supportOHLC": {
+    "open": 83000.1,
+    "high": 83000.2,
+    "low": 83000.1,
+    "close": 83000.2
+  },
+  "coordinate": {
+    "x": 511,
+    "y": 325,
+    "stage": {
+      "width": 671,
+      "height": 670
+    },
+    "canvasLayersCovering": 2
+  },
+  "nativeHover": {
+    "price": 83000,
+    "bid": 0.143,
+    "ask": 0.147
+  },
+  "cellLabels": [
+    {
+      "value": "0.143",
+      "font": "9px ui-monospace, SFMono-Regular, Menlo, monospace",
+      "x": 498.05,
+      "y": 324.5,
+      "align": "center",
+      "width": 27.000198364257812,
+      "fillStyle": "#f4f4f4",
+      "absolute": {
+        "x": 503.05,
+        "y": 387.5
+      },
+      "row": {
+        "top": 379.99999999999994,
+        "bottom": 396.00000000000006,
+        "center": 388
+      },
+      "column": "bid",
+      "inNativeRow": true,
+      "inPlot": true,
+      "exactColorGlyphPixels": 5,
+      "canvas": {
+        "top": 63,
+        "left": 5,
+        "width": 671,
+        "height": 670
+      }
+    },
+    {
+      "value": "0.147",
+      "font": "9px ui-monospace, SFMono-Regular, Menlo, monospace",
+      "x": 532.95,
+      "y": 324.5,
+      "align": "center",
+      "width": 27.000198364257812,
+      "fillStyle": "#2e2e2e",
+      "absolute": {
+        "x": 537.95,
+        "y": 387.5
+      },
+      "row": {
+        "top": 379.99999999999994,
+        "bottom": 396.00000000000006,
+        "center": 388
+      },
+      "column": "ask",
+      "inNativeRow": true,
+      "inPlot": true,
+      "exactColorGlyphPixels": 6,
+      "canvas": {
+        "top": 63,
+        "left": 5,
+        "width": 671,
+        "height": 670
+      }
+    }
+  ],
+  "otherMatchingCanvasLabels": [
+    {
+      "value": "0.143",
+      "font": "8.5px ui-monospace, SFMono-Regular, Menlo, monospace",
+      "x": 511,
+      "y": 612.5,
+      "align": "center",
+      "width": 25.500335693359375,
+      "fillStyle": "#858585",
+      "absolute": {
+        "x": 516,
+        "y": 675.5
+      },
+      "row": {
+        "top": 379.99999999999994,
+        "bottom": 396.00000000000006,
+        "center": 388
+      },
+      "column": "center",
+      "inNativeRow": false,
+      "inPlot": false,
+      "exactColorGlyphPixels": 13,
+      "canvas": {
+        "top": 63,
+        "left": 5,
+        "width": 671,
+        "height": 670
+      }
+    },
+    {
+      "value": "0.147",
+      "font": "8.5px ui-monospace, SFMono-Regular, Menlo, monospace",
+      "x": 511,
+      "y": 627.5,
+      "align": "center",
+      "width": 25.500335693359375,
+      "fillStyle": "#868686",
+      "absolute": {
+        "x": 516,
+        "y": 690.5
+      },
+      "row": {
+        "top": 379.99999999999994,
+        "bottom": 396.00000000000006,
+        "center": 388
+      },
+      "column": "center",
+      "inNativeRow": false,
+      "inPlot": false,
+      "exactColorGlyphPixels": 10,
+      "canvas": {
+        "top": 63,
+        "left": 5,
+        "width": 671,
+        "height": 670
+      }
+    }
+  ]
+}

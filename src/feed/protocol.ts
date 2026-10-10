@@ -58,8 +58,77 @@ export interface DepthObservation {
   bidCovered: boolean;
   askCovered: boolean;
 }
-export type Command = { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' };
-export type Event = { type: 'snapshot' | 'patch'; key: string; ids: string[]; candles: Candle[] } | { type: 'status'; key: string; ids: string[]; status: Status } | { type: 'depth-status'; ids: string[]; status: DepthStatus } | { type: 'depth-history'; ids: string[]; bandPercent: number; observations: DepthObservation[] } | { type: 'depth-sample'; ids: string[]; observation: DepthObservation } | { type: 'diagnostics'; data: Record<string, unknown> };
+/** Row widths are quoted directly in USDT and aligned to the exchange PRICE_FILTER grid. */
+export const FOOTPRINT_DEFAULT_ROW_PRICE = 25;
+export const FOOTPRINT_MAX_ROW_PRICE = 10_000;
+/** Prior UI presets, retained only for persisted-layout migration. */
+export const legacyFootprintRowTicks = Object.freeze([1, 2, 5, 10, 20, 50] as const);
+export type FootprintRowTicks = number;
+export function validFootprintRowPrice(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 && value <= FOOTPRINT_MAX_ROW_PRICE;
+}
+/** Collapse harmless Number input noise so equivalent widths share one worker group. */
+export function canonicalFootprintRowPrice(value: number): number {
+  return validFootprintRowPrice(value) ? Number(value.toPrecision(15)) : value;
+}
+/** Convert a user-facing quote width to the real exchange tick grid, without rounding off-grid values. */
+export function footprintTicksForPrice(rowPrice: number, tickSize: number): number | null {
+  if (!validFootprintRowPrice(rowPrice) || !Number.isFinite(tickSize) || tickSize <= 0) return null;
+  const count = rowPrice / tickSize;
+  const nearest = Math.round(count);
+  // Tolerate floating-point noise (e.g. 0.3 / 0.1), while rejecting meaningful
+  // fractions such as a half tick even for very small tick sizes.
+  const tolerance = Math.min(1e-7, Math.max(1, Math.abs(count)) * Number.EPSILON * 8);
+  return Number.isSafeInteger(nearest) && nearest > 0 && Math.abs(count - nearest) <= tolerance ? nearest : null;
+}
+export const footprintKeyOf = (series: Series, rowPrice: number) =>
+  `${connectionKey(series)}:${instrumentOf(series).native}:footprint:${series.interval}:p${canonicalFootprintRowPrice(rowPrice)}`;
+export interface FootprintCell {
+  price: number; bidVol: number; askVol: number;
+  /** Exact observed sum of execution price * base quantity, not bucket price * volume. */
+  bidNotional?: number; askNotional?: number;
+}
+/** Live classified Binance aggTrade observations only; there is no classified history. */
+export interface FootprintBar {
+  /** UTC interval opening time in seconds; normalized execution timeMs stays milliseconds. */
+  time: number;
+  revision: number;
+  cells: FootprintCell[];
+  delta: number;
+  /** Extremes along the received aggregate-observation path; not intrafill extrema. */
+  minDelta: number;
+  maxDelta: number;
+  quoteDelta?: number;
+  minQuoteDelta?: number;
+  maxQuoteDelta?: number;
+  rowSize: number;
+  source: 'binance-usdm-aggtrade';
+  granularity: 'aggregate-trade';
+  coverage: 'partial' | 'observed' | 'gapped' | 'capacity-limited';
+  gapBefore: boolean;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  aggregateRecordCount: number;
+}
+export interface FootprintStatus extends Status {
+  tickSize: number | null;
+  rowSize: number | null;
+  collectionStartedAt: number | null;
+  firstTradeAt: number | null;
+  lastTradeAt: number | null;
+  eventTime: number | null;
+  outages: number;
+  capacityDrops: number;
+  unknownSideRecords: number;
+  unknownSideVolume: number;
+  lateRecords: number;
+  retentionStart: number | null;
+  coverage: 'waiting' | 'partial' | 'continuous' | 'gapped' | 'capacity-limited' | 'unclassified';
+}
+export type Command = { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' } | { type: 'footprint-subscribe'; id: string; series: Series; rowPrice: number } | { type: 'footprint-unsubscribe'; id: string } | { type: 'footprint-retry' } | { type: 'footprint-ack'; key: string; generation: number; batchId: number };
+export type Event = { type: 'snapshot' | 'patch'; key: string; ids: string[]; candles: Candle[] } | { type: 'status'; key: string; ids: string[]; status: Status } | { type: 'depth-status'; ids: string[]; status: DepthStatus } | { type: 'depth-history'; ids: string[]; bandPercent: number; observations: DepthObservation[] } | { type: 'depth-sample'; ids: string[]; observation: DepthObservation } | { type: 'footprint-snapshot' | 'footprint-patch'; key: string; ids: string[]; bars: FootprintBar[]; retentionStart: number | null; generation: number; batchId: number; status: FootprintStatus } | { type: 'footprint-status'; key: string; ids: string[]; status: FootprintStatus; generation: number; batchId: number } | { type: 'diagnostics'; data: Record<string, unknown> };
 export function validSeries(s: unknown): s is Series {
   return canonicalSeries(s) !== null;
 }

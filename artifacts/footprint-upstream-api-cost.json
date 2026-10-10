@@ -1,0 +1,18 @@
+{
+  "mode": "Installed OpenAlgo 2.6.0 pure CPU API measurement; no draw/compositor measurement",
+  "architecture": "arm64",
+  "aggregator": {
+    "records": 20000,
+    "finalRows": 13,
+    "durationMs": 81.859547,
+    "recordsPerSecond": 244320.92203002295
+  },
+  "setBars": {
+    "bars": 300,
+    "cells": 36000,
+    "samples": 100,
+    "p50Ms": 12.084089000000176,
+    "p95Ms": 17.258925999999974,
+    "maxMs": 27.83167199999997
+  }
+}

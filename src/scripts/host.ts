@@ -219,7 +219,7 @@ export class ScriptStudyHost {
         requiresHistory = true;
       }
     }
-    this.candles = this.candles.slice(-5_000);
+    if (this.candles.length > 5_000) this.candles.splice(0, this.candles.length - 5_000);
     for (const study of this.studies.values()) {
       if (!this.visible || document.hidden || !study.visible) { study.needsHistory = true; continue; }
       if (requiresHistory) study.worker.history(this.scriptBars(study.depthBand));

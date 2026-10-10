@@ -1,0 +1,38 @@
+{
+  "mode": "Ordinary production build, real Binance USD-M aggTrade, no fixtures",
+  "browser": "154.0.8037.92",
+  "workerProbe": "Read-only wrapping of actual WebSocket and postMessage; no messages substituted",
+  "socketCount": 1,
+  "capturedWireCount": 46,
+  "comparisons": [
+    {
+      "time": 1791654360,
+      "revision": 46,
+      "coverage": "partial",
+      "aggregateObservations": 46,
+      "expected": {
+        "bid": 0.401,
+        "ask": 1.5749999999999997
+      },
+      "actual": {
+        "bid": 0.401,
+        "ask": 1.5749999999999997
+      },
+      "volume": 1.9759999999999998,
+      "delta": 1.174,
+      "ohlc": [
+        83084.6,
+        83087.4,
+        83084.6,
+        83087.4
+      ]
+    }
+  ],
+  "studyApplyMessage": "EMA overlay added with its default settings.",
+  "scriptWorkerPresent": true,
+  "readout": "[partial] 17:46:00 UTC\nO 83,084.6 · H 83,087.4 · L 83,084.6 · C 83,087.4\nV 1.977 · Bid 0.401 · Ask 1.576 · Δ 1.175 BTC\nHover a cell for price and bid / ask volume",
+  "status": "live · Live · partial first interval; Binance aggTrade observations only · partial coverage · collecting since 17:46:35 UTC · 0s ago",
+  "candleStatus": "live · Native candle stream · 1s ago",
+  "hyperliquidStatus": "live · Native candle stream · 0s ago",
+  "errors": []
+}

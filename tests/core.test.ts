@@ -15,6 +15,12 @@ describe('candle reconciliation',()=>{
 describe('wire identity and storage',()=>{
   it('venue and interval identity enforced; cumulative volume normalized once',()=>{const wire={e:'kline',E:5,k:{s:'BTCUSDT',i:'1m',t:1791558000000,o:'83000',h:'83001',l:'82999',c:'83000.1',v:'12',x:false}};expect(parseLive(wire,{venue:'binance',interval:'1m'})[0].v).toBe(12);expect(parseLive(wire,{venue:'binance',interval:'5m'})).toEqual([]);expect(hyperCandle({s:'ETH',i:'1m'}, {venue:'hyperliquid',interval:'1m'})).toBeNull();});
   it('corrupt/unknown/oversized layouts recover',()=>{expect(restoreValue('{bad')).toBeNull();expect(restoreValue(JSON.stringify({version:99}))).toBeNull();expect(restoreValue(JSON.stringify({version:1,layout:{grid:{},panels:{'chart-x':{contentComponent:'ai',params:{venue:'binance',interval:'1m'}}}}}))).toBeNull();});
+  it('restores a persisted USD-M Footprint chart while legacy candle layouts remain valid',()=>{
+    const layout={grid:{},panels:{'chart-footprint':{contentComponent:'candle',params:{venue:'binance',market:'perpetual',interval:'1m',type:'footprint',rowTicks:20,footprint:{displayMode:'delta',cellStyle:'heatmap',showPoc:false,stackedImbalances:true,imbalanceRatio:4,imbalanceThreshold:0.02}}}}} as any;
+    expect(restoreValue(JSON.stringify({version:2,layout}))).toEqual(layout);
+    const legacy={...layout,panels:{'chart-footprint':{...layout.panels['chart-footprint'],params:{venue:'binance',interval:'1m',type:'candle'}}}};
+    expect(restoreValue(JSON.stringify({version:1,layout:legacy}))).toEqual(legacy);
+  });
 });
 describe('chart price formatting',()=>{
   it('matches Intl exactly for repeated, negative zero, nonfinite, and cache-evicted values',()=>{

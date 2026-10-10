@@ -8,7 +8,7 @@ export function restoreValue(raw:string|null):SerializedDockview|null {
     if(l.floatingGroups?.length||l.popoutGroups?.length)return null;
     let charts=0, editors=0;
     for(const [id,p] of Object.entries(l.panels)){
-      if(p.contentComponent==='candle'&&/^chart-[a-z0-9-]+$/i.test(id)&&validSeries(p.params)&&(p.params as {type?:string})?.type==='candle'){charts++;continue;}
+      if(p.contentComponent==='candle'&&/^chart-[a-z0-9-]+$/i.test(id)&&validSeries(p.params)&&['candle','footprint'].includes((p.params as {type?:string})?.type ?? '')){charts++;continue;}
       if(saved.version===2&&id==='script-editor'&&p.contentComponent==='script-editor'){editors++;continue;}
       return null;
     }

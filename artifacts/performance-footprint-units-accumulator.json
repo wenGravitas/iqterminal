@@ -1,0 +1,216 @@
+{
+  "fixture": "Explicit synthetic aggregate observations, 1200 tick range, 20k burst records; retained history populated first",
+  "scope": "CPU aggregation and batch snapshot cost only; excludes worker messaging, browser rendering and total process memory. No raw Binance replay or production data.",
+  "machine": {
+    "platform": "linux",
+    "arch": "arm64",
+    "node": "v22.19.0"
+  },
+  "results": [
+    {
+      "configurations": 1,
+      "syntheticRecordsPerSecond": 1000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 61.33930099999998,
+      "batchP50Ms": 0.3371119999999337,
+      "batchP95Ms": 0.6163719999999557,
+      "batchMaxMs": 1.1968180000000075,
+      "outputBarSnapshots": 200,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": 84088
+    },
+    {
+      "configurations": 1,
+      "syntheticRecordsPerSecond": 10000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 18.114495000000034,
+      "batchP50Ms": 0.7043720000001485,
+      "batchP95Ms": 2.7874520000000302,
+      "batchMaxMs": 2.7874520000000302,
+      "outputBarSnapshots": 20,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": -2877112
+    },
+    {
+      "configurations": 2,
+      "syntheticRecordsPerSecond": 1000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 31.669051999999965,
+      "batchP50Ms": 0.11394500000005792,
+      "batchP95Ms": 0.2737970000000587,
+      "batchMaxMs": 3.137916000000132,
+      "outputBarSnapshots": 400,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 295,
+          "cells": 17995,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": -2825824
+    },
+    {
+      "configurations": 2,
+      "syntheticRecordsPerSecond": 10000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 18.90005300000007,
+      "batchP50Ms": 0.9482249999998658,
+      "batchP95Ms": 1.0697620000000825,
+      "batchMaxMs": 1.0697620000000825,
+      "outputBarSnapshots": 40,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 295,
+          "cells": 17995,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": -2953280
+    },
+    {
+      "configurations": 8,
+      "syntheticRecordsPerSecond": 1000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 235.66045199999985,
+      "batchP50Ms": 0.7023169999999936,
+      "batchP95Ms": 3.7267139999999017,
+      "batchMaxMs": 7.9441699999999855,
+      "outputBarSnapshots": 1600,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 295,
+          "cells": 17995,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 300,
+          "cells": 7500,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 146,
+          "cells": 17912,
+          "capacityDrops": 11296
+        },
+        {
+          "bars": 146,
+          "cells": 17912,
+          "capacityDrops": 2897
+        },
+        {
+          "bars": 148,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": -43984
+    },
+    {
+      "configurations": 8,
+      "syntheticRecordsPerSecond": 10000,
+      "records": 20000,
+      "batchCadenceMs": 100,
+      "elapsedCpuMs": 80.58315100000027,
+      "batchP50Ms": 3.980641000000105,
+      "batchP95Ms": 5.94281299999966,
+      "batchMaxMs": 5.94281299999966,
+      "outputBarSnapshots": 160,
+      "retained": [
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 295,
+          "cells": 17995,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 300,
+          "cells": 7500,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 146,
+          "cells": 17912,
+          "capacityDrops": 11296
+        },
+        {
+          "bars": 146,
+          "cells": 17912,
+          "capacityDrops": 2897
+        },
+        {
+          "bars": 148,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        },
+        {
+          "bars": 149,
+          "cells": 17881,
+          "capacityDrops": 0
+        }
+      ],
+      "postGcHeapChangeBytes": -107392
+    }
+  ],
+  "upstream": {
+    "library": "openalgo-charts@2.6.0",
+    "records": 20000,
+    "elapsedCpuMs": 558.8540189999999,
+    "snapshotEveryTick": true
+  },
+  "equivalentSingleAccumulator": {
+    "elapsedCpuMs": 6.437870000000203,
+    "batchSnapshotOnce": true,
+    "upstreamValueParity": "OHLC, delta extrema and every bid/ask row verified within 1e-8"
+  }
+}

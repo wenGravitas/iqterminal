@@ -1,10 +1,271 @@
 import {test,expect} from '@playwright/test';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 
 test.beforeEach(async({page})=>{
   await page.goto('/?fixture=1');
   await page.waitForFunction(()=>document.querySelectorAll('.candle-panel').length===2);
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((panel:any)=>panel.bars===5000&&panel.renderer.draws>0&&panel.autoPrice&&panel.max-panel.min>100));
+});
+
+test('chart type picker exposes live Footprint only for Binance USD-M',async({page})=>{
+  const selectors=page.locator('select[aria-label="Chart type"]');
+  await expect(selectors).toHaveCount(2);
+  const order=await page.locator('.chart-toolbar').first().locator('select').evaluateAll(selects=>selects.map(select=>select.getAttribute('aria-label')));
+  expect(order).toEqual(['Instrument','Chart type','Timeframe']);
+  const binance=selectors.nth(0),hyperliquid=selectors.nth(1);
+  await expect(binance).toHaveValue('candle');
+  await expect(binance.locator('option')).toHaveText(['Candle','Footprint']);
+  await expect(binance.locator('option[value="footprint"]')).toBeEnabled();
+  await expect(hyperliquid).toHaveValue('candle');
+  await expect(hyperliquid.locator('option')).toHaveText(['Candle','Footprint · USD-M only']);
+  await expect(hyperliquid.locator('option[value="footprint"]')).toBeDisabled();
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels.map((panel:any)=>panel.bars))).toEqual([5000,5000]);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels.map((panel:any)=>panel.footprint.surfaceMounted))).toEqual([false,false]);
+  await expect(page.locator('.footprint-settings-button').first()).toBeHidden();
+  await expect(page.getByRole('spinbutton',{name:'Price level (USDT)'}).first()).toBeHidden();
+
+  await page.setViewportSize({width:720,height:860});
+  const widths=await selectors.evaluateAll(selects=>selects.map(select=>select.getBoundingClientRect().width));
+  expect(widths).toHaveLength(2);
+  for(const width of widths){expect(width).toBeGreaterThanOrEqual(85);expect(width).toBeLessThanOrEqual(95);}
+  const toolbar=page.locator('.chart-toolbar').first();
+  const cue=page.getByRole('button',{name:'Scroll chart controls right'}).first();
+  await expect(cue).toBeVisible();
+  expect(await toolbar.evaluate(element=>element.scrollWidth-element.clientWidth)).toBeGreaterThan(2);
+  await cue.click();
+  await expect.poll(()=>toolbar.evaluate(element=>element.scrollLeft)).toBeGreaterThan(0);
+  await expect(page.getByRole('button',{name:'Scroll chart controls left'}).first()).toBeVisible();
+});
+
+test('Footprint mode owns a separate subscription, renders bar revisions, and restores row settings',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    const target=[...terminal.panels.values()][0];
+    const subscriptions:Array<any>=[];
+    let listener:((event:any)=>void)|undefined;
+    terminal.feed.subscribeFootprint=(id:any,series:any,rowPrice:any,callback:any)=>{
+      subscriptions.push({id,series,rowPrice});listener=callback;
+      queueMicrotask(()=>callback({type:'footprint-status',key:'test',ids:[id],status:{state:'live',message:'Live',lastUpdate:Date.now(),tickSize:.1,rowSize:rowPrice,collectionStartedAt:Date.now(),firstTradeAt:null,lastTradeAt:null,eventTime:null,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:null,coverage:'waiting'}}));
+      return ()=>{subscriptions.push({released:id});if(listener===callback)listener=undefined;};
+    };
+    terminal.injectFootprint=(event:any)=>listener?.(event);
+    terminal.footprintSubscriptions=subscriptions;
+  });
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].series.type)).toBe('footprint');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);
+  const footprintSettings=panel.getByRole('button',{name:'Footprint display settings'});
+  await expect(footprintSettings).toBeVisible();
+  await footprintSettings.click();
+  await expect(panel.getByRole('dialog',{name:'Footprint display settings'})).toBeVisible();
+  await expect(panel.getByLabel('Cell display')).toBeVisible();
+  await expect(panel.getByLabel('Diagonal imbalances')).toBeChecked();
+  await panel.getByLabel('Minimum dominant volume (BTC)').fill('0.02');
+  await panel.getByLabel('Diagonal imbalances').uncheck();
+  await panel.locator('dialog.footprint-settings-dialog').getByRole('button',{name:'Apply'}).click();
+  await expect(panel.locator('dialog.footprint-settings-dialog')).toBeHidden();
+  const disabledImbalanceOptions=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    return (window as any).__terminal.panels.get(id).engine.footprint.options();
+  });
+  expect(disabledImbalanceOptions).toMatchObject({imbalanceThreshold:Number.MAX_VALUE,textColorMode:'contrast',stackedImbalances:0,
+    pocStyle:'outline',pocColor:'#858585',buyColor:'#58a65c',buyTextColor:'#58a65c',sellColor:'#ad5858',sellTextColor:'#ad5858',radius:0});
+  await footprintSettings.click();
+  await expect(panel.getByLabel('Diagonal imbalances')).not.toBeChecked();
+  await expect(panel.getByLabel('Minimum dominant volume (BTC)')).toHaveValue('0.02');
+  await panel.getByLabel('Diagonal imbalances').check();
+  await panel.getByLabel('Stacked imbalance brackets').check();
+  await panel.locator('dialog.footprint-settings-dialog').getByRole('button',{name:'Apply'}).click();
+  const enabledImbalanceOptions=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    return (window as any).__terminal.panels.get(id).engine.footprint.options();
+  });
+  expect(enabledImbalanceOptions).toMatchObject({imbalanceThreshold:0.02,textColorMode:'imbalance',stackedImbalances:2,
+    pocStyle:'outline',pocColor:'#858585',buyColor:'#58a65c',buyTextColor:'#58a65c',sellColor:'#ad5858',sellTextColor:'#ad5858',radius:0});
+  const now=Date.now();
+  const barTime=Math.floor(now/60_000)*60;
+  const makeBar=(revision:number,close:number,coverage:'partial'|'gapped'='partial',time=barTime)=>({time,revision,cells:[{price:84_000.1,bidVol:0.05,askVol:0.02}],delta:-0.03,minDelta:-0.05,maxDelta:0,rowSize:1,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage,gapBefore:coverage==='gapped',open:84_000,high:84_000.2,low:83_999.9,close,aggregateRecordCount:2});
+  const callback=await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    return terminal.footprintSubscriptions[0];
+  });
+  expect(callback.series).toMatchObject({venue:'binance',market:'perpetual',interval:'1m'});
+  expect(callback.rowPrice).toBe(25);
+  const rowPrice=panel.getByRole('spinbutton',{name:'Price level (USDT)'});
+  await expect(rowPrice).toHaveValue('25');
+  await expect(panel.locator('.footprint-row-prefix')).toHaveText('$');
+  await rowPrice.evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.rowPrice!==undefined).map((item:any)=>item.rowPrice))).toEqual([25,1]);
+  await expect(panel.locator('.instrument-meta')).toContainText('Price level (USDT) · $1');
+  const panelId=panel.getAttribute('data-panel-id');
+  const status={state:'live',message:'Live · partial first interval; Binance aggTrade observations only',lastUpdate:now,tickSize:.1,rowSize:1,collectionStartedAt:now,firstTradeAt:now,lastTradeAt:now,eventTime:now,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:barTime,coverage:'partial'};
+  await page.evaluate(({panelId,barTime,now,status,bar})=>{
+    const t=(window as any).__terminal;
+    t.injectFootprint({type:'footprint-status',key:'test',ids:[panelId],status});
+    t.injectFootprint({type:'footprint-snapshot',key:'test',ids:[panelId],bars:[bar],retentionStart:barTime});
+  },{panelId,barTime,now,status,bar:makeBar(1,84_000.1)});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(84_000.1);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(80);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].rightOffset)).toBe(1);
+  const firstRevision=await page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest.revision);
+  await page.evaluate(({panelId,barTime,now,status,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[panelId],bars:[bar],retentionStart:barTime}),{panelId,barTime,now,status,bar:makeBar(2,84_000.2)});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.revision)).toBeGreaterThan(firstRevision);
+  await page.setViewportSize({width:720,height:860});
+  await expect.poll(()=>panel.locator('.chart-stage').evaluate(element=>element.clientWidth)).toBeLessThan(400);
+  const narrowStageWidth=await panel.locator('.chart-stage').evaluate(element=>element.clientWidth);
+  expect(narrowStageWidth).toBeGreaterThan(280);
+  const hoveredCell=await panel.evaluate((element,barTime)=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const target=(window as any).__terminal.panels.get(id);
+    const chart=target.engine.chart;
+    const x=chart.timeToCoordinate(barTime);
+    const y=chart.priceToCoordinate(84_000.1,0);
+    if(x===null||y===null) throw new Error(`Expected visible footprint cell coordinates, got ${x}, ${y}`);
+    const stage=(element as HTMLElement).querySelector<HTMLElement>('.chart-stage')!;
+    const rect=stage.getBoundingClientRect();
+    return {x:rect.left+x,y:rect.top+y};
+  },barTime);
+  await page.mouse.move(hoveredCell.x,hoveredCell.y);
+  await expect.poll(()=>panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    return (window as any).__terminal.panels.get(id)?.hoveredFootprint?.cell?.price ?? null;
+  })).toBe(84_000.1);
+  const initialHover=await panel.locator('.ohlc').evaluate(element=>({text:element.textContent,mode:(element as HTMLElement).dataset.mode,lines:element.textContent?.split('\n').length}));
+  expect(initialHover.mode).toBe('footprint');
+  expect(initialHover.lines).toBe(4);
+  expect(initialHover.text?.split('\n')[0]).toBe('84,000.1 USDT · bid 0.050 / ask 0.020 BTC');
+  const initialReadoutGeometry=await panel.locator('.ohlc').evaluate(element=>({height:element.clientHeight,scrollTop:element.scrollTop}));
+  expect(initialReadoutGeometry.height).toBeGreaterThan(24);
+  expect(initialReadoutGeometry.scrollTop).toBe(0);
+  await page.mouse.move(1,1);
+  await expect(panel.locator('.ohlc')).toContainText('Bid');
+  await expect(panel.locator('.ohlc')).toContainText('[partial]');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.initialViewSet)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(80);
+
+  const beforeDockGeometry=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const p=(window as any).__terminal.panels.get(id);
+    return {width:element.querySelector<HTMLElement>('.chart-stage')!.clientWidth,spacing:p.diagnostics().spacing};
+  });
+  const docked=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const t=(window as any).__terminal;
+    const other=t.dock.panels.find((item:any)=>item.id!==id)!;
+    t.dock.getPanel(id).api.moveTo({group:other.api.group,position:'center'});
+    t.dock.getPanel(id).api.setActive();
+    return {id,otherId:other.id};
+  });
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().visible,docked.id)).toBe(true);
+  await panel.evaluate(element=>new Promise<void>(resolve=>{
+    const stage=element.querySelector<HTMLElement>('.chart-stage')!;
+    let lastWidth=-1,stableFrames=0;
+    const sample=()=>{
+      const width=stage.clientWidth;
+      stableFrames=width===lastWidth?stableFrames+1:0;
+      lastWidth=width;
+      if(stableFrames>=3)resolve();else requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  }));
+  const dockedGeometry=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const p=(window as any).__terminal.panels.get(id);
+    return {width:element.querySelector<HTMLElement>('.chart-stage')!.clientWidth,spacing:p.diagnostics().spacing};
+  });
+  const hiddenView=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const t=(window as any).__terminal,p=t.panels.get(id),range=p.engine.visibleRange();
+    p.engine.setRange({from:range.from-2,to:range.to-2});
+    const before=p.diagnostics();
+    const currentRange=p.engine.visibleRange();
+    const currentTimeRange=p.engine.visibleTimeRange();
+    const geometry={width:element.querySelector<HTMLElement>('.chart-stage')!.clientWidth,spacing:before.spacing};
+    const other=t.dock.panels.find((item:any)=>item.id!==id)!;
+    other.api.setActive();
+    return {id,range:currentRange,timeRange:currentTimeRange,geometry,sets:before.footprint.primitiveSets};
+  });
+  expect(dockedGeometry.width).toBeGreaterThan(beforeDockGeometry.width);
+  expect(dockedGeometry.spacing).toBeCloseTo(beforeDockGeometry.spacing,5);
+  expect(hiddenView.geometry.width).toBe(dockedGeometry.width);
+  expect(hiddenView.geometry.spacing).toBeCloseTo(dockedGeometry.spacing,5);
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().visible,hiddenView.id)).toBe(false);
+  await page.evaluate(({id,barTime,now,status,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[id],bars:[bar],retentionStart:barTime}),{id:hiddenView.id,barTime,now,status,bar:makeBar(3,84_000.3,'gapped')});
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.latest.revision,hiddenView.id)).toBe(3);
+  await expect.poll(()=>page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id);return {needsSync:p.diagnostics().footprint.needsSync,sets:p.diagnostics().footprint.primitiveSets};
+  },hiddenView.id)).toMatchObject({needsSync:true,sets:hiddenView.sets});
+  await panel.evaluate(el=>{
+    const id=(el as HTMLElement).dataset.panelId!;(window as any).__terminal.dock.getPanel(id).api.setActive();
+  });
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.needsSync,hiddenView.id)).toBe(false);
+  const reactivatedView=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;return (window as any).__terminal.panels.get(id).engine.visibleRange();
+  });
+  const reactivatedTimeRange=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;return (window as any).__terminal.panels.get(id).engine.visibleTimeRange();
+  });
+  expect(reactivatedTimeRange.from).toBeCloseTo(hiddenView.timeRange.from,3);
+  expect(reactivatedTimeRange.to).toBeCloseTo(hiddenView.timeRange.to,3);
+  expect(reactivatedView.from).toBeCloseTo(hiddenView.range.from,2);
+  expect(reactivatedView.to).toBeCloseTo(hiddenView.range.to,2);
+  await expect(panel.locator('.ohlc')).toContainText('[gapped · gap before]');
+
+  const historicalRight=await panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;const engine=(window as any).__terminal.panels.get(id).engine;
+    const range=engine.visibleRange();engine.setRange({from:range.from-3,to:range.to-3});
+    return engine.visibleRange().to;
+  });
+  await page.evaluate(({id,barTime,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[id],bars:[bar],retentionStart:barTime}),
+    {id:hiddenView.id,barTime,bar:makeBar(4,84_000.4,'partial',barTime+60)});
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.bars,hiddenView.id)).toBe(2);
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleRange().to,hiddenView.id)).toBeLessThan(historicalRight+1);
+  await panel.getByRole('button',{name:'Latest',exact:true}).click();
+  await expect.poll(()=>page.evaluate(id=>{
+    const engine=(window as any).__terminal.panels.get(id).engine;
+    return {spacing:engine.chart.timeScale.barSpacing,rightOffset:engine.chart.timeScale.rightOffset};
+  },hiddenView.id)).toEqual({spacing:80,rightOffset:1});
+
+  const offscreenPatch=await page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id);
+    const range=p.engine.visibleTimeRange();
+    const latest=p.footprintBars.at(-1);
+    const oldest=p.engine.chart.dataLayer.indexToTime(0);
+    const time=Math.floor((oldest+(range.from-oldest)/2)/60)*60;
+    if(!(time<range.from&&time>oldest)) throw new Error(`Expected historical execution bar outside visible chart range: candidate=${time}, range=${range.from}..${range.to}, oldest=${oldest}, latest=${latest.time}`);
+    return {time,sets:p.diagnostics().footprint.primitiveSets,bars:p.diagnostics().footprint.bars};
+  },hiddenView.id);
+  await page.evaluate(({id,time,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[id],bars:[bar]}),
+    {id:hiddenView.id,time:offscreenPatch.time,bar:makeBar(1,83_999.9,'partial',offscreenPatch.time)});
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.bars,hiddenView.id)).toBe(offscreenPatch.bars+1);
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.primitiveSets,hiddenView.id)).toBe(offscreenPatch.sets);
+  const visibleSets=await page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.primitiveSets,hiddenView.id);
+  const revisedVisible=await page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id),last=p.footprintBars.at(-1);
+    return {time:last.time,revision:last.revision+1};
+  },hiddenView.id);
+  await page.evaluate(({id,time,revision,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[id],bars:[bar]}),
+    {id:hiddenView.id,time:revisedVisible.time,revision:revisedVisible.revision,bar:makeBar(revisedVisible.revision,84_000.6,'partial',revisedVisible.time)});
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.primitiveSets,hiddenView.id)).toBeGreaterThan(visibleSets);
+
+  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='5';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.rowPrice!==undefined).map((item:any)=>item.rowPrice))).toEqual([25,1,5]);
+  await expect(panel.locator('.instrument-meta')).toContainText('Price level (USDT) · $5');
+  await expect.poll(()=>panel.evaluate(element=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    return JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[id]?.params;
+  })).toMatchObject({type:'footprint',rowPrice:5});
+  await page.setViewportSize({width:720,height:860});
+  await panel.locator('.chart-toolbar').evaluate(toolbar=>{toolbar.scrollLeft=toolbar.scrollWidth;});
+  await expect(panel.getByRole('button',{name:'Latest',exact:true})).toBeVisible();
+  await expect(panel.getByRole('button',{name:'Footprint display settings'})).toBeVisible();
+  const releasesBeforeModeChange=await page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.released).length);
+  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.released).length)).toBeGreaterThan(releasesBeforeModeChange);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(false);
+  await expect(panel.getByRole('button',{name:'Footprint display settings'})).toBeHidden();
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].bars)).toBe(5000);
 });
 
 test('tab cycling is per group, editable, pausable, and removed with its Dockview group',async({page})=>{
@@ -103,6 +364,7 @@ test('held mouse drags time and price, live patches preserve the view, Latest re
   await page.mouse.wheel(0,80);
   const zoomed=await read();
   expect(zoomed.spacing).not.toBeCloseTo(dragged.spacing,3);
+  expect(zoomed.max-zoomed.min).toBeGreaterThan(dragged.max-dragged.min);
   await page.evaluate(()=>(window as any).__terminal.feed.send({type:'fixture',rate:1000}));
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].status.state)).toBe('live');
   const updated=await read();
@@ -184,7 +446,7 @@ test('add, grouping, tab reorder, split docking, resize, close/empty, restore',a
   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.candle-panel')).toHaveCount(3);
   await page.evaluate(()=>{const d=(window as any).__terminal.dock;d.panels[2].api.moveTo({group:d.panels[0].api.group,position:'center',index:0});});
   await expect(page.locator('.dv-groupview')).toHaveCount(2);
-  await page.evaluate(()=>{const d=(window as any).__terminal.dock;d.panels[0].api.moveTo({group:d.panels[1].api.group,position:'below'});});
+  await page.evaluate(()=>{const d=(window as any).__terminal.dock;d.panels[0].api.moveTo({group:d.panels[1].api.group,position:'bottom'});});
   await expect(page.locator('.dv-groupview')).toHaveCount(3);await page.setViewportSize({width:1920,height:1080});await page.waitForTimeout(400);await page.reload();await expect(page.locator('.candle-panel')).toHaveCount(3);
   await page.evaluate(()=>{const d=(window as any).__terminal.dock;for(const p of [...d.panels])p.api.close();});await expect(page.getByText('No charts open')).toBeVisible();await page.waitForTimeout(300);await page.reload();await expect(page.getByText('No charts open')).toBeVisible();await page.getByRole('button',{name:'Add chart',exact:true}).last().click();await expect(page.locator('.candle-panel')).toHaveCount(1);
 });
@@ -404,6 +666,225 @@ test('one synthetic depth observation creates native sparse markers that follow 
   const after=await readMarkers();
   expect(after.y).not.toBe(before.y);
   expect(after.green).toBeGreaterThan(0);
+});
+
+test('Footprint price level defaults to $25, rejects off-grid edits, and restores a validated $50 width',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    const subscriptions:number[]=[];
+    const target=[...terminal.panels.values()][0];
+    target.persistenceWrites={parameters:0,saves:0};
+    const updateParameters=target.params.api.updateParameters.bind(target.params.api);
+    target.params.api.updateParameters=(value:any)=>{target.persistenceWrites.parameters++;updateParameters(value);};
+    const save=target.save.bind(target);
+    target.save=()=>{target.persistenceWrites.saves++;save();};
+    terminal.footprintPersistenceWrites=()=>({...target.persistenceWrites});
+    let active:((event:any)=>void)|undefined;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,rowPrice:number,callback:any)=>{
+      subscriptions.push(rowPrice);active=callback;
+      queueMicrotask(()=>callback({type:'footprint-status',key:'test',ids:[],status:{state:'live',message:'Live',lastUpdate:Date.now(),tickSize:.1,rowSize:rowPrice,collectionStartedAt:Date.now(),firstTradeAt:null,lastTradeAt:null,eventTime:null,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:null,coverage:'waiting'}}));
+      return ()=>{if(active===callback)active=undefined;};
+    };
+    terminal.footprintSubscriptions=subscriptions;
+    terminal.injectFootprint=(event:any)=>active?.(event);
+  });
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  const price=panel.getByRole('spinbutton',{name:'Price level (USDT)'});
+  await expect(price).toHaveValue('25');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.params.api.getParameters().rowPrice)).toBe(25);
+  const writesAt25=await page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites());
+  await price.evaluate((element:HTMLInputElement)=>{element.value='50';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
+  const panelId=await panel.getAttribute('data-panel-id');
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[[...(window as any).__terminal.panels.values()][0].params.api.id]?.params?.rowPrice)).toBe(50);
+  const writesAt50=await page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites());
+  expect(writesAt50.parameters).toBe(writesAt25.parameters+1);
+  expect(writesAt50.saves).toBe(writesAt25.saves+1);
+  const time=Math.floor(Date.now()/60_000)*60;
+  await page.evaluate(({panelId,time})=>{
+    const terminal=(window as any).__terminal;
+    const now=Date.now();
+    terminal.injectFootprint({type:'footprint-snapshot',key:'test',ids:[panelId],retentionStart:time,bars:[{time,revision:1,cells:[{price:83_000,bidVol:.1,askVol:.2}],delta:.1,minDelta:0,maxDelta:.1,rowSize:50,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,open:83_000,high:83_001,low:83_000,close:83_001,aggregateRecordCount:2}],status:{state:'live',message:'Live',lastUpdate:now,tickSize:.1,rowSize:50,collectionStartedAt:now,firstTradeAt:now,lastTradeAt:now,eventTime:now,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:time,coverage:'partial'}});
+  },{panelId,time});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(83_001);
+  const writesAfterSnapshot=await page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites());
+  await page.evaluate(({panelId,time})=>{
+    const terminal=(window as any).__terminal;const now=Date.now();
+    const status={state:'live',message:'Live',lastUpdate:now,tickSize:.1,rowSize:50,collectionStartedAt:now,firstTradeAt:now,lastTradeAt:now,eventTime:now,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:time,coverage:'partial'};
+    terminal.injectFootprint({type:'footprint-status',key:'test',ids:[panelId],status});
+    terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[panelId],retentionStart:time,status,bars:[{time,revision:2,cells:[{price:83_000,bidVol:.2,askVol:.3}],delta:.1,minDelta:0,maxDelta:.1,rowSize:50,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,open:83_000,high:83_001,low:83_000,close:83_001,aggregateRecordCount:3}]});
+  },{panelId,time});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.revision)).toBe(2);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites())).toEqual(writesAfterSnapshot);
+  await price.evaluate((element:HTMLInputElement)=>{element.value='25.05';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await expect.poll(()=>price.evaluate((element:HTMLInputElement)=>element.validationMessage)).toContain('tick size, $0.1');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(83_001);
+  await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.rowPrice)).toBe(50);
+  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await page.reload();
+  await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
+  await expect.poll(()=>page.evaluate(()=>([...(window as any).__terminal.panels.values()][0]?.selection.rowPrice))).toBe(50);
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,rowPrice:number,callback:any)=>{
+      queueMicrotask(()=>callback({type:'footprint-status',key:'test',ids:[],status:{state:'live',message:'Live',lastUpdate:Date.now(),tickSize:.1,rowSize:rowPrice,collectionStartedAt:Date.now(),firstTradeAt:null,lastTradeAt:null,eventTime:null,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:null,coverage:'waiting'}}));
+      return ()=>{};
+    };
+  });
+  const restored=page.locator('.candle-panel').first();
+  await restored.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await expect(restored.getByRole('spinbutton',{name:'Price level (USDT)'})).toHaveValue('50');
+});
+
+test('two-trade 1 USDT footprint row remains on-screen without an indicator scale',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,_rowPrice:any,callback:any)=>{
+      terminal.syntheticFootprintCallback=callback;
+      return ()=>{delete terminal.syntheticFootprintCallback;};
+    };
+    const target=[...terminal.panels.values()][0];
+    for(const view of target.studies.views())target.studies.remove(view.attachmentId);
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.studies.views().length)).toBe(0);
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>Boolean((window as any).__terminal.syntheticFootprintCallback))).toBe(true);
+  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await expect.poll(()=>page.evaluate(()=>Boolean((window as any).__terminal.syntheticFootprintCallback))).toBe(true);
+
+  const fixture=await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    const panel=[...terminal.panels.values()][0];
+    const time=panel.engine.series.getData().at(-1).time;
+    const bar={
+      time,revision:2,
+      cells:[{price:83000,bidVol:0.143,askVol:0.147}],
+      delta:0.004,minDelta:-0.143,maxDelta:0.004,rowSize:1,
+      source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false,
+      open:83000.1,high:83000.2,low:83000.1,close:83000.2,aggregateRecordCount:2,
+    };
+    const now=Date.now();
+    const status={state:'live',message:'Live · two aggregate observations',lastUpdate:now,tickSize:.1,rowSize:1,collectionStartedAt:now,firstTradeAt:now,lastTradeAt:now,eventTime:now,outages:0,capacityDrops:0,unknownSideRecords:0,unknownSideVolume:0,lateRecords:0,retentionStart:time,coverage:'observed'};
+    terminal.syntheticFootprintCallback({type:'footprint-status',key:'synthetic',ids:[panel.params.api.id],status});
+    const original=CanvasRenderingContext2D.prototype.fillText;
+    (window as any).__footprintFillText=[];
+    CanvasRenderingContext2D.prototype.fillText=function(text:any,...args:any[]){
+      const value=String(text);
+      if(value.includes('.143')||value.includes('.147')){
+        const metrics=this.measureText(value);
+        (window as any).__footprintFillText.push({value,font:this.font,x:args[0],y:args[1],align:this.textAlign,width:metrics.width,
+          ascent:metrics.actualBoundingBoxAscent,descent:metrics.actualBoundingBoxDescent,fillStyle:String(this.fillStyle),globalAlpha:this.globalAlpha,canvas:this.canvas});
+      }
+      return (original as any).call(this,text,...args);
+    };
+    terminal.syntheticFootprintCallback({type:'footprint-snapshot',key:'synthetic',ids:[panel.params.api.id],bars:[bar],retentionStart:time});
+    return {time,bar};
+  });
+
+  const probe=()=>page.evaluate(({time,price})=>{
+    const panel=[...(window as any).__terminal.panels.values()][0];
+    const chart=panel.engine.chart,stage=panel.element.querySelector('.chart-stage') as HTMLElement;
+    const rect=stage.getBoundingClientRect();
+    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(price,0);
+    const indexBar=panel.engine.footprintIndexSeries?.getData().at(-1);
+    const hover=typeof x==='number'&&typeof y==='number'?panel.engine.footprintAt(x,y):null;
+    const canvases=[...stage.querySelectorAll('canvas')] as HTMLCanvasElement[];
+    const covering=typeof x==='number'&&typeof y==='number'?canvases.filter(canvas=>{
+      const r=canvas.getBoundingClientRect();return rect.left+x>=r.left&&rect.left+x<r.right&&rect.top+y>=r.top&&rect.top+y<r.bottom&&r.width>100&&r.height>100;
+    }).length:0;
+    const rowSize=indexBar?.rowSize??1;
+    const rowA=chart.priceToCoordinate(price+rowSize/2,0),rowB=chart.priceToCoordinate(price-rowSize/2,0);
+    const rowTop=rect.top+Math.min(rowA??y,rowB??y),rowBottom=rect.top+Math.max(rowA??y,rowB??y);
+    const labels=(window as any).__footprintFillText.map((label:any)=>{
+      const canvas=label.canvas as HTMLCanvasElement,cr=canvas.getBoundingClientRect();
+      const sx=canvas.width/cr.width,sy=canvas.height/cr.height;
+      const absX=cr.left+label.x/sx,absY=cr.top+label.y/sy;
+      const textLeft=label.align==='center'?label.x-label.width/2:label.align==='right'?label.x-label.width:label.x;
+      const left=Math.max(0,Math.floor(textLeft-1)),right=Math.min(canvas.width,Math.ceil(textLeft+label.width+1));
+      const top=Math.max(0,Math.floor(label.y-label.ascent-1)),bottom=Math.min(canvas.height,Math.ceil(label.y+label.descent+1));
+      const pixels=canvas.getContext('2d')!.getImageData(left,top,right-left,bottom-top).data;
+      const rgb=label.fillStyle.match(/rgba?\(\s*(\d+)\D+(\d+)\D+(\d+)(?:\D+([\d.]+))?\s*\)/i);
+      const hex=label.fillStyle.match(/^#([\da-f]{6})$/i);
+      const target=rgb?[Number(rgb[1]),Number(rgb[2]),Number(rgb[3])]:hex?[0,2,4].map(i=>parseInt(hex[1]!.slice(i,i+2),16)):null;
+      let glyphPixels=0;
+      if(target)for(let i=0;i<pixels.length;i+=4){
+        const r=pixels[i]!,g=pixels[i+1]!,b=pixels[i+2]!,a=pixels[i+3]!;
+        if(a>0&&Math.abs(r-target[0]!)<26&&Math.abs(g-target[1]!)<26&&Math.abs(b-target[2]!)<26)glyphPixels++;
+      }
+      const inNativeRow=absY>=rowTop&&absY<=rowBottom&&Math.abs(absY-(rect.top+y))<=12;
+      const inPlot=absX>=rect.left&&absX<=rect.right&&absY>=rowTop&&absY<=rowBottom;
+      return {value:label.value,font:label.font,x:label.x,y:label.y,align:label.align,width:label.width,
+        fillStyle:label.fillStyle,absolute:{x:absX,y:absY},row:{top:rowTop,bottom:rowBottom,center:rect.top+y},
+        column:absX<rect.left+x?'bid':absX>rect.left+x?'ask':'center',inNativeRow,inPlot,exactColorGlyphPixels:glyphPixels,
+        canvas:{top:cr.top,left:cr.left,width:cr.width,height:cr.height}};
+    });
+    return {
+      range:panel.engine.footprintIndexSeries?.priceScale().priceRange(),
+      x,y,stage:{width:rect.width,height:rect.height},covering,
+      footprintFont:panel.engine.footprint?.options().font,dpr:window.devicePixelRatio,
+      actualOHLC:indexBar&&{open:indexBar.open,high:indexBar.high,low:indexBar.low,close:indexBar.close},
+      hover:hover&&{price:hover.price,bid:hover.cell?.bidVol,ask:hover.cell?.askVol},
+      labels,
+      cellLabels:labels.filter((label:any)=>label.inNativeRow&&label.inPlot),
+    };
+  },{time:fixture.time,price:fixture.bar.cells[0].price});
+
+  await expect.poll(async()=>{
+    const result=await probe();
+    return Boolean(result.hover&&result.hover.bid===0.143&&result.hover.ask===0.147);
+  }).toBe(true);
+  await expect(panel.locator('.panel-status')).not.toHaveClass(/no-data/);
+  const result=await probe();
+  expect(result.actualOHLC).toEqual({open:83000.1,high:83000.2,low:83000.1,close:83000.2});
+  expect(result.range.min).toBeLessThanOrEqual(83000.0);
+  expect(result.range.max).toBeGreaterThanOrEqual(83000.0);
+  expect(result.y).toBeGreaterThan(0);
+  expect(result.y).toBeLessThan(result.stage.height-20);
+  expect(result.covering).toBeGreaterThan(0);
+  expect(result.hover).toEqual({price:83000,bid:0.143,ask:0.147});
+  expect(result.footprintFont).toBe(9);
+  expect(result.cellLabels).toHaveLength(2);
+  const bidCellLabel=result.cellLabels.find((label:any)=>label.value==='0.143');
+  const askCellLabel=result.cellLabels.find((label:any)=>label.value==='0.147');
+  expect(bidCellLabel).toMatchObject({inNativeRow:true,inPlot:true,column:'bid'});
+  expect(askCellLabel).toMatchObject({inNativeRow:true,inPlot:true,column:'ask'});
+  expect(bidCellLabel.exactColorGlyphPixels).toBeGreaterThan(3);
+  expect(askCellLabel.exactColorGlyphPixels).toBeGreaterThan(3);
+  await page.screenshot({path:'artifacts/footprint-two-trade-no-study-1366x768.png'});
+  await writeFile('artifacts/footprint-two-trade-no-study.json',JSON.stringify({
+    scenario:'two aggTrade observations at 83000.1 and 83000.2; one 1 USDT ladder row centered at 83000.0',
+    attachedStudies:0,
+    observationCount:fixture.bar.aggregateRecordCount,
+    footprintOptions:{font:result.footprintFont,devicePixelRatio:result.dpr},
+    row:{price:fixture.bar.cells[0].price,bid:fixture.bar.cells[0].bidVol,ask:fixture.bar.cells[0].askVol,rowSize:fixture.bar.rowSize},
+    nativeRange:result.range,
+    supportOHLC:result.actualOHLC,
+    coordinate:{x:result.x,y:result.y,stage:result.stage,canvasLayersCovering:result.covering},
+    nativeHover:result.hover,
+    cellLabels:result.cellLabels,
+    otherMatchingCanvasLabels:result.labels.filter((label:any)=>!label.inNativeRow||!label.inPlot),
+  },null,2));
+  await expect(panel.locator('.ohlc')).toContainText('Bid 0.143 · Ask 0.147 · Δ 0.004 BTC');
+  const center=await panel.evaluate((element,time)=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const target=(window as any).__terminal.panels.get(id),chart=target.engine.chart;
+    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(83000,0);
+    const rect=element.querySelector<HTMLElement>('.chart-stage')!.getBoundingClientRect();
+    return {x:rect.left+x,y:rect.top+y};
+  },fixture.time);
+  await page.mouse.move(center.x,center.y);
+  await expect(panel.locator('.ohlc')).toContainText('83,000 USDT · bid 0.143 / ask 0.147 BTC');
+  await panel.evaluate((element,{time,bar})=>{
+    const id=(element as HTMLElement).dataset.panelId!;
+    const updated={...bar,revision:bar.revision+1,cells:[{price:83000,bidVol:0.243,askVol:0.347}],delta:0.104,minDelta:-0.243,maxDelta:0.104};
+    (window as any).__terminal.syntheticFootprintCallback({type:'footprint-patch',key:'synthetic',ids:[id],bars:[updated],retentionStart:time});
+  },{time:fixture.time,bar:fixture.bar});
+  await expect(panel.locator('.ohlc')).toContainText('83,000 USDT · bid 0.243 / ask 0.347 BTC');
+  await expect(panel.locator('.ohlc')).toContainText('V 0.590 · Bid 0.243 · Ask 0.347 · Δ 0.104 BTC');
 });
 
 test('unavailable direct endpoint displays recoverable error',async({page})=>{
@@ -666,4 +1147,217 @@ test('a local storage quota failure is reported while chart data stays available
   await expect(page.locator('.script-editor-status')).toContainText(/quota/i);
   await expect(page.locator('.candle-panel')).toHaveCount(2);
   await expect.poll(()=>page.evaluate(()=>Math.min(...(window as any).__terminal.stats().panels.map((panel:any)=>panel.bars)))).toBe(5000);
+});
+
+test('a single $25 footprint row opens at text height and respects manual price zoom',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,_price:any,callback:any)=>{
+      terminal.singleRowCallback=callback;
+      return ()=>{delete terminal.singleRowCallback;};
+    };
+  });
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0];
+    const time=target.engine.series.getData().at(-1).time;
+    terminal.singleRowCallback({type:'footprint-snapshot',key:'test',ids:[target.params.api.id],retentionStart:time,bars:[{
+      time,revision:1,cells:[{price:82975,bidVol:.165,askVol:.003}],delta:-.162,minDelta:-.165,maxDelta:0,
+      rowSize:25,open:82981.7,high:82981.7,low:82981.7,close:82981.7,
+      source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,aggregateRecordCount:2,
+    }]});
+  });
+  const rowHeight=()=>page.evaluate(()=>{
+    const chart=[...(window as any).__terminal.panels.values()][0].engine.chart;
+    return Math.abs(chart.priceToCoordinate(82987.5,0)-chart.priceToCoordinate(82962.5,0));
+  });
+  await expect.poll(rowHeight).toBeGreaterThan(10);
+  await expect.poll(rowHeight).toBeLessThanOrEqual(17);
+  await page.setViewportSize({width:720,height:860});
+  await expect.poll(rowHeight).toBeGreaterThan(10);
+  await expect.poll(rowHeight).toBeLessThanOrEqual(17);
+  await page.screenshot({path:'artifacts/footprint-single-row-720x860.png'});
+  const stage=(await panel.locator('.chart-stage').boundingBox())!;
+  const originalHeight=await rowHeight();
+  await page.mouse.move(Math.round(stage.x+stage.width*.4),Math.round(stage.y+stage.height*.4));
+  await page.mouse.wheel(0,-100);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeGreaterThan(80);
+  await expect.poll(rowHeight).toBeGreaterThan(originalHeight);
+  await page.mouse.wheel(0,100);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeCloseTo(80,6);
+  await expect.poll(rowHeight).toBeCloseTo(originalHeight,6);
+  const manual=await page.evaluate(()=>{
+    const scale=[...(window as any).__terminal.panels.values()][0].engine.chart.panes()[0].priceScale;
+    scale.setAutoScale(false);
+    scale.setPriceRange({min:82950,max:83000});
+    return scale.priceRange();
+  });
+  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.chart.panes()[0].priceScale.priceRange())).toEqual(manual);
+  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(false);
+});
+
+test('plot wheel zooms both axes around the cursor and Latest restores autoscale',async({page})=>{
+  const point=await page.evaluate(()=>{
+    const panel=[...(window as any).__terminal.panels.values()][0],plot=panel.engine.chart.plotRect(0);
+    const bounds=panel.element.querySelector('.chart-stage').getBoundingClientRect();
+    const screenX=Math.round(bounds.left+plot.left+plot.width*.35),screenY=Math.round(bounds.top+plot.top+plot.height*.4);
+    return {x:screenX-bounds.left,y:screenY-bounds.top,screenX,screenY};
+  });
+  const read=()=>page.evaluate(({x,y})=>{
+    const chart=[...(window as any).__terminal.panels.values()][0].engine.chart,scale=chart.panes()[0].priceScale;
+    const range=scale.priceRange();
+    return {spacing:chart.timeScale.barSpacing,span:range.max-range.min,price:chart.coordinateToPrice(y,0),time:chart.coordinateToTime(x),auto:scale.autoScale};
+  },point);
+  const before=await read();
+  await page.mouse.move(point.screenX,point.screenY);
+  await page.mouse.wheel(0,-100);
+  await expect.poll(async()=>(await read()).spacing).toBeGreaterThan(before.spacing);
+  const inside=await read();
+  expect(inside.span).toBeLessThan(before.span);
+  expect(inside.price).toBeCloseTo(before.price!,6);
+  expect(inside.time).toBeCloseTo(before.time,4);
+  expect(inside.auto).toBe(false);
+  await page.mouse.wheel(0,100);
+  await expect.poll(async()=>(await read()).spacing).toBeCloseTo(before.spacing,6);
+  const outside=await read();
+  expect(outside.span).toBeCloseTo(before.span,6);
+  expect(outside.price).toBeCloseTo(before.price!,6);
+  await page.getByRole('button',{name:'Latest',exact:true}).first().click();
+  await expect.poll(async()=>(await read()).auto).toBe(true);
+});
+
+test('footprint execution feedback fades on the overlay and stops for reduced motion or disposal',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,_width:any,callback:any)=>{
+      terminal.pulseCallback=callback;return ()=>{delete terminal.pulseCallback;};
+    };
+  });
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],engine=target.engine;
+    const time=engine.series.getData().at(-1).time;
+    const bar={time,revision:1,cells:[{price:83000,bidVol:.1,askVol:.2}],rowSize:25,delta:.1,minDelta:-.1,maxDelta:.1,
+      open:83000,high:83000,low:83000,close:83000,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,aggregateRecordCount:2};
+    terminal.pulseBar=bar;
+    terminal.pulseCallback({type:'footprint-snapshot',key:'test',ids:[target.params.api.id],bars:[structuredClone(bar)],retentionStart:time});
+    terminal.pulseDraws={base:0,overlay:0};
+    const base=engine.footprint.draw.bind(engine.footprint),overlay=engine.footprintActivity.draw.bind(engine.footprintActivity);
+    engine.footprint.draw=(...args:any[])=>{terminal.pulseDraws.base++;base(...args);};
+    engine.footprintActivity.draw=(...args:any[])=>{terminal.pulseDraws.overlay++;overlay(...args);};
+    terminal.pulseUpdate=()=>{
+      bar.revision++;bar.cells=[{price:83000,bidVol:.1+bar.revision*.01,askVol:.2}];
+      terminal.pulseCallback({type:'footprint-patch',key:'test',ids:[target.params.api.id],bars:[structuredClone(bar)],retentionStart:time});
+      return engine.footprintActivity.size;
+    };
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.revision)).toBe(1);
+  await page.waitForTimeout(100);
+  const before=await page.evaluate(()=>(window as any).__terminal.pulseDraws.base);
+  expect(await page.evaluate(()=>(window as any).__terminal.pulseUpdate())).toBe(1);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.pulseDraws.overlay)).toBeGreaterThan(3);
+  await page.screenshot({path:'artifacts/footprint-activity-pulse-1366x768.png'});
+  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.footprintActivity.size)).toBe(0);
+  const counts=await page.evaluate(()=>(window as any).__terminal.pulseDraws);
+  expect(counts.base-before).toBeLessThanOrEqual(3);
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(()=>(window as any).__terminal.pulseDraws)).toEqual(counts);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  expect(await page.evaluate(()=>(window as any).__terminal.pulseUpdate())).toBe(0);
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  expect(await page.evaluate(()=>(window as any).__terminal.pulseUpdate())).toBe(1);
+  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.footprintActivity.size)).toBe(0);
+});
+
+test('footprint last-price line tracks executions within rows and $1 rows remain distinct',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,_width:any,callback:any)=>{terminal.priceLineCallback=callback;return ()=>{};};
+    const native=CanvasRenderingContext2D.prototype.fillText;
+    terminal.priceLabels=[];
+    CanvasRenderingContext2D.prototype.fillText=function(text:any,x:number,y:number,maxWidth?:number){terminal.priceLabels.push(String(text));return maxWidth===undefined?native.call(this,text,x,y):native.call(this,text,x,y,maxWidth);};
+  });
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],time=target.engine.series.getData().at(-1).time;
+    const bar={time,revision:1,cells:[{price:83000,bidVol:.1,askVol:.2}],rowSize:1,delta:.1,minDelta:-.1,maxDelta:.1,
+      open:83000.1,high:83000.2,low:83000.1,close:83000.2,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,aggregateRecordCount:2};
+    terminal.priceLineBar=bar;
+    terminal.priceLineCallback({type:'footprint-snapshot',key:'test',ids:[target.params.api.id],bars:[structuredClone(bar)],retentionStart:time});
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.priceLabels.includes('83,000.2'))).toBe(true);
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,bar=terminal.priceLineBar,target=[...terminal.panels.values()][0];
+    bar.revision=2;bar.high=bar.close=83000.4;
+    terminal.priceLineCallback({type:'footprint-patch',key:'test',ids:[target.params.api.id],bars:[structuredClone(bar)],retentionStart:bar.time});
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.priceLabels.includes('83,000.4'))).toBe(true);
+  expect(await page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest.cellCount)).toBe(1);
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,bar=terminal.priceLineBar,target=[...terminal.panels.values()][0];
+    bar.revision=3;bar.high=bar.close=83001.2;bar.cells=[{price:83001,bidVol:0,askVol:.1},...bar.cells];
+    terminal.priceLineCallback({type:'footprint-patch',key:'test',ids:[target.params.api.id],bars:[structuredClone(bar)],retentionStart:bar.time});
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.priceLabels.includes('83,001.2'))).toBe(true);
+  expect(await page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest.cellCount)).toBe(2);
+  await page.screenshot({path:'artifacts/footprint-execution-price-line-1366x768.png'});
+});
+
+test('footprint BTC/USDT toggle preserves collection and viewport, updates totals and persists per panel',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal;
+    terminal.unitSubscriptions=0;
+    terminal.feed.subscribeFootprint=(_id:any,_series:any,_width:any,callback:any)=>{terminal.unitSubscriptions++;terminal.unitsCallback=callback;return ()=>{};};
+  });
+  const units=panel.getByRole('button',{name:'Footprint volume units',exact:true});
+  await expect(units).toBeHidden();
+  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await expect(units).toHaveText('BTC');
+  await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],time=target.engine.series.getData().at(-1).time;
+    terminal.unitsCallback({type:'footprint-snapshot',key:'test',ids:[target.params.api.id],retentionStart:time,bars:[{
+      time,revision:1,cells:[{price:83000,bidVol:.001,askVol:.002,bidNotional:83.0001,askNotional:166.0008}],rowSize:25,
+      delta:.001,minDelta:-.001,maxDelta:.001,quoteDelta:83.0007,minQuoteDelta:-83.0001,maxQuoteDelta:83.0007,
+      open:83000.1,high:83000.4,low:83000.1,close:83000.4,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'partial',gapBefore:false,aggregateRecordCount:2,
+    }]});
+    terminal.unitRaw=structuredClone(target.footprintBars);
+  });
+  await expect(panel.locator('.ohlc')).toContainText('Bid 0.001 · Ask 0.002');
+  const before=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.visibleRange());
+  await units.click();
+  await expect(units).toHaveText('USDT');
+  await expect(units).toHaveAttribute('aria-pressed','true');
+  await expect(panel.locator('.ohlc')).toContainText('Bid 83 · Ask 166');
+  await expect(panel.locator('.ohlc')).toContainText('USDT');
+  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(83.0001);
+  const cellPoint=await page.evaluate(()=>{
+    const target=[...(window as any).__terminal.panels.values()][0],chart=target.engine.chart,bar=target.footprintBars[0];
+    const bounds=target.element.querySelector('.chart-stage').getBoundingClientRect();
+    return {x:bounds.left+chart.timeToCoordinate(bar.time)+12,y:bounds.top+chart.priceToCoordinate(83000,0)};
+  });
+  await page.mouse.move(cellPoint.x,cellPoint.y);
+  await expect(panel.locator('.ohlc')).toContainText('bid 83 / ask 166 USDT');
+  expect(await page.evaluate(()=>(window as any).__terminal.unitSubscriptions)).toBe(1);
+  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.visibleRange())).toEqual(before);
+  expect(await page.evaluate(()=>JSON.stringify([...(window as any).__terminal.panels.values()][0].footprintBars)==JSON.stringify((window as any).__terminal.unitRaw))).toBe(true);
+  await page.screenshot({path:'artifacts/footprint-units-usdt-1366x768.png'});
+  await page.setViewportSize({width:720,height:860});
+  await units.scrollIntoViewIfNeeded();
+  await page.screenshot({path:'artifacts/footprint-units-usdt-720x860.png'});
+  await units.click();
+  await expect(units).toHaveText('BTC');
+  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(.001);
+  await units.click();
+  await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.footprintUnits)).toBe('usdt');
+  await page.reload();
+  await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
+  await expect(page.getByRole('button',{name:'Footprint volume units',exact:true}).first()).toHaveText('USDT');
+  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][1].selection.footprintUnits)).toBe('btc');
 });

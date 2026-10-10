@@ -1,0 +1,577 @@
+{
+  "mode": "profiled diagnostic fixture only; synthetic 100 aggregate trades every 100 ms for 5 s; timings include DevTools sampling overhead; production feed is not used",
+  "sameMachine": true,
+  "browserVersion": "154.0.8037.92",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "results": [
+    {
+      "panels": 8,
+      "fixture": "synthetic Binance USD-M aggTrade in the real worker, IPC acknowledgement, FeedClient, chart primitive and RAF",
+      "schedule": {
+        "scheduledBatches": 50,
+        "observations": 5000,
+        "elapsedMs": 4900.29999999702,
+        "intervalMs": 100
+      },
+      "aggregation": {
+        "messages": 5000,
+        "accepted": 5000,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 1,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 50,
+        "aggregationObservations": 5000,
+        "aggregationTotalMs": 55.8999999910593,
+        "aggregationMaxMs": 11.899999998509884
+      },
+      "groups": [
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r1",
+          "cells": 101
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r2",
+          "cells": 51
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r5",
+          "cells": 21
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+          "cells": 11
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r20",
+          "cells": 6
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:1m:r50",
+          "cells": 3
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:r1",
+          "cells": 101
+        },
+        {
+          "clients": 1,
+          "key": "binance:perpetual:BTCUSDT:footprint:5m:r2",
+          "cells": 51
+        }
+      ],
+      "workerMeasurements": {
+        "sent": 5000,
+        "socketCount": 1,
+        "socketCloseCalls": 0,
+        "batchCount": 50,
+        "sendBatchMsP50": 0.5,
+        "sendBatchMsP95": 1.6000000014901161
+      },
+      "browser": {
+        "visiblePanels": 8,
+        "worker": {
+          "subscribers": 8,
+          "groups": [
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r1",
+              "clients": 1,
+              "bars": 1,
+              "cells": 101,
+              "rowTicks": 1,
+              "maxBars": 300,
+              "rowSize": 0.1,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038272,
+              "generation": 1,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r2",
+              "clients": 1,
+              "bars": 1,
+              "cells": 51,
+              "rowTicks": 2,
+              "maxBars": 300,
+              "rowSize": 0.2,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038313,
+              "generation": 2,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r5",
+              "clients": 1,
+              "bars": 1,
+              "cells": 21,
+              "rowTicks": 5,
+              "maxBars": 300,
+              "rowSize": 0.5,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038336,
+              "generation": 3,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r10",
+              "clients": 1,
+              "bars": 1,
+              "cells": 11,
+              "rowTicks": 10,
+              "maxBars": 300,
+              "rowSize": 1,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038366,
+              "generation": 4,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r20",
+              "clients": 1,
+              "bars": 1,
+              "cells": 6,
+              "rowTicks": 20,
+              "maxBars": 300,
+              "rowSize": 2,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038383,
+              "generation": 5,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:1m:r50",
+              "clients": 1,
+              "bars": 1,
+              "cells": 3,
+              "rowTicks": 50,
+              "maxBars": 300,
+              "rowSize": 5,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038418,
+              "generation": 6,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:5m:r1",
+              "clients": 1,
+              "bars": 1,
+              "cells": 101,
+              "rowTicks": 1,
+              "maxBars": 300,
+              "rowSize": 0.1,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038452,
+              "generation": 7,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:5m:r2",
+              "clients": 1,
+              "bars": 1,
+              "cells": 51,
+              "rowTicks": 2,
+              "maxBars": 300,
+              "rowSize": 0.2,
+              "firstTradeAt": 1791649990000,
+              "lastTradeAt": 1791649994999,
+              "collectionStartedAt": 1791650038475,
+              "generation": 8,
+              "transportInFlight": false,
+              "transportInFlightBars": 0,
+              "transportPendingBars": 0,
+              "transportSnapshotPending": false,
+              "outages": 0,
+              "capacityDrops": 0,
+              "buyVolume": 7.4999999999995435,
+              "sellVolume": 5.0000000000000595,
+              "classifiedVolume": 12.499999999999602,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0
+            }
+          ],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 5000,
+          "lastTradeId": 5000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791649994999,
+          "lastEventTime": 1791649995000,
+          "counters": {
+            "messages": 5000,
+            "accepted": 5000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 1,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 50,
+            "aggregationObservations": 5000,
+            "aggregationTotalMs": 55.8999999910593,
+            "aggregationMaxMs": 11.899999998509884
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "panels": [
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 101,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 40
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 51,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 40
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 21,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 37
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 11,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 37
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 6,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 37
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 3,
+            "latestRevision": 5000,
+            "primitiveSets": 34,
+            "draws": 37
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 101,
+            "latestRevision": 5000,
+            "primitiveSets": 33,
+            "draws": 36
+          },
+          {
+            "visible": true,
+            "mode": "footprint",
+            "bars": 1,
+            "rows": 51,
+            "latestRevision": 5000,
+            "primitiveSets": 32,
+            "draws": 35
+          }
+        ],
+        "frameMs": {
+          "samples": 68,
+          "p50": 66.60000000000036,
+          "p95": 266.7000000000007,
+          "max": 499.89999999999964
+        },
+        "ipcToNextDrawMs": {
+          "samples": 306,
+          "p50": 29.899999998509884,
+          "p95": 249.59999999403954,
+          "max": 306.09999999403954
+        },
+        "longTasksMs": [
+          223,
+          54,
+          167,
+          176,
+          103,
+          54,
+          58,
+          53,
+          69,
+          55,
+          54,
+          157,
+          73,
+          219,
+          302,
+          77,
+          151,
+          107,
+          175,
+          94,
+          166,
+          87,
+          65,
+          59,
+          51,
+          107
+        ],
+        "errors": []
+      },
+      "cpuProfileTop": [
+        {
+          "functionName": "(program) · :0",
+          "milliseconds": 2021
+        },
+        {
+          "functionName": "hp · index-2XZfoYHb.js:13",
+          "milliseconds": 675
+        },
+        {
+          "functionName": "(idle) · :0",
+          "milliseconds": 641
+        },
+        {
+          "functionName": "measureText · :0",
+          "milliseconds": 307
+        },
+        {
+          "functionName": "(anonymous) · index-2XZfoYHb.js:12",
+          "milliseconds": 197
+        },
+        {
+          "functionName": "_a · index-2XZfoYHb.js:1",
+          "milliseconds": 189
+        },
+        {
+          "functionName": "refreshReadout · index-2XZfoYHb.js:12",
+          "milliseconds": 147
+        },
+        {
+          "functionName": "fillText · :0",
+          "milliseconds": 143
+        },
+        {
+          "functionName": "postMessage · :0",
+          "milliseconds": 120
+        },
+        {
+          "functionName": "Jo · index-2XZfoYHb.js:1",
+          "milliseconds": 107
+        },
+        {
+          "functionName": "feedWorker.onmessage · :6",
+          "milliseconds": 97
+        },
+        {
+          "functionName": "updateFootprintMetadata · index-2XZfoYHb.js:12",
+          "milliseconds": 90
+        },
+        {
+          "functionName": "fill · :0",
+          "milliseconds": 84
+        },
+        {
+          "functionName": "(anonymous) · index-2XZfoYHb.js:1",
+          "milliseconds": 77
+        },
+        {
+          "functionName": "_cell · index-2XZfoYHb.js:12",
+          "milliseconds": 70
+        },
+        {
+          "functionName": "_drawColumn · index-2XZfoYHb.js:12",
+          "milliseconds": 59
+        },
+        {
+          "functionName": "_drawFooter · index-2XZfoYHb.js:12",
+          "milliseconds": 52
+        },
+        {
+          "functionName": "mergeFootprints · index-2XZfoYHb.js:12",
+          "milliseconds": 43
+        },
+        {
+          "functionName": "invalidate · index-2XZfoYHb.js:12",
+          "milliseconds": 35
+        },
+        {
+          "functionName": "X · index-2XZfoYHb.js:1",
+          "milliseconds": 34
+        },
+        {
+          "functionName": "Hd · index-2XZfoYHb.js:12",
+          "milliseconds": 33
+        },
+        {
+          "functionName": "roundRect · :0",
+          "milliseconds": 33
+        },
+        {
+          "functionName": "_updateBar · index-2XZfoYHb.js:12",
+          "milliseconds": 31
+        },
+        {
+          "functionName": "replaceChildren · :0",
+          "milliseconds": 31
+        },
+        {
+          "functionName": "Pd · index-2XZfoYHb.js:12",
+          "milliseconds": 30
+        },
+        {
+          "functionName": "draw · index-2XZfoYHb.js:12",
+          "milliseconds": 30
+        },
+        {
+          "functionName": "_t · index-2XZfoYHb.js:1",
+          "milliseconds": 26
+        },
+        {
+          "functionName": "autoscale · index-2XZfoYHb.js:1",
+          "milliseconds": 26
+        },
+        {
+          "functionName": "updateStatus · index-2XZfoYHb.js:13",
+          "milliseconds": 25
+        },
+        {
+          "functionName": "save · :0",
+          "milliseconds": 24
+        }
+      ],
+      "teardown": {
+        "sockets": 1,
+        "closeCalls": 1,
+        "ready": [
+          3
+        ]
+      }
+    }
+  ],
+  "limitation": "IPC-to-next-draw is sampled at the next RAF after chart draw counters advance; this is an end-to-end browser scheduling measure, not a device-wide performance acceptance claim."
+}
