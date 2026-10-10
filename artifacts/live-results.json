@@ -1,14 +1,14 @@
 {
   "mode": "REAL direct browser exchange smoke, no fixtures",
   "browser": "154.0.8037.92",
-  "started": "2026-10-09T18:43:51.960Z",
+  "started": "2026-10-10T09:33:19.959Z",
   "intervals": [
     {
       "interval": "1m",
       "ready": true,
       "before": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -18,8 +18,8 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 82218.375,
-          "max": 82773.625,
+          "min": 82687.9,
+          "max": 82937.9,
           "renderer": {
             "draws": 6,
             "backend": "canvas2d"
@@ -27,24 +27,31 @@
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571437154
+            "lastUpdate": 1791624804148
           },
           "series": {
             "venue": "binance",
             "interval": "1m",
-            "type": "candle"
+            "type": "candle",
+            "studies": []
           },
           "last": {
-            "t": 1791571380000,
-            "o": 82406.4,
-            "h": 82430.7,
-            "l": 82403.3,
-            "c": 82430.7,
-            "v": 88.232
+            "t": 1791624780000,
+            "o": 82850.1,
+            "h": 82850.1,
+            "l": 82850,
+            "c": 82850.1,
+            "v": 3.522
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -54,35 +61,85 @@
           },
           "spacing": 7,
           "autoPrice": true,
-          "min": 82195.5,
-          "max": 82770.5,
+          "min": 82709.375,
+          "max": 82935.625,
           "renderer": {
-            "draws": 5,
+            "draws": 4,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
-            "message": "Native candle stream",
-            "lastUpdate": 1791571436847
+            "message": "History repaired",
+            "lastUpdate": 1791624803549
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "1m",
-            "type": "candle"
+            "type": "candle",
+            "studies": []
           },
           "last": {
-            "t": 1791571380000,
-            "o": 82394,
-            "h": 82428,
-            "l": 82393,
-            "c": 82428,
-            "v": 17.48519
+            "t": 1791624780000,
+            "o": 82857,
+            "h": 82858,
+            "l": 82857,
+            "c": 82857,
+            "v": 0.89183
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
       "after": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
+          "visible": true,
+          "bars": 1000,
+          "right": 1003,
+          "range": {
+            "from": 918.5714285714286,
+            "to": 1003
+          },
+          "spacing": 6.999999999999998,
+          "autoPrice": true,
+          "min": 82687.9,
+          "max": 82937.9,
+          "renderer": {
+            "draws": 13,
+            "backend": "canvas2d"
+          },
+          "status": {
+            "state": "live",
+            "message": "Native candle stream",
+            "lastUpdate": 1791624808091
+          },
+          "series": {
+            "venue": "binance",
+            "interval": "1m",
+            "type": "candle",
+            "studies": []
+          },
+          "last": {
+            "t": 1791624780000,
+            "o": 82850.1,
+            "h": 82850.1,
+            "l": 82850,
+            "c": 82850.1,
+            "v": 4.478
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
+          }
+        },
+        {
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -90,67 +147,38 @@
             "from": 919.5714285714286,
             "to": 1004
           },
-          "spacing": 6.999999999999998,
-          "autoPrice": true,
-          "min": 82218.375,
-          "max": 82773.625,
-          "renderer": {
-            "draws": 16,
-            "backend": "canvas2d"
-          },
-          "status": {
-            "state": "live",
-            "message": "Native candle stream",
-            "lastUpdate": 1791571440953
-          },
-          "series": {
-            "venue": "binance",
-            "interval": "1m",
-            "type": "candle"
-          },
-          "last": {
-            "t": 1791571440000,
-            "o": 82430.7,
-            "h": 82430.7,
-            "l": 82430.6,
-            "c": 82430.6,
-            "v": 0.137
-          }
-        },
-        {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
-          "visible": true,
-          "bars": 1002,
-          "right": 1005,
-          "range": {
-            "from": 920.5714285714286,
-            "to": 1005
-          },
           "spacing": 7,
           "autoPrice": true,
-          "min": 82195.5,
-          "max": 82770.5,
+          "min": 82709.375,
+          "max": 82935.625,
           "renderer": {
-            "draws": 10,
+            "draws": 8,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571441057
+            "lastUpdate": 1791624807841
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "1m",
-            "type": "candle"
+            "type": "candle",
+            "studies": []
           },
           "last": {
-            "t": 1791571440000,
-            "o": 82428,
-            "h": 82428,
-            "l": 82427,
-            "c": 82427,
-            "v": 0.14079
+            "t": 1791624780000,
+            "o": 82857,
+            "h": 82858,
+            "l": 82857,
+            "c": 82857,
+            "v": 0.91004
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
@@ -176,7 +204,7 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -186,33 +214,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 82135.66249999999,
-          "max": 83518.0375,
+          "min": 82470.325,
+          "max": 82962.075,
           "renderer": {
-            "draws": 22,
+            "draws": 19,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571445308
+            "lastUpdate": 1791624811991
           },
           "series": {
             "venue": "binance",
             "interval": "5m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791571200000,
-            "o": 82344,
-            "h": 82430.7,
-            "l": 82344,
-            "c": 82430.7,
-            "v": 271.945
+            "t": 1791624600000,
+            "o": 82867.6,
+            "h": 82912.9,
+            "l": 82850,
+            "c": 82850,
+            "v": 211.155
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -220,37 +255,44 @@
             "from": 919.5714285714286,
             "to": 1004
           },
-          "spacing": 7,
+          "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 82109.5,
-          "max": 83544.5,
+          "min": 82476.5,
+          "max": 82961.5,
           "renderer": {
-            "draws": 12,
+            "draws": 11,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571445905
+            "lastUpdate": 1791624812041
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "5m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791571200000,
-            "o": 82338,
-            "h": 82428,
-            "l": 82333,
-            "c": 82428,
-            "v": 55.15508
+            "t": 1791624600000,
+            "o": 82866,
+            "h": 82913,
+            "l": 82857,
+            "c": 82858,
+            "v": 16.67963
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
       "after": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -260,33 +302,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 82135.66249999999,
-          "max": 83518.0375,
+          "min": 82470.325,
+          "max": 82962.075,
           "renderer": {
-            "draws": 32,
+            "draws": 23,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571449856
+            "lastUpdate": 1791624815791
           },
           "series": {
             "venue": "binance",
             "interval": "5m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791571200000,
-            "o": 82344,
-            "h": 82430.7,
-            "l": 82344,
-            "c": 82430.6,
-            "v": 275.676
+            "t": 1791624600000,
+            "o": 82867.6,
+            "h": 82912.9,
+            "l": 82850,
+            "c": 82850,
+            "v": 211.576
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -294,31 +343,38 @@
             "from": 919.5714285714286,
             "to": 1004
           },
-          "spacing": 7,
+          "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 82109.5,
-          "max": 83544.5,
+          "min": 82476.5,
+          "max": 82961.5,
           "renderer": {
-            "draws": 15,
+            "draws": 16,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571447595
+            "lastUpdate": 1791624815387
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "5m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791571200000,
-            "o": 82338,
-            "h": 82428,
-            "l": 82333,
-            "c": 82428,
-            "v": 55.24565
+            "t": 1791624600000,
+            "o": 82866,
+            "h": 82913,
+            "l": 82857,
+            "c": 82857,
+            "v": 16.69045
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
@@ -344,7 +400,7 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -354,33 +410,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 81330.45,
-          "max": 83740.95,
+          "min": 82113.0125,
+          "max": 83397.8875,
           "renderer": {
-            "draws": 37,
+            "draws": 26,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571452268
+            "lastUpdate": 1791624818870
           },
           "series": {
             "venue": "binance",
             "interval": "15m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791570600000,
-            "o": 82466.1,
-            "h": 82487.9,
-            "l": 82273.9,
-            "c": 82430.6,
-            "v": 1889.672
+            "t": 1791624600000,
+            "o": 82867.6,
+            "h": 82912.9,
+            "l": 82850,
+            "c": 82850,
+            "v": 211.143
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -390,35 +453,42 @@
           },
           "spacing": 7,
           "autoPrice": true,
-          "min": 81309.625,
-          "max": 83743.375,
+          "min": 82096.25,
+          "max": 83413.75,
           "renderer": {
-            "draws": 18,
+            "draws": 19,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571452269
+            "lastUpdate": 1791624818641
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "15m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791570600000,
-            "o": 82456,
-            "h": 82465,
-            "l": 82253,
-            "c": 82428,
-            "v": 332.7572
+            "t": 1791624600000,
+            "o": 82866,
+            "h": 82913,
+            "l": 82856,
+            "c": 82856,
+            "v": 16.69074
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
       "after": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -428,33 +498,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 81330.45,
-          "max": 83740.95,
+          "min": 82113.0125,
+          "max": 83397.8875,
           "renderer": {
-            "draws": 45,
+            "draws": 33,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571456160
+            "lastUpdate": 1791624822526
           },
           "series": {
             "venue": "binance",
             "interval": "15m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791570600000,
-            "o": 82466.1,
-            "h": 82487.9,
-            "l": 82273.9,
-            "c": 82438.5,
-            "v": 1904.215
+            "t": 1791624600000,
+            "o": 82867.6,
+            "h": 82912.9,
+            "l": 82846.2,
+            "c": 82846.2,
+            "v": 213.668
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -464,29 +541,36 @@
           },
           "spacing": 7,
           "autoPrice": true,
-          "min": 81309.625,
-          "max": 83743.375,
+          "min": 82096.25,
+          "max": 83413.75,
           "renderer": {
-            "draws": 21,
+            "draws": 22,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571455104
+            "lastUpdate": 1791624822841
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "15m",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791570600000,
-            "o": 82456,
-            "h": 82465,
-            "l": 82253,
-            "c": 82427,
-            "v": 332.99726
+            "t": 1791624600000,
+            "o": 82866,
+            "h": 82913,
+            "l": 82856,
+            "c": 82856,
+            "v": 16.7664
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
@@ -512,7 +596,7 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -522,33 +606,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 79554.7875,
-          "max": 87454.91249999999,
+          "min": 79692.96250000001,
+          "max": 86211.3375,
           "renderer": {
-            "draws": 48,
+            "draws": 38,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571459355
+            "lastUpdate": 1791624826348
           },
           "series": {
             "venue": "binance",
             "interval": "1h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791568800000,
-            "o": 82680.1,
-            "h": 82702.2,
-            "l": 82273.9,
-            "c": 82430.7,
-            "v": 3392.262
+            "t": 1791622800000,
+            "o": 82803.9,
+            "h": 82912.9,
+            "l": 82803.8,
+            "c": 82846.2,
+            "v": 1130.218
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -558,35 +649,42 @@
           },
           "spacing": 7,
           "autoPrice": true,
-          "min": 79561.125,
-          "max": 87459.875,
+          "min": 79695,
+          "max": 86255,
           "renderer": {
-            "draws": 25,
+            "draws": 24,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571459361
+            "lastUpdate": 1791624826592
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "1h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791568800000,
-            "o": 82683,
-            "h": 82702,
-            "l": 82253,
-            "c": 82428,
-            "v": 659.18265
+            "t": 1791622800000,
+            "o": 82812,
+            "h": 82913,
+            "l": 82811,
+            "c": 82856,
+            "v": 146.54613
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
       "after": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -596,33 +694,40 @@
           },
           "spacing": 6.999999999999998,
           "autoPrice": true,
-          "min": 79554.7875,
-          "max": 87454.91249999999,
+          "min": 79692.96250000001,
+          "max": 86211.3375,
           "renderer": {
-            "draws": 58,
+            "draws": 46,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571463013
+            "lastUpdate": 1791624829855
           },
           "series": {
             "venue": "binance",
             "interval": "1h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791568800000,
-            "o": 82680.1,
-            "h": 82702.2,
-            "l": 82273.9,
-            "c": 82438.6,
-            "v": 3410.506
+            "t": 1791622800000,
+            "o": 82803.9,
+            "h": 82912.9,
+            "l": 82803.8,
+            "c": 82846.2,
+            "v": 1132.773
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -632,29 +737,36 @@
           },
           "spacing": 7,
           "autoPrice": true,
-          "min": 79561.125,
-          "max": 87459.875,
+          "min": 79695,
+          "max": 86255,
           "renderer": {
-            "draws": 30,
+            "draws": 29,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571462623
+            "lastUpdate": 1791624830366
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "1h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791568800000,
-            "o": 82683,
-            "h": 82702,
-            "l": 82253,
-            "c": 82428,
-            "v": 659.19888
+            "t": 1791622800000,
+            "o": 82812,
+            "h": 82913,
+            "l": 82811,
+            "c": 82857,
+            "v": 146.55548
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
@@ -680,7 +792,7 @@
       "ready": true,
       "before": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -693,30 +805,37 @@
           "min": 79481.7,
           "max": 88112.70000000001,
           "renderer": {
-            "draws": 63,
+            "draws": 50,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571466164
+            "lastUpdate": 1791624834909
           },
           "series": {
             "venue": "binance",
             "interval": "4h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82980,
-            "l": 82273.9,
-            "c": 82443.1,
-            "v": 10702.188
+            "t": 1791619200000,
+            "o": 82759.9,
+            "h": 82912.9,
+            "l": 82712.9,
+            "c": 82846.2,
+            "v": 2443.058
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -724,37 +843,44 @@
             "from": 919.5714285714286,
             "to": 1004
           },
-          "spacing": 6.999999999999998,
+          "spacing": 7,
           "autoPrice": true,
           "min": 79490.5,
           "max": 88095.5,
           "renderer": {
-            "draws": 34,
+            "draws": 31,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571466312
+            "lastUpdate": 1791624835615
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "4h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82970,
-            "l": 82253,
-            "c": 82435,
-            "v": 2488.57856
+            "t": 1791619200000,
+            "o": 82769,
+            "h": 82913,
+            "l": 82732,
+            "c": 82857,
+            "v": 411.04164
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],
       "after": [
         {
-          "id": "chart-c7c536b3-c45d-40b4-96c0-332b0a493f31",
+          "id": "chart-28e21d86-2bfc-44db-be8e-1df0910bbcd9",
           "visible": true,
           "bars": 1000,
           "right": 1003,
@@ -767,30 +893,37 @@
           "min": 79481.7,
           "max": 88112.70000000001,
           "renderer": {
-            "draws": 68,
+            "draws": 57,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571469854
+            "lastUpdate": 1791624839418
           },
           "series": {
             "venue": "binance",
             "interval": "4h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82839.5,
-            "h": 82980,
-            "l": 82273.9,
-            "c": 82443.1,
-            "v": 10703.425
+            "t": 1791619200000,
+            "o": 82759.9,
+            "h": 82912.9,
+            "l": 82712.9,
+            "c": 82846.2,
+            "v": 2443.946
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         },
         {
-          "id": "chart-6c868580-44ea-4d7c-b368-77bc51d1403f",
+          "id": "chart-9d31e1ad-1619-4327-8e97-aa475aa3ea19",
           "visible": true,
           "bars": 1001,
           "right": 1004,
@@ -798,31 +931,38 @@
             "from": 919.5714285714286,
             "to": 1004
           },
-          "spacing": 6.999999999999998,
+          "spacing": 7,
           "autoPrice": true,
           "min": 79490.5,
           "max": 88095.5,
           "renderer": {
-            "draws": 37,
+            "draws": 35,
             "backend": "canvas2d"
           },
           "status": {
             "state": "live",
             "message": "Native candle stream",
-            "lastUpdate": 1791571469658
+            "lastUpdate": 1791624838820
           },
           "series": {
             "venue": "hyperliquid",
             "interval": "4h",
+            "studies": [],
             "type": "candle"
           },
           "last": {
-            "t": 1791561600000,
-            "o": 82844,
-            "h": 82970,
-            "l": 82253,
-            "c": 82435,
-            "v": 2489.07944
+            "t": 1791619200000,
+            "o": 82769,
+            "h": 82913,
+            "l": 82732,
+            "c": 82856,
+            "v": 411.04228
+          },
+          "studies": {
+            "attached": 0,
+            "workers": 0,
+            "depthBands": [],
+            "statuses": []
           }
         }
       ],

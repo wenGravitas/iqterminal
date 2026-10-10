@@ -1,0 +1,205 @@
+{
+  "mode": "real public Binance USD-M depth; fixture disabled",
+  "fixture": false,
+  "interval": "1m",
+  "candleStatus": {
+    "state": "live",
+    "message": "Native candle stream",
+    "lastUpdate": 1791622642487
+  },
+  "study": {
+    "attachmentId": "study-32a6c52d-0128-4edf-af2d-3948ab04f7a2",
+    "scriptId": "builtin.binance-depth-band",
+    "revisionId": "55c0741784089e6d9d4672302d1a6604c87e140169d4c04fb82f31e91a19c360",
+    "title": "Binance depth band",
+    "description": "Synchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.",
+    "settings": {
+      "iq_depth_band_pct_v1": 0.2,
+      "smooth": 1,
+      "bid": "iq_depth_bid_quote_v1",
+      "ask": "iq_depth_ask_quote_v1"
+    },
+    "visible": true,
+    "status": "Depth live · 0.20% band exceeds synchronized snapshot coverage on bid and ask; values unavailable",
+    "diagnostics": [],
+    "inputs": [
+      {
+        "key": "iq_depth_band_pct_v1",
+        "label": "Depth band (%)",
+        "kind": "number",
+        "defaultValue": 0.05,
+        "min": 0.01,
+        "max": 0.25,
+        "step": 0.01,
+        "options": [],
+        "tooltip": ""
+      },
+      {
+        "key": "smooth",
+        "label": "Smoothing bars",
+        "kind": "number",
+        "defaultValue": 1,
+        "min": 1,
+        "max": 120,
+        "step": null,
+        "options": [],
+        "tooltip": ""
+      },
+      {
+        "key": "bid",
+        "label": "Bid quote · USDT",
+        "kind": "source",
+        "defaultValue": "iq_depth_bid_quote_v1",
+        "min": null,
+        "max": null,
+        "step": null,
+        "options": [],
+        "tooltip": ""
+      },
+      {
+        "key": "ask",
+        "label": "Ask quote · USDT",
+        "kind": "source",
+        "defaultValue": "iq_depth_ask_quote_v1",
+        "min": null,
+        "max": null,
+        "step": null,
+        "options": [],
+        "tooltip": ""
+      }
+    ],
+    "outputs": {
+      "p0": null,
+      "p1": null
+    }
+  },
+  "latestCandle": {
+    "t": 1791622620000,
+    "o": 82803.4,
+    "h": 82803.4,
+    "l": 82803.3,
+    "c": 82803.4,
+    "v": 3.001,
+    "revision": 1791622642254,
+    "closed": false
+  },
+  "latestDepthBucket": [
+    1791622620000,
+    {
+      "sampledAt": 1791622642487,
+      "mid": 82803.35,
+      "bandPercent": 0.2,
+      "bidBase": null,
+      "bidQuote": null,
+      "askBase": null,
+      "askQuote": null,
+      "bidCovered": false,
+      "askCovered": false
+    }
+  ],
+  "latestDepthObservation": {
+    "sampledAt": 1791622642487,
+    "mid": 82803.35,
+    "bandPercent": 0.2,
+    "bidBase": null,
+    "bidQuote": null,
+    "askBase": null,
+    "askQuote": null,
+    "bidCovered": false,
+    "askCovered": false
+  },
+  "depthTransport": {
+    "subscribers": 1,
+    "sockets": 1,
+    "state": "live",
+    "lastUpdateId": 11781303101104,
+    "buffered": 0,
+    "samples": 5,
+    "snapshotBidBoundary": 82668,
+    "snapshotAskBoundary": 82927.2,
+    "collectionStartedAt": 1791622637930,
+    "synthetic": false
+  },
+  "studyWorkerCount": 1,
+  "errors": [],
+  "workerCount": 1,
+  "sampleAdvancement": {
+    "bandPercent": 0.05,
+    "before": {
+      "sampleCount": 1,
+      "latestObservation": {
+        "sampledAt": 1791622638487,
+        "bandPercent": 0.05,
+        "mid": 82803.35,
+        "bidQuote": 8795604.258999998,
+        "askQuote": 11527365.744800005,
+        "bidCovered": true,
+        "askCovered": true
+      },
+      "candle": {
+        "t": 1791622620000,
+        "o": 82803.4,
+        "h": 82803.4,
+        "l": 82803.3,
+        "c": 82803.3,
+        "v": 1.874,
+        "revision": 1791622638166,
+        "closed": false
+      },
+      "outputs": {
+        "p0": 8795604.258999998,
+        "p1": 11527365.744800005
+      },
+      "studyStatus": "Depth live · Synchronized · 1,000-level snapshot · bid edge 82668.0 / ask edge 82927.2 · 1s sampled observations"
+    },
+    "after": {
+      "sampleCount": 4,
+      "latestObservation": {
+        "sampledAt": 1791622641487,
+        "bandPercent": 0.05,
+        "mid": 82803.35,
+        "bidQuote": 8606646.6349,
+        "askQuote": 11562811.321700005,
+        "bidCovered": true,
+        "askCovered": true
+      },
+      "candle": {
+        "t": 1791622620000,
+        "o": 82803.4,
+        "h": 82803.4,
+        "l": 82803.3,
+        "c": 82803.3,
+        "v": 1.967,
+        "revision": 1791622640324,
+        "closed": false
+      },
+      "outputs": {
+        "p0": 8606646.6349,
+        "p1": 11562811.321700005
+      },
+      "studyStatus": "Depth live · Synchronized · 1,000-level snapshot · bid edge 82668.0 / ask edge 82927.2 · 1s sampled observations"
+    },
+    "newSamples": 3,
+    "outputChanged": true
+  },
+  "coverageProbe": {
+    "status": "Depth live · 0.20% band exceeds synchronized snapshot coverage on bid and ask; values unavailable",
+    "outputs": {
+      "p0": null,
+      "p1": null
+    },
+    "observation": {
+      "sampledAt": 1791622642487,
+      "mid": 82803.35,
+      "bandPercent": 0.2,
+      "bidBase": null,
+      "bidQuote": null,
+      "askBase": null,
+      "askQuote": null,
+      "bidCovered": false,
+      "askCovered": false
+    }
+  },
+  "browser": "154.0.8037.92",
+  "capturedAt": "2026-10-10T08:57:22.789Z"
+}

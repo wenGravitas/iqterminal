@@ -1,0 +1,731 @@
+{
+  "mode": "Supplemental diagnostic workload: explicit timestamp-aligned synthetic candle fixtures plus the genuine live Binance depth service; depth coverage remains snapshot-dependent.",
+  "browser": "154.0.8037.92",
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "viewport": [
+      1366,
+      768
+    ],
+    "dpr": 1,
+    "cores": 4
+  },
+  "errors": [],
+  "editorOpenMs": 201,
+  "editorApplyMs": 220,
+  "workloads": [
+    {
+      "label": "1 chart · EMA + volume + Binance depth",
+      "setupMs": 581,
+      "interactions": 23,
+      "interactionDurationMs": 5209,
+      "visiblePanels": 1,
+      "panels": [
+        {
+          "id": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83549.351653753,
+            "v": 21400
+          },
+          "draws": 542
+        }
+      ],
+      "activeStudyCount": 3,
+      "liveStudyWorkers": 3,
+      "failedStudyCount": 0,
+      "studies": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83589.66337995668
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "Volume",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 21400
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "Binance depth band",
+          "status": "Depth syncing · Connecting to Binance BTCUSDT USD-M depth",
+          "outputTail": {
+            "p0": null,
+            "p1": null
+          },
+          "diagnostics": 0
+        }
+      ],
+      "depth": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "percent": 0.05,
+          "status": "syncing",
+          "samples": 0,
+          "firstSampleAt": null,
+          "lastSampleAt": null,
+          "bidCoveredSamples": 0,
+          "askCoveredSamples": 0,
+          "latestCandleHasSample": false
+        }
+      ],
+      "fixtureMessages": 21300,
+      "longTasks": [],
+      "memory": {
+        "used": 46274287,
+        "total": 96639871
+      },
+      "frameMs": {
+        "samples": 307,
+        "p50": 16.700000000000728,
+        "p95": 16.799999999999272,
+        "p99": 33.29999999999927,
+        "max": 33.400000000001455
+      }
+    },
+    {
+      "label": "2 charts · EMA on both + volume/depth on Binance",
+      "setupMs": 749,
+      "interactions": 18,
+      "interactionDurationMs": 5476,
+      "visiblePanels": 2,
+      "panels": [
+        {
+          "id": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83539.26095404511,
+            "v": 30299
+          },
+          "draws": 802
+        },
+        {
+          "id": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623160000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83556.6947888079,
+            "v": 30300
+          },
+          "draws": 221
+        }
+      ],
+      "activeStudyCount": 4,
+      "liveStudyWorkers": 4,
+      "failedStudyCount": 0,
+      "studies": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83588.70236093688
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "Volume",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 30299
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "Binance depth band",
+          "status": "Depth live · Synchronized · 1,000-level snapshot · bid edge 82680.9 / ask edge 82936.4 · 1s sampled observations",
+          "outputTail": {
+            "p0": null,
+            "p1": null
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83606.64844043806
+          },
+          "diagnostics": 0
+        }
+      ],
+      "depth": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "percent": 0.05,
+          "status": "live",
+          "samples": 7,
+          "firstSampleAt": 1791623166222,
+          "lastSampleAt": 1791623172222,
+          "bidCoveredSamples": 7,
+          "askCoveredSamples": 7,
+          "latestCandleHasSample": false
+        }
+      ],
+      "fixtureMessages": 30200,
+      "longTasks": [
+        83,
+        60,
+        107
+      ],
+      "memory": {
+        "used": 49849872,
+        "total": 116300688
+      },
+      "frameMs": {
+        "samples": 284,
+        "p50": 16.700000000000728,
+        "p95": 33.400000000001455,
+        "p99": 83.40000000000146,
+        "max": 116.69999999999709
+      }
+    },
+    {
+      "label": "8 charts · EMA on every chart (8-worker budget)",
+      "setupMs": 1524,
+      "interactions": 6,
+      "interactionDurationMs": 5831,
+      "visiblePanels": 8,
+      "panels": [
+        {
+          "id": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83522.14726471153,
+            "v": 36297
+          },
+          "draws": 927
+        },
+        {
+          "id": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623160000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83539.56477199658,
+            "v": 36298
+          },
+          "draws": 343
+        },
+        {
+          "id": "chart-c9fdf58c-e077-48a3-8581-eb76ccebe2f6",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83520.98527240475,
+            "v": 36299
+          },
+          "draws": 121
+        },
+        {
+          "id": "chart-24fad0fb-2ee6-4252-bf3e-80df8a5627d0",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83538.4089977282,
+            "v": 36300
+          },
+          "draws": 121
+        },
+        {
+          "id": "chart-215b246b-7fb5-48f9-858d-9e6c5a8ead21",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83522.14726471153,
+            "v": 36297
+          },
+          "draws": 121
+        },
+        {
+          "id": "chart-80b30219-46a3-4dd7-bc5b-234b880798a3",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623160000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83539.56477199658,
+            "v": 36298
+          },
+          "draws": 121
+        },
+        {
+          "id": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83520.98527240475,
+            "v": 36299
+          },
+          "draws": 121
+        },
+        {
+          "id": "chart-cd867c9e-e452-498a-8bdd-fc359832c366",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83538.4089977282,
+            "v": 36300
+          },
+          "draws": 121
+        }
+      ],
+      "activeStudyCount": 8,
+      "liveStudyWorkers": 8,
+      "failedStudyCount": 0,
+      "studies": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83587.07248576224
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83607.58751678446
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-c9fdf58c-e077-48a3-8581-eb76ccebe2f6",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83586.96181982827
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-24fad0fb-2ee6-4252-bf3e-80df8a5627d0",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83604.9069365257
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-215b246b-7fb5-48f9-858d-9e6c5a8ead21",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83587.07248576224
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-80b30219-46a3-4dd7-bc5b-234b880798a3",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83607.58751678446
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83586.96181982827
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-cd867c9e-e452-498a-8bdd-fc359832c366",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83604.9069365257
+          },
+          "diagnostics": 0
+        }
+      ],
+      "depth": [],
+      "fixtureMessages": 36200,
+      "longTasks": [
+        53,
+        60,
+        76,
+        54,
+        79,
+        54,
+        50,
+        50,
+        53,
+        51,
+        55
+      ],
+      "memory": {
+        "used": 81880036,
+        "total": 119710176
+      },
+      "frameMs": {
+        "samples": 133,
+        "p50": 50,
+        "p95": 66.69999999999709,
+        "p99": 83.40000000000146,
+        "max": 83.40000000000146
+      }
+    },
+    {
+      "label": "8 charts · six EMA + volume/depth on Binance (8-worker budget)",
+      "setupMs": 1492,
+      "interactions": 5,
+      "interactionDurationMs": 6275,
+      "visiblePanels": 8,
+      "panels": [
+        {
+          "id": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83500.15043027067,
+            "v": 58997
+          },
+          "draws": 1367
+        },
+        {
+          "id": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623160000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83518.31736993937,
+            "v": 58998
+          },
+          "draws": 784
+        },
+        {
+          "id": "chart-c9fdf58c-e077-48a3-8581-eb76ccebe2f6",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83500.49580140873,
+            "v": 58999
+          },
+          "draws": 561
+        },
+        {
+          "id": "chart-24fad0fb-2ee6-4252-bf3e-80df8a5627d0",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83518.68565330857,
+            "v": 59000
+          },
+          "draws": 561
+        },
+        {
+          "id": "chart-215b246b-7fb5-48f9-858d-9e6c5a8ead21",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83500.15043027067,
+            "v": 58997
+          },
+          "draws": 561
+        },
+        {
+          "id": "chart-80b30219-46a3-4dd7-bc5b-234b880798a3",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623160000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83518.31736993937,
+            "v": 58998
+          },
+          "draws": 562
+        },
+        {
+          "id": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83529.047829294,
+            "h": 83579.047829294,
+            "l": 83479.047829294,
+            "c": 83500.49580140873,
+            "v": 58999
+          },
+          "draws": 562
+        },
+        {
+          "id": "chart-cd867c9e-e452-498a-8bdd-fc359832c366",
+          "visible": true,
+          "bars": 5000,
+          "last": {
+            "t": 1791623100000,
+            "o": 83547.047829294,
+            "h": 83597.047829294,
+            "l": 83497.047829294,
+            "c": 83518.68565330857,
+            "v": 59000
+          },
+          "draws": 548
+        }
+      ],
+      "activeStudyCount": 8,
+      "liveStudyWorkers": 8,
+      "failedStudyCount": 0,
+      "studies": [
+        {
+          "panelId": "chart-664cdc13-3af0-4869-826e-5036c99db57d",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83590.29795886001
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-3e4ec443-01d5-4e94-b83b-e3dfc659dc0f",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83606.12058135691
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-c9fdf58c-e077-48a3-8581-eb76ccebe2f6",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83588.0639014296
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-24fad0fb-2ee6-4252-bf3e-80df8a5627d0",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83606.00708781909
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-215b246b-7fb5-48f9-858d-9e6c5a8ead21",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83588.1771049299
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-80b30219-46a3-4dd7-bc5b-234b880798a3",
+          "title": "EMA overlay",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 83606.12058135691
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "title": "Volume",
+          "status": "Study ready",
+          "outputTail": {
+            "p0": 58847
+          },
+          "diagnostics": 0
+        },
+        {
+          "panelId": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "title": "Binance depth band",
+          "status": "Depth live · Synchronized · 1,000-level snapshot · bid edge 82680.9 / ask edge 82936.1 · 1s sampled observations",
+          "outputTail": {
+            "p0": 8523717.9557,
+            "p1": 13238106.9998
+          },
+          "diagnostics": 0
+        }
+      ],
+      "depth": [
+        {
+          "panelId": "chart-e32b9e7f-7f7d-4516-9a75-5b79fb035760",
+          "percent": 0.05,
+          "status": "live",
+          "samples": 27,
+          "firstSampleAt": 1791623166222,
+          "lastSampleAt": 1791623204896,
+          "bidCoveredSamples": 27,
+          "askCoveredSamples": 27,
+          "latestCandleHasSample": true
+        }
+      ],
+      "fixtureMessages": 58900,
+      "longTasks": [
+        53,
+        82,
+        50,
+        147,
+        59,
+        57,
+        50,
+        50,
+        51,
+        52,
+        60,
+        53,
+        50,
+        56,
+        61,
+        50,
+        59,
+        51,
+        152,
+        58
+      ],
+      "memory": {
+        "used": 60287460,
+        "total": 140422112
+      },
+      "frameMs": {
+        "samples": 118,
+        "p50": 50,
+        "p95": 83.30000000000291,
+        "p99": 216.60000000000582,
+        "max": 233.3000000000029
+      }
+    }
+  ],
+  "teardownMs": 133,
+  "final": {
+    "panels": 2,
+    "workers": 0,
+    "feed": {
+      "series": 4,
+      "subscriptions": 8,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 1
+        },
+        {
+          "key": "hyperliquid:BTC:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 1
+        },
+        {
+          "key": "binance:BTCUSDT:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 1
+        },
+        {
+          "key": "hyperliquid:BTC:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 1,
+        "sockets": 1,
+        "state": "live",
+        "lastUpdateId": 11781343497403,
+        "buffered": 0,
+        "samples": 27,
+        "snapshotBidBoundary": 82680.9,
+        "snapshotAskBoundary": 82936.1,
+        "collectionStartedAt": 1791623165821,
+        "synthetic": false
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 58900
+    }
+  }
+}

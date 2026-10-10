@@ -1,0 +1,2 @@
+patchedDependencies:
+  openalgo-script@0.8.1: patches/openalgo-script@0.8.1.patch

@@ -51,6 +51,7 @@ export class OpenAlgoCandleChart {
   private times: number[] = [];
   private nextFrame = 0;
   private disposed = false;
+  private visibleCallbacks = new Set<() => void>();
   private latestTime = -Infinity;
   private latestBar: Bar | null = null;
 
@@ -176,8 +177,17 @@ export class OpenAlgoCandleChart {
   get barCount() { return this.times.length; }
   get backend() { return this.chart.rendererKind; }
 
+  enqueueVisible(callback: () => void) {
+    if (this.disposed) return;
+    this.visibleCallbacks.add(callback);
+    this.scheduler.invalidate(this);
+  }
+
   draw() {
     if (!this.visible || document.hidden || this.disposed) return;
+    const visibleCallbacks = [...this.visibleCallbacks];
+    this.visibleCallbacks.clear();
+    for (const callback of visibleCallbacks) callback();
     const pending = [...this.callbacks.values()];
     this.callbacks.clear();
     for (const callback of pending) {
@@ -191,6 +201,7 @@ export class OpenAlgoCandleChart {
     this.disposed = true;
     this.chart.destroy();
     this.callbacks.clear();
+    this.visibleCallbacks.clear();
     this.times = [];
     this.scheduler.remove(this);
   }

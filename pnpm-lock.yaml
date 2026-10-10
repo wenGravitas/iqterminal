@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  openalgo-script@0.8.1:
+    hash: fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff
+    path: patches/openalgo-script@0.8.1.patch
+
 importers:
 
   .:
@@ -14,6 +19,9 @@ importers:
       openalgo-charts:
         specifier: 2.6.0
         version: 2.6.0
+      openalgo-script:
+        specifier: 0.8.1
+        version: 0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0)
     devDependencies:
       '@playwright/test':
         specifier: 1.64.0
@@ -190,6 +198,12 @@ packages:
     resolution: {integrity: sha512-Qh4eU4/y3yDjnfjjyPYihMj5/ODIlmt+Bzu17OI+fiSRDW57QmU5SiN63exPRNJPKUzcc1INa1NXdrJ+MqHjUQ==}
     engines: {node: '>=16.20.0'}
     cpu: [arm64]
+    os: [linux]
+
+  '@typescript/typescript-linux-arm@7.0.2':
+    resolution: {integrity: sha512-gffT3xPz9sR7j/YJExkyPntrI0P2EP9XbOyWzth2/Gs0RstK+90RBcO0ncXoXy/beYll1SXw846Nf2zdnEz0QQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm]
     os: [linux]
 
   '@typescript/typescript-linux-loong64@7.0.2':
@@ -408,6 +422,28 @@ packages:
   openalgo-charts@2.6.0:
     resolution: {integrity: sha512-+6Kx0NCf6An2RKPPGq1fLo6nvahmGB/xT4w7Q2qdJV7Cr9USWPP/ZjSx0Ao/UytVnyNU4rhVkMAp1aVKRHRjvQ==}
     engines: {node: '>=20'}
+
+  openalgo-script@0.8.1:
+    resolution: {integrity: sha512-GevO0P8vagnxX2h12DyCHoNrfiAOX2SFxzCMhveMOCeH3eIImS8XnGIxT4GCvZfznb0/qTGMURU7nGA5HktcAg==}
+    version: 0.8.1
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@codemirror/autocomplete': '>=6.0.0'
+      '@codemirror/language': '>=6.0.0'
+      '@codemirror/lint': '>=6.0.0'
+      '@codemirror/view': '>=6.0.0'
+      openalgo-charts: '>=2.4.0'
+    peerDependenciesMeta:
+      '@codemirror/autocomplete':
+        optional: true
+      '@codemirror/language':
+        optional: true
+      '@codemirror/lint':
+        optional: true
+      '@codemirror/view':
+        optional: true
+      openalgo-charts:
+        optional: true
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -646,6 +682,9 @@ snapshots:
   '@typescript/typescript-linux-arm64@7.0.2':
     optional: true
 
+  '@typescript/typescript-linux-arm@7.0.2':
+    optional: true
+
   '@typescript/typescript-linux-loong64@7.0.2':
     optional: true
 
@@ -778,6 +817,10 @@ snapshots:
 
   openalgo-charts@2.6.0: {}
 
+  openalgo-script@0.8.1(patch_hash=fc356156003d785193ee977fd90ef972484a71199caf7f63e0e1fa68c8b48fff)(openalgo-charts@2.6.0):
+    optionalDependencies:
+      openalgo-charts: 2.6.0
+
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
@@ -835,6 +878,7 @@ snapshots:
       '@typescript/typescript-darwin-x64': 7.0.2
       '@typescript/typescript-freebsd-arm64': 7.0.2
       '@typescript/typescript-freebsd-x64': 7.0.2
+      '@typescript/typescript-linux-arm': 7.0.2
       '@typescript/typescript-linux-arm64': 7.0.2
       '@typescript/typescript-linux-loong64': 7.0.2
       '@typescript/typescript-linux-mips64el': 7.0.2

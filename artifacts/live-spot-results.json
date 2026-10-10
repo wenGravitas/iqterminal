@@ -1,0 +1,69 @@
+{
+  "mode": "REAL public Binance Spot smoke, no fixtures",
+  "browser": "154.0.8037.92",
+  "started": "2026-10-10T12:00:04.884Z",
+  "url": "http://127.0.0.1:4174",
+  "errors": [],
+  "cancelledRequests": [
+    "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1m&limit=1000: cancelled during instrument switch"
+  ],
+  "interval": "1m",
+  "spotRest": [
+    {
+      "status": 200,
+      "url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=1000"
+    }
+  ],
+  "socketSessions": [
+    {
+      "url": "wss://fstream.binance.com/market/stream",
+      "spot": false
+    },
+    {
+      "url": "wss://api.hyperliquid.xyz/ws",
+      "spot": false
+    },
+    {
+      "url": "wss://data-stream.binance.vision/stream",
+      "spot": true
+    }
+  ],
+  "spotKlineFrames": 2,
+  "chart": {
+    "series": {
+      "venue": "binance",
+      "market": "spot",
+      "interval": "1m",
+      "type": "candle",
+      "studies": []
+    },
+    "metadata": "USDT quote · BTC volume · UTC",
+    "title": "Binance · BTCUSDT Spot · 1m",
+    "status": {
+      "state": "live",
+      "message": "Native candle stream",
+      "lastUpdate": 1791633612352
+    },
+    "bars": 1000,
+    "nativeBars": 1000,
+    "nativeLast": {
+      "time": 1791633600,
+      "open": 82879.71,
+      "high": 82879.72,
+      "low": 82879.71,
+      "close": 82879.72,
+      "volume": 0.25529
+    },
+    "nativeLastMatches": true,
+    "diagnosticLast": {
+      "t": 1791633600000,
+      "o": 82879.71,
+      "h": 82879.72,
+      "l": 82879.71,
+      "c": 82879.72,
+      "v": 0.25529
+    },
+    "diagnosticsGlobal": "object",
+    "fixtureBrand": false
+  }
+}

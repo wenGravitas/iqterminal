@@ -1,4 +1,4 @@
-import { type Candle, type Command, type Event, type Series, type Status, type Venue, keyOf, duration } from './protocol';
+import { type Candle, type Command, type Event, type Series, type Status, type ConnectionKey, canonicalSeries, connectionKey, keyOf, duration } from './protocol';
 import { Reconciler, PatchQueue } from './reconcile';
 import { history, HttpError, parseLive, socketURL, subscription } from './adapters';
 export interface Transport { history:typeof history; socket:(url:string)=>WebSocket; now:()=>number; random:()=>number }
@@ -7,8 +7,9 @@ interface Connection { ws?:WebSocket; attempts:number; timer?:ReturnType<typeof 
 export class MarketService {
   readonly entries=new Map<string,Entry>();
   private clients=new Map<string,string>();
-  private connections=new Map<Venue,Connection>();
-  private wireCommands=new Map<string,{series:Series;subscribe:boolean}>();private lastControl=0;private sequence=0; private online=true; private dead=false;
+  private connections=new Map<ConnectionKey,Connection>();
+  private wireCommands=new Map<ConnectionKey,Map<string,{series:Series;subscribe:boolean}>>();
+  private lastControl=new Map<ConnectionKey,number>();private sequence=0; private online=true; private dead=false;
   private flushTimer:ReturnType<typeof setInterval>;private checkTimer:ReturnType<typeof setInterval>;
   constructor(private emit:(event:Event)=>void,private transport:Transport={history,socket:url=>new WebSocket(url),now:Date.now,random:Math.random}) {
     this.flushTimer=setInterval(()=>this.flush(),50);this.checkTimer=setInterval(()=>this.check(),1000);
@@ -16,25 +17,26 @@ export class MarketService {
   command(c:Command) {
     if(c.type==='subscribe')this.subscribe(c.id,c.series);
     else if(c.type==='unsubscribe')this.unsubscribe(c.id);
-    else if(c.type==='retry') { const e=this.entries.get(this.clients.get(c.id)??''); if(e){ e.hard=false;e.attempts=0;this.fetchHistory(e);this.connect(e.series.venue); } }
-    else if(c.type==='online') { this.online=c.online;if(c.online){for(const e of this.entries.values()){if(!e.hard)this.fetchHistory(e);}for(const v of this.connections.keys())this.connect(v);}else{for(const e of this.entries.values())this.state(e,'stale','Offline · waiting for network');for(const v of this.connections.keys())this.closeSocket(v);} }
+    else if(c.type==='retry') { const e=this.entries.get(this.clients.get(c.id)??''); if(e){ e.hard=false;e.attempts=0;this.fetchHistory(e);this.connect(connectionKey(e.series)); } }
+    else if(c.type==='online') { this.online=c.online;if(c.online){for(const e of this.entries.values()){if(!e.hard)this.fetchHistory(e);}for(const key of this.connections.keys())this.connect(key);}else{for(const e of this.entries.values())this.state(e,'stale','Offline · waiting for network');for(const key of this.connections.keys())this.closeSocket(key);} }
     else if(c.type==='diagnostics')this.emit({type:'diagnostics',data:this.diagnostics()});
   }
   subscribe(id:string,series:Series) {
+    const canonical=canonicalSeries(series);if(!canonical)return;series=canonical;
     this.unsubscribe(id);
     const key=keyOf(series);let e=this.entries.get(key);
     if(!e) { e={series,ids:new Set(),data:new Reconciler(),queue:new PatchQueue(),status:{state:'loading',message:'Loading native candles…',lastUpdate:0},generation:0,ready:false,retryAt:0,attempts:0,hard:false};this.entries.set(key,e); }
     e.ids.add(id);this.clients.set(id,key);
     if(e.data.bars.size)this.emit({type:'snapshot',key,ids:[id],candles:e.data.snapshot()});
     this.emit({type:'status',key,ids:[id],status:e.status});
-    if(e.ids.size===1) { this.fetchHistory(e);const conn=this.connections.get(series.venue);if(conn?.ws?.readyState===1)this.send(series,true);else this.connect(series.venue); }
+    if(e.ids.size===1) { this.fetchHistory(e);const key=connectionKey(series);const conn=this.connections.get(key);if(conn?.ws?.readyState===1)this.send(series,true);else this.connect(key); }
   }
   unsubscribe(id:string) {
     const key=this.clients.get(id);this.clients.delete(id);if(!key)return;
     const e=this.entries.get(key);if(!e)return;e.ids.delete(id);
-    if(!e.ids.size){e.generation++;e.abort?.abort();this.send(e.series,false);this.entries.delete(key);if(!this.active(e.series.venue).length){this.closeSocket(e.series.venue);this.connections.delete(e.series.venue);} }
+    if(!e.ids.size){const owner=connectionKey(e.series);e.generation++;e.abort?.abort();this.send(e.series,false);this.entries.delete(key);if(!this.active(owner).length){this.closeSocket(owner);this.connections.delete(owner);} }
   }
-  private active(v:Venue) { return [...this.entries.values()].filter(e=>e.series.venue===v); }
+  private active(owner:ConnectionKey) { return [...this.entries.values()].filter(e=>connectionKey(e.series)===owner); }
   private state(e:Entry,state:Status['state'],message:string) {
     if(e.status.state===state&&e.status.message===message)return;
     e.status={...e.status,state,message};this.emit({type:'status',key:keyOf(e.series),ids:[...e.ids],status:e.status});
@@ -80,55 +82,65 @@ export class MarketService {
     }
   }
   private backoff(attempt:number) { return Math.min(30000,1000*2**Math.min(attempt,5))*(.75+this.transport.random()*.5); }
-  private connect(venue:Venue) {
-    if(this.dead||!this.online||!this.active(venue).some(e=>!e.hard))return;
-    let conn=this.connections.get(venue);
+  private connect(owner:ConnectionKey) {
+    const active=this.active(owner);
+    if(this.dead||!this.online||!active.some(e=>!e.hard))return;
+    let conn=this.connections.get(owner);
     if(conn?.ws&&conn.ws.readyState<=1)return;
-    if(!conn){conn={attempts:0,lastMessage:0,opened:false};this.connections.set(venue,conn);}
+    if(!conn){conn={attempts:0,lastMessage:0,opened:false};this.connections.set(owner,conn);}
     clearTimeout(conn.timer);const current=conn;
-    const ws=this.transport.socket(socketURL(venue));current.ws=ws;current.opened=false;
+    const ws=this.transport.socket(socketURL(active[0]!.series));current.ws=ws;current.opened=false;
     const opening=current.opening=setTimeout(()=>{if(ws.readyState===0)ws.close();},12000);
     ws.onopen=()=>{
       clearTimeout(opening);current.opened=true;current.attempts=0;current.lastMessage=this.transport.now();
-      for(const e of this.active(venue)){this.send(e.series,true);if(!e.abort)this.fetchHistory(e);}
-      if(venue==='hyperliquid')current.heartbeat=setInterval(()=>{if(ws.readyState===1){ws.send(JSON.stringify({method:'ping'}));if(this.transport.now()-current.lastMessage>60000)ws.close();}},25000);
+      for(const e of this.active(owner)){this.send(e.series,true);if(!e.abort)this.fetchHistory(e);}
+      if(owner==='hyperliquid:perpetual')current.heartbeat=setInterval(()=>{if(ws.readyState===1){ws.send(JSON.stringify({method:'ping'}));if(this.transport.now()-current.lastMessage>60000)ws.close();}},25000);
       else current.lifetime=setTimeout(()=>ws.close(),23*60*60*1000+55*60*1000);
     };
     ws.onmessage=event=> {
       current.lastMessage=this.transport.now();
       let raw:unknown;try{raw=JSON.parse(String(event.data));}catch{return;}
-      for(const e of this.active(venue))this.ingest(e,parseLive(raw,e.series));
+      for(const e of this.active(owner))this.ingest(e,parseLive(raw,e.series));
     };
-    ws.onerror=()=> { for(const e of this.active(venue))this.state(e,e.data.bars.size?'stale':'reconnecting','WebSocket unavailable'); };
+    ws.onerror=()=> { for(const e of this.active(owner))this.state(e,e.data.bars.size?'stale':'reconnecting','WebSocket unavailable'); };
     ws.onclose=()=>{
-      if(venue==='binance')this.wireCommands.clear();
+      this.wireCommands.delete(owner);this.lastControl.delete(owner);
       clearTimeout(opening);clearInterval(current.heartbeat);clearTimeout(current.lifetime);current.ws=undefined;current.opened=false;
-      if(this.dead||!this.online||!this.active(venue).length)return;
+      if(this.dead||!this.online||!this.active(owner).length)return;
       current.attempts++;
-      for(const e of this.active(venue))this.state(e,e.data.bars.size?'reconnecting':'failed','Connection lost · repairing on reconnect');
+      for(const e of this.active(owner))this.state(e,e.data.bars.size?'reconnecting':'failed','Connection lost · repairing on reconnect');
       // Stop blind retries after repeated handshakes fail (browser hides HTTP rejection).
-      if(current.attempts<=5)current.timer=setTimeout(()=>this.connect(venue),this.backoff(current.attempts));
-      else for(const e of this.active(venue))this.state(e,'failed','WebSocket repeatedly rejected · use Retry');
+      if(current.attempts<=5)current.timer=setTimeout(()=>this.connect(owner),this.backoff(current.attempts));
+      else for(const e of this.active(owner))this.state(e,'failed','WebSocket repeatedly rejected · use Retry');
     };
   }
   private send(s:Series,subscribe:boolean) {
-    const ws=this.connections.get(s.venue)?.ws;if(ws?.readyState!==1)return;
-    if(s.venue==='binance')this.wireCommands.set(keyOf(s),{series:s,subscribe});
+    const owner=connectionKey(s),ws=this.connections.get(owner)?.ws;if(ws?.readyState!==1)return;
+    if(s.venue==='binance') {
+      const queue=this.wireCommands.get(owner)??new Map<string,{series:Series;subscribe:boolean}>();
+      queue.set(keyOf(s),{series:s,subscribe});this.wireCommands.set(owner,queue);
+    }
     else ws.send(JSON.stringify(subscription(s,subscribe,++this.sequence)));
   }
   private flushControls(){
-    const now=this.transport.now(),ws=this.connections.get('binance')?.ws;
-    if(!this.wireCommands.size||ws?.readyState!==1||now-this.lastControl<200)return;
-    // At most five control frames/s, below Binance's documented ten/s limit.
-    for(const subscribe of [false,true]){
-      const matching=[...this.wireCommands.entries()].filter(([,c])=>c.subscribe===subscribe);
-      if(!matching.length)continue;
-      ws.send(JSON.stringify({method:subscribe?'SUBSCRIBE':'UNSUBSCRIBE',params:matching.map(([,c])=>`btcusdt@kline_${c.series.interval}`),id:String(++this.sequence)}));
-      for(const [key]of matching)this.wireCommands.delete(key);this.lastControl=now;break;
+    const now=this.transport.now();
+    for(const [owner,queue] of this.wireCommands) {
+      const ws=this.connections.get(owner)?.ws;
+      if(!queue.size||ws?.readyState!==1)continue;
+      // Spot allows 5 incoming client frames per second; 4 control frames/s leaves room for browser-managed pong frames.
+      const minimumInterval=owner==='binance:spot'?250:200;
+      if(now-(this.lastControl.get(owner)??0)<minimumInterval)continue;
+      for(const subscribe of [false,true]){
+        const matching=[...queue.entries()].filter(([,command])=>command.subscribe===subscribe);
+        if(!matching.length)continue;
+        ws.send(JSON.stringify({method:subscribe?'SUBSCRIBE':'UNSUBSCRIBE',params:matching.map(([,command])=>`btcusdt@kline_${command.series.interval}`),id:String(++this.sequence)}));
+        for(const [key]of matching)queue.delete(key);
+        this.lastControl.set(owner,now);break;
+      }
     }
   }
-  private closeSocket(v:Venue) {
-    if(v==='binance')this.wireCommands.clear();const c=this.connections.get(v);if(!c)return;clearTimeout(c.timer);clearInterval(c.heartbeat);clearTimeout(c.lifetime);
+  private closeSocket(owner:ConnectionKey) {
+    this.wireCommands.delete(owner);this.lastControl.delete(owner);const c=this.connections.get(owner);if(!c)return;clearTimeout(c.timer);clearInterval(c.heartbeat);clearTimeout(c.lifetime);
     clearTimeout(c.opening);if(c.ws){c.ws.onclose=null;c.ws.onmessage=null;c.ws.onerror=null;c.ws.onopen=null;c.ws.close();c.ws=undefined;}
   }
   private check() {
@@ -140,5 +152,5 @@ export class MarketService {
     }
   }
   diagnostics() {return {series:this.entries.size,subscriptions:this.clients.size,sockets:[...this.connections.values()].filter(c=>c.ws&&c.ws.readyState<=1).length,caches:[...this.entries].map(([key,e])=>({key,bars:e.data.bars.size,clients:e.ids.size,pending:e.queue.size})),inactiveCaches:0};}
-  dispose(){this.dead=true;clearInterval(this.flushTimer);clearInterval(this.checkTimer);for(const e of this.entries.values()){e.generation++;e.abort?.abort();}for(const v of this.connections.keys())this.closeSocket(v);this.entries.clear();this.clients.clear();}
+  dispose(){this.dead=true;clearInterval(this.flushTimer);clearInterval(this.checkTimer);for(const e of this.entries.values()){e.generation++;e.abort?.abort();}for(const owner of this.connections.keys())this.closeSocket(owner);this.entries.clear();this.clients.clear();}
 }

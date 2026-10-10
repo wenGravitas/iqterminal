@@ -1,0 +1,44 @@
+{
+  "url": "http://127.0.0.1:4173/?fixture=1&fixtureTime=now",
+  "guard": {
+    "title": "Basis · BTC terminal",
+    "brand": "BASIS",
+    "diagnosticsGlobal": "undefined",
+    "fixtureBrand": false
+  },
+  "spotRest": [
+    {
+      "status": 200,
+      "url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=1000"
+    }
+  ],
+  "socketSessions": [
+    {
+      "url": "wss://fstream.binance.com/market/stream",
+      "spot": false
+    },
+    {
+      "url": "wss://api.hyperliquid.xyz/ws",
+      "spot": false
+    },
+    {
+      "url": "wss://data-stream.binance.vision/stream",
+      "spot": true
+    }
+  ],
+  "spotKlineFrames": 4,
+  "chart": {
+    "title": "Binance · BTCUSDT Spot candlestick chart",
+    "metadata": "USDT quote · BTC volume · UTC",
+    "status": "live · Native candle stream · 1s ago",
+    "canvasCount": 2
+  },
+  "cancelledRequests": [
+    "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1m&limit=1000"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "GET /favicon.ico returned 404 (confirmed by the console source location; no application page error)"
+  ],
+  "failedResponses": []
+}

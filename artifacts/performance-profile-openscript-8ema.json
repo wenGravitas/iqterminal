@@ -1,0 +1,171 @@
+{
+  "mode": "Supplemental diagnostic OpenScript workload; CDP CPU sampling enabled only during this 8-EMA workload, so timing values are instrumented and not comparable to the primary chart-only benchmarks.",
+  "browser": "154.0.8037.92",
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "viewport": [
+      1366,
+      768
+    ],
+    "dpr": 1,
+    "cores": 4
+  },
+  "workload": {
+    "label": "8 charts · EMA on every chart (8-worker budget)",
+    "activeStudyCount": 8,
+    "liveStudyWorkers": 8,
+    "failedStudyCount": 0,
+    "visiblePanels": 8,
+    "barCounts": [
+      5000,
+      5000,
+      5000,
+      5000,
+      5000,
+      5000,
+      5000,
+      5000
+    ],
+    "frameMs": {
+      "samples": 121,
+      "p50": 50,
+      "p95": 83.30000000000291,
+      "p99": 166.79999999999927,
+      "max": 316.59999999999854
+    },
+    "longTasks": [
+      61,
+      56,
+      56,
+      52,
+      66,
+      50,
+      63,
+      69,
+      54,
+      54,
+      52,
+      53,
+      73,
+      55,
+      56,
+      58,
+      52,
+      54,
+      56,
+      52,
+      50,
+      54,
+      50,
+      50,
+      68,
+      67,
+      320,
+      55
+    ],
+    "mainHeapAfterGc": 30019479,
+    "fixtureMessages": 29500,
+    "cpuProfileTop": [
+      {
+        "functionName": "(program) · :0",
+        "milliseconds": 1449
+      },
+      {
+        "functionName": "Gd · index-CyXe3h90.js:12",
+        "milliseconds": 1005
+      },
+      {
+        "functionName": "(anonymous) · index-CyXe3h90.js:12",
+        "milliseconds": 583
+      },
+      {
+        "functionName": "(garbage collector) · :0",
+        "milliseconds": 545
+      },
+      {
+        "functionName": "Ld.worker.onmessage · index-CyXe3h90.js:12",
+        "milliseconds": 456
+      },
+      {
+        "functionName": "measureText · :0",
+        "milliseconds": 212
+      },
+      {
+        "functionName": "fillText · :0",
+        "milliseconds": 188
+      },
+      {
+        "functionName": "_updateAccessibleSummary · index-CyXe3h90.js:12",
+        "milliseconds": 162
+      },
+      {
+        "functionName": "Lo · index-CyXe3h90.js:1",
+        "milliseconds": 145
+      },
+      {
+        "functionName": "writeValues · index-CyXe3h90.js:12",
+        "milliseconds": 112
+      },
+      {
+        "functionName": "(idle) · :0",
+        "milliseconds": 111
+      },
+      {
+        "functionName": "calc · index-CyXe3h90.js:12",
+        "milliseconds": 108
+      },
+      {
+        "functionName": "(anonymous) · index-CyXe3h90.js:1",
+        "milliseconds": 102
+      },
+      {
+        "functionName": "postMessage · :0",
+        "milliseconds": 90
+      },
+      {
+        "functionName": "getBoundingClientRect · :0",
+        "milliseconds": 59
+      },
+      {
+        "functionName": "oc · index-CyXe3h90.js:1",
+        "milliseconds": 54
+      },
+      {
+        "functionName": "Bd · index-CyXe3h90.js:12",
+        "milliseconds": 51
+      },
+      {
+        "functionName": "begin · index-CyXe3h90.js:12",
+        "milliseconds": 47
+      },
+      {
+        "functionName": "updateReadout · index-CyXe3h90.js:12",
+        "milliseconds": 47
+      },
+      {
+        "functionName": "record · index-CyXe3h90.js:1",
+        "milliseconds": 45
+      },
+      {
+        "functionName": "ma · index-CyXe3h90.js:1",
+        "milliseconds": 45
+      },
+      {
+        "functionName": "save · :0",
+        "milliseconds": 42
+      },
+      {
+        "functionName": "stroke · :0",
+        "milliseconds": 40
+      },
+      {
+        "functionName": "X · index-CyXe3h90.js:1",
+        "milliseconds": 35
+      },
+      {
+        "functionName": "draw · index-CyXe3h90.js:1",
+        "milliseconds": 32
+      }
+    ]
+  }
+}
