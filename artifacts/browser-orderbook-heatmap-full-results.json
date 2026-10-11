@@ -1,0 +1,1150 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4179",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm preview --port 4173",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "heatmap.spec.ts",
+      "file": "heatmap.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6981,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:01:56.590Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-caf8d619f4789feddffc",
+          "file": "heatmap.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "heatmap labels, settings, resize, unsupported instruments and saved layouts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4149,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:04.514Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-7171dcffaeedb7414eb9",
+          "file": "heatmap.spec.ts",
+          "line": 64,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "terminal.spec.ts",
+      "file": "terminal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "chart type picker exposes live Footprint only for Binance USD-M",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2753,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:08.767Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-5ffbc75769e0963c5fff",
+          "file": "terminal.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "Footprint mode owns a separate subscription, renders bar revisions, and restores row settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3583,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:11.550Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-91392f056420bd11b864",
+          "file": "terminal.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "tab cycling is per group, editable, pausable, and removed with its Dockview group",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:15.172Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-bd668f40ea1d94383edc",
+          "file": "terminal.spec.ts",
+          "line": 276,
+          "column": 1
+        },
+        {
+          "title": "held mouse drags time and price, live patches preserve the view, Latest restores autoscale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1653,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:21.197Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-4eb703f648661f0ed8d6",
+          "file": "terminal.spec.ts",
+          "line": 356,
+          "column": 1
+        },
+        {
+          "title": "charts render, controls persist, corrupt layout recovers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2374,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:22.883Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-9be39d5bb375ac7e83d8",
+          "file": "terminal.spec.ts",
+          "line": 386,
+          "column": 1
+        },
+        {
+          "title": "Binance Spot stays a distinct BTCUSDT series and legacy layouts keep defaulting to Perp",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3468,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:25.304Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-485b3d3f42870c93fcae",
+          "file": "terminal.spec.ts",
+          "line": 403,
+          "column": 1
+        },
+        {
+          "title": "add, grouping, tab reorder, split docking, resize, close/empty, restore",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3857,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:28.825Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-b2b55491cdf00bae7c23",
+          "file": "terminal.spec.ts",
+          "line": 450,
+          "column": 1
+        },
+        {
+          "title": "hidden panels suspend chart frames and panned views survive activation in Canvas2D",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3610,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:32.726Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-4f51407ed204445ccca4",
+          "file": "terminal.spec.ts",
+          "line": 459,
+          "column": 1
+        },
+        {
+          "title": "series applies late history corrections, remains capped at 5,000 bars, and chart closes cleanly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1554,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:36.391Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-f77700cd41bb53a1e6db",
+          "file": "terminal.spec.ts",
+          "line": 481,
+          "column": 1
+        },
+        {
+          "title": "indicator picker adds from the title and native legend controls isolate settings, open source, and remove workers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3583,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:37.989Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-72e85c18d6e8326a08a0",
+          "file": "terminal.spec.ts",
+          "line": 504,
+          "column": 1
+        },
+        {
+          "title": "declining a dirty native source switch keeps the editor chart and attachment target",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3570,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:41.612Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-97c49a9db82d13651606",
+          "file": "terminal.spec.ts",
+          "line": 567,
+          "column": 1
+        },
+        {
+          "title": "one synthetic depth observation creates native sparse markers that follow a forming-bar revision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2312,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:45.213Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-95c0cef8b72d1ff75c37",
+          "file": "terminal.spec.ts",
+          "line": 608,
+          "column": 1
+        },
+        {
+          "title": "Footprint price level defaults to $25, rejects off-grid edits, and restores a validated $50 width",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2209,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:47.560Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-dd889db429abfd2b20d9",
+          "file": "terminal.spec.ts",
+          "line": 676,
+          "column": 1
+        },
+        {
+          "title": "two-trade 1 USDT footprint row remains on-screen without an indicator scale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1524,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:49.802Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-c592c73aba67da38a076",
+          "file": "terminal.spec.ts",
+          "line": 746,
+          "column": 1
+        },
+        {
+          "title": "unavailable direct endpoint displays recoverable error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1619,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:51.356Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-ec5894e05be48d356500",
+          "file": "terminal.spec.ts",
+          "line": 895,
+          "column": 1
+        },
+        {
+          "title": "native tab drag groups charts and splitter drag resizes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6461,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:904:72",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                      "column": 72,
+                      "line": 904
+                    },
+                    "snippet": "  902 | test('native tab drag groups charts and splitter drag resizes',async({page})=>{\n  903 |   const tab=page.locator('.dv-tab').first(),target=page.locator('.dv-tab').last();\n> 904 |   await tab.dragTo(target);await expect(page.locator('.dv-groupview')).toHaveCount(1);\n      |                                                                        ^\n  905 |   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.dv-groupview')).toHaveCount(2);\n  906 |   const sash=page.locator('.dv-sash.dv-enabled').first();const box=await sash.boundingBox();if(!box)throw new Error('Splitter absent');const before=await page.locator('.dv-groupview').first().boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+100,box.y+box.height/2,{steps:10});await page.mouse.up();const after=await page.locator('.dv-groupview').first().boundingBox();expect(Math.abs(after!.width-before!.width)).toBeGreaterThan(20);\n  907 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                        "column": 72,
+                        "line": 904
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n\n  902 | test('native tab drag groups charts and splitter drag resizes',async({page})=>{\n  903 |   const tab=page.locator('.dv-tab').first(),target=page.locator('.dv-tab').last();\n> 904 |   await tab.dragTo(target);await expect(page.locator('.dv-groupview')).toHaveCount(1);\n      |                                                                        ^\n  905 |   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.dv-groupview')).toHaveCount(2);\n  906 |   const sash=page.locator('.dv-sash.dv-enabled').first();const box=await sash.boundingBox();if(!box)throw new Error('Splitter absent');const before=await page.locator('.dv-groupview').first().boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+100,box.y+box.height/2,{steps:10});await page.mouse.up();const after=await page.locator('.dv-groupview').first().boundingBox();expect(Math.abs(after!.width-before!.width)).toBeGreaterThan(20);\n  907 | });\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:904:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:02:53.017Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/terminal-native-tab-drag-g-d5f43-s-and-splitter-drag-resizes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                    "column": 72,
+                    "line": 904
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-99ccaf103196337ca0c0",
+          "file": "terminal.spec.ts",
+          "line": 902,
+          "column": 1
+        },
+        {
+          "title": "OpenScript editor previews inputs, applies immutable revisions, retains last good study and restores attachments",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:00.924Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-6573635b0f601ed6d751",
+          "file": "terminal.spec.ts",
+          "line": 909,
+          "column": 1
+        },
+        {
+          "title": "OpenScript package roundtrip, visibility, repeat removal and loop budget keep the feed responsive",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6100,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:06.780Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-4a163e14fdaf44641cce",
+          "file": "terminal.spec.ts",
+          "line": 962,
+          "column": 1
+        },
+        {
+          "title": "two attachments keep independent inputs and unsupported depth states stay explicit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4810,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:12.928Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-d3b13b099e2854afd045",
+          "file": "terminal.spec.ts",
+          "line": 1043,
+          "column": 1
+        },
+        {
+          "title": "a damaged local-library row is isolated from charts and built-in examples",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1942,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:17.770Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-4200d87c8784eed5c215",
+          "file": "terminal.spec.ts",
+          "line": 1099,
+          "column": 1
+        },
+        {
+          "title": "the script library upgrades an older IndexedDB database with no object store",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1946,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:19.746Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-41b1c970e3a2ce479598",
+          "file": "terminal.spec.ts",
+          "line": 1120,
+          "column": 1
+        },
+        {
+          "title": "a local storage quota failure is reported while chart data stays available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:21.738Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-ad50ecb86e7b58d5f465",
+          "file": "terminal.spec.ts",
+          "line": 1140,
+          "column": 1
+        },
+        {
+          "title": "a single $25 footprint row opens at text height and respects manual price zoom",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:23.478Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-870eb310f023acc11a19",
+          "file": "terminal.spec.ts",
+          "line": 1157,
+          "column": 1
+        },
+        {
+          "title": "plot wheel zooms both axes around the cursor and Latest restores autoscale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2058,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:25.243Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-b36f78a017f6e25d888d",
+          "file": "terminal.spec.ts",
+          "line": 1206,
+          "column": 1
+        },
+        {
+          "title": "footprint execution feedback fades on the overlay and stops for reduced motion or disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2213,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:27.341Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-8cc400e99be16fd1b120",
+          "file": "terminal.spec.ts",
+          "line": 1236,
+          "column": 1
+        },
+        {
+          "title": "footprint last-price line tracks executions within rows and $1 rows remain distinct",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1480,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:29.585Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-3efd7913e93cdb941e42",
+          "file": "terminal.spec.ts",
+          "line": 1281,
+          "column": 1
+        },
+        {
+          "title": "footprint BTC/USDT toggle preserves collection and viewport, updates totals and persists per panel",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2164,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T08:03:31.098Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-1a450e9c59e73675e48e",
+          "file": "terminal.spec.ts",
+          "line": 1317,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T08:01:54.342Z",
+    "duration": 99149.689,
+    "expected": 28,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

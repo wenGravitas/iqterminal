@@ -1,6 +1,8 @@
+import { AxisGrid } from './axis-grid';
+import { OrderBookHeatmap } from './orderbook-heatmap';
+import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
 import {
   createChart,
-  darkTheme,
   epochMsToUtcSeconds,
   InvalidationLevel,
   type Bar,
@@ -17,23 +19,7 @@ import { FootprintActivity } from './footprint-activity';
 import { footprintForUnits, type FootprintUnits } from './footprint-units';
 import type { Scheduler } from './scheduler';
 
-const theme = {
-  ...darkTheme,
-  background: '#090909',
-  grid: '#1d1d1d',
-  axisText: '#858585',
-  axisLine: '#292929',
-  paneSeparator: '#292929',
-  crosshair: '#777777',
-  crosshairLabelBackground: '#202020',
-  upColor: '#58a65c',
-  downColor: '#ad5858',
-  wickUpColor: '#58a65c',
-  wickDownColor: '#ad5858',
-  lastPriceUp: '#58a65c',
-  lastPriceDown: '#ad5858',
-  lastPriceText: '#c7c7c7',
-};
+import { CHART_THEMES, THEME_EVENT, currentTheme, type ThemeName } from '../theme';
 
 function toBar(candle: Candle): Bar {
   return {
@@ -54,7 +40,8 @@ function toExecutionBar(footprint: FootprintBar): Bar {
 function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
   return {
     time: bar.time,
-    cells: bar.cells.map(cell => ({ ...cell })),
+    // OpenAlgo draws cells around their centre; canonical cells carry lower bounds.
+    cells: bar.cells.map(cell => ({ ...cell, price: cell.price + bar.rowSize / 2 })),
     delta: bar.delta,
     minDelta: bar.minDelta,
     maxDelta: bar.maxDelta,
@@ -73,7 +60,9 @@ interface ViewAnchor { fromTime: number; toTime: number; fromOffset: number; toO
 /** Owns the chart engine while routing its frames through the shared visible-panel scheduler. */
 export class OpenAlgoCandleChart {
   visible = false;
+  private heatmap: OrderBookHeatmap | null = null;
   readonly chart: OpenAlgoChart;
+  private readonly axisGrid = new AxisGrid();
   readonly series: SeriesApi;
   private footprintIndexSeries: SeriesApi | null = null;
   readonly stats = { draws: 0, footprintSets: 0 };
@@ -100,13 +89,11 @@ export class OpenAlgoCandleChart {
     displayMode: 'bidask', cellStyle: 'ladder',
     statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'], tableRows: [],
     showCandle: true, showPoc: true, showValueArea: false,
-    pocStyle: 'outline', pocColor: '#858585',
-    buyColor: '#58a65c', buyTextColor: '#58a65c',
-    sellColor: '#ad5858', sellTextColor: '#ad5858', radius: 0,
+    pocStyle: 'outline', radius: 0,
     stackedImbalances: 0, cvdOffset: 0,
   };
   private readonly footprintRefresh = () => this.refreshVisibleFootprint();
-  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  private readonly reducedMotion = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)'); } catch { return { matches: false }; } })();
   private readonly footprintActivity = new FootprintActivity(() => this.footprintOptions, () => this.reducedMotion.matches);
   // A sparse session must not stretch one price row to the entire pane.
   // This contributes only an autoscale extent; manual scaling remains owned by OpenAlgo.
@@ -140,7 +127,7 @@ export class OpenAlgoCandleChart {
           if (!this.callbacks.size) this.scheduler.remove(this);
         },
       },
-      theme,
+      theme: CHART_THEMES[currentTheme()],
       renderer,
       timezone: 'UTC',
       branding: false,
@@ -151,7 +138,7 @@ export class OpenAlgoCandleChart {
       priceAxisWidth: 80,
       timeAxisHeight: 20,
       priceFormatter: formatPrice,
-      grid: { spacing: 90, vertColor: '#1d1d1d', horzColor: '#1d1d1d', lineWidth: 1 },
+      grid: { vertLines: false, horzLines: false, spacing: 90, vertColor: CHART_THEMES[currentTheme()].grid, horzColor: CHART_THEMES[currentTheme()].grid, lineWidth: 1 },
       timeScale: { barSpacing: 7, minBarSpacing: 3, maxBarSpacing: 320, rightOffset: 5 },
       navigation: {
         panEnabled: true,
@@ -167,23 +154,44 @@ export class OpenAlgoCandleChart {
     });
     this.series = this.chart.addSeries('candlestick', {
       style: {
-        upColor: '#58a65c',
-        downColor: '#ad5858',
-        borderUpColor: '#58a65c',
-        borderDownColor: '#ad5858',
-        wickUpColor: '#58a65c',
-        wickDownColor: '#ad5858',
         priceLineVisible: true,
         lastValueVisible: true,
         colorByPreviousClose: false,
       },
     });
+    this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
+    this.setTheme(currentTheme());
+    window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
     // OpenAlgo 2.6.0 zooms only time on a plot wheel. Apply its matching
     // price-scale gesture first so the time zoom cannot autoscale it away.
     container.addEventListener('wheel', event => this.zoomPriceWithWheel(event, container), {
       capture: true, passive: false, signal: this.inputAbort.signal,
     });
   }
+
+  setGridVisible(visible: boolean) { this.axisGrid.setEnabled(visible); }
+
+  private setTheme(name: ThemeName) {
+    const palette = CHART_THEMES[name];
+    this.chart.setTheme(palette);
+    // Explicit series/grid overrides need the same palette; preserve all data and view state.
+    this.chart.setGridOptions({ vertColor: palette.grid, horzColor: palette.grid });
+    this.series.applyOptions({ upColor: palette.upColor, downColor: palette.downColor,
+      borderUpColor: palette.upColor, borderDownColor: palette.downColor,
+      wickUpColor: palette.wickUpColor, wickDownColor: palette.wickDownColor });
+    this.footprintOptions = { ...this.footprintOptions, buyColor: palette.upColor, buyTextColor: palette.upColor,
+      sellColor: palette.downColor, sellTextColor: palette.downColor, pocColor: palette.axisText };
+    this.footprint?.setOptions(this.footprintOptions);
+  }
+
+  setHeatmap(options: HeatmapSettings, intervalMs: number) {
+    if (!options.enabled) { if (this.heatmap) this.chart.removePrimitive(this.heatmap); this.heatmap = null; return; }
+    if (!this.heatmap) { this.heatmap = new OrderBookHeatmap(intervalMs); this.chart.addPrimitive(this.heatmap, 0); }
+    this.heatmap.setInterval(intervalMs); this.heatmap.setOptions(options);
+  }
+  updateHeatmap(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) { this.heatmap?.update(buckets, snapshot, retentionStart); }
+  heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
+  heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
 
   private zoomPriceWithWheel(event: WheelEvent, container: HTMLElement) {
     if (this.disposed || !this.visible || !Number.isFinite(event.deltaY)) return;
@@ -367,7 +375,13 @@ export class OpenAlgoCandleChart {
   zoom(factor: number) { this.chart.timeScale.setBarSpacing(this.chart.timeScale.barSpacing * factor); }
 
   latestCandle() { return this.latestBar; }
-  footprintAt(x: number, y: number): FootprintHover | null { return this.mode === 'footprint' ? this.footprint?.hoverAt(x, y) ?? null : null; }
+  footprintAt(x: number, y: number): FootprintHover | null {
+    const hit = this.mode === 'footprint' ? this.footprint?.hoverAt(x, y) ?? null : null;
+    if (!hit || hit.price === null) return hit;
+    const bar = this.footprintBars.find(bar => bar.time === hit.time);
+    const cell = bar?.cells.find(cell => cell.price + bar.rowSize / 2 === hit.price);
+    return cell ? { ...hit, price: cell.price, cell: hit.cell ? { ...hit.cell, price: cell.price } : null } : null;
+  }
   latestFootprintStats() { return this.footprint?.stats().at(-1) ?? null; }
   get footprintSurfaceMounted() { return this.footprint !== null && this.footprintIndexSeries !== null; }
   get displayMode() { return this.mode; }
@@ -460,7 +474,7 @@ export class OpenAlgoCandleChart {
         // Footprint primitives have no price autoscale of their own. Keep this
         // OHLC index visible to price scaling while drawing no candle pixels.
         visible: true,
-        color: '#858585',
+        color: CHART_THEMES[currentTheme()].axisText,
         upColor: 'rgba(0,0,0,0)', downColor: 'rgba(0,0,0,0)',
         borderUpColor: 'rgba(0,0,0,0)', borderDownColor: 'rgba(0,0,0,0)',
         wickUpColor: 'rgba(0,0,0,0)', wickDownColor: 'rgba(0,0,0,0)',
@@ -514,6 +528,9 @@ export class OpenAlgoCandleChart {
     this.disposed = true;
     this.inputAbort.abort();
     this.removeFootprintSurface();
+    if (this.heatmap) this.chart.removePrimitive(this.heatmap);
+    this.heatmap = null;
+    this.chart.removePrimitive(this.axisGrid);
     this.chart.destroy();
     this.callbacks.clear();
     this.visibleCallbacks.clear();

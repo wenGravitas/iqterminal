@@ -1,6 +1,7 @@
 import './vendor/dockview-8.4.1.css';
 import { createDockview, type DockviewApi } from 'dockview-core';
 import './style.css';
+import { ThemeController, THEME_EVENT, currentTheme } from './theme';
 import { FeedClient } from './feed/client';
 import { Scheduler } from './chart/scheduler';
 import { CandlePanel, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
@@ -22,6 +23,7 @@ const panels = new Map<string, CandlePanelInstance>();
 const root = document.querySelector<HTMLElement>('#workspace')!;
 const add = document.querySelector<HTMLButtonElement>('#add')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
+const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
 let dock: DockviewApi;
 let editor: LazyScriptEditorPanel | undefined;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
@@ -75,7 +77,7 @@ function defaults() {
 }
 
 dock = createDockview(root, {
-  theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: 'dark', gap: 4, dndTabIndicator: 'line' },
+  theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
   disableFloatingGroups: true,
   defaultRenderer: 'always',
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
@@ -120,6 +122,7 @@ const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
 })];
 const abort = new AbortController();
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
+window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
 reset.addEventListener('click', () => { defaults(); save(); }, { signal: abort.signal });
 window.addEventListener('online', () => feed.send({ type: 'online', online: true }), { signal: abort.signal });
 window.addEventListener('offline', () => feed.send({ type: 'online', online: false }), { signal: abort.signal });
@@ -158,6 +161,7 @@ function dispose() {
   clearTimeout(saveTimer);
   clearInterval(timer);
   abort.abort();
+  appearance.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
   scheduler.dispose();

@@ -1,0 +1,525 @@
+{
+  "scope": "Diagnostic only: synthetic synchronized 100ms depth diffs, prepopulated retention, real worker+IPC+Canvas2D; 5000 native candle fixtures and 1000 candle revisions/s. Host counters include startup. Main heap excludes workers/canvases.",
+  "browser": "154.0.8037.92",
+  "results": [
+    {
+      "panels": 1,
+      "rafP50Ms": 16.699999999999818,
+      "rafP95Ms": 16.700000000000728,
+      "longTasks": [
+        67
+      ],
+      "mainHeapBytes": 14535260,
+      "heatmaps": [
+        {
+          "draws": 116,
+          "rebuilds": 26,
+          "renderMs": 220.7000000034459,
+          "maxRenderMs": 58.1999999997206,
+          "labels": 0,
+          "bins": 64,
+          "bytes": 1753088,
+          "p95RenderMs": 7,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705588478,
+            "retentionStart": 1791705780500,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        }
+      ],
+      "worker": {
+        "transitions": 556,
+        "processingMs": 350.1999999997206,
+        "flushMs": 13.800000000279397,
+        "publications": 12,
+        "configurations": 1,
+        "consumers": 1,
+        "tickSize": 0.1,
+        "groups": [
+          {
+            "buckets": 128,
+            "cells": 16384,
+            "bytes": 1753088,
+            "evictions": 385,
+            "dirty": 1,
+            "subscribers": 1,
+            "pending": 0,
+            "inFlight": false
+          }
+        ]
+      },
+      "teardown": {
+        "panels": 0,
+        "heatmap": {
+          "transitions": 568,
+          "processingMs": 354.39999999990687,
+          "flushMs": 14.600000000558794,
+          "publications": 19,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": 0.1,
+          "groups": []
+        },
+        "mainHeapBytes": 20927639
+      },
+      "errors": []
+    },
+    {
+      "panels": 2,
+      "rafP50Ms": 16.699999999999818,
+      "rafP95Ms": 16.700000000000728,
+      "longTasks": [
+        75
+      ],
+      "mainHeapBytes": 17422143,
+      "heatmaps": [
+        {
+          "draws": 115,
+          "rebuilds": 27,
+          "renderMs": 179.79999999748543,
+          "maxRenderMs": 18.700000000186265,
+          "labels": 0,
+          "bins": 96,
+          "bytes": 1753088,
+          "p95RenderMs": 6.899999999906868,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705597013,
+            "retentionStart": 1791705789000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 115,
+          "rebuilds": 27,
+          "renderMs": 206.50000000325963,
+          "maxRenderMs": 43.10000000009313,
+          "labels": 0,
+          "bins": 96,
+          "bytes": 1753088,
+          "p95RenderMs": 8.100000000093132,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705597013,
+            "retentionStart": 1791705789000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        }
+      ],
+      "worker": {
+        "transitions": 552,
+        "processingMs": 381.89999999292195,
+        "flushMs": 16.59999999916181,
+        "publications": 12,
+        "configurations": 1,
+        "consumers": 2,
+        "tickSize": 0.1,
+        "groups": [
+          {
+            "buckets": 128,
+            "cells": 16384,
+            "bytes": 1753088,
+            "evictions": 383,
+            "dirty": 1,
+            "subscribers": 2,
+            "pending": 0,
+            "inFlight": false
+          }
+        ]
+      },
+      "hidden": {
+        "drawDelta": 0,
+        "bytes": 1753088
+      },
+      "teardown": {
+        "panels": 0,
+        "heatmap": {
+          "transitions": 581,
+          "processingMs": 393.1999999904074,
+          "flushMs": 18.59999999962747,
+          "publications": 23,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": 0.1,
+          "groups": []
+        },
+        "mainHeapBytes": 19629418
+      },
+      "errors": []
+    },
+    {
+      "panels": 8,
+      "rafP50Ms": 66.69999999999982,
+      "rafP95Ms": 116.70000000000073,
+      "longTasks": [
+        213,
+        75,
+        64,
+        53,
+        53,
+        50,
+        81,
+        57,
+        56,
+        51,
+        61,
+        57,
+        50,
+        50,
+        59,
+        102,
+        51,
+        72,
+        81,
+        52,
+        121,
+        52,
+        90,
+        63,
+        68,
+        114,
+        101,
+        78,
+        76,
+        89
+      ],
+      "mainHeapBytes": 25277866,
+      "heatmaps": [
+        {
+          "draws": 79,
+          "rebuilds": 25,
+          "renderMs": 163.39999999990687,
+          "maxRenderMs": 22.200000000186265,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 7.400000000372529,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 79,
+          "rebuilds": 25,
+          "renderMs": 127.00000000325963,
+          "maxRenderMs": 29.40000000037253,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 6.2000000001862645,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 79,
+          "rebuilds": 25,
+          "renderMs": 111.19999999878928,
+          "maxRenderMs": 14.199999999720603,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 7.399999999906868,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 79,
+          "rebuilds": 25,
+          "renderMs": 137.9000000008382,
+          "maxRenderMs": 58.60000000009313,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 6.300000000279397,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 80,
+          "rebuilds": 26,
+          "renderMs": 103.99999999813735,
+          "maxRenderMs": 26.200000000186265,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 4.800000000279397,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 80,
+          "rebuilds": 26,
+          "renderMs": 83.70000000251457,
+          "maxRenderMs": 10.200000000186265,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 6.199999999720603,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 80,
+          "rebuilds": 26,
+          "renderMs": 106.99999999906868,
+          "maxRenderMs": 17,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 6.399999999906868,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        {
+          "draws": 80,
+          "rebuilds": 26,
+          "renderMs": 86.1000000005588,
+          "maxRenderMs": 7.899999999906868,
+          "labels": 0,
+          "bins": 15,
+          "bytes": 1753088,
+          "p95RenderMs": 5.100000000093132,
+          "mounted": true,
+          "status": {
+            "state": "live",
+            "message": "Observed resting liquidity · BTC · session only",
+            "tickSize": 0.1,
+            "collectionStart": 1791705607714,
+            "retentionStart": 1791705801000,
+            "capacityLimited": true
+          },
+          "settings": {
+            "enabled": true,
+            "rowPrice": 1,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.45,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        }
+      ],
+      "worker": {
+        "transitions": 568,
+        "processingMs": 537.5999999968335,
+        "flushMs": 17.5,
+        "publications": 13,
+        "configurations": 1,
+        "consumers": 8,
+        "tickSize": 0.1,
+        "groups": [
+          {
+            "buckets": 128,
+            "cells": 16384,
+            "bytes": 1753088,
+            "evictions": 387,
+            "dirty": 2,
+            "subscribers": 8,
+            "pending": 0,
+            "inFlight": false
+          }
+        ]
+      },
+      "hidden": {
+        "drawDelta": 0,
+        "bytes": 1753088
+      },
+      "teardown": {
+        "panels": 0,
+        "heatmap": {
+          "transitions": 619,
+          "processingMs": 555.6999999969266,
+          "flushMs": 20.299999999813735,
+          "publications": 26,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": 0.1,
+          "groups": []
+        },
+        "mainHeapBytes": 16838249
+      },
+      "errors": []
+    }
+  ]
+}

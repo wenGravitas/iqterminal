@@ -10,7 +10,7 @@ const execution = (id: number, price: number, side: 'buy' | 'sell'): AggTradeObs
 });
 
 it('groups real execution quantities into 25 and 50 USDT rows without changing OHLC or totals', () => {
-  const trades = [execution(1, 83_002.1, 'sell'), execution(2, 83_008.2, 'buy'), execution(3, 83_023.3, 'buy')];
+  const trades = [execution(1, 83_002.1, 'sell'), execution(2, 83_008.2, 'buy'), execution(3, 83_025.0, 'buy')];
   const narrow = new FootprintAccumulator('1m', 0.1, 250);
   const wide = new FootprintAccumulator('1m', 0.1, 500);
   for (const trade of trades) {
@@ -23,7 +23,7 @@ it('groups real execution quantities into 25 and 50 USDT rows without changing O
   ]);
   expect(wide.latest?.cells.map(({ price, bidVol, askVol }) => ({ price, bidVol, askVol }))).toEqual([{ price: 83_000, bidVol: 0.001, askVol: 0.002 }]);
   for (const bar of [narrow.latest, wide.latest]) {
-    expect(bar).toMatchObject({ open: 83_002.1, high: 83_023.3, low: 83_002.1, close: 83_023.3,
+    expect(bar).toMatchObject({ open: 83_002.1, high: 83_025.0, low: 83_002.1, close: 83_025.0,
       delta: 0.001, minDelta: -0.001, maxDelta: 0.001, aggregateRecordCount: 3 });
     expect(bar!.cells.reduce((sum, cell) => sum + cell.bidVol + cell.askVol, 0)).toBeCloseTo(0.003, 12);
   }

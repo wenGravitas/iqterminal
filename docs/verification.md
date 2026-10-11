@@ -101,6 +101,47 @@ The eight-panel p95 remains well above 16.7 ms, and the maximum long task rose f
 
 The visual script uses diagnostic fixtures aligned to the current time for the candle charts and real Binance depth, and captures the editor and active EMA/volume/depth charts at both 1366×768 and 1920×1080. The label remains FIXTURE to distinguish the synthetic candles. Screenshots are in `artifacts/openscript-{editor,studies}-{1366x768,1920x1080}.png`. The indicator picker, settings dialog and exact-attachment source editor were also captured at 1366×768 and 720×860 in `artifacts/indicator-{picker,settings,source}-{desktop-1366x768,narrow-720x860}.png`. Tab-cycling Start and running Stop dialogs with their Dockview tab strips are captured at 1366×768 and 720×860 in `artifacts/tab-cycle-{start,running}-{1366x768,720x860}.png`.
 
+
+## Order-book heatmap
+
+The streaming milestone retains OpenAlgo Charts **2.6.0**, OpenScript **0.8.1** and Dockview **8.4.1**; it adds no dependency or upstream patch. `pnpm typecheck`, all **118 tests in 21 files**, and ordinary/diagnostic builds pass. Ordinary main bundle: **888.15 kB / 232.55 kB gzip**, versus the fresh before baseline **872.51 / 227.28 kB**; feed worker **59.92 kB** versus **48.39 kB**. The script worker (361.40 kB) and lazy editor (16.14 kB) remain unchanged. Vite's existing 500 kB chunk warning remains.
+
+The complete Chromium suite ran **29 checks: 28 passed, one failed**. `native tab drag groups charts and splitter drag resizes` still leaves two groups after Playwright `dragTo`, expecting one. A fresh focused run against the unchanged before build reproduces exactly that failure; its assertion was not weakened. Programmatic Dockview grouping/reordering/splitting/resizing/restoration checks pass. The narrow toolbar test now scrolls additional steps to reach the expanded control strip while preserving its endpoint assertions. After the price-projection cache change, both complete heatmap browser scenarios pass again: real worker/book/IPC/primitive, shared depth study, chart switching, hover coexistence, pan/two-axis wheel zoom, settings, hidden activation, resize, unsupported Spot, persistence and final disposal. Evidence: [full browser results](../artifacts/browser-orderbook-heatmap-full-results.json), [final heatmap checks](../artifacts/browser-orderbook-heatmap-focused-results.json), [before-build drag failure](../artifacts/browser-orderbook-heatmap-baseline-drag-results.json).
+
+The ordinary-build live check used **one real Binance depth socket**, a **1,000-bid / 1,000-ask** REST snapshot and **130 genuine diff messages**. It verified the snapshot bridge and subsequent `pu` continuity, reconciled **96 complete time-weighted row/side observations** against an independent replay of captured book states, added the editable Binance depth study, and switched to Footprint without changing collection start or opening another depth socket. No page errors were recorded. The replay allows an explicit 0.01 BTC + 2.5% tolerance for adjacent instrumentation/service receipt clocks; the captured examples reconcile exactly. No synthetic depth is present in this build. [Live measurements](../artifacts/orderbook-heatmap-live-results.json), [live Candles](../artifacts/orderbook-heatmap-live-candles-1366x768.png), [live Footprint + depth study](../artifacts/orderbook-heatmap-live-footprint-1366x768.png).
+
+### Same-host performance comparison
+
+All measurements used this **Raspberry Pi 5 Model B Rev 1.0, ARM64, Node 22.19 / Chromium 154.0.8037.92**, Canvas2D, 1366×768 at DPR 1. Workloads and diagnostic previews were run sequentially, without concurrent test/benchmark jobs. Other desktop applications remained running; later samples showed 79% user CPU and some swap-in, without thermal throttling (`throttled=0x0`). These are contended-host measurements, not an isolated certification.
+
+The Candle-only before/after controls use identical 5,000-bar fixtures, 1,000 revisions/s, fixed five-action interactions and 1/2/8 visible panels. The heatmap is disabled in these paired controls. Both the first comparison and repeat are retained; the spread prevents a causal speedup/regression claim.
+
+| Visible charts | First before / after p95 RAF (ms) | Repeat before / after p95 RAF (ms) | Repeat before / after long tasks (maximum ms) |
+|---:|---:|---:|---:|
+| 1 | 16.8 / 83.4 | 16.7 / 16.8 | 0 / 0 |
+| 2 | 16.7 / 116.7 | 16.8 / 16.8 | 1 (149) / 0 |
+| 8 | 33.3 / 133.4 | 133.3 / 50.0 | 19 (103) / 5 (78) |
+
+[First before](../artifacts/performance-before-orderbook-heatmap.json), [first after](../artifacts/performance-after-orderbook-heatmap-candles.json), [repeat before](../artifacts/performance-before-orderbook-heatmap-recheck.json), [repeat after](../artifacts/performance-after-orderbook-heatmap-candles-recheck.json). Every paired run recorded zero hidden-chart draws while candles continued changing, no errors and ten add/close cycles returning to two panels.
+
+The enabled-layer stress uses one shared Binance configuration across **1/2/8 visible charts**, 5,000 native candle fixtures, 1,000 revisions/s, 2,000-level deterministic synchronized depth at 100 ms, a prepopulated maximum-retention cache and twelve pan/zoom actions. This differs from the multi-venue Candle-only controls and cannot be treated as an A/B speed comparison. Publication remains 2 Hz. Final measurements, including initial primitive draws, are:
+
+| Heatmap charts | p95 RAF (ms) | Long tasks (maximum ms) | Primitive render p95 range (ms) | Transient main JS heap (MiB) |
+|---:|---:|---:|---:|---:|
+| 1 | 66.7 | 4 (74) | 11.5–11.5 | 12.9 |
+| 2 | 33.3 | 1 (75) | 5.8–6.2 | 16.1 |
+| 8 | 133.4 | 38 (128) | 1.8–9.0 | 27.5 |
+
+Every workload retained **128 buckets / 16,384 cells / 1,753,088 accounted bytes**, below 2 MiB per configuration, with eviction active; narrower dense rows therefore retain about 64 seconds rather than the 120-second upper bound. All eight panels shared one collector and socket. The hidden-panel probes painted zero times while collection continued. Five panel add/remove cycles and final teardown left **zero DOM panels, heatmap consumers, configurations and active depth sockets**. Main heap after eight-panel teardown was 16.0 MiB; transient heap readings exclude worker/native/canvas allocations and are not a hard total-memory bound.
+
+Investigation found repeated price regrouping of unchanged tiles on navigation. A bounded immutable-revision price-projection cache now reuses it; its focused test proves revised quantities invalidate the cache and disposal releases it. Eight-panel diagnostics recorded 276 price-projection builds per chart across 24–25 geometry rebuilds, instead of regrouping all 128 retained tiles for each navigation redraw. The earlier enabled-layer run is retained [before price caching](../artifacts/performance-heatmap-browser-before-price-cache.json); host variability prevents attributing latency differences solely to this optimization. [Final enabled-layer results](../artifacts/performance-heatmap-browser.json).
+
+An independent worker-model computation benchmark processes 2,000 levels and 2,000 supplied updates after retention is full. For 1/2/4 distinct configurations, p95 update time is **0.257 / 0.642 / 1.152 ms**, maxima **3.16 / 4.12 / 3.19 ms**. All bucket, cell and byte limits remain enforced. This isolates collector computation from IPC/Canvas2D and is not a foreground-FPS measurement. [Collector results](../artifacts/performance-heatmap-collector.json).
+
+**The strict 16.7 ms frame budget is not met consistently, including the final enabled-layer stress.** The eight-panel final p95 is 133.4 ms with 38 long tasks (128 ms maximum). The baseline also misses the gate and varies materially; neither a 60 fps acceptance pass nor a proven causal regression is claimed. Further performance work should profile an isolated Pi run and optimize remaining geometry/drawing costs before treating eight simultaneous heatmaps as a 60 fps workload. No budget was removed or relaxed.
+
+Deterministic visual evidence: [quantity cells](../artifacts/orderbook-heatmap-cells-1366x768.png), [Footprint hover coexistence](../artifacts/orderbook-heatmap-footprint-1366x768.png), [720px settings](../artifacts/orderbook-heatmap-settings-720x860.png). The design detector's colour advisories were inspected; the restrained active accent and ordered liquidity palette are intentional, documented choices. See [usage, weighting, coverage, limits and reproduction commands](orderbook-heatmap.md). Reload clears session tiles; only settings persist. Spot/Hyperliquid liquidity, historical recording and cross-venue aggregation remain outside this milestone.
+
 ## Limits and follow-up
 
 Fixtures require explicit development/diagnostic selection and never serve as a connectivity fallback. The ordinary build omits the diagnostics global and fixture route. Firefox was not verified on this host because its system compositor failed to map the default framebuffer.
@@ -108,3 +149,58 @@ Fixtures require explicit development/diagnostic selection and never serve as a 
 OpenScript is restricted to read-only study programs. It has no JavaScript evaluation, file, network, account or order functions. Per-worker runtime and output limits, the eight-worker cap, host series/capability validation, immutable source hashes and persistence budgets are described in [the architecture](architecture.md#openscript-studies). These are bounded application inputs/results, not a claim that browser or worker total memory is hard-capped. RAF measurements exclude full display-compositor/GPU timing; the eight-active-study p95 also misses the 60 fps target as shown above. Full-column result cloning/validation/alignment on each incremental study update remains a measured follow-up area.
 
 Footprint mode now uses a separate classified Binance USD-M `aggTrade` stream and bounded per-price aggregation; it never derives execution rows from OHLCV. Collection is session-only and has no historical trade backfill. A quiet interval is not proof that the venue missed trades: after 15 seconds without a valid observation the service marks coverage uncertain/stale, and outage intervals are labeled conservatively. Binance Spot and Hyperliquid do not provide this Footprint mode. OpenScript remains a separate restricted worker runtime; adding a Footprint-specific script capability is still a later milestone.
+
+### Candle-aligned heatmap columns
+
+The follow-up presentation change combines retained observations into **one column per actual chart candle**, including Footprint's irregular session time keys. The forming column occupies its full logical slot from its first observation and updates quantities without advancing its edges. Actual observation times remain in hover; partial intervals and interruption subtotals remain explicit. Raw worker resolution, bounded retention, source subscriptions and weighting are unchanged.
+
+All **119 unit tests across 21 files** pass, as do typecheck, ordinary build and both focused browser scenarios. Coverage includes stable edges on revisions, UTC rollover, interval regrouping, missing host bars, duration-weighted reconnect gaps and alignment on both chart types. [Browser results](../artifacts/browser-heatmap-candle-columns-results.json); [updated cell screenshot](../artifacts/orderbook-heatmap-cells-1366x768.png). Ordinary main bundle is **888.23 kB / 232.54 kB gzip**; the existing chunk-size warning remains. No full-suite or real-feed rerun was made for this presentation-only follow-up; the preceding evidence and native drag limitation remain separate.
+
+The same Pi stress command was rerun with the same 1/2/8-panel workload. p95 RAF intervals were **16.8 / 33.3 / 100.0 ms**; primitive render p95 was **8.0 / 4.9–7.0 / 0.8–4.4 ms**, respectively. The preceding run was **66.7 / 33.3 / 133.4 ms** RAF and **11.5 / 5.8–6.2 / 1.8–9.0 ms** primitive render p95. These contended-host samples do not prove a causal speedup or a 60fps pass: the multi-panel frame budget remains unmet. Hidden heatmaps recorded zero draws, retained payload remained bounded, and final disposal returned to zero panels/configurations/consumers. [Column-mode stress results](../artifacts/performance-heatmap-candle-columns.json).
+
+### Footprint-aligned heatmap price rows
+
+Footprint mode now derives its heatmap price resolution from the chart's Price level control and uses the same nearest-centre tick grouping. Rows retain exactly the footprint height during zoom rather than independently merging into coarse price bins. Candle mode keeps its independent heatmap row setting. Changing the effective grid restarts collection unless another consumer retains it; the settings dialog explains this and makes its footprint row field read-only. One-sided visible liquidity fills its row; mixed rows keep distinct bid/ask halves.
+
+All **122 tests in 21 files**, typecheck, production build and both focused browser scenarios pass. New checks cover centred boundary assignments, incomplete snapshot edges, grid-specific shared keys, simultaneous coarse peaks, worker consumer sharing, full-height one-sided rendering, actual OpenAlgo footprint hover boundaries matching heatmap row edges, $25-to-$50 toolbar changes and existing hidden-panel/disposal behavior. [Browser results](../artifacts/browser-heatmap-price-rows-results.json). Ordinary bundle: **888.94 kB / 232.79 kB gzip**; feed worker **60.31 kB**. The existing chunk warning remains. No full browser-suite or performance campaign was rerun for this row-grid change; preceding performance limitations still apply.
+
+The ordinary-build live check received **135 genuine Binance diffs**, reconciled **100 complete row/side time-weighted observations** against the independent replay, then verified the footprint heatmap's **$25 rows / -$12.50 lower-bound offset** with the depth study retaining **one shared socket**. There were no page errors. The new grid's collection start is allowed to change; this check no longer incorrectly requires unchanged collection when switching to a different data resolution. [Live results](../artifacts/orderbook-heatmap-price-rows-live-results.json), [updated live Footprint screenshot](../artifacts/orderbook-heatmap-live-footprint-1366x768.png). Preserve separate live output with `HEATMAP_LIVE_OUTPUT`.
+
+
+### Light and restored Dark themes
+
+Dark restores the original terminal palette (`#080808` workspace, `#090909` plot, charcoal controls and restrained green/red). Light uses the verified OpenAlgo market-profile Ivory palette, with attribution accessible through Licences. Saved light/dark selection takes priority over device preference; without either, Dark is the fallback. System clears the saved override. Theme selection does not change workspace persistence or collected data.
+
+All **125 unit tests across 22 files**, typecheck and ordinary/diagnostic production builds pass. The focused browser suite covers saved/device/fallback selection, blocked storage and missing media APIs, cross-tab synchronization, standalone licences, candles, footprint, heatmap, editable EMA, hidden-tab activation and desktop/narrow editor layouts. It checks that chart/primitive identities, manual viewport, collection start, retained data and active depth subscription counts survive theme changes. Final focused results and screenshots are linked below.
+
+The wider browser suite passed **32 of 33 checks**; the previously documented native tab `dragTo()` check still leaves two groups instead of one. Its assertion remains unchanged. [Full results](../artifacts/browser-themes-full-results.json). This full run preceded the final restoration of the original Dark colours; focused appearance/heatmap checks were rerun after restoration.
+
+Ordinary main bundle is **891.87 kB / 233.58 kB gzip**, versus the preceding **888.94 / 232.79 kB**; CSS is **144.19 / 13.84 kB**, and the feed worker remains **60.31 kB**. The existing chunk-size warning and previously recorded multi-panel performance limitations remain. No new live-feed or performance campaign is claimed for this appearance change.
+
+[Final focused browser results](../artifacts/browser-themes-focused-results.json); [original Dark screenshot](../artifacts/theme-dark-1366x768.png); [Ivory screenshot](../artifacts/theme-light-1366x768.png); [Dark editor](../artifacts/theme-dark-editor-720x860.png); [Ivory editor](../artifacts/theme-light-editor-720x860.png).
+
+
+### Axis-bound grid and chart settings
+
+The primary price-pane grid now follows native price ticks and time-axis labels instead of fixed pixels. The per-panel Chart settings → Gridlines checkbox defaults on for older layouts, persists and survives Candles/Footprint changes. The primitive does not change data, autoscale, collection or scheduling.
+
+**129 unit tests in 23 files**, typecheck, ordinary/diagnostic builds and **7 focused Chromium browser checks** pass. New checks cover price tick/candle index coordinates, pan and both zoom axes, empty and irregular time keys, midnight priority, label collision, configuration migration and primitive disposal. The browser compares grid positions with actual native axis text coordinates, exercises wheel zoom, settings, Footprint switching and saved-layout reload. Existing heatmap sharing/hidden-tab/disposal and theme checks pass in the same run. [Results](../artifacts/browser-chart-grid-results.json); [Footprint grid](../artifacts/chart-grid-footprint-1366x768.png); [grid off](../artifacts/chart-grid-off-1366x768.png); [narrow settings](../artifacts/chart-grid-settings-720x860.png).
+
+Ordinary main bundle: **896.18 kB / 234.68 kB gzip**, versus **891.87 / 233.58 kB** before this change. Worker bundles and CSS are unchanged. The existing bundle warning and earlier native tab-drag/full-suite and platform-performance limitations remain; no full-suite, live-feed or performance rerun is claimed for this rendering/settings fix. The focused development screenshots contain explicitly selected fixtures.
+
+
+### Fixed lower-bound price buckets
+
+$25 footprint rows now cover fixed price multiples, such as [$82,800, $82,825), instead of nearest-centre ranges. The execution worker and heatmap collector use the same integer-tick floor grouping. Only the chart adapter converts a lower bound to OpenAlgo's required cell centre; hover and pulse geometry retain the true bucket bounds. Matching Candle/Footprint heatmap resolutions share one collector. Actual execution OHLC, bid/ask quantities, delta and exact USDT notionals are preserved.
+
+**130 unit tests in 23 files**, typecheck and both builds pass. The new boundary test accepts $82,800 and $82,824.90 in one row and puts $82,825 in the next, checking quantities, delta, OHLC and exact notional. Existing price-row, coverage, peak, shared-source and disposal tests now assert lower-bound semantics. **16 focused browser checks** pass across the [9 Footprint/zoom checks](../artifacts/browser-fixed-buckets-footprint-results.json) and [7 heatmap/grid/theme checks](../artifacts/browser-fixed-buckets-layers-results.json). They verify actual cell edges matching heatmap bounds, range hover, $25/$50 widths, raw units, pulses, sparse rows, pan/zoom, persistence and subscriptions. Two initial assertions expected the old single-price hover text; their fixtures/assertions were updated to fixed bucket ranges, with the complete Footprint subset rerun successfully. [Fixed-bucket hover screenshot](../artifacts/footprint-fixed-bucket-1366x768.png).
+
+Ordinary main bundle is **896.51 kB / 234.81 kB gzip**; feed worker **60.13 kB**. The existing bundle warning remains. No full-suite, new live-feed or performance campaign is claimed for this arithmetic/adapter change; previous native drag and platform-performance limitations remain separate. Refresh starts fresh session collection; saved widths and other settings remain compatible. The reproducible live heatmap check was updated to expect zero-offset fixed buckets.
+
+### Chart footer separation
+
+Heatmap metadata and connection status now occupy separate native footer rows below the canvas. They cannot cover the time axis or Footprint Delta statistics. Narrow panels truncate long text with full-text tooltips; Retry remains unclipped, and empty/error messages retain their centred plot placement.
+
+**130 unit tests in 23 files**, typecheck, ordinary/diagnostic builds and **8 focused Chromium browser checks** pass. The footer check verifies canvas/footer boundaries, separate metadata rows, both chart types, Dark and Ivory themes, narrow resize, Retry and empty/error placement. Existing heatmap, grid and theme checks pass in the same run. [Browser results](../artifacts/browser-chart-footer-results.json); [Dark desktop](../artifacts/chart-footer-dark-1366x768.png); [Ivory narrow layout](../artifacts/chart-footer-light-720x860.png). Screenshots use explicit development fixtures.
+
+Ordinary main bundle is **896.79 kB / 234.90 kB gzip**, CSS **144.83 / 13.94 kB**, and feed worker **60.13 kB**. The existing bundle warning remains. No new full-suite, live-feed or performance campaign is claimed for this footer styling change; earlier native tab-drag and platform-performance limitations remain separate.

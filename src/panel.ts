@@ -1,3 +1,6 @@
+import { HeatmapControls } from './heatmap-controls';
+import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
+import { duration } from './feed/protocol';
 import type { Bar, CrosshairMoveEvent } from 'openalgo-charts';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
@@ -19,7 +22,7 @@ export interface FootprintViewOptions {
   imbalanceRatio: 2 | 3 | 4;
   imbalanceThreshold: number;
 }
-export interface PanelConfig extends CanonicalSeries { type: 'candle' | 'footprint'; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; studies: StudyPin[] }
+export interface PanelConfig extends CanonicalSeries { type: 'candle' | 'footprint'; grid: boolean; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
 const DEFAULT_FOOTPRINT_VIEW: FootprintViewOptions = {
   displayMode: 'bidask', cellStyle: 'ladder', showPoc: true,
   showDiagonalImbalances: true, stackedImbalances: false,
@@ -45,7 +48,8 @@ export function config(value: unknown): PanelConfig {
       : legacyRowPrice(source.rowTicks);
   const wantsFootprint = source.type === 'footprint' && supportsDepth(series);
   return { ...series, type: wantsFootprint ? 'footprint' : 'candle', rowPrice,
-    footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' : 'btc', footprint, studies: validStudyPins(source.studies) };
+    grid: typeof source.grid === 'boolean' ? source.grid : true,
+    footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' : 'btc', footprint, heatmap: heatmapSettings(source.heatmap), studies: validStudyPins(source.studies) };
 }
 
 function legacyRowPrice(value: unknown) {
@@ -59,8 +63,14 @@ function legacyRowPrice(value: unknown) {
 
 export class CandlePanel implements IContentRenderer {
   readonly element = document.createElement('section');
+  private heatmapControls!: HeatmapControls;
+  private releaseHeatmap?: () => void;
+  private heatmapSubscriptionKey = '';
+  private heatmapGeneration = 0;
+  private heatmapStatus?: HeatmapStatus;
   private toolbarWrap = document.createElement('div');
   private chart = document.createElement('div');
+  private chartFooter = document.createElement('footer');
   private toolbar = document.createElement('div');
   private toolbarCue = document.createElement('button');
   private depthNotice = document.createElement('div');
@@ -71,6 +81,9 @@ export class CandlePanel implements IContentRenderer {
   private chartType = document.createElement('select');
   private rowPrice = document.createElement('input');
   private rowPriceControl = document.createElement('label');
+  private chartSettings = document.createElement('button');
+  private chartSettingsDialog = document.createElement('dialog');
+  private gridCheckbox = document.createElement('input');
   private footprintSettings = document.createElement('button');
   private footprintUnits = document.createElement('button');
   private interval = document.createElement('select');
@@ -140,6 +153,7 @@ export class CandlePanel implements IContentRenderer {
     this.toolbarCue.setAttribute('aria-label', 'Scroll chart controls right');
     this.toolbarCue.title = 'More chart controls';
     this.chart.className = 'chart-stage';
+    this.chartFooter.className = 'chart-footer';
     this.depthNotice.className = 'depth-notice';
     this.depthNotice.hidden = true;
     this.depthNotice.setAttribute('role', 'status');
@@ -185,6 +199,11 @@ export class CandlePanel implements IContentRenderer {
     settingsPath.setAttribute('stroke', 'currentColor');
     settingsPath.setAttribute('stroke-width', '1');
     settingsIcon.append(settingsPath);
+    this.chartSettings.type = 'button';
+    this.chartSettings.append(settingsIcon.cloneNode(true));
+    this.chartSettings.className = 'footprint-settings-button';
+    this.chartSettings.setAttribute('aria-label', 'Chart settings');
+    this.chartSettings.title = 'Chart settings';
     this.footprintSettings.append(settingsIcon);
     this.footprintSettings.className = 'footprint-settings-button';
     this.footprintSettings.setAttribute('aria-label', 'Footprint display settings');
@@ -196,16 +215,18 @@ export class CandlePanel implements IContentRenderer {
     this.indicators.title = 'Add a study or open the local OpenScript library';
     this.retry.textContent = 'Retry';
     this.retry.setAttribute('aria-label', 'Retry market data');
-    this.toolbar.append(this.instrument, this.chartType, this.interval, this.rowPriceControl, this.footprintUnits, this.footprintSettings, this.latest, this.indicators, this.metadata);
+    this.heatmapControls = new HeatmapControls(settings => this.changeHeatmap(settings), () => this.feed.retryDepth(), this.abort.signal, settingsIcon.cloneNode(true));
+    this.toolbar.append(this.instrument, this.chartType, this.interval, this.rowPriceControl, this.footprintUnits, this.footprintSettings, this.latest, this.indicators, this.chartSettings, this.heatmapControls.toggle, this.heatmapControls.settings, this.metadata);
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
     this.buildDialogs();
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.picker, this.settingsDialog, this.footprintDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.chartSettingsDialog);
   }
 
   init(params: IDockviewPanelProps) {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
+    this.gridCheckbox.checked = this.selection.grid;
     params.api.updateParameters(this.selection);
     this.instrument.value = instrumentKey(this.selection);
     this.chartType.value = this.selection.type;
@@ -269,7 +290,17 @@ export class CandlePanel implements IContentRenderer {
     this.toolbarResizeObserver = new ResizeObserver(() => this.updateToolbarOverflowCue());
     this.toolbarResizeObserver.observe(this.toolbar);
     for (const child of this.toolbar.children) this.toolbarResizeObserver.observe(child);
+    this.chartSettings.addEventListener('click', () => this.chartSettingsDialog.showModal(), options);
+    this.chartSettingsDialog.addEventListener('click', event => {
+      if (event.target === this.chartSettingsDialog || (event.target as HTMLElement).closest('[data-dialog-action=close-chart-settings]')) this.chartSettingsDialog.close();
+    }, options);
+    this.gridCheckbox.addEventListener('change', () => {
+      this.selection = { ...this.selection, grid: this.gridCheckbox.checked };
+      this.engine?.setGridVisible(this.selection.grid);
+      this.params.api.updateParameters(this.selection); this.save();
+    }, options);
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
+    this.engine.setGridVisible(this.selection.grid);
     if (this.selection.type === 'footprint') this.engine.setDisplayMode('footprint');
     this.applyFootprintOptions();
     this.studyHost = new ScriptStudyHost(params.api.id, this.engine, this.feed, this.library, this.selection, studies => {
@@ -287,7 +318,8 @@ export class CandlePanel implements IContentRenderer {
       { dispose: this.engine.chart.on('indicatorRemoved', event => this.studyHost?.removeNativeInstance(event.instanceId)) },
       { dispose: this.engine.chart.on('objects:change', () => this.studyHost?.syncNativeVisibility()) },
     );
-    this.chart.append(this.readout, this.statusNode);
+    this.chart.append(this.readout, this.heatmapControls.readout);
+    this.chartFooter.append(this.heatmapControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
     this.register(params.api.id, this);
     this.subscribe();
@@ -304,6 +336,18 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private buildDialogs() {
+    this.chartSettingsDialog.className = 'indicator-settings chart-settings';
+    this.chartSettingsDialog.setAttribute('aria-label', 'Chart settings');
+    const chartForm = document.createElement('div'); chartForm.className = 'indicator-settings-form';
+    const chartHeader = document.createElement('header');
+    const chartTitle = document.createElement('h2'); chartTitle.textContent = 'Chart settings';
+    chartHeader.append(chartTitle, this.dialogButton('Close', 'close-chart-settings'));
+    const chartFields = document.createElement('div'); chartFields.className = 'indicator-settings-fields';
+    const gridLabel = document.createElement('label'); gridLabel.className = 'indicator-setting-field';
+    const gridText = document.createElement('span'); gridText.textContent = 'Gridlines';
+    this.gridCheckbox.type = 'checkbox'; gridLabel.append(gridText, this.gridCheckbox); chartFields.append(gridLabel);
+    chartForm.append(chartHeader, chartFields); this.chartSettingsDialog.append(chartForm);
+
     this.picker.className = 'indicator-picker';
     this.picker.setAttribute('aria-label', 'Add an indicator');
     const pickerHeader = document.createElement('header');
@@ -365,7 +409,7 @@ export class CandlePanel implements IContentRenderer {
     );
     const settingsHint = document.createElement('p');
     settingsHint.className = 'footprint-settings-hint';
-    settingsHint.textContent = 'Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size starts a fresh collection unless another chart retains that exact stream; OpenScript studies use native candle OHLCV.';
+    settingsHint.textContent = 'Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size starts a fresh collection unless another chart retains that exact stream; OpenScript studies use native candle OHLCV.';
     const footprintFooter = document.createElement('footer');
     footprintFooter.append(this.dialogButton('Cancel', 'close-footprint'), this.dialogButton('Apply', 'apply-footprint', true));
     this.footprintForm.append(footprintHeader, this.footprintFields, settingsHint, footprintFooter);
@@ -729,6 +773,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine?.setSnapshot(this.candles, false);
       this.engine?.resetView();
     }
+    this.syncHeatmap();
     this.refreshReadout();
     this.updateStatus();
     this.save();
@@ -756,6 +801,7 @@ export class CandlePanel implements IContentRenderer {
     this.footprintStatus = { ...this.footprintStatus, state: 'loading', message: 'Validating the selected price level against Binance tick metadata…', coverage: 'waiting', lastUpdate: 0 };
     this.engine?.setFootprintBars([], false);
     this.subscribeFootprint();
+    this.syncHeatmap();
     this.refreshReadout();
     this.updateStatus();
   }
@@ -791,8 +837,32 @@ export class CandlePanel implements IContentRenderer {
         this.status = { ...this.status, lastUpdate: Date.now() };
       }
     });
+    this.syncHeatmap();
     if (selection.type === 'footprint') this.subscribeFootprint();
     else { this.releaseFootprint?.(); this.releaseFootprint = undefined; }
+  }
+
+  private changeHeatmap(settings: HeatmapSettings) {
+    this.selection = config({ ...this.selection, heatmap: { ...settings, rowPrice: this.selection.type === 'footprint' ? this.selection.heatmap.rowPrice : settings.rowPrice } });
+    this.params.api.updateParameters(this.selection); this.syncHeatmap(); this.save();
+  }
+  private syncHeatmap() {
+    const supported = supportsDepth(this.selection), footprint = this.selection.type === 'footprint';
+    const settings: HeatmapSettings = footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' } : this.selection.heatmap;
+    this.heatmapControls.sync(settings, supported, footprint);
+    this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported }, duration[this.selection.interval]);
+    const key = settings.enabled && supported ? heatmapKey(settings) : '';
+    if (key === this.heatmapSubscriptionKey) return;
+    this.releaseHeatmap?.(); this.releaseHeatmap = undefined; this.heatmapSubscriptionKey = key;
+    const generation = ++this.heatmapGeneration; this.heatmapStatus = undefined; this.heatmapControls.setStatus(undefined); this.heatmapControls.hover(null);
+    this.engine?.updateHeatmap([], true, null);
+    if (!key) return;
+    this.releaseHeatmap = this.feed.subscribeHeatmap(this.params.api.id, settings, event => {
+      if (this.dead || generation !== this.heatmapGeneration || event.type !== 'heatmap-batch') return;
+      this.heatmapStatus = event.status;
+      this.engine?.updateHeatmap(event.buckets, event.snapshot, event.status.retentionStart);
+      if (this.visible && !document.hidden) this.heatmapControls.setStatus(event.status);
+    });
   }
 
   private subscribeFootprint() {
@@ -861,6 +931,9 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private crosshair(event: CrosshairMoveEvent) {
+    const plot = this.engine?.chart.plotRect(0);
+    const point = event.point;
+    this.heatmapControls.hover(point && plot ? this.engine?.heatmapAt(point.x - plot.left, point.y - plot.top) ?? null : null);
     if (event.point === null || event.time === null) {
       this.hoveredBar = null;
       this.hoveredFootprint = null;
@@ -884,6 +957,7 @@ export class CandlePanel implements IContentRenderer {
       if (this.visible) this.scheduler.invalidate(this.engine);
     }
     if (this.visible) {
+      this.heatmapControls.setStatus(this.heatmapStatus);
       if (this.selection.type === 'footprint') {
         if (this.footprintNeedsSync) {
           this.engine?.setFootprintBars(this.footprintBars, true);
@@ -944,7 +1018,7 @@ export class CandlePanel implements IContentRenderer {
     const timestamp = new Date(bar.time * 1000).toISOString().slice(11, 19);
     const hasCell = cell !== undefined;
     const cellText = cell && hover?.price !== null && hover?.price !== undefined
-      ? `${formatFootprintPrice(hover.price!)} ${quote} · bid ${volumeText(cell.bidVol)} / ask ${volumeText(cell.askVol)} ${units}`
+      ? `${formatFootprintPrice(cell.price)}–${formatFootprintPrice(cell.price + bar.rowSize)} ${quote} (upper exclusive) · bid ${volumeText(cell.bidVol)} / ask ${volumeText(cell.askVol)} ${units}`
       : 'Hover a cell for price and bid / ask volume';
     const coverageText = `[${coverage}${gap}] ${timestamp} UTC`;
     const barText = `O ${formatFootprintPrice(bar.open)} · H ${formatFootprintPrice(bar.high)} · L ${formatFootprintPrice(bar.low)} · C ${formatFootprintPrice(bar.close)}`;
@@ -1021,13 +1095,15 @@ export class CandlePanel implements IContentRenderer {
       ? ` · collecting since ${new Date(this.footprintStatus.collectionStartedAt).toISOString().slice(11, 19)} UTC`
       : '';
     const text = `${status.state} · ${status.message}${coverage}${collectingSince} · ${age}`;
-    if (this.statusText.textContent !== text) this.statusText.textContent = text;
+    if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
     const showRetry = status.state === 'failed' || status.state === 'stale';
     if (this.statusText.parentElement !== this.statusNode || (this.retry.parentElement === this.statusNode) !== showRetry) {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }
     const noData = !this.engine?.barCount;
+    const statusParent = noData ? this.chart : this.chartFooter;
+    if (this.statusNode.parentElement !== statusParent) statusParent.append(this.statusNode);
     if (this.statusNode.classList.contains('no-data') !== noData) this.statusNode.classList.toggle('no-data', noData);
   }
 
@@ -1084,6 +1160,7 @@ export class CandlePanel implements IContentRenderer {
         surfaceMounted: this.engine?.footprintSurfaceMounted ?? false,
         hover: this.hoveredFootprint,
       },
+      heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
       studies: this.studyHost?.diagnostics(),
     };
   }
@@ -1097,7 +1174,9 @@ export class CandlePanel implements IContentRenderer {
     if (this.picker.open) this.picker.close();
     if (this.settingsDialog.open) this.settingsDialog.close();
     if (this.footprintDialog.open) this.footprintDialog.close();
+    if (this.chartSettingsDialog.open) this.chartSettingsDialog.close();
     this.release?.();
+    this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
     this.releaseFootprint?.();
     this.subscriptions.forEach(subscription => subscription.dispose());
     this.studyHost?.dispose();

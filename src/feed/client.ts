@@ -1,6 +1,9 @@
+import { heatmapKey, type HeatmapResolution } from './heatmap-model';
 import { type Command, type Event, type Series, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
 export class FeedClient {
   private sequence=0;private current=new Map<string,string>();private currentDepth=new Map<string,string>();private currentFootprint=new Map<string,string>();private worker:Worker;private listeners=new Map<string,{key:string;callback:(e:Event)=>void}>();private depthListeners=new Map<string,(e:Event)=>void>();private footprintListeners=new Map<string,{key:string;callback:(e:Event)=>void}>();
+  private heatmapListeners = new Map<string,{key:string;callback:(e:Event)=>void}>();
+  private currentHeatmap = new Map<string,string>();
   diagnostics:Record<string,unknown>={};
   constructor(fixture=false, alignFixtureToNow=false) {
     // Explicit diagnostic build mode only, never automatic fallback.
@@ -14,11 +17,13 @@ export class FeedClient {
         for(const id of e.ids){
           try {
             const l=this.listeners.get(id);if(l&&'key'in e&&l.key===e.key)l.callback(e);
+            const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key)heatmap.callback(e);
             const depth=this.depthListeners.get(id);depth?.(e);
             const footprint=this.footprintListeners.get(id);if(footprint&&'key'in e&&footprint.key===e.key&&e.type.startsWith('footprint-'))footprint.callback(e);
           } catch(error) { console.error('Market data subscriber callback failed',error); }
         }
       } finally {
+        if(e.type==='heatmap-batch')this.send({type:'heatmap-ack',key:e.key,generation:e.generation,batchId:e.batchId});
         if(isFootprintBatch(e)) this.send({type:'footprint-ack',key:e.key,generation:e.generation,batchId:e.batchId});
       }
     };
@@ -36,6 +41,12 @@ export class FeedClient {
     const token=`depth:${id}:${++this.sequence}`;this.currentDepth.set(id,token);this.depthListeners.set(token,callback);this.send({type:'depth-subscribe',id:token,bandPercent});
     return ()=>{this.depthListeners.delete(token);if(this.currentDepth.get(id)===token)this.currentDepth.delete(id);this.send({type:'depth-unsubscribe',id:token});};
   }
+  subscribeHeatmap(id:string,resolution:HeatmapResolution,callback:(e:Event)=>void) {
+    const previous=this.currentHeatmap.get(id);if(previous){this.heatmapListeners.delete(previous);this.send({type:'heatmap-unsubscribe',id:previous});}
+    const token=`heatmap:${id}:${++this.sequence}`;this.currentHeatmap.set(id,token);this.heatmapListeners.set(token,{key:heatmapKey(resolution),callback});
+    this.send({type:'heatmap-subscribe',id:token,resolution});
+    return ()=>{this.heatmapListeners.delete(token);if(this.currentHeatmap.get(id)===token)this.currentHeatmap.delete(id);this.send({type:'heatmap-unsubscribe',id:token});};
+  }
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {
     if(series.venue!=='binance'||marketOf(series)!=='perpetual')return ()=>{};
@@ -45,7 +56,7 @@ export class FeedClient {
     return ()=>{this.footprintListeners.delete(token);if(this.currentFootprint.get(id)===token)this.currentFootprint.delete(id);this.send({type:'footprint-unsubscribe',id:token});};
   }
   retryFootprint(){this.send({type:'footprint-retry'});}
-  dispose(){this.worker.onmessage=null;this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.worker.terminate();}
+  dispose(){this.worker.onmessage=null;this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

@@ -1,0 +1,11 @@
+IQTerminal axis-bound grid
+
+Time-axis tick selection in src/chart/axis-grid.ts is adapted from the installed
+OpenAlgo Charts 2.6.0 src/render/axis.ts implementation.
+Copyright 2026 OpenAlgo. Apache License, Version 2.0.
+Full licence and upstream NOTICE: /licenses/openalgo-charts/.
+
+Modifications by IQTerminal: UTC-only tick geometry exposed through a repo-owned
+public background primitive; price ticks use the public PriceScale API. Native
+fixed-pixel grid is disabled. Added per-panel visibility and scheduled disposal.
+No dependency files are modified.

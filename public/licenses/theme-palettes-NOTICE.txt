@@ -1,0 +1,10 @@
+IQTerminal theme palette attribution
+
+Ivory palette values adapted from OpenAlgo Charts' market-profile demo themes.js:
+https://marketcalls.github.io/openalgo-charts/demos/market-profile/themes.js
+Copyright 2026 OpenAlgo. Licensed under the Apache License, Version 2.0.
+The full licence and upstream NOTICE are available under /licenses/openalgo-charts/.
+
+Modifications by IQTerminal: mapped Ivory palette roles to compact terminal
+chrome and added theme preference selection, persistence and first-paint handling.
+No demo shell, logos or market-profile implementation is included.

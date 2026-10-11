@@ -1,3 +1,4 @@
+import type { HeatmapResolution, HeatmapStatus, LiquidityBucket } from './heatmap-model';
 export const intervals = ['1m', '5m', '15m', '1h', '4h'] as const;
 export type Interval = typeof intervals[number];
 export type Venue = 'binance' | 'hyperliquid';
@@ -84,6 +85,7 @@ export function footprintTicksForPrice(rowPrice: number, tickSize: number): numb
 export const footprintKeyOf = (series: Series, rowPrice: number) =>
   `${connectionKey(series)}:${instrumentOf(series).native}:footprint:${series.interval}:p${canonicalFootprintRowPrice(rowPrice)}`;
 export interface FootprintCell {
+  /** Inclusive lower bound; the upper bound is price + bar.rowSize (exclusive). */
   price: number; bidVol: number; askVol: number;
   /** Exact observed sum of execution price * base quantity, not bucket price * volume. */
   bidNotional?: number; askNotional?: number;
@@ -127,8 +129,8 @@ export interface FootprintStatus extends Status {
   retentionStart: number | null;
   coverage: 'waiting' | 'partial' | 'continuous' | 'gapped' | 'capacity-limited' | 'unclassified';
 }
-export type Command = { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' } | { type: 'footprint-subscribe'; id: string; series: Series; rowPrice: number } | { type: 'footprint-unsubscribe'; id: string } | { type: 'footprint-retry' } | { type: 'footprint-ack'; key: string; generation: number; batchId: number };
-export type Event = { type: 'snapshot' | 'patch'; key: string; ids: string[]; candles: Candle[] } | { type: 'status'; key: string; ids: string[]; status: Status } | { type: 'depth-status'; ids: string[]; status: DepthStatus } | { type: 'depth-history'; ids: string[]; bandPercent: number; observations: DepthObservation[] } | { type: 'depth-sample'; ids: string[]; observation: DepthObservation } | { type: 'footprint-snapshot' | 'footprint-patch'; key: string; ids: string[]; bars: FootprintBar[]; retentionStart: number | null; generation: number; batchId: number; status: FootprintStatus } | { type: 'footprint-status'; key: string; ids: string[]; status: FootprintStatus; generation: number; batchId: number } | { type: 'diagnostics'; data: Record<string, unknown> };
+export type Command = { type: 'heatmap-subscribe'; id: string; resolution: HeatmapResolution } | { type: 'heatmap-unsubscribe'; id: string } | { type: 'heatmap-ack'; key: string; generation: number; batchId: number } | { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' } | { type: 'footprint-subscribe'; id: string; series: Series; rowPrice: number } | { type: 'footprint-unsubscribe'; id: string } | { type: 'footprint-retry' } | { type: 'footprint-ack'; key: string; generation: number; batchId: number };
+export type Event = { type: 'heatmap-batch'; ids: string[]; key: string; generation: number; batchId: number; snapshot: boolean; buckets: LiquidityBucket[]; status: HeatmapStatus } | { type: 'snapshot' | 'patch'; key: string; ids: string[]; candles: Candle[] } | { type: 'status'; key: string; ids: string[]; status: Status } | { type: 'depth-status'; ids: string[]; status: DepthStatus } | { type: 'depth-history'; ids: string[]; bandPercent: number; observations: DepthObservation[] } | { type: 'depth-sample'; ids: string[]; observation: DepthObservation } | { type: 'footprint-snapshot' | 'footprint-patch'; key: string; ids: string[]; bars: FootprintBar[]; retentionStart: number | null; generation: number; batchId: number; status: FootprintStatus } | { type: 'footprint-status'; key: string; ids: string[]; status: FootprintStatus; generation: number; batchId: number } | { type: 'diagnostics'; data: Record<string, unknown> };
 export function validSeries(s: unknown): s is Series {
   return canonicalSeries(s) !== null;
 }

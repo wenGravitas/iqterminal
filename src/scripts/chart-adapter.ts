@@ -131,7 +131,7 @@ export function isolatedLineMarkers(
         price: value,
         shape: 'circle',
         size: 'small',
-        color: typeof plot.style?.color === 'string' ? plot.style.color : '#c7c7c7',
+        color: typeof plot.style?.color === 'string' ? plot.style.color : '#737373',
         plot: plot.key,
       });
       if (markers.length >= MAX_ISOLATED_LINE_MARKERS) return markers.reverse();

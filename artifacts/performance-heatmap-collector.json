@@ -1,0 +1,107 @@
+{
+  "scope": "Synthetic CPU collector stress on pre-populated maximum retained session; excludes IPC/drawing and total browser process memory",
+  "machine": {
+    "platform": "linux",
+    "arch": "arm64",
+    "node": "v22.19.0"
+  },
+  "results": [
+    {
+      "configurations": 1,
+      "updates": 2000,
+      "levels": 2000,
+      "cadenceMs": 100,
+      "publicationMs": 500,
+      "cpuMs": 432.324204,
+      "updateP50Ms": 0.19464700000003177,
+      "updateP95Ms": 0.2567020000000184,
+      "updateMaxMs": 3.1597789999999577,
+      "snapshots": 799,
+      "groups": [
+        {
+          "buckets": 240,
+          "cells": 5040,
+          "bytes": 616320,
+          "evictions": 660,
+          "dirty": 0
+        }
+      ],
+      "postGcHeapDelta": 1011800,
+      "arrayBufferDelta": -104840
+    },
+    {
+      "configurations": 2,
+      "updates": 2000,
+      "levels": 2000,
+      "cadenceMs": 100,
+      "publicationMs": 500,
+      "cpuMs": 913.9387260000001,
+      "updateP50Ms": 0.41103500000008353,
+      "updateP95Ms": 0.6416629999998804,
+      "updateMaxMs": 4.123644000000013,
+      "snapshots": 1598,
+      "groups": [
+        {
+          "buckets": 240,
+          "cells": 5040,
+          "bytes": 616320,
+          "evictions": 660,
+          "dirty": 0
+        },
+        {
+          "buckets": 240,
+          "cells": 9840,
+          "bytes": 1115520,
+          "evictions": 660,
+          "dirty": 0
+        }
+      ],
+      "postGcHeapDelta": 1112032,
+      "arrayBufferDelta": 2181448
+    },
+    {
+      "configurations": 4,
+      "updates": 2000,
+      "levels": 2000,
+      "cadenceMs": 100,
+      "publicationMs": 500,
+      "cpuMs": 1768.8210809999996,
+      "updateP50Ms": 0.8205520000001343,
+      "updateP95Ms": 1.151585999999952,
+      "updateMaxMs": 3.1917610000000423,
+      "snapshots": 3196,
+      "groups": [
+        {
+          "buckets": 240,
+          "cells": 5040,
+          "bytes": 616320,
+          "evictions": 660,
+          "dirty": 0
+        },
+        {
+          "buckets": 240,
+          "cells": 9840,
+          "bytes": 1115520,
+          "evictions": 660,
+          "dirty": 0
+        },
+        {
+          "buckets": 128,
+          "cells": 16384,
+          "bytes": 1748992,
+          "evictions": 772,
+          "dirty": 0
+        },
+        {
+          "buckets": 128,
+          "cells": 16384,
+          "bytes": 1744896,
+          "evictions": 772,
+          "dirty": 0
+        }
+      ],
+      "postGcHeapDelta": 1267480,
+      "arrayBufferDelta": 3760984
+    }
+  ]
+}

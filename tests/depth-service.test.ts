@@ -101,6 +101,22 @@ describe('shared Binance depth service', () => {
     expect(x.events.filter(event => event.type === 'depth-sample').length).toBeGreaterThan(priorSamples);
   });
 
+  it('bounds every snapshot retry, including a hung request after an unbridged snapshot', async () => {
+    let calls = 0, retrySignal: AbortSignal | undefined;
+    const x = setup(signal => {
+      if (++calls === 1) return Promise.resolve(snapshot);
+      retrySignal = signal;
+      return new Promise((_, reject) => signal.addEventListener('abort', () => reject(new Error('Snapshot timeout')), { once: true }));
+    });
+    service.subscribe('script-a', .05); x.sockets[0].open();
+    // No bridging diff yet: first snapshot schedules another snapshot attempt.
+    await x.advance(250); expect(calls).toBe(2);
+    await x.advance(12000); expect(retrySignal?.aborted).toBe(true);
+    expect(x.sockets[0].readyState).toBe(3);
+    expect(service.diagnostics().state).toBe('syncing');
+    await x.advance(500); expect(x.sockets).toHaveLength(2);
+  });
+
   it('ignores stale snapshot completion after the final subscriber leaves', async () => {
     let resolve!: (value: DepthSnapshot) => void;
     const x = setup(() => new Promise<DepthSnapshot>(r => { resolve = r; }));

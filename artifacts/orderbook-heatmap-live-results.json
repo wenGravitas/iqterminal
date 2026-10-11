@@ -1,0 +1,879 @@
+{
+  "scope": "Ordinary-build actual Binance snapshot/diff; no fixtures; host receipt time weighted replay with documented 2.5% temporal tolerance",
+  "depthSocketCount": 1,
+  "snapshotLevels": {
+    "bids": 1000,
+    "asks": 1000
+  },
+  "realDiffs": 130,
+  "collectionStart": 1791706177941,
+  "comparisons": [
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82880,
+      "side": "bid",
+      "actual": 33.398999999999994,
+      "expected": 33.398999999999994,
+      "tolerance": 0.8449749999999999
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82880,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82890,
+      "side": "bid",
+      "actual": 23.998,
+      "expected": 23.998,
+      "tolerance": 0.6099500000000001
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82890,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82900,
+      "side": "bid",
+      "actual": 65.73600000000002,
+      "expected": 65.73600000000002,
+      "tolerance": 1.6534000000000006
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82900,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82910,
+      "side": "bid",
+      "actual": 57.965019999999996,
+      "expected": 57.965019999999996,
+      "tolerance": 1.4591255
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82910,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82920,
+      "side": "bid",
+      "actual": 40.74676,
+      "expected": 40.74676,
+      "tolerance": 1.028669
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82920,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82930,
+      "side": "bid",
+      "actual": 35.88548000000002,
+      "expected": 35.88548000000002,
+      "tolerance": 0.9071370000000006
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82930,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82940,
+      "side": "bid",
+      "actual": 30.428,
+      "expected": 30.428,
+      "tolerance": 0.7707
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82940,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82950,
+      "side": "bid",
+      "actual": 36.624,
+      "expected": 36.624,
+      "tolerance": 0.9256000000000001
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82950,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82960,
+      "side": "bid",
+      "actual": 38.130922,
+      "expected": 38.130922,
+      "tolerance": 0.96327305
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82960,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82970,
+      "side": "bid",
+      "actual": 35.74666200000001,
+      "expected": 35.74666200000001,
+      "tolerance": 0.9036665500000003
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82970,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82980,
+      "side": "bid",
+      "actual": 15.861191999999996,
+      "expected": 15.861191999999996,
+      "tolerance": 0.40652979999999994
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82980,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82990,
+      "side": "bid",
+      "actual": 13.925999999999995,
+      "expected": 13.925999999999995,
+      "tolerance": 0.3581499999999999
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 82990,
+      "side": "ask",
+      "actual": 7.634532,
+      "expected": 7.634532,
+      "tolerance": 0.20086330000000002
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83000,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83000,
+      "side": "ask",
+      "actual": 25.280296,
+      "expected": 25.280296,
+      "tolerance": 0.6420074
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83010,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83010,
+      "side": "ask",
+      "actual": 29.78672400000001,
+      "expected": 29.78672400000001,
+      "tolerance": 0.7546681000000003
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83020,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83020,
+      "side": "ask",
+      "actual": 43.672416000000005,
+      "expected": 43.672416000000005,
+      "tolerance": 1.1018104000000002
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83030,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83030,
+      "side": "ask",
+      "actual": 34.68294400000002,
+      "expected": 34.68294400000002,
+      "tolerance": 0.8770736000000006
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83040,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83040,
+      "side": "ask",
+      "actual": 46.32441600000001,
+      "expected": 46.32441600000001,
+      "tolerance": 1.1681104000000002
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83050,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83050,
+      "side": "ask",
+      "actual": 21.541999999999987,
+      "expected": 21.541999999999987,
+      "tolerance": 0.5485499999999998
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83060,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83060,
+      "side": "ask",
+      "actual": 30.754138,
+      "expected": 30.754138,
+      "tolerance": 0.7788534500000001
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83070,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83070,
+      "side": "ask",
+      "actual": 85.69904000000002,
+      "expected": 85.69904000000002,
+      "tolerance": 2.1524760000000005
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83080,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83080,
+      "side": "ask",
+      "actual": 37.741580000000006,
+      "expected": 37.741580000000006,
+      "tolerance": 0.9535395000000002
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83090,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83090,
+      "side": "ask",
+      "actual": 43.38100000000001,
+      "expected": 43.38100000000001,
+      "tolerance": 1.0945250000000002
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83100,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83100,
+      "side": "ask",
+      "actual": 36.33064800000001,
+      "expected": 36.33064800000001,
+      "tolerance": 0.9182662000000004
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83110,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706180500,
+      "end": 1791706181000,
+      "price": 83110,
+      "side": "ask",
+      "actual": 35.364,
+      "expected": 35.364,
+      "tolerance": 0.8941
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82880,
+      "side": "bid",
+      "actual": 33.31691044776118,
+      "expected": 33.315417910447756,
+      "tolerance": 0.8429227611940295
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82880,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82890,
+      "side": "bid",
+      "actual": 23.998,
+      "expected": 23.998,
+      "tolerance": 0.6099500000000001
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82890,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82900,
+      "side": "bid",
+      "actual": 65.736,
+      "expected": 65.736,
+      "tolerance": 1.6534000000000002
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82900,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82910,
+      "side": "bid",
+      "actual": 61.418000000000006,
+      "expected": 61.418000000000006,
+      "tolerance": 1.5454500000000002
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82910,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82920,
+      "side": "bid",
+      "actual": 40.75801492537314,
+      "expected": 40.76159701492537,
+      "tolerance": 1.0290399253731344
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82920,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82930,
+      "side": "bid",
+      "actual": 35.88300000000002,
+      "expected": 35.88300000000002,
+      "tolerance": 0.9070750000000005
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82930,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82940,
+      "side": "bid",
+      "actual": 30.427999999999997,
+      "expected": 30.428,
+      "tolerance": 0.7707
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82940,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82950,
+      "side": "bid",
+      "actual": 36.624,
+      "expected": 36.624,
+      "tolerance": 0.9256000000000001
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82950,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82960,
+      "side": "bid",
+      "actual": 37.41099999999998,
+      "expected": 37.41099999999999,
+      "tolerance": 0.9452749999999998
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82960,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82970,
+      "side": "bid",
+      "actual": 35.94299999999999,
+      "expected": 35.943,
+      "tolerance": 0.908575
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82970,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82980,
+      "side": "bid",
+      "actual": 16.364522388059694,
+      "expected": 16.36489552238805,
+      "tolerance": 0.41912238805970126
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82980,
+      "side": "ask",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82990,
+      "side": "bid",
+      "actual": 13.925999999999995,
+      "expected": 13.925999999999995,
+      "tolerance": 0.3581499999999999
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 82990,
+      "side": "ask",
+      "actual": 7.641,
+      "expected": 7.641,
+      "tolerance": 0.201025
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83000,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83000,
+      "side": "ask",
+      "actual": 26.1405671641791,
+      "expected": 26.161686567164175,
+      "tolerance": 0.6640421641791044
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83010,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83010,
+      "side": "ask",
+      "actual": 29.66107462686567,
+      "expected": 29.646985074626865,
+      "tolerance": 0.7515268656716418
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83020,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83020,
+      "side": "ask",
+      "actual": 44.08900000000002,
+      "expected": 44.08900000000002,
+      "tolerance": 1.1122250000000005
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83030,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83030,
+      "side": "ask",
+      "actual": 34.68658208955226,
+      "expected": 34.68628358208957,
+      "tolerance": 0.8771645522388065
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83040,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83040,
+      "side": "ask",
+      "actual": 46.741,
+      "expected": 46.741,
+      "tolerance": 1.178525
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83050,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83050,
+      "side": "ask",
+      "actual": 21.54199999999999,
+      "expected": 21.54199999999999,
+      "tolerance": 0.5485499999999998
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83060,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83060,
+      "side": "ask",
+      "actual": 30.721000000000004,
+      "expected": 30.721000000000004,
+      "tolerance": 0.7780250000000002
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83070,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83070,
+      "side": "ask",
+      "actual": 85.75200000000002,
+      "expected": 85.75200000000001,
+      "tolerance": 2.1538000000000004
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83080,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83080,
+      "side": "ask",
+      "actual": 39.64700000000001,
+      "expected": 39.64700000000001,
+      "tolerance": 1.0011750000000004
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83090,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83090,
+      "side": "ask",
+      "actual": 43.38100000000001,
+      "expected": 43.38100000000001,
+      "tolerance": 1.0945250000000002
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83100,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83100,
+      "side": "ask",
+      "actual": 36.659000000000006,
+      "expected": 36.65900000000001,
+      "tolerance": 0.9264750000000004
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83110,
+      "side": "bid",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0.035
+    },
+    {
+      "start": 1791706181000,
+      "end": 1791706181067,
+      "price": 83110,
+      "side": "ask",
+      "actual": 35.364000000000004,
+      "expected": 35.364000000000004,
+      "tolerance": 0.8941000000000001
+    }
+  ],
+  "heatmapPersistsAcrossChartType": true,
+  "depthStudyApplied": true,
+  "errors": []
+}

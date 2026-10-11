@@ -54,8 +54,8 @@ export class FootprintActivity implements IPrimitive {
       const index = rc.dataLayer.timeToIndex(pulse.time);
       if (index === undefined) { this.pulses.delete(key); continue; }
       let x = rc.timeScale.indexToX(index) - column / 2 + candle;
-      const a = rc.priceScale.priceToY(pulse.price + pulse.rowSize / 2);
-      const b = rc.priceScale.priceToY(pulse.price - pulse.rowSize / 2);
+      const a = rc.priceScale.priceToY(pulse.price + pulse.rowSize);
+      const b = rc.priceScale.priceToY(pulse.price);
       const y = Math.min(a, b), rowHeight = Math.abs(b - a);
       let cellWidth = width;
       if (options.displayMode === 'bidask') {
@@ -66,7 +66,8 @@ export class FootprintActivity implements IPrimitive {
       if (x + cellWidth < 0 || x >= rc.plotWidth || y + rowHeight <= 0 || y >= height) continue;
       this.needsFrame = true;
       const strength = Math.pow(1 - Math.max(0, elapsed) / DURATION_MS, 2);
-      const color = pulse.side === 'bid' ? '#d98b8b' : '#8bcc91';
+      const color = rc.theme?.background === '#f6f4ee' ? pulse.side === 'bid' ? rc.theme.downColor : rc.theme.upColor
+        : pulse.side === 'bid' ? '#d98b8b' : '#8bcc91';
       ctx.fillStyle = color; ctx.globalAlpha = .13 * strength;
       ctx.fillRect(x * dpr, y * dpr, cellWidth * dpr, rowHeight * dpr);
       ctx.strokeStyle = color; ctx.globalAlpha = .85 * strength; ctx.lineWidth = dpr;

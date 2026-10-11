@@ -32,7 +32,7 @@ components:
 
 Basis is a compact, full-viewport workspace for inspecting native BTC perpetual candles. The retained reference guides the dense, neutral terminal chrome; the product keeps its original Basis identity. T0 is limited to dockable candle panels for Binance BTCUSDT USD-M and Hyperliquid BTC perpetuals.
 
-Almost-black plotting surfaces hold the focus. Charcoal dock chrome, thin dividers, and small monospace controls frame each chart. Green and red carry directional market meaning; metadata stays muted.
+Dark retains the original almost-black plotting surfaces and neutral charcoal dock chrome. Ivory uses warm paper plotting surfaces, pale controls and dark slate text. Both retain thin dividers and small monospace controls. Green and red carry directional market meaning; metadata stays muted.
 
 **Key Characteristics:**
 - Dockable candle charts in a fixed full-viewport shell.
@@ -44,6 +44,30 @@ Almost-black plotting surfaces hold the focus. Charcoal dock chrome, thin divide
 Neutral layers dominate, with no separate brand-color accent. The up and down colors carry market direction; workspace, chart, chrome, controls, dividers, text, and muted text use the neutral tokens above.
 
 **The Market Meaning Rule.** Keep green and red paired with directional market meaning; do not use them as decoration.
+
+### Light and dark themes
+
+Theme references:
+
+- Light: **Ivory** — [Ivory market-profile demo](https://marketcalls.github.io/openalgo-charts/demos/market-profile/index.html?theme=ivory).
+- Dark: **Dark** — the original terminal palette, guided by `docs/reference/terminal.png`. This supersedes the earlier OpenAlgo Dark demo choice.
+
+These palettes apply to charts, dock chrome, native controls, dialogs, readouts and the script editor while retaining compact spacing, monospace typography and square controls. Dark restores the existing terminal palette over the installed OpenAlgo 2.6.0 theme defaults. Ivory's chart overrides and chrome values are adapted from the referenced demo's `themes.js` with attribution in the Licences page.
+
+| Role | Dark | Ivory |
+|---|---|---|
+| Workspace | `#080808` | `#f6f4ee` |
+| Plot | `#090909` | `#f6f4ee` |
+| Chrome | `#111111` | `#edeae2` |
+| Control / input | `#202020` / `#0d0d0d` | `#fffefa` |
+| Hover | `#2b2b2b` | `#e2e6e2` |
+| Divider / soft border | `#292929` / `#1b1b1b` | `#b7bcb5` / `#d1d2c9` |
+| Text / muted | `#c7c7c7` / `#858585` | `#202934` / `#485667` |
+| Grid / axis text | `#1d1d1d` / `#858585` | `#e9e5dc` / `#485567` |
+| Up / down | `#58a65c` / `#ad5858` | `#167260` / `#b54436` |
+| Active control | `#92c5cc` | `#006a73` |
+
+The footer Theme selector offers System, Ivory (light), and Dark. A valid saved choice wins; otherwise System follows the device preference, with Dark as the fallback. System clears the saved override. Theme changes retain chart instances, manual viewports, collected data and author-selected study colours. Liquidity quantity labels choose black or white against the composited cell/background rather than using a fixed light label colour.
 
 ## Typography
 
@@ -63,7 +87,11 @@ Buttons, selects, tabs, dock panes, and chart surfaces all remain square.
 
 ## Components
 
-Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar actions are shorter; the native venue and timeframe selects keep the same treatment. Dockview tabs follow the custom Basis theme. Each candle panel has a compact selector toolbar, OHLC readout at the plot top, and status at the lower right; retry appears for failed or stale data.
+Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar actions are shorter; the native venue and timeframe selects keep the same treatment. Dockview tabs follow the custom Basis theme. Each panel has a compact selector toolbar and OHLC readout at the plot top. Connection status sits in a compact footer below the time axis and footprint statistics; enabled heatmap metadata occupies a separate footer row. Long text truncates with the full description on hover. Retry remains visible for failed or stale data; empty/error messages stay centred in the plot.
+
+### Order-book Heatmap
+
+The heatmap toggle and settings button use the same square, compact monospace toolbar treatment. Each candle interval owns one fixed heatmap column; forming quantities update in place. In Footprint mode the toolbar price level governs both layers, including centred row boundaries and height; one-sided liquidity fills its row. The density palette sits behind candles and footprint marks, with bids and asks kept distinct; optional auto labels use `B` and `A` with BTC quantity when a cell has room. Hover identifies the resting side and quantity, average or peak mode, UTC time span, price range, and whether coverage is incomplete. Defaults use 0.45 opacity and full intensity at 100 BTC per $10 of price. The active toggle uses the theme accent. Settings open in a native, square dialog that stays within the viewport and scrolls at smaller sizes. Heatmap values describe observed resting liquidity, not executed trades.
 
 ## Do's and Don'ts
 

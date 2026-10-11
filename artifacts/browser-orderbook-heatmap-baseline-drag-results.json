@@ -1,0 +1,193 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/browser/terminal.spec.ts",
+      "-g",
+      "native tab drag"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4178",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm preview --port 4173",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "terminal.spec.ts",
+      "file": "terminal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native tab drag groups charts and splitter drag resizes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7657,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:904:72",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                      "column": 72,
+                      "line": 904
+                    },
+                    "snippet": "  902 | test('native tab drag groups charts and splitter drag resizes',async({page})=>{\n  903 |   const tab=page.locator('.dv-tab').first(),target=page.locator('.dv-tab').last();\n> 904 |   await tab.dragTo(target);await expect(page.locator('.dv-groupview')).toHaveCount(1);\n      |                                                                        ^\n  905 |   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.dv-groupview')).toHaveCount(2);\n  906 |   const sash=page.locator('.dv-sash.dv-enabled').first();const box=await sash.boundingBox();if(!box)throw new Error('Splitter absent');const before=await page.locator('.dv-groupview').first().boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+100,box.y+box.height/2,{steps:10});await page.mouse.up();const after=await page.locator('.dv-groupview').first().boundingBox();expect(Math.abs(after!.width-before!.width)).toBeGreaterThan(20);\n  907 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                        "column": 72,
+                        "line": 904
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.dv-groupview')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.dv-groupview') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.dv-groupview')\u001b[22m\n\u001b[2m    14 × locator resolved to 2 elements\u001b[22m\n\u001b[2m       - unexpected value \"2\"\u001b[22m\n\n\n  902 | test('native tab drag groups charts and splitter drag resizes',async({page})=>{\n  903 |   const tab=page.locator('.dv-tab').first(),target=page.locator('.dv-tab').last();\n> 904 |   await tab.dragTo(target);await expect(page.locator('.dv-groupview')).toHaveCount(1);\n      |                                                                        ^\n  905 |   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.dv-groupview')).toHaveCount(2);\n  906 |   const sash=page.locator('.dv-sash.dv-enabled').first();const box=await sash.boundingBox();if(!box)throw new Error('Splitter absent');const before=await page.locator('.dv-groupview').first().boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+100,box.y+box.height/2,{steps:10});await page.mouse.up();const after=await page.locator('.dv-groupview').first().boundingBox();expect(Math.abs(after!.width-before!.width)).toBeGreaterThan(20);\n  907 | });\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:904:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T07:59:53.146Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/terminal-native-tab-drag-g-d5f43-s-and-splitter-drag-resizes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                    "column": 72,
+                    "line": 904
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-99ccaf103196337ca0c0",
+          "file": "terminal.spec.ts",
+          "line": 902,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T07:59:49.825Z",
+    "duration": 11901.085,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

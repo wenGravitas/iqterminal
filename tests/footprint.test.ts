@@ -63,6 +63,22 @@ describe('Binance USD-M aggregate trade normalization', () => {
 });
 
 describe('bounded footprint accumulator', () => {
+  it('uses fixed $25 lower bounds and assigns the exact upper edge to the next bucket', () => {
+    const book = new FootprintAccumulator('1m', 0.1, 250);
+    book.ingest(observation(1, base, 82800, 'buy'));
+    book.ingest(observation(2, base + 1, 82824.9, 'sell'));
+    book.ingest(observation(3, base + 2, 82825, 'buy'));
+    const bar = book.snapshot()[0]!;
+    expect(bar.rowSize).toBe(25);
+    expect(bar.cells).toMatchObject([
+      { price: 82825, bidVol: 0, askVol: .001 },
+      { price: 82800, bidVol: .001, askVol: .001 },
+    ]);
+    expect(bar).toMatchObject({ open: 82800, high: 82825, low: 82800, close: 82825 });
+    expect(bar.delta).toBeCloseTo(.001);
+    expect(bar.cells[1]!.bidNotional).toBeCloseTo(82824.9 * .001);
+  });
+
   it('aggregates classified observations on an integer tick grid and revises bars', () => {
     const book = new FootprintAccumulator('1m', 0.1, 1);
     expect(book.ingest(observation(1, base + 1_000, 83_000.1, 'sell'))).toBe('applied');

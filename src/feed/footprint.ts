@@ -164,7 +164,8 @@ export class FootprintAccumulator {
     const tolerance = Math.max(1, Math.abs(trade.price)) * Number.EPSILON * 4;
     if (!Number.isSafeInteger(tickIndex) || Math.abs(exactTickPrice - trade.price) > tolerance) return 'invalid-grid';
 
-    const row = Math.round(tickIndex / this.rowTicks);
+    // Fixed lower-bound buckets: [N * rowSize, (N + 1) * rowSize).
+    const row = Math.floor(tickIndex / this.rowTicks);
     if (!Number.isSafeInteger(row)) return 'invalid-grid';
     const barTime = Math.floor(trade.timeMs / duration[this.interval]) * duration[this.interval] / 1000;
     if (this.current && barTime < this.current.time) return 'late';

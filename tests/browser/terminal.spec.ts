@@ -34,6 +34,11 @@ test('chart type picker exposes live Footprint only for Binance USD-M',async({pa
   expect(await toolbar.evaluate(element=>element.scrollWidth-element.clientWidth)).toBeGreaterThan(2);
   await cue.click();
   await expect.poll(()=>toolbar.evaluate(element=>element.scrollLeft)).toBeGreaterThan(0);
+  // More layer controls can require another scroll step; both toolbar ends remain reachable.
+  for(let step=0;step<3 && await page.getByRole('button',{name:'Scroll chart controls right'}).first().isVisible();step++){
+    await page.getByRole('button',{name:'Scroll chart controls right'}).first().click();
+    await page.waitForTimeout(350);
+  }
   await expect(page.getByRole('button',{name:'Scroll chart controls left'}).first()).toBeVisible();
 });
 
@@ -85,7 +90,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     pocStyle:'outline',pocColor:'#858585',buyColor:'#58a65c',buyTextColor:'#58a65c',sellColor:'#ad5858',sellTextColor:'#ad5858',radius:0});
   const now=Date.now();
   const barTime=Math.floor(now/60_000)*60;
-  const makeBar=(revision:number,close:number,coverage:'partial'|'gapped'='partial',time=barTime)=>({time,revision,cells:[{price:84_000.1,bidVol:0.05,askVol:0.02}],delta:-0.03,minDelta:-0.05,maxDelta:0,rowSize:1,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage,gapBefore:coverage==='gapped',open:84_000,high:84_000.2,low:83_999.9,close,aggregateRecordCount:2});
+  const makeBar=(revision:number,close:number,coverage:'partial'|'gapped'='partial',time=barTime)=>({time,revision,cells:[{price:84_000,bidVol:0.05,askVol:0.02}],delta:-0.03,minDelta:-0.05,maxDelta:0,rowSize:1,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage,gapBefore:coverage==='gapped',open:84_000,high:84_000.2,low:83_999.9,close,aggregateRecordCount:2});
   const callback=await page.evaluate(()=>{
     const terminal=(window as any).__terminal;
     return terminal.footprintSubscriptions[0];
@@ -120,7 +125,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     const target=(window as any).__terminal.panels.get(id);
     const chart=target.engine.chart;
     const x=chart.timeToCoordinate(barTime);
-    const y=chart.priceToCoordinate(84_000.1,0);
+    const y=chart.priceToCoordinate(84_000.5,0);
     if(x===null||y===null) throw new Error(`Expected visible footprint cell coordinates, got ${x}, ${y}`);
     const stage=(element as HTMLElement).querySelector<HTMLElement>('.chart-stage')!;
     const rect=stage.getBoundingClientRect();
@@ -130,11 +135,11 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   await expect.poll(()=>panel.evaluate(element=>{
     const id=(element as HTMLElement).dataset.panelId!;
     return (window as any).__terminal.panels.get(id)?.hoveredFootprint?.cell?.price ?? null;
-  })).toBe(84_000.1);
+  })).toBe(84_000);
   const initialHover=await panel.locator('.ohlc').evaluate(element=>({text:element.textContent,mode:(element as HTMLElement).dataset.mode,lines:element.textContent?.split('\n').length}));
   expect(initialHover.mode).toBe('footprint');
   expect(initialHover.lines).toBe(4);
-  expect(initialHover.text?.split('\n')[0]).toBe('84,000.1 USDT · bid 0.050 / ask 0.020 BTC');
+  expect(initialHover.text?.split('\n')[0]).toBe('84,000–84,001 USDT (upper exclusive) · bid 0.050 / ask 0.020 BTC');
   const initialReadoutGeometry=await panel.locator('.ohlc').evaluate(element=>({height:element.clientHeight,scrollTop:element.scrollTop}));
   expect(initialReadoutGeometry.height).toBeGreaterThan(24);
   expect(initialReadoutGeometry.scrollTop).toBe(0);
@@ -789,15 +794,15 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     const panel=[...(window as any).__terminal.panels.values()][0];
     const chart=panel.engine.chart,stage=panel.element.querySelector('.chart-stage') as HTMLElement;
     const rect=stage.getBoundingClientRect();
-    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(price,0);
+    const rowSize=panel.footprintBars.find((bar:any)=>bar.time===time)?.rowSize??1;
+    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(price+rowSize/2,0);
     const indexBar=panel.engine.footprintIndexSeries?.getData().at(-1);
     const hover=typeof x==='number'&&typeof y==='number'?panel.engine.footprintAt(x,y):null;
     const canvases=[...stage.querySelectorAll('canvas')] as HTMLCanvasElement[];
     const covering=typeof x==='number'&&typeof y==='number'?canvases.filter(canvas=>{
       const r=canvas.getBoundingClientRect();return rect.left+x>=r.left&&rect.left+x<r.right&&rect.top+y>=r.top&&rect.top+y<r.bottom&&r.width>100&&r.height>100;
     }).length:0;
-    const rowSize=indexBar?.rowSize??1;
-    const rowA=chart.priceToCoordinate(price+rowSize/2,0),rowB=chart.priceToCoordinate(price-rowSize/2,0);
+    const rowA=chart.priceToCoordinate(price+rowSize,0),rowB=chart.priceToCoordinate(price,0);
     const rowTop=rect.top+Math.min(rowA??y,rowB??y),rowBottom=rect.top+Math.max(rowA??y,rowB??y);
     const labels=(window as any).__footprintFillText.map((label:any)=>{
       const canvas=label.canvas as HTMLCanvasElement,cr=canvas.getBoundingClientRect();
@@ -877,13 +882,13 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     return {x:rect.left+x,y:rect.top+y};
   },fixture.time);
   await page.mouse.move(center.x,center.y);
-  await expect(panel.locator('.ohlc')).toContainText('83,000 USDT · bid 0.143 / ask 0.147 BTC');
+  await expect(panel.locator('.ohlc')).toContainText('83,000–83,001 USDT (upper exclusive) · bid 0.143 / ask 0.147 BTC');
   await panel.evaluate((element,{time,bar})=>{
     const id=(element as HTMLElement).dataset.panelId!;
     const updated={...bar,revision:bar.revision+1,cells:[{price:83000,bidVol:0.243,askVol:0.347}],delta:0.104,minDelta:-0.243,maxDelta:0.104};
     (window as any).__terminal.syntheticFootprintCallback({type:'footprint-patch',key:'synthetic',ids:[id],bars:[updated],retentionStart:time});
   },{time:fixture.time,bar:fixture.bar});
-  await expect(panel.locator('.ohlc')).toContainText('83,000 USDT · bid 0.243 / ask 0.347 BTC');
+  await expect(panel.locator('.ohlc')).toContainText('83,000–83,001 USDT (upper exclusive) · bid 0.243 / ask 0.347 BTC');
   await expect(panel.locator('.ohlc')).toContainText('V 0.590 · Bid 0.243 · Ask 0.347 · Δ 0.104 BTC');
 });
 
@@ -1170,7 +1175,7 @@ test('a single $25 footprint row opens at text height and respects manual price 
   });
   const rowHeight=()=>page.evaluate(()=>{
     const chart=[...(window as any).__terminal.panels.values()][0].engine.chart;
-    return Math.abs(chart.priceToCoordinate(82987.5,0)-chart.priceToCoordinate(82962.5,0));
+    return Math.abs(chart.priceToCoordinate(83000,0)-chart.priceToCoordinate(82975,0));
   });
   await expect.poll(rowHeight).toBeGreaterThan(10);
   await expect.poll(rowHeight).toBeLessThanOrEqual(17);
@@ -1340,7 +1345,7 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
   const cellPoint=await page.evaluate(()=>{
     const target=[...(window as any).__terminal.panels.values()][0],chart=target.engine.chart,bar=target.footprintBars[0];
     const bounds=target.element.querySelector('.chart-stage').getBoundingClientRect();
-    return {x:bounds.left+chart.timeToCoordinate(bar.time)+12,y:bounds.top+chart.priceToCoordinate(83000,0)};
+    return {x:bounds.left+chart.timeToCoordinate(bar.time)+12,y:bounds.top+chart.priceToCoordinate(83000+bar.rowSize/2,0)};
   });
   await page.mouse.move(cellPoint.x,cellPoint.y);
   await expect(panel.locator('.ohlc')).toContainText('bid 83 / ask 166 USDT');

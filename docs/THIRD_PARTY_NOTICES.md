@@ -5,3 +5,7 @@ Runtime: `openalgo-charts` 2.6.0, Apache-2.0, copyright OpenAlgo 2026; full lice
 Development: TypeScript 7.0.2 (Apache-2.0), Vite 8.3.4 (MIT), Vitest 5.0.3 (MIT), Playwright/@playwright/test 1.64.0 (Apache-2.0), @types/node 26.6.4 (MIT). Their distributed notices remain in installed packages; pnpm-lock.yaml records exact transitive versions/integrity. The complete inspected tree is artifacts/dependency-tree.txt. The in-app Licences page links all three production dependencies' full licenses and upstream notices.
 
 The in-app Licences page links all three runtime dependencies' full license texts and upstream notices. The user's supplied screenshot is a visual reference, retained under docs/reference. Its original marks are not copied into the application.
+
+Ivory palette values are adapted from OpenAlgo Charts' Apache-2.0 market-profile demo `themes.js`; Dark retains the original terminal palette over the installed 2.6.0 defaults. Modified mappings and preference handling are repo-owned in `src/theme.ts`, with a modification comment and `/licenses/theme-palettes-NOTICE.txt` linked from the app. No demo shell or market-profile implementation is copied.
+
+The UTC time-axis tick selection in `src/chart/axis-grid.ts` is adapted from the installed OpenAlgo Charts 2.6.0 renderer, with changes marked in source and `/licenses/axis-grid-NOTICE.txt`. It is used through a repo-owned public primitive; no dependency files are modified.

@@ -43,6 +43,7 @@ export class BinanceDepthBook {
   private readonly bidLevels = new Map<number, number>();
   private readonly askLevels = new Map<number, number>();
   private buffered: DepthDiff[] = [];
+  private bufferedLevels = 0;
   private last = 0;
   private synced = false;
   private failed = false;
@@ -51,7 +52,7 @@ export class BinanceDepthBook {
   private receivedAt = 0;
   private epochStart = 0;
 
-  constructor(private readonly maxBufferedEvents = 20_000) {}
+  constructor(private readonly maxBufferedEvents = 512) {}
 
   get state(): 'syncing' | 'live' | 'failed' { return this.failed ? 'failed' : this.synced ? 'live' : 'syncing'; }
   get lastUpdateId() { return this.last; }
@@ -60,6 +61,13 @@ export class BinanceDepthBook {
   get snapshotAskBoundary() { return this.askBoundary; }
   get lastReceivedAt() { return this.receivedAt; }
   get bufferedCount() { return this.buffered.length; }
+
+  /** Worker-local visitor: never exposes mutable maps or copies the full book to the page. */
+  visitLevels(visitor: (side: 'bid' | 'ask', price: number, size: number) => void) {
+    if (!this.synced) return;
+    for (const [price, size] of this.bidLevels) visitor('bid', price, size);
+    for (const [price, size] of this.askLevels) visitor('ask', price, size);
+  }
 
   beginSync() {
     this.synced = false;
@@ -70,7 +78,7 @@ export class BinanceDepthBook {
     this.askBoundary = null;
     this.bidLevels.clear();
     this.askLevels.clear();
-    this.buffered = [];
+    this.buffered = []; this.bufferedLevels = 0;
   }
 
   markFailed() {
@@ -82,13 +90,14 @@ export class BinanceDepthBook {
 
   push(diff: DepthDiff, receivedAt: number): 'buffered' | 'applied' | 'gap' | 'invalid' {
     if (!validSequence(diff.U) || !validSequence(diff.u) || !validSequence(diff.pu) || diff.u < diff.U) return 'invalid';
+    if (this.synced && diff.u <= this.last) return 'invalid'; // obsolete overlap, never rewind
     this.receivedAt = receivedAt;
     if (!this.synced) {
-      if (this.buffered.length >= this.maxBufferedEvents) {
-        this.buffered = [];
+      if (this.buffered.length >= this.maxBufferedEvents || this.bufferedLevels + diff.b.length + diff.a.length > 20000) {
+        this.buffered = []; this.bufferedLevels = 0;
         return 'gap';
       }
-      this.buffered.push(diff);
+      this.buffered.push(diff); this.bufferedLevels += diff.b.length + diff.a.length;
       return 'buffered';
     }
     if (diff.pu !== this.last) {
@@ -97,10 +106,11 @@ export class BinanceDepthBook {
       this.askLevels.clear();
       this.bidBoundary = null;
       this.askBoundary = null;
-      this.buffered = [diff];
+      this.buffered = [diff]; this.bufferedLevels = diff.b.length + diff.a.length;
       return 'gap';
     }
     this.apply(diff);
+    if (this.bidLevels.size > 10000 || this.askLevels.size > 10000) { this.markFailed(); return 'gap'; }
     this.last = diff.u;
     return 'applied';
   }
@@ -121,12 +131,12 @@ export class BinanceDepthBook {
     this.epochStart = sampledAt;
 
     const pending = this.buffered;
-    this.buffered = [];
+    this.buffered = []; this.bufferedLevels = 0;
     const relevant = pending.filter(event => event.u >= snapshot.lastUpdateId);
     const firstIndex = relevant.findIndex(event => event.U <= snapshot.lastUpdateId && event.u >= snapshot.lastUpdateId);
     if (firstIndex < 0) {
       // Keep events received after this snapshot so a newer snapshot can bridge them.
-      this.buffered = pending;
+      this.buffered = pending; this.bufferedLevels = pending.reduce((n, d) => n + d.b.length + d.a.length, 0);
       this.synced = false;
       return false;
     }
@@ -139,6 +149,7 @@ export class BinanceDepthBook {
         return this.rejectBridge();
       }
       this.apply(event);
+      if (this.bidLevels.size > 10000 || this.askLevels.size > 10000) return this.rejectBridge();
       expectedPrevious = event.u;
     }
     this.last = expectedPrevious;
