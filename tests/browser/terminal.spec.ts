@@ -274,6 +274,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
 });
 
 test('tab cycling is per group, editable, pausable, and removed with its Dockview group',async({page})=>{
+  await page.emulateMedia({colorScheme:'dark'});
   const groups=await page.evaluate(()=>{
     const terminal=(window as any).__terminal;
     const dock=terminal.dock;
@@ -298,8 +299,16 @@ test('tab cycling is per group, editable, pausable, and removed with its Dockvie
   const dialog=page.getByRole('dialog',{name:'Cycle group tabs'});
   const interval=dialog.getByRole('spinbutton',{name:'Seconds per tab'});
   await expect(interval).toHaveValue('10');
+  const anchor=await firstAction.boundingBox(), menu=await dialog.boundingBox();
+  expect(menu!.x).toBeCloseTo(Math.max(6,anchor!.x),0); expect(menu!.y).toBeGreaterThan(anchor!.y);
+  expect(menu!.y-anchor!.y).toBeLessThan(36); expect(menu!.width).toBeLessThan(240);
+  await page.screenshot({path:'artifacts/tab-cycle-menu-dark-1366x768.png'});
+
+  await interval.fill('0');
+  await dialog.getByRole('button',{name:'Start tab cycling',exact:true}).click();
+  await expect(dialog.getByRole('alert')).toContainText('whole number');
   await interval.fill('1');
-  await dialog.getByRole('button',{name:'Start'}).click();
+  await dialog.getByRole('button',{name:'Start tab cycling',exact:true}).click();
   const manualTarget=groups[0].panels.find((id:string)=>id!==groups[0].active)!;
   await page.evaluate((id:string)=>(window as any).__terminal.dock.getPanel(id).api.setActive(),manualTarget);
   const current=(id:string)=>page.evaluate((groupId:string)=>{
@@ -313,21 +322,35 @@ test('tab cycling is per group, editable, pausable, and removed with its Dockvie
   expect(await current(secondId)).toBe(untouchedSecond);
 
   await firstAction.getByRole('button',{name:'Cycle tabs'}).click();
-  await expect(dialog.getByRole('button',{name:'Restart'})).toBeVisible();
-  await expect(dialog.getByRole('button',{name:'Stop'})).toBeVisible();
+  await expect(dialog.getByRole('button',{name:'Pause tab cycling',exact:true})).toBeVisible();
+  await expect(firstAction.getByRole('button',{name:'Cycle tabs'}).locator('svg[data-icon="pause"]')).toBeVisible();
+  await page.screenshot({path:'artifacts/tab-cycle-menu-running-1366x768.png'});
+  await interval.fill('2'); await interval.press('Tab');
+  await expect(firstAction.getByRole('button',{name:'Cycle tabs'})).toHaveAttribute('title',/2s per tab/);
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
   await firstAction.getByRole('button',{name:'Cycle tabs'}).click();
   const beforeStop=await current(groups[0].id);
-  await dialog.getByRole('button',{name:'Stop'}).click();
+  await dialog.getByRole('button',{name:'Pause tab cycling',exact:true}).click();
   await expect(firstAction.getByRole('button',{name:'Cycle tabs'})).toHaveAttribute('aria-pressed','false');
   await page.waitForTimeout(1100);
   expect(await current(groups[0].id)).toBe(beforeStop);
+  await page.getByRole('combobox',{name:'Theme',exact:true}).selectOption('light');
+  await page.setViewportSize({width:720,height:860});
+  await firstAction.getByRole('button',{name:'Cycle tabs'}).click();
+  await expect(dialog).toBeVisible();
+  const narrowMenu=await dialog.boundingBox();
+  expect(narrowMenu!.x).toBeGreaterThanOrEqual(0); expect(narrowMenu!.x+narrowMenu!.width).toBeLessThanOrEqual(720);
+  await page.screenshot({path:'artifacts/tab-cycle-menu-light-720x860.png'});
+  await page.locator('.chart-stage').last().click({position:{x:40,y:80}});
+  await expect(dialog).toBeHidden();
+  await page.setViewportSize({width:1366,height:768});
+
 
   await secondAction.getByRole('button',{name:'Cycle tabs'}).click();
   const secondDialog=page.getByRole('dialog',{name:'Cycle group tabs'});
   await secondDialog.getByRole('spinbutton',{name:'Seconds per tab'}).fill('1');
-  await secondDialog.getByRole('button',{name:'Start'}).click();
+  await secondDialog.getByRole('button',{name:'Start tab cycling',exact:true}).click();
   const firstAfterStop=await current(groups[0].id);
   await page.evaluate(groupId=>{
     const dock=(window as any).__terminal.dock;

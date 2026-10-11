@@ -10,8 +10,11 @@ async function expectCandleColumns(page: Page) {
       const key = `${b.columnStart}:${b.low}:${b.high}`;
       const duplicate = seen.has(key); seen.add(key);
       const index = engine.chart.dataLayer.timeToIndex(b.columnStart / 1000);
-      return { duplicate, leftError: b.x - engine.chart.timeScale.indexToX(index - .5),
-        rightError: b.right - engine.chart.timeScale.indexToX(index + .5) };
+      const centre = engine.chart.timeScale.indexToX(index), spacing = engine.chart.timeScale.barSpacing;
+      const opts = engine.footprintOptions, column = Math.max(.1, Math.min(opts.cellWidth ?? spacing * opts.widthFactor, spacing * .96));
+      const candle = opts.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
+      return { duplicate, leftError: b.x - (engine.mode === 'footprint' ? centre-column/2+candle : engine.chart.timeScale.indexToX(index - .5)),
+        rightError: b.right - (engine.mode === 'footprint' ? centre+column/2 : engine.chart.timeScale.indexToX(index + .5)) };
     });
   });
   expect(columns.length).toBeGreaterThan(0);
@@ -87,8 +90,10 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   expect(await worker.evaluate(() => (self as any).__heatmapFixture.sockets)).toBe(1);
   const hover = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
-    const bin = p.engine.heatmap.bins.find((b: any) => b.bid > 0);
-    return bin ? { x: (bin.x + bin.right) / 2, y: (bin.y + bin.bottom) / 2 } : null;
+    const plot = p.engine.chart.plotRect(0);
+    const bin = p.engine.heatmap.bins.find((b: any) => b.bid > 0 && b.x < plot.width && b.right > 0 && b.y < plot.height && b.bottom > 0);
+    return bin ? { x: (Math.max(0, bin.x) + Math.min(plot.width, bin.right)) / 2,
+      y: (Math.max(0, bin.y) + Math.min(plot.height, bin.bottom)) / 2 } : null;
   });
   expect(hover).not.toBeNull(); const bounds = await panel.locator('.chart-stage').boundingBox();
   await page.mouse.move(bounds!.x + hover!.x, bounds!.y + hover!.y);
@@ -153,7 +158,12 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   })).toBe(60);
   const revised = await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.heatmap.bins.map((b: any) => ({ x: b.x, right: b.right })));
   expect(revised).toEqual(revision.map(({ x, right }: { x: number; right: number }) => ({ x, right })));
-  await page.screenshot({ path: 'artifacts/orderbook-heatmap-cells-1366x768.png' });
+  await page.screenshot({ path: 'artifacts/heatmap-quantity-labels-1366x768.png' });
+  const beforeResize = await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.draws);
+  await page.setViewportSize({ width: 720, height: 860 });
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.draws)).toBeGreaterThan(beforeResize);
+  await page.screenshot({ path: 'artifacts/heatmap-quantity-labels-720x860.png' });
+  await page.setViewportSize({ width: 1366, height: 768 });
   const plot = await panel.locator('.chart-stage').boundingBox();
   const priceRange = () => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.panes()[0].priceScale.priceRange());
   const beforeWheel = await priceRange();

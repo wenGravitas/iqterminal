@@ -98,6 +98,24 @@ describe('resting liquidity tiles', () => {
   });
 });
 describe('heatmap chart boundary', () => {
+  it('fits quantity-only labels and aligns footprint ladder bounds including its candle gutter', () => {
+    const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1); c.transition(state(), 0, 1); c.advance(500);
+    const p = new OrderBookHeatmap(60000); p.update(c.snapshot(), true, 0);
+    p.setFootprintLayout({ widthFactor: .96, showCandle: true });
+    const labels: { text: string; font: string }[] = [];
+    const context = { font: '', save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, fillRect() {},
+      fillText(text: string) { labels.push({ text, font: this.font }); }, moveTo() {}, lineTo() {}, stroke() {} };
+    const rc = { dpr: 1, plotWidth: 600, plotHeight: 300,
+      timeScale: { barSpacing: 100, visibleRange: () => ({ from: 0, to: 2 }), indexToX: (i: number) => (i+.5)*100 },
+      priceScale: { priceRange: () => ({ min: 80, max: 120 }), priceToY: (v: number) => 600-v*5 },
+      dataLayer: { timeToIndex: () => 0, indexToTime: () => 0 } };
+    p.draw(context as any, rc as any);
+    expect(labels.length).toBeGreaterThan(0);
+    for (const label of labels) { expect(label.text).toMatch(/^\d+\.\d{2}$/); expect(parseFloat(label.font)).toBeGreaterThan(10); }
+    expect(p.hoverAt(10, 95)).toBeNull(); expect(p.hoverAt(11, 95)?.side).toBe('bid');
+    expect(p.hoverAt(97, 95)?.side).toBe('bid'); expect(p.hoverAt(98, 95)).toBeNull();
+    p.setFootprintLayout(); p.draw(context as any, rc as any); expect(p.hoverAt(1, 95)?.side).toBe('bid');
+  });
   it('maps every observation in a candle to its fixed logical centre', () => {
     const index = (s: number) => new Map([[0, 0], [60, 1], [180, 2]]).get(s);
     expect(timestampToLogical(30000, 60000, index)).toBe(0);

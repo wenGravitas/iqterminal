@@ -188,6 +188,7 @@ export class OpenAlgoCandleChart {
     if (!options.enabled) { if (this.heatmap) this.chart.removePrimitive(this.heatmap); this.heatmap = null; return; }
     if (!this.heatmap) { this.heatmap = new OrderBookHeatmap(intervalMs); this.chart.addPrimitive(this.heatmap, 0); }
     this.heatmap.setInterval(intervalMs); this.heatmap.setOptions(options);
+    this.heatmap.setFootprintLayout(this.mode === 'footprint' ? this.footprintOptions : undefined);
   }
   updateHeatmap(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) { this.heatmap?.update(buckets, snapshot, retentionStart); }
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
@@ -236,6 +237,7 @@ export class OpenAlgoCandleChart {
     if (this.disposed || this.mode === mode) return;
     this.pendingView = preserveView ? this.captureView() : null;
     this.mode = mode;
+    this.heatmap?.setFootprintLayout(mode === 'footprint' ? this.footprintOptions : undefined);
     this.series.applyOptions({
       visible: mode === 'candle',
       priceLineVisible: mode === 'candle',
@@ -443,6 +445,7 @@ export class OpenAlgoCandleChart {
 
   setFootprintOptions(options: Partial<FootprintOptions>) {
     this.footprintOptions = { ...this.footprintOptions, ...options };
+    if (this.mode === 'footprint') this.heatmap?.setFootprintLayout(this.footprintOptions);
     const threshold = this.footprintOptions.imbalanceThreshold;
     this.footprint?.setOptions({ ...options, imbalanceThreshold: this.footprintUnits === 'usdt' && threshold < Number.MAX_VALUE
       ? Math.min(Number.MAX_VALUE, threshold * (this.latestBar?.close ?? 1)) : threshold });

@@ -1,4 +1,5 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
+import type { FootprintOptions } from 'openalgo-charts/profile';
 import { DEFAULT_HEATMAP, HEATMAP_LIMITS, HEATMAP_STRIDE, type HeatmapSettings, type LiquidityBucket } from '../feed/heatmap-model';
 
 /** Map observations to their candle centre. Missing host intervals have no display slot. */
@@ -96,6 +97,7 @@ export function intensityIndex(quantity: number, priceWidth: number, fixedScale:
   return Math.round(255 * Math.min(1, Math.log1p(quantity * 10 / priceWidth / fixedScale) / Math.log(2)));
 }
 export class OrderBookHeatmap implements IPrimitive {
+  private footprintLayout?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>;
   private host?: PrimitiveHost; private buckets: LiquidityBucket[] = []; private options: HeatmapSettings = { ...DEFAULT_HEATMAP };
   private version = 0; private cacheKey = ''; private bins: HeatmapBin[] = [];
   private durations: number[] = [];
@@ -109,6 +111,9 @@ export class OrderBookHeatmap implements IPrimitive {
   detached() { this.host = undefined; this.buckets = []; this.bins = []; this.stats.bytes = 0; this.priceCache.clear(); }
   setInterval(intervalMs: number) { if (this.intervalMs !== intervalMs) { this.intervalMs = intervalMs; this.cacheKey = ''; this.host?.requestUpdate(); } }
   setOptions(options: HeatmapSettings) { this.options = { ...options }; this.version++; this.host?.requestUpdate(); }
+  setFootprintLayout(options?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>) {
+    this.footprintLayout = options ? { ...options } : undefined; this.version++; this.host?.requestUpdate();
+  }
   update(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) {
     const map = new Map(snapshot ? [] : this.buckets.map(b => [b.id, b]));
     for (const b of buckets) {
@@ -133,11 +138,21 @@ export class OrderBookHeatmap implements IPrimitive {
         const rows = groupPriceRows(b, factor); this.priceCache.set(b.id, { revision: b.revision, factor, rows }); this.stats.priceCacheBuilds++;
         return rows;
       });
+      if (this.footprintLayout) {
+        // Public 2.6.0 Footprint geometry: reserve the slim candle before the ladder.
+        const o = this.footprintLayout, spacing = rc.timeScale.barSpacing;
+        const column = Math.max(.1, Math.min(o.cellWidth ?? spacing * o.widthFactor, spacing * .96));
+        const candle = o.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
+        for (const bin of this.bins) {
+          const centre = (bin.x + bin.right) / 2;
+          bin.x = centre - column / 2 + candle; bin.right = bin.x + Math.max(.1, column - candle);
+        }
+      }
       this.cacheKey = key; this.stats.rebuilds++;
     }
     this.stats.draws++; this.stats.labels = 0; this.stats.bins = this.bins.length;
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth * dpr, rc.plotHeight * dpr); ctx.clip();
-    ctx.font = `${10 * dpr}px ui-monospace, monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (const b of this.bins) {
       const sides = this.visibleSides(b);
       const w = b.right - b.x, h = b.bottom - b.y;
@@ -153,9 +168,14 @@ export class OrderBookHeatmap implements IPrimitive {
           ctx.strokeStyle = '#858585'; ctx.globalAlpha = .3; ctx.lineWidth = dpr;
           ctx.beginPath(); ctx.moveTo(b.x * dpr, (y + height) * dpr); ctx.lineTo(Math.min(b.right, b.x + height) * dpr, y * dpr); ctx.stroke();
         }
-        if (o.labels === 'auto' && w >= 58 && height >= 14) {
+        const text = quantity.toFixed(2), labelLeft = Math.max(0, b.x), labelRight = Math.min(rc.plotWidth, b.right);
+        const labelTop = Math.max(0, y), labelBottom = Math.min(rc.plotHeight, y + height);
+        const labelWidth = labelRight - labelLeft, labelHeight = labelBottom - labelTop;
+        const font = Math.min(24, labelHeight * .8, (labelWidth - 8) / (text.length * .62));
+        if (o.labels === 'auto' && font >= 9 && labelHeight >= 14) {
           ctx.globalAlpha = 1; ctx.fillStyle = liquidityTextColor(intensity, o.opacity * (b.incomplete ? .55 : 1), rc.theme?.background ?? '#090909');
-          ctx.fillText(`${side === 'bid' ? 'B' : 'A'} ${quantity.toFixed(2)}`, (b.x + w / 2) * dpr, (y + height / 2) * dpr, (w - 4) * dpr); this.stats.labels++;
+          ctx.font = `${font * dpr}px ui-monospace, monospace`;
+          ctx.fillText(text, (labelLeft + labelWidth / 2) * dpr, (labelTop + labelHeight / 2) * dpr, (labelWidth - 8) * dpr); this.stats.labels++;
         }
       }
     }

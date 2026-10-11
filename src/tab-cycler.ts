@@ -123,8 +123,6 @@ export class TabCycleHeaderAction {
   private readonly seconds = document.createElement('input');
   private readonly error = document.createElement('p');
   private readonly startButton = document.createElement('button');
-  private readonly restartButton = document.createElement('button');
-  private readonly stopButton = document.createElement('button');
   private readonly cycler: GroupTabCycler;
   private readonly subscriptions: { dispose(): void }[] = [];
   private readonly abort = new AbortController();
@@ -145,6 +143,8 @@ export class TabCycleHeaderAction {
     this.element.append(this.button);
 
     this.dialog.className = 'tab-cycle-dialog';
+    this.dialog.setAttribute('popover', 'auto');
+    this.dialog.setAttribute('role', 'dialog');
     this.dialog.setAttribute('aria-labelledby', `tab-cycle-title-${safeId(group.id)}`);
     const form = document.createElement('form');
     form.className = 'tab-cycle-form';
@@ -159,7 +159,9 @@ export class TabCycleHeaderAction {
     const fields = document.createElement('div');
     fields.className = 'tab-cycle-fields';
     const label = document.createElement('label');
-    label.className = 'tab-cycle-field';
+    const row = document.createElement('div');
+    row.className = 'tab-cycle-field';
+    row.append(label);
     label.htmlFor = `tab-cycle-seconds-${safeId(group.id)}`;
     label.textContent = 'Seconds per tab';
     this.seconds.type = 'number';
@@ -172,36 +174,26 @@ export class TabCycleHeaderAction {
     this.seconds.value = String(DEFAULT_TAB_DWELL_SECONDS);
     this.seconds.setAttribute('aria-describedby', `tab-cycle-help-${safeId(group.id)} tab-cycle-error-${safeId(group.id)}`);
     this.seconds.addEventListener('input', () => this.clearError(), { signal: this.abort.signal });
+    this.seconds.addEventListener('change', () => {
+      const seconds = Number(this.seconds.value);
+      if (this.cycler.running && this.cycler.start(seconds)) this.updateToggle();
+    }, { signal: this.abort.signal });
     label.append(this.seconds);
     const help = document.createElement('small');
     help.id = `tab-cycle-help-${safeId(group.id)}`;
-    help.textContent = 'The current tab stays active for the full interval before the first switch.';
+    help.textContent = 'Left to right · seconds per tab';
     this.error.className = 'tab-cycle-error';
     this.error.id = `tab-cycle-error-${safeId(group.id)}`;
     this.error.setAttribute('role', 'alert');
     this.error.hidden = true;
-    fields.append(label, help, this.error);
+    fields.append(row, help, this.error);
 
-    const footer = document.createElement('footer');
-    const cancelButton = actionButton('Cancel', 'tab-cycle-cancel');
-    cancelButton.addEventListener('click', () => this.dialog.close(), { signal: this.abort.signal });
     this.startButton.type = 'submit';
-    this.startButton.className = 'primary';
+    this.startButton.formNoValidate = true;
+    this.startButton.className = 'tab-cycle-play';
     this.startButton.dataset.action = 'start';
-    this.startButton.textContent = 'Start';
-    this.restartButton.type = 'submit';
-    this.restartButton.className = 'primary';
-    this.restartButton.dataset.action = 'restart';
-    this.restartButton.textContent = 'Restart';
-    this.stopButton.type = 'button';
-    this.stopButton.dataset.action = 'stop';
-    this.stopButton.textContent = 'Stop';
-    this.stopButton.addEventListener('click', () => {
-      this.cycler.stop();
-      this.dialog.close();
-    }, { signal: this.abort.signal });
-    footer.append(cancelButton, this.stopButton, this.restartButton, this.startButton);
-    form.append(header, fields, footer);
+    row.append(this.startButton);
+    form.append(header, fields);
     this.dialog.append(form);
     this.element.append(this.dialog);
 
@@ -209,9 +201,14 @@ export class TabCycleHeaderAction {
     this.button.addEventListener('pointerdown', event => event.stopPropagation(), { signal: this.abort.signal });
     this.button.addEventListener('click', event => {
       event.stopPropagation();
-      this.openDialog();
+      if (this.dialog.matches(':popover-open')) this.dialog.hidePopover();
+      else this.openDialog();
     }, { signal: this.abort.signal });
-    this.dialog.addEventListener('close', () => this.dialogClosed(), { signal: this.abort.signal });
+    this.dialog.addEventListener('toggle', event => {
+      if ((event as ToggleEvent).newState === 'closed') this.dialogClosed();
+    }, { signal: this.abort.signal });
+    window.addEventListener('resize', () => this.positionMenu(), { signal: this.abort.signal });
+    document.addEventListener('scroll', () => this.positionMenu(), { capture: true, signal: this.abort.signal });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) this.cycler.pause('hidden');
       else this.cycler.resume('hidden');
@@ -233,7 +230,7 @@ export class TabCycleHeaderAction {
     this.cycler.dispose();
     this.subscriptions.forEach(subscription => subscription.dispose());
     this.abort.abort();
-    if (this.dialog.open) this.dialog.close();
+    if (this.dialog.matches(':popover-open')) this.dialog.hidePopover();
     this.element.remove();
   }
 
@@ -241,35 +238,38 @@ export class TabCycleHeaderAction {
     const multipleTabs = this.group.panels.length > 1;
     if (!multipleTabs) {
       this.cycler.groupChanged();
-      if (this.dialog.open) this.dialog.close();
+      if (this.dialog.matches(':popover-open')) this.dialog.hidePopover();
     } else this.cycler.groupChanged();
     this.element.hidden = !multipleTabs;
     this.updateToggle();
   }
 
   private openDialog() {
-    if (this.disposed || this.dialog.open || this.group.panels.length <= 1) return;
+    if (this.disposed || this.dialog.matches(':popover-open') || this.group.panels.length <= 1) return;
     this.seconds.value = String(this.cycler.secondsPerTab);
     this.clearError();
     this.updateDialogActions();
     this.cycler.pause('dialog');
-    this.dialog.showModal();
+    this.dialog.showPopover();
+    this.positionMenu();
     this.button.setAttribute('aria-expanded', 'true');
     this.seconds.focus();
   }
 
   private submit(event: SubmitEvent) {
     event.preventDefault();
+    if (this.cycler.running) { this.cycler.stop(); this.dialog.hidePopover(); return; }
     const seconds = Number(this.seconds.value);
     if (!Number.isInteger(seconds) || seconds < MIN_TAB_DWELL_SECONDS || seconds > MAX_TAB_DWELL_SECONDS) {
       this.error.textContent = `Enter a whole number from ${MIN_TAB_DWELL_SECONDS} to ${MAX_TAB_DWELL_SECONDS}.`;
       this.error.hidden = false;
+      this.positionMenu();
       this.seconds.setAttribute('aria-invalid', 'true');
       this.seconds.focus();
       return;
     }
     if (!this.cycler.start(seconds)) return;
-    this.dialog.close();
+    this.dialog.hidePopover();
   }
 
   private dialogClosed() {
@@ -285,11 +285,18 @@ export class TabCycleHeaderAction {
     this.seconds.removeAttribute('aria-invalid');
   }
 
+  private positionMenu() {
+    if (!this.dialog.matches(':popover-open')) return;
+    const anchor = this.button.getBoundingClientRect(), box = this.dialog.getBoundingClientRect();
+    this.dialog.style.left = `${Math.max(6, Math.min(anchor.left, window.innerWidth - box.width - 6))}px`;
+    this.dialog.style.top = `${Math.max(6, anchor.bottom + 4 + box.height <= window.innerHeight - 6 ? anchor.bottom + 4 : anchor.top - box.height - 4)}px`;
+  }
+
   private updateDialogActions() {
     const running = this.cycler.running;
-    this.startButton.hidden = running;
-    this.restartButton.hidden = !running;
-    this.stopButton.hidden = !running;
+    this.startButton.setAttribute('aria-label', running ? 'Pause tab cycling' : 'Start tab cycling');
+    this.startButton.title = running ? 'Pause tab cycling' : 'Start tab cycling';
+    this.startButton.replaceChildren(makePlaybackIcon(running));
   }
 
   private updateToggle() {
@@ -299,6 +306,7 @@ export class TabCycleHeaderAction {
       ? `Tab cycling · ${this.cycler.secondsPerTab}s per tab · open controls`
       : 'Cycle group tabs';
     this.button.dataset.running = String(running);
+    this.button.replaceChildren(running ? makePlaybackIcon(true) : makeCycleIcon());
     this.updateDialogActions();
   }
 }
@@ -318,12 +326,15 @@ function makeCycleIcon() {
   return svg;
 }
 
-function actionButton(text: string, className: string) {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = className;
-  button.textContent = text;
-  return button;
+function makePlaybackIcon(pause: boolean) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 16 16');
+  svg.setAttribute('width', '14'); svg.setAttribute('height', '14');
+  svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
+  svg.dataset.icon = pause ? 'pause' : 'play';
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', pause ? 'M5 3v10M11 3v10' : 'M5 3l8 5-8 5z');
+  svg.append(path); return svg;
 }
 
 function safeId(value: string) { return value.replace(/[^a-zA-Z0-9_-]/g, '-'); }

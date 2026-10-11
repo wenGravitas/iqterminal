@@ -91,7 +91,7 @@ Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar a
 
 ### Order-book Heatmap
 
-The heatmap toggle and settings button use the same square, compact monospace toolbar treatment. Each candle interval owns one fixed heatmap column; forming quantities update in place. In Footprint mode the toolbar price level governs both layers, including centred row boundaries and height; one-sided liquidity fills its row. The density palette sits behind candles and footprint marks, with bids and asks kept distinct; optional auto labels use `B` and `A` with BTC quantity when a cell has room. Hover identifies the resting side and quantity, average or peak mode, UTC time span, price range, and whether coverage is incomplete. Defaults use 0.45 opacity and full intensity at 100 BTC per $10 of price. The active toggle uses the theme accent. Settings open in a native, square dialog that stays within the viewport and scrolls at smaller sizes. Heatmap values describe observed resting liquidity, not executed trades.
+The heatmap toggle and settings button use the same square, compact monospace toolbar treatment. Each candle interval owns one fixed heatmap column; forming quantities update in place. In Footprint mode the toolbar price level governs both layers, including fixed bucket boundaries and height; one-sided liquidity fills its row. The density palette sits behind candles and footprint marks, with bids and asks kept distinct; optional auto labels show quantity alone, sized to fit the cell with a 24px cap; bid/ask side and BTC units remain explicit on hover. Hover identifies the resting side and quantity, average or peak mode, UTC time span, price range, and whether coverage is incomplete. Defaults use 0.45 opacity and full intensity at 100 BTC per $10 of price. The active toggle uses the theme accent. Settings open in a native, square dialog that stays within the viewport and scrolls at smaller sizes. Heatmap values describe observed resting liquidity, not executed trades.
 
 ## Do's and Don'ts
 
@@ -103,3 +103,7 @@ The heatmap toggle and settings button use the same square, compact monospace to
 - **Don't** copy logos or watermarks from the reference image.
 - **Don't** turn flat dock panes into rounded, shadowed cards.
 - **Don't** use market colors as general interface decoration.
+
+### Tab cycling controls
+
+The tab-strip cycle icon opens a small anchored popover just below the control, with seconds per tab and one Play/Pause icon button on the same row. Running groups show a Pause icon in the tab strip. The menu uses existing square controls, theme colours and a thin border; it clamps inside the viewport and dismisses on Escape or an outside click. No modal backdrop or central pointer travel.

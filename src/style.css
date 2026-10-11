@@ -18,18 +18,19 @@ dialog.indicator-picker,dialog.indicator-settings{width:min(520px,calc(100vw - 2
 .tab-cycle-toggle{display:grid;place-items:center;width:23px;height:23px;padding:0;border-color:transparent;background:transparent;color:var(--muted)}
 .tab-cycle-toggle:hover,.tab-cycle-toggle[data-running=true]{background:var(--control);color:var(--text)}
 .tab-cycle-toggle svg{display:block;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter}
-.tab-cycle-dialog{width:min(340px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--divider);border-radius:0;background:var(--chart);color:var(--text);font:inherit;box-shadow:0 12px 48px var(--shadow)}
-.tab-cycle-form>header{padding:9px 11px;border-bottom:1px solid var(--divider);background:var(--chrome)}
-.tab-cycle-form h2{margin:0;font-size:12px;font-weight:600}
-.tab-cycle-fields{display:flex;flex-direction:column;gap:7px;padding:11px;color:var(--muted)}
-.tab-cycle-field{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--text)}
-.tab-cycle-field input{width:86px;height:25px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:4px}
+.tab-cycle-dialog{position:fixed;inset:auto;margin:0;width:min(224px,calc(100vw - 12px));max-height:calc(100vh - 12px);padding:0;border:1px solid var(--divider);border-radius:0;background:var(--chart);color:var(--text);font:inherit;box-shadow:0 6px 18px var(--shadow)}
+.tab-cycle-dialog::backdrop{background:transparent}
+.tab-cycle-form>header{padding:7px 9px;border-bottom:1px solid var(--border-soft);background:var(--chrome)}
+.tab-cycle-form h2{margin:0;font-size:11px;font-weight:600}
+.tab-cycle-fields{display:flex;flex-direction:column;gap:6px;padding:8px 9px;color:var(--muted)}
+.tab-cycle-field{display:flex;align-items:center;gap:6px;color:var(--text);font-size:10px}
+.tab-cycle-field>label{display:flex;align-items:center;gap:6px}
+.tab-cycle-field input{width:54px;min-width:0;height:25px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:3px}
 .tab-cycle-fields small{color:var(--muted);font-size:10px;line-height:1.4}
 .tab-cycle-error{margin:0;color:var(--down);font-size:10px}
-.tab-cycle-form>footer{display:flex;justify-content:flex-end;gap:5px;padding:7px 11px;border-top:1px solid var(--divider);background:var(--chrome)}
-.tab-cycle-form>footer button{height:24px}
-.tab-cycle-form>footer .primary{border-color:var(--primary-border);background:var(--primary)}
-.tab-cycle-form button[hidden]{display:none!important}
+.tab-cycle-play{display:grid;place-items:center;flex:none;width:26px;height:25px;padding:0;margin-left:auto}
+.tab-cycle-play svg{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:miter}
+.tab-cycle-play:focus-visible,.tab-cycle-toggle:focus-visible{outline:1px solid var(--focus);outline-offset:-2px}
 .chart-toolbar .chart-type-select{width:92px;min-width:92px;max-width:92px;flex:none}
 .chart-toolbar .footprint-row-control{display:flex;align-items:center;gap:4px;height:23px;color:var(--muted);font-size:10px;white-space:nowrap}
 .chart-toolbar .footprint-row-prefix{color:var(--muted);margin-left:1px}
