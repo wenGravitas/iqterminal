@@ -36,7 +36,7 @@ const save = () => {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     saveTimer = undefined;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, layout: dock.toJSON() })); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 3, layout: dock.toJSON() })); }
     catch { document.querySelector('#venue-states')!.textContent = 'Layout storage unavailable'; }
   }, 250);
 };
@@ -172,7 +172,7 @@ function dispose() {
 if (import.meta.hot) import.meta.hot.dispose(dispose);
 window.addEventListener('pagehide', event => {
   if (saveTimer) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 3, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
   }
   if (!event.persisted) dispose();
 }, { signal: abort.signal });

@@ -1,11 +1,12 @@
 /** Storage-ready session liquidity, independent of chart engine types. Times are host-observed UTC ms. */
-export const HEATMAP_STRIDE = 9;
-// row-low, bid BTC*ms, ask BTC*ms, bid peak, ask peak, bid/ask observed ms, bid/ask complete ms.
+export const HEATMAP_STRIDE = 13;
+// row-low, bid/ask BTC*ms, BTC peaks, observed ms, complete ms, bid/ask USDT*ms, USDT peaks.
+export const HEATMAP_PEAK_STRIDE = 6;
 export interface LiquidityBucket {
   id: string; start: number; end: number; epoch: number; rowSize: number;
   priceOffset?: number; // Lower-bound grid offset, zero for fixed price-multiple buckets.
   revision: number; capacityLimited: boolean; cells: Float64Array;
-  /** factor, row low, simultaneous bid peak, simultaneous ask peak for power-of-two price bins. */
+  /** factor, row low, simultaneous bid peak, simultaneous ask peak, bid/ask USDT peaks for power-of-two price bins. */
   peaks: Float64Array;
 }
 /** Footprint flag affects rendering LOD only; all collection uses fixed lower bounds. */
@@ -20,17 +21,17 @@ export interface HeatmapStatus {
 }
 export const HEATMAP_LIMITS = Object.freeze({ configurations: 4, buckets: 240, rows: 128, cells: 16384, bytes: 2 * 1024 * 1024 });
 export const DEFAULT_HEATMAP: HeatmapSettings = Object.freeze({ enabled: false, rowPrice: 10, bucketMs: 500,
-  mode: 'average', opacity: .45, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true });
+  mode: 'average', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true });
 export function heatmapSettings(value: unknown): HeatmapSettings {
   const v = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const bounded = (key: string, low: number, high: number, fallback: number) => typeof v[key] === 'number' && Number.isFinite(v[key]) && Number(v[key]) >= low && Number(v[key]) <= high ? Number(v[key]) : fallback;
   return { enabled: v.enabled === true, rowPrice: bounded('rowPrice', .000001, 10000, 10), bucketMs: v.bucketMs === 250 ? 250 : 500,
-    mode: v.mode === 'peak' ? 'peak' : 'average', opacity: bounded('opacity', .05, .8, .45), intensity: bounded('intensity', .01, 10000, 100),
+    mode: v.mode === 'peak' ? 'peak' : 'average', opacity: bounded('opacity', 0, 1, .85), intensity: bounded('intensity', .01, 10000, 100),
     minimum: bounded('minimum', 0, 10000, .01), labels: v.labels === 'off' ? 'off' : 'auto', bids: v.bids !== false, asks: v.asks !== false };
 }
 export function heatmapKey(resolution: HeatmapResolution) { return `${resolution.rowPrice}:${resolution.bucketMs}`; }
 export function validResolution(v: HeatmapResolution) { return v && (v.rowAlignment === undefined || v.rowAlignment === 'footprint') && [250, 500].includes(v.bucketMs) && Number.isFinite(v.rowPrice) && v.rowPrice > 0 && v.rowPrice <= 10000; }
-export interface LiquidityState { rowLow: number; bid: number; ask: number; bidObserved: boolean; askObserved: boolean; bidComplete: boolean; askComplete: boolean }
+export interface LiquidityState { rowLow: number; bid: number; ask: number; bidQuote: number; askQuote: number; bidObserved: boolean; askObserved: boolean; bidComplete: boolean; askComplete: boolean }
 export interface ReadonlyDepthView {
   snapshotBidBoundary: number | null; snapshotAskBoundary: number | null;
   visitLevels(visitor: (side: 'bid' | 'ask', price: number, size: number) => void): void;
@@ -47,13 +48,13 @@ export function groupBook(book: ReadonlyDepthView, rowSize: number, tickSize: nu
   const start = count > HEATMAP_LIMITS.rows ? Math.floor((first + last - HEATMAP_LIMITS.rows + 1) / 2) : first;
   const rows: LiquidityState[] = Array.from({ length: Math.min(count, HEATMAP_LIMITS.rows) }, (_, i) => {
     const rowLow = (start + i) * rowTicks * tickSize + offset, rowHigh = rowLow + rowSize;
-    return { rowLow, bid: 0, ask: 0, bidObserved: rowHigh > low, askObserved: rowLow <= high,
+    return { rowLow, bid: 0, ask: 0, bidQuote: 0, askQuote: 0, bidObserved: rowHigh > low, askObserved: rowLow <= high,
       bidComplete: rowLow >= low - tickSize * 1e-6, askComplete: rowHigh <= high + tickSize * 1e-6 };
   });
   book.visitLevels((side, price, size) => {
     if (price < low || price > high) return; // Never import untrustworthy outer updates.
     const index = grid(price) - start;
-    if (index >= 0 && index < rows.length) rows[index]![side] += size;
+    if (index >= 0 && index < rows.length) { rows[index]![side] += size; rows[index]![side === 'bid' ? 'bidQuote' : 'askQuote'] += price * size; }
   });
   return { rows, limited: count > HEATMAP_LIMITS.rows };
 }
@@ -86,6 +87,7 @@ export class LiquidityCollector {
         if (i < 0 || i >= bucket.cells.length) { bucket.capacityLimited = true; continue; }
         bucket.cells[i + 3] = Math.max(bucket.cells[i + 3]!, row.bid);
         bucket.cells[i + 4] = Math.max(bucket.cells[i + 4]!, row.ask);
+        bucket.cells[i + 11] = Math.max(bucket.cells[i + 11]!, row.bidQuote); bucket.cells[i + 12] = Math.max(bucket.cells[i + 12]!, row.askQuote);
       }
     }
   }
@@ -109,6 +111,8 @@ export class LiquidityCollector {
         const c = bucket.cells;
         c[offset + 1]! += row.bid * dt; c[offset + 2]! += row.ask * dt;
         c[offset + 3] = Math.max(c[offset + 3]!, row.bid); c[offset + 4] = Math.max(c[offset + 4]!, row.ask);
+        c[offset + 9]! += row.bidQuote * dt; c[offset + 10]! += row.askQuote * dt;
+        c[offset + 11] = Math.max(c[offset + 11]!, row.bidQuote); c[offset + 12] = Math.max(c[offset + 12]!, row.askQuote);
         if (row.bidObserved) c[offset + 5]! += dt;
         if (row.askObserved) c[offset + 6]! += dt;
         if (row.bidComplete) c[offset + 7]! += dt;
@@ -136,25 +140,25 @@ export class LiquidityCollector {
     for (let factor = 2; factor <= 128; factor *= 2) {
       const size = this.resolution.rowPrice * factor;
       const low = Math.floor((this.state[0]!.rowLow - this.priceOffset) / size + 1e-8), high = Math.floor((this.state.at(-1)!.rowLow - this.priceOffset) / size + 1e-8);
-      for (let i = low; i <= high; i++) entries.push(factor, i * size + this.priceOffset, 0, 0);
+      for (let i = low; i <= high; i++) entries.push(factor, i * size + this.priceOffset, 0, 0, 0, 0);
     }
     return new Float64Array(entries);
   }
   private observePeaks(b: LiquidityBucket) {
     for (let factor = 2; factor <= 128; factor *= 2) {
-      const size = factor * b.rowSize, sums = new Map<number, [number, number]>();
+      const size = factor * b.rowSize, sums = new Map<number, [number, number, number, number]>();
       for (const row of this.state) {
-        const key = Math.floor((row.rowLow - this.priceOffset) / size + 1e-8), pair = sums.get(key) ?? [0, 0];
-        pair[0] += row.bid; pair[1] += row.ask; sums.set(key, pair);
+        const key = Math.floor((row.rowLow - this.priceOffset) / size + 1e-8), pair = sums.get(key) ?? [0, 0, 0, 0];
+        pair[0] += row.bid; pair[1] += row.ask; pair[2] += row.bidQuote; pair[3] += row.askQuote; sums.set(key, pair);
       }
-      for (let i = 0; i < b.peaks.length; i += 4) if (b.peaks[i] === factor) {
+      for (let i = 0; i < b.peaks.length; i += HEATMAP_PEAK_STRIDE) if (b.peaks[i] === factor) {
         const sum = sums.get(Math.round((b.peaks[i + 1]! - this.priceOffset) / size));
-        if (sum) { b.peaks[i + 2] = Math.max(b.peaks[i + 2]!, sum[0]); b.peaks[i + 3] = Math.max(b.peaks[i + 3]!, sum[1]); }
+        if (sum) { b.peaks[i + 2] = Math.max(b.peaks[i + 2]!, sum[0]); b.peaks[i + 3] = Math.max(b.peaks[i + 3]!, sum[1]); b.peaks[i + 4] = Math.max(b.peaks[i + 4]!, sum[2]); b.peaks[i + 5] = Math.max(b.peaks[i + 5]!, sum[3]); }
       }
     }
   }
   private makeRoom(rows: number) {
-    while (this.buckets.size && (this.buckets.size >= this.limits.buckets || this.cellCount + rows > this.limits.cells || this.bytes + rows * (HEATMAP_STRIDE + 8) * 8 + 1024 > this.limits.bytes)) {
+    while (this.buckets.size && (this.buckets.size >= this.limits.buckets || this.cellCount + rows > this.limits.cells || this.bytes + rows * (HEATMAP_STRIDE + 12) * 8 + 1024 > this.limits.bytes)) {
       const key = this.buckets.keys().next().value!;
       this.buckets.delete(key); this.dirty.delete(key); this.evictions++;
     }

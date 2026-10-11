@@ -1,3 +1,4 @@
+import { addIndicator } from './indicator-actions.mjs';
 import { launch, url } from './browser.mjs';
 import { writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -5,6 +6,8 @@ import assert from 'node:assert/strict';
 const browser = await launch(false);
 const page = await browser.newPage({ viewport: { width: 1366, height: 768 }, deviceScaleFactor: 1 });
 const errors = [];
+const withStudies = process.env.BENCH_STUDIES === '1';
+const studyAdds = [];
 const renderer = 'canvas2d';
 const profileEnabled = process.env.BENCH_PROFILE === '1';
 const fixedActions = process.env.BENCH_FIXED_ACTIONS === '1';
@@ -45,6 +48,16 @@ async function setPanels(count) {
     terminal.feed.send({ type: 'fixture', rate: 1000 });
   }, count);
   await page.waitForFunction(count => window.__terminal.stats().panels.length === count && window.__terminal.stats().panels.every(panel => panel.bars === 5000), count);
+  if (withStudies) {
+    for (let index = 0; index < count; index++) {
+      const panel = page.locator('.candle-panel').nth(index);
+      if (!await panel.locator('.active-indicator[data-definition-id="script:builtin.ema-overlay"]').count()) {
+        const start = performance.now(); await addIndicator(panel, 'EMA overlay');
+        await page.waitForFunction(index => [...window.__terminal.panels.values()][index].studies.views().length === 1, index);
+        studyAdds.push({ panel: index, milliseconds: performance.now() - start });
+      }
+    }
+  }
   await page.waitForTimeout(700);
   const geometry = await page.locator('.chart-stage').evaluateAll(stages => stages.map(stage => {
     const rect = stage.getBoundingClientRect();
@@ -236,6 +249,7 @@ const report = {
   browser: browser.version(),
   metadata,
   errors,
+  studies: { enabled: withStudies, adds: studyAdds },
   one,
   two,
   eight,

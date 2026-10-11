@@ -1,0 +1,582 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/browser/footprint-presentation.spec.ts",
+      "tests/browser/heatmap.spec.ts",
+      "tests/browser/terminal.spec.ts",
+      "-g",
+      "Footprint|footprint|heatmap|plot wheel",
+      "--reporter=list,json"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4179",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm preview --port 4173",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "footprint-presentation.spec.ts",
+      "file": "footprint-presentation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "footprint text scales with zoom and independent opacity settings persist without resetting collection",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4570,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"bars\": 1,\u001b[22m\n\u001b[2m    \"heatmap\": 0.65,\u001b[22m\n\u001b[2m    \"opacity\": 0.35,\u001b[22m\n\u001b[32m-   \"start\": null,\u001b[39m\n\u001b[31m+   \"start\": 1791724773102,\u001b[39m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"bars\": 1,\u001b[22m\n\u001b[2m    \"heatmap\": 0.65,\u001b[22m\n\u001b[2m    \"opacity\": 0.35,\u001b[22m\n\u001b[32m-   \"start\": null,\u001b[39m\n\u001b[31m+   \"start\": 1791724773102,\u001b[39m\n\u001b[2m  }\u001b[22m\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:43:17",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                      "column": 17,
+                      "line": 43
+                    },
+                    "snippet": "  41 |     return { opacity: p.engine.footprint.opacity, heatmap: p.selection.heatmap.opacity, start: p.heatmapStatus.collectionStart, bars: p.engine.footprintBars.length };\n  42 |   });\n> 43 |   expect(state).toEqual({ opacity: .35, heatmap: .65, start: before, bars: 1 });\n     |                 ^\n  44 |   await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');\n  45 |   await page.setViewportSize({ width: 720, height: 860 });\n  46 |   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                        "column": 17,
+                        "line": 43
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"bars\": 1,\u001b[22m\n\u001b[2m    \"heatmap\": 0.65,\u001b[22m\n\u001b[2m    \"opacity\": 0.35,\u001b[22m\n\u001b[32m-   \"start\": null,\u001b[39m\n\u001b[31m+   \"start\": 1791724773102,\u001b[39m\n\u001b[2m  }\u001b[22m\n\n  41 |     return { opacity: p.engine.footprint.opacity, heatmap: p.selection.heatmap.opacity, start: p.heatmapStatus.collectionStart, bars: p.engine.footprintBars.length };\n  42 |   });\n> 43 |   expect(state).toEqual({ opacity: .35, heatmap: .65, start: before, bars: 1 });\n     |                 ^\n  44 |   await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');\n  45 |   await page.setViewportSize({ width: 720, height: 860 });\n  46 |   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:43:17"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:19:27.675Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/footprint-presentation-foo-19fd0-ithout-resetting-collection/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                    "column": 17,
+                    "line": 43
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-78bd3c44a6e0acbe4f1a",
+          "file": "footprint-presentation.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "heatmap.spec.ts",
+      "file": "heatmap.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12369,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:19:35.422Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-caf8d619f4789feddffc",
+          "file": "heatmap.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "heatmap labels, settings, resize, unsupported instruments and saved layouts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12165,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:19:48.823Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-7171dcffaeedb7414eb9",
+          "file": "heatmap.spec.ts",
+          "line": 124,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "terminal.spec.ts",
+      "file": "terminal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "chart type picker exposes live Footprint only for Binance USD-M",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5906,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:01.168Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-5ffbc75769e0963c5fff",
+          "file": "terminal.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "Footprint mode owns a separate subscription, renders bar revisions, and restores row settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6194,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:07.168Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-91392f056420bd11b864",
+          "file": "terminal.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "Footprint price level defaults to $25, rejects off-grid edits, and restores a validated $50 width",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3231,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:13.466Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-dd889db429abfd2b20d9",
+          "file": "terminal.spec.ts",
+          "line": 699,
+          "column": 1
+        },
+        {
+          "title": "two-trade 1 USDT footprint row remains on-screen without an indicator scale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2447,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:16.736Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-c592c73aba67da38a076",
+          "file": "terminal.spec.ts",
+          "line": 769,
+          "column": 1
+        },
+        {
+          "title": "a single $25 footprint row opens at text height and respects manual price zoom",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1782,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:19.227Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-870eb310f023acc11a19",
+          "file": "terminal.spec.ts",
+          "line": 1180,
+          "column": 1
+        },
+        {
+          "title": "plot wheel zooms both axes around the cursor and Latest restores autoscale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1555,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:21.039Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-b36f78a017f6e25d888d",
+          "file": "terminal.spec.ts",
+          "line": 1229,
+          "column": 1
+        },
+        {
+          "title": "footprint execution feedback fades on the overlay and stops for reduced motion or disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2363,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:22.634Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-8cc400e99be16fd1b120",
+          "file": "terminal.spec.ts",
+          "line": 1259,
+          "column": 1
+        },
+        {
+          "title": "footprint last-price line tracks executions within rows and $1 rows remain distinct",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1732,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:25.047Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-3efd7913e93cdb941e42",
+          "file": "terminal.spec.ts",
+          "line": 1304,
+          "column": 1
+        },
+        {
+          "title": "footprint BTC/USDT toggle preserves collection and viewport, updates totals and persists per panel",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2594,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T13:20:26.816Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-1a450e9c59e73675e48e",
+          "file": "terminal.spec.ts",
+          "line": 1340,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T13:19:25.916Z",
+    "duration": 63864.853,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

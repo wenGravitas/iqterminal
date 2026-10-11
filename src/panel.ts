@@ -1,3 +1,5 @@
+import { indicatorIcon } from './indicators/icons';
+import { FOOTPRINT_ID, HEATMAP_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
 import { HeatmapControls } from './heatmap-controls';
 import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
 import { duration } from './feed/protocol';
@@ -16,26 +18,27 @@ import { makeInputControl, readInputSettings } from './scripts/input-controls';
 export interface FootprintViewOptions {
   displayMode: FootprintDisplayMode;
   cellStyle: FootprintCellStyle;
+  opacity: number;
+  showCandle: boolean;
   showPoc: boolean;
+  showValueArea: boolean;
   showDiagonalImbalances: boolean;
   stackedImbalances: boolean;
   imbalanceRatio: 2 | 3 | 4;
   imbalanceThreshold: number;
 }
-export interface PanelConfig extends CanonicalSeries { type: 'candle' | 'footprint'; grid: boolean; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
-const DEFAULT_FOOTPRINT_VIEW: FootprintViewOptions = {
-  displayMode: 'bidask', cellStyle: 'ladder', showPoc: true,
-  showDiagonalImbalances: true, stackedImbalances: false,
-  imbalanceRatio: 3, imbalanceThreshold: 0.01,
-};
-export function config(value: unknown): PanelConfig {
+export interface PanelConfig extends CanonicalSeries { indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
+function legacyConfig(value: unknown) {
   const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const series = canonicalSeries(value) ?? { venue: 'binance' as const, market: 'perpetual' as const, interval: '1m' as const };
   const savedFootprint = source.footprint && typeof source.footprint === 'object' ? source.footprint as Record<string, unknown> : {};
   const footprint: FootprintViewOptions = {
     displayMode: savedFootprint.displayMode === 'delta' || savedFootprint.displayMode === 'volume' ? savedFootprint.displayMode : 'bidask',
     cellStyle: savedFootprint.cellStyle === 'profile' ? 'profile' : 'ladder',
+    opacity: typeof savedFootprint.opacity === 'number' && Number.isFinite(savedFootprint.opacity) ? Math.max(0, Math.min(1, savedFootprint.opacity)) : .85,
+    showCandle: savedFootprint.showCandle !== false,
     showPoc: typeof savedFootprint.showPoc === 'boolean' ? savedFootprint.showPoc : DEFAULT_FOOTPRINT_VIEW.showPoc,
+    showValueArea: savedFootprint.showValueArea !== false,
     showDiagonalImbalances: typeof savedFootprint.showDiagonalImbalances === 'boolean'
       ? savedFootprint.showDiagonalImbalances : DEFAULT_FOOTPRINT_VIEW.showDiagonalImbalances,
     stackedImbalances: savedFootprint.stackedImbalances === true,
@@ -47,9 +50,26 @@ export function config(value: unknown): PanelConfig {
     : Object.hasOwn(source, 'rowPrice') ? FOOTPRINT_DEFAULT_ROW_PRICE
       : legacyRowPrice(source.rowTicks);
   const wantsFootprint = source.type === 'footprint' && supportsDepth(series);
-  return { ...series, type: wantsFootprint ? 'footprint' : 'candle', rowPrice,
+  return { ...series, type: wantsFootprint ? 'footprint' as const : 'candle' as const, rowPrice,
     grid: typeof source.grid === 'boolean' ? source.grid : true,
-    footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' : 'btc', footprint, heatmap: heatmapSettings(source.heatmap), studies: validStudyPins(source.studies) };
+    footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' as const : 'btc' as const, footprint, heatmap: heatmapSettings(source.heatmap), studies: validStudyPins(source.studies) };
+}
+
+export function config(value: unknown): PanelConfig {
+  const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+  const legacy = legacyConfig(source);
+  const indicators = migrateIndicators(source, { ...legacy, type: source.type === 'footprint' ? 'footprint' : 'candle' });
+  const footprint = indicators.find(i => i.definitionId === FOOTPRINT_ID && i.settingsVersion === 1 && i.source.kind === 'chart');
+  const heatmap = indicators.find(i => i.definitionId === HEATMAP_ID && i.settingsVersion === 1 && i.source.kind === 'chart');
+  const normalized = legacyConfig({ ...source,
+    ...(footprint ? { rowPrice: footprint.settings.rowPrice, footprintUnits: footprint.settings.units, footprint: footprint.settings.view } : {}),
+    ...(heatmap ? { heatmap: heatmap.settings } : {}) });
+  if (footprint) footprint.settings = { rowPrice: normalized.rowPrice, units: normalized.footprintUnits, view: normalized.footprint };
+  if (heatmap) heatmap.settings = { ...normalized.heatmap, enabled: true };
+  return { ...source, ...normalized, indicatorVersion: INDICATOR_CONFIG_VERSION, indicators,
+    basePriceVisible: source.basePriceVisible !== false,
+    type: footprint?.visible && supportsDepth(normalized) ? 'footprint' : 'candle',
+    heatmap: { ...normalized.heatmap, enabled: Boolean(heatmap?.visible) }, studies: studyPins(indicators) };
 }
 
 function legacyRowPrice(value: unknown) {
@@ -78,14 +98,21 @@ export class CandlePanel implements IContentRenderer {
   private statusNode = document.createElement('div');
   private statusText = document.createElement('span');
   private instrument = document.createElement('select');
-  private chartType = document.createElement('select');
   private rowPrice = document.createElement('input');
   private rowPriceControl = document.createElement('label');
   private chartSettings = document.createElement('button');
   private chartSettingsDialog = document.createElement('dialog');
   private gridCheckbox = document.createElement('input');
-  private footprintSettings = document.createElement('button');
-  private footprintUnits = document.createElement('button');
+  private footprintUnits = document.createElement('select');
+  private overlays = document.createElement('div');
+  private activeIndicators = document.createElement('details');
+  private activeSummary = document.createElement('summary');
+  private activeRows = document.createElement('div');
+  private indicatorLifecycle?: IndicatorLifecycle;
+  private indicatorErrors = new Map<string, string>();
+  private footprintGeneration = 0;
+  private footprintSubscriptionKey = '';
+  private baseVisible = document.createElement('input');
   private interval = document.createElement('select');
   private metadata = document.createElement('span');
   private retry = document.createElement('button');
@@ -166,12 +193,6 @@ export class CandlePanel implements IContentRenderer {
     this.metadata.className = 'instrument-meta';
     this.instrument.setAttribute('aria-label', 'Instrument');
     for (const [value, info] of Object.entries(instruments)) this.instrument.add(new Option(info.label, value));
-    this.chartType.className = 'chart-type-select';
-    this.chartType.setAttribute('aria-label', 'Chart type');
-    this.chartType.add(new Option('Candle', 'candle'));
-    const footprint = new Option('Footprint', 'footprint');
-    this.chartType.add(footprint);
-    this.chartType.value = 'candle';
     this.interval.setAttribute('aria-label', 'Timeframe');
     for (const value of intervals) this.interval.add(new Option(value, value));
     this.rowPrice.type = 'number';
@@ -187,7 +208,7 @@ export class CandlePanel implements IContentRenderer {
     this.rowPriceControl.append(rowPriceLabel, rowPricePrefix, this.rowPrice);
     this.footprintUnits.className = 'footprint-units-button';
     this.footprintUnits.setAttribute('aria-label', 'Footprint volume units');
-    this.footprintSettings.replaceChildren();
+    this.footprintUnits.add(new Option('BTC base quantity', 'btc')); this.footprintUnits.add(new Option('USDT execution notional', 'usdt'));
     const settingsIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     settingsIcon.setAttribute('aria-hidden', 'true');
     settingsIcon.setAttribute('viewBox', '0 0 16 16');
@@ -204,10 +225,6 @@ export class CandlePanel implements IContentRenderer {
     this.chartSettings.className = 'footprint-settings-button';
     this.chartSettings.setAttribute('aria-label', 'Chart settings');
     this.chartSettings.title = 'Chart settings';
-    this.footprintSettings.append(settingsIcon);
-    this.footprintSettings.className = 'footprint-settings-button';
-    this.footprintSettings.setAttribute('aria-label', 'Footprint display settings');
-    this.footprintSettings.title = 'Footprint display settings';
     this.latest.className = 'chart-latest-button';
     this.latest.textContent = 'Latest';
     this.latest.title = 'Return to the latest candle and restore price autoscale (Home or double click)';
@@ -215,9 +232,14 @@ export class CandlePanel implements IContentRenderer {
     this.indicators.title = 'Add a study or open the local OpenScript library';
     this.retry.textContent = 'Retry';
     this.retry.setAttribute('aria-label', 'Retry market data');
-    this.heatmapControls = new HeatmapControls(settings => this.changeHeatmap(settings), () => this.feed.retryDepth(), this.abort.signal, settingsIcon.cloneNode(true));
-    this.toolbar.append(this.instrument, this.chartType, this.interval, this.rowPriceControl, this.footprintUnits, this.footprintSettings, this.latest, this.indicators, this.chartSettings, this.heatmapControls.toggle, this.heatmapControls.settings, this.metadata);
+    this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
+    this.toolbar.append(this.instrument, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
+    this.overlays.className = 'chart-top-overlays';
+    this.activeIndicators.className = 'active-indicators'; this.activeIndicators.open = true;
+    this.activeIndicators.setAttribute('aria-label', 'Active indicators');
+    this.activeSummary.textContent = 'Indicators'; this.activeRows.className = 'active-indicator-rows';
+    this.activeIndicators.append(this.activeSummary, this.activeRows);
     this.buildDialogs();
     this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.chartSettingsDialog);
   }
@@ -226,34 +248,23 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
-    this.gridCheckbox.checked = this.selection.grid;
+    this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
     params.api.updateParameters(this.selection);
     this.instrument.value = instrumentKey(this.selection);
-    this.chartType.value = this.selection.type;
     this.rowPrice.value = String(this.selection.rowPrice);
     this.interval.value = this.selection.interval;
     this.updateFootprintControls();
     const options = { signal: this.abort.signal };
     this.instrument.addEventListener('change', () => this.select(), options);
-    this.chartType.addEventListener('change', () => this.selectMode(), options);
-    this.rowPrice.addEventListener('change', () => this.selectRowPrice(), options);
-    this.footprintUnits.addEventListener('click', () => {
-      this.selection = config({ ...this.selection, footprintUnits: this.selection.footprintUnits === 'btc' ? 'usdt' : 'btc' });
-      this.params.api.updateParameters(this.selection);
-      this.engine?.setFootprintUnits(this.selection.footprintUnits);
-      this.updateFootprintControls();
-      this.refreshReadout();
-      this.save();
-    }, options);
     this.interval.addEventListener('change', () => this.select(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
     this.retry.addEventListener('click', () => this.selection.type === 'footprint' ? this.feed.retryFootprint() : this.feed.retry(params.api.id), options);
-    this.footprintSettings.addEventListener('click', () => this.openFootprintSettings(), options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
-      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script]');
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
       if (!button || button.disabled) return;
+      if (button.dataset.addNative) { this.addNativeIndicator(button.dataset.addNative); return; }
       if (button.dataset.addScript) { void this.addStudy(button.dataset.addScript); return; }
       const action = button.dataset.dialogAction;
       if (action === 'close-picker') this.picker.close();
@@ -282,8 +293,10 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     this.footprintDialog.addEventListener('cancel', event => { if (this.footprintBusy) event.preventDefault(); }, options);
     this.footprintForm.addEventListener('submit', event => { event.preventDefault(); this.applyFootprintSettings(); }, options);
-    this.chart.addEventListener('dblclick', () => this.engine?.resetView(), options);
-    this.chart.addEventListener('keydown', event => this.keydown(event), options);
+    this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.engine?.resetView(); }, options);
+    this.chart.addEventListener('keydown', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.keydown(event); }, options);
+    for (const name of ['pointerdown', 'mousedown', 'wheel', 'dblclick', 'keydown'] as const) this.activeIndicators.addEventListener(name, event => event.stopPropagation(), options);
+    this.activeRows.addEventListener('click', event => this.indicatorAction(event), options);
     this.toolbar.addEventListener('scroll', () => this.updateToolbarOverflowCue(), { ...options, passive: true });
     this.toolbarCue.addEventListener('click', () => this.scrollToolbar(), options);
     window.addEventListener('resize', () => this.updateToolbarOverflowCue(), options);
@@ -300,15 +313,16 @@ export class CandlePanel implements IContentRenderer {
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
-    this.engine.setGridVisible(this.selection.grid);
+    this.engine.setGridVisible(this.selection.grid); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     if (this.selection.type === 'footprint') this.engine.setDisplayMode('footprint');
     this.applyFootprintOptions();
     this.studyHost = new ScriptStudyHost(params.api.id, this.engine, this.feed, this.library, this.selection, studies => {
-      this.selection = { ...this.selection, studies };
+      this.selection = config({ ...this.selection, indicators: withStudyPins(this.selection.indicators, studies) });
       this.params.api.updateParameters(this.selection);
       this.save();
     });
-    this.subscriptions.push({ dispose: this.studyHost.subscribe(() => this.updateDepthNotice()) });
+    this.indicatorLifecycle = new IndicatorLifecycle(instance => this.createIndicatorHandle(instance), (instance, error) => { if (!this.dead && this.selection.indicators.some(i => i.instanceId === instance.instanceId)) { this.indicatorErrors.set(instance.instanceId,errorText(error)); this.renderActiveIndicators(); } });
+    this.subscriptions.push({ dispose: this.studyHost.subscribe(() => { this.updateDepthNotice(); this.reconcileIndicators(); }) });
     this.studyHost.restore(this.selection.studies);
     const unsubscribeCrosshair = this.engine.chart.subscribeCrosshairMove(event => this.crosshair(event));
     this.subscriptions.push({ dispose: unsubscribeCrosshair });
@@ -318,7 +332,8 @@ export class CandlePanel implements IContentRenderer {
       { dispose: this.engine.chart.on('indicatorRemoved', event => this.studyHost?.removeNativeInstance(event.instanceId)) },
       { dispose: this.engine.chart.on('objects:change', () => this.studyHost?.syncNativeVisibility()) },
     );
-    this.chart.append(this.readout, this.heatmapControls.readout);
+    this.overlays.append(this.readout, this.activeIndicators);
+    this.chart.append(this.overlays, this.heatmapControls.readout);
     this.chartFooter.append(this.heatmapControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
     this.register(params.api.id, this);
@@ -345,7 +360,11 @@ export class CandlePanel implements IContentRenderer {
     const chartFields = document.createElement('div'); chartFields.className = 'indicator-settings-fields';
     const gridLabel = document.createElement('label'); gridLabel.className = 'indicator-setting-field';
     const gridText = document.createElement('span'); gridText.textContent = 'Gridlines';
+    this.baseVisible.type = 'checkbox'; this.baseVisible.setAttribute('aria-label', 'Show base candles');
+    this.baseVisible.addEventListener('change', () => { this.selection = { ...this.selection, basePriceVisible: this.baseVisible.checked }; this.engine?.setBasePriceVisible(this.selection.basePriceVisible); this.params.api.updateParameters(this.selection); this.save(); }, { signal: this.abort.signal });
     this.gridCheckbox.type = 'checkbox'; gridLabel.append(gridText, this.gridCheckbox); chartFields.append(gridLabel);
+    const baseLabel = document.createElement('label'); baseLabel.className = 'indicator-setting-field'; const baseText = document.createElement('span'); baseText.textContent = 'Show base candles'; baseLabel.append(baseText, this.baseVisible); chartFields.append(baseLabel);
+    const baseHint = document.createElement('p'); baseHint.className = 'dialog-status'; baseHint.textContent = 'Base style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.'; chartFields.append(baseHint);
     chartForm.append(chartHeader, chartFields); this.chartSettingsDialog.append(chartForm);
 
     this.picker.className = 'indicator-picker';
@@ -389,17 +408,21 @@ export class CandlePanel implements IContentRenderer {
     this.footprintDialog.setAttribute('aria-label', 'Footprint display settings');
     this.footprintForm.className = 'indicator-settings-form footprint-settings-form';
     const footprintHeader = document.createElement('header');
-    const footprintTitle = document.createElement('h2'); footprintTitle.textContent = 'Footprint display';
+    const footprintTitle = document.createElement('h2'); footprintTitle.textContent = 'Footprint settings';
     footprintHeader.append(footprintTitle, this.dialogButton('Close', 'close-footprint'));
     this.footprintFields.className = 'footprint-settings-fields';
     this.footprintFields.append(
+      this.rowPriceControl, this.footprintField('Volume units', this.footprintUnits),
       this.footprintField('Cell display', this.selectControl('displayMode', [
         ['bidask', 'Bid / ask'], ['delta', 'Delta'], ['volume', 'Volume'],
       ])),
       this.footprintField('Cells', this.selectControl('cellStyle', [
         ['ladder', 'Bid / ask ladder'], ['profile', 'Volume profile'],
       ])),
+      this.footprintField('Cell opacity (%)', this.opacityControl()),
+      this.footprintField('Show execution candle', this.checkboxControl('showCandle')),
       this.footprintField('Show point of control', this.checkboxControl('showPoc')),
+      this.footprintField('Show VAH and VAL', this.checkboxControl('showValueArea')),
       this.footprintField('Diagonal imbalances', this.checkboxControl('showDiagonalImbalances')),
       this.footprintField('Stacked imbalance brackets', this.checkboxControl('stackedImbalances')),
       this.footprintField('Dominant / opposing ratio', this.selectControl('imbalanceRatio', [
@@ -443,8 +466,13 @@ export class CandlePanel implements IContentRenderer {
     return input;
   }
 
+  private opacityControl() {
+    const input = document.createElement('input'); input.type = 'number'; input.min = '0'; input.max = '100'; input.step = '1'; input.required = true;
+    input.dataset.footprintOption = 'opacity'; return input;
+  }
+
   private openFootprintSettings() {
-    if (this.selection.type !== 'footprint') return;
+    if (!this.nativeIndicator(FOOTPRINT_ID)) return;
     const view = this.selection.footprint;
     const mode = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="displayMode"]')!;
     const style = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="cellStyle"]')!;
@@ -453,6 +481,10 @@ export class CandlePanel implements IContentRenderer {
     const stacked = this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="stackedImbalances"]')!;
     const ratio = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="imbalanceRatio"]')!;
     const threshold = this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="imbalanceThreshold"]')!;
+    this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="opacity"]')!.value = String(Math.round(view.opacity * 100));
+    this.rowPrice.value = String(this.selection.rowPrice); this.rowPrice.setCustomValidity(''); this.footprintUnits.value = this.selection.footprintUnits;
+    this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showCandle"]')!.checked = view.showCandle;
+    this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showValueArea"]')!.checked = view.showValueArea;
     mode.value = view.displayMode; style.value = view.cellStyle; poc.checked = view.showPoc;
     diagonal.checked = view.showDiagonalImbalances; stacked.checked = view.stackedImbalances;
     ratio.value = String(view.imbalanceRatio); threshold.value = String(view.imbalanceThreshold);
@@ -460,35 +492,39 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private applyFootprintSettings() {
-    if (this.selection.type !== 'footprint') return;
+    if (!this.nativeIndicator(FOOTPRINT_ID)) return;
     const threshold = this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="imbalanceThreshold"]')!;
-    if (!threshold.reportValidity()) return;
-    const updated = config({
-      ...this.selection,
-      footprint: {
+    const opacity = this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="opacity"]')!;
+    const price = Number(this.rowPrice.value);
+    this.rowPrice.setCustomValidity(!validFootprintRowPrice(price) ? 'Enter a positive price level no greater than $10,000.' : this.footprintStatus.tickSize !== null && footprintTicksForPrice(price, this.footprintStatus.tickSize) === null ? `Enter a multiple of the exchange tick size, $${this.footprintStatus.tickSize}.` : '');
+    if (!this.rowPrice.reportValidity() || !threshold.reportValidity() || !opacity.reportValidity()) return;
+    const view = {
+        opacity: Number(opacity.value) / 100,
         displayMode: this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="displayMode"]')!.value,
         cellStyle: this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="cellStyle"]')!.value,
+        showCandle: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showCandle"]')!.checked,
         showPoc: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showPoc"]')!.checked,
+        showValueArea: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showValueArea"]')!.checked,
         showDiagonalImbalances: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showDiagonalImbalances"]')!.checked,
         stackedImbalances: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="stackedImbalances"]')!.checked,
         imbalanceRatio: Number(this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="imbalanceRatio"]')!.value),
         imbalanceThreshold: Number(threshold.value),
-      },
-    });
-    this.selection = updated;
-    this.params.api.updateParameters(this.selection);
-    this.applyFootprintOptions();
-    this.save();
+    };
+    const instance = this.nativeIndicator(FOOTPRINT_ID)!;
+    this.changeIndicator(instance.instanceId, { settings: { rowPrice: price, units: this.footprintUnits.value, view } });
     this.footprintDialog.close();
   }
 
   private applyFootprintOptions() {
     const view = this.selection.footprint;
     this.engine?.setFootprintUnits(this.selection.footprintUnits);
+    this.heatmapControls.setUnits(this.selection.footprintUnits);
+    this.engine?.setFootprintOpacity(view.opacity);
     this.engine?.setFootprintOptions({
       displayMode: view.displayMode,
       cellStyle: view.cellStyle,
       showPoc: view.showPoc,
+      showValueArea: view.showValueArea,
       pocStyle: 'outline',
       pocColor: '#858585',
       buyColor: '#58a65c',
@@ -500,34 +536,17 @@ export class CandlePanel implements IContentRenderer {
       imbalanceThreshold: view.showDiagonalImbalances ? view.imbalanceThreshold : Number.MAX_VALUE,
       textColorMode: view.showDiagonalImbalances ? 'imbalance' : 'contrast',
       stackedImbalances: view.showDiagonalImbalances && view.stackedImbalances ? 2 : 0,
-      showCandle: true,
+      showCandle: view.showCandle,
       statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'],
       tableRows: [],
-      showValueArea: false,
     });
   }
 
   private updateFootprintControls() {
-    const option = [...this.chartType.options].find(item => item.value === 'footprint');
-    if (option) {
-      option.disabled = !supportsDepth(this.selection);
-      option.textContent = option.disabled ? 'Footprint · USD-M only' : 'Footprint';
-      option.title = option.disabled ? 'Footprint is supported only for Binance BTCUSDT USD-M perpetual' : 'Live Binance USD-M aggregate observations';
-    }
-    this.chartType.value = this.selection.type;
-    this.footprintUnits.hidden = this.selection.type !== 'footprint';
-    this.footprintUnits.textContent = this.selection.footprintUnits === 'btc' ? 'BTC' : 'USDT';
-    this.footprintUnits.setAttribute('aria-pressed', String(this.selection.footprintUnits === 'usdt'));
-    this.footprintUnits.title = this.selection.footprintUnits === 'btc'
-      ? 'Volume in BTC · click for USDT notional' : 'Execution notional in USDT · click for BTC volume';
-    if (document.activeElement !== this.rowPrice) this.rowPrice.value = String(this.selection.rowPrice);
-    this.rowPriceControl.hidden = this.selection.type !== 'footprint';
-    this.footprintSettings.hidden = this.selection.type !== 'footprint';
     this.chart.setAttribute('aria-label', `${instrumentLabel(this.selection)} ${this.selection.type === 'footprint' ? 'Footprint' : 'candlestick'} chart`);
     this.metadata.dataset.mode = this.selection.type;
-    if (this.selection.type === 'footprint') this.updateFootprintMetadata();
-    else this.updateInstrumentMetadata();
-    this.updateToolbarOverflowCue();
+    if (this.selection.type === 'footprint') this.updateFootprintMetadata(); else this.updateInstrumentMetadata();
+    this.renderActiveIndicators(); this.updateToolbarOverflowCue();
   }
 
   private updateToolbarOverflowCue() {
@@ -559,8 +578,140 @@ export class CandlePanel implements IContentRenderer {
     return button;
   }
 
+  private nativeIndicator(id: string) { return this.selection?.indicators.find(i => i.definitionId === id && i.settingsVersion === 1 && i.source.kind === 'chart'); }
+
+  private createIndicatorHandle(instance: IndicatorInstance) {
+    if (instance.source.kind !== 'chart' || instance.settingsVersion !== 1) return undefined;
+    if (nativeDefinition(instance.definitionId) && instance.settingsVersion === 1) {
+      this.syncNativeIndicators();
+      return { updateSettings: () => this.syncNativeIndicators(), setVisible: () => this.syncNativeIndicators(), dispose: () => { if (!this.dead) this.syncNativeIndicators(); } };
+    }
+    if (instance.script && studyPins([instance]).length) return {
+      updateSettings: async (settings: Record<string, unknown>) => {
+        const current = this.studyHost?.views().find(v => v.attachmentId === instance.instanceId);
+        if (current && JSON.stringify(current.settings) !== JSON.stringify(settings)) await this.studyHost?.applySettings(instance.instanceId, settings as StudyPin['settings']);
+      },
+      setVisible: (visible: boolean) => { if (this.studyHost?.views().find(v => v.attachmentId === instance.instanceId)?.visible !== visible) this.studyHost?.setVisibleStudy(instance.instanceId, visible); },
+      dispose: () => { if (!this.dead) this.studyHost?.remove(instance.instanceId); },
+    };
+    return undefined;
+  }
+
+  private reconcileIndicators() {
+    if (this.dead) return;
+    this.indicatorLifecycle?.reconcile(this.selection.indicators);
+    this.renderActiveIndicators();
+  }
+
+  private syncNativeIndicators() {
+    if (!this.engine || this.dead) return;
+    const oldMode = this.engine.displayMode;
+    this.applyFootprintOptions(); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
+    this.engine.setDisplayMode(this.selection.type, true);
+    this.subscribeFootprint();
+    if (oldMode !== this.selection.type && this.selection.type === 'footprint') {
+      this.engine.setFootprintBars(this.footprintBars, true); this.footprintNeedsSync = false;
+      this.focusFootprintOnce();
+    }
+    this.syncHeatmap(); this.hoveredBar = null; this.hoveredFootprint = null;
+    this.updateFootprintControls(); this.refreshReadout(); this.updateStatus();
+  }
+
+  private changeIndicator(instanceId: string, change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>>) {
+    delete this.activeIndicators.dataset.error; this.indicatorErrors.delete(instanceId);
+    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(i => i.instanceId === instanceId ? { ...i, ...change } : i) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
+  private addNativeIndicator(definitionId: string) {
+    const definition = nativeDefinition(definitionId); if (!definition) return;
+    const existing = this.selection.indicators.find(i => i.definitionId === definitionId);
+    if (!existing) {
+      const settings = definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
+        : { ...this.selection.heatmap, enabled: true };
+      this.selection = config({ ...this.selection, indicators: [...this.selection.indicators, nativeInstance(definitionId, settings)] });
+      this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+      this.renderPicker(`${definition.name} added with its default settings.`);
+    } else {
+      this.picker.close(); this.openIndicatorSettings(existing);
+    }
+  }
+
+  private openIndicatorSettings(instance: IndicatorInstance) {
+    if (instance.settingsVersion !== 1) return;
+    if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
+    else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
+    else if (instance.script) void this.openAttachmentSettings(instance.instanceId);
+  }
+
+  private async indicatorAction(event: MouseEvent) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-indicator-action]');
+    if (!button || button.disabled || this.dead) return;
+    const instance = this.selection.indicators.find(i => i.instanceId === button.dataset.instanceId); if (!instance) return;
+    const action = button.dataset.indicatorAction;
+    if (action === 'settings') this.openIndicatorSettings(instance);
+    else if (action === 'visibility') {
+      this.changeIndicator(instance.instanceId, { visible: !instance.visible });
+    } else if (action === 'remove') {
+      this.selection = config({ ...this.selection, indicators: this.selection.indicators.filter(i => i.instanceId !== instance.instanceId) });
+      this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+    } else if (action === 'source' && instance.script) this.openEditor(this.params.api.id, instance.instanceId);
+    else if (action === 'duplicate' && instance.script && this.studyHost) {
+      button.disabled = true;
+      try {
+        const pin = instance.script, revision = await this.library.getRevision(pin.scriptId, pin.revisionId);
+        if (!revision || this.dead) throw new Error('The pinned source is unavailable. Reimport it before duplicating.');
+        await this.studyHost.apply({ ...pin, source: revision.source, settings: { ...instance.settings } as StudyPin['settings'], visible: instance.visible });
+      } catch (error) { this.activeIndicators.dataset.error = errorText(error); this.renderActiveIndicators(); }
+      finally { button.disabled = false; }
+    }
+  }
+
+  private activeListKey = '';
+  private renderActiveIndicators() {
+    if (!this.selection || this.dead) return;
+    const views = this.studyHost?.views() ?? [];
+    const rows = this.selection.indicators.map(instance => {
+      const definition = nativeDefinition(instance.definitionId), study = views.find(v => v.attachmentId === instance.instanceId);
+      const name = definition?.name ?? instance.script?.title ?? instance.definitionId;
+      const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
+      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && !supportsDepth(this.selection) ? 'Unavailable · Binance USD-M only'
+        : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
+          : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
+            : study ? study.inputs.filter(i => i.kind !== 'color').map(i => `${i.label} ${study.settings[i.key] ?? i.defaultValue}`).join(' · ') : 'Restoring pinned revision…';
+      const error = study && study.diagnostics.length ? study.status : study && !study.inputs.length && study.status !== 'Study ready' ? study.status : '';
+      if (error) summary = error;
+      if (this.indicatorErrors.has(instance.instanceId)) summary = this.indicatorErrors.get(instance.instanceId)!;
+      return { instance, name, summary: `${summary || 'Default inputs'} · ${instrumentLabel(this.selection)} · ${this.selection.interval}`, unavailable };
+    });
+    const key = JSON.stringify([rows, this.activeIndicators.dataset.error]); if (key === this.activeListKey) return;
+    this.activeListKey = key; this.activeIndicators.hidden = rows.length === 0;
+    this.activeSummary.textContent = `Indicators (${rows.length})`;
+    const focused = this.activeRows.contains(document.activeElement) ? (document.activeElement as HTMLButtonElement) : null;
+    const focusId = focused?.dataset.instanceId, focusAction = focused?.dataset.indicatorAction;
+    this.activeRows.replaceChildren();
+    for (const row of rows) {
+      const element = document.createElement('div'); element.className = 'active-indicator'; element.dataset.instanceId = row.instance.instanceId; element.dataset.definitionId = row.instance.definitionId; element.dataset.visible = String(row.instance.visible);
+      const copy = document.createElement('div'); copy.className = 'active-indicator-copy';
+      const name = document.createElement('span'); name.textContent = row.name;
+      const description = document.createElement('small'); description.textContent = row.summary; description.title = row.summary; copy.append(name, description);
+      const controls = document.createElement('div'); controls.className = 'active-indicator-actions';
+      const actions = ['visibility', 'settings', ...(row.instance.script ? ['source','duplicate'] : []), 'remove'];
+      for (const action of actions) {
+        const button = document.createElement('button'); button.type = 'button'; button.dataset.indicatorAction = action; button.dataset.instanceId = row.instance.instanceId;
+        const label = action === 'visibility' ? `${row.instance.visible ? 'Hide' : 'Show'} ${row.name}` : action === 'settings' ? `${row.name} settings` : action === 'source' ? `Edit Script for ${row.name}` : `${action === 'remove' ? 'Remove' : 'Duplicate'} ${row.name}`;
+        button.setAttribute('aria-label', label); button.title = label;
+        if (action === 'visibility') button.setAttribute('aria-pressed', String(row.instance.visible));
+        button.disabled = row.unavailable && action !== 'remove'; button.append(indicatorIcon(action)); controls.append(button);
+      }
+      element.append(copy, controls); this.activeRows.append(element);
+    }
+    if (this.activeIndicators.dataset.error) { const error = document.createElement('p'); error.className = 'dialog-status'; error.setAttribute('role','status'); error.textContent = this.activeIndicators.dataset.error; this.activeRows.append(error); }
+    if (focusId && focusAction) [...this.activeRows.querySelectorAll<HTMLButtonElement>('button')].find(b => b.dataset.instanceId === focusId && b.dataset.indicatorAction === focusAction)?.focus();
+  }
+
   private async openPicker() {
-    this.pickerStatus.textContent = 'Loading local studies…';
+    this.renderPicker('Loading local scripts…');
     this.pickerSearch.value = '';
     if (!this.picker.open) this.picker.showModal();
     try {
@@ -576,62 +727,34 @@ export class CandlePanel implements IContentRenderer {
 
   private renderPicker(statusMessage?: string) {
     const query = this.pickerSearch.value.trim().toLocaleLowerCase();
-    const groups: { name: string; records: ScriptRecord[] }[] = [
-      { name: 'Trend', records: [] },
-      { name: 'Volume', records: [] },
-      { name: 'Order book', records: [] },
-      { name: 'My scripts', records: [] },
-    ];
-    for (const record of this.pickerRecords) {
-      const searchable = `${record.title} ${record.description}`.toLocaleLowerCase();
-      if (query && !searchable.includes(query)) continue;
-      const revision = record.revisions.find(item => item.id === record.currentRevision);
-      const requiresDepth = revision?.declaredCapabilities.includes('iqterminal.depth.series.v1') === true;
-      const category = !record.builtin ? 'My scripts'
-        : record.id === 'builtin.volume-histogram' ? 'Volume'
-          : requiresDepth ? 'Order book' : 'Trend';
-      groups.find(group => group.name === category)?.records.push(record);
-    }
+    const entries = [...NATIVE_DEFINITIONS, ...this.pickerRecords.map(record => scriptDefinition(record))];
     this.pickerList.replaceChildren();
-    const activeCount = this.studyHost?.diagnostics().attached ?? 0;
+    const activeCount = this.selection.studies.length;
     let shown = 0;
-    let enabled = 0;
-    for (const group of groups) {
-      if (!group.records.length) continue;
-      const section = document.createElement('section');
-      section.className = 'indicator-category';
-      const heading = document.createElement('h3'); heading.textContent = group.name;
-      section.append(heading);
-      for (const record of group.records) {
-        const revision = record.revisions.find(item => item.id === record.currentRevision);
-        const requiresDepth = revision?.declaredCapabilities.includes('iqterminal.depth.series.v1') === true;
-        const unsupported = requiresDepth && !supportsDepth(this.selection);
-        const row = document.createElement('button');
-        row.type = 'button';
-        row.className = 'indicator-option';
-        row.dataset.addScript = record.id;
-        row.setAttribute('aria-label', `Add ${record.title}`);
-        row.disabled = this.pickerBusy || activeCount >= MAX_STUDIES_PER_CHART || unsupported;
-        row.title = unsupported ? 'Depth studies require Binance BTCUSDT USD-M Perp' : activeCount >= MAX_STUDIES_PER_CHART ? `This chart already has ${MAX_STUDIES_PER_CHART} studies` : `Add ${record.title} with its default settings`;
+    for (const category of ['Order Flow','Trend','Volume','My Scripts']) {
+      const matches = entries.filter(d => d.category === category && (!query || `${d.name} ${d.description}`.toLocaleLowerCase().includes(query)));
+      if (!matches.length) continue;
+      const section = document.createElement('section'); section.className = 'indicator-category';
+      const heading = document.createElement('h3'); heading.textContent = category; section.append(heading);
+      for (const definition of matches) {
+        const native = definition.implementation === 'builtin';
+        const existing = native && this.selection.indicators.some(i => i.definitionId === definition.id);
+        const unsupported = definition.dataRequirements.some(r => ['executions','synchronized-book','depth-series'].includes(r)) && !supportsDepth(this.selection);
+        const row = document.createElement('button'); row.type = 'button'; row.className = 'indicator-option';
+        if (native) row.dataset.addNative = definition.id; else row.dataset.addScript = definition.id.slice(7);
+        row.setAttribute('aria-label', `${existing ? 'Configure' : 'Add'} ${definition.name}`);
+        row.disabled = this.pickerBusy || (!native && (activeCount >= MAX_STUDIES_PER_CHART || unsupported));
+        row.title = existing ? 'Configure the existing singleton' : unsupported ? 'Available on Binance BTCUSDT USD-M Perp only; chart market will stay selected' : `Add ${definition.name} with its default settings`;
         const copy = document.createElement('div'); copy.className = 'indicator-option-copy';
-        const title = document.createElement('strong'); title.textContent = record.title;
-        const description = document.createElement('span'); description.textContent = record.description;
-        copy.append(title, description);
-        const action = document.createElement('span'); action.className = 'indicator-option-action'; action.textContent = '＋ Add'; action.setAttribute('aria-hidden', 'true');
-        row.append(copy, action);
-        if (unsupported) {
-          const note = document.createElement('small'); note.textContent = 'Binance BTCUSDT USD-M Perp only';
-          row.append(note);
-        }
-        section.append(row);
-        shown++;
-        if (!unsupported && activeCount < MAX_STUDIES_PER_CHART) enabled++;
+        const title = document.createElement('strong'); title.textContent = definition.name;
+        const description = document.createElement('span'); description.textContent = definition.description;
+        const kind = document.createElement('small'); kind.textContent = native ? 'Built-in · one per chart' : 'Scripted · editable source'; if (unsupported) kind.textContent += ' · Binance BTCUSDT USD-M Perp only'; copy.append(title, description, kind);
+        const action = document.createElement('span'); action.className = 'indicator-option-action'; action.textContent = existing ? 'Settings' : 'Add'; action.setAttribute('aria-hidden','true');
+        row.append(copy, action); section.append(row); shown++;
       }
       this.pickerList.append(section);
     }
-    this.pickerStatus.textContent = statusMessage ?? (shown
-      ? `${enabled} addable · ${activeCount}/${MAX_STUDIES_PER_CHART} studies attached`
-      : 'No indicators match this search.');
+    this.pickerStatus.textContent = statusMessage ?? (shown ? `${activeCount}/${MAX_STUDIES_PER_CHART} scripted studies attached · native layers use shared feeds` : 'No indicators match this search.');
   }
 
   private async addStudy(scriptId: string) {
@@ -663,9 +786,13 @@ export class CandlePanel implements IContentRenderer {
 
   private async openStudySettings(instanceId: string) {
     const attachmentId = this.studyHost?.attachmentForInstance(instanceId);
+    if (attachmentId) await this.openAttachmentSettings(attachmentId);
+  }
+
+  private async openAttachmentSettings(attachmentId: string) {
     const study = attachmentId && this.studyHost?.views().find(view => view.attachmentId === attachmentId);
     if (!attachmentId || !study) return;
-    this.settingsAttachmentId = attachmentId;
+    this.settingsAttachmentId = attachmentId; delete this.activeIndicators.dataset.error;
     this.settingsDialog.querySelector<HTMLElement>('.settings-title')!.textContent = `${study.title} settings`;
     this.settingsFields.replaceChildren();
     for (const input of study.inputs) {
@@ -728,9 +855,8 @@ export class CandlePanel implements IContentRenderer {
 
   private select() {
     const series = seriesForInstrument(this.instrument.value, this.interval.value as Interval);
-    const type = this.selection.type === 'footprint' && supportsDepth(series ?? this.selection) ? 'footprint' : 'candle';
     const wasFootprint = this.selection.type === 'footprint';
-    this.selection = config({ ...this.selection, ...(series ?? {}), type, studies: this.selection.studies });
+    this.selection = config({ ...this.selection, ...(series ?? {}), studies: this.selection.studies });
     this.params.api.updateParameters(this.selection);
     this.updateFootprintControls();
     this.resetViewOnSnapshot = true;
@@ -748,62 +874,6 @@ export class CandlePanel implements IContentRenderer {
     this.updateReadout(null);
     this.subscribe();
     this.save();
-  }
-
-  private selectMode() {
-    const requested = this.chartType.value === 'footprint' ? 'footprint' : 'candle';
-    const type = requested === 'footprint' && supportsDepth(this.selection) ? 'footprint' : 'candle';
-    if (type === this.selection.type) { this.updateFootprintControls(); return; }
-    this.selection = config({ ...this.selection, type });
-    this.params.api.updateParameters(this.selection);
-    this.updateFootprintControls();
-    this.hoveredBar = null;
-    this.hoveredFootprint = null;
-    if (type === 'footprint') {
-      this.footprintHasInitialView = false;
-      this.footprintNeedsSync = true;
-      this.engine?.setDisplayMode('footprint', true);
-      this.footprintBars = [];
-      this.footprintStatus = { ...this.footprintStatus, state: 'loading', message: 'Waiting for Binance USD-M aggTrade observations', coverage: 'waiting', lastUpdate: 0 };
-      this.subscribeFootprint();
-    } else {
-      this.releaseFootprint?.(); this.releaseFootprint = undefined;
-      this.footprintBars = [];
-      this.engine?.setDisplayMode('candle', true);
-      this.engine?.setSnapshot(this.candles, false);
-      this.engine?.resetView();
-    }
-    this.syncHeatmap();
-    this.refreshReadout();
-    this.updateStatus();
-    this.save();
-  }
-
-  private selectRowPrice() {
-    const parsed = Number(this.rowPrice.value);
-    if (!validFootprintRowPrice(parsed)) {
-      this.rowPrice.setCustomValidity(`Enter a price level greater than $0 and no more than $${FOOTPRINT_MAX_ROW_PRICE.toLocaleString('en-US')}.`);
-      this.rowPrice.reportValidity();
-      return;
-    }
-    this.rowPrice.setCustomValidity('');
-    if (parsed === this.selection.rowPrice) { this.rowPrice.value = String(this.selection.rowPrice); return; }
-    if (this.footprintStatus.tickSize !== null && footprintTicksForPrice(parsed, this.footprintStatus.tickSize) === null) {
-      const tick = formatFootprintPrice(this.footprintStatus.tickSize);
-      this.rowPrice.setCustomValidity(`Enter a multiple of the current BTCUSDT tick size, $${tick} USDT.`);
-      this.rowPrice.reportValidity();
-      return;
-    }
-    this.selection = config({ ...this.selection, rowPrice: parsed });
-    this.footprintNeedsSync = true;
-    this.hoveredFootprint = null;
-    this.footprintBars = [];
-    this.footprintStatus = { ...this.footprintStatus, state: 'loading', message: 'Validating the selected price level against Binance tick metadata…', coverage: 'waiting', lastUpdate: 0 };
-    this.engine?.setFootprintBars([], false);
-    this.subscribeFootprint();
-    this.syncHeatmap();
-    this.refreshReadout();
-    this.updateStatus();
   }
 
   private subscribe() {
@@ -838,20 +908,24 @@ export class CandlePanel implements IContentRenderer {
       }
     });
     this.syncHeatmap();
-    if (selection.type === 'footprint') this.subscribeFootprint();
-    else { this.releaseFootprint?.(); this.releaseFootprint = undefined; }
+    this.subscribeFootprint();
+    this.reconcileIndicators();
   }
 
-  private changeHeatmap(settings: HeatmapSettings) {
-    this.selection = config({ ...this.selection, heatmap: { ...settings, rowPrice: this.selection.type === 'footprint' ? this.selection.heatmap.rowPrice : settings.rowPrice } });
-    this.params.api.updateParameters(this.selection); this.syncHeatmap(); this.save();
+  private changeHeatmap(settings: HeatmapSettings, units: FootprintUnits) {
+    const previousUnits = this.selection.footprintUnits;
+    const instance = this.nativeIndicator(HEATMAP_ID); if (!instance) return;
+    this.selection = config({ ...this.selection, footprintUnits: units, indicators: this.selection.indicators.map(i =>
+      i.instanceId === instance.instanceId ? { ...i, settings: { ...settings, rowPrice: this.nativeIndicator(FOOTPRINT_ID) ? this.selection.heatmap.rowPrice : settings.rowPrice } }
+        : i.definitionId === FOOTPRINT_ID && i.settingsVersion === 1 && i.source.kind === 'chart' ? { ...i, settings: { ...i.settings, units } } : i) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); if (previousUnits !== this.selection.footprintUnits) this.syncNativeIndicators(); this.save();
   }
   private syncHeatmap() {
-    const supported = supportsDepth(this.selection), footprint = this.selection.type === 'footprint';
+    const supported = supportsDepth(this.selection), footprint = Boolean(this.nativeIndicator(FOOTPRINT_ID));
     const settings: HeatmapSettings = footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' } : this.selection.heatmap;
-    this.heatmapControls.sync(settings, supported, footprint);
+    this.heatmapControls.sync(settings, supported, footprint); this.heatmapControls.setUnits(this.selection.footprintUnits);
     this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported }, duration[this.selection.interval]);
-    const key = settings.enabled && supported ? heatmapKey(settings) : '';
+    const key = this.nativeIndicator(HEATMAP_ID) && supported ? heatmapKey(settings) : '';
     if (key === this.heatmapSubscriptionKey) return;
     this.releaseHeatmap?.(); this.releaseHeatmap = undefined; this.heatmapSubscriptionKey = key;
     const generation = ++this.heatmapGeneration; this.heatmapStatus = undefined; this.heatmapControls.setStatus(undefined); this.heatmapControls.hover(null);
@@ -866,9 +940,13 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private subscribeFootprint() {
-    this.releaseFootprint?.();
-    this.releaseFootprint = undefined;
-    if (this.selection.type !== 'footprint' || !supportsDepth(this.selection)) return;
+    const attached = Boolean(this.nativeIndicator(FOOTPRINT_ID));
+    const key = attached && supportsDepth(this.selection) ? `${this.selectionEpoch}:${instrumentKey(this.selection)}:${this.selection.interval}:${this.selection.rowPrice}` : '';
+    if (key === this.footprintSubscriptionKey) return;
+    this.releaseFootprint?.(); this.releaseFootprint = undefined; this.footprintSubscriptionKey = key;
+    const generation = ++this.footprintGeneration; this.footprintBars = []; this.footprintNeedsSync = true; this.footprintHasInitialView = false;
+    if (this.selection.type === 'footprint') this.engine?.setFootprintBars([], false);
+    if (!key) return;
     const epoch = this.selectionEpoch;
     const selection = this.selection;
     this.footprintStatus = {
@@ -879,7 +957,7 @@ export class CandlePanel implements IContentRenderer {
     };
     this.updateFootprintMetadata();
     this.releaseFootprint = this.feed.subscribeFootprint(this.params.api.id, selection, selection.rowPrice, event => {
-      if (this.dead || epoch !== this.selectionEpoch || this.selection.type !== 'footprint') return;
+      if (this.dead || epoch !== this.selectionEpoch || generation !== this.footprintGeneration || !this.nativeIndicator(FOOTPRINT_ID)) return;
       if ((event.type === 'footprint-snapshot' || event.type === 'footprint-patch') && event.status) {
         this.footprintStatus = event.status;
         this.updateFootprintMetadata();
@@ -894,7 +972,7 @@ export class CandlePanel implements IContentRenderer {
       } else if (event.type === 'footprint-snapshot') {
         this.footprintBars = event.bars.slice().sort((a, b) => a.time - b.time);
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
-        if (this.visible) {
+        if (this.visible && this.selection.type === 'footprint') {
           this.engine?.setFootprintBars(this.footprintBars, true);
           this.footprintNeedsSync = false;
           this.focusFootprintOnce();
@@ -903,7 +981,7 @@ export class CandlePanel implements IContentRenderer {
       } else if (event.type === 'footprint-patch') {
         this.mergeFootprints(event.bars, event.retentionStart);
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
-        if (this.visible) {
+        if (this.visible && this.selection.type === 'footprint') {
           this.engine?.applyFootprintPatch(event.bars, event.retentionStart);
           this.footprintNeedsSync = false;
           this.focusFootprintOnce();
@@ -1177,7 +1255,8 @@ export class CandlePanel implements IContentRenderer {
     if (this.chartSettingsDialog.open) this.chartSettingsDialog.close();
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
-    this.releaseFootprint?.();
+    this.releaseFootprint?.(); this.footprintGeneration++;
+    this.indicatorLifecycle?.dispose();
     this.subscriptions.forEach(subscription => subscription.dispose());
     this.studyHost?.dispose();
     this.engine?.dispose();

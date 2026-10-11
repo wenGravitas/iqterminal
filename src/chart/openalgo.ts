@@ -11,10 +11,11 @@ import {
   type SeriesApi,
   type IPrimitive,
 } from 'openalgo-charts';
-import { DEFAULT_FOOTPRINT_OPTIONS, Footprint, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
+import { DEFAULT_FOOTPRINT_OPTIONS, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
 import type { Candle, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
+import { TerminalFootprint } from './terminal-footprint';
 import { FootprintActivity } from './footprint-activity';
 import { footprintForUnits, type FootprintUnits } from './footprint-units';
 import type { Scheduler } from './scheduler';
@@ -78,23 +79,24 @@ export class OpenAlgoCandleChart {
   private footprintTimes: number[] = [];
   private footprintBars: FootprintBar[] = [];
   private footprintSliceKey = '';
+  private footprintOpacity = .85;
   private footprintUnits: FootprintUnits = 'btc';
   private pendingView: ViewAnchor | null = null;
   private mode: 'candle' | 'footprint' = 'candle';
-  private footprint: Footprint | null = null;
+  private footprint: TerminalFootprint | null = null;
   private footprintOptions: FootprintOptions = {
     ...DEFAULT_FOOTPRINT_OPTIONS,
     // Reserve enough of each bar slot for the 5-digit buy/sell quantities at 80px spacing.
-    font: 9, widthFactor: 0.96,
+    font: 9, widthFactor: 0.84,
     displayMode: 'bidask', cellStyle: 'ladder',
     statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'], tableRows: [],
-    showCandle: true, showPoc: true, showValueArea: false,
+    showCandle: true, showPoc: true, showValueArea: true, valueAreaColor: 'rgba(133, 133, 133, 0.8)',
     pocStyle: 'outline', radius: 0,
     stackedImbalances: 0, cvdOffset: 0,
   };
   private readonly footprintRefresh = () => this.refreshVisibleFootprint();
   private readonly reducedMotion = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)'); } catch { return { matches: false }; } })();
-  private readonly footprintActivity = new FootprintActivity(() => this.footprintOptions, () => this.reducedMotion.matches);
+  private readonly footprintActivity = new FootprintActivity(() => this.footprint?.options() ?? this.footprintOptions, () => this.reducedMotion.matches);
   // A sparse session must not stretch one price row to the entire pane.
   // This contributes only an autoscale extent; manual scaling remains owned by OpenAlgo.
   private readonly footprintScaleFloor: IPrimitive = {
@@ -186,7 +188,12 @@ export class OpenAlgoCandleChart {
 
   setHeatmap(options: HeatmapSettings, intervalMs: number) {
     if (!options.enabled) { if (this.heatmap) this.chart.removePrimitive(this.heatmap); this.heatmap = null; return; }
-    if (!this.heatmap) { this.heatmap = new OrderBookHeatmap(intervalMs); this.chart.addPrimitive(this.heatmap, 0); }
+    if (!this.heatmap) { this.heatmap = new OrderBookHeatmap(intervalMs); this.heatmap.setUnits(this.footprintUnits); this.chart.addPrimitive(this.heatmap, 0); }
+    this.heatmap.setFootprintOcclusion((timeMs, low, high) => {
+      if (this.mode !== 'footprint') return false;
+      const bar = this.footprintBars[lowerBoundFootprint(this.footprintBars, timeMs / 1000)];
+      return bar?.time === timeMs / 1000 && bar.cells.some(cell => cell.price < high && cell.price + bar.rowSize > low);
+    });
     this.heatmap.setInterval(intervalMs); this.heatmap.setOptions(options);
     this.heatmap.setFootprintLayout(this.mode === 'footprint' ? this.footprintOptions : undefined);
   }
@@ -233,15 +240,18 @@ export class OpenAlgoCandleChart {
     this.restoreView(view);
   }
 
+  private basePriceVisible = true;
+  setBasePriceVisible(visible: boolean) { this.basePriceVisible = visible; if (this.mode === 'candle') this.series.applyOptions({ visible, priceLineVisible: visible, lastValueVisible: visible }); }
+
   setDisplayMode(mode: 'candle' | 'footprint', preserveView = false) {
     if (this.disposed || this.mode === mode) return;
     this.pendingView = preserveView ? this.captureView() : null;
     this.mode = mode;
     this.heatmap?.setFootprintLayout(mode === 'footprint' ? this.footprintOptions : undefined);
     this.series.applyOptions({
-      visible: mode === 'candle',
-      priceLineVisible: mode === 'candle',
-      lastValueVisible: mode === 'candle',
+      visible: mode === 'candle' && this.basePriceVisible,
+      priceLineVisible: mode === 'candle' && this.basePriceVisible,
+      lastValueVisible: mode === 'candle' && this.basePriceVisible,
     });
     if (mode === 'footprint') {
       this.ensureFootprintSurface();
@@ -443,6 +453,8 @@ export class OpenAlgoCandleChart {
     this.chart.setVisibleLogicalRange({ from: fromIndex + view.fromOffset, to: toIndex + view.toOffset });
   }
 
+  setFootprintOpacity(opacity: number) { this.footprintOpacity = opacity; this.footprint?.setCellOpacity(opacity); }
+
   setFootprintOptions(options: Partial<FootprintOptions>) {
     this.footprintOptions = { ...this.footprintOptions, ...options };
     if (this.mode === 'footprint') this.heatmap?.setFootprintLayout(this.footprintOptions);
@@ -453,7 +465,7 @@ export class OpenAlgoCandleChart {
 
   setFootprintUnits(units: FootprintUnits) {
     if (units === this.footprintUnits) return;
-    this.footprintUnits = units;
+    this.footprintUnits = units; this.heatmap?.setUnits(units);
     this.footprintActivity.clear();
     this.footprintSliceKey = '';
     this.enqueueFootprintRefresh();
@@ -486,7 +498,8 @@ export class OpenAlgoCandleChart {
         priceLineVisible: true, lastValueVisible: true,
       },
     });
-    this.footprint = new Footprint(this.footprintOptions);
+    this.footprint = new TerminalFootprint(this.footprintOptions);
+    this.footprint.setCellOpacity(this.footprintOpacity);
     this.chart.addPrimitive(this.footprint);
     this.chart.addPrimitive(this.footprintScaleFloor);
     this.chart.addPrimitive(this.footprintActivity);

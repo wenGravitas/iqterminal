@@ -26,8 +26,9 @@ describe('appearance preference', () => {
   it('uses the verified Ivory and original terminal Dark palettes and readable liquidity labels', () => {
     expect(CHART_THEMES.light).toMatchObject({ background: '#f6f4ee', grid: '#e9e5dc', upColor: '#167260', downColor: '#b54436' });
     expect(CHART_THEMES.dark).toMatchObject({ background: '#090909', upColor: '#58a65c', downColor: '#ad5858' });
-    expect(liquidityTextColor(0, .05, CHART_THEMES.light.background)).toBe('#000000');
-    expect(liquidityTextColor(255, .05, CHART_THEMES.dark.background)).toBe('#ffffff');
-    expect(liquidityTextColor(255, .8, CHART_THEMES.dark.background)).toBe('#000000');
+    expect(liquidityTextColor(0, .05, CHART_THEMES.light.background)).toBe('#485567');
+    expect(liquidityTextColor(255, .05, CHART_THEMES.dark.background)).toBe('#bcc3ce');
+    expect(liquidityTextColor(255, .8, CHART_THEMES.dark.background)).toBe('#bcc3ce');
+    expect(liquidityTextColor(255, .8, CHART_THEMES.light.background)).toBe('#485567');
   });
 });

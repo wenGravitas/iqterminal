@@ -217,3 +217,118 @@ Heatmap labels show quantity alone, fitting the visible cell area with padding a
 The central modal is replaced by a 224px native auto popover beneath the group's cycle control. Seconds and an SVG Play/Pause button share one row; running groups show Pause in the tab strip. It clamps inside the viewport, closes on Escape/outside click and supports changing the interval while running on field change. Per-group ordering, initial dwell, hidden-document suspension and disposal remain in the existing timer.
 
 **131 unit tests**, typecheck through build and ordinary/diagnostic builds pass. The focused Chromium tab-cycle scenario passes: local geometry, invalid interval errors, full dwell/manual reset, independent groups, running Pause icons, live interval edits, Escape/outside dismissal, narrow Ivory layout and group disposal. Initial test assertions needed to account for the viewport edge clamp and target the tab-strip icon separately from the menu's Pause icon; the final scenario passes. [Results](../artifacts/browser-tab-cycle-menu-results.json); [Dark menu](../artifacts/tab-cycle-menu-dark-1366x768.png); [running](../artifacts/tab-cycle-menu-running-1366x768.png); [Ivory narrow](../artifacts/tab-cycle-menu-light-720x860.png). Screenshots use explicit candle fixtures. Main bundle **898.42 kB / 235.32 kB gzip**, CSS **144.96 / 14.02 kB**; existing chunk warning remains. No full-suite, live-feed or performance rerun is claimed for this UI change.
+
+
+### Zoom-responsive footprint text and independent opacity
+
+Executed-cell text fits price-row height and column width, from 9px to 24px semibold; statistics keep their compact font. Footprint display settings adds Cell opacity (%) with an 85% default. Heatmap settings supports 0–1 opacity and defaults to .85 in new layouts; explicit saved values remain intact. Heatmap labels beneath occupied footprint cells are hidden to prevent overlapping figures, while liquidity backgrounds and hover remain available.
+
+**133 unit tests in 24 files**, typecheck and ordinary/diagnostic builds pass. The installed OpenAlgo renderer is exercised directly for fitted fonts, cell-only alpha, opaque text, unchanged footer typography and DPR changes. Additional assertions cover configuration migration, independent settings and heatmap-label occlusion without losing hover. The final occlusion assertions pass in a 17-test focused rerun. **12 focused browser scenarios** are covered: 11 pass in the [Footprint/heatmap subset](../artifacts/browser-footprint-presentation-subset-results.json), and the new presentation case passes in its [corrected rerun](../artifacts/browser-footprint-presentation-results.json). The initial presentation fixture lacked required USDT notionals; it now supplies exact notionals and waits for the new heatmap resolution to start before comparing collection identities. No data guard was weakened. Browser checks cover zoom, units, settings/reload, hidden tabs, teardown, pulses, sparse rows, both axes and heatmap sharing. [Dark presentation](../artifacts/footprint-prominent-dark-1366x768.png). Development fixtures only.
+
+Main bundle **900.99 kB / 236.06 kB gzip**, CSS **144.96 / 14.02 kB**, feed worker **60.13 kB**. The existing chunk warning remains. No new full-suite, live-feed or performance campaign is claimed for this styling change. Dependency files and versions are unchanged; the public Footprint drawing-command wrapper must be rechecked on an OpenAlgo upgrade.
+
+Heatmap BTC/USDT display follow-up: 134 unit tests pass, including exact
+price-weighted quote amounts, irregular-duration averages, simultaneous coarse
+quote peaks and the unchanged byte ceiling. Typecheck and production build pass.
+Browser checks pass for the unit toggle with preserved collection, shared depth
+studies, chart switching, hidden tabs/disposal, labels, resize, unsupported markets
+and saved layout. The labels fixture was updated from 9 to 13 fields per cell.
+No new live-depth or performance benchmark was claimed for this formatting change.
+
+### Unified indicators and central footprint candles
+
+The shared catalogue/list adapts existing script, execution and depth paths;
+OpenAlgo Charts 2.6.0 and OpenScript 0.8.1 remain pinned. Tests cover idempotent
+legacy migration, authoritative empty lists, unknown/future records, independent
+script pins, removal during pending apply, unavailable source binding teardown,
+visibility and disposal. Native hides retain bounded collection; removal releases
+the consumer. Bid/ask cells reserve a central execution-candle gutter, including
+translated hit testing and pulse geometry; short panes compact the statistics.
+
+The Chromium full regression run passed 34/38 scenarios initially. Three failures
+were old geometry assertions targeting the new candle gutter/old ladder edge and
+were corrected to target actual bid cells; their focused rerun passes. The
+remaining native Dockview `dragTo` grouping failure predates this milestone;
+API-based grouping/reorder/split/resize and tab cycling pass. Unified browser
+checks exercise EMA 20/50, default adds, native settings, keyboard/touch-visible
+controls, narrow Ivory layout, list gesture isolation, shared feeds, hide/show,
+removal, unsupported markets, market/timeframe changes and repeated legacy
+reload. [Full run](../artifacts/browser-unified-full-results.json),
+[final focused checks](../artifacts/browser-unified-final-results.json),
+[desktop](../artifacts/unified-indicators-1366x768.png),
+[narrow](../artifacts/unified-indicators-720x860.png),
+[central candle](../artifacts/footprint-prominent-dark-1366x768.png).
+The source UI detector reported no findings. Fixtures remain explicit development
+paths; these browser workflows do not prove live exchange connectivity.
+
+#### Performance comparison
+
+Same Raspberry Pi 5, Chromium 154, Canvas2D, 1366×768, 5,000-bar fixtures,
+1,000 synthetic candle messages/second and the existing fixed-action benchmark.
+The first completed pair ran before then after; the repeat reversed the order.
+User desktop browsers/services remained active, so the results are observations
+on a variable-load host, not a controlled platform acceptance pass.
+
+| Panels | First before / after p95 RAF ms | Repeat before / after p95 RAF ms |
+|---:|---:|---:|
+| 1 | 133.3 / 149.9 | 16.8 / 233.3 |
+| 2 | 166.7 / 166.7 | 16.8 / 166.7 |
+| 8 | 233.3 / 250.1 | 33.3 / 50.0 |
+
+The smooth-frame budget is **not met**, and the large/inconsistent differences
+remain unresolved. Investigation found no catalogue/list rebuilding on native
+market ticks and no new worker ingestion/aggregation path. A redundant native
+primitive update request during draw was removed. No causal performance parity
+or speedup is claimed. First-pair eight-panel transient main JS heap was
+23.2/32.7 MiB; the repeat was 20.9/21.0 MiB. These are pre-GC values, excluding
+workers, canvas buffers and native allocations. Both builds reported no errors,
+zero hidden-panel draws while data continued, and ten add/close cycles returned
+to two panels. No budget was weakened.
+
+[Before](../artifacts/performance-unified-before.json),
+[after](../artifacts/performance-unified-after.json),
+[repeat before](../artifacts/performance-unified-before-repeat.json),
+[repeat after](../artifacts/performance-unified-after-repeat.json).
+An additional real-script-worker EMA workload measured 1/2/8-panel p95 RAF
+33.3/33.2/183.3 ms, main JS heap 36.4/29.2/82.0 MiB, and catalogue-to-applied
+latencies 704–3,382 ms across eight adds. It retained zero hidden draws and
+reported no errors. This is not a paired scripting baseline:
+[active-study results](../artifacts/performance-unified-studies.json).
+
+Reproduce with a diagnostic build (`VITE_DIAGNOSTICS=1 pnpm exec vite build`):
+`BENCH_FIXED_ACTIONS=1 pnpm bench`; add `BENCH_STUDIES=1` for active EMAs.
+`node scripts/bench-footprint-browser.mjs` exercises synthetic aggregate trades
+through the real worker, shared socket, acknowledged publications, renderer,
+hit testing, hidden panels and repeated lifecycle. Its final measurements are
+[the footprint report](../artifacts/performance-unified-footprints.json).
+Ordinary production never substitutes these fixtures. Hardware-accelerated
+interactive desktop performance is not certified by these headless checks.
+
+The final footprint workload accepted all 5,000 observations per run through one
+shared execution socket. For 1/2/8 panels, p95 RAF was 16.8/33.3/66.7 ms, p95
+IPC-to-next-draw was 14.0/28.6/33.2 ms and maximum long task was 0/67/129 ms.
+Worker wire-delivery batch measurements and full aggregation counters are in the
+report. Eight-panel hit tests, hidden collection without painting, ten add/close
+cycles and final shared-socket close pass. The eight-panel frame target remains
+unmet; this is disclosed rather than accepted as smooth desktop rendering.
+
+The ordinary production live Footprint check passed without fixtures: captured
+Binance aggregate executions reconciled with rendered bid/ask/volume/delta,
+one shared trade socket was used, EMA applied through the script worker,
+BTC/USDT display changed without a new subscription, and native Binance and
+Hyperliquid candle streams were live after returning to candles.
+[Live report](../artifacts/footprint-live-unified-results.json).
+
+Final checks: **146 unit tests in 25 files pass**, production build includes the
+typecheck, and eight final focused browser checks pass. Main bundle is
+920.65 kB / 241.54 kB gzip; CSS 147.35 / 14.43 kB. The comparable diagnostic
+baseline was 902.90 / 236.61 kB, so added main gzip cost is approximately 4.9 kB.
+The existing large-chunk warning remains; no dependencies were added.
+
+The attempted ordinary live Heatmap smoke timed out after 35 seconds waiting
+for synchronized live collection, before quantity reconciliation. A subsequent
+read-only request to the exact 1,000-level REST endpoint returned HTTP 200.
+This does not identify the browser synchronization failure or certify live
+heatmap operation. Deterministic worker/book/sharing checks pass; this live
+check remains unverified. The existing exchange synchronization path was not
+changed to bypass its integrity checks.

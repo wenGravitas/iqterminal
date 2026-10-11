@@ -13,7 +13,7 @@ it('migrates an existing candle panel and rejects Footprint on unsupported instr
 it('sanitizes corrupt settings and retains valid Footprint choices without mutating saved input', () => {
   const input = { venue: 'binance', market: 'perpetual', interval: '5m', type: 'footprint', rowPrice: 0.2,
     footprint: { displayMode: 'delta', cellStyle: 'profile', showPoc: false,
-      showDiagonalImbalances: false, stackedImbalances: true, imbalanceRatio: 4, imbalanceThreshold: 0.02 } };
+      showDiagonalImbalances: false, showValueArea: false, stackedImbalances: true, imbalanceRatio: 4, imbalanceThreshold: 0.02 } };
   const saved = structuredClone(input);
   expect(config(input)).toMatchObject(saved);
   expect(input).toEqual(saved);
@@ -24,7 +24,7 @@ it('sanitizes corrupt settings and retains valid Footprint choices without mutat
   expect(config({ ...input, rowPrice: 50 }).rowPrice).toBe(50);
   const invalid = config({ ...input, footprint: { displayMode: 'invented', cellStyle: 'heatmap', showPoc: 'false',
     showDiagonalImbalances: 1, stackedImbalances: 'yes', imbalanceRatio: Infinity, imbalanceThreshold: NaN } });
-  expect(invalid.footprint).toEqual({ displayMode: 'bidask', cellStyle: 'ladder', showPoc: true,
+  expect(invalid.footprint).toEqual({ displayMode: 'bidask', cellStyle: 'ladder', opacity: .85, showCandle: true, showPoc: true, showValueArea: true,
     showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3, imbalanceThreshold: 0.01 });
   expect(config({ ...input, footprint: { imbalanceThreshold: -1 } }).footprint.imbalanceThreshold).toBe(0);
   expect(config({ ...input, footprint: { imbalanceThreshold: 500 } }).footprint.imbalanceThreshold).toBe(10);

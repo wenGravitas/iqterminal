@@ -91,7 +91,7 @@ Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar a
 
 ### Order-book Heatmap
 
-The heatmap toggle and settings button use the same square, compact monospace toolbar treatment. Each candle interval owns one fixed heatmap column; forming quantities update in place. In Footprint mode the toolbar price level governs both layers, including fixed bucket boundaries and height; one-sided liquidity fills its row. The density palette sits behind candles and footprint marks, with bids and asks kept distinct; optional auto labels show quantity alone, sized to fit the cell with a 24px cap; bid/ask side and BTC units remain explicit on hover. Hover identifies the resting side and quantity, average or peak mode, UTC time span, price range, and whether coverage is incomplete. Defaults use 0.45 opacity and full intensity at 100 BTC per $10 of price. The active toggle uses the theme accent. Settings open in a native, square dialog that stays within the viewport and scrolls at smaller sizes. Heatmap values describe observed resting liquidity, not executed trades.
+The shared catalogue and active-indicator list expose heatmap visibility and settings with compact square controls. Each candle interval owns one fixed heatmap column; forming quantities update in place. In Footprint mode the Footprint settings price level governs both layers, including fixed bucket boundaries and height; one-sided liquidity fills its row. The density palette sits behind candles and footprint marks, with bids and asks kept distinct; optional auto labels show quantity alone, sized to fit the cell with a quiet 12px cap; bid/ask side and BTC units remain explicit on hover. Hover identifies the resting side and quantity, average or peak mode, UTC time span, price range, and whether coverage is incomplete. Defaults use 0.85 opacity and full intensity at 100 BTC per $10 of price. The active toggle uses the theme accent. Settings open in a native, square dialog that stays within the viewport and scrolls at smaller sizes. Heatmap values describe observed resting liquidity, not executed trades.
 
 ## Do's and Don'ts
 
@@ -107,3 +107,7 @@ The heatmap toggle and settings button use the same square, compact monospace to
 ### Tab cycling controls
 
 The tab-strip cycle icon opens a small anchored popover just below the control, with seconds per tab and one Play/Pause icon button on the same row. Running groups show a Pause icon in the tab strip. The menu uses existing square controls, theme colours and a thin border; it clamps inside the viewport and dismisses on Escape or an outside click. No modal backdrop or central pointer travel.
+
+### Footprint text and opacity
+
+Bid/ask quantities grow with the price-row height and available column width, from 9px up to a restrained 24px semibold monospace. Compact rows keep compact text; the statistics footer keeps its original size. Executed cell backgrounds default to 85% opacity (15% transparency), independently adjustable in Footprint display settings. Heatmap backgrounds retain their own opacity control and use muted, theme-aware liquidity colours with smaller labels so executed footprint cells remain in the foreground. Text remains opaque; saved explicit heatmap opacity is respected.

@@ -118,9 +118,8 @@ async function configure(page, worker, count) {
       panel.select();
       // Preserve the original benchmark's quote widths after the UI moved from ticks to USDT.
       panel.rowPrice.value = count === 2 ? '1' : (count === 8 ? String([0.1, 0.2, 0.5, 1, 2, 5, 0.1, 0.2][index]) : '1');
-      panel.selectRowPrice();
-      panel.chartType.value = 'footprint';
-      panel.selectMode();
+      panel.selection = { ...panel.selection, rowPrice: Number(panel.rowPrice.value) };
+      panel.addNativeIndicator('native.footprint');
     }
     for (let index = 2; index < charts.length; index++) {
       charts[index].api.moveTo({ group: charts[index - 2].api.group, position: 'bottom' });
@@ -235,8 +234,12 @@ async function runFootprintLifecycleProbes(page, worker) {
       ?? bar?.cells.find(value => value.bidVol > 0 || value.askVol > 0);
     if (!bar || !cell) return { id: panel.diagnostics().id, error: 'No native aggregate cell retained' };
     const chart = panel.engine.chart;
-    const x = chart.timeToCoordinate(bar.time);
-    const y = chart.priceToCoordinate(cell.price, 0);
+    const centre = chart.timeToCoordinate(bar.time);
+    const options = panel.engine.footprint.options(), spacing = chart.timeScale.barSpacing;
+    const column = Math.min(options.cellWidth ?? spacing * options.widthFactor, spacing * .96);
+    const gap = options.showCandle && options.displayMode === 'bidask' && column >= 32 ? Math.min(24, Math.max(12, column * .12)) : 0;
+    const x = centre === null ? null : centre - column / 4 - gap / 4;
+    const y = chart.priceToCoordinate(cell.price + bar.rowSize / 2, 0);
     const hover = x === null || y === null ? null : panel.engine.footprintAt(x, y);
     return {
       id: panel.diagnostics().id, time: bar.time, cell: { ...cell }, x, y,
@@ -299,8 +302,7 @@ async function runFootprintLifecycleProbes(page, worker) {
       const dockPanel = window.__terminal.dock.panels.filter(panel => panel.view.contentComponent === 'candle').at(-1);
       const panel = dockPanel && window.__terminal.panels.get(dockPanel.id);
       if (!panel) throw new Error('Added chart did not construct its native panel');
-      panel.chartType.value = 'footprint';
-      panel.selectMode();
+      panel.addNativeIndicator('native.footprint');
       return dockPanel.id;
     });
     await page.waitForFunction(() => {
@@ -418,8 +420,8 @@ async function measure(count) {
     if (count === 8 && !profileEnabled) result.lifecycle = await runFootprintLifecycleProbes(page, worker);
     await page.evaluate(() => {
       for (const panel of window.__terminal.panels.values()) {
-        panel.chartType.value = 'candle';
-        panel.selectMode();
+        const footprint = panel.selection.indicators.find(i => i.definitionId === 'native.footprint');
+        if (footprint) panel.activeRows.querySelector('[data-indicator-action=remove][data-instance-id="' + footprint.instanceId + '"]').click();
       }
       window.__terminal.feed.send({ type: 'diagnostics' });
     });

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { BinanceDepthBook } from '../src/feed/depth-book';
-import { LiquidityCollector, groupBook, HEATMAP_LIMITS, HEATMAP_STRIDE, heatmapSettings, heatmapKey, validResolution, type ReadonlyDepthView } from '../src/feed/heatmap-model';
+import { LiquidityCollector, groupBook, HEATMAP_LIMITS, HEATMAP_STRIDE, HEATMAP_PEAK_STRIDE, heatmapSettings, heatmapKey, validResolution, type ReadonlyDepthView } from '../src/feed/heatmap-model';
 import { heatmapBins, timestampToLogical, intensityIndex, OrderBookHeatmap } from '../src/chart/orderbook-heatmap';
 import { config } from '../src/panel';
 
@@ -10,6 +10,21 @@ function cell(collector: LiquidityCollector, price = 100) { const b = collector.
 const bins = (c: LiquidityCollector, options = heatmapSettings(null), pricePixel = 1) => heatmapBins(c.snapshot(), options, 60000, t => t === 0 ? 0 : undefined, i => (i + .5) * 600, p => 200 - p * pricePixel, 600, 300);
 
 describe('resting liquidity tiles', () => {
+  it('retains exact resting quote notional, weighted averages and simultaneous coarse quote peaks', () => {
+    const book = (second = false): ReadonlyDepthView => ({ snapshotBidBoundary: 90, snapshotAskBoundary: 150,
+      visitLevels: cb => { cb('bid', 101, second ? 0 : 2); cb('bid', 111, second ? 3 : 0); cb('ask', 141, 4); } });
+    const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1);
+    c.transition(book(), 0, 1); c.transition(book(true), 100, 1); c.advance(500);
+    const v = cell(c).values;
+    expect(v[9]).toBe(20200); expect(v[11]).toBe(202);
+    const out = bins(c, heatmapSettings(null), .01).find(b => b.low === 0)!;
+    expect(out.bidQuote).toBeCloseTo((202*100+333*400)/500);
+    expect(out.askQuote).toBe(564);
+    const peak = bins(c, { ...heatmapSettings(null), mode: 'peak' }, .01).find(b => b.low === 0)!;
+    expect(peak.bidQuote).toBe(333); // Not the sum of separate-time peaks (535).
+    expect(peak.bid).toBe(3);
+  });
+
   it('duration-weights irregular absolute replacements and never adds repeated wall quantity', () => {
     const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1);
     c.transition(state(), 0, 1); c.transition(state(), 100, 1); c.transition(state(40), 400, 1); c.advance(500);
@@ -72,7 +87,7 @@ describe('resting liquidity tiles', () => {
     expect(heatmapKey(c.resolution)).toBe('25:500');
     expect(heatmapKey({ rowPrice: 25, bucketMs: 500 })).toBe('25:500');
     expect(validResolution({ rowPrice: 25, bucketMs: 500, rowAlignment: 'invalid' } as any)).toBe(false);
-    const peaks = Array.from(tile.peaks); const offset = peaks.findIndex((v, i) => i%4 === 0 && v === 2 && peaks[i+1] === 100);
+    const peaks = Array.from(tile.peaks); const offset = peaks.findIndex((v, i) => i%HEATMAP_PEAK_STRIDE === 0 && v === 2 && peaks[i+1] === 100);
     expect(peaks.slice(offset+2, offset+4)).toEqual([3, 9]);
   });
   it('bounds allocation, evicts oldest buckets and records capacity-limited grids', () => {
@@ -102,8 +117,8 @@ describe('heatmap chart boundary', () => {
     const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1); c.transition(state(), 0, 1); c.advance(500);
     const p = new OrderBookHeatmap(60000); p.update(c.snapshot(), true, 0);
     p.setFootprintLayout({ widthFactor: .96, showCandle: true });
-    const labels: { text: string; font: string }[] = [];
-    const context = { font: '', save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, fillRect() {},
+    const labels: { text: string; font: string }[] = [], fills: number[] = [];
+    const context = { font: '', save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, fillRect(_x: number, y: number) { fills.push(y); },
       fillText(text: string) { labels.push({ text, font: this.font }); }, moveTo() {}, lineTo() {}, stroke() {} };
     const rc = { dpr: 1, plotWidth: 600, plotHeight: 300,
       timeScale: { barSpacing: 100, visibleRange: () => ({ from: 0, to: 2 }), indexToX: (i: number) => (i+.5)*100 },
@@ -111,10 +126,18 @@ describe('heatmap chart boundary', () => {
       dataLayer: { timeToIndex: () => 0, indexToTime: () => 0 } };
     p.draw(context as any, rc as any);
     expect(labels.length).toBeGreaterThan(0);
-    for (const label of labels) { expect(label.text).toMatch(/^\d+\.\d{2}$/); expect(parseFloat(label.font)).toBeGreaterThan(10); }
-    expect(p.hoverAt(10, 95)).toBeNull(); expect(p.hoverAt(11, 95)?.side).toBe('bid');
+    for (const label of labels) { expect(label.text).toMatch(/^\d+(\.\d+)?[KM]?$/); expect(parseFloat(label.font)).toBeGreaterThan(10); expect(parseFloat(label.font)).toBeLessThanOrEqual(12); }
+    expect(p.hoverAt(1, 95)).toBeNull(); expect(p.hoverAt(2, 95)?.side).toBe('bid');
     expect(p.hoverAt(97, 95)?.side).toBe('bid'); expect(p.hoverAt(98, 95)).toBeNull();
-    p.setFootprintLayout(); p.draw(context as any, rc as any); expect(p.hoverAt(1, 95)?.side).toBe('bid');
+    p.setUnits('usdt'); labels.length = 0; p.draw(context as any, rc as any);
+    expect(labels.map(l => l.text)).toContain('2K');
+    expect(p.hoverAt(50,95)).toMatchObject({ units: 'usdt', quantity: 2000 });
+    p.setUnits('btc'); p.setFootprintLayout(); p.draw(context as any, rc as any); expect(p.hoverAt(1, 95)?.side).toBe('bid');
+    labels.length = 0; fills.length = 0; p.setFootprintOcclusion((_time, low) => low === 100); p.draw(context as any, rc as any);
+    expect(labels.map(l => l.text)).not.toContain('20'); expect(fills).not.toContain(50); expect(p.hoverAt(50, 95)).toBeNull();
+    expect(labels.map(l => l.text)).toContain('5');
+    p.setFootprintOcclusion(() => false); fills.length = 0; p.draw(context as any, rc as any);
+    expect(fills).toContain(50); expect(p.hoverAt(50, 95)?.side).toBe('bid');
   });
   it('maps every observation in a candle to its fixed logical centre', () => {
     const index = (s: number) => new Map([[0, 0], [60, 1], [180, 2]]).get(s);
@@ -184,7 +207,7 @@ describe('heatmap chart boundary', () => {
   it('validates settings, migrates absent layouts and clears caches on detach', () => {
     expect(config({ venue: 'binance', interval: '1m' }).heatmap).toMatchObject({ enabled: false, rowPrice: 10, bucketMs: 500 });
     const opts = heatmapSettings({ enabled: true, rowPrice: Infinity, opacity: 99, mode: 'unsafe', bucketMs: 250 });
-    expect(opts).toMatchObject({ enabled: true, rowPrice: 10, opacity: .45, mode: 'average', bucketMs: 250 });
+    expect(opts).toMatchObject({ enabled: true, rowPrice: 10, opacity: .85, mode: 'average', bucketMs: 250 });
     const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1); c.transition(state(), 0, 1); c.advance(500);
     const primitive = new OrderBookHeatmap(60000); primitive.update(c.snapshot(), true, 0);
     expect(primitive.stats.bytes).toBeGreaterThan(0); primitive.detached(); expect(primitive.stats.bytes).toBe(0); expect(primitive.autoscaleInfo()).toBeNull();

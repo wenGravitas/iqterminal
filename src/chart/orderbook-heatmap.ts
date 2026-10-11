@@ -1,6 +1,6 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
-import type { FootprintOptions } from 'openalgo-charts/profile';
-import { DEFAULT_HEATMAP, HEATMAP_LIMITS, HEATMAP_STRIDE, type HeatmapSettings, type LiquidityBucket } from '../feed/heatmap-model';
+import { compactVol, type FootprintOptions } from 'openalgo-charts/profile';
+import { DEFAULT_HEATMAP, HEATMAP_LIMITS, HEATMAP_STRIDE, HEATMAP_PEAK_STRIDE, type HeatmapSettings, type LiquidityBucket } from '../feed/heatmap-model';
 
 /** Map observations to their candle centre. Missing host intervals have no display slot. */
 export function timestampToLogical(timeMs: number, intervalMs: number, indexOf: (seconds: number) => number | undefined): number | null {
@@ -10,10 +10,10 @@ export function timestampToLogical(timeMs: number, intervalMs: number, indexOf: 
 export interface HeatmapBin {
   start: number; end: number; columnStart: number; columnEnd: number; observedDuration: number; partial: boolean;
   low: number; high: number; epoch: number;
-  bid: number; ask: number; bidObserved: boolean; askObserved: boolean; incomplete: boolean;
+  bid: number; ask: number; bidQuote: number; askQuote: number; bidObserved: boolean; askObserved: boolean; incomplete: boolean;
   x: number; right: number; y: number; bottom: number;
 }
-interface Aggregate extends HeatmapBin { duration: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number }
+interface Aggregate extends HeatmapBin { duration: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number; bidQuoteArea: number; askQuoteArea: number; bidQuotePeak: number; askQuotePeak: number }
 /** Quantities, never colour values, are aggregated. Fixed density scaling is independent of viewport. */
 export function heatmapBins(buckets: readonly LiquidityBucket[], options: HeatmapSettings, intervalMs: number,
   indexOf: (seconds: number) => number | undefined, xOf: (index: number) => number, yOf: (price: number) => number,
@@ -38,22 +38,23 @@ export function heatmapBins(buckets: readonly LiquidityBucket[], options: Heatma
       if (bottom < 0 || y > height) continue;
       const key = `${columnStart}:${priceKey}:${factor}`;
       let a = bins.get(key);
-      if (!a) { a = { start: b.start, end: b.end, columnStart, columnEnd, observedDuration: 0, partial: true, low, high, epoch: b.epoch, bid: 0, ask: 0, bidObserved: false, askObserved: false,
-        incomplete: false, x, right, y, bottom, duration: 0, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0 }; bins.set(key, a); }
+      if (!a) { a = { start: b.start, end: b.end, columnStart, columnEnd, observedDuration: 0, partial: true, low, high, epoch: b.epoch, bid: 0, ask: 0, bidQuote: 0, askQuote: 0, bidObserved: false, askObserved: false,
+        incomplete: false, x, right, y, bottom, duration: 0, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0, bidQuoteArea: 0, askQuoteArea: 0, bidQuotePeak: 0, askQuotePeak: 0 }; bins.set(key, a); }
       else if (a.end !== b.start || a.epoch !== b.epoch) a.incomplete = true;
       // Gaps contribute no duration or zero quantity. Multiple epochs in one
       // candle share its column but are explicitly marked incomplete.
       a.end = b.end; a.duration += duration;
       a.bidArea += g.bidArea; a.askArea += g.askArea; a.bidPeak = Math.max(a.bidPeak, g.bidPeak); a.askPeak = Math.max(a.askPeak, g.askPeak);
+      a.bidQuoteArea += g.bidQuoteArea; a.askQuoteArea += g.askQuoteArea; a.bidQuotePeak = Math.max(a.bidQuotePeak, g.bidQuotePeak); a.askQuotePeak = Math.max(a.askQuotePeak, g.askQuotePeak);
       a.bidObserved ||= g.bidObserved; a.askObserved ||= g.askObserved; a.incomplete ||= g.incomplete;
     }
   }
   return [...bins.values()].map(a => ({ ...a, observedDuration: a.duration, partial: a.start > a.columnStart || a.end < a.columnEnd, bid: options.mode === 'peak' ? a.bidPeak : a.bidArea / a.duration,
-    ask: options.mode === 'peak' ? a.askPeak : a.askArea / a.duration }));
+    bidQuote: options.mode === 'peak' ? a.bidQuotePeak : a.bidQuoteArea / a.duration, askQuote: options.mode === 'peak' ? a.askQuotePeak : a.askQuoteArea / a.duration, ask: options.mode === 'peak' ? a.askPeak : a.askArea / a.duration }));
 }
 
 interface PriceRow {
-  low: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number;
+  low: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number; bidQuoteArea: number; askQuoteArea: number; bidQuotePeak: number; askQuotePeak: number;
   bidObserved: boolean; askObserved: boolean; incomplete: boolean;
 }
 /** Projection of one immutable tile, reusable across pans and time zoom. */
@@ -61,42 +62,54 @@ function groupPriceRows(b: LiquidityBucket, factor: number): PriceRow[] {
   const priceSize = b.rowSize * factor, duration = b.end - b.start, groups = new Map<number, PriceRow>();
   for (let i = 0; i < b.cells.length; i += HEATMAP_STRIDE) {
     const c = b.cells, offset = b.priceOffset ?? 0, key = Math.floor((c[i]! - offset) / priceSize + 1e-8);
-    const g = groups.get(key) ?? { low: key * priceSize + offset, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0, bidObserved: false, askObserved: false, incomplete: b.capacityLimited };
+    const g = groups.get(key) ?? { low: key * priceSize + offset, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0, bidQuoteArea: 0, askQuoteArea: 0, bidQuotePeak: 0, askQuotePeak: 0, bidObserved: false, askObserved: false, incomplete: b.capacityLimited };
     g.bidArea += c[i + 1]!; g.askArea += c[i + 2]!;
     g.bidPeak = Math.max(g.bidPeak, c[i + 3]!); g.askPeak = Math.max(g.askPeak, c[i + 4]!);
+    g.bidQuoteArea += c[i + 9]!; g.askQuoteArea += c[i + 10]!; g.bidQuotePeak = Math.max(g.bidQuotePeak, c[i + 11]!); g.askQuotePeak = Math.max(g.askQuotePeak, c[i + 12]!);
     g.bidObserved ||= c[i + 5]! > 0; g.askObserved ||= c[i + 6]! > 0;
     g.incomplete ||= c[i + 7]! < duration || c[i + 8]! < duration; groups.set(key, g);
   }
   if (factor > 1) for (const g of groups.values()) {
     g.incomplete ||= g.low < b.cells[0]! || g.low + priceSize > b.cells[b.cells.length - HEATMAP_STRIDE]! + b.rowSize;
     // Worker peaks are maxima of simultaneous row sums, not sums of individual maxima.
-    for (let i = 0; i < b.peaks.length; i += 4) if (b.peaks[i] === factor && Math.abs(b.peaks[i + 1]! - g.low) < b.rowSize * 1e-6) {
-      g.bidPeak = b.peaks[i + 2]!; g.askPeak = b.peaks[i + 3]!; break;
+    for (let i = 0; i < b.peaks.length; i += HEATMAP_PEAK_STRIDE) if (b.peaks[i] === factor && Math.abs(b.peaks[i + 1]! - g.low) < b.rowSize * 1e-6) {
+      g.bidPeak = b.peaks[i + 2]!; g.askPeak = b.peaks[i + 3]!; g.bidQuotePeak = b.peaks[i + 4]!; g.askQuotePeak = b.peaks[i + 5]!; break;
     }
   }
   return [...groups.values()];
 }
 
-const stops = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
-export const LIQUIDITY_PALETTE = Array.from({ length: 256 }, (_, n) => {
+// Resting liquidity is a background wash; executed volume owns the foreground.
+const stops = [[21, 16, 29], [27, 30, 43], [28, 43, 44], [42, 56, 45], [67, 70, 47]];
+const lightStops = [[238, 231, 238], [228, 229, 235], [219, 230, 227], [215, 226, 210], [218, 222, 191]];
+const palette = (stops: number[][]) => Array.from({ length: 256 }, (_, n) => {
   const position = n / 255 * 4, i = Math.min(3, Math.floor(position)), f = position - i;
   const color = stops[i]!.map((value, channel) => Math.round(value + (stops[i + 1]![channel]! - value) * f));
   return `rgb(${color.join(',')})`;
 });
+export const LIQUIDITY_PALETTE = palette(stops);
+const LIGHT_LIQUIDITY_PALETTE = palette(lightStops);
+function backgroundPalette(background: string) {
+  const rgb = /^#[\da-f]{6}$/i.test(background) ? [1, 3, 5].map(i => parseInt(background.slice(i, i + 2), 16)) : [9, 9, 9];
+  return rgb[0]! * .2126 + rgb[1]! * .7152 + rgb[2]! * .0722 > 128 ? LIGHT_LIQUIDITY_PALETTE : LIQUIDITY_PALETTE;
+}
 /** Choose contrast after compositing liquidity opacity over the actual chart background. */
 export function liquidityTextColor(index: number, opacity: number, background: string) {
-  const fill = LIQUIDITY_PALETTE[index]!.match(/\d+/g)!.map(Number);
+  const fill = backgroundPalette(background)[index]!.match(/\d+/g)!.map(Number);
   const hex = /^#[\da-f]{6}$/i.test(background) ? background : '#090909';
   const channels = fill.map((value, i) => (value * opacity + parseInt(hex.slice(1+i*2,3+i*2),16)*(1-opacity))/255);
   const linear = channels.map(v => v <= .04045 ? v/12.92 : ((v+.055)/1.055)**2.4);
   const luminance = linear[0]!*.2126 + linear[1]!*.7152 + linear[2]!*.0722;
-  return luminance > .179 ? '#000000' : '#ffffff';
+  return luminance > .179 ? '#485567' : '#bcc3ce';
 }
 export function intensityIndex(quantity: number, priceWidth: number, fixedScale: number) {
   // Density in BTC per $10 prevents wider price bins looking like stronger individual walls.
   return Math.round(255 * Math.min(1, Math.log1p(quantity * 10 / priceWidth / fixedScale) / Math.log(2)));
 }
 export class OrderBookHeatmap implements IPrimitive {
+  private units: 'btc' | 'usdt' = 'btc';
+  setUnits(units: 'btc' | 'usdt') { this.units = units; this.host?.requestUpdate(); }
+  private rowOccluded?: (timeMs: number, low: number, high: number) => boolean;
   private footprintLayout?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>;
   private host?: PrimitiveHost; private buckets: LiquidityBucket[] = []; private options: HeatmapSettings = { ...DEFAULT_HEATMAP };
   private version = 0; private cacheKey = ''; private bins: HeatmapBin[] = [];
@@ -111,13 +124,14 @@ export class OrderBookHeatmap implements IPrimitive {
   detached() { this.host = undefined; this.buckets = []; this.bins = []; this.stats.bytes = 0; this.priceCache.clear(); }
   setInterval(intervalMs: number) { if (this.intervalMs !== intervalMs) { this.intervalMs = intervalMs; this.cacheKey = ''; this.host?.requestUpdate(); } }
   setOptions(options: HeatmapSettings) { this.options = { ...options }; this.version++; this.host?.requestUpdate(); }
+  setFootprintOcclusion(test: (timeMs: number, low: number, high: number) => boolean) { this.rowOccluded = test; }
   setFootprintLayout(options?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>) {
     this.footprintLayout = options ? { ...options } : undefined; this.version++; this.host?.requestUpdate();
   }
   update(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) {
     const map = new Map(snapshot ? [] : this.buckets.map(b => [b.id, b]));
     for (const b of buckets) {
-      if (!(b.cells instanceof Float64Array) || !(b.peaks instanceof Float64Array) || b.cells.length > HEATMAP_LIMITS.rows * HEATMAP_STRIDE || b.peaks.length > 1200 || b.end <= b.start || !Number.isFinite(b.start + b.end + b.rowSize) || b.rowSize <= 0) continue;
+      if (!(b.cells instanceof Float64Array) || !(b.peaks instanceof Float64Array) || b.cells.length % HEATMAP_STRIDE !== 0 || b.peaks.length % HEATMAP_PEAK_STRIDE !== 0 || b.cells.length > HEATMAP_LIMITS.rows * HEATMAP_STRIDE || b.peaks.length > 1800 || b.end <= b.start || !Number.isFinite(b.start + b.end + b.rowSize) || b.rowSize <= 0) continue;
       if (!map.has(b.id) || b.revision > map.get(b.id)!.revision) map.set(b.id, b);
     }
     this.buckets = [...map.values()].filter(b => retentionStart !== null && b.end > retentionStart).sort((a, b) => a.start - b.start).slice(-HEATMAP_LIMITS.buckets);
@@ -129,6 +143,7 @@ export class OrderBookHeatmap implements IPrimitive {
   }
   draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const started = performance.now(), o = this.options, dpr = rc.dpr;
+    const colors = backgroundPalette(rc.theme?.background ?? '#090909');
     const range = rc.timeScale.visibleRange(), prices = rc.priceScale.priceRange();
     const key = `${this.version}:${this.intervalMs}:${range.from}:${range.to}:${prices.min}:${prices.max}:${rc.plotWidth}:${rc.plotHeight}:${dpr}:${rc.dataLayer.indexToTime(0)}`;
     if (this.cacheKey !== key) {
@@ -139,13 +154,12 @@ export class OrderBookHeatmap implements IPrimitive {
         return rows;
       });
       if (this.footprintLayout) {
-        // Public 2.6.0 Footprint geometry: reserve the slim candle before the ladder.
+        // Match the terminal ladder’s outer edges, including its central candle gutter.
         const o = this.footprintLayout, spacing = rc.timeScale.barSpacing;
         const column = Math.max(.1, Math.min(o.cellWidth ?? spacing * o.widthFactor, spacing * .96));
-        const candle = o.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
         for (const bin of this.bins) {
           const centre = (bin.x + bin.right) / 2;
-          bin.x = centre - column / 2 + candle; bin.right = bin.x + Math.max(.1, column - candle);
+          bin.x = centre - column / 2; bin.right = bin.x + column;
         }
       }
       this.cacheKey = key; this.stats.rebuilds++;
@@ -154,6 +168,9 @@ export class OrderBookHeatmap implements IPrimitive {
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth * dpr, rc.plotHeight * dpr); ctx.clip();
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (const b of this.bins) {
+      // Suppress the entire occupied row, including the central candle gutter.
+      // Keep collected quantities intact so hiding Footprint restores the layer.
+      if (this.rowOccluded?.(b.columnStart, b.low, b.high)) continue;
       const sides = this.visibleSides(b);
       const w = b.right - b.x, h = b.bottom - b.y;
       for (const side of sides) {
@@ -162,16 +179,16 @@ export class OrderBookHeatmap implements IPrimitive {
         const split = sides.length === 2, y = b.y + (split && side === 'bid' ? h / 2 : 0), height = split ? h / 2 : h;
         ctx.globalAlpha = o.opacity * (b.incomplete ? .55 : 1);
         const intensity = intensityIndex(quantity, b.high - b.low, o.intensity);
-        ctx.fillStyle = LIQUIDITY_PALETTE[intensity]!;
+        ctx.fillStyle = colors[intensity]!;
         ctx.fillRect(b.x * dpr, y * dpr, w * dpr, height * dpr);
         if (b.incomplete && w > 4 && height > 4) {
           ctx.strokeStyle = '#858585'; ctx.globalAlpha = .3; ctx.lineWidth = dpr;
           ctx.beginPath(); ctx.moveTo(b.x * dpr, (y + height) * dpr); ctx.lineTo(Math.min(b.right, b.x + height) * dpr, y * dpr); ctx.stroke();
         }
-        const text = quantity.toFixed(2), labelLeft = Math.max(0, b.x), labelRight = Math.min(rc.plotWidth, b.right);
+        const text = compactVol(this.units === 'usdt' ? b[side === 'bid' ? 'bidQuote' : 'askQuote'] : quantity), labelLeft = Math.max(0, b.x), labelRight = Math.min(rc.plotWidth, b.right);
         const labelTop = Math.max(0, y), labelBottom = Math.min(rc.plotHeight, y + height);
         const labelWidth = labelRight - labelLeft, labelHeight = labelBottom - labelTop;
-        const font = Math.min(24, labelHeight * .8, (labelWidth - 8) / (text.length * .62));
+        const font = Math.min(12, labelHeight * .65, (labelWidth - 8) / (text.length * .62));
         if (o.labels === 'auto' && font >= 9 && labelHeight >= 14) {
           ctx.globalAlpha = 1; ctx.fillStyle = liquidityTextColor(intensity, o.opacity * (b.incomplete ? .55 : 1), rc.theme?.background ?? '#090909');
           ctx.font = `${font * dpr}px ui-monospace, monospace`;
@@ -184,12 +201,13 @@ export class OrderBookHeatmap implements IPrimitive {
   private visibleSides(b: HeatmapBin) {
     return (['bid', 'ask'] as const).filter(side => (side === 'bid' ? this.options.bids && b.bidObserved : this.options.asks && b.askObserved) && b[side] > 0 && b[side] >= this.options.minimum);
   }
-  hoverAt(x: number, y: number): { bin: HeatmapBin; side: 'bid' | 'ask'; mode: 'average' | 'peak' } | null {
+  hoverAt(x: number, y: number): { bin: HeatmapBin; side: 'bid' | 'ask'; mode: 'average' | 'peak'; units: 'btc' | 'usdt'; quantity: number } | null {
     for (const b of this.bins) if (x >= b.x && x < b.right && y >= b.y && y < b.bottom) {
+      if (this.rowOccluded?.(b.columnStart, b.low, b.high)) continue;
       const sides = this.visibleSides(b);
       const side = sides.length === 2 ? y >= (b.y + b.bottom) / 2 ? 'bid' : 'ask' : sides[0];
       if (!side) return null;
-      return { bin: b, side, mode: this.options.mode };
+      return { bin: b, side, mode: this.options.mode, units: this.units, quantity: this.units === 'usdt' ? b[side === 'bid' ? 'bidQuote' : 'askQuote'] : b[side] };
     }
     return null;
   }

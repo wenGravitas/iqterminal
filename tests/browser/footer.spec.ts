@@ -1,3 +1,4 @@
+import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 
@@ -6,7 +7,7 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
   await page.emulateMedia({ colorScheme: 'dark' });
   await installDepthFixture(page);
   const panels = page.locator('.candle-panel'), first = panels.first();
-  await first.getByRole('button', { name: 'Order-book heatmap', exact: true }).click();
+  await addIndicator(first, 'Order-book Heatmap');
   await expect(first.locator('.heatmap-notice')).toContainText('live');
   await page.evaluate(() => {
     const t = (window as any).__terminal;
@@ -19,7 +20,7 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
       return () => {};
     };
   });
-  await first.getByLabel('Chart type', { exact: true }).selectOption('footprint');
+  await setFootprint(first, true);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].footprint.latest)).not.toBeNull();
   const verify = async () => {
     const rows = await panels.evaluateAll(elements => elements.map(panel => {
@@ -43,7 +44,7 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
   await verify(); await page.screenshot({ path: 'artifacts/chart-footer-dark-1366x768.png' });
   await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
   await page.setViewportSize({ width: 720, height: 860 }); await verify(); await page.screenshot({ path: 'artifacts/chart-footer-light-720x860.png' });
-  await first.getByLabel('Chart type', { exact: true }).selectOption('candle'); await verify();
+  await setFootprint(first, false); await verify();
   // Empty/error status remains centred with an accessible Retry control.
   await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0] as any; p.engine.setSnapshot([]); p.status = { state: 'failed', message: 'Explicit test failure', lastUpdate: 0 }; p.updateStatus(); });
   await expect(first.locator('.chart-stage .panel-status.no-data')).toContainText('Explicit test failure');

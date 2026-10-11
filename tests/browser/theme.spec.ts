@@ -1,3 +1,4 @@
+import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 
@@ -55,7 +56,7 @@ test('themes restyle candles, footprint, liquidity, editor and hidden charts wit
   await page.emulateMedia({ colorScheme: 'dark' });
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
-  await panel.getByRole('button', { name: 'Order-book heatmap', exact: true }).click();
+  await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   await page.evaluate(() => {
     const t = (window as any).__terminal;
@@ -67,7 +68,7 @@ test('themes restyle candles, footprint, liquidity, editor and hidden charts wit
       return () => {};
     };
   });
-  await panel.getByLabel('Chart type', { exact: true }).selectOption('footprint');
+  await setFootprint(panel, true);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);
   const baseline = await page.evaluate(() => {
     const t = (window as any).__terminal, p = [...t.panels.values()][0] as any, e = p.engine;

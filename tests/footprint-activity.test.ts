@@ -8,8 +8,8 @@ const bar=(revision:number,bidVol:number,askVol:number):FootprintBar=>({time:180
   open:83000,high:83000,low:83000,close:83000,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',
   coverage:'partial',gapBefore:false,aggregateRecordCount:revision});
 const paint=(activity:FootprintActivity)=>{
-  const rectangles:{x:number,color:string}[]=[];
-  const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},fillRect(){},strokeRect(x:number){rectangles.push({x,color:this.strokeStyle});}};
+  const rectangles:{x:number,color:string,width:number,alpha:number}[]=[];
+  const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},fillRect(){},strokeRect(x:number){rectangles.push({x,color:this.strokeStyle,width:this.lineWidth,alpha:this.globalAlpha});}};
   activity.draw(ctx,{dpr:1,plotWidth:300,plotHeight:200,timeScale:{barSpacing:80,indexToX:()=>100},
     dataLayer:{timeToIndex:()=>0},priceScale:{priceToY:(price:number)=>100+(83000-price)*.64}} as any);
   return rectangles;
@@ -18,11 +18,11 @@ it('pulses only increasing classified sides, deduplicates revisions and expires'
   let now=0;
   const activity=new FootprintActivity(()=>DEFAULT_FOOTPRINT_OPTIONS,()=>false,()=>now);
   activity.observe(bar(1,.1,.2),bar(2,.15,.2));
-  const bid=paint(activity);expect(bid).toHaveLength(1);expect(bid[0]!.color).toBe('#d98b8b');
+  const bid=paint(activity);expect(bid).toHaveLength(1);expect(bid[0]!.color).toBe('#f0aaa4');expect(bid[0]!.width).toBe(2);expect(bid[0]!.alpha).toBe(1);
   activity.observe(bar(2,.15,.2),bar(2,.15,.2));expect(activity.size).toBe(1);
   now=400;paint(activity);expect(activity.size).toBe(0);expect(activity.needsFrame).toBe(false);
   activity.observe(bar(2,.15,.2),bar(3,.15,.25));
-  const ask=paint(activity);expect(ask).toHaveLength(1);expect(ask[0]!.color).toBe('#8bcc91');expect(ask[0]!.x).toBeGreaterThan(bid[0]!.x);
+  const ask=paint(activity);expect(ask).toHaveLength(1);expect(ask[0]!.color).toBe('#b4e8b9');expect(ask[0]!.x).toBeGreaterThan(bid[0]!.x);
   now=800;paint(activity);activity.observe(bar(3,.15,.25),bar(4,.14,.24));expect(activity.size).toBe(0);
 });
 it('bounds burst feedback and clears reduced-motion and disposed surface state',()=>{

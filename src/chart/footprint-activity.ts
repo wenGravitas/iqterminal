@@ -1,3 +1,4 @@
+import { footprintColumn } from './terminal-footprint';
 import type { IPrimitive, PrimitiveRenderContext } from 'openalgo-charts';
 import type { FootprintOptions } from 'openalgo-charts/profile';
 import type { FootprintBar } from '../feed/protocol';
@@ -41,9 +42,7 @@ export class FootprintActivity implements IPrimitive {
     if (this.reducedMotion()) { this.clear(); return; }
     const now = this.now(), options = this.options(), dpr = rc.dpr;
     // Match the public 2.6.0 footprint column geometry; no private library state.
-    const column = Math.max(.1, Math.min(options.cellWidth ?? rc.timeScale.barSpacing * options.widthFactor, rc.timeScale.barSpacing * .96));
-    const candle = options.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
-    const width = column - candle, half = width / 2;
+    const { column, gap, cells: width } = footprintColumn(options, rc.timeScale.barSpacing), half = width / 2;
     const footerRows = options.tableRows.length || (options.statsPosition === 'bottom' ? options.statsRows.length : 0);
     const height = Math.max(0, rc.plotHeight - footerRows * options.statsRowHeight);
     ctx.save();
@@ -53,25 +52,26 @@ export class FootprintActivity implements IPrimitive {
       if (elapsed >= DURATION_MS) { this.pulses.delete(key); continue; }
       const index = rc.dataLayer.timeToIndex(pulse.time);
       if (index === undefined) { this.pulses.delete(key); continue; }
-      let x = rc.timeScale.indexToX(index) - column / 2 + candle;
+      let x = rc.timeScale.indexToX(index) - column / 2;
       const a = rc.priceScale.priceToY(pulse.price + pulse.rowSize);
       const b = rc.priceScale.priceToY(pulse.price);
       const y = Math.min(a, b), rowHeight = Math.abs(b - a);
       let cellWidth = width;
       if (options.displayMode === 'bidask') {
         const gutter = Math.min(1, half * .08);
-        if (pulse.side === 'ask') x += half + gutter;
+        if (pulse.side === 'ask') x += half + gap + gutter;
         cellWidth = half - gutter;
       }
       if (x + cellWidth < 0 || x >= rc.plotWidth || y + rowHeight <= 0 || y >= height) continue;
       this.needsFrame = true;
-      const strength = Math.pow(1 - Math.max(0, elapsed) / DURATION_MS, 2);
+      const strength = Math.pow(1 - Math.max(0, elapsed) / DURATION_MS, 1.3);
       const color = rc.theme?.background === '#f6f4ee' ? pulse.side === 'bid' ? rc.theme.downColor : rc.theme.upColor
-        : pulse.side === 'bid' ? '#d98b8b' : '#8bcc91';
-      ctx.fillStyle = color; ctx.globalAlpha = .13 * strength;
+        : pulse.side === 'bid' ? '#f0aaa4' : '#b4e8b9';
+      ctx.fillStyle = color; ctx.globalAlpha = .16 * strength;
       ctx.fillRect(x * dpr, y * dpr, cellWidth * dpr, rowHeight * dpr);
-      ctx.strokeStyle = color; ctx.globalAlpha = .85 * strength; ctx.lineWidth = dpr;
-      ctx.strokeRect((x + .5) * dpr, (y + .5) * dpr, Math.max(0, cellWidth - 1) * dpr, Math.max(0, rowHeight - 1) * dpr);
+      const border = Math.min(2, rowHeight / 3, cellWidth / 3);
+      ctx.strokeStyle = color; ctx.globalAlpha = strength; ctx.lineWidth = border * dpr;
+      ctx.strokeRect((x + border / 2) * dpr, (y + border / 2) * dpr, Math.max(0, cellWidth - border) * dpr, Math.max(0, rowHeight - border) * dpr);
     }
     ctx.restore();
   }

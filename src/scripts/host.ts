@@ -21,6 +21,7 @@ export interface StudyPin {
   description: string;
   settings: Record<string, string | number | boolean>;
   visible: boolean;
+  placement?: 'overlay' | 'pane';
 }
 
 export interface StudyView extends StudyPin {
@@ -79,6 +80,8 @@ export interface StudyDraft {
 
 /** Attaches isolated study workers to one native chart and persists only revision pins. */
 export class ScriptStudyHost {
+  private intents = new Map<string, number>();
+  private contextGeneration = 0;
   private candles: Candle[] = [];
   private series: Series;
   private visible = false;
@@ -107,11 +110,11 @@ export class ScriptStudyHost {
     const active = [...this.studies.values()].map(study => ({
       attachmentId: study.attachmentId, scriptId: study.scriptId, revisionId: study.revisionId,
       title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
-      status: study.status, diagnostics: [...study.diagnostics], inputs: [...study.inputs], outputs: { ...study.outputs },
+      placement: study.placement, status: study.status, diagnostics: [...study.diagnostics], inputs: [...study.inputs], outputs: { ...study.outputs },
     }));
     return [...active, ...this.restoreErrors.values()].map(view => ({ ...view, settings: { ...view.settings }, diagnostics: [...view.diagnostics], inputs: [...view.inputs], outputs: { ...view.outputs } }));
   }
-  pins(): StudyPin[] { return [...this.studies.values()].map(study => pinOf(study)); }
+  pins(): StudyPin[] { return validStudyPins([...this.pendingPins, ...[...this.studies.values()].map(study => pinOf(study)), ...[...this.restoreErrors.values()].map(pinOf)]).filter((p,i,a) => a.findIndex(v => v.attachmentId === p.attachmentId) === i); }
 
   depthNotices(): DepthNotice[] {
     const unsupported = !supportsDepth(this.series);
@@ -164,7 +167,7 @@ export class ScriptStudyHost {
 
   setSeries(series: Series) {
     if (this.series.venue === series.venue && marketOf(this.series) === marketOf(series) && this.series.interval === series.interval) return;
-    this.series = series;
+    this.series = series; this.contextGeneration++;
     this.contextNeedsReload = true;
     for (const band of this.bands.values()) this.releaseBand(band);
     this.bands.clear();
@@ -228,7 +231,10 @@ export class ScriptStudyHost {
   }
 
   async apply(draft: StudyDraft): Promise<string> {
-    return enqueueApply(() => this.applyNow(draft));
+    const id = draft.attachmentId ?? `study-${crypto.randomUUID()}`;
+    const intent = (this.intents.get(id) ?? 0) + 1; this.intents.set(id, intent);
+    const generation = this.contextGeneration;
+    return enqueueApply(() => this.applyNow({ ...draft, attachmentId: id }, intent, generation));
   }
 
   async applySettings(attachmentId: string, settings: Record<string, string | number | boolean>): Promise<string> {
@@ -285,7 +291,11 @@ export class ScriptStudyHost {
 
   setVisibleStudy(attachmentId: string, visible: boolean) {
     const study = this.studies.get(attachmentId);
-    if (!study) return false;
+    if (!study) {
+      const pin = this.pendingPins.find(p => p.attachmentId === attachmentId) ?? this.restoreErrors.get(attachmentId);
+      if (!pin) return false;
+      pin.visible = visible; this.persist(); this.notify(); return true;
+    }
     study.visible = visible;
     if (study.api.visible() !== visible) study.api.setVisible(visible);
     if (visible) this.queueHistory(study);
@@ -296,9 +306,12 @@ export class ScriptStudyHost {
   }
 
   remove(attachmentId: string, removeChartIndicator = true) {
+    this.intents.set(attachmentId, (this.intents.get(attachmentId) ?? 0) + 1);
+    const pending = this.pendingPins.some(pin => pin.attachmentId === attachmentId);
+    this.pendingPins = this.pendingPins.filter(pin => pin.attachmentId !== attachmentId);
     const study = this.studies.get(attachmentId);
     if (!study) {
-      if (!this.restoreErrors.delete(attachmentId)) return false;
+      if (!this.restoreErrors.delete(attachmentId) && !pending) return false;
       this.persist();
       this.notify();
       return true;
@@ -341,7 +354,7 @@ export class ScriptStudyHost {
 
   dispose() {
     if (this.dead) return;
-    this.dead = true;
+    this.dead = true; this.contextGeneration++; this.pendingPins = [];
     const studies = [...this.studies.values()];
     this.studies.clear();
     for (const study of studies) {
@@ -357,7 +370,9 @@ export class ScriptStudyHost {
     this.candles = [];
   }
 
-  private async applyNow(draft: StudyDraft): Promise<string> {
+  private async applyNow(draft: StudyDraft, intent: number, generation: number): Promise<string> {
+    const assertCurrent = () => { if (this.dead || generation !== this.contextGeneration || this.intents.get(draft.attachmentId!) !== intent) throw new Error('Apply cancelled: indicator or chart changed. Reapply to the current chart.'); };
+    assertCurrent();
     if (this.dead) throw new Error('This chart panel is closed.');
     if (!this.candles.length) throw new Error('Wait for candle history before applying a study.');
     const attachmentId = draft.attachmentId ?? `study-${crypto.randomUUID()}`;
@@ -401,6 +416,7 @@ export class ScriptStudyHost {
     let depthUnavailable = false;
     try {
       const result = await candidate.start(draft.source, draft.settings, this.scriptBars(null), this.context());
+      assertCurrent();
       if (!result.program) throw new Error('The script worker did not return its compiled study.');
       const needsDepth = requiresDepth(result.program, draft.settings);
       if (needsDepth) {
@@ -410,12 +426,14 @@ export class ScriptStudyHost {
       }
       candidateDepthBand = nextDepthBand;
       const revision = await this.library.pinRevision(draft.scriptId, draft.source, requiredScriptCapabilities(result.program));
+      assertCurrent();
       bridge = createScriptChartBridge(result, descriptorId, draft.settings);
       (bridge.descriptor as { name: string }).name = draft.title;
       registerIndicator(bridge.descriptor);
       api = this.engine.chart.addIndicator(descriptorId, {}, { policy: { removable: true, configurable: true, movable: true } });
       api.setVisible(draft.visible ?? existing?.visible ?? true);
       api.setPolicy({ removable: true, configurable: true });
+      api.legend()?.setOptions({ visible: false });
 
       // Keep at least one live depth subscriber while atomically replacing an
       // attachment's band. This retains the shared book/socket and its samples.
@@ -433,6 +451,7 @@ export class ScriptStudyHost {
         attachmentId, scriptId: draft.scriptId, revisionId: revision.id,
         title: draft.title, description: draft.description,
         settings: { ...draft.settings }, visible: draft.visible ?? existing?.visible ?? true,
+        placement: bridge.descriptor.placement === 'pane' ? 'pane' : 'overlay',
         source: draft.source, descriptorId, api, worker: candidate, bridge,
         depthBand: nextDepthBand, depthUnavailable,
         status: nextDepthBand === null ? 'Study ready' : depthStatusText(
@@ -466,17 +485,25 @@ export class ScriptStudyHost {
     if (this.dead || this.restoreStarted || !this.pendingPins.length || !this.candles.length) return;
     this.restoreStarted = true;
     const pins = this.pendingPins;
-    this.pendingPins = [];
     for (const pin of pins) {
       if (this.dead) return;
-      if (this.studies.has(pin.attachmentId)) continue;
+      if (this.studies.has(pin.attachmentId)) { this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId); continue; }
+      let intent = this.intents.get(pin.attachmentId) ?? 0;
       try {
         const revision = await this.library.getRevision(pin.scriptId, pin.revisionId);
+        if (this.dead || (this.intents.get(pin.attachmentId) ?? 0) !== intent) continue;
         if (!revision) throw new Error('The pinned local script revision is missing. Reimport the script or remove this attachment.');
-        await this.apply({ ...pin, source: revision.source });
+        const currentPin = this.pendingPins.find(p => p.attachmentId === pin.attachmentId);
+        if (!currentPin) continue;
+        const applying = this.apply({ ...currentPin, source: revision.source }); intent++;
+        await applying;
+        this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId);
+        this.persist();
       } catch (error) {
+        if (this.dead || (this.intents.get(pin.attachmentId) ?? 0) !== intent) continue;
+        this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId);
         this.restoreErrors.set(pin.attachmentId, { ...pin, status: error instanceof Error ? error.message : 'Could not restore this study.', diagnostics: [], inputs: [], outputs: {} });
-        this.notify();
+        this.persist(); this.notify();
       }
     }
   }
@@ -610,10 +637,11 @@ function releaseSlot(id: string) {
   if (slot) descriptorSlots.delete(Number(slot[1]));
 }
 
-function pinOf(study: StudyInstance): StudyPin {
+function pinOf(study: StudyPin): StudyPin {
   return {
     attachmentId: study.attachmentId, scriptId: study.scriptId, revisionId: study.revisionId,
     title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
+    ...(study.placement ? { placement: study.placement } : {}),
   };
 }
 

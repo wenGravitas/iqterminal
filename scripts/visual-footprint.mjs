@@ -1,3 +1,4 @@
+import { addIndicator, footprintSettings } from './indicator-actions.mjs';
 // Ordinary-build visual evidence; uses the real execution stream without fixtures.
 import assert from 'node:assert/strict';
 import { launch, url } from './browser.mjs';
@@ -9,14 +10,14 @@ try {
   const panel = page.locator('.candle-panel').first();
   await panel.waitFor();
   assert.equal(await page.evaluate(() => !!window.__terminal), false);
-  await panel.getByRole('combobox', { name: 'Chart type', exact: true }).selectOption('footprint');
-  const priceLevel = panel.getByRole('spinbutton', { name: 'Price level (USDT)', exact: true });
+  await addIndicator(panel, 'Footprint');
+  const priceLevel = panel.locator('input.footprint-row-price');
   assert.equal(await priceLevel.inputValue(), '25', 'Fresh charts use the 25 USDT default');
-  await priceLevel.scrollIntoViewIfNeeded();
+
   await page.waitForTimeout(8000);
   assert.ok((await panel.locator('.ohlc').textContent())?.includes('BTC'), 'Real footprint observations arrived');
   await page.screenshot({ path: 'artifacts/footprint-price-level-1366x768.png' });
-  await panel.getByRole('button', { name: 'Footprint display settings', exact: true }).click();
+  await footprintSettings(panel);
   await page.getByRole('dialog', { name: 'Footprint display settings', exact: true }).waitFor();
   await page.screenshot({ path: 'artifacts/footprint-settings-1366x768.png' });
   await page.getByRole('dialog', { name: 'Footprint display settings', exact: true }).getByRole('button', { name: 'Close', exact: true }).click();
@@ -24,9 +25,9 @@ try {
   // ResizeObserver + the chart scheduler need their own frames before capture.
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.waitForTimeout(150);
-  await priceLevel.scrollIntoViewIfNeeded();
+
   await page.screenshot({ path: 'artifacts/footprint-price-level-720x860.png' });
-  await panel.getByRole('button', { name: 'Footprint display settings', exact: true }).click();
+  await footprintSettings(panel);
   await page.screenshot({ path: 'artifacts/footprint-settings-720x860.png' });
   await page.getByRole('dialog', { name: 'Footprint display settings', exact: true }).getByRole('button', { name: 'Close', exact: true }).click();
   const stage = await panel.locator('.chart-stage').boundingBox();

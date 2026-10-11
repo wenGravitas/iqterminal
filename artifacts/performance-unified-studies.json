@@ -1,0 +1,2231 @@
+{
+  "mode": "SYNTHETIC candle path, OpenAlgo renderer=canvas2d, production bundle with explicit diagnostic build flag",
+  "interactionMode": "fixed-count",
+  "browser": "154.0.8037.92",
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "viewport": [
+      1366,
+      768
+    ],
+    "dpr": 1,
+    "cores": 4
+  },
+  "errors": [],
+  "studies": {
+    "enabled": true,
+    "adds": [
+      {
+        "panel": 0,
+        "milliseconds": 703.729472
+      },
+      {
+        "panel": 1,
+        "milliseconds": 1012.1983679999994
+      },
+      {
+        "panel": 2,
+        "milliseconds": 1315.1520999999993
+      },
+      {
+        "panel": 3,
+        "milliseconds": 1439.718911
+      },
+      {
+        "panel": 4,
+        "milliseconds": 1831.350832
+      },
+      {
+        "panel": 5,
+        "milliseconds": 2376.431822999999
+      },
+      {
+        "panel": 6,
+        "milliseconds": 2194.941322999999
+      },
+      {
+        "panel": 7,
+        "milliseconds": 3381.8794749999943
+      }
+    ]
+  },
+  "one": {
+    "label": "One visible chart, 5,000-bar deterministic fixtures; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      173
+    ],
+    "panels": [
+      {
+        "id": "chart-36a9c436-5b06-40d3-9853-fd35506f9c7a",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 208,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730712619
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 1,
+      "subscriptions": 1,
+      "sockets": 1,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "transitions": 0,
+        "processingMs": 0,
+        "flushMs": 0,
+        "publications": 0,
+        "configurations": 0,
+        "consumers": 0,
+        "tickSize": null,
+        "groups": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 9600
+    },
+    "longTasks": [
+      198,
+      50,
+      137
+    ],
+    "memory": {
+      "used": 38166320,
+      "total": 72372660
+    },
+    "viewportGeometry": [
+      {
+        "left": 5,
+        "top": 63,
+        "right": 1361,
+        "bottom": 715,
+        "width": 1356,
+        "height": 652,
+        "inViewport": true
+      }
+    ],
+    "durationMs": 8218,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 2095,
+    "stressWindowMs": 6000,
+    "visiblePanels": 1,
+    "frameMs": {
+      "samples": 416,
+      "p50": 16.69999999999891,
+      "p95": 33.30000000000018,
+      "p99": 83.30000000000018,
+      "max": 216.70000000000073
+    }
+  },
+  "two": {
+    "label": "Two visible charts on native BTC perpetuals, 5,000 bars each; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      166,
+      158
+    ],
+    "panels": [
+      {
+        "id": "chart-36a9c436-5b06-40d3-9853-fd35506f9c7a",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 412,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730722868
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-8163548b-e8c2-48b2-8fb8-b202a7871962",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 198,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730722869
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-c7df21f0-2240-43aa-99c6-449bb6244f5e",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-c7df21f0-2240-43aa-99c6-449bb6244f5e",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 2,
+      "subscriptions": 2,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "transitions": 0,
+        "processingMs": 0,
+        "flushMs": 0,
+        "publications": 0,
+        "configurations": 0,
+        "consumers": 0,
+        "tickSize": null,
+        "groups": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 19750
+    },
+    "longTasks": [
+      191,
+      66,
+      98,
+      51
+    ],
+    "memory": {
+      "used": 30568473,
+      "total": 83907845
+    },
+    "viewportGeometry": [
+      {
+        "left": 5,
+        "top": 63,
+        "right": 676,
+        "bottom": 715,
+        "width": 671,
+        "height": 652,
+        "inViewport": true
+      },
+      {
+        "left": 690,
+        "top": 80,
+        "right": 1361,
+        "bottom": 715,
+        "width": 671,
+        "height": 635,
+        "inViewport": true
+      }
+    ],
+    "durationMs": 8272,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 2148,
+    "stressWindowMs": 6000,
+    "visiblePanels": 2,
+    "frameMs": {
+      "samples": 402,
+      "p50": 16.700000000000728,
+      "p95": 33.20000000000073,
+      "p99": 83.29999999999927,
+      "max": 300
+    }
+  },
+  "eight": {
+    "label": "Eight visible charts, 5,000 bars each, four shared series; 1,000 synthetic wire messages/s",
+    "shellPanelIdentityPreserved": true,
+    "draws": [
+      231,
+      230,
+      230,
+      230,
+      230,
+      230,
+      230,
+      230
+    ],
+    "panels": [
+      {
+        "id": "chart-36a9c436-5b06-40d3-9853-fd35506f9c7a",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 839,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757203
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-8163548b-e8c2-48b2-8fb8-b202a7871962",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 624,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757204
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-c7df21f0-2240-43aa-99c6-449bb6244f5e",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-c7df21f0-2240-43aa-99c6-449bb6244f5e",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-7f48628b-b450-49a7-99cb-75af36030820",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 423,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757204
+        },
+        "series": {
+          "venue": "binance",
+          "interval": "5m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-9704535f-f941-4a19-b298-2f50536e2c3b",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-9704535f-f941-4a19-b298-2f50536e2c3b",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-9643a73b-eead-4f41-b12a-be9f6ece90f2",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 421,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757205
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "5m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-b774578f-1f06-4c2d-9746-d32d336758ee",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-b774578f-1f06-4c2d-9746-d32d336758ee",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-1b0346fe-4822-4e96-ab1c-04db57723dff",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 422,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757204
+        },
+        "series": {
+          "venue": "binance",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-7cfde637-a6a6-4730-b311-ffc0fd7834de",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-7cfde637-a6a6-4730-b311-ffc0fd7834de",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-dbf53817-d231-409a-940d-6b4defb1c07a",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 420,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757204
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-67535be0-e72a-4d9f-8745-c6f8cbe540d5",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-67535be0-e72a-4d9f-8745-c6f8cbe540d5",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-68426147-6766-473e-b8ca-cd0576593f97",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 419,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757205
+        },
+        "series": {
+          "venue": "binance",
+          "interval": "5m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-4fd5c4a1-4a90-4b7a-a5a7-cf05d69670c0",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-4fd5c4a1-4a90-4b7a-a5a7-cf05d69670c0",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      },
+      {
+        "id": "chart-99ee8bd8-dfc9-4c92-b4bf-7d255273f906",
+        "visible": true,
+        "bars": 5000,
+        "renderer": {
+          "draws": 419,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730757205
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "5m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-38ea4d73-3726-489a-974d-6f2292d5cf3d",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-38ea4d73-3726-489a-974d-6f2292d5cf3d",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        }
+      }
+    ],
+    "sharedSeriesAgree": true,
+    "feed": {
+      "series": 4,
+      "subscriptions": 8,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "binance:perpetual:BTCUSDT:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:5m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "transitions": 0,
+        "processingMs": 0,
+        "flushMs": 0,
+        "publications": 0,
+        "configurations": 0,
+        "consumers": 0,
+        "tickSize": null,
+        "groups": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 53800
+    },
+    "longTasks": [
+      73,
+      59,
+      50,
+      59,
+      55,
+      56,
+      256,
+      113,
+      62,
+      79,
+      94,
+      70,
+      66,
+      89,
+      121,
+      68,
+      54,
+      51,
+      63,
+      50,
+      53,
+      339,
+      129,
+      202,
+      242,
+      84,
+      87,
+      90,
+      78,
+      66,
+      71,
+      82,
+      112,
+      74,
+      79,
+      107,
+      66,
+      115,
+      101,
+      89,
+      67,
+      87,
+      55,
+      51,
+      72,
+      51,
+      67,
+      51,
+      62,
+      56,
+      59,
+      71,
+      114,
+      78,
+      89,
+      100,
+      81,
+      78,
+      95,
+      110,
+      70,
+      93,
+      80,
+      90,
+      61,
+      67,
+      62,
+      64,
+      70,
+      67,
+      68,
+      65,
+      90,
+      78,
+      89,
+      83,
+      121,
+      61,
+      88,
+      512,
+      81,
+      188,
+      155,
+      80,
+      55,
+      68,
+      60,
+      62,
+      68,
+      53,
+      56,
+      62,
+      79,
+      60,
+      63,
+      51,
+      60,
+      51,
+      123,
+      50,
+      51,
+      51,
+      58,
+      63,
+      82,
+      53,
+      61,
+      76,
+      55,
+      58,
+      55,
+      64,
+      59,
+      54,
+      60,
+      50,
+      51,
+      62,
+      54,
+      77,
+      66,
+      53,
+      64,
+      55,
+      71,
+      65,
+      65,
+      73,
+      54,
+      55,
+      62,
+      73,
+      62,
+      55,
+      57,
+      83,
+      74,
+      66,
+      69,
+      64,
+      50,
+      63,
+      50,
+      82,
+      61,
+      74,
+      60,
+      55,
+      53,
+      66,
+      62,
+      57,
+      53,
+      73,
+      67,
+      66,
+      102,
+      59,
+      55,
+      67,
+      90,
+      56,
+      55,
+      61
+    ],
+    "memory": {
+      "used": 86015859,
+      "total": 145527475
+    },
+    "viewportGeometry": [
+      {
+        "left": 5,
+        "top": 63,
+        "right": 676,
+        "bottom": 162,
+        "width": 671,
+        "height": 99,
+        "inViewport": true
+      },
+      {
+        "left": 690,
+        "top": 80,
+        "right": 1361,
+        "bottom": 162,
+        "width": 671,
+        "height": 82,
+        "inViewport": true
+      },
+      {
+        "left": 5,
+        "top": 248,
+        "right": 676,
+        "bottom": 347,
+        "width": 671,
+        "height": 99,
+        "inViewport": true
+      },
+      {
+        "left": 690,
+        "top": 265,
+        "right": 1361,
+        "bottom": 347,
+        "width": 671,
+        "height": 82,
+        "inViewport": true
+      },
+      {
+        "left": 5,
+        "top": 433,
+        "right": 676,
+        "bottom": 531,
+        "width": 671,
+        "height": 98,
+        "inViewport": true
+      },
+      {
+        "left": 690,
+        "top": 450,
+        "right": 1361,
+        "bottom": 531,
+        "width": 671,
+        "height": 81,
+        "inViewport": true
+      },
+      {
+        "left": 5,
+        "top": 617,
+        "right": 676,
+        "bottom": 715,
+        "width": 671,
+        "height": 98,
+        "inViewport": true
+      },
+      {
+        "left": 690,
+        "top": 634,
+        "right": 1361,
+        "bottom": 715,
+        "width": 671,
+        "height": 81,
+        "inViewport": true
+      }
+    ],
+    "durationMs": 20119,
+    "interactions": 5,
+    "interactionMode": "fixed-count",
+    "interactionDurationMs": 9826,
+    "stressWindowMs": 10000,
+    "visiblePanels": 8,
+    "frameMs": {
+      "samples": 233,
+      "p50": 66.70000000000437,
+      "p95": 183.29999999999563,
+      "p99": 316.70000000000437,
+      "max": 550
+    }
+  },
+  "hidden": {
+    "id": "chart-99ee8bd8-dfc9-4c92-b4bf-7d255273f906",
+    "visibleBefore": false,
+    "visibleAfter": false,
+    "drawsBefore": 421,
+    "drawsAfter": 421,
+    "drawDelta": 0,
+    "syntheticMessagesBefore": 54350,
+    "syntheticMessagesAfter": 55300,
+    "hiddenCandleCloseBefore": 83574.7012765137,
+    "hiddenCandleCloseAfter": 83574.04281136669,
+    "hiddenCandleChanged": true
+  },
+  "lifecycle": [
+    {
+      "panels": 2,
+      "memory": 34526068
+    },
+    {
+      "panels": 2,
+      "memory": 39198086
+    },
+    {
+      "panels": 2,
+      "memory": 22088792
+    },
+    {
+      "panels": 2,
+      "memory": 27281661
+    },
+    {
+      "panels": 2,
+      "memory": 31733346
+    },
+    {
+      "panels": 2,
+      "memory": 36987076
+    },
+    {
+      "panels": 2,
+      "memory": 42323317
+    },
+    {
+      "panels": 2,
+      "memory": 29406314
+    },
+    {
+      "panels": 2,
+      "memory": 34361433
+    },
+    {
+      "panels": 2,
+      "memory": 39552058
+    }
+  ],
+  "final": {
+    "panels": [
+      {
+        "id": "chart-36a9c436-5b06-40d3-9853-fd35506f9c7a",
+        "visible": false,
+        "bars": 5000,
+        "right": 4987.117656513387,
+        "range": {
+          "from": 4889.713280485471,
+          "to": 4987.117656513387
+        },
+        "spacing": 6.067489204290129,
+        "rightOffset": -11.882343486612626,
+        "autoPrice": false,
+        "min": 82301.2846496883,
+        "max": 84185.15653376232,
+        "renderer": {
+          "draws": 867,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730762068
+        },
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83529.047829294,
+          "h": 83579.047829294,
+          "l": 83479.047829294,
+          "c": 83545.75655841983,
+          "v": 58149
+        },
+        "footprint": {
+          "bars": 0,
+          "latest": null,
+          "status": {
+            "state": "loading",
+            "message": "Waiting for Binance USD-M aggTrade observations",
+            "lastUpdate": 0,
+            "tickSize": null,
+            "rowSize": null,
+            "collectionStartedAt": null,
+            "firstTradeAt": null,
+            "lastTradeAt": null,
+            "eventTime": null,
+            "outages": 0,
+            "lateRecords": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "coverage": "waiting",
+            "retentionStart": null
+          },
+          "needsSync": false,
+          "initialViewSet": false,
+          "primitiveSets": 0,
+          "surfaceMounted": false,
+          "hover": null
+        },
+        "heatmap": {
+          "mounted": false,
+          "settings": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        "studies": {
+          "context": {
+            "symbol": "BTCUSDT",
+            "exchange": "Binance USD-M",
+            "interval": "1m"
+          },
+          "attached": 1,
+          "workers": 1,
+          "depthBands": [],
+          "statuses": [
+            {
+              "id": "study-9c6a311d-0c88-4853-8a6e-0697b06783c4",
+              "title": "EMA overlay",
+              "status": "Study ready"
+            }
+          ]
+        }
+      },
+      {
+        "id": "chart-99ee8bd8-dfc9-4c92-b4bf-7d255273f906",
+        "visible": true,
+        "bars": 5000,
+        "right": 5003,
+        "range": {
+          "from": 4820.714285714285,
+          "to": 5003
+        },
+        "spacing": 7,
+        "rightOffset": 4,
+        "autoPrice": true,
+        "min": 82153.84698629471,
+        "max": 83882.85874912466,
+        "renderer": {
+          "draws": 493,
+          "backend": "canvas2d"
+        },
+        "status": {
+          "state": "live",
+          "message": "Native candle stream",
+          "lastUpdate": 1791730762069
+        },
+        "series": {
+          "venue": "hyperliquid",
+          "interval": "5m",
+          "type": "candle",
+          "studies": [
+            {
+              "scriptId": "builtin.ema-overlay",
+              "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+              "title": "EMA overlay",
+              "description": "An editable exponential moving average over price.",
+              "placement": "overlay",
+              "attachmentId": "study-38ea4d73-3726-489a-974d-6f2292d5cf3d",
+              "settings": {},
+              "visible": true
+            }
+          ],
+          "market": "perpetual",
+          "rowPrice": 25,
+          "grid": true,
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [
+            {
+              "instanceId": "study-38ea4d73-3726-489a-974d-6f2292d5cf3d",
+              "definitionId": "script:builtin.ema-overlay",
+              "settingsVersion": 1,
+              "visible": true,
+              "source": {
+                "kind": "chart"
+              },
+              "placement": "overlay",
+              "settings": {},
+              "script": {
+                "scriptId": "builtin.ema-overlay",
+                "revisionId": "35a993f92dcfb796c732ccb834e93e76b85e582c1b9fdf3430095a73e0e9402e",
+                "title": "EMA overlay",
+                "description": "An editable exponential moving average over price.",
+                "placement": "overlay"
+              }
+            }
+          ],
+          "basePriceVisible": true
+        },
+        "last": {
+          "t": 1791558000000,
+          "o": 83547.047829294,
+          "h": 83597.047829294,
+          "l": 83497.047829294,
+          "c": 83564.25150810566,
+          "v": 58150
+        },
+        "footprint": {
+          "bars": 0,
+          "latest": null,
+          "status": {
+            "state": "loading",
+            "message": "Waiting for Binance USD-M aggTrade observations",
+            "lastUpdate": 0,
+            "tickSize": null,
+            "rowSize": null,
+            "collectionStartedAt": null,
+            "firstTradeAt": null,
+            "lastTradeAt": null,
+            "eventTime": null,
+            "outages": 0,
+            "lateRecords": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "coverage": "waiting",
+            "retentionStart": null
+          },
+          "needsSync": false,
+          "initialViewSet": false,
+          "primitiveSets": 0,
+          "surfaceMounted": false,
+          "hover": null
+        },
+        "heatmap": {
+          "mounted": false,
+          "settings": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          }
+        },
+        "studies": {
+          "context": {
+            "symbol": "BTC",
+            "exchange": "Hyperliquid",
+            "interval": "5m"
+          },
+          "attached": 1,
+          "workers": 1,
+          "depthBands": [],
+          "statuses": [
+            {
+              "id": "study-38ea4d73-3726-489a-974d-6f2292d5cf3d",
+              "title": "EMA overlay",
+              "status": "Study ready"
+            }
+          ]
+        }
+      }
+    ],
+    "feed": {
+      "series": 2,
+      "subscriptions": 2,
+      "sockets": 2,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        },
+        {
+          "key": "hyperliquid:perpetual:BTC:5m",
+          "bars": 5000,
+          "clients": 1,
+          "pending": 1
+        }
+      ],
+      "inactiveCaches": 0,
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "transitions": 0,
+        "processingMs": 0,
+        "flushMs": 0,
+        "publications": 0,
+        "configurations": 0,
+        "consumers": 0,
+        "tickSize": null,
+        "groups": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 58150
+    },
+    "frameIntervals": [
+      66.58200000000215,
+      83.40000000000146,
+      116.79999999999563,
+      33.30000000000291,
+      16.599999999998545,
+      16.63799999999901,
+      16.53399999999965,
+      16.63400000000547,
+      16.53399999999965,
+      16.5679999999993,
+      16.5679999999993,
+      16.700000000004366,
+      16.5679999999993,
+      16.635999999998603,
+      16.608000000000175,
+      16.5679999999993,
+      16.667999999997846,
+      16.667999999997846,
+      16.601999999998952,
+      16.60000000000582,
+      16.599999999998545
+    ],
+    "longTasks": [
+      73,
+      59,
+      50,
+      59,
+      55,
+      56,
+      256,
+      113,
+      62,
+      79,
+      94,
+      70,
+      66,
+      89,
+      121,
+      68,
+      54,
+      51,
+      63,
+      50,
+      53,
+      339,
+      129,
+      202,
+      242,
+      84,
+      87,
+      90,
+      78,
+      66,
+      71,
+      82,
+      112,
+      74,
+      79,
+      107,
+      66,
+      115,
+      101,
+      89,
+      67,
+      87,
+      55,
+      51,
+      72,
+      51,
+      67,
+      51,
+      62,
+      56,
+      59,
+      71,
+      114,
+      78,
+      89,
+      100,
+      81,
+      78,
+      95,
+      110,
+      70,
+      93,
+      80,
+      90,
+      61,
+      67,
+      62,
+      64,
+      70,
+      67,
+      68,
+      65,
+      90,
+      78,
+      89,
+      83,
+      121,
+      61,
+      88,
+      512,
+      81,
+      188,
+      155,
+      80,
+      55,
+      68,
+      60,
+      62,
+      68,
+      53,
+      56,
+      62,
+      79,
+      60,
+      63,
+      51,
+      60,
+      51,
+      123,
+      50,
+      51,
+      51,
+      58,
+      63,
+      82,
+      53,
+      61,
+      76,
+      55,
+      58,
+      55,
+      64,
+      59,
+      54,
+      60,
+      50,
+      51,
+      62,
+      54,
+      77,
+      66,
+      53,
+      64,
+      55,
+      71,
+      65,
+      65,
+      73,
+      54,
+      55,
+      62,
+      73,
+      62,
+      55,
+      57,
+      83,
+      74,
+      66,
+      69,
+      64,
+      50,
+      63,
+      50,
+      82,
+      61,
+      74,
+      60,
+      55,
+      53,
+      66,
+      62,
+      57,
+      53,
+      73,
+      67,
+      66,
+      102,
+      59,
+      55,
+      67,
+      90,
+      56,
+      55,
+      61,
+      83,
+      68,
+      55,
+      107,
+      71,
+      61,
+      60,
+      56,
+      66,
+      59,
+      55,
+      60,
+      63,
+      111,
+      55
+    ],
+    "domPanels": 2
+  }
+}

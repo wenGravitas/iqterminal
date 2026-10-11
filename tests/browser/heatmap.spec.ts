@@ -1,3 +1,4 @@
+import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect, type Page } from '@playwright/test';
 
 import { installDepthFixture } from './depth-fixture';
@@ -13,7 +14,7 @@ async function expectCandleColumns(page: Page) {
       const centre = engine.chart.timeScale.indexToX(index), spacing = engine.chart.timeScale.barSpacing;
       const opts = engine.footprintOptions, column = Math.max(.1, Math.min(opts.cellWidth ?? spacing * opts.widthFactor, spacing * .96));
       const candle = opts.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
-      return { duplicate, leftError: b.x - (engine.mode === 'footprint' ? centre-column/2+candle : engine.chart.timeScale.indexToX(index - .5)),
+      return { duplicate, leftError: b.x - (engine.mode === 'footprint' ? centre-column/2 : engine.chart.timeScale.indexToX(index - .5)),
         rightError: b.right - (engine.mode === 'footprint' ? centre+column/2 : engine.chart.timeScale.indexToX(index + .5)) };
     });
   });
@@ -25,7 +26,7 @@ async function expectCandleColumns(page: Page) {
 test('worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
-  await panel.getByRole('button', { name: 'Order-book heatmap', exact: true }).click();
+  await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);
   await expectCandleColumns(page);
@@ -49,13 +50,13 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
       return () => {};
     };
   });
-  await panel.getByLabel('Chart type', { exact: true }).selectOption('footprint');
+  await setFootprint(panel, true);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);
   await expectCandleColumns(page);
   const footprintStart = (await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart;
   expect(footprintStart).toBeGreaterThanOrEqual(heatStart);
-  await panel.getByRole('button', { name: 'Order-book heatmap settings', exact: true }).click();
+  await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   await expect(panel.getByLabel('Price row (USDT)', { exact: true })).toBeDisabled();
   await expect(panel.getByLabel('Price row (USDT)', { exact: true })).toHaveValue('25');
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
@@ -69,7 +70,7 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   const alignedHover = await page.evaluate(() => {
     const e = ([...(window as any).__terminal.panels.values()][0] as any).engine;
     const b = e.heatmap.bins.find((b: any) => b.low === 83000);
-    const x = (b.x+b.right)/2;
+    const x = b.x + (b.right-b.x)/4;
     return [e.footprintAt(x,b.y+.1)?.price, e.footprintAt(x,b.bottom-.1)?.price,
       e.footprintAt(x,b.y-.1)?.price ?? null, e.footprintAt(x,b.bottom+.1)?.price ?? null];
   });
@@ -77,13 +78,12 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   const bucketPoint = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     const bin = p.engine.heatmap.bins.find((b: any) => b.low === 83000), box = p.element.querySelector('.chart-stage').getBoundingClientRect();
-    return { x: box.left + (bin.x + bin.right) / 2, y: box.top + (bin.y + bin.bottom) / 2 };
+    return { x: box.left + bin.x + (bin.right-bin.x)/4, y: box.top + (bin.y + bin.bottom) / 2 };
   });
   await page.mouse.move(bucketPoint.x, bucketPoint.y);
   await expect(panel.locator('.ohlc')).toContainText('83,000–83,025 USDT (upper exclusive)');
   await page.screenshot({ path: 'artifacts/footprint-fixed-bucket-1366x768.png' });
-  await panel.getByLabel('Price level (USDT)', { exact: true }).fill('50');
-  await panel.getByLabel('Price level (USDT)', { exact: true }).dispatchEvent('change');
+  await setPriceLevel(panel, '50');
   await expect.poll(async () => (await rows()).some((b: any) => b.high-b.low !== 50)).toBe(false);
   await expect.poll(async () => (await rows()).length).toBeGreaterThan(0);
   for (const row of await rows()) expect(row.low/50).toBeCloseTo(Math.round(row.low/50));
@@ -100,10 +100,10 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   await expect(panel.locator('.heatmap-readout')).toContainText('Resting');
   await expect(panel.locator('.ohlc')).toContainText('BTC');
   await page.screenshot({ path: 'artifacts/orderbook-heatmap-footprint-1366x768.png' });
-  await panel.getByLabel('Chart type', { exact: true }).selectOption('candle');
+  await setFootprint(panel, false);
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   const candleStart = (await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart;
-  await panel.getByRole('button', { name: 'Order-book heatmap settings', exact: true }).click();
+  await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   await panel.getByLabel('Opacity', { exact: true }).fill('0.3');
   await panel.locator('dialog.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
   expect((await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart).toBe(candleStart);
@@ -123,7 +123,7 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
 
 test('heatmap labels, settings, resize, unsupported instruments and saved layouts', async ({ page }) => {
   await installDepthFixture(page); const panel = page.locator('.candle-panel').first();
-  await panel.getByRole('button', { name: 'Order-book heatmap', exact: true }).click();
+  await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   // Explicit long session tiles exercise actual primitive LOD and labels, independent of wall-clock wait.
   await page.evaluate(() => {
@@ -131,7 +131,7 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
     p.releaseHeatmap?.(); p.releaseHeatmap = undefined;
     const end = Date.now(), start = Math.floor((end - 60000) / 500) * 500, buckets = [];
     for (let time = start; time < end; time += 500) {
-      const cells = new Float64Array([82980, 10000, 0, 20, 0, 500, 500, 500, 500, 82990, 15000, 0, 30, 0, 500, 500, 500, 500, 83000, 0, 12500, 0, 25, 500, 500, 500, 500]);
+      const cells = new Float64Array([82980, 10000, 0, 20, 0, 500, 500, 500, 500, 829800000, 0, 1659600, 0, 82990, 15000, 0, 30, 0, 500, 500, 500, 500, 1244850000, 0, 2489700, 0, 83000, 0, 12500, 0, 25, 500, 500, 500, 500, 0, 1037500000, 0, 2075000]);
       buckets.push({ id: `fixture:${time}`, start: time, end: time + 500, epoch: 100, revision: 1, rowSize: 10, capacityLimited: false, cells, peaks: new Float64Array() });
     }
     engine.setSnapshot(Array.from({ length: 5 }, (_, i) => ({ t: Math.floor(end / 60000) * 60000 - (4-i)*60000, o: 82985+i*2, h: 83005+i*2, l: 82975+i*2, c: 82995+i*2, v: 2, revision: 1, closed: i<4 })), false);
@@ -146,7 +146,7 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
     const engine = ([...(window as any).__terminal.panels.values()][0] as any).engine;
     const before = engine.heatmap.bins.map((b: any) => ({ x: b.x, right: b.right, bid: b.bid }));
     const buckets = engine.heatmap.buckets.map((b: any) => {
-      const cells = b.cells.slice(); for (let i = 0; i < cells.length; i += 9) cells[i + 1] *= 2;
+      const cells = b.cells.slice(); for (let i = 0; i < cells.length; i += 13) { cells[i + 1] *= 2; cells[i + 9] *= 2; }
       return { ...b, revision: b.revision + 1, cells };
     });
     engine.updateHeatmap(buckets, true, buckets[0].start);
@@ -176,7 +176,7 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   // The layer neither captures pan gestures nor forces autoscale back to captured book depth.
   await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0] as any; p.engine.chart.panes()[0].priceScale.setFixedRange({ min: 82950, max: 83050 }); p.engine.chart.setAutoScale(false); });
 
-  await panel.getByRole('button', { name: 'Order-book heatmap settings', exact: true }).click();
+  await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   await panel.getByLabel('Quantity labels', { exact: true }).selectOption('off');
   await panel.getByLabel('Price row (USDT)', { exact: true }).fill('1.25');
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
@@ -185,11 +185,11 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.labels)).toBe(0);
   await page.setViewportSize({ width: 720, height: 860 });
-  await panel.getByRole('button', { name: 'Order-book heatmap settings', exact: true }).click();
+  await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   await page.screenshot({ path: 'artifacts/orderbook-heatmap-settings-720x860.png' });
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
   await page.waitForTimeout(400); await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.stats().panels[0].series.heatmap.enabled);
-  expect(await panel.getByRole('button', { name: 'Order-book heatmap', exact: true }).getAttribute('aria-pressed')).toBe('true');
+  await expect(panel.getByRole('button', { name: 'Hide Order-book Heatmap', exact: true })).toHaveAttribute('aria-pressed','true');
   await panel.getByLabel('Instrument', { exact: true }).selectOption('binance:spot');
   await expect(panel.locator('.heatmap-notice')).toContainText('unavailable');
 });

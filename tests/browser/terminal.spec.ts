@@ -1,3 +1,4 @@
+import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import {test,expect} from '@playwright/test';
 import {readFile,writeFile} from 'node:fs/promises';
 
@@ -7,39 +8,22 @@ test.beforeEach(async({page})=>{
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.every((panel:any)=>panel.bars===5000&&panel.renderer.draws>0&&panel.autoPrice&&panel.max-panel.min>100));
 });
 
-test('chart type picker exposes live Footprint only for Binance USD-M',async({page})=>{
-  const selectors=page.locator('select[aria-label="Chart type"]');
-  await expect(selectors).toHaveCount(2);
-  const order=await page.locator('.chart-toolbar').first().locator('select').evaluateAll(selects=>selects.map(select=>select.getAttribute('aria-label')));
-  expect(order).toEqual(['Instrument','Chart type','Timeframe']);
-  const binance=selectors.nth(0),hyperliquid=selectors.nth(1);
-  await expect(binance).toHaveValue('candle');
-  await expect(binance.locator('option')).toHaveText(['Candle','Footprint']);
-  await expect(binance.locator('option[value="footprint"]')).toBeEnabled();
-  await expect(hyperliquid).toHaveValue('candle');
-  await expect(hyperliquid.locator('option')).toHaveText(['Candle','Footprint · USD-M only']);
-  await expect(hyperliquid.locator('option[value="footprint"]')).toBeDisabled();
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels.map((panel:any)=>panel.bars))).toEqual([5000,5000]);
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels.map((panel:any)=>panel.footprint.surfaceMounted))).toEqual([false,false]);
-  await expect(page.locator('.footprint-settings-button').first()).toBeHidden();
-  await expect(page.getByRole('spinbutton',{name:'Price level (USDT)'}).first()).toBeHidden();
-
+test('unified catalogue exposes native layers and keeps unsupported chart markets unchanged',async({page})=>{
+  const panels=page.locator('.candle-panel');
+  expect(await panels.first().locator('.chart-toolbar select').evaluateAll(selects=>selects.map(s=>s.getAttribute('aria-label')))).toEqual(['Instrument','Timeframe']);
+  await expect(page.locator('select[aria-label="Chart type"]')).toHaveCount(0);
+  await panels.nth(1).getByRole('button',{name:'Indicators',exact:true}).click();
+  await expect(panels.nth(1).getByRole('button',{name:'Add Footprint',exact:true})).toContainText('Binance BTCUSDT USD-M only');
+  await panels.nth(1).getByRole('button',{name:'Add Footprint',exact:true}).click();
+  await panels.nth(1).locator('.indicator-picker').getByRole('button',{name:'Done',exact:true}).click();
+  await expect(panels.nth(1).locator('.active-indicator')).toContainText('Unavailable');
+  expect(await page.evaluate(()=>(window as any).__terminal.stats().panels[1].series.venue)).toBe('hyperliquid');
+  expect(await page.evaluate(()=>(window as any).__terminal.stats().panels[1].footprint.surfaceMounted)).toBe(false);
   await page.setViewportSize({width:720,height:860});
-  const widths=await selectors.evaluateAll(selects=>selects.map(select=>select.getBoundingClientRect().width));
-  expect(widths).toHaveLength(2);
-  for(const width of widths){expect(width).toBeGreaterThanOrEqual(85);expect(width).toBeLessThanOrEqual(95);}
-  const toolbar=page.locator('.chart-toolbar').first();
+  const toolbar=panels.first().locator('.chart-toolbar');
   const cue=page.getByRole('button',{name:'Scroll chart controls right'}).first();
-  await expect(cue).toBeVisible();
-  expect(await toolbar.evaluate(element=>element.scrollWidth-element.clientWidth)).toBeGreaterThan(2);
-  await cue.click();
-  await expect.poll(()=>toolbar.evaluate(element=>element.scrollLeft)).toBeGreaterThan(0);
-  // More layer controls can require another scroll step; both toolbar ends remain reachable.
-  for(let step=0;step<3 && await page.getByRole('button',{name:'Scroll chart controls right'}).first().isVisible();step++){
-    await page.getByRole('button',{name:'Scroll chart controls right'}).first().click();
-    await page.waitForTimeout(350);
-  }
-  await expect(page.getByRole('button',{name:'Scroll chart controls left'}).first()).toBeVisible();
+  if(await cue.isVisible()) { await cue.click(); await expect.poll(()=>toolbar.evaluate(el=>el.scrollLeft)).toBeGreaterThan(0); }
+  await expect(panels.first().getByRole('button',{name:'Indicators',exact:true})).toBeVisible();
 });
 
 test('Footprint mode owns a separate subscription, renders bar revisions, and restores row settings',async({page})=>{
@@ -57,10 +41,10 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     terminal.injectFootprint=(event:any)=>listener?.(event);
     terminal.footprintSubscriptions=subscriptions;
   });
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await setFootprint(panel, true);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].series.type)).toBe('footprint');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);
-  const footprintSettings=panel.getByRole('button',{name:'Footprint display settings'});
+  const footprintSettings=panel.getByRole('button',{name:'Footprint settings',exact:true});
   await expect(footprintSettings).toBeVisible();
   await footprintSettings.click();
   await expect(panel.getByRole('dialog',{name:'Footprint display settings'})).toBeVisible();
@@ -97,10 +81,10 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   });
   expect(callback.series).toMatchObject({venue:'binance',market:'perpetual',interval:'1m'});
   expect(callback.rowPrice).toBe(25);
-  const rowPrice=panel.getByRole('spinbutton',{name:'Price level (USDT)'});
+  const rowPrice=panel.getByLabel('Price level (USDT)',{exact:true});
   await expect(rowPrice).toHaveValue('25');
   await expect(panel.locator('.footprint-row-prefix')).toHaveText('$');
-  await rowPrice.evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setPriceLevel(panel, '1');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.rowPrice!==undefined).map((item:any)=>item.rowPrice))).toEqual([25,1]);
   await expect(panel.locator('.instrument-meta')).toContainText('Price level (USDT) · $1');
   const panelId=panel.getAttribute('data-panel-id');
@@ -124,7 +108,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     const id=(element as HTMLElement).dataset.panelId!;
     const target=(window as any).__terminal.panels.get(id);
     const chart=target.engine.chart;
-    const x=chart.timeToCoordinate(barTime);
+    const x=chart.timeToCoordinate(barTime)-chart.timeScale.barSpacing*.96/4;
     const y=chart.priceToCoordinate(84_000.5,0);
     if(x===null||y===null) throw new Error(`Expected visible footprint cell coordinates, got ${x}, ${y}`);
     const stage=(element as HTMLElement).querySelector<HTMLElement>('.chart-stage')!;
@@ -254,7 +238,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     {id:hiddenView.id,time:revisedVisible.time,revision:revisedVisible.revision,bar:makeBar(revisedVisible.revision,84_000.6,'partial',revisedVisible.time)});
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.primitiveSets,hiddenView.id)).toBeGreaterThan(visibleSets);
 
-  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='5';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setPriceLevel(panel, '5');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.rowPrice!==undefined).map((item:any)=>item.rowPrice))).toEqual([25,1,5]);
   await expect(panel.locator('.instrument-meta')).toContainText('Price level (USDT) · $5');
   await expect.poll(()=>panel.evaluate(element=>{
@@ -264,12 +248,12 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   await page.setViewportSize({width:720,height:860});
   await panel.locator('.chart-toolbar').evaluate(toolbar=>{toolbar.scrollLeft=toolbar.scrollWidth;});
   await expect(panel.getByRole('button',{name:'Latest',exact:true})).toBeVisible();
-  await expect(panel.getByRole('button',{name:'Footprint display settings'})).toBeVisible();
+  await expect(panel.getByRole('button',{name:'Footprint settings',exact:true})).toBeVisible();
   const releasesBeforeModeChange=await page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.released).length);
-  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await setFootprint(panel, false);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions.filter((item:any)=>item.released).length)).toBeGreaterThan(releasesBeforeModeChange);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(false);
-  await expect(panel.getByRole('button',{name:'Footprint display settings'})).toBeHidden();
+  await expect(panel.getByRole('button',{name:'Footprint settings',exact:true})).toBeHidden();
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].bars)).toBe(5000);
 });
 
@@ -446,7 +430,7 @@ test('Binance Spot stays a distinct BTCUSDT series and legacy layouts keep defau
   const picker=page.getByRole('dialog',{name:'Add an indicator'});
   const depth=picker.locator('[data-add-script="builtin.binance-depth-band"]');
   await expect(depth).toBeDisabled();
-  await expect(depth).toHaveAttribute('title','Depth studies require Binance BTCUSDT USD-M Perp');
+  await expect(depth).toHaveAttribute('title',/Binance BTCUSDT USD-M Perp/);
   await expect.poll(()=>page.evaluate(()=> (window as any).__terminal.feed.diagnostics.depth?.subscribers ?? 0)).toBe(0);
   await picker.locator('[data-add-script="builtin.ema-overlay"]').getByText('EMA overlay',{exact:true}).click();
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].studies.diagnostics().context)).toEqual({symbol:'BTCUSDT',exchange:'Binance Spot',interval:'1m'});
@@ -524,7 +508,7 @@ test('series applies late history corrections, remains capped at 5,000 bars, and
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.has(id),panelId)).toBe(false);
 });
 
-test('indicator picker adds from the title and native legend controls isolate settings, open source, and remove workers',async({page})=>{
+test('indicator picker adds from the title and active list controls isolate settings, open source, and remove workers',async({page})=>{
   const firstPanel=page.locator('.candle-panel').first();
   await firstPanel.getByRole('button',{name:'Indicators'}).click();
   const picker=page.getByRole('dialog',{name:'Add an indicator'});
@@ -544,18 +528,13 @@ test('indicator picker adds from the title and native legend controls isolate se
   const secondPicker=page.getByRole('dialog',{name:'Add an indicator'});
   const depth=secondPicker.locator('.indicator-option[data-add-script="builtin.binance-depth-band"]');
   await expect(depth).toBeDisabled();
-  await expect(depth).toContainText('Binance BTCUSDT USD-M Perp only');
+  await expect(depth).toHaveAttribute('title',/Binance BTCUSDT USD-M Perp only/);
   await secondPicker.getByRole('button',{name:'Done'}).click();
 
   const canvas=page.locator('.chart-stage canvas').first();
   const box=(await canvas.boundingBox())!;
-  const clickLegend=async(xOffset:number,rowOffset:number)=>{
-    await page.mouse.move(box.x+150,box.y+rowOffset);
-    await page.waitForTimeout(80);
-    await page.mouse.click(box.x+xOffset,box.y+rowOffset);
-  };
   const settings=page.getByRole('dialog',{name:'Study settings'});
-  await clickLegend(210,48);
+  await firstPanel.getByRole('button',{name:'EMA overlay settings',exact:true}).nth(1).click();
   await expect(settings).toBeVisible();
   const length=settings.locator('[data-input-key="length"]');
   await expect(length).toHaveValue('20');
@@ -570,7 +549,7 @@ test('indicator picker adds from the title and native legend controls isolate se
   expect(changed.find((view:any)=>view.id===initial[0].id)?.settings.length).toBeUndefined();
   expect(changed.find((view:any)=>view.id===initial[1].id)?.settings.length).toBe(8);
 
-  await clickLegend(228,32);
+  await firstPanel.getByRole('button',{name:'Edit Script for EMA overlay',exact:true}).first().click();
   const editor=page.locator('.script-editor-panel');
   await expect(editor).toBeVisible();
   await expect(page.getByRole('combobox',{name:'Attached study'})).toHaveValue(initial[0].id);
@@ -582,7 +561,7 @@ test('indicator picker adds from the title and native legend controls isolate se
   await page.evaluate(()=> (window as any).__terminal.dock.getPanel('script-editor').api.close());
   await expect(editor).toHaveCount(0);
   await expect(canvas).toBeVisible();
-  await clickLegend(236,48);
+  await firstPanel.getByRole('button',{name:'Remove EMA overlay',exact:true}).nth(1).click();
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.studies.diagnostics().attached)).toBe(1);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.studies.diagnostics().workers)).toBe(1);
 });
@@ -598,10 +577,7 @@ test('declining a dirty native source switch keeps the editor chart and attachme
   };
   await addEma(0);await addEma(1);
   const pins=await page.evaluate(()=>[...(window as any).__terminal.panels.entries()].map(([id,panel]:any)=>({id,pin:panel.studies.views()[0]})));
-  const clickSource=async(index:number)=>{
-    const canvas=page.locator('.candle-panel').nth(index).locator('.chart-stage canvas').first(),box=(await canvas.boundingBox())!;
-    await page.mouse.move(box.x+150,box.y+32);await page.waitForTimeout(80);await page.mouse.click(box.x+228,box.y+32);
-  };
+  const clickSource=async(index:number)=>{ await page.locator('.candle-panel').nth(index).getByRole('button',{name:'Edit Script for EMA overlay',exact:true}).click(); };
   await clickSource(0);
   const editor=page.locator('.script-editor-panel');
   await expect(editor).toBeVisible();
@@ -717,12 +693,12 @@ test('Footprint price level defaults to $25, rejects off-grid edits, and restore
     terminal.footprintSubscriptions=subscriptions;
     terminal.injectFootprint=(event:any)=>active?.(event);
   });
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
-  const price=panel.getByRole('spinbutton',{name:'Price level (USDT)'});
+  await setFootprint(panel, true);
+  const price=panel.getByLabel('Price level (USDT)',{exact:true});
   await expect(price).toHaveValue('25');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.params.api.getParameters().rowPrice)).toBe(25);
   const writesAt25=await page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites());
-  await price.evaluate((element:HTMLInputElement)=>{element.value='50';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setPriceLevel(panel, '50');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
   const panelId=await panel.getAttribute('data-panel-id');
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[[...(window as any).__terminal.panels.values()][0].params.api.id]?.params?.rowPrice)).toBe(50);
@@ -745,12 +721,13 @@ test('Footprint price level defaults to $25, rejects off-grid edits, and restore
   },{panelId,time});
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.revision)).toBe(2);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites())).toEqual(writesAfterSnapshot);
-  await price.evaluate((element:HTMLInputElement)=>{element.value='25.05';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setPriceLevel(panel, '25.05');
   await expect.poll(()=>price.evaluate((element:HTMLInputElement)=>element.validationMessage)).toContain('tick size, $0.1');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(83_001);
   await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.rowPrice)).toBe(50);
-  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  if(await panel.locator('.footprint-settings-dialog').isVisible()) await panel.locator('.footprint-settings-dialog').getByRole('button',{name:'Close',exact:true}).click();
+  await setFootprint(panel, false);
   await page.reload();
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
   await expect.poll(()=>page.evaluate(()=>([...(window as any).__terminal.panels.values()][0]?.selection.rowPrice))).toBe(50);
@@ -762,8 +739,8 @@ test('Footprint price level defaults to $25, rejects off-grid edits, and restore
     };
   });
   const restored=page.locator('.candle-panel').first();
-  await restored.locator('select[aria-label="Chart type"]').selectOption('footprint');
-  await expect(restored.getByRole('spinbutton',{name:'Price level (USDT)'})).toHaveValue('50');
+  await setFootprint(restored, true);
+  await expect(restored.getByLabel('Price level (USDT)',{exact:true})).toHaveValue('50');
 });
 
 test('two-trade 1 USDT footprint row remains on-screen without an indicator scale',async({page})=>{
@@ -778,10 +755,10 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     for(const view of target.studies.views())target.studies.remove(view.attachmentId);
   });
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.studies.views().length)).toBe(0);
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await setFootprint(panel, true);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);
   await expect.poll(()=>page.evaluate(()=>Boolean((window as any).__terminal.syntheticFootprintCallback))).toBe(true);
-  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setPriceLevel(panel, '1');
   await expect.poll(()=>page.evaluate(()=>Boolean((window as any).__terminal.syntheticFootprintCallback))).toBe(true);
 
   const fixture=await page.evaluate(()=>{
@@ -818,7 +795,7 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     const chart=panel.engine.chart,stage=panel.element.querySelector('.chart-stage') as HTMLElement;
     const rect=stage.getBoundingClientRect();
     const rowSize=panel.footprintBars.find((bar:any)=>bar.time===time)?.rowSize??1;
-    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(price+rowSize/2,0);
+    const x=chart.timeToCoordinate(time)-chart.timeScale.barSpacing*.96/4,y=chart.priceToCoordinate(price+rowSize/2,0);
     const indexBar=panel.engine.footprintIndexSeries?.getData().at(-1);
     const hover=typeof x==='number'&&typeof y==='number'?panel.engine.footprintAt(x,y):null;
     const canvases=[...stage.querySelectorAll('canvas')] as HTMLCanvasElement[];
@@ -847,7 +824,7 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
       const inPlot=absX>=rect.left&&absX<=rect.right&&absY>=rowTop&&absY<=rowBottom;
       return {value:label.value,font:label.font,x:label.x,y:label.y,align:label.align,width:label.width,
         fillStyle:label.fillStyle,absolute:{x:absX,y:absY},row:{top:rowTop,bottom:rowBottom,center:rect.top+y},
-        column:absX<rect.left+x?'bid':absX>rect.left+x?'ask':'center',inNativeRow,inPlot,exactColorGlyphPixels:glyphPixels,
+        column:absX<rect.left+chart.timeToCoordinate(time)?'bid':absX>rect.left+chart.timeToCoordinate(time)?'ask':'center',inNativeRow,inPlot,exactColorGlyphPixels:glyphPixels,
         canvas:{top:cr.top,left:cr.left,width:cr.width,height:cr.height}};
     });
     return {
@@ -900,7 +877,7 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
   const center=await panel.evaluate((element,time)=>{
     const id=(element as HTMLElement).dataset.panelId!;
     const target=(window as any).__terminal.panels.get(id),chart=target.engine.chart;
-    const x=chart.timeToCoordinate(time),y=chart.priceToCoordinate(83000,0);
+    const x=chart.timeToCoordinate(time)-chart.timeScale.barSpacing*.96/4,y=chart.priceToCoordinate(83000.5,0);
     const rect=element.querySelector<HTMLElement>('.chart-stage')!.getBoundingClientRect();
     return {x:rect.left+x,y:rect.top+y};
   },fixture.time);
@@ -1186,7 +1163,7 @@ test('a single $25 footprint row opens at text height and respects manual price 
       return ()=>{delete terminal.singleRowCallback;};
     };
   });
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await setFootprint(panel, true);
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0];
     const time=target.engine.series.getData().at(-1).time;
@@ -1222,7 +1199,7 @@ test('a single $25 footprint row opens at text height and respects manual price 
     return scale.priceRange();
   });
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.chart.panes()[0].priceScale.priceRange())).toEqual(manual);
-  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await setFootprint(panel, false);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(false);
 });
 
@@ -1264,7 +1241,7 @@ test('footprint execution feedback fades on the overlay and stops for reduced mo
       terminal.pulseCallback=callback;return ()=>{delete terminal.pulseCallback;};
     };
   });
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
+  await setFootprint(panel, true);
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],engine=target.engine;
     const time=engine.series.getData().at(-1).time;
@@ -1297,7 +1274,7 @@ test('footprint execution feedback fades on the overlay and stops for reduced mo
   expect(await page.evaluate(()=>(window as any).__terminal.pulseUpdate())).toBe(0);
   await page.emulateMedia({reducedMotion:'no-preference'});
   expect(await page.evaluate(()=>(window as any).__terminal.pulseUpdate())).toBe(1);
-  await panel.locator('select[aria-label="Chart type"]').selectOption('candle');
+  await setFootprint(panel, false);
   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.footprintActivity.size)).toBe(0);
 });
 
@@ -1310,8 +1287,8 @@ test('footprint last-price line tracks executions within rows and $1 rows remain
     terminal.priceLabels=[];
     CanvasRenderingContext2D.prototype.fillText=function(text:any,x:number,y:number,maxWidth?:number){terminal.priceLabels.push(String(text));return maxWidth===undefined?native.call(this,text,x,y):native.call(this,text,x,y,maxWidth);};
   });
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
-  await panel.getByRole('spinbutton',{name:'Price level (USDT)'}).evaluate((element:HTMLInputElement)=>{element.value='1';element.dispatchEvent(new Event('change',{bubbles:true}));});
+  await setFootprint(panel, true);
+  await setPriceLevel(panel, '1');
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],time=target.engine.series.getData().at(-1).time;
     const bar={time,revision:1,cells:[{price:83000,bidVol:.1,askVol:.2}],rowSize:1,delta:.1,minDelta:-.1,maxDelta:.1,
@@ -1344,10 +1321,10 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
     terminal.unitSubscriptions=0;
     terminal.feed.subscribeFootprint=(_id:any,_series:any,_width:any,callback:any)=>{terminal.unitSubscriptions++;terminal.unitsCallback=callback;return ()=>{};};
   });
-  const units=panel.getByRole('button',{name:'Footprint volume units',exact:true});
+  const units=panel.getByLabel('Footprint volume units',{exact:true});
   await expect(units).toBeHidden();
-  await panel.locator('select[aria-label="Chart type"]').selectOption('footprint');
-  await expect(units).toHaveText('BTC');
+  await setFootprint(panel, true);
+  await expect(units).toHaveValue('btc');
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal,target=[...terminal.panels.values()][0],time=target.engine.series.getData().at(-1).time;
     terminal.unitsCallback({type:'footprint-snapshot',key:'test',ids:[target.params.api.id],retentionStart:time,bars:[{
@@ -1359,16 +1336,15 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
   });
   await expect(panel.locator('.ohlc')).toContainText('Bid 0.001 · Ask 0.002');
   const before=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.visibleRange());
-  await units.click();
-  await expect(units).toHaveText('USDT');
-  await expect(units).toHaveAttribute('aria-pressed','true');
+  await setUnits(panel, 'usdt');
+  await expect(units).toHaveValue('usdt');
   await expect(panel.locator('.ohlc')).toContainText('Bid 83 · Ask 166');
   await expect(panel.locator('.ohlc')).toContainText('USDT');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(83.0001);
   const cellPoint=await page.evaluate(()=>{
     const target=[...(window as any).__terminal.panels.values()][0],chart=target.engine.chart,bar=target.footprintBars[0];
     const bounds=target.element.querySelector('.chart-stage').getBoundingClientRect();
-    return {x:bounds.left+chart.timeToCoordinate(bar.time)+12,y:bounds.top+chart.priceToCoordinate(83000+bar.rowSize/2,0)};
+    return {x:bounds.left+chart.timeToCoordinate(bar.time)+chart.timeScale.barSpacing*.96/4,y:bounds.top+chart.priceToCoordinate(83000+bar.rowSize/2,0)};
   });
   await page.mouse.move(cellPoint.x,cellPoint.y);
   await expect(panel.locator('.ohlc')).toContainText('bid 83 / ask 166 USDT');
@@ -1377,15 +1353,14 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
   expect(await page.evaluate(()=>JSON.stringify([...(window as any).__terminal.panels.values()][0].footprintBars)==JSON.stringify((window as any).__terminal.unitRaw))).toBe(true);
   await page.screenshot({path:'artifacts/footprint-units-usdt-1366x768.png'});
   await page.setViewportSize({width:720,height:860});
-  await units.scrollIntoViewIfNeeded();
   await page.screenshot({path:'artifacts/footprint-units-usdt-720x860.png'});
-  await units.click();
-  await expect(units).toHaveText('BTC');
+  await setUnits(panel, 'btc');
+  await expect(units).toHaveValue('btc');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(.001);
-  await units.click();
+  await setUnits(panel, 'usdt');
   await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.footprintUnits)).toBe('usdt');
   await page.reload();
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
-  await expect(page.getByRole('button',{name:'Footprint volume units',exact:true}).first()).toHaveText('USDT');
+  await expect(page.locator('.active-indicator[data-definition-id="native.footprint"]').first()).toContainText('USDT');
   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][1].selection.footprintUnits)).toBe('btc');
 });

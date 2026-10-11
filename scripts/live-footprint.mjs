@@ -1,3 +1,4 @@
+import { addIndicator, setPriceLevel, setUnits } from './indicator-actions.mjs';
 // Ordinary-build real Binance smoke. Read-only instrumentation observes actual
 // worker WebSockets/messages; it neither mocks trades nor enables app diagnostics.
 import assert from 'node:assert/strict';
@@ -44,8 +45,8 @@ try {
   const panel = page.locator('.candle-panel').first();
   const priceLevel = panel.locator('input.footprint-row-price');
   assert.equal(await priceLevel.inputValue(), '25');
-  if (rowPrice !== 25) await priceLevel.evaluate((element, width) => { element.value = String(width); element.dispatchEvent(new Event('change', { bubbles: true })); }, rowPrice);
-  await panel.getByRole('combobox', { name: 'Chart type', exact: true }).selectOption('footprint');
+  await addIndicator(panel, 'Footprint');
+  if (rowPrice !== 25) await setPriceLevel(panel, rowPrice);
   assert.equal(await priceLevel.inputValue(), String(rowPrice));
   await page.waitForFunction(() => document.querySelector('.candle-panel .panel-status')?.getAttribute('data-state') === 'live' && document.querySelector('.candle-panel .ohlc')?.textContent?.includes('BTC'), undefined, { timeout: 35_000 });
   await page.waitForTimeout(500);
@@ -98,21 +99,21 @@ try {
   assert.ok(readout?.includes('BTC'), 'Rendered footprint readout has BTC units');
   assert.equal(errors.length, 0, 'No page errors');
   await page.screenshot({ path: 'artifacts/footprint-live-1366x768.png' });
-  const units = panel.getByRole('button', { name: 'Footprint volume units', exact: true });
-  await units.click();
-  assert.equal(await units.textContent(), 'USDT');
+  const units = panel.getByLabel('Footprint volume units', { exact: true });
+  await setUnits(panel, 'usdt');
+  assert.equal(await units.inputValue(), 'usdt');
   assert.ok((await panel.locator('.ohlc').textContent())?.includes('USDT'), 'Notional readout labelled');
   await page.screenshot({ path: 'artifacts/footprint-units-live-usdt-1366x768.png' });
   assert.equal((await worker.evaluate(() => self.__liveFootprintProbe)).sockets, 1, 'Unit switch retains the shared feed');
-  await units.click();
-  assert.equal(await units.textContent(), 'BTC');
+  await setUnits(panel, 'btc');
+  assert.equal(await units.inputValue(), 'btc');
   const hyperliquid = page.locator('.candle-panel').last();
   await page.waitForFunction(() => document.querySelectorAll('.candle-panel')[1]?.querySelector('.panel-status')?.getAttribute('data-state') === 'live', undefined, { timeout: 35_000 });
   const hyperliquidStatus = await hyperliquid.locator('.panel-status').textContent();
-  await panel.getByRole('combobox', { name: 'Chart type', exact: true }).selectOption('candle');
+  await panel.getByRole('button', { name: 'Remove Footprint', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('.candle-panel .panel-status')?.getAttribute('data-state') === 'live', undefined, { timeout: 35_000 });
   const candleStatus = await panel.locator('.panel-status').textContent();
-  assert.equal(await panel.getByRole('button', { name: 'Footprint display settings', exact: true }).isVisible(), false);
+  assert.equal(await panel.getByRole('button', { name: 'Footprint settings', exact: true }).isVisible(), false);
   assert.ok((await panel.locator('.ohlc').textContent())?.includes('V'), 'Native candle volume readout restored');
   assert.equal(errors.length, 0, 'No page errors after returning to native candles');
   const report = { priceLevelUsdt: rowPrice, mode: 'Ordinary production build, real Binance USD-M aggTrade, no fixtures', browser: browser.version(), workerProbe: 'Read-only wrapping of actual WebSocket and postMessage; no messages substituted', socketCount: captured.sockets, capturedWireCount: captured.wire.length, comparisons, studyApplyMessage, scriptWorkerPresent: page.workers().length >= 2, readout, status, candleStatus, hyperliquidStatus, errors };

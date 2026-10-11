@@ -4,16 +4,13 @@ import type { OrderBookHeatmap } from './chart/orderbook-heatmap';
 
 /** Compact native controls; collection ownership remains in panel/feed. */
 export class HeatmapControls {
-  readonly toggle = document.createElement('button'); readonly settings = document.createElement('button');
   readonly dialog = document.createElement('dialog'); readonly notice = document.createElement('div'); readonly readout = document.createElement('div');
   private form = document.createElement('form'); private inputs = new Map<string, HTMLInputElement | HTMLSelectElement>();
   private rowHint = document.createElement('p');
+  private units: 'btc' | 'usdt' = 'btc';
+  setUnits(units: 'btc' | 'usdt') { this.units = units; this.readout.textContent = ''; this.renderStatus(); }
   private current = heatmapSettings(null); private supported = true; private status?: HeatmapStatus;
-  constructor(private changed: (settings: HeatmapSettings) => void, private retry: () => void, signal: AbortSignal, settingsIcon: Node) {
-    this.toggle.textContent = 'Heatmap'; this.toggle.type = 'button'; this.toggle.setAttribute('aria-label', 'Order-book heatmap');
-    this.toggle.title = 'Toggle observed resting order-book liquidity';
-    this.settings.type = 'button'; this.settings.append(settingsIcon); this.settings.className = 'heatmap-settings-button';
-    this.settings.setAttribute('aria-label', 'Order-book heatmap settings');
+  constructor(private changed: (settings: HeatmapSettings, units: 'btc' | 'usdt') => void, private retry: () => void, signal: AbortSignal) {
     this.dialog.className = 'indicator-settings heatmap-settings'; this.dialog.setAttribute('aria-label', 'Order-book heatmap settings');
     this.notice.className = 'heatmap-notice'; this.notice.setAttribute('role', 'status'); this.readout.className = 'heatmap-readout';
     const header = document.createElement('header'), title = document.createElement('h2'); title.textContent = 'Order-book heatmap';
@@ -27,20 +24,20 @@ export class HeatmapControls {
     };
     number('rowPrice', 'Price row (USDT)', .000001, 10000, 'any');
     select('bucketMs', 'Time bucket', [['500', '500 ms'], ['250', '250 ms']]);
+    select('units', 'Quantity units', [['btc', 'BTC'], ['usdt', 'USDT notional']]);
     select('mode', 'Resting quantity', [['average', 'Time-weighted average'], ['peak', 'Observed peak']]);
-    number('opacity', 'Opacity', .05, .8, '.05'); number('intensity', 'Full intensity (BTC / $10)', .01, 10000, 'any');
+    number('opacity', 'Opacity', 0, 1, '.05'); number('intensity', 'Full intensity (BTC / $10)', .01, 10000, 'any');
     number('minimum', 'Minimum quantity (BTC)', 0, 10000, 'any');
     select('labels', 'Quantity labels', [['auto', 'Auto'], ['off', 'Off']]);
     for (const name of ['bids', 'asks']) { const input = document.createElement('input'); input.type = 'checkbox'; this.field(fields, name, `Show ${name}`, input); }
-    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'BTC resting quantity · session only. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Stripes indicate incomplete coverage.';
+    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Stripes indicate incomplete coverage.';
     this.rowHint.className = 'dialog-status';
     const footer = document.createElement('footer'), apply = document.createElement('button'), retryButton = document.createElement('button');
     apply.type = 'submit'; apply.textContent = 'Apply'; retryButton.type = 'button'; retryButton.textContent = 'Retry depth'; footer.append(retryButton, apply);
     this.form.className = 'indicator-settings-form';
     this.form.append(header, fields, this.rowHint, hint, footer); this.dialog.append(this.form);
     const options = { signal };
-    this.toggle.addEventListener('click', () => this.changed({ ...this.current, enabled: !this.current.enabled }), options);
-    this.settings.addEventListener('click', () => this.open(), options); close.addEventListener('click', () => this.dialog.close(), options);
+    close.addEventListener('click', () => this.dialog.close(), options);
     retryButton.addEventListener('click', () => this.retry(), options);
     this.dialog.addEventListener('click', e => { if (e.target === this.dialog) this.dialog.close(); }, options);
     this.form.addEventListener('submit', e => {
@@ -49,7 +46,7 @@ export class HeatmapControls {
       const price = this.inputs.get('rowPrice') as HTMLInputElement; price.setCustomValidity('');
       if (this.status?.tickSize && footprintTicksForPrice(Number(raw.rowPrice), this.status.tickSize) === null) price.setCustomValidity(`Enter a multiple of the exchange tick size, $${this.status.tickSize}.`);
       if (!this.form.reportValidity()) return;
-      this.changed(heatmapSettings(raw)); this.dialog.close();
+      this.changed(heatmapSettings(raw), raw.units === 'usdt' ? 'usdt' : 'btc'); this.dialog.close();
     }, options);
     this.inputs.get('rowPrice')!.addEventListener('input', () => (this.inputs.get('rowPrice') as HTMLInputElement).setCustomValidity(''), options);
   }
@@ -59,25 +56,25 @@ export class HeatmapControls {
   }
   sync(settings: HeatmapSettings, supported: boolean, footprint = false) {
     const row = this.inputs.get('rowPrice') as HTMLInputElement; row.disabled = footprint; row.value = String(settings.rowPrice); row.setCustomValidity('');
-    this.rowHint.hidden = !footprint; this.rowHint.textContent = 'Price rows match the footprint. Change Price level in the chart toolbar to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.';
-    this.current = settings; this.supported = supported; this.toggle.setAttribute('aria-pressed', String(settings.enabled)); this.settings.hidden = !settings.enabled;
+    this.rowHint.hidden = !footprint; this.rowHint.textContent = 'Price rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.';
+    this.current = settings; this.supported = supported;
     this.notice.hidden = !settings.enabled; this.readout.hidden = !settings.enabled; this.renderStatus();
   }
   setStatus(status?: HeatmapStatus) { this.status = status; this.renderStatus(); }
   private renderStatus() {
     if (!this.current.enabled) return;
     const s = this.status;
-    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · BTC · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${s.capacityLimited ? ' · row limit' : ''} · ${s.collectionStart ? `since ${utc(s.collectionStart)}` : 'collecting…'}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
+    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${s.capacityLimited ? ' · row limit' : ''} · ${s.collectionStart ? `since ${utc(s.collectionStart)}` : 'collecting…'}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
     this.notice.title = !this.supported ? this.notice.textContent : `${this.notice.textContent}\n${s?.message ?? 'Waiting for synchronized depth'}`;
   }
   hover(hit: ReturnType<OrderBookHeatmap['hoverAt']>) {
     if (!hit || !this.current.enabled) { this.readout.textContent = ''; return; }
     const b = hit.bin;
-    this.readout.textContent = `Resting ${hit.side} · ${b[hit.side].toFixed(4)} BTC · ${hit.mode === 'peak' ? 'observed peak' : 'time-weighted average'}\n${utc(b.start)}–${utc(b.end)} UTC · $${b.low.toFixed(2)}–$${b.high.toFixed(2)} · ${b.incomplete ? 'incomplete / unknown subtotal' : 'covered observations'}${b.partial ? ' · partial interval' : ''}`;
+    this.readout.textContent = `Resting ${hit.side} · ${hit.quantity.toLocaleString('en-US', { maximumFractionDigits: hit.units === 'btc' ? 4 : 2 })} ${hit.units.toUpperCase()} · ${hit.mode === 'peak' ? 'observed peak' : 'time-weighted average'}\n${utc(b.start)}–${utc(b.end)} UTC · $${b.low.toFixed(2)}–$${b.high.toFixed(2)} · ${b.incomplete ? 'incomplete / unknown subtotal' : 'covered observations'}${b.partial ? ' · partial interval' : ''}`;
   }
-  private open() {
+  open() {
     for (const [name, input] of this.inputs) {
-      const value = this.current[name as keyof HeatmapSettings];
+      const value = name === 'units' ? this.units : this.current[name as keyof HeatmapSettings];
       if (input instanceof HTMLInputElement && input.type === 'checkbox') input.checked = Boolean(value); else input.value = String(value);
     }
     if (!this.dialog.open) this.dialog.showModal();

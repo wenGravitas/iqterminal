@@ -1,3 +1,4 @@
+import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 
 test('axis grid follows price/time transforms, settings persist on candles and footprint', async ({ page }) => {
@@ -61,7 +62,7 @@ test('axis grid follows price/time transforms, settings persist on candles and f
       return () => {};
     };
   });
-  await panel.getByLabel('Chart type', { exact: true }).selectOption('footprint');
+  await setFootprint(panel, true);
   await panel.getByRole('button', { name: 'Chart settings', exact: true }).click();
   await expect(panel.getByLabel('Gridlines')).not.toBeChecked(); await panel.getByLabel('Gridlines').check();
   await panel.locator('.chart-settings').getByRole('button', { name: 'Close', exact: true }).click();
@@ -69,7 +70,7 @@ test('axis grid follows price/time transforms, settings persist on candles and f
   const footprint = await geometry();
   for (let i = 0; i < footprint.time.length; i++) expect(footprint.time[i].coordinate).toBeCloseTo(footprint.times[i], 0);
   await page.screenshot({ path: 'artifacts/chart-grid-footprint-1366x768.png' });
-  await panel.getByLabel('Chart type', { exact: true }).selectOption('candle');
+  await setFootprint(panel, false);
   await panel.getByRole('button', { name: 'Chart settings', exact: true }).click();
   await panel.getByLabel('Gridlines').uncheck(); await panel.locator('.chart-settings').getByRole('button', { name: 'Close', exact: true }).click();
   await page.reload(); await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
