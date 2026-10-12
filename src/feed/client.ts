@@ -1,3 +1,4 @@
+import type {WatchMessage,WatchSnapshot} from '../level-watch/types';
 import { heatmapKey, type HeatmapResolution } from './heatmap-model';
 import { type Command, type Event, type Series, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
 export class FeedClient {
@@ -6,6 +7,11 @@ export class FeedClient {
   private currentTicker = new Map<string,string>();
   private heatmapListeners = new Map<string,{key:string;callback:(e:Event)=>void}>();
   private currentHeatmap = new Map<string,string>();
+  private watchListeners=new Set<(snapshot:WatchSnapshot|undefined,error?:string)=>void>();
+  private watchSnapshot?:WatchSnapshot;private watchError?:string;private watchStarted=false;
+  private watchRequests=new Map<number,{resolve:(value:unknown)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
+  watchRequest<T=unknown>(path:string,body?:unknown,key:string=crypto.randomUUID()):Promise<T>{if(this.watchRequests.size>=8)return Promise.reject(new Error('Watch request capacity; retry'));const id=++this.sequence;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.watchRequests.delete(id);reject(new Error('Watch request timed out; refresh before retrying a mutation'));},15000);this.watchRequests.set(id,{resolve:value=>resolve(value as T),reject,timer});this.worker.postMessage({type:'watch-rpc',id,path,body,key});});}
+  subscribeWatches(listener:(snapshot:WatchSnapshot|undefined,error?:string)=>void){this.watchListeners.add(listener);if(this.watchSnapshot||this.watchError)listener(this.watchSnapshot,this.watchError);if(!this.watchStarted){this.watchStarted=true;this.worker.postMessage({type:'watch-start'});}return ()=>{this.watchListeners.delete(listener);};}
   diagnostics:Record<string,unknown>={};
   constructor(fixture=false, alignFixtureToNow=false) {
     // Explicit diagnostic build mode only, never automatic fallback.
@@ -13,6 +19,9 @@ export class FeedClient {
     // Vite worker URL query isn't preserved consistently; fixture selected by command initialization below.
     if(fixture)this.worker.postMessage({type:'initFixture',alignToNow:alignFixtureToNow});
     this.worker.onmessage=(message:MessageEvent<Event>)=>{
+      const wm=message.data as unknown as WatchMessage;
+      if(wm.type==='watch-result'){const request=this.watchRequests.get(wm.id);if(request){clearTimeout(request.timer);this.watchRequests.delete(wm.id);if(wm.error)request.reject(new Error(wm.error));else request.resolve(wm.value);}return;}
+      if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot?.events)this.worker.postMessage({type:'watch-ack',cursor:wm.snapshot.cursor});}return;}
       const e=message.data;
       if(e.type==='diagnostics'){this.diagnostics=e.data;return;}
       try {
@@ -67,7 +76,7 @@ export class FeedClient {
   }
   updateTicker(id:string,config:import('../ticker/model').TickerConfig) {const token=this.currentTicker.get(id);const listener=token&&this.tickerListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'ticker-update',id:token,configRevision:listener.revision,config});}}
   retryFootprint(){this.send({type:'footprint-retry'});}
-  dispose(){this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.worker.terminate();}
+  dispose(){for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

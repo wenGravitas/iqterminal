@@ -1,3 +1,4 @@
+import type {LevelWatch} from './level-watch/types';
 import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
 import { FOOTPRINT_ID, HEATMAP_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
@@ -141,6 +142,19 @@ export class CandlePanel implements IContentRenderer {
   private footprintBusy = false;
   private engine?: OpenAlgoCandleChart;
   private studyHost?: ScriptStudyHost;
+  private watchList:LevelWatch[]=[];
+  private watchButton?:HTMLButtonElement;
+  private cancelWatchPick?:()=>void;
+  setWatchZones(watches:LevelWatch[]){this.watchList=watches;const supported=instrumentKey(this.selection)==='binance:perpetual';if(this.watchButton){this.watchButton.disabled=!supported;this.watchButton.title=supported?'Select two zone boundaries':'Level Watch requires Binance BTCUSDT USD-M perpetual';}this.engine?.setWatchZones(supported?watches:[]);}
+  focusWatch(w:LevelWatch){if(instrumentKey(this.selection)!=='binance:perpetual')return;this.params.api.setActive();const padding=Math.max(10,(w.definition.upper-w.definition.invalidation)*.5);this.engine?.focusWatch(w.definition.invalidation-padding,w.definition.upper+padding);}
+  beginWatchZone(done:(bounds:{lower:number;upper:number})=>void){
+    this.cancelWatchPick?.();if(instrumentKey(this.selection)!=='binance:perpetual'||!this.engine)return;
+    const abort=new AbortController(),hint=document.createElement('div');hint.className='watch-pick-hint';hint.textContent='Watch zone: click first boundary · Escape cancels';this.chart.append(hint);this.chart.classList.add('watch-zone-picking');this.chart.focus();let first:number|undefined,finished=false,timer:ReturnType<typeof setTimeout>|undefined;
+    this.cancelWatchPick=()=>{clearTimeout(timer);abort.abort();hint.remove();this.chart.classList.remove('watch-zone-picking');this.cancelWatchPick=undefined;};
+    const options={capture:true,signal:abort.signal};for(const name of ['pointerdown','pointerup','mousedown','mouseup','dblclick'] as const)this.chart.addEventListener(name,event=>{event.preventDefault();event.stopImmediatePropagation();},options);
+    this.chart.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();if(finished)return;const rect=this.chart.getBoundingClientRect(),price=this.engine?.watchPriceAt(event.clientX-rect.left,event.clientY-rect.top);if(price==null)return;if(first===undefined){first=price;hint.textContent=`First boundary $${price.toFixed(1)} · click second boundary · Escape cancels`;return;}if(first===price){hint.textContent='Choose a different second boundary';return;}finished=true;done({lower:Math.min(first,price),upper:Math.max(first,price)});timer=setTimeout(()=>this.cancelWatchPick?.(),350);},options);
+    this.chart.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();this.cancelWatchPick?.();}},options);
+  }
   private subscriptions: { dispose(): void }[] = [];
   private release?: () => void;
   private releaseFootprint?: () => void;
@@ -318,6 +332,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine?.setGridVisible(this.selection.grid);
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
+    if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
     this.engine.onHeatmapViewport = viewport => this.feed.requestHeatmapViewport(this.params.api.id, viewport);
     this.engine.setGridVisible(this.selection.grid); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
@@ -888,6 +903,7 @@ export class CandlePanel implements IContentRenderer {
     const wasFootprint = this.selection.type === 'footprint';
     if (series) this.marketButton.textContent = instrumentLabel(series);
     this.selection = config({ ...this.selection, ...(series ?? {}), studies: this.selection.studies });
+    this.cancelWatchPick?.();this.setWatchZones(this.watchList);
     this.params.api.updateParameters(this.selection);
     this.updateFootprintControls();
     this.resetViewOnSnapshot = true;
@@ -1275,6 +1291,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   dispose() {
+    this.cancelWatchPick?.();
     this.dead = true;
     this.selectionEpoch++;
     clearInterval(this.timer);

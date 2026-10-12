@@ -1,0 +1,10 @@
+export interface WatchDefinition { name:string;lower:number;upper:number;invalidation:number;thesis:string;expiresAt:number }
+export interface WatchEvidence { at:number;price:number;sellBtc:number;baselineBtc:number;baselinePrints:number;relative:number|null;progressTicks:number;pressure:boolean;reclaimBtc:number;reclaimMs:number;bidBtc:number|null;bidIncreaseBtc:number;depthEpoch:number;depthSequence:number }
+export interface WatchEncounter { id:string;watchId:string;revision:number;definition:WatchDefinition;state:string;startedAt:number;endedAt?:number;confirmationAt?:number;reason:string;evidence?:WatchEvidence;low:number;high:number;clipFrom:number;clipTo?:number;annotation?:string;note?:string;outcomes?:Record<string,{censored:boolean;favourableUsdt:number;adverseUsdt:number;referencePrice:number}>;postInvalidationAt?:number }
+export interface LevelWatch { id:string;revision:number;definition:WatchDefinition;state:string;quality:string;reason:string;armedAt:number;lastEvidence?:WatchEvidence;encounter?:WatchEncounter }
+export interface WatchEvent {id:number;at:number;watchId:string;kind:string;value:{fresh?:boolean;reason?:string;encounter?:WatchEncounter}}
+export interface WatchSnapshot {version:1;source:string;cursor:number;preset:Record<string,string|number>;service:{state:string;reason:string;lastPoll:number;bidFloor:number;askCeiling:number;depthEpoch:number;bytes:number};watches:LevelWatch[];events?:WatchEvent[]}
+export type WatchCommand={type:'watch-start'}|{type:'watch-ack';cursor:number}|{type:'watch-rpc';id:number;path:string;body?:unknown;key:string};
+export type WatchMessage={type:'watch-state';snapshot?:WatchSnapshot;error?:string}|{type:'watch-result';id:number;value?:unknown;error?:string};
+export interface ClipRecord {id:number;at:number;seed:boolean;sha256:string;data:{admittedAt:number;health:{state:string;reason:string};input:Array<{type:string;timeMs?:number;price?:string;quantity?:string;side?:string;kind?:string;at?:number;payload?:unknown}>}}
+export interface WatchClip {format:string;from:number;to:number;retentionComplete:boolean;marketCoverage:string;records:ClipRecord[];nextAfter:number|null}

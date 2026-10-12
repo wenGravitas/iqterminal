@@ -1,3 +1,5 @@
+import { WatchZones } from './watch-zones';
+import type {LevelWatch} from '../level-watch/types';
 import { AxisGrid } from './axis-grid';
 import { OrderBookHeatmap } from './orderbook-heatmap';
 import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
@@ -94,6 +96,10 @@ export class OpenAlgoCandleChart {
     pocStyle: 'outline', radius: 0,
     stackedImbalances: 0, cvdOffset: 0,
   };
+  private readonly watchZones = new WatchZones();
+  setWatchZones(watches:LevelWatch[]){this.watchZones.set(watches);}
+  watchPriceAt(x:number,y:number){const plot=this.chart.plotRect(0);if(!plot||x<plot.left||x>plot.left+plot.width||y<plot.top||y>plot.top+plot.height)return null;return Math.round(this.chart.panes()[0].yToPrice(y-plot.top)*10)/10;}
+  focusWatch(lower:number,upper:number){const scale=this.chart.panes()[0].readoutScale();this.chart.setAutoScale(false);scale.setPriceRange({min:lower,max:upper});this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));}
   private readonly footprintRefresh = () => this.refreshVisibleFootprint();
   private readonly reducedMotion = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)'); } catch { return { matches: false }; } })();
   private readonly footprintActivity = new FootprintActivity(() => this.footprint?.options() ?? this.footprintOptions, () => this.reducedMotion.matches);
@@ -161,6 +167,7 @@ export class OpenAlgoCandleChart {
         colorByPreviousClose: false,
       },
     });
+    this.chart.addPrimitive(this.watchZones, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
@@ -548,6 +555,7 @@ export class OpenAlgoCandleChart {
     this.removeFootprintSurface();
     if (this.heatmap) this.chart.removePrimitive(this.heatmap);
     this.heatmap = null;
+    this.chart.removePrimitive(this.watchZones);
     this.chart.removePrimitive(this.axisGrid);
     this.chart.destroy();
     this.callbacks.clear();

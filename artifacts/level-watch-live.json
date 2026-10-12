@@ -1,0 +1,11 @@
+{
+  "kind": "live Pi browser against staging; verification watch, no claimed trading signal",
+  "id": "c1072677-edd8-43ba-87ad-c39edb55949d",
+  "lower": 82704,
+  "upper": 82953.8,
+  "closedStillArmed": true,
+  "zoneSelectionLower": "82785.9",
+  "reloaded": true,
+  "reconnected": true,
+  "errors": []
+}

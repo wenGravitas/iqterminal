@@ -1,4 +1,6 @@
 /// <reference lib="webworker" />
+import { LevelWatchTransport } from './level-watch';
+import type { WatchCommand } from '../level-watch/types';
 import { parseLive } from './adapters';
 import { MarketService } from './service';
 import { StagingHeatmapService } from './staging-heatmap';
@@ -35,6 +37,7 @@ const tickers = new TickerService(footprint, e => scope.postMessage(e));
 const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) : undefined;
 const stagingHeatmap = stagingMode ? new StagingHeatmapService(e=>scope.postMessage(e)) : undefined;
 const stagingClients = new Set<string>();
+const watchTransport=new LevelWatchTransport(message=>scope.postMessage(message),()=>stagingMode&&!fixture);
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
@@ -44,6 +47,7 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     service=new MarketService(e=>scope.postMessage(e),fixtureOptions());
     return;
   }
+  if(event.data.type.startsWith('watch-')){watchTransport.command(event.data as unknown as WatchCommand);return;}
   const c=event.data;
   if (staging && !fixture) {
     if ((c.type === 'subscribe' || c.type === 'footprint-subscribe') && stagingMarket(c.series)) { stagingClients.add(c.id); staging.command(c); return; }

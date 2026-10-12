@@ -1,3 +1,5 @@
+import { LevelWatchPanel } from './level-watch/panel';
+import type {WatchSnapshot,LevelWatch} from './level-watch/types';
 import './vendor/dockview-8.4.1.css';
 import { createDockview, type DockviewApi } from 'dockview-core';
 import './style.css';
@@ -31,6 +33,7 @@ const reset = document.querySelector<HTMLButtonElement>('#reset')!;
 const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
 let dock: DockviewApi;
 let editor: LazyScriptEditorPanel | undefined;
+let watchPanel:LevelWatchPanel|undefined;let watchSnapshot:WatchSnapshot|undefined;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let restoring = true;
 let disposed = false;
@@ -66,6 +69,8 @@ function addTicker() {
   save();
 }
 
+function openWatches(bounds?:{lower:number;upper:number}){const existing=dock.getPanel('level-watch');if(existing)existing.api.setActive();else dock.addPanel({id:'level-watch',component:'level-watch',title:'Level Watch',params:{},position:dock.activePanel?{referencePanel:dock.activePanel,direction:'right'}:undefined,minimumWidth:280,minimumHeight:180});if(bounds)watchPanel?.openDraft(bounds);save();}
+function focusWatch(w:LevelWatch){const panel=[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual');if(panel)panel.focusWatch(w);else {addChart();queueMicrotask(()=>[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual')?.focusWatch(w));}}
 function openEditor(targetChartId: string, attachmentId?: string) {
   const existing = dock.getPanel('script-editor');
   if (existing) {
@@ -95,10 +100,11 @@ dock = createDockview(root, {
   createTabComponent: () => new CompactChartTab(),
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
+    if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
     if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);});
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {
-        if (panel) panels.set(id, panel);
+        if (panel) {panels.set(id, panel);panel.setWatchZones(watchSnapshot?.watches??[]);}
         else panels.delete(id);
         editor?.refreshTargets();
       }, openEditor);
@@ -137,6 +143,9 @@ const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
 })];
 const abort = new AbortController();
 window.addEventListener('keydown', event => activateNumberedTab(dock, event), { signal: abort.signal, capture: true });
+document.querySelector('#level-watch')!.addEventListener('click',()=>openWatches(),{signal:abort.signal});
+window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
+const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
 document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
@@ -166,7 +175,7 @@ let perf: PerformanceObserver | undefined;
 if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
-    dock, addChart, addTicker, tickers, notifications, openEditor, feed, panels, library, fixture,
+    dock, addChart, addTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; },
   };
@@ -183,7 +192,7 @@ function dispose() {
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
   scheduler.dispose(); notifications.dispose();
-  feed.dispose();
+  releaseWatches?.();feed.dispose();
   perf?.disconnect();
 }
 

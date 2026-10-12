@@ -114,3 +114,7 @@ exposes the shared BTC/USDT display preference when no Footprint is attached.
 ## Durable staging liquidity
 
 Explicit staging mode routes supported heatmaps to `feed/staging-heatmap.ts` inside the existing feed worker. The chart adapter reports its visible time/price bounds; the worker coalesces and aborts generation-scoped requests, adapts resolution within a rendering budget and replaces bounded historical/live tiles by identity. One shared acknowledged depth-head socket invalidates the current tail; API watermarks reconcile reconnects without additive double counting. The renderer retains side-specific known durations and partial coverage, and spans coarse time columns across native candle slots. Server collection is independent of chart configuration, with no browser row cap. Direct heatmaps and OpenScript depth studies keep their existing source. See [staging contract and evidence](staging-market-data.md).
+
+## Level Watch
+
+The [experimental Level Watch](level-watch.md) uses a separate supervised staging observer and transactional SQLite journal. The existing feed worker owns its private API/WebSocket connection; native docked controls, chart zone primitives and bounded evidence replay consume that shared connection. Chart subscriptions do not own server watch lifetimes.
