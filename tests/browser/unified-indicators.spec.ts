@@ -1,3 +1,4 @@
+import { chooseChartMarket } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint, setPriceLevel, setUnits } from './indicator-actions';
@@ -26,7 +27,7 @@ async function fixture(page: import('@playwright/test').Page) {
 test('unified catalogue, independent scripts and native ownership through hide, remove and reload', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror',e => errors.push(e.message));
   const worker = await fixture(page); await page.getByRole('combobox',{name:'Theme',exact:true}).selectOption('dark'); const panel = page.locator('.candle-panel').first();
-  expect(await panel.locator('.chart-toolbar select').evaluateAll(nodes => nodes.map(n => n.getAttribute('aria-label')))).toEqual(['Instrument','Timeframe']);
+  expect(await panel.locator('.chart-toolbar select').evaluateAll(nodes => nodes.map(n => n.getAttribute('aria-label')))).toEqual(['Timeframe']);
   await addIndicator(panel, 'EMA overlay'); await expect(panel.locator('.active-indicator')).toHaveCount(1);
   await panel.getByRole('button',{ name:'EMA overlay settings',exact:true }).click();
   await panel.locator('.indicator-settings:not(.heatmap-settings):not(.footprint-settings-dialog):not(.chart-settings) input[data-input-key=length]').fill('20');
@@ -78,7 +79,7 @@ test('unified catalogue, independent scripts and native ownership through hide, 
   await setFootprint(panel,true); await expect.poll(() => worker.evaluate(() => (self as any).__executionFixture.active)).toBe(1);
   await panel.getByRole('button',{name:'Remove Order-book Heatmap',exact:true}).click(); expect(await worker.evaluate(() => (self as any).__executionFixture.active)).toBe(1);
   await addIndicator(panel,'Order-book Heatmap');
-  await panel.getByLabel('Timeframe',{exact:true}).selectOption('5m'); await panel.getByLabel('Instrument',{exact:true}).selectOption('binance:spot');
+  await panel.getByLabel('Timeframe',{exact:true}).selectOption('5m'); await chooseChartMarket(panel,'Binance · BTCUSDT Spot');
   await expect(panel.locator('.active-indicator[data-definition-id="native.footprint"]')).toContainText('Unavailable');
   await expect(panel.locator('.heatmap-notice')).toContainText('unavailable');
   await page.waitForTimeout(350); await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);

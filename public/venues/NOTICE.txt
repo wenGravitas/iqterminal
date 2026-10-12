@@ -1,0 +1,9 @@
+Venue identification icons
+
+Binance: official site favicon retrieved from
+https://bin.bnbstatic.com/static/images/common/favicon.ico
+Hyperliquid: official trading application favicon retrieved from
+https://app.hyperliquid.xyz/favicon-32x32.png
+
+These unmodified marks identify the selected data venue. Their respective owners
+retain all trademark and artwork rights. No affiliation or endorsement is implied.

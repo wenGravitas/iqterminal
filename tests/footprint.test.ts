@@ -228,7 +228,7 @@ describe('shared Binance footprint worker service', () => {
     };
     service = new BinanceFootprintService(event => {
       events.push(event);
-      if (event.type.startsWith('footprint-') && 'generation' in event && 'batchId' in event) service.acknowledge(event.key, event.generation, event.batchId);
+      if (event.type.startsWith('footprint-') && 'generation' in event && 'batchId' in event && 'key' in event) service.acknowledge(event.key, event.generation, event.batchId);
     }, transport);
     service.subscribe('custom-grid', { venue: 'binance', market: 'perpetual', interval: '1m' }, 25);
     now++;
@@ -380,4 +380,15 @@ describe('shared Binance footprint worker service', () => {
     expect(resumed?.type === 'footprint-patch' ? resumed.bars.at(-1) : undefined).toMatchObject({ coverage: 'observed', gapBefore: false });
     expect((service.diagnostics() as { groups: { outages: number }[] }).groups[0]!.outages).toBe(1);
   });
+});
+
+it('shares the normalized execution socket with tickers and keeps it alive until the final consumer leaves', async () => {
+  const t=setup(); const observed: any[]=[];
+  const release=service.subscribeExecutions('ticker-test',(trades)=>observed.push(...trades));
+  service.subscribe('foot',{venue:'binance',interval:'1m'},25);
+  await t.advance(0);expect(t.sockets).toHaveLength(1);t.sockets[0].open();
+  t.sockets[0].update(record(1,base+1000));t.sockets[0].update(record(1,base+1000));await t.advance(100);
+  expect(observed).toHaveLength(1);expect(observed[0].executionId).toContain('binance:perpetual:BTCUSDT:agg:1');
+  service.unsubscribe('foot');expect(service.diagnostics().sockets).toBe(1);expect(service.diagnostics().executionConsumers).toBe(1);
+  release();expect(service.diagnostics().sockets).toBe(0);
 });

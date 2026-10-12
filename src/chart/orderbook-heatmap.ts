@@ -1,3 +1,4 @@
+import { footprintColumn } from './terminal-footprint';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import { compactVol, type FootprintOptions } from 'openalgo-charts/profile';
 import { DEFAULT_HEATMAP, HEATMAP_LIMITS, HEATMAP_STRIDE, HEATMAP_PEAK_STRIDE, type HeatmapSettings, type LiquidityBucket } from '../feed/heatmap-model';
@@ -110,7 +111,7 @@ export class OrderBookHeatmap implements IPrimitive {
   private units: 'btc' | 'usdt' = 'btc';
   setUnits(units: 'btc' | 'usdt') { this.units = units; this.host?.requestUpdate(); }
   private rowOccluded?: (timeMs: number, low: number, high: number) => boolean;
-  private footprintLayout?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>;
+  private footprintLayout?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'> & Partial<Pick<FootprintOptions, 'statsPosition'>>;
   private host?: PrimitiveHost; private buckets: LiquidityBucket[] = []; private options: HeatmapSettings = { ...DEFAULT_HEATMAP };
   private version = 0; private cacheKey = ''; private bins: HeatmapBin[] = [];
   private durations: number[] = [];
@@ -125,7 +126,7 @@ export class OrderBookHeatmap implements IPrimitive {
   setInterval(intervalMs: number) { if (this.intervalMs !== intervalMs) { this.intervalMs = intervalMs; this.cacheKey = ''; this.host?.requestUpdate(); } }
   setOptions(options: HeatmapSettings) { this.options = { ...options }; this.version++; this.host?.requestUpdate(); }
   setFootprintOcclusion(test: (timeMs: number, low: number, high: number) => boolean) { this.rowOccluded = test; }
-  setFootprintLayout(options?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'>) {
+  setFootprintLayout(options?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'> & Partial<Pick<FootprintOptions, 'statsPosition'>>) {
     this.footprintLayout = options ? { ...options } : undefined; this.version++; this.host?.requestUpdate();
   }
   update(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) {
@@ -156,7 +157,7 @@ export class OrderBookHeatmap implements IPrimitive {
       if (this.footprintLayout) {
         // Match the terminal ladder’s outer edges, including its central candle gutter.
         const o = this.footprintLayout, spacing = rc.timeScale.barSpacing;
-        const column = Math.max(.1, Math.min(o.cellWidth ?? spacing * o.widthFactor, spacing * .96));
+        const { column } = footprintColumn(o, spacing);
         for (const bin of this.bins) {
           const centre = (bin.x + bin.right) / 2;
           bin.x = centre - column / 2; bin.right = bin.x + column;

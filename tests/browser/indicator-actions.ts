@@ -18,3 +18,8 @@ export async function setUnits(panel: Locator, value: string) {
   await footprintSettings(panel); await panel.getByLabel('Footprint volume units', { exact: true }).selectOption(value);
   await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
 }
+export async function chooseChartMarket(panel: Locator, label: string) {
+  await panel.getByRole('button',{name:'Chart market',exact:true}).click();
+  const picker=panel.locator('.market-picker');await picker.getByRole('radio',{name:label,exact:true}).check();
+  await picker.getByRole('button',{name:'Apply',exact:true}).click();
+}

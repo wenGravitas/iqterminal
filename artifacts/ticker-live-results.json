@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "reconciledRows": 28,
+  "rows": 28,
+  "aggSockets": 1,
+  "wireRecords": 40,
+  "wireBase": 0.9640000000000002,
+  "wireNotional": 80664.051,
+  "status": "Binance · BTCUSDT USD-M Perp · live · Session prints · no backfill · reported aggregate prints · 40/500 retained",
+  "errors": []
+}

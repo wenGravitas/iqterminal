@@ -2,11 +2,12 @@ import type { PrimitiveRenderContext, PrimitiveHost } from 'openalgo-charts';
 import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type FootprintHover } from 'openalgo-charts/profile';
 
 /** Presentation wrapper for pinned OpenAlgo 2.6.0, using its public drawing boundary. */
-export function footprintColumn(options: FootprintOptions, spacing: number) {
-  const column = Math.max(.1, Math.min(options.cellWidth ?? spacing * options.widthFactor, spacing * .96));
+export function footprintColumn(options: Pick<FootprintOptions, 'cellWidth' | 'widthFactor' | 'showCandle'> & Partial<Pick<FootprintOptions, 'displayMode' | 'statsPosition'>>, spacing: number) {
+  const annotation = options.statsPosition === 'bar' && spacing >= 140 ? Math.min(84, spacing * .42) : 0;
+  const column = Math.max(.1, Math.min(options.cellWidth ?? spacing * options.widthFactor, spacing * .96, annotation ? spacing - annotation - 12 : Infinity));
   const gap = options.showCandle && options.displayMode === 'bidask' && column >= 32
     ? Math.min(24, Math.max(12, column * .12)) : 0;
-  return { column, gap, cells: column - gap };
+  return { column, gap, cells: column - gap, annotation };
 }
 export class TerminalFootprint extends Footprint {
   private style: FootprintOptions;
@@ -63,7 +64,7 @@ export class TerminalFootprint extends Footprint {
       this.statsHeight = statsHeight;
       this.renderWidth = geometry.cells;
       this.configuringDraw = true;
-      try { super.setOptions({ cellWidth: geometry.cells, showCandle: o.displayMode !== 'bidask' && o.showCandle, statsRowHeight: statsHeight }); }
+      try { super.setOptions({ cellWidth: geometry.cells, showCandle: false, statsRowHeight: statsHeight, statsRows: o.statsPosition === 'bar' ? [] : o.statsRows }); }
       finally { this.configuringDraw = false; }
     }
     this.centres = this.bars.flatMap(bar => {
@@ -104,6 +105,11 @@ export class TerminalFootprint extends Footprint {
           }
           if (key === 'roundRect' || key === 'fillText' || key === 'fillRect' || key === 'strokeRect') {
             if (!methods.has(key)) methods.set(key, (...args: any[]) => {
+              // 2.6.0 erases the profile beneath text that exceeds its proportional
+              // bar width. Our enlarged font makes that plate hide smaller bars.
+              // Retain the quantity text without masking the measured profile.
+              if (key === 'fillRect' && this.cellText && this.style.cellStyle === 'profile'
+                && target.fillStyle === this.rc?.theme.background) return;
               const poc = key === 'strokeRect' && Math.abs(args[2] / this.dpr - this.renderWidth) < .01;
               if (this.gap && (key === 'roundRect' ? args[2] <= this.renderWidth * this.dpr / 2 : poc || this.cellText)) {
                 const index = key === 'fillText' ? 1 : 0;
@@ -142,7 +148,39 @@ export class TerminalFootprint extends Footprint {
       this.contexts.set(ctx, proxy);
     }
     super.draw(proxy, rc);
-    if (this.bars.length && o.showCandle && o.displayMode === 'bidask' && this.gap) this.drawCandles(ctx, rc);
+    if (o.statsPosition === 'bar') this.drawBarTotals(ctx, rc);
+    if (this.bars.length && o.showCandle) this.drawCandles(ctx, rc);
+  }
+  /** Totals use the inter-column gutter, leaving the heatmap beneath each bar unobstructed. */
+  private drawBarTotals(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
+    const o = this.style, spacing = rc.timeScale.barSpacing;
+    const { column, annotation } = footprintColumn(o, spacing);
+    if (!annotation) return;
+    const dpr = rc.dpr, font = Math.min(12, Math.max(9, annotation / 7)), lineHeight = font + 2;
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth*dpr, rc.plotHeight*dpr); ctx.clip();
+    ctx.font = `${font*dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    const stats = this.stats();
+    for (let n = 0; n < this.bars.length; n++) {
+      const bar = this.bars[n], totals = stats[n];
+      const index = rc.dataLayer.timeToIndex(bar.time);
+      if (index === undefined || !totals || !bar.cells.length) continue;
+      const centre = rc.timeScale.indexToX(index), x = centre + column / 2 + 6;
+      const right = Math.min(rc.plotWidth, centre + spacing - column / 2 - 6);
+      if (x < 0 || x >= right) continue;
+      let bottom = -Infinity;
+      for (const cell of bar.cells) bottom = Math.max(bottom, rc.priceScale.priceToY(cell.price - (o.tickSize ?? bar.rowSize ?? 0) / 2));
+      if (o.showCandle && bar.low !== undefined) bottom = Math.max(bottom, rc.priceScale.priceToY(bar.low));
+      if (bottom < 2*lineHeight || bottom > rc.plotHeight) continue;
+      const volume = `V: ${compactVol(totals.volume / o.volumeDivisor)}`;
+      const delta = `Δ: ${totals.delta >= 0 ? '+' : ''}${compactVol(totals.delta / o.volumeDivisor)}`;
+      if (Math.max(ctx.measureText(volume).width, ctx.measureText(delta).width) > (right-x)*dpr) continue;
+      ctx.fillStyle = o.textColor ?? rc.theme.axisText;
+      ctx.fillText(volume, x*dpr, (bottom - 1.5*lineHeight)*dpr);
+      ctx.fillStyle = totals.delta === 0 ? o.textColor ?? rc.theme.axisText : totals.delta > 0 ? o.buyTextColor ?? rc.theme.upColor : o.sellTextColor ?? rc.theme.downColor;
+      ctx.fillText(delta, x*dpr, (bottom - .5*lineHeight)*dpr);
+    }
+    ctx.restore();
   }
   private drawCandles(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const o = this.style, dpr = rc.dpr;
@@ -153,8 +191,8 @@ export class TerminalFootprint extends Footprint {
       if (index === undefined || bar.open === undefined || bar.close === undefined || bar.high === undefined || bar.low === undefined) continue;
       const x = rc.timeScale.indexToX(index);
       if (x < 0 || x > rc.plotWidth) continue;
-      const centre = this.gap ? x : x - footprintColumn(o, rc.timeScale.barSpacing).column / 2 - 3;
-      const bodyWidth = Math.min(8, Math.max(2, (this.gap || 8) * .4));
+      const centre = this.gap ? x : x - footprintColumn(o, rc.timeScale.barSpacing).column / 2 - 6;
+      const bodyWidth = Math.min(8, Math.max(2, this.gap ? this.gap * .4 : rc.timeScale.barSpacing * .06));
       const high = rc.priceScale.priceToY(bar.high), low = rc.priceScale.priceToY(bar.low);
       const open = rc.priceScale.priceToY(bar.open), close = rc.priceScale.priceToY(bar.close);
       ctx.fillStyle = bar.close >= bar.open ? o.buyColor ?? rc.theme.upColor : o.sellColor ?? rc.theme.downColor;

@@ -18,13 +18,13 @@ export interface IndicatorInstance {
   /** Immutable script revision pin. Its settings/visibility are held by the instance. */
   script?: Omit<StudyPin, 'attachmentId' | 'settings' | 'visible'>;
 }
-export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
+export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, statsPosition: 'bottom' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
 export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
   { id: FOOTPRINT_ID, name: 'Footprint', description: 'Live executed bid/ask volume · Binance BTCUSDT USD-M only', category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { rowPrice: 25, units: 'btc', view: DEFAULT_FOOTPRINT_VIEW }, settingsSchema: [
       { key: 'rowPrice', label: 'Price level (USDT)', kind: 'number', defaultValue: 25 },
       { key: 'units', label: 'Volume units', kind: 'select', defaultValue: 'btc' },
-      ...['displayMode','cellStyle','opacity','showCandle','showPoc','showValueArea','showDiagonalImbalances','stackedImbalances','imbalanceRatio','imbalanceThreshold'].map(key => ({ key: `view.${key}`, label: key, kind: 'native', defaultValue: DEFAULT_FOOTPRINT_VIEW[key as keyof typeof DEFAULT_FOOTPRINT_VIEW] }))],
+      ...['displayMode','cellStyle','statsPosition','opacity','showCandle','showPoc','showValueArea','showDiagonalImbalances','stackedImbalances','imbalanceRatio','imbalanceThreshold'].map(key => ({ key: `view.${key}`, label: key, kind: 'native', defaultValue: DEFAULT_FOOTPRINT_VIEW[key as keyof typeof DEFAULT_FOOTPRINT_VIEW] }))],
     placements: ['price-presentation'], dataRequirements: ['executions'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: HEATMAP_ID, name: 'Order-book Heatmap', description: 'Observed resting liquidity · Binance BTCUSDT USD-M only', category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { rowPrice: 10, bucketMs: 500, mode: 'average', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true },

@@ -94,6 +94,12 @@ Heatmap quantity labels are suppressed where an execution cell occupies the same
 
 See [the unified indicator contract](indicators.md) for registry definitions, native/script runtime handles, hide/removal ownership, version-3 layout migration and future anchored Profile/TPO attachments. Native Footprint and Heatmap are singletons; script instances retain independent revision/input pins. The toolbar no longer chooses a footprint chart type.
 
+## Trade Ticker M1
+
+`markets.ts` is the capability catalogue; `market-picker.ts` supplies Apply/Cancel drafts for single chart and multiple ticker selections. `feed/footprint-service.ts` now exposes reference-counted normalized execution consumers alongside footprint configurations, retaining one Binance USD-M aggregate-trade socket. The historical filename does not imply that the ticker reads rendered footprint bars. `feed/ticker-service.ts` classifies executions in the feed worker and sends acknowledged, bounded replacement batches; configuration revisions reject stale results. `ticker/model.ts` owns pure tier/filter/tape policy, `ticker/panel.ts` owns Dockview/DOM presentation, and `notifications.ts` independently owns application audio/toasts. Classified events remain reusable without depending on rows; widget messaging and bubbles are not implemented.
+
+Layout envelope version 4 adds ticker panels while accepting versions 1–3 unchanged. Each ticker persists its market selection, explicit ladder scope, filters, appearance and tiers, not runtime objects or prints. Eight tickers are allowed independently of the eight-chart budget. Hidden tickers continue bounded ingestion and notification policy but do not paint; scrolling pause freezes the displayed rows while the live buffer continues. Final consumer removal closes the execution socket unless footprints still own it. See [M1 limits and verification](trade-ticker.md).
+
 Bid/ask ladders reserve a 12–24px central gutter at readable zoom levels. OpenAlgo’s public renderer paints the cells through a forwarding Canvas2D context; the wrapper translates bid/ask coordinates and hover, and draws execution OHLC in the central gutter. Pulses use the same geometry, heatmap outer edges span the whole column, and the supporting execution series still owns autoscale/time indexing. This pinned drawing contract is covered by an installed-renderer test; no dependency files are changed.
 
 At short pane heights the footprint statistics rows compact to 8–15px, reserving
@@ -102,3 +108,5 @@ same effective footer geometry. Updating render-time dimensions through the
 public primitive options suppresses redundant update requests during that draw;
 normal external changes still request scheduled repaint. Heatmap settings also
 exposes the shared BTC/USDT display preference when no Footprint is attached.
+
+`CompactChartTab` decorates Dockview’s public `DefaultTab` renderer, preserving native drag, close, context-menu and accessibility behaviour. It projects the canonical instrument to local official venue icons and native ticker text, while keeping full persisted titles intact. Group-local ordinals refresh only on layout/parameter/title changes. An abort-owned global Alt+1…9 handler selects the corresponding active-group panel and ignores inputs, editors and dialogs. No runtime tab objects or numbering are persisted; legacy layouts receive compact tabs through the default renderer option. Icon sources and rights are recorded in `/venues/NOTICE.txt` and linked from Licences.

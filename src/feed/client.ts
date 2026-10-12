@@ -2,6 +2,8 @@ import { heatmapKey, type HeatmapResolution } from './heatmap-model';
 import { type Command, type Event, type Series, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
 export class FeedClient {
   private sequence=0;private current=new Map<string,string>();private currentDepth=new Map<string,string>();private currentFootprint=new Map<string,string>();private worker:Worker;private listeners=new Map<string,{key:string;callback:(e:Event)=>void}>();private depthListeners=new Map<string,(e:Event)=>void>();private footprintListeners=new Map<string,{key:string;callback:(e:Event)=>void}>();
+  private tickerListeners = new Map<string,{revision:number;callback:(e: import('../ticker/model').TickerBatch) => void}>();
+  private currentTicker = new Map<string,string>();
   private heatmapListeners = new Map<string,{key:string;callback:(e:Event)=>void}>();
   private currentHeatmap = new Map<string,string>();
   diagnostics:Record<string,unknown>={};
@@ -16,6 +18,7 @@ export class FeedClient {
       try {
         for(const id of e.ids){
           try {
+            if(e.type==='ticker-batch'){const ticker=this.tickerListeners.get(id);if(ticker?.revision===e.configRevision)ticker.callback(e);}
             const l=this.listeners.get(id);if(l&&'key'in e&&l.key===e.key)l.callback(e);
             const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key)heatmap.callback(e);
             const depth=this.depthListeners.get(id);depth?.(e);
@@ -23,6 +26,7 @@ export class FeedClient {
           } catch(error) { console.error('Market data subscriber callback failed',error); }
         }
       } finally {
+        if(e.type==='ticker-batch')this.send({type:'ticker-ack',id:e.ids[0],generation:e.generation,batchId:e.batchId});
         if(e.type==='heatmap-batch')this.send({type:'heatmap-ack',key:e.key,generation:e.generation,batchId:e.batchId});
         if(isFootprintBatch(e)) this.send({type:'footprint-ack',key:e.key,generation:e.generation,batchId:e.batchId});
       }
@@ -55,8 +59,14 @@ export class FeedClient {
     const token=`footprint:${id}:${++this.sequence}`;const key=footprintKeyOf(series,rowPrice);this.currentFootprint.set(id,token);this.footprintListeners.set(token,{key,callback});this.send({type:'footprint-subscribe',id:token,series,rowPrice});
     return ()=>{this.footprintListeners.delete(token);if(this.currentFootprint.get(id)===token)this.currentFootprint.delete(id);this.send({type:'footprint-unsubscribe',id:token});};
   }
+  subscribeTicker(id:string,config:import('../ticker/model').TickerConfig,callback:(e:import('../ticker/model').TickerBatch)=>void) {
+    const previous=this.currentTicker.get(id);if(previous){this.tickerListeners.delete(previous);this.send({type:'ticker-unsubscribe',id:previous});}
+    const token=`ticker:${id}:${++this.sequence}`;this.currentTicker.set(id,token);this.tickerListeners.set(token,{revision:0,callback});this.send({type:'ticker-subscribe',id:token,configRevision:0,config});
+    return ()=>{this.tickerListeners.delete(token);if(this.currentTicker.get(id)===token)this.currentTicker.delete(id);this.send({type:'ticker-unsubscribe',id:token});};
+  }
+  updateTicker(id:string,config:import('../ticker/model').TickerConfig) {const token=this.currentTicker.get(id);const listener=token&&this.tickerListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'ticker-update',id:token,configRevision:listener.revision,config});}}
   retryFootprint(){this.send({type:'footprint-retry'});}
-  dispose(){this.worker.onmessage=null;this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.worker.terminate();}
+  dispose(){this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

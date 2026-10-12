@@ -1,8 +1,8 @@
 # IQ Terminal: market data, trade ticker and widget architecture
 
 Date: 11 October 2026  
-Status: proposed architecture and MVP delivery plan  
-Basis: agreed product discussion. This document is not a fresh repository audit; module names are conceptual and should be mapped onto existing code before implementation.
+Status: M1 implemented; later milestones remain proposed.
+Implementation: [Trade Ticker M1](trade-ticker.md) records the actual modules, usage, limits and verification. The existing shared execution feed currently supports Binance BTCUSDT USD-M perpetual only, so the multi-selection picker exposes that capability honestly; adding a second reliable execution adapter remains the next step. Conceptual components below describe the later architecture, not shipped features.
 
 ## 1. Direction and starting point
 

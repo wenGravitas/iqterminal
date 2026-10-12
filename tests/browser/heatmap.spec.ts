@@ -1,3 +1,4 @@
+import { chooseChartMarket } from './indicator-actions';
 import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -190,6 +191,6 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
   await page.waitForTimeout(400); await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.stats().panels[0].series.heatmap.enabled);
   await expect(panel.getByRole('button', { name: 'Hide Order-book Heatmap', exact: true })).toHaveAttribute('aria-pressed','true');
-  await panel.getByLabel('Instrument', { exact: true }).selectOption('binance:spot');
+  await chooseChartMarket(panel,'Binance · BTCUSDT Spot');
   await expect(panel.locator('.heatmap-notice')).toContainText('unavailable');
 });

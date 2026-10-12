@@ -1,0 +1,1227 @@
+{
+  "fixture": true,
+  "renderer": "Canvas2D with headless SwiftShader",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "runs": [
+    {
+      "count": 0,
+      "seconds": 6,
+      "aggregatePrintsPerSecond": 0,
+      "heapBefore": 9674064,
+      "heapAfter": 9930764,
+      "rowPaintP95Ms": null,
+      "frameIntervalP95Ms": 16.799999999999955,
+      "longTasks": [],
+      "tickers": [],
+      "feed": {
+        "series": 2,
+        "subscriptions": 2,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:perpetual:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:perpetual:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "depth": {
+          "subscribers": 0,
+          "bookObservers": 0,
+          "sockets": 0,
+          "state": "syncing",
+          "lastUpdateId": 0,
+          "buffered": 0,
+          "samples": 0,
+          "snapshotBidBoundary": null,
+          "snapshotAskBoundary": null,
+          "collectionStartedAt": null,
+          "synthetic": false
+        },
+        "heatmap": {
+          "transitions": 0,
+          "processingMs": 0,
+          "flushMs": 0,
+          "publications": 0,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": null,
+          "groups": []
+        },
+        "footprint": {
+          "subscribers": 0,
+          "executionConsumers": 0,
+          "groups": [],
+          "sockets": 0,
+          "connected": false,
+          "tickSize": null,
+          "pending": 0,
+          "recentIds": 0,
+          "lastTradeId": null,
+          "expiredIdFloor": null,
+          "lastTradeTime": null,
+          "lastEventTime": null,
+          "counters": {
+            "messages": 0,
+            "accepted": 0,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 0,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 0,
+            "aggregationObservations": 0,
+            "aggregationTotalMs": 0,
+            "aggregationMaxMs": 0
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "loading"
+        },
+        "tickers": {
+          "publishedBatches": 0,
+          "publishedRecords": 0,
+          "widgets": 0,
+          "subscribers": []
+        },
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 0
+      }
+    },
+    {
+      "count": 1,
+      "seconds": 6,
+      "aggregatePrintsPerSecond": 500,
+      "heapBefore": 10420120,
+      "heapAfter": 7547612,
+      "rowPaintP95Ms": 16.600000001490116,
+      "frameIntervalP95Ms": 33.29999999999927,
+      "longTasks": [
+        69
+      ],
+      "tickers": [
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 32,
+          "generation": 1
+        }
+      ],
+      "feed": {
+        "series": 2,
+        "subscriptions": 2,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:perpetual:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:perpetual:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "depth": {
+          "subscribers": 0,
+          "bookObservers": 0,
+          "sockets": 0,
+          "state": "syncing",
+          "lastUpdateId": 0,
+          "buffered": 0,
+          "samples": 0,
+          "snapshotBidBoundary": null,
+          "snapshotAskBoundary": null,
+          "collectionStartedAt": null,
+          "synthetic": false
+        },
+        "heatmap": {
+          "transitions": 0,
+          "processingMs": 0,
+          "flushMs": 0,
+          "publications": 0,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": null,
+          "groups": []
+        },
+        "footprint": {
+          "subscribers": 0,
+          "executionConsumers": 1,
+          "groups": [],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 3000,
+          "lastTradeId": 3000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791745369901,
+          "lastEventTime": 1791745369901,
+          "counters": {
+            "messages": 3000,
+            "accepted": 3000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 1,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 60,
+            "aggregationObservations": 3000,
+            "aggregationTotalMs": 16.89999980479479,
+            "aggregationMaxMs": 1.7000000029802322
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "tickers": {
+          "publishedBatches": 61,
+          "publishedRecords": 2950,
+          "widgets": 1,
+          "subscribers": [
+            {
+              "id": "ticker:ticker-38c19c8e-40fb-4f65-9a5d-48a3c1bccdad:3",
+              "pending": 50,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            }
+          ]
+        },
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 0
+      }
+    },
+    {
+      "count": 2,
+      "seconds": 6,
+      "aggregatePrintsPerSecond": 500,
+      "heapBefore": 8059612,
+      "heapAfter": 9247512,
+      "rowPaintP95Ms": 19.100000001490116,
+      "frameIntervalP95Ms": 66.60000000000036,
+      "longTasks": [
+        55,
+        74,
+        89,
+        61,
+        102,
+        56,
+        74,
+        89,
+        58,
+        88,
+        57,
+        54,
+        79,
+        51,
+        93,
+        63,
+        91,
+        60,
+        91,
+        76,
+        60,
+        63
+      ],
+      "tickers": [
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 32,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 32,
+          "generation": 1
+        }
+      ],
+      "feed": {
+        "series": 2,
+        "subscriptions": 2,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:perpetual:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:perpetual:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "depth": {
+          "subscribers": 0,
+          "bookObservers": 0,
+          "sockets": 0,
+          "state": "syncing",
+          "lastUpdateId": 0,
+          "buffered": 0,
+          "samples": 0,
+          "snapshotBidBoundary": null,
+          "snapshotAskBoundary": null,
+          "collectionStartedAt": null,
+          "synthetic": false
+        },
+        "heatmap": {
+          "transitions": 0,
+          "processingMs": 0,
+          "flushMs": 0,
+          "publications": 0,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": null,
+          "groups": []
+        },
+        "footprint": {
+          "subscribers": 0,
+          "executionConsumers": 2,
+          "groups": [],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 50,
+          "recentIds": 2950,
+          "lastTradeId": 5950,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791745376274,
+          "lastEventTime": 1791745376274,
+          "counters": {
+            "messages": 6000,
+            "accepted": 5950,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 2,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 119,
+            "aggregationObservations": 5950,
+            "aggregationTotalMs": 38.499999701976776,
+            "aggregationMaxMs": 2.100000001490116
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "tickers": {
+          "publishedBatches": 183,
+          "publishedRecords": 8900,
+          "widgets": 2,
+          "subscribers": [
+            {
+              "id": "ticker:ticker-0a6c8a70-7641-4f54-b858-39583a12fb2f:4",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-4b3b78f5-a6ca-4ed8-b287-1f9e1c7c52de:5",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            }
+          ]
+        },
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 0
+      }
+    },
+    {
+      "count": 8,
+      "seconds": 6,
+      "aggregatePrintsPerSecond": 500,
+      "heapBefore": 10680960,
+      "heapAfter": 10070048,
+      "rowPaintP95Ms": 29.799999997019768,
+      "frameIntervalP95Ms": 316.6000000000022,
+      "longTasks": [
+        160,
+        94,
+        466,
+        370,
+        55,
+        436,
+        219,
+        371,
+        183,
+        447,
+        256,
+        412,
+        301,
+        515,
+        266,
+        444,
+        250,
+        479,
+        267
+      ],
+      "tickers": [
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 19,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 17,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        },
+        {
+          "settings": {
+            "version": 1,
+            "markets": [
+              "binance:perpetual"
+            ],
+            "scope": [
+              "binance:perpetual"
+            ],
+            "tiers": [
+              {
+                "id": "tier-0",
+                "name": "Small",
+                "minimum": 0,
+                "unit": "USDT",
+                "buyColor": "#426b4a",
+                "sellColor": "#79534e",
+                "bold": false,
+                "pulse": false,
+                "sound": "silent",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-1",
+                "name": "Large",
+                "minimum": 100000,
+                "unit": "USDT",
+                "buyColor": "#65b873",
+                "sellColor": "#d17872",
+                "bold": true,
+                "pulse": false,
+                "sound": "bell",
+                "volume": 0.5,
+                "toast": false
+              },
+              {
+                "id": "tier-2",
+                "name": "Very large",
+                "minimum": 1000000,
+                "unit": "USDT",
+                "buyColor": "#85d894",
+                "sellColor": "#e8a29c",
+                "bold": true,
+                "pulse": true,
+                "sound": "alarm",
+                "volume": 0.5,
+                "toast": true
+              }
+            ],
+            "displayMinimum": 0,
+            "displayUnit": "USDT",
+            "side": "both",
+            "muted": false
+          },
+          "retained": 500,
+          "paused": false,
+          "visible": true,
+          "draws": 18,
+          "generation": 1
+        }
+      ],
+      "feed": {
+        "series": 2,
+        "subscriptions": 2,
+        "sockets": 2,
+        "caches": [
+          {
+            "key": "binance:perpetual:BTCUSDT:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          },
+          {
+            "key": "hyperliquid:perpetual:BTC:1m",
+            "bars": 5000,
+            "clients": 1,
+            "pending": 0
+          }
+        ],
+        "inactiveCaches": 0,
+        "depth": {
+          "subscribers": 0,
+          "bookObservers": 0,
+          "sockets": 0,
+          "state": "syncing",
+          "lastUpdateId": 0,
+          "buffered": 0,
+          "samples": 0,
+          "snapshotBidBoundary": null,
+          "snapshotAskBoundary": null,
+          "collectionStartedAt": null,
+          "synthetic": false
+        },
+        "heatmap": {
+          "transitions": 0,
+          "processingMs": 0,
+          "flushMs": 0,
+          "publications": 0,
+          "configurations": 0,
+          "consumers": 0,
+          "tickSize": null,
+          "groups": []
+        },
+        "footprint": {
+          "subscribers": 0,
+          "executionConsumers": 8,
+          "groups": [],
+          "sockets": 1,
+          "connected": true,
+          "tickSize": 0.1,
+          "pending": 0,
+          "recentIds": 3000,
+          "lastTradeId": 9000,
+          "expiredIdFloor": null,
+          "lastTradeTime": 1791745382987,
+          "lastEventTime": 1791745382987,
+          "counters": {
+            "messages": 9000,
+            "accepted": 9000,
+            "duplicates": 0,
+            "late": 0,
+            "unknownSide": 0,
+            "invalidGrid": 0,
+            "pendingFlushes": 0,
+            "socketOpens": 3,
+            "reconnects": 0,
+            "capacityDrops": 0,
+            "aggregationBatches": 180,
+            "aggregationObservations": 9000,
+            "aggregationTotalMs": 89.7999996766448,
+            "aggregationMaxMs": 2.7999999970197678
+          },
+          "rejected": {
+            "market": 0,
+            "contract": 0,
+            "symbol": 0,
+            "maker-side": 0,
+            "trade-id": 0,
+            "time": 0,
+            "price": 0,
+            "quantity": 0
+          },
+          "state": "live"
+        },
+        "tickers": {
+          "publishedBatches": 447,
+          "publishedRecords": 33000,
+          "widgets": 8,
+          "subscribers": [
+            {
+              "id": "ticker:ticker-32867f1c-5061-4a35-b36d-4be01408d4b8:6",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-e5be148e-ec9b-444c-8c7e-b47a5d42c60c:7",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-77804ca3-d0d3-408c-9b16-c1976c7901f1:8",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-0ec63931-46a5-42c8-b3b1-8d6c0a9d0462:9",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-cdddfeb0-f69a-4926-8591-9c2a7dc981b5:10",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-58449f03-cf2e-4348-9308-37bfabb87ee4:11",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-3bbce64a-c2eb-4fd1-b74f-f3b2f46dcac4:12",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            },
+            {
+              "id": "ticker:ticker-8cf34167-ac35-4360-9c50-727298f33f52:13",
+              "pending": 0,
+              "retained": 500,
+              "inFlight": false,
+              "dropped": 0
+            }
+          ]
+        },
+        "fixture": true,
+        "networkSockets": 0,
+        "syntheticMessages": 0
+      }
+    }
+  ],
+  "teardown": {
+    "active": 0,
+    "socketOpens": 3
+  },
+  "errors": []
+}

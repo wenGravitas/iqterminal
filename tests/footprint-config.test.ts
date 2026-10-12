@@ -24,7 +24,7 @@ it('sanitizes corrupt settings and retains valid Footprint choices without mutat
   expect(config({ ...input, rowPrice: 50 }).rowPrice).toBe(50);
   const invalid = config({ ...input, footprint: { displayMode: 'invented', cellStyle: 'heatmap', showPoc: 'false',
     showDiagonalImbalances: 1, stackedImbalances: 'yes', imbalanceRatio: Infinity, imbalanceThreshold: NaN } });
-  expect(invalid.footprint).toEqual({ displayMode: 'bidask', cellStyle: 'ladder', opacity: .85, showCandle: true, showPoc: true, showValueArea: true,
+  expect(invalid.footprint).toEqual({ displayMode: 'bidask', cellStyle: 'ladder', statsPosition: 'bottom', opacity: .85, showCandle: true, showPoc: true, showValueArea: true,
     showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3, imbalanceThreshold: 0.01 });
   expect(config({ ...input, footprint: { imbalanceThreshold: -1 } }).footprint.imbalanceThreshold).toBe(0);
   expect(config({ ...input, footprint: { imbalanceThreshold: 500 } }).footprint.imbalanceThreshold).toBe(10);
@@ -49,4 +49,12 @@ it('retains immutable study revision pins and independent input settings across 
   footprint.studies[0]!.settings.length = 40;
   expect(pin.settings.length).toBe(20);
   expect(candle.studies[0]!.settings.length).toBe(20);
+});
+
+it('preserves per-candle volume/delta statistics and defaults legacy or invalid choices to the table', () => {
+  const c = config({ venue: 'binance', interval: '1m', type: 'footprint', footprint: { displayMode: 'bidask', cellStyle: 'profile', statsPosition: 'bar' } });
+  expect(config(JSON.parse(JSON.stringify(c)))).toEqual(c);
+  expect(c.footprint.statsPosition).toBe('bar');
+  expect(config({ footprint: { statsPosition: 'invented' } }).footprint.statsPosition).toBe('bottom');
+  expect(config({ type: 'footprint' }).footprint.statsPosition).toBe('bottom');
 });

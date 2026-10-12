@@ -1,3 +1,4 @@
+import { chooseChartMarket } from './indicator-actions';
 import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import {test,expect} from '@playwright/test';
 import {readFile,writeFile} from 'node:fs/promises';
@@ -10,7 +11,7 @@ test.beforeEach(async({page})=>{
 
 test('unified catalogue exposes native layers and keeps unsupported chart markets unchanged',async({page})=>{
   const panels=page.locator('.candle-panel');
-  expect(await panels.first().locator('.chart-toolbar select').evaluateAll(selects=>selects.map(s=>s.getAttribute('aria-label')))).toEqual(['Instrument','Timeframe']);
+  expect(await panels.first().locator('.chart-toolbar select').evaluateAll(selects=>selects.map(s=>s.getAttribute('aria-label')))).toEqual(['Timeframe']);
   await expect(page.locator('select[aria-label="Chart type"]')).toHaveCount(0);
   await panels.nth(1).getByRole('button',{name:'Indicators',exact:true}).click();
   await expect(panels.nth(1).getByRole('button',{name:'Add Footprint',exact:true})).toContainText('Binance BTCUSDT USD-M only');
@@ -391,7 +392,7 @@ test('held mouse drags time and price, live patches preserve the view, Latest re
 });
 
 test('charts render, controls persist, corrupt layout recovers',async({page})=>{
-  await expect(page.locator('select[aria-label=Instrument]')).toHaveCount(2);
+  await expect(page.getByRole('button',{name:'Chart market',exact:true})).toHaveCount(2);
   await expect(page.locator('.chart-stage canvas')).toHaveCount(4);
   await page.locator('select[aria-label=Timeframe]').first().selectOption('15m');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].bars)).toBe(5000);
@@ -416,13 +417,14 @@ test('Binance Spot stays a distinct BTCUSDT series and legacy layouts keep defau
     localStorage.setItem('basis.layout.v1',JSON.stringify({version:1,layout}));
   });
   await page.reload();
-  const instrument=page.locator('select[aria-label=Instrument]').first();
-  await expect(instrument).toHaveValue('binance:perpetual');
+  const instrument=page.getByRole('button',{name:'Chart market',exact:true}).first();
+  await expect(instrument).toContainText('USD-M Perp');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].series.market)).toBe('perpetual');
 
-  await instrument.selectOption('binance:spot');
+  await chooseChartMarket(page.locator('.candle-panel').first(),'Binance · BTCUSDT Spot');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].series)).toMatchObject({venue:'binance',market:'spot',interval:'1m'});
   const panel=page.locator('.candle-panel').first();
+  const spotPanelId=await panel.getAttribute('data-panel-id');
   await expect(panel.locator('.instrument-meta')).toContainText('USDT quote · BTC volume');
   await expect(panel.locator('.chart-stage')).toHaveAttribute('aria-label','Binance · BTCUSDT Spot candlestick chart');
 
@@ -447,11 +449,12 @@ test('Binance Spot stays a distinct BTCUSDT series and legacy layouts keep defau
   await expect(page.getByRole('combobox',{name:'Target chart'}).locator('option').filter({hasText:/Binance · BTCUSDT Spot · 1m/})).toHaveCount(1);
 
   await page.reload();
-  await expect(page.locator('select[aria-label=Instrument]').first()).toHaveValue('binance:spot');
-  await expect.poll(()=>page.evaluate(()=>{
-    const panel=[...(window as any).__terminal.panels.values()][0];
+  await page.evaluate(id=>(window as any).__terminal.dock.getPanel(id)?.api.setActive(),spotPanelId);
+  await expect(page.locator(`[data-panel-id="${spotPanelId}"]`).getByRole('button',{name:'Chart market',exact:true})).toContainText('BTCUSDT Spot');
+  await expect.poll(()=>page.evaluate(id=>{
+    const panel=(window as any).__terminal.panels.get(id);
     return {context:panel.studies.diagnostics().context,depth:panel.studies.views().find((view:any)=>view.scriptId==='builtin.binance-depth-band')?.status,subscribers:(window as any).__terminal.feed.diagnostics.depth?.subscribers ?? 0};
-  })).toMatchObject({context:{symbol:'BTCUSDT',exchange:'Binance Spot',interval:'1m'},depth:expect.stringContaining('Binance BTCUSDT USD-M Perp only'),subscribers:0});
+  },spotPanelId)).toMatchObject({context:{symbol:'BTCUSDT',exchange:'Binance Spot',interval:'1m'},depth:expect.stringContaining('Binance BTCUSDT USD-M Perp only'),subscribers:0});
 });
 
 test('add, grouping, tab reorder, split docking, resize, close/empty, restore',async({page})=>{

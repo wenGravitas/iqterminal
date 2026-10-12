@@ -37,6 +37,10 @@ Footprint is available on Binance BTCUSDT USD-M Perp. It groups classified publi
 
 Add **Order-book Heatmap** through **Indicators** on ordinary candles or a Footprint presentation to collect resting Binance BTCUSDT USD-M liquidity. Its active-indicator row settings controls tick-aligned price rows, average/observed peak, opacity, intensity and labels. In Footprint mode, Footprint settings’ Price level sets the size and fixed lower-bound grid for both footprint and heatmap cells. Candle heatmaps retain an independent row setting. Changing the effective resolution starts fresh collection unless another chart retains it; reload retains settings only. It shares the synchronized depth connection with OpenScript depth studies. Spot and Hyperliquid explicitly report unavailable heatmap data. See [quantity, coverage and resource limits](docs/orderbook-heatmap.md).
 
+## Trade Ticker
+
+Add **Trade Ticker** from the bottom toolbar for live Binance BTCUSDT USD-M reported prints. **Settings** edits the display filter, aggressor filter, market scope and size tiers; **Pause** freezes the visible tape while collection continues. Enable browser audio explicitly, and use the application **Notifications** button for master mute/volume and sound previews. Settings persist with the dock layout; trade history is session-only. Spot/Hyperliquid execution feeds are not available yet. See [Trade Ticker usage and limits](docs/trade-ticker.md).
+
 ## Local OpenScript studies
 
 Open **Indicators** on any chart to search categories and add a built-in EMA, candle-volume histogram, Binance depth study, or local script with its default inputs; Binance depth is available only on USD-M Perp. Open **Manage library** to edit or preview source, save a built-in copy, or import/export a plain `.oscript` source file or IQTerminal `.json` package. Each study’s active-list Edit Script control opens its exact pinned revision, and its active-list settings control changes only that chart attachment. Scripts and immutable source revisions stay in this browser's IndexedDB; chart layouts pin the exact revision and its inputs, so attached studies can be restored on the same device.
@@ -63,3 +67,5 @@ node scripts/visual-openscript.mjs
 See [architecture](docs/architecture.md), [OpenScript evidence map](docs/openscript-milestone.md) and [verification/performance](docs/verification.md), plus screenshots and machine-readable results in `artifacts/`. Reference retained in `docs/reference/terminal.png`.
 
 OpenAlgo Charts is pinned to 2.6.0 and OpenScript to 0.8.1 (both Apache-2.0). The app footer's Licences link opens the bundled runtime notices and full license texts.
+
+Chart tabs show the venue icon, native ticker and a small S (spot) / P (perpetual) marker. Hover for the full market and interval. **Alt+1…9** activates that numbered tab in the active tabset; numbers track left-to-right reordering. Shortcuts are disabled in editable controls and open dialogs.

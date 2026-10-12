@@ -2,12 +2,15 @@ import './vendor/dockview-8.4.1.css';
 import { createDockview, type DockviewApi } from 'dockview-core';
 import './style.css';
 import { ThemeController, THEME_EVENT, currentTheme } from './theme';
+import { Notifications } from './notifications';
+import { TradeTickerPanel } from './ticker/panel';
 import { FeedClient } from './feed/client';
 import { Scheduler } from './chart/scheduler';
 import { CandlePanel, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
 import { LazyScriptEditorPanel } from './scripts/editor-loader';
 import { ScriptLibrary } from './scripts/library';
 import { TabCycleHeaderAction } from './tab-cycler';
+import { CompactChartTab, activateNumberedTab } from './chart-tab';
 import { instrumentKey, type Series } from './feed/protocol';
 import { STORAGE_KEY, PANEL_BUDGET, restoreValue } from './layout';
 
@@ -18,6 +21,8 @@ const alignFixtureToNow = fixture && query.get('fixtureTime') === 'now';
 if (fixture) document.querySelector('.brand')!.textContent = 'BASIS · FIXTURE';
 const feed = new FeedClient(fixture, alignFixtureToNow);
 const scheduler = new Scheduler();
+const notifications = new Notifications();
+const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
 const panels = new Map<string, CandlePanelInstance>();
 const root = document.querySelector<HTMLElement>('#workspace')!;
@@ -36,7 +41,7 @@ const save = () => {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     saveTimer = undefined;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 3, layout: dock.toJSON() })); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, layout: dock.toJSON() })); }
     catch { document.querySelector('#venue-states')!.textContent = 'Layout storage unavailable'; }
   }, 250);
 };
@@ -52,6 +57,12 @@ function addChart(series: Series = { venue: 'binance', market: 'perpetual', inte
     minimumWidth: 220,
     minimumHeight: 140,
   });
+  save();
+}
+
+function addTicker() {
+  if (dock.panels.filter(p => p.view.contentComponent === 'trade-ticker').length >= 8) return;
+  dock.addPanel({ id: `ticker-${crypto.randomUUID()}`, component: 'trade-ticker', title: 'Trade Ticker · BTC', params: {}, position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, minimumWidth: 240, minimumHeight: 160 });
   save();
 }
 
@@ -80,8 +91,11 @@ dock = createDockview(root, {
   theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
   disableFloatingGroups: true,
   defaultRenderer: 'always',
+  defaultTabComponent: 'compact-chart',
+  createTabComponent: () => new CompactChartTab(),
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
+    if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);});
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {
         if (panel) panels.set(id, panel);
@@ -118,9 +132,13 @@ restoring = false;
 const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
   save();
   add.disabled = chartCount() >= PANEL_BUDGET;
+  const tickerAdd = document.querySelector<HTMLButtonElement>('#add-ticker')!; tickerAdd.disabled = tickers.size >= 8; tickerAdd.title = tickerAdd.disabled ? 'Maximum 8 tickers' : 'Add a dockable Trade Ticker';
   add.title = add.disabled ? `Maximum ${PANEL_BUDGET} charts` : 'Add a chart to the right of the active group';
 })];
 const abort = new AbortController();
+window.addEventListener('keydown', event => activateNumberedTab(dock, event), { signal: abort.signal, capture: true });
+document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
+document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
 reset.addEventListener('click', () => { defaults(); save(); }, { signal: abort.signal });
@@ -148,7 +166,7 @@ let perf: PerformanceObserver | undefined;
 if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
-    dock, addChart, openEditor, feed, panels, library, fixture,
+    dock, addChart, addTicker, tickers, notifications, openEditor, feed, panels, library, fixture,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; },
   };
@@ -164,7 +182,7 @@ function dispose() {
   appearance.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
-  scheduler.dispose();
+  scheduler.dispose(); notifications.dispose();
   feed.dispose();
   perf?.disconnect();
 }
@@ -172,7 +190,7 @@ function dispose() {
 if (import.meta.hot) import.meta.hot.dispose(dispose);
 window.addEventListener('pagehide', event => {
   if (saveTimer) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 3, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
   }
   if (!event.persisted) dispose();
 }, { signal: abort.signal });

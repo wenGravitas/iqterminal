@@ -60,3 +60,129 @@ test('footprint text scales with zoom and independent opacity settings persist w
   const persisted = await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).selection);
   expect(persisted.footprint.showValueArea).toBe(false); expect(persisted.footprint.opacity).toBe(.35); expect(persisted.heatmap.opacity).toBe(.65); expect(errors).toEqual([]);
 });
+
+test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {
+  await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first();
+  await page.evaluate(() => {
+    const t = (window as any).__terminal; t.profileSubscriptions = 0;
+    t.feed.subscribeFootprint = (_id: string, _s: any, rowSize: number, callback: any) => {
+      t.profileSubscriptions++;
+      const time = Math.floor(Date.now() / 60000) * 60, start = Date.now();
+      queueMicrotask(() => callback({ type: 'footprint-snapshot', bars: [{ time, rowSize, revision: 1,
+        cells: [{ price: 83000, bidVol: 2, askVol: 12 }, { price: 82975, bidVol: 8, askVol: 3 }, { price: 82950, bidVol: 1, askVol: 3 }],
+        open: 82960, high: 83020, low: 82955, close: 83010, delta: 7, minDelta: -5, maxDelta: 10, coverage: 'partial', gapBefore: false }],
+        retentionStart: time, status: { state: 'live', message: 'Explicit test trades', lastUpdate: start, collectionStartedAt: start, coverage: 'partial', tickSize: .1, rowSize } }));
+      return () => {};
+    };
+  });
+  await setFootprint(panel, true);
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintBars.length)).toBe(1);
+  const before = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any; t.profilePrimitive = p.engine.footprint;
+    return { start: p.footprintStatus.collectionStartedAt, range: p.engine.visibleRange() };
+  });
+  await footprintSettings(panel);
+  await page.getByRole('combobox', { name: 'Cell display', exact: true }).selectOption('delta-profile');
+  await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
+  await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
+  const after = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any;
+    return { start: p.footprintStatus.collectionStartedAt, range: p.engine.visibleRange(), subscriptions: t.profileSubscriptions,
+      samePrimitive: p.engine.footprint === t.profilePrimitive, options: p.engine.footprint.options(), delta: p.engine.footprint.stats()[0].delta };
+  });
+  expect(after).toMatchObject({ ...before, subscriptions: 1, samePrimitive: true, options: { displayMode: 'delta', cellStyle: 'profile' }, delta: 7 });
+  await page.screenshot({ path: 'artifacts/footprint-delta-profile-1366x768.png' });
+  await page.waitForTimeout(400); await page.reload();
+  await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
+  await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('delta-profile');
+  await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
+});
+
+test('volume delta candle shows paired profiles and per-bar totals without restarting collection', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await page.emulateMedia({ colorScheme: 'dark' }); const worker = await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first();
+  await page.evaluate(() => {
+    const t = (window as any).__terminal; t.profileSubscriptions = 0;
+    t.feed.subscribeFootprint = (_id: string, _s: any, rowSize: number, callback: any) => {
+      t.profileSubscriptions++;
+      const time = Math.floor(Date.now() / 60000) * 60, start = Date.now();
+      queueMicrotask(() => callback({ type: 'footprint-snapshot', bars: [0, 1, 2].map((n) => ({ time: time - (2-n)*60, rowSize, revision: 1,
+        cells: [{ price: 83000, bidVol: 2, askVol: 12 }, { price: 82975, bidVol: 8, askVol: 3 }, { price: 82950, bidVol: 1, askVol: 3 }],
+        open: 82960, high: 83020, low: 82955, close: 83010, delta: 7, minDelta: -5, maxDelta: 10, coverage: 'partial', gapBefore: false })),
+        retentionStart: time, status: { state: 'live', message: 'Explicit test trades', lastUpdate: start, collectionStartedAt: start, coverage: 'partial', tickSize: .1, rowSize } }));
+      return () => {};
+    };
+  });
+  await setFootprint(panel, true);
+  await addIndicator(panel, 'Order-book Heatmap');
+  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await worker.evaluate(() => {
+    const socket = (self as any).__heatmapFixture.socket, previous = socket.last;
+    socket.last++;
+    socket.onmessage({ data: JSON.stringify({ e: 'depthUpdate', s: 'BTCUSDT', U: socket.last, u: socket.last, pu: previous,
+      b: [[82930, 15]], a: [[83050, 10]] }) });
+  });
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintBars.length)).toBe(3);
+  const before = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any; t.profilePrimitive = p.engine.footprint;
+    return { start: p.footprintStatus.collectionStartedAt, range: p.engine.visibleRange() };
+  });
+  await footprintSettings(panel);
+  await page.getByRole('combobox', { name: 'Cell display', exact: true }).selectOption('volume-delta-candle');
+  await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
+  await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
+  const after = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any;
+    return { start: p.footprintStatus.collectionStartedAt, range: p.engine.visibleRange(), subscriptions: t.profileSubscriptions,
+      samePrimitive: p.engine.footprint === t.profilePrimitive, options: p.engine.footprint.options(), delta: p.engine.footprint.stats()[0].delta };
+  });
+  expect(after).toMatchObject({ ...before, subscriptions: 1, samePrimitive: true, options: { displayMode: 'bidask', cellStyle: 'profile', statsPosition: 'bar', statsRows: ['volume', 'delta'], showCandle: true, showValueArea: true, textColorMode: 'dominant' }, delta: 7 });
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    p.engine.chart.timeScale.setBarSpacing(200); p.engine.chart.timeScale.setRightOffset(1);
+    p.engine.chart.panes()[0].priceScale.setAutoScale(false);
+    p.engine.chart.panes()[0].priceScale.setFixedRange({ min: 82900, max: 83075 }); p.engine.chart.setAutoScale(false);
+  });
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprint.cellFont)).toBeGreaterThan(15);
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.heatmap.bins.some((b: any) => b.low === 82925 && b.bid > 0))).toBe(true);
+  await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-1366x768.png' });
+  await page.setViewportSize({ width: 720, height: 860 });
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);
+  await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-720x860.png' });
+  await page.waitForTimeout(400); await page.reload();
+  await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
+  await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('volume-delta-candle');
+  await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
+  await expect(page.getByRole('combobox', { name: 'Statistics', exact: true })).toHaveValue('bar');
+  expect(errors).toEqual([]);
+});
+
+test('smaller bid profile remains visible beneath enlarged quantity labels',async({page})=>{
+  await page.emulateMedia({colorScheme:'dark'});await installDepthFixture(page);const panel=page.locator('.candle-panel').first();
+  await page.evaluate(()=>{
+    const t=(window as any).__terminal;
+    t.feed.subscribeFootprint=(_id:string,_s:any,rowSize:number,callback:any)=>{
+      const time=Math.floor(Date.now()/60000)*60;
+      queueMicrotask(()=>callback({type:'footprint-snapshot',bars:[{time,rowSize,revision:1,cells:[{price:83012.5,bidVol:4.07,askVol:8.36}],open:83002,high:83021,low:83002,close:83018,delta:4.29,minDelta:0,maxDelta:4.29,coverage:'partial',gapBefore:false}],retentionStart:time,status:{state:'live',message:'Explicit profile test',lastUpdate:Date.now(),collectionStartedAt:Date.now(),coverage:'partial',tickSize:.1,rowSize}}));return()=>{};
+    };
+  });
+  await setFootprint(panel,true);await footprintSettings(panel);await page.getByRole('combobox',{name:'Cell display',exact:true}).selectOption('volume-delta-candle');await panel.locator('.footprint-settings-dialog').getByRole('button',{name:'Apply',exact:true}).click();
+  await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;p.engine.chart.timeScale.setBarSpacing(280);p.engine.chart.timeScale.setRightOffset(1);p.engine.chart.panes()[0].priceScale.setAutoScale(false);p.engine.chart.panes()[0].priceScale.setFixedRange({min:82925,max:83100});p.engine.chart.setAutoScale(false);});
+  await expect.poll(()=>page.evaluate(()=>([...(window as any).__terminal.panels.values()][0] as any).engine.footprint.cellFont)).toBeGreaterThan(20);
+  await panel.locator('.chart-stage').screenshot({path:'artifacts/footprint-profile-visible-bar.png'});
+  await footprintSettings(panel);
+  await page.getByRole('combobox',{name:'Cell display',exact:true}).selectOption('delta-profile');
+  await expect(panel.getByLabel('Show execution candle',{exact:true})).toBeChecked();
+  await panel.locator('.footprint-settings-dialog').getByRole('button',{name:'Apply',exact:true}).click();
+  await page.waitForTimeout(100);
+  await panel.locator('.chart-stage').screenshot({path:'artifacts/footprint-delta-visible-candle.png'});
+  await footprintSettings(panel);await panel.getByLabel('Show execution candle',{exact:true}).uncheck();
+  await panel.locator('.footprint-settings-dialog').getByRole('button',{name:'Apply',exact:true}).click();
+  await expect.poll(()=>page.evaluate(()=>([...(window as any).__terminal.panels.values()][0] as any).engine.footprint.options().showCandle)).toBe(false);
+  await page.waitForTimeout(100);
+  await panel.locator('.chart-stage').screenshot({path:'artifacts/footprint-delta-hidden-candle.png'});
+  await page.waitForTimeout(400);await page.reload();await footprintSettings(panel);
+  await expect(panel.getByLabel('Show execution candle',{exact:true})).not.toBeChecked();
+});

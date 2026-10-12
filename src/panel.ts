@@ -1,3 +1,4 @@
+import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
 import { FOOTPRINT_ID, HEATMAP_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
 import { HeatmapControls } from './heatmap-controls';
@@ -18,6 +19,7 @@ import { makeInputControl, readInputSettings } from './scripts/input-controls';
 export interface FootprintViewOptions {
   displayMode: FootprintDisplayMode;
   cellStyle: FootprintCellStyle;
+  statsPosition: 'bottom' | 'bar';
   opacity: number;
   showCandle: boolean;
   showPoc: boolean;
@@ -35,6 +37,7 @@ function legacyConfig(value: unknown) {
   const footprint: FootprintViewOptions = {
     displayMode: savedFootprint.displayMode === 'delta' || savedFootprint.displayMode === 'volume' ? savedFootprint.displayMode : 'bidask',
     cellStyle: savedFootprint.cellStyle === 'profile' ? 'profile' : 'ladder',
+    statsPosition: savedFootprint.statsPosition === 'bar' ? 'bar' : 'bottom',
     opacity: typeof savedFootprint.opacity === 'number' && Number.isFinite(savedFootprint.opacity) ? Math.max(0, Math.min(1, savedFootprint.opacity)) : .85,
     showCandle: savedFootprint.showCandle !== false,
     showPoc: typeof savedFootprint.showPoc === 'boolean' ? savedFootprint.showPoc : DEFAULT_FOOTPRINT_VIEW.showPoc,
@@ -97,6 +100,8 @@ export class CandlePanel implements IContentRenderer {
   private readout = document.createElement('div');
   private statusNode = document.createElement('div');
   private statusText = document.createElement('span');
+  private marketPicker!: MarketPicker;
+  private marketButton = document.createElement('button');
   private instrument = document.createElement('select');
   private rowPrice = document.createElement('input');
   private rowPriceControl = document.createElement('label');
@@ -191,7 +196,8 @@ export class CandlePanel implements IContentRenderer {
     this.statusNode.className = 'panel-status';
     this.statusNode.setAttribute('role', 'status');
     this.metadata.className = 'instrument-meta';
-    this.instrument.setAttribute('aria-label', 'Instrument');
+    this.marketButton.setAttribute('aria-label', 'Chart market'); this.marketButton.className = 'chart-market-button';
+    this.marketPicker = new MarketPicker(this.element);
     for (const [value, info] of Object.entries(instruments)) this.instrument.add(new Option(info.label, value));
     this.interval.setAttribute('aria-label', 'Timeframe');
     for (const value of intervals) this.interval.add(new Option(value, value));
@@ -233,7 +239,7 @@ export class CandlePanel implements IContentRenderer {
     this.retry.textContent = 'Retry';
     this.retry.setAttribute('aria-label', 'Retry market data');
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
-    this.toolbar.append(this.instrument, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
+    this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
     this.overlays.className = 'chart-top-overlays';
     this.activeIndicators.className = 'active-indicators'; this.activeIndicators.open = true;
@@ -250,12 +256,12 @@ export class CandlePanel implements IContentRenderer {
     this.selection = config(params.params);
     this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
     params.api.updateParameters(this.selection);
-    this.instrument.value = instrumentKey(this.selection);
+    this.instrument.value = instrumentKey(this.selection); this.marketButton.textContent = instrumentLabel(this.selection);
     this.rowPrice.value = String(this.selection.rowPrice);
     this.interval.value = this.selection.interval;
     this.updateFootprintControls();
     const options = { signal: this.abort.signal };
-    this.instrument.addEventListener('change', () => this.select(), options);
+    this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
     this.interval.addEventListener('change', () => this.select(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
@@ -414,10 +420,13 @@ export class CandlePanel implements IContentRenderer {
     this.footprintFields.append(
       this.rowPriceControl, this.footprintField('Volume units', this.footprintUnits),
       this.footprintField('Cell display', this.selectControl('displayMode', [
-        ['bidask', 'Bid / ask'], ['delta', 'Delta'], ['volume', 'Volume'],
+        ['bidask', 'Bid / ask'], ['delta', 'Delta'], ['delta-profile', 'Delta profile'], ['volume-delta-candle', 'Volume delta candle'], ['volume', 'Volume'],
       ])),
       this.footprintField('Cells', this.selectControl('cellStyle', [
         ['ladder', 'Bid / ask ladder'], ['profile', 'Volume profile'],
+      ])),
+      this.footprintField('Statistics', this.selectControl('statsPosition', [
+        ['bottom', 'Bottom table'], ['bar', 'Volume / delta beside candle'],
       ])),
       this.footprintField('Cell opacity (%)', this.opacityControl()),
       this.footprintField('Show execution candle', this.checkboxControl('showCandle')),
@@ -430,6 +439,22 @@ export class CandlePanel implements IContentRenderer {
       ])),
       this.footprintField('Minimum dominant volume (BTC)', this.numberControl('imbalanceThreshold')),
     );
+    const display = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="displayMode"]')!;
+    const cells = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="cellStyle"]')!;
+    const statistics = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="statsPosition"]')!;
+    display.addEventListener('change', () => {
+      if (display.value === 'delta-profile' || display.value === 'volume-delta-candle') cells.value = 'profile';
+      if (display.value === 'volume-delta-candle') {
+        statistics.value = 'bar';
+        for (const key of ['showCandle', 'showPoc', 'showValueArea']) this.footprintFields.querySelector<HTMLInputElement>(`[data-footprint-option="${key}"]`)!.checked = true;
+      }
+    }, { signal: this.abort.signal });
+    const reconcilePreset = () => {
+      if (display.value === 'delta-profile' && cells.value !== 'profile') display.value = 'delta';
+      if (display.value === 'volume-delta-candle' && (cells.value !== 'profile' || statistics.value !== 'bar')) display.value = 'bidask';
+    };
+    cells.addEventListener('change', reconcilePreset, { signal: this.abort.signal });
+    statistics.addEventListener('change', reconcilePreset, { signal: this.abort.signal });
     const settingsHint = document.createElement('p');
     settingsHint.className = 'footprint-settings-hint';
     settingsHint.textContent = 'Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size starts a fresh collection unless another chart retains that exact stream; OpenScript studies use native candle OHLCV.';
@@ -485,7 +510,8 @@ export class CandlePanel implements IContentRenderer {
     this.rowPrice.value = String(this.selection.rowPrice); this.rowPrice.setCustomValidity(''); this.footprintUnits.value = this.selection.footprintUnits;
     this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showCandle"]')!.checked = view.showCandle;
     this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showValueArea"]')!.checked = view.showValueArea;
-    mode.value = view.displayMode; style.value = view.cellStyle; poc.checked = view.showPoc;
+    mode.value = view.displayMode === 'delta' && view.cellStyle === 'profile' ? 'delta-profile' : view.displayMode === 'bidask' && view.cellStyle === 'profile' && view.statsPosition === 'bar' ? 'volume-delta-candle' : view.displayMode;
+    this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="statsPosition"]')!.value = view.statsPosition; style.value = view.cellStyle; poc.checked = view.showPoc;
     diagonal.checked = view.showDiagonalImbalances; stacked.checked = view.stackedImbalances;
     ratio.value = String(view.imbalanceRatio); threshold.value = String(view.imbalanceThreshold);
     if (!this.footprintDialog.open) this.footprintDialog.showModal();
@@ -498,10 +524,12 @@ export class CandlePanel implements IContentRenderer {
     const price = Number(this.rowPrice.value);
     this.rowPrice.setCustomValidity(!validFootprintRowPrice(price) ? 'Enter a positive price level no greater than $10,000.' : this.footprintStatus.tickSize !== null && footprintTicksForPrice(price, this.footprintStatus.tickSize) === null ? `Enter a multiple of the exchange tick size, $${this.footprintStatus.tickSize}.` : '');
     if (!this.rowPrice.reportValidity() || !threshold.reportValidity() || !opacity.reportValidity()) return;
+    const display = this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="displayMode"]')!.value;
     const view = {
         opacity: Number(opacity.value) / 100,
-        displayMode: this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="displayMode"]')!.value,
-        cellStyle: this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="cellStyle"]')!.value,
+        displayMode: display === 'delta-profile' ? 'delta' : display === 'volume-delta-candle' ? 'bidask' : display,
+        cellStyle: display === 'delta-profile' || display === 'volume-delta-candle' ? 'profile' : this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="cellStyle"]')!.value,
+        statsPosition: this.footprintFields.querySelector<HTMLSelectElement>('[data-footprint-option="statsPosition"]')!.value,
         showCandle: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showCandle"]')!.checked,
         showPoc: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showPoc"]')!.checked,
         showValueArea: this.footprintFields.querySelector<HTMLInputElement>('[data-footprint-option="showValueArea"]')!.checked,
@@ -534,10 +562,11 @@ export class CandlePanel implements IContentRenderer {
       radius: 0,
       imbalanceRatio: view.imbalanceRatio,
       imbalanceThreshold: view.showDiagonalImbalances ? view.imbalanceThreshold : Number.MAX_VALUE,
-      textColorMode: view.showDiagonalImbalances ? 'imbalance' : 'contrast',
+      textColorMode: view.displayMode === 'bidask' && view.cellStyle === 'profile' ? 'dominant' : view.showDiagonalImbalances ? 'imbalance' : 'contrast',
       stackedImbalances: view.showDiagonalImbalances && view.stackedImbalances ? 2 : 0,
       showCandle: view.showCandle,
-      statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'],
+      statsPosition: view.statsPosition,
+      statsRows: view.statsPosition === 'bar' ? ['volume', 'delta'] : ['volume', 'bidVolume', 'askVolume', 'delta'],
       tableRows: [],
     });
   }
@@ -856,6 +885,7 @@ export class CandlePanel implements IContentRenderer {
   private select() {
     const series = seriesForInstrument(this.instrument.value, this.interval.value as Interval);
     const wasFootprint = this.selection.type === 'footprint';
+    if (series) this.marketButton.textContent = instrumentLabel(series);
     this.selection = config({ ...this.selection, ...(series ?? {}), studies: this.selection.studies });
     this.params.api.updateParameters(this.selection);
     this.updateFootprintControls();
@@ -1248,7 +1278,7 @@ export class CandlePanel implements IContentRenderer {
     this.selectionEpoch++;
     clearInterval(this.timer);
     this.toolbarResizeObserver?.disconnect();
-    this.abort.abort();
+    this.abort.abort(); this.marketPicker.dispose();
     if (this.picker.open) this.picker.close();
     if (this.settingsDialog.open) this.settingsDialog.close();
     if (this.footprintDialog.open) this.footprintDialog.close();

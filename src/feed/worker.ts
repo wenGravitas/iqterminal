@@ -3,6 +3,7 @@ import { parseLive } from './adapters';
 import { MarketService } from './service';
 import { BinanceHeatmapService } from './heatmap-service';
 import { BinanceDepthService } from './depth-service';
+import { TickerService } from './ticker-service';
 import { BinanceFootprintService } from './footprint-service';
 import { fixtureBars } from './fixtures';
 import { duration, type Command, type Event, type Series } from './protocol';
@@ -26,6 +27,7 @@ let service=new MarketService((e:Event)=>scope.postMessage(e));
 const depth=new BinanceDepthService((e:Event)=>scope.postMessage(e));
 const heatmap=new BinanceHeatmapService(depth, e=>scope.postMessage(e));
 const footprint=new BinanceFootprintService((e:Event)=>scope.postMessage(e), undefined, {}, import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS==='1');
+const tickers = new TickerService(footprint, e => scope.postMessage(e));
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
@@ -36,6 +38,10 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     return;
   }
   const c=event.data;
+  if(c.type==='ticker-subscribe'){tickers.subscribe(c.id,c.config,c.configRevision);return;}
+  if(c.type==='ticker-update'){tickers.update(c.id,c.config,c.configRevision);return;}
+  if(c.type==='ticker-unsubscribe'){tickers.unsubscribe(c.id);return;}
+  if(c.type==='ticker-ack'){tickers.ack(c.id,c.generation,c.batchId);return;}
   if(c.type==='fixture'&&fixture){clearInterval(burst);if(c.rate>0)burst=setInterval(()=>{
     const entries=[...service.entries.values()];if(!entries.length)return;
     const lasts=entries.map(e=>e.data.snapshot().at(-1));
@@ -49,6 +55,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='depth-retry'){depth.retry();heatmap.retry();return;}
   if(c.type==='footprint-subscribe'||c.type==='footprint-unsubscribe'||c.type==='footprint-retry'||c.type==='footprint-ack'){footprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),depth:depth.diagnostics(),heatmap:heatmap.diagnostics(),footprint:footprint.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),depth:depth.diagnostics(),heatmap:heatmap.diagnostics(),footprint:footprint.diagnostics(),tickers:tickers.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

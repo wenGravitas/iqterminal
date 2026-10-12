@@ -6,6 +6,7 @@ import {
   type AggTradeObservation, type AggTradeReject, type FootprintLimits,
 } from './footprint';
 
+type ExecutionConsumer = (trades: readonly AggTradeObservation[], status: import('./protocol').Status, liveSince: number) => void;
 const AGG_TRADE_SOCKET = 'wss://fstream.binance.com/market/ws/btcusdt@aggTrade';
 const EXCHANGE_INFO = 'https://fapi.binance.com/fapi/v1/exchangeInfo?symbol=BTCUSDT';
 const STALE_AFTER_MS = 15_000;
@@ -66,6 +67,15 @@ type FootprintTransportEvent = Extract<Event, { type: 'footprint-status' | 'foot
 
 /** One public BTCUSDT USD-M aggTrade socket, shared by timeframe/row configurations. */
 export class BinanceFootprintService {
+  private executionConsumers = new Map<string, ExecutionConsumer>();
+  private liveSince = 0;
+  private hasConsumers() { return this.groups.size > 0 || this.executionConsumers.size > 0; }
+  subscribeExecutions(id: string, consumer: ExecutionConsumer) {
+    this.executionConsumers.set(id, consumer);
+    consumer([], { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince);
+    if (!this.opened) void this.start();
+    return () => { this.executionConsumers.delete(id); if (!this.hasConsumers()) this.stop(true); };
+  }
   private groups = new Map<string, Group>();
   private clients = new Map<string, string>();
   private tickSize: number | null = null;
@@ -176,11 +186,11 @@ export class BinanceFootprintService {
     if (group.ids.size) return;
     group.accumulator?.dispose();
     this.groups.delete(key);
-    if (!this.groups.size) this.stop(true);
+    if (!this.hasConsumers()) this.stop(true);
   }
 
   retry() {
-    if (!this.online || !this.groups.size || this.dead) return;
+    if (!this.online || !this.hasConsumers() || this.dead) return;
     this.attempts = 0;
     this.start(true);
   }
@@ -204,7 +214,7 @@ export class BinanceFootprintService {
       this.clearRetry();
       this.discardPending();
       this.setStatus('stale', 'Offline · Binance aggTrade collection paused');
-    } else if (this.groups.size) {
+    } else if (this.hasConsumers()) {
       this.attempts = 0;
       this.start();
     }
@@ -212,7 +222,7 @@ export class BinanceFootprintService {
 
   diagnostics() {
     return {
-      subscribers: this.clients.size,
+      subscribers: this.clients.size, executionConsumers: this.executionConsumers.size,
       groups: [...this.groups.values()].map(group => ({
         key: group.key, clients: group.ids.size, bars: group.accumulator?.barCount ?? 0,
         cells: group.accumulator?.cellCount ?? 0, rowPrice: group.rowPrice, rowTicks: group.rowTicks, maxBars: this.limits.maxBars,
@@ -251,7 +261,7 @@ export class BinanceFootprintService {
     this.stop(true);
     for (const group of this.groups.values()) group.accumulator?.dispose();
     this.groups.clear();
-    this.clients.clear();
+    this.clients.clear(); this.executionConsumers.clear();
   }
 
   private start(force = false) {
@@ -264,7 +274,7 @@ export class BinanceFootprintService {
   }
 
   private async startOnce(force = false): Promise<void> {
-    if (this.dead || !this.online || !this.groups.size) return;
+    if (this.dead || !this.online || !this.hasConsumers()) return;
     if (force) {
       this.epoch++;
       this.abort?.abort();
@@ -296,8 +306,8 @@ export class BinanceFootprintService {
           if (this.abort === controller) this.abort = undefined;
         }
       }
-      if (this.dead || epoch !== this.epoch || !this.groups.size) return;
-      if (![...this.groups.values()].some(group => group.accumulator)) return;
+      if (this.dead || epoch !== this.epoch || !this.hasConsumers()) return;
+      if (!this.executionConsumers.size && ![...this.groups.values()].some(group => group.accumulator)) return;
       if (!this.flushTimer) this.flushTimer = this.transport.setInterval(() => this.flush(), FOOTPRINT_FLUSH_MS);
       if (!this.checkTimer) this.checkTimer = this.transport.setInterval(() => this.check(), 1000);
       this.openSocket(epoch);
@@ -318,7 +328,7 @@ export class BinanceFootprintService {
       if (this.epoch !== epoch || this.ws !== socket) return;
       this.transport.clearTimeout(this.openingTimer!);
       this.openingTimer = undefined;
-      this.opened = true;
+      this.opened = true; this.liveSince = this.transport.now();
       this.outageOpen = false;
       this.attempts = 0;
       this.counters.socketOpens++;
@@ -340,7 +350,7 @@ export class BinanceFootprintService {
     socket.onclose = () => {
       if (this.openingTimer) this.transport.clearTimeout(this.openingTimer);
       this.openingTimer = undefined;
-      if (this.epoch !== epoch || this.ws !== socket || this.dead || !this.groups.size || !this.online) return;
+      if (this.epoch !== epoch || this.ws !== socket || this.dead || !this.hasConsumers() || !this.online) return;
       this.ws = undefined;
       this.opened = false;
       this.discardPending();
@@ -378,10 +388,12 @@ export class BinanceFootprintService {
     const batch = [...this.pending.values()].sort((a, b) => a.timeMs - b.timeMs || a.id - b.id);
     this.pending.clear();
     this.pendingIds.clear();
+    const executions: AggTradeObservation[] = [];
     const startedAt = this.measureAggregation ? performance.now() : 0;
     try { for (const trade of batch) {
       if (trade.id <= this.expiredIdFloor || trade.timeMs < this.lastTradeTime) { this.markLate(trade); continue; }
       this.remember(trade.id);
+      if (this.executionConsumers.size) executions.push(trade);
       this.lastTradeId = Math.max(this.lastTradeId, trade.id);
       this.lastTradeTime = trade.timeMs;
       this.lastTradeAt = trade.timeMs;
@@ -418,9 +430,11 @@ export class BinanceFootprintService {
         if (result === 'capacity') this.counters.capacityDrops++;
       }
       if (trade.side === 'unknown') this.counters.unknownSide++;
-      if (appliedAny) this.counters.accepted++;
+      if (appliedAny || this.executionConsumers.size) this.counters.accepted++;
       this.setStatus('live', this.liveMessage());
-    } } finally {
+    }
+      if (executions.length) for (const consumer of this.executionConsumers.values()) consumer(executions, { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince);
+    } finally {
       if (this.measureAggregation) {
         const elapsed = Math.max(0, performance.now() - startedAt);
         this.counters.aggregationBatches++;
@@ -480,6 +494,7 @@ export class BinanceFootprintService {
     if (this.state === state && this.message === message) return;
     this.state = state;
     this.message = message;
+    for (const consumer of this.executionConsumers.values()) consumer([], { state, message, lastUpdate: this.lastUpdate }, this.liveSince);
     for (const group of this.groups.values()) this.emitStatus(group);
   }
 
@@ -598,7 +613,7 @@ export class BinanceFootprintService {
   }
 
   private scheduleRetry() {
-    if (this.retryTimer || this.dead || !this.online || !this.groups.size) return;
+    if (this.retryTimer || this.dead || !this.online || !this.hasConsumers()) return;
     this.attempts++;
     if (this.attempts > 5) {
       this.setStatus('failed', 'Binance aggTrade repeatedly failed · use Retry');
