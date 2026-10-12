@@ -23,14 +23,13 @@ export class HeatmapControls {
       const input = document.createElement('select'); for (const [value, text] of values) { const option = document.createElement('option'); option.value = value; option.textContent = text; input.append(option); } this.field(fields, name, label, input);
     };
     number('rowPrice', 'Price row (USDT)', .000001, 10000, 'any');
-    select('bucketMs', 'Time bucket', [['500', '500 ms'], ['250', '250 ms']]);
     select('units', 'Quantity units', [['btc', 'BTC'], ['usdt', 'USDT notional']]);
     select('mode', 'Resting quantity', [['average', 'Time-weighted average'], ['peak', 'Observed peak']]);
     number('opacity', 'Opacity', 0, 1, '.05'); number('intensity', 'Full intensity (BTC / $10)', .01, 10000, 'any');
     number('minimum', 'Minimum quantity (BTC)', 0, 10000, 'any');
     select('labels', 'Quantity labels', [['auto', 'Auto'], ['off', 'Off']]);
     for (const name of ['bids', 'asks']) { const input = document.createElement('input'); input.type = 'checkbox'; this.field(fields, name, `Show ${name}`, input); }
-    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Stripes indicate incomplete coverage.';
+    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Stripes indicate incomplete coverage.';
     this.rowHint.className = 'dialog-status';
     const footer = document.createElement('footer'), apply = document.createElement('button'), retryButton = document.createElement('button');
     apply.type = 'submit'; apply.textContent = 'Apply'; retryButton.type = 'button'; retryButton.textContent = 'Retry depth'; footer.append(retryButton, apply);
@@ -41,7 +40,7 @@ export class HeatmapControls {
     retryButton.addEventListener('click', () => this.retry(), options);
     this.dialog.addEventListener('click', e => { if (e.target === this.dialog) this.dialog.close(); }, options);
     this.form.addEventListener('submit', e => {
-      e.preventDefault(); const raw: Record<string, unknown> = { enabled: this.current.enabled };
+      e.preventDefault(); const raw: Record<string, unknown> = { enabled: this.current.enabled, bucketMs: this.current.bucketMs };
       for (const [name, input] of this.inputs) raw[name] = input instanceof HTMLInputElement ? input.type === 'checkbox' ? input.checked : Number(input.value) : name === 'bucketMs' ? Number(input.value) : input.value;
       const price = this.inputs.get('rowPrice') as HTMLInputElement; price.setCustomValidity('');
       if (this.status?.tickSize && footprintTicksForPrice(Number(raw.rowPrice), this.status.tickSize) === null) price.setCustomValidity(`Enter a multiple of the exchange tick size, $${this.status.tickSize}.`);
@@ -64,7 +63,7 @@ export class HeatmapControls {
   private renderStatus() {
     if (!this.current.enabled) return;
     const s = this.status;
-    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${s.capacityLimited ? ' · row limit' : ''} · ${s.collectionStart ? `since ${utc(s.collectionStart)}` : 'collecting…'}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
+    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${s.message.startsWith('Staging') ? ' · '+s.message : ''}${s.capacityLimited ? ' · row limit' : ''} · ${s.collectionStart ? `since ${utc(s.collectionStart)}` : 'collecting…'}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
     this.notice.title = !this.supported ? this.notice.textContent : `${this.notice.textContent}\n${s?.message ?? 'Waiting for synchronized depth'}`;
   }
   hover(hit: ReturnType<OrderBookHeatmap['hoverAt']>) {

@@ -319,6 +319,7 @@ export class CandlePanel implements IContentRenderer {
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
+    this.engine.onHeatmapViewport = viewport => this.feed.requestHeatmapViewport(this.params.api.id, viewport);
     this.engine.setGridVisible(this.selection.grid); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     if (this.selection.type === 'footprint') this.engine.setDisplayMode('footprint');
     this.applyFootprintOptions();
@@ -457,7 +458,7 @@ export class CandlePanel implements IContentRenderer {
     statistics.addEventListener('change', reconcilePreset, { signal: this.abort.signal });
     const settingsHint = document.createElement('p');
     settingsHint.className = 'footprint-settings-hint';
-    settingsHint.textContent = 'Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size starts a fresh collection unless another chart retains that exact stream; OpenScript studies use native candle OHLCV.';
+    settingsHint.textContent = 'Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. ' + (import.meta.env.VITE_DATA_MODE === 'staging' ? 'Changing interval or row size reloads the bounded retained staging history; ' : 'Changing interval or row size starts a fresh collection unless another chart retains that exact stream; ') + 'OpenScript studies use native candle OHLCV.';
     const footprintFooter = document.createElement('footer');
     footprintFooter.append(this.dialogButton('Cancel', 'close-footprint'), this.dialogButton('Apply', 'apply-footprint', true));
     this.footprintForm.append(footprintHeader, this.footprintFields, settingsHint, footprintFooter);
@@ -952,7 +953,7 @@ export class CandlePanel implements IContentRenderer {
   }
   private syncHeatmap() {
     const supported = supportsDepth(this.selection), footprint = Boolean(this.nativeIndicator(FOOTPRINT_ID));
-    const settings: HeatmapSettings = footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' } : this.selection.heatmap;
+    const settings: HeatmapSettings = { ...(footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' as const } : this.selection.heatmap), candleMs: duration[this.selection.interval] };
     this.heatmapControls.sync(settings, supported, footprint); this.heatmapControls.setUnits(this.selection.footprintUnits);
     this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported }, duration[this.selection.interval]);
     const key = this.nativeIndicator(HEATMAP_ID) && supported ? heatmapKey(settings) : '';

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "dev:staging": "VITE_DATA_MODE=staging vite --mode staging --host 127.0.0.1",
+    "tunnel:staging": "bash scripts/staging-tunnel.sh",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",

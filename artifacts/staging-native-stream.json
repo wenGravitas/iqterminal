@@ -1,0 +1,25 @@
+{
+  "actualPi": true,
+  "fixture": false,
+  "nativeSource": "binance-native-kline",
+  "liveVolumeAdvanced": true,
+  "nativeHistoryReloadOnReconnect": true,
+  "before": {
+    "t": 1791799740000,
+    "o": 83463.5,
+    "h": 83463.5,
+    "l": 83446.8,
+    "c": 83447.8,
+    "v": 17.897
+  },
+  "after": {
+    "t": 1791799740000,
+    "o": 83463.5,
+    "h": 83463.5,
+    "l": 83446.8,
+    "c": 83447.7,
+    "v": 17.924
+  },
+  "historyRequests": 2,
+  "errors": []
+}

@@ -1,6 +1,6 @@
 # Basis — terminal T0
 
-A saved, dockable BTC candlestick workspace with Binance BTCUSDT Spot, Binance USD-M perpetual, and Hyperliquid BTC perpetual instruments. The initial pair remains Binance USD-M and Hyperliquid perpetual. Vanilla strict TypeScript, Dockview Core, and official OpenAlgo Charts 2.6.0 using its Canvas2D renderer. Optional OpenScript studies run locally in bounded dedicated workers. No account, keys, backend or React.
+A saved, dockable BTC candlestick workspace with Binance BTCUSDT Spot, Binance USD-M perpetual, and Hyperliquid BTC perpetual instruments. The initial pair remains Binance USD-M and Hyperliquid perpetual. Vanilla strict TypeScript, Dockview Core, and official OpenAlgo Charts 2.6.0 using its Canvas2D renderer. Optional OpenScript studies run locally in bounded dedicated workers. No account, keys or React. An optional staging market-data backend supports local development.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -12,6 +12,8 @@ pnpm preview --port 4173
 ```
 
 Node 22.19+ and pnpm 10.18+ (Node 22.19 used here). On this machine: `source /home/daz/.nvm/nvm.sh` first if needed. Open the URL printed by Vite. Direct public exchange access requires reachable REST and WebSocket endpoints; failures remain visible and Retry is explicit.
+
+For durable staging Binance USD-M Footprints, historical/live heatmaps and proxied native candles, run `pnpm tunnel:staging` and `pnpm dev:staging` in separate terminals, then open `http://127.0.0.1:5173/`. See [staging setup, coverage and verification](docs/staging-market-data.md). Ordinary development remains direct to venues.
 
 Drag tabs onto another group's tab bar to combine/reorder them; drag onto its content edges to dock above/below/beside. Drag the narrow splitters to resize. Close with each tab's close button. Add chart places another chart beside the active group. Reset layout restores the initial pair. Eight charts maximum.
 
@@ -35,7 +37,7 @@ Footprint is available on Binance BTCUSDT USD-M Perp. It groups classified publi
 
 ## Order-book heatmap
 
-Add **Order-book Heatmap** through **Indicators** on ordinary candles or a Footprint presentation to collect resting Binance BTCUSDT USD-M liquidity. Its active-indicator row settings controls tick-aligned price rows, average/observed peak, opacity, intensity and labels. In Footprint mode, Footprint settings’ Price level sets the size and fixed lower-bound grid for both footprint and heatmap cells. Candle heatmaps retain an independent row setting. Changing the effective resolution starts fresh collection unless another chart retains it; reload retains settings only. It shares the synchronized depth connection with OpenScript depth studies. Spot and Hyperliquid explicitly report unavailable heatmap data. See [quantity, coverage and resource limits](docs/orderbook-heatmap.md).
+Add **Order-book Heatmap** through **Indicators** on ordinary candles or a Footprint presentation to collect resting Binance BTCUSDT USD-M liquidity. Its active-indicator row settings controls tick-aligned price rows, average/observed peak, opacity, intensity and labels. In Footprint mode, Footprint settings’ Price level sets the size and fixed lower-bound grid for both footprint and heatmap cells. Candle heatmaps retain an independent row setting. In ordinary direct mode, changing the effective resolution starts fresh collection unless another chart retains it; reload retains settings only, and it shares the synchronized depth connection with OpenScript depth studies. In staging mode, the server records independently and the worker reloads historical liquidity at the selected resolution; partial outer regions and gaps stay visible. Spot and Hyperliquid explicitly report unavailable heatmap data. See [quantity, coverage and resource limits](docs/orderbook-heatmap.md).
 
 ## Trade Ticker
 

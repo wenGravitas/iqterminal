@@ -1,0 +1,199 @@
+{
+  "initial": {
+    "priceCacheBuilds": 5,
+    "draws": 27,
+    "rebuilds": 9,
+    "renderMs": 39.900000005960464,
+    "maxRenderMs": 22.5,
+    "labels": 184,
+    "bins": 195,
+    "bytes": 33096,
+    "cachedPriceTiles": 5,
+    "cachedPriceRows": 215,
+    "p95RenderMs": 1.800000000745058,
+    "mounted": true,
+    "status": {
+      "state": "live",
+      "message": "Staging durable depth · partial outer coverage · 1 coverage gap(s) · RPI excluded",
+      "tickSize": 0.1,
+      "collectionStart": 1791798640202,
+      "retentionStart": 1791799020000,
+      "capacityLimited": false
+    },
+    "settings": {
+      "enabled": true,
+      "rowPrice": 10,
+      "bucketMs": 500,
+      "mode": "average",
+      "opacity": 0.85,
+      "intensity": 100,
+      "minimum": 0.01,
+      "labels": "auto",
+      "bids": true,
+      "asks": true
+    }
+  },
+  "reload": {
+    "time": 1791799320000,
+    "matchedRows": 43,
+    "identical": true
+  },
+  "reconnect": true,
+  "rowSizeReuse": {
+    "epoch": 1791799323486,
+    "recordingUnchanged": true
+  },
+  "zoom": {
+    "rowSize": 1280,
+    "rows": 869,
+    "min": 49920,
+    "max": 151040,
+    "positiveOuterRows": [
+      {
+        "time": 1791798840000,
+        "low": 52480,
+        "high": 53760,
+        "bid": 0.00007512554402410445,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 57600,
+        "high": 58880,
+        "bid": 0.000042957919488997294,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 58880,
+        "high": 60160,
+        "bid": 0.33774871666666667,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 64000,
+        "high": 65280,
+        "bid": 527.286,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 65280,
+        "high": 66560,
+        "bid": 0.0184711,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 66560,
+        "high": 67840,
+        "bid": 1.3476775333333333,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 67840,
+        "high": 69120,
+        "bid": 0.017,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 69120,
+        "high": 70400,
+        "bid": 72.389,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 70400,
+        "high": 71680,
+        "bid": 0.039,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 71680,
+        "high": 72960,
+        "bid": 12.497170766666667,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 72960,
+        "high": 74240,
+        "bid": 8.044,
+        "ask": 0,
+        "incomplete": true
+      },
+      {
+        "time": 1791798840000,
+        "low": 74240,
+        "high": 75520,
+        "bid": 5.353361533333334,
+        "ask": 0,
+        "incomplete": true
+      }
+    ]
+  },
+  "restart": {
+    "freshEpoch": 1791799504886,
+    "tradeState": "live",
+    "oi": {
+      "lastObservedAt": 1791799535168,
+      "error": null,
+      "stale": false
+    }
+  },
+  "retainedAfterRestart": {
+    "cells": 43,
+    "coverage": {
+      "from": 1791799320000,
+      "to": 1791799380000,
+      "watermark": 12279,
+      "confirmedTo": 1791799539033,
+      "epochs": [
+        {
+          "epoch": 1791799323486,
+          "from": 1791799326358,
+          "to": 1791799484363,
+          "ended": true
+        }
+      ],
+      "semantics": "Standard USD-M diff-depth excludes RPI; per-side snapshot ranges complete, individually observed outer levels partial; unknown is not zero",
+      "priceSpans": [
+        {
+          "epoch": 1791799323486,
+          "from": 1791799326358,
+          "bidFloor": 83372.2,
+          "askCeiling": 83631.2
+        },
+        {
+          "epoch": 1791799323486,
+          "from": 1791799356604,
+          "bidFloor": 83372.2,
+          "askCeiling": 83631.2
+        }
+      ],
+      "gaps": [
+        {
+          "from": 1791799320000,
+          "to": 1791799326358,
+          "reason": "Depth unrecorded or continuity unavailable"
+        }
+      ]
+    }
+  },
+  "errors": []
+}

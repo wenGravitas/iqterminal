@@ -95,6 +95,7 @@ export class TerminalFootprint extends Footprint {
               if (this.valueAreaPath) {
                 if (key === 'stroke') {
                   target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
+                  target.strokeStyle = '#ffffff'; target.globalAlpha = 1; target.lineWidth = this.dpr;
                   try { return (target.stroke as Function).apply(target, args); } finally { target.restore(); }
                 }
                 if (this.gap) args[0] = this.shiftedX(args[0]);

@@ -86,11 +86,11 @@ export class OpenAlgoCandleChart {
   private footprint: TerminalFootprint | null = null;
   private footprintOptions: FootprintOptions = {
     ...DEFAULT_FOOTPRINT_OPTIONS,
-    // Reserve enough of each bar slot for the 5-digit buy/sell quantities at 80px spacing.
-    font: 9, widthFactor: 0.84,
+    // Keep readable quantities with a wider gutter between footprint columns.
+    font: 9, widthFactor: 0.76,
     displayMode: 'bidask', cellStyle: 'ladder',
     statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'], tableRows: [],
-    showCandle: true, showPoc: true, showValueArea: true, valueAreaColor: 'rgba(133, 133, 133, 0.8)',
+    showCandle: true, showPoc: true, showValueArea: true, valueAreaColor: '#ffffff',
     pocStyle: 'outline', radius: 0,
     stackedImbalances: 0, cvdOffset: 0,
   };
@@ -115,7 +115,7 @@ export class OpenAlgoCandleChart {
   };
   private readonly viewSubscriptions: (() => void)[] = [];
 
-  constructor(container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d') {
+  constructor(private readonly container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d') {
     this.chart = createChart(container, {
       raf: {
         schedule: callback => {
@@ -370,7 +370,7 @@ export class OpenAlgoCandleChart {
   focusFootprintLatest() {
     if (this.mode !== 'footprint' || !this.footprintIndexSeries || !this.footprintTimes.length) return;
     this.chart.resetScale();
-    this.chart.timeScale.setBarSpacing(80);
+    this.chart.timeScale.setBarSpacing(112);
     this.chart.timeScale.setRightOffset(1);
   }
 
@@ -524,6 +524,7 @@ export class OpenAlgoCandleChart {
     this.footprintIndexSeries = null;
   }
 
+  onHeatmapViewport?: (viewport:import('../feed/staging-heatmap').HeatmapViewport)=>void;
   draw() {
     if (!this.visible || document.hidden || this.disposed) return;
     const visibleCallbacks = [...this.visibleCallbacks.values()];
@@ -535,6 +536,7 @@ export class OpenAlgoCandleChart {
       callback();
       this.stats.draws++;
     }
+    if(this.heatmap&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     // Cursor invalidation repaints only OpenAlgo's overlay, through our existing RAF scheduler.
     if (this.footprintActivity.needsFrame) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
   }

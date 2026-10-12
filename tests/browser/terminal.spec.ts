@@ -96,7 +96,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     t.injectFootprint({type:'footprint-snapshot',key:'test',ids:[panelId],bars:[bar],retentionStart:barTime});
   },{panelId,barTime,now,status,bar:makeBar(1,84_000.1)});
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(84_000.1);
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(80);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(112);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].rightOffset)).toBe(1);
   const firstRevision=await page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest.revision);
   await page.evaluate(({panelId,barTime,now,status,bar})=>(window as any).__terminal.injectFootprint({type:'footprint-patch',key:'test',ids:[panelId],bars:[bar],retentionStart:barTime}),{panelId,barTime,now,status,bar:makeBar(2,84_000.2)});
@@ -132,7 +132,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   await expect(panel.locator('.ohlc')).toContainText('Bid');
   await expect(panel.locator('.ohlc')).toContainText('[partial]');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.initialViewSet)).toBe(true);
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(80);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(112);
 
   const beforeDockGeometry=await panel.evaluate(element=>{
     const id=(element as HTMLElement).dataset.panelId!;
@@ -215,7 +215,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   await expect.poll(()=>page.evaluate(id=>{
     const engine=(window as any).__terminal.panels.get(id).engine;
     return {spacing:engine.chart.timeScale.barSpacing,rightOffset:engine.chart.timeScale.rightOffset};
-  },hiddenView.id)).toEqual({spacing:80,rightOffset:1});
+  },hiddenView.id)).toEqual({spacing:112,rightOffset:1});
 
   const offscreenPatch=await page.evaluate(id=>{
     const p=(window as any).__terminal.panels.get(id);
@@ -1190,10 +1190,10 @@ test('a single $25 footprint row opens at text height and respects manual price 
   const originalHeight=await rowHeight();
   await page.mouse.move(Math.round(stage.x+stage.width*.4),Math.round(stage.y+stage.height*.4));
   await page.mouse.wheel(0,-100);
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeGreaterThan(80);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeGreaterThan(112);
   await expect.poll(rowHeight).toBeGreaterThan(originalHeight);
   await page.mouse.wheel(0,100);
-  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeCloseTo(80,6);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBeCloseTo(112,6);
   await expect.poll(rowHeight).toBeCloseTo(originalHeight,6);
   const manual=await page.evaluate(()=>{
     const scale=[...(window as any).__terminal.panels.values()][0].engine.chart.panes()[0].priceScale;

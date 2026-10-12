@@ -3,14 +3,16 @@ export const HEATMAP_STRIDE = 13;
 // row-low, bid/ask BTC*ms, BTC peaks, observed ms, complete ms, bid/ask USDT*ms, USDT peaks.
 export const HEATMAP_PEAK_STRIDE = 6;
 export interface LiquidityBucket {
+  preaggregated?: boolean; timeMs?: number;
   id: string; start: number; end: number; epoch: number; rowSize: number;
   priceOffset?: number; // Lower-bound grid offset, zero for fixed price-multiple buckets.
   revision: number; capacityLimited: boolean; cells: Float64Array;
   /** factor, row low, simultaneous bid peak, simultaneous ask peak, bid/ask USDT peaks for power-of-two price bins. */
   peaks: Float64Array;
 }
-/** Footprint flag affects rendering LOD only; all collection uses fixed lower bounds. */
-export interface HeatmapResolution { rowPrice: number; bucketMs: 250 | 500; rowAlignment?: 'footprint' }
+/** Candle duration is supplied by the panel; standalone collectors retain legacy short tiles.
+ * Footprint flag affects rendering LOD only; all collection uses fixed lower bounds. */
+export interface HeatmapResolution { rowPrice: number; bucketMs: 250 | 500; rowAlignment?: 'footprint'; candleMs?: number }
 export interface HeatmapSettings extends HeatmapResolution {
   enabled: boolean; mode: 'average' | 'peak'; opacity: number; intensity: number;
   minimum: number; labels: 'auto' | 'off'; bids: boolean; asks: boolean;
@@ -29,8 +31,8 @@ export function heatmapSettings(value: unknown): HeatmapSettings {
     mode: v.mode === 'peak' ? 'peak' : 'average', opacity: bounded('opacity', 0, 1, .85), intensity: bounded('intensity', .01, 10000, 100),
     minimum: bounded('minimum', 0, 10000, .01), labels: v.labels === 'off' ? 'off' : 'auto', bids: v.bids !== false, asks: v.asks !== false };
 }
-export function heatmapKey(resolution: HeatmapResolution) { return `${resolution.rowPrice}:${resolution.bucketMs}`; }
-export function validResolution(v: HeatmapResolution) { return v && (v.rowAlignment === undefined || v.rowAlignment === 'footprint') && [250, 500].includes(v.bucketMs) && Number.isFinite(v.rowPrice) && v.rowPrice > 0 && v.rowPrice <= 10000; }
+export function heatmapKey(resolution: HeatmapResolution) { return resolution.candleMs === undefined ? `${resolution.rowPrice}:${resolution.bucketMs}` : `${resolution.rowPrice}:candle:${resolution.candleMs}`; }
+export function validResolution(v: HeatmapResolution) { return v && (v.candleMs === undefined || [60000, 300000, 900000, 3600000, 14400000].includes(v.candleMs)) && (v.rowAlignment === undefined || v.rowAlignment === 'footprint') && [250, 500].includes(v.bucketMs) && Number.isFinite(v.rowPrice) && v.rowPrice > 0 && v.rowPrice <= 10000; }
 export interface LiquidityState { rowLow: number; bid: number; ask: number; bidQuote: number; askQuote: number; bidObserved: boolean; askObserved: boolean; bidComplete: boolean; askComplete: boolean }
 export interface ReadonlyDepthView {
   snapshotBidBoundary: number | null; snapshotAskBoundary: number | null;
@@ -71,7 +73,8 @@ export class LiquidityCollector {
   collectionStart: number | null = null;
   evictions = 0;
   constructor(readonly resolution: HeatmapResolution, readonly tickSize: number,
-    private limits = HEATMAP_LIMITS) {}
+    private limits: { readonly [K in keyof typeof HEATMAP_LIMITS]: number } = HEATMAP_LIMITS) {}
+  private get periodMs() { return this.resolution.candleMs ?? this.resolution.bucketMs; }
   transition(book: ReadonlyDepthView | null, now: number, epoch: number) {
     this.advance(now);
     const grouped = book ? groupBook(book, this.resolution.rowPrice, this.tickSize) : { rows: [], limited: false };
@@ -97,8 +100,8 @@ export class LiquidityCollector {
     // Bound work after suspended worker timers. Unobserved >5s is a gap, not an extrapolated wall.
     const end = Math.min(now, this.at + 5000);
     while (this.at < end) {
-      const boundary = Math.floor(this.at / this.resolution.bucketMs) * this.resolution.bucketMs;
-      const until = Math.min(end, boundary + this.resolution.bucketMs), dt = until - this.at;
+      const boundary = Math.floor(this.at / this.periodMs) * this.periodMs;
+      const until = Math.min(end, boundary + this.periodMs), dt = until - this.at;
       const id = `${boundary}:${this.epoch}`;
       const fresh = !this.buckets.has(id);
       const bucket = this.ensureBucket(this.at);
@@ -124,7 +127,7 @@ export class LiquidityCollector {
     if (end < now) { this.at = now; this.state = []; }
   }
   private ensureBucket(now: number) {
-    const boundary = Math.floor(now / this.resolution.bucketMs) * this.resolution.bucketMs, id = `${boundary}:${this.epoch}`;
+    const boundary = Math.floor(now / this.periodMs) * this.periodMs, id = `${boundary}:${this.epoch}`;
     let b = this.buckets.get(id);
     if (!b) {
       this.makeRoom(this.state.length);
@@ -160,7 +163,13 @@ export class LiquidityCollector {
   private makeRoom(rows: number) {
     while (this.buckets.size && (this.buckets.size >= this.limits.buckets || this.cellCount + rows > this.limits.cells || this.bytes + rows * (HEATMAP_STRIDE + 12) * 8 + 1024 > this.limits.bytes)) {
       const key = this.buckets.keys().next().value!;
-      this.buckets.delete(key); this.dirty.delete(key); this.evictions++;
+      // Evict a whole candle, including all reconnect epochs. Never erode a
+      // closed candle's average by dropping only its earliest observations.
+      const boundary = Math.floor(this.buckets.get(key)!.start / this.periodMs);
+      for (const [id, bucket] of this.buckets) {
+        if (Math.floor(bucket.start / this.periodMs) !== boundary) break;
+        this.buckets.delete(id); this.dirty.delete(id); this.evictions++;
+      }
     }
   }
   get cellCount() { let n = 0; for (const b of this.buckets.values()) n += b.cells.length / HEATMAP_STRIDE; return n; }

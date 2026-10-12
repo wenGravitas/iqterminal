@@ -62,6 +62,8 @@ Matching configurations share collection. A new interval or row size starts a ne
 
 ## Coverage
 
+These session rules describe the ordinary direct data mode. In explicit [staging development mode](staging-market-data.md), the same pure accumulator loads bounded retained execution history and uses durable coverage evidence; timeframe/row changes reload retained data, and reload/reconnect reconciles replacement bars. Native script OHLCV remains separate.
+
 The first collected bar is partial. Connection interruptions mark affected coverage and the first later observed bar carries gap metadata where needed. No synthetic zero-volume bars are inserted. A healthy interval with no observed executions differs from an unobserved interval during an outage, even though neither supplies a fabricated footprint bar. Session collection start and connection state remain visible in the panel. The crosshair/readout identifies the matching bar’s partial, observed, gapped or capacity-limited coverage and any gap before it; it is not just a global connection label.
 
 Observed means accepted stream observations under the connection’s coverage rules. It does not promise every exchange fill, fills excluded by Binance, execution history before subscription, or exact intrafill delta extrema. Reconnects preserve retained bars, deduplicate overlaps within bounded state, and resume live collection without a REST trade-history backfill.
@@ -94,7 +96,7 @@ Footprint display settings includes Cell opacity (%) with an 85% default (15% tr
 
 The slim execution candle sits in a central 12–24px gutter between Bid and Ask at readable zoom levels. It uses actual execution OHLC, not row bounds. Its body grows up to 8px, with a 1px wick; Show slim candle hides it without changing observed volume.
 
-Footprint and heatmap columns occupy 84% of each bar slot, leaving a consistent horizontal gap between candles. **Show VAH and VAL** in Footprint settings defaults on (including older saved layouts). Dotted lines span each candle’s column at the outer boundaries of OpenAlgo’s contiguous 70% executed-volume value area around its POC. They use only observed session executions; partial or gapped bars remain incomplete. This visual setting preserves collection and viewport.
+Footprint and heatmap columns occupy 76% of each bar slot by default (112px footprint spacing), leaving a consistent horizontal gap between candles. **Show VAH and VAL** in Footprint settings defaults on (including older saved layouts). Dotted lines span each candle’s column at the outer boundaries of OpenAlgo’s contiguous 70% executed-volume value area around its POC. They use only observed session executions; partial or gapped bars remain incomplete. This visual setting preserves collection and viewport.
 
 POC uses a thin white outline, up to 1px. Bid/ask execution flashes use brighter side colours and a 2px border with a slower fade inside the same bounded 360ms animation. Narrow rows reduce border thickness to preserve their figures; reduced-motion handling and the pulse cap remain unchanged.
 
@@ -109,3 +111,5 @@ This is a presentation preset using OpenAlgo 2.6.0’s public `bidask`/`profile`
 Profile widths use one shared maximum for bid and ask quantities within each candle. A bid of 4.07 is about 49% of an ask of 8.36. Enlarged quantity labels may extend beyond the coloured bar; the wrapper suppresses OpenAlgo 2.6.0’s label background plate so it cannot erase the smaller profile. Candle, POC and statistics backgrounds retain their existing behaviour.
 
 **Show execution candle** defaults to on for every footprint presentation, including Delta profile, Delta and Volume. The shared wrapper draws the execution-derived OHLC body/wick in the central gutter for bid/ask cells and beside the column for single-value cells. Forming-bar revisions update that same candle. Disabling the checkbox hides it without changing collection; an explicitly saved off preference remains off after reload.
+
+Staging mode restores a bounded durable snapshot into the same pure accumulator, then ingests acknowledged execution cursor batches in the worker. Reconnects replay stored IDs; staging collector repairs through supported REST history and reports unrecoverable gaps. Native candles remain independent script inputs. See [staging development](staging-market-data.md).

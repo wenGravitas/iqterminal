@@ -14,7 +14,7 @@ export class TickerService {
     if (config.markets.includes('binance:perpetual')) s.release = this.executions.subscribeExecutions(id, (trades,status,liveSince) => {
       if (this.subscribers.get(id) !== s) return;
       if (s.status.state === 'live' && status.state !== 'live') s.gaps++;
-      s.status = { ...status, message: status.state === 'live' ? `Session prints · no backfill${s.gaps ? ` · ${s.gaps} connection gap(s)` : ''}` : status.message }; s.dirty = true;
+      s.status = { ...status, message: status.state === 'live' ? `Direct Binance · session prints · no backfill${s.gaps ? ` · ${s.gaps} connection gap(s)` : ''}` : status.message }; s.dirty = true;
       for (const trade of trades) { const record = s.pipeline.accept(trade,this.now(),liveSince); if (!record) continue;
         if (s.pending.length === TICKER_BATCH_LIMIT) { s.pending.shift(); s.dropped++; }
         s.pending.push(record);

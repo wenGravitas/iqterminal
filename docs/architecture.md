@@ -42,7 +42,7 @@ Users can edit a built-in copy, import/export a plain `.oscript` source, or exch
 
 ## Later milestones, not implemented
 
-Other venue adapters, durable/shared execution history and additional footprint-derived studies remain later milestones. The current implementation deliberately keeps collection session-local and separate from candle history and OpenScript inputs.
+Other venue adapters and additional footprint-derived studies remain later milestones. The ordinary direct mode keeps executions session-local and separate from native candle history and OpenScript inputs. The explicit [staging development mode](staging-market-data.md) adds durable Binance USD-M aggregate history through the existing worker, shared pure accumulator and private SSH proxy. Native script candle inputs remain distinct.
 
 Rust/WASM may help measured bulk aggregation, backfills or numeric kernels using batched calls across the existing DOM-free boundary. Host rendering remains owned here. OffscreenCanvas/WebGPU are later benchmark questions, not assumed speedups. AI panels would request explicit bounded timestamped market context, with requests entirely outside the feed/chart hot path.
 
@@ -110,3 +110,7 @@ normal external changes still request scheduled repaint. Heatmap settings also
 exposes the shared BTC/USDT display preference when no Footprint is attached.
 
 `CompactChartTab` decorates Dockview’s public `DefaultTab` renderer, preserving native drag, close, context-menu and accessibility behaviour. It projects the canonical instrument to local official venue icons and native ticker text, while keeping full persisted titles intact. Group-local ordinals refresh only on layout/parameter/title changes. An abort-owned global Alt+1…9 handler selects the corresponding active-group panel and ignores inputs, editors and dialogs. No runtime tab objects or numbering are persisted; legacy layouts receive compact tabs through the default renderer option. Icon sources and rights are recorded in `/venues/NOTICE.txt` and linked from Licences.
+
+## Durable staging liquidity
+
+Explicit staging mode routes supported heatmaps to `feed/staging-heatmap.ts` inside the existing feed worker. The chart adapter reports its visible time/price bounds; the worker coalesces and aborts generation-scoped requests, adapts resolution within a rendering budget and replaces bounded historical/live tiles by identity. One shared acknowledged depth-head socket invalidates the current tail; API watermarks reconcile reconnects without additive double counting. The renderer retains side-specific known durations and partial coverage, and spans coarse time columns across native candle slots. Server collection is independent of chart configuration, with no browser row cap. Direct heatmaps and OpenScript depth studies keep their existing source. See [staging contract and evidence](staging-market-data.md).

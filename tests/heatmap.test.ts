@@ -213,3 +213,40 @@ describe('heatmap chart boundary', () => {
     expect(primitive.stats.bytes).toBeGreaterThan(0); primitive.detached(); expect(primitive.stats.bytes).toBe(0); expect(primitive.autoscaleInfo()).toBeNull();
   });
 });
+
+it('freezes closed candle quantities, peaks and revisions while new candles update', () => {
+  const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500, candleMs: 60000 }, 1);
+  c.transition(state(20), 0, 1);
+  for (let t = 1000; t <= 30000; t += 1000) c.advance(t);
+  c.transition(state(40), 30000, 1);
+  for (let t = 31000; t <= 60000; t += 1000) c.advance(t);
+  const closed = c.snapshot()[0]!;
+  expect(bins(c).find(b => b.low === 100)?.bid).toBe(30);
+  expect(bins(c, { ...heatmapSettings(null), mode: 'peak' }).find(b => b.low === 100)?.bid).toBe(40);
+  c.changes(); c.transition(state(100), 60000, 1);
+  for (let t = 61000; t <= 180000; t += 1000) c.advance(t);
+  // This exceeds the old 120-second raw tile window: history must not erode.
+  expect(c.snapshot()[0]).toEqual(closed);
+  expect(c.changes().every(b => b.start >= 60000)).toBe(true);
+  expect(c.snapshot()[1]!.cells[HEATMAP_STRIDE + 1]! / 60000).toBe(100);
+  expect(bins(c).find(b => b.low === 100)?.bid).toBe(30);
+});
+
+it('evicts whole closed candles including reconnect epochs, without partial averages', () => {
+  const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500, candleMs: 60000 }, 1,
+    { ...HEATMAP_LIMITS, buckets: 3 });
+  c.transition(state(20), 0, 1); c.advance(1000);
+  c.transition(null, 1000, 1); c.transition(state(40), 2000, 2); c.advance(3000);
+  c.transition(state(60), 60000, 2); c.advance(61000);
+  expect(c.snapshot()).toHaveLength(3);
+  c.transition(state(80), 120000, 2); c.advance(121000);
+  expect(c.snapshot().every(b => b.start >= 60000)).toBe(true);
+  expect(c.retentionStart).toBe(60000);
+});
+
+it('shares candle collection only for matching timeframes and validates chart durations', () => {
+  expect(heatmapKey({ rowPrice: 10, bucketMs: 250, candleMs: 60000 })).toBe(heatmapKey({ rowPrice: 10, bucketMs: 500, candleMs: 60000 }));
+  expect(heatmapKey({ rowPrice: 10, bucketMs: 500, candleMs: 60000 })).not.toBe(heatmapKey({ rowPrice: 10, bucketMs: 500, candleMs: 300000 }));
+  expect(validResolution({ rowPrice: 10, bucketMs: 500, candleMs: 60000 })).toBe(true);
+  expect(validResolution({ rowPrice: 10, bucketMs: 500, candleMs: 60001 })).toBe(false);
+});

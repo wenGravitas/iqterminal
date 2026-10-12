@@ -1,0 +1,162 @@
+{
+  "actualPiBrowser": true,
+  "fixture": false,
+  "historicalBars": 16,
+  "completeBarsReproduced": 5,
+  "verifiedCompleteInterval": {
+    "from": 1791799200000,
+    "to": 1791799500000
+  },
+  "liveRevisionAdvanced": true,
+  "actualCursorHandoffParity": {
+    "cursor": 3482038724,
+    "bars": 16
+  },
+  "offlineRetained": 16,
+  "reconnectReconciled": true,
+  "timeframeChanged": true,
+  "timeframeVolumeParity": {
+    "oneMinute": [
+      141.13399999999996,
+      11784786.3151
+    ],
+    "fiveMinute": [
+      141.13400000000001,
+      11784786.315099996
+    ]
+  },
+  "actualUnrecordedCoverageGapVisible": true,
+  "backendRestartReconciledInPi": true,
+  "latencySamples": [
+    {
+      "cursor": 3482038700,
+      "backendSentAtMs": 1791799687367,
+      "workerReceivedAtMs": 1791799687552,
+      "workerAppliedAtMs": 1791799687561,
+      "chartDrawObservedAtMs": 1791799687652,
+      "rendererDrawObservedAfterWorkerMs": 91
+    },
+    {
+      "cursor": 3482038702,
+      "backendSentAtMs": 1791799688466,
+      "workerReceivedAtMs": 1791799688592,
+      "workerAppliedAtMs": 1791799688592,
+      "chartDrawObservedAtMs": 1791799688665,
+      "rendererDrawObservedAfterWorkerMs": 73
+    },
+    {
+      "cursor": 3482038704,
+      "backendSentAtMs": 1791799689139,
+      "workerReceivedAtMs": 1791799689292,
+      "workerAppliedAtMs": 1791799689293,
+      "chartDrawObservedAtMs": 1791799689350,
+      "rendererDrawObservedAfterWorkerMs": 57
+    },
+    {
+      "cursor": 3482038706,
+      "backendSentAtMs": 1791799690195,
+      "workerReceivedAtMs": 1791799690324,
+      "workerAppliedAtMs": 1791799690324,
+      "chartDrawObservedAtMs": 1791799690369,
+      "rendererDrawObservedAfterWorkerMs": 45
+    },
+    {
+      "cursor": 3482038708,
+      "backendSentAtMs": 1791799691016,
+      "workerReceivedAtMs": 1791799691157,
+      "workerAppliedAtMs": 1791799691157,
+      "chartDrawObservedAtMs": 1791799691186,
+      "rendererDrawObservedAfterWorkerMs": 29
+    },
+    {
+      "cursor": 3482038711,
+      "backendSentAtMs": 1791799691835,
+      "workerReceivedAtMs": 1791799691969,
+      "workerAppliedAtMs": 1791799691969,
+      "chartDrawObservedAtMs": 1791799692011,
+      "rendererDrawObservedAfterWorkerMs": 42
+    },
+    {
+      "cursor": 3482038712,
+      "backendSentAtMs": 1791799692282,
+      "workerReceivedAtMs": 1791799692407,
+      "workerAppliedAtMs": 1791799692407,
+      "chartDrawObservedAtMs": 1791799692439,
+      "rendererDrawObservedAfterWorkerMs": 32
+    },
+    {
+      "cursor": 3482038713,
+      "backendSentAtMs": 1791799693051,
+      "workerReceivedAtMs": 1791799693180,
+      "workerAppliedAtMs": 1791799693182,
+      "chartDrawObservedAtMs": 1791799693240,
+      "rendererDrawObservedAfterWorkerMs": 58
+    },
+    {
+      "cursor": 3482038714,
+      "backendSentAtMs": 1791799693725,
+      "workerReceivedAtMs": 1791799693868,
+      "workerAppliedAtMs": 1791799693868,
+      "chartDrawObservedAtMs": 1791799693942,
+      "rendererDrawObservedAfterWorkerMs": 74
+    },
+    {
+      "cursor": 3482038716,
+      "backendSentAtMs": 1791799694533,
+      "workerReceivedAtMs": 1791799694679,
+      "workerAppliedAtMs": 1791799694679,
+      "chartDrawObservedAtMs": 1791799694713,
+      "rendererDrawObservedAfterWorkerMs": 34
+    },
+    {
+      "cursor": 3482038719,
+      "backendSentAtMs": 1791799695390,
+      "workerReceivedAtMs": 1791799695519,
+      "workerAppliedAtMs": 1791799695519,
+      "chartDrawObservedAtMs": 1791799695546,
+      "rendererDrawObservedAfterWorkerMs": 27
+    },
+    {
+      "cursor": 3482038722,
+      "backendSentAtMs": 1791799696068,
+      "workerReceivedAtMs": 1791799696201,
+      "workerAppliedAtMs": 1791799696201,
+      "chartDrawObservedAtMs": 1791799696231,
+      "rendererDrawObservedAfterWorkerMs": 30
+    },
+    {
+      "cursor": 3482038724,
+      "backendSentAtMs": 1791799697185,
+      "workerReceivedAtMs": 1791799697324,
+      "workerAppliedAtMs": 1791799697325,
+      "chartDrawObservedAtMs": 1791799697363,
+      "rendererDrawObservedAfterWorkerMs": 38
+    }
+  ],
+  "gapBounds": {
+    "from": 1791788640000,
+    "to": 1791788880000
+  },
+  "final": {
+    "bars": 4,
+    "status": {
+      "state": "live",
+      "message": "Staging · retained aggTrades · 4 bars · 0 coverage gap(s)",
+      "lastUpdate": 1791799763014,
+      "tickSize": 0.1,
+      "rowSize": 25,
+      "collectionStartedAt": 1791788760000,
+      "firstTradeAt": 1791798600000,
+      "lastTradeAt": 1791799762476,
+      "eventTime": null,
+      "outages": 0,
+      "capacityDrops": 0,
+      "unknownSideRecords": 0,
+      "unknownSideVolume": 0,
+      "lateRecords": 0,
+      "retentionStart": 1791798600,
+      "coverage": "partial"
+    }
+  },
+  "errors": []
+}

@@ -51,6 +51,7 @@ export class FeedClient {
     this.send({type:'heatmap-subscribe',id:token,resolution});
     return ()=>{this.heatmapListeners.delete(token);if(this.currentHeatmap.get(id)===token)this.currentHeatmap.delete(id);this.send({type:'heatmap-unsubscribe',id:token});};
   }
+  requestHeatmapViewport(id:string,viewport:import('./staging-heatmap').HeatmapViewport){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentHeatmap.get(id);if(token)this.send({type:'heatmap-viewport',id:token,viewport});}
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {
     if(series.venue!=='binance'||marketOf(series)!=='perpetual')return ()=>{};

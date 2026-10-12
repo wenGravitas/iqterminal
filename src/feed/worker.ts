@@ -1,10 +1,12 @@
 /// <reference lib="webworker" />
 import { parseLive } from './adapters';
 import { MarketService } from './service';
+import { StagingHeatmapService } from './staging-heatmap';
 import { BinanceHeatmapService } from './heatmap-service';
 import { BinanceDepthService } from './depth-service';
 import { TickerService } from './ticker-service';
 import { BinanceFootprintService } from './footprint-service';
+import { StagingFeedService, stagingMarket } from './staging-service';
 import { fixtureBars } from './fixtures';
 import { duration, type Command, type Event, type Series } from './protocol';
 const scope=self as unknown as DedicatedWorkerGlobalScope;
@@ -23,11 +25,16 @@ const fixtureOptions = () => ({
   now: Date.now,
   random: () => .5,
 });
-let service=new MarketService((e:Event)=>scope.postMessage(e));
+const stagingMode = import.meta.env.VITE_DATA_MODE === 'staging';
+const emitDirect = (e: Event) => scope.postMessage(stagingMode && e.type === 'status' ? { ...e, status: { ...e.status, message: `Direct venue · ${e.status.message}` } } : e);
+let service=new MarketService(emitDirect);
 const depth=new BinanceDepthService((e:Event)=>scope.postMessage(e));
 const heatmap=new BinanceHeatmapService(depth, e=>scope.postMessage(e));
 const footprint=new BinanceFootprintService((e:Event)=>scope.postMessage(e), undefined, {}, import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS==='1');
 const tickers = new TickerService(footprint, e => scope.postMessage(e));
+const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) : undefined;
+const stagingHeatmap = stagingMode ? new StagingHeatmapService(e=>scope.postMessage(e)) : undefined;
+const stagingClients = new Set<string>();
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
@@ -38,6 +45,16 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     return;
   }
   const c=event.data;
+  if (staging && !fixture) {
+    if ((c.type === 'subscribe' || c.type === 'footprint-subscribe') && stagingMarket(c.series)) { stagingClients.add(c.id); staging.command(c); return; }
+    if ((c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe' || c.type === 'retry') && stagingClients.has(c.id)) {
+      staging.command(c); if (c.type !== 'retry') stagingClients.delete(c.id); return;
+    }
+    if (c.type === 'footprint-ack' || c.type === 'footprint-retry') { staging.command(c); return; }
+    if(c.type.startsWith('heatmap-')){stagingHeatmap?.command(c);return;}
+    if(c.type==='online'||c.type==='depth-retry')stagingHeatmap?.command(c);
+    if (c.type === 'online') staging.command(c);
+  }
   if(c.type==='ticker-subscribe'){tickers.subscribe(c.id,c.config,c.configRevision);return;}
   if(c.type==='ticker-update'){tickers.update(c.id,c.config,c.configRevision);return;}
   if(c.type==='ticker-unsubscribe'){tickers.unsubscribe(c.id);return;}
@@ -55,6 +72,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='depth-retry'){depth.retry();heatmap.retry();return;}
   if(c.type==='footprint-subscribe'||c.type==='footprint-unsubscribe'||c.type==='footprint-retry'||c.type==='footprint-ack'){footprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),depth:depth.diagnostics(),heatmap:heatmap.diagnostics(),footprint:footprint.diagnostics(),tickers:tickers.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),footprint:footprint.diagnostics(),tickers:tickers.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

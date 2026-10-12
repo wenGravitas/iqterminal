@@ -1,0 +1,16 @@
+{
+  "ordinaryCandles": {
+    "status": {
+      "state": "live",
+      "message": "Staging durable depth · partial outer coverage · 6 coverage gap(s) · RPI excluded",
+      "tickSize": 0.1,
+      "collectionStart": 1791798177946,
+      "retentionStart": 1791798120000,
+      "capacityLimited": false
+    },
+    "bins": 1540,
+    "footprintEnabled": false
+  },
+  "errors": [],
+  "browserClosedAfterCheck": true
+}

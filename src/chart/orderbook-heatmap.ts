@@ -14,22 +14,23 @@ export interface HeatmapBin {
   bid: number; ask: number; bidQuote: number; askQuote: number; bidObserved: boolean; askObserved: boolean; incomplete: boolean;
   x: number; right: number; y: number; bottom: number;
 }
-interface Aggregate extends HeatmapBin { duration: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number; bidQuoteArea: number; askQuoteArea: number; bidQuotePeak: number; askQuotePeak: number }
+interface Aggregate extends HeatmapBin { duration: number; bidDuration: number; askDuration: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number; bidQuoteArea: number; askQuoteArea: number; bidQuotePeak: number; askQuotePeak: number }
 /** Quantities, never colour values, are aggregated. Fixed density scaling is independent of viewport. */
 export function heatmapBins(buckets: readonly LiquidityBucket[], options: HeatmapSettings, intervalMs: number,
   indexOf: (seconds: number) => number | undefined, xOf: (index: number) => number, yOf: (price: number) => number,
   width: number, height: number, priceRows: typeof groupPriceRows = groupPriceRows): HeatmapBin[] {
   const bins = new Map<string, Aggregate>();
   for (const b of buckets) {
-    const index = timestampToLogical(b.start, intervalMs, indexOf);
+    const period=b.timeMs??intervalMs;
+    const columnStart = Math.floor(b.start / period) * period, columnEnd = columnStart + period;
+    const index = timestampToLogical(columnStart, intervalMs, indexOf);
     if (index === null) continue;
-    const columnStart = Math.floor(b.start / intervalMs) * intervalMs, columnEnd = columnStart + intervalMs;
     // One fixed-width column per host candle, including the forming candle. Its
     // display slot is not an observation of future liquidity: retain actual times.
-    const x = xOf(index - .5), right = xOf(index + .5);
+    const x = xOf(index - .5), right = xOf(index + period/intervalMs - .5);
     if (right <= 0 || x >= width || b.end <= b.start) continue;
     const rowHeight = Math.abs(yOf(b.rowSize) - yOf(0));
-    const factor = options.rowAlignment === 'footprint' ? 1 : Math.min(128, Math.max(1, 2 ** Math.ceil(Math.log2(4 / Math.max(.0001, rowHeight)))));
+    const factor = b.preaggregated || options.rowAlignment === 'footprint' ? 1 : Math.min(128, Math.max(1, 2 ** Math.ceil(Math.log2(4 / Math.max(.0001, rowHeight)))));
     const priceSize = b.rowSize * factor;
     const duration = b.end - b.start;
     for (const g of priceRows(b, factor)) {
@@ -40,21 +41,22 @@ export function heatmapBins(buckets: readonly LiquidityBucket[], options: Heatma
       const key = `${columnStart}:${priceKey}:${factor}`;
       let a = bins.get(key);
       if (!a) { a = { start: b.start, end: b.end, columnStart, columnEnd, observedDuration: 0, partial: true, low, high, epoch: b.epoch, bid: 0, ask: 0, bidQuote: 0, askQuote: 0, bidObserved: false, askObserved: false,
-        incomplete: false, x, right, y, bottom, duration: 0, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0, bidQuoteArea: 0, askQuoteArea: 0, bidQuotePeak: 0, askQuotePeak: 0 }; bins.set(key, a); }
+        incomplete: false, x, right, y, bottom, duration: 0, bidDuration: 0, askDuration: 0, bidArea: 0, askArea: 0, bidPeak: 0, askPeak: 0, bidQuoteArea: 0, askQuoteArea: 0, bidQuotePeak: 0, askQuotePeak: 0 }; bins.set(key, a); }
       else if (a.end !== b.start || a.epoch !== b.epoch) a.incomplete = true;
       // Gaps contribute no duration or zero quantity. Multiple epochs in one
       // candle share its column but are explicitly marked incomplete.
-      a.end = b.end; a.duration += duration;
+      a.end = b.end; a.duration += duration; a.bidDuration += g.bidDuration ?? duration; a.askDuration += g.askDuration ?? duration;
       a.bidArea += g.bidArea; a.askArea += g.askArea; a.bidPeak = Math.max(a.bidPeak, g.bidPeak); a.askPeak = Math.max(a.askPeak, g.askPeak);
       a.bidQuoteArea += g.bidQuoteArea; a.askQuoteArea += g.askQuoteArea; a.bidQuotePeak = Math.max(a.bidQuotePeak, g.bidQuotePeak); a.askQuotePeak = Math.max(a.askQuotePeak, g.askQuotePeak);
       a.bidObserved ||= g.bidObserved; a.askObserved ||= g.askObserved; a.incomplete ||= g.incomplete;
     }
   }
-  return [...bins.values()].map(a => ({ ...a, observedDuration: a.duration, partial: a.start > a.columnStart || a.end < a.columnEnd, bid: options.mode === 'peak' ? a.bidPeak : a.bidArea / a.duration,
-    bidQuote: options.mode === 'peak' ? a.bidQuotePeak : a.bidQuoteArea / a.duration, askQuote: options.mode === 'peak' ? a.askQuotePeak : a.askQuoteArea / a.duration, ask: options.mode === 'peak' ? a.askPeak : a.askArea / a.duration }));
+  return [...bins.values()].map(a => ({ ...a, observedDuration: Math.max(a.bidDuration,a.askDuration), partial: a.start > a.columnStart || a.end < a.columnEnd, bid: options.mode === 'peak' ? a.bidPeak : a.bidDuration ? a.bidArea / a.bidDuration : 0,
+    bidQuote: options.mode === 'peak' ? a.bidQuotePeak : a.bidDuration ? a.bidQuoteArea / a.bidDuration : 0, askQuote: options.mode === 'peak' ? a.askQuotePeak : a.askDuration ? a.askQuoteArea / a.askDuration : 0, ask: options.mode === 'peak' ? a.askPeak : a.askDuration ? a.askArea / a.askDuration : 0 }));
 }
 
 interface PriceRow {
+  bidDuration?: number; askDuration?: number;
   low: number; bidArea: number; askArea: number; bidPeak: number; askPeak: number; bidQuoteArea: number; askQuoteArea: number; bidQuotePeak: number; askQuotePeak: number;
   bidObserved: boolean; askObserved: boolean; incomplete: boolean;
 }
@@ -67,6 +69,7 @@ function groupPriceRows(b: LiquidityBucket, factor: number): PriceRow[] {
     g.bidArea += c[i + 1]!; g.askArea += c[i + 2]!;
     g.bidPeak = Math.max(g.bidPeak, c[i + 3]!); g.askPeak = Math.max(g.askPeak, c[i + 4]!);
     g.bidQuoteArea += c[i + 9]!; g.askQuoteArea += c[i + 10]!; g.bidQuotePeak = Math.max(g.bidQuotePeak, c[i + 11]!); g.askQuotePeak = Math.max(g.askQuotePeak, c[i + 12]!);
+    if(b.preaggregated){g.bidDuration=c[i+5]!;g.askDuration=c[i+6]!;}
     g.bidObserved ||= c[i + 5]! > 0; g.askObserved ||= c[i + 6]! > 0;
     g.incomplete ||= c[i + 7]! < duration || c[i + 8]! < duration; groups.set(key, g);
   }
@@ -132,7 +135,7 @@ export class OrderBookHeatmap implements IPrimitive {
   update(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) {
     const map = new Map(snapshot ? [] : this.buckets.map(b => [b.id, b]));
     for (const b of buckets) {
-      if (!(b.cells instanceof Float64Array) || !(b.peaks instanceof Float64Array) || b.cells.length % HEATMAP_STRIDE !== 0 || b.peaks.length % HEATMAP_PEAK_STRIDE !== 0 || b.cells.length > HEATMAP_LIMITS.rows * HEATMAP_STRIDE || b.peaks.length > 1800 || b.end <= b.start || !Number.isFinite(b.start + b.end + b.rowSize) || b.rowSize <= 0) continue;
+      if (!(b.cells instanceof Float64Array) || !(b.peaks instanceof Float64Array) || b.cells.length % HEATMAP_STRIDE !== 0 || b.peaks.length % HEATMAP_PEAK_STRIDE !== 0 || b.cells.length > (b.preaggregated ? 512 : HEATMAP_LIMITS.rows) * HEATMAP_STRIDE || b.peaks.length > 1800 || b.end <= b.start || !Number.isFinite(b.start + b.end + b.rowSize) || b.rowSize <= 0) continue;
       if (!map.has(b.id) || b.revision > map.get(b.id)!.revision) map.set(b.id, b);
     }
     this.buckets = [...map.values()].filter(b => retentionStart !== null && b.end > retentionStart).sort((a, b) => a.start - b.start).slice(-HEATMAP_LIMITS.buckets);
@@ -160,7 +163,8 @@ export class OrderBookHeatmap implements IPrimitive {
         const { column } = footprintColumn(o, spacing);
         for (const bin of this.bins) {
           const centre = (bin.x + bin.right) / 2;
-          bin.x = centre - column / 2; bin.right = bin.x + column;
+          const span=(bin.columnEnd-bin.columnStart)/this.intervalMs;
+          bin.x = centre - column * span / 2; bin.right = bin.x + column * span;
         }
       }
       this.cacheKey = key; this.stats.rebuilds++;

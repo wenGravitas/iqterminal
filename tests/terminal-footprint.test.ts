@@ -40,8 +40,9 @@ test('footprint opacity migrates and validates independently of heatmap opacity'
 test('bid and ask cells leave a central execution-candle gutter with matching hover', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'ladder', widthFactor: .84, showCandle: true, showPoc: false, showValueArea: true, valueAreaColor: '#858585', statsRows: [] });
   p.setBars([{ time: 0, rowSize: 25, open: 100, high: 120, low: 100, close: 110, delta: 1, cells: [{ price: 112.5, bidVol: 2, askVol: 3 }] }]);
+  const valueAreaStrokes: { color: string; alpha: number; width: number }[] = [];
   const cells: number[][] = [], candles: number[][] = [], dashes: number[][] = [], lines: number[][] = [];
-  const target: any = { globalAlpha: 1, font: '', measureText: () => ({ width: 10 }), roundRect: (...args: number[]) => cells.push(args), fillRect: (...args: number[]) => candles.push(args), setLineDash: (dash: number[]) => dashes.push(dash), moveTo: (...args: number[]) => lines.push(args), lineTo: (...args: number[]) => lines.push(args) };
+  const target: any = { stroke() { valueAreaStrokes.push({ color: this.strokeStyle, alpha: this.globalAlpha, width: this.lineWidth }); }, globalAlpha: 1, font: '', measureText: () => ({ width: 10 }), roundRect: (...args: number[]) => cells.push(args), fillRect: (...args: number[]) => candles.push(args), setLineDash: (dash: number[]) => dashes.push(dash), moveTo: (...args: number[]) => lines.push(args), lineTo: (...args: number[]) => lines.push(args) };
   const ctx = new Proxy(target, { get: (t, key) => key in t ? t[key] : () => {} });
   const rc: any = { dpr: 1, plotWidth: 600, plotHeight: 400, theme: { background: '#090909', axisText: '#cccccc', upColor: '#58a65c', downColor: '#ad5858' },
     timeScale: { barSpacing: 200, visibleRange: () => ({ from: 0, to: 1 }), indexToX: () => 150 },
@@ -58,6 +59,7 @@ test('bid and ask cells leave a central execution-candle gutter with matching ho
   expect(p.hoverAt(150, 150)).toBeNull();
   expect(p.options().showCandle).toBe(true);
   expect(dashes).toContainEqual([1, 3]);
+  expect(valueAreaStrokes).toContainEqual({ color: '#ffffff', alpha: 1, width: 1 });
   expect(lines).toHaveLength(4);
   [[66, 100], [234, 100], [66, 200], [234, 200]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
   expect(cells[0][0]).toBeCloseTo(66); expect(cells[1][0] + cells[1][2]).toBeCloseTo(234);

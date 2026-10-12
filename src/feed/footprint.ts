@@ -154,6 +154,16 @@ export class FootprintAccumulator {
   get oldestTime() { return this.bars[0]?.time ?? null; }
   get latest() { return this.current ? freezeBar(this.current, this.tickSize * this.rowTicks) : null; }
 
+  /** Restore a validated bounded durable snapshot before cursor replay. */
+  restore(bars: FootprintBar[]) {
+    if (bars.length > this.limits.maxBars || bars.reduce((n, b) => n + b.cells.length, 0) > this.limits.maxCells
+      || bars.some((b, i) => b.rowSize !== this.tickSize * this.rowTicks || b.cells.length > this.limits.maxCellsPerBar || (i > 0 && b.time <= bars[i - 1]!.time))) throw new Error('Invalid footprint snapshot bounds');
+    this.dispose();
+    this.bars = bars.map(b => ({ ...b, quoteDelta: b.quoteDelta ?? 0, minQuoteDelta: b.minQuoteDelta ?? 0, maxQuoteDelta: b.maxQuoteDelta ?? 0,
+      cells: new Map(b.cells.map(c => { const row = Math.round(c.price / b.rowSize); return [row, { row, bidVol: c.bidVol, askVol: c.askVol, bidNotional: c.bidNotional ?? 0, askNotional: c.askNotional ?? 0 }]; })) }));
+    this.current = this.bars.at(-1); this.cells = bars.reduce((n, b) => n + b.cells.length, 0); this.nextPartial = !this.current;
+  }
+
   ingest(trade: AggTradeObservation): 'applied' | 'late' | 'unknown-side' | 'capacity' | 'invalid-grid' {
     if (trade.side === 'unknown') return 'unknown-side';
     if (![trade.timeMs, trade.price, trade.quantity].every(Number.isFinite)
