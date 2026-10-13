@@ -1,9 +1,13 @@
+import {PreparedFootprints} from './prepared-footprints';
+import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
 import { footprintTicksForPrice } from './protocol';
 import { duration, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintBar, type FootprintStatus, type Series } from './protocol';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
+interface View {from:number;to:number;key:string;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 interface Group {
+  views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
   bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number;
@@ -14,12 +18,13 @@ export const stagingMarket = (series: Series) => series.venue === 'binance' && m
 
 /** Worker-owned snapshot restore + durable cursor replay, with bounded shared caches and acknowledged IPC. */
 export class StagingFeedService {
+  private prepared:PreparedFootprints;private usePrepared=import.meta.env.VITE_HISTORY_TILES!=='0';
   private groups = new Map<string, Group>();
   private clients = new Map<string, string>();
   private sequence = 0; private batch = 0; private online = true;
   private timer: ReturnType<typeof setInterval>; private dead = false;
   constructor(private emit: (event: Event) => void, private request: typeof fetch = (...args) => fetch(...args), private now = Date.now, private socket: (url: string) => WebSocket = url => new WebSocket(url)) {
-    this.timer = setInterval(() => this.refresh(), 1000);
+    this.prepared=new PreparedFootprints(request);this.timer = setInterval(() => this.refresh(), 1000);
   }
   command(c: Command) {
     if (c.type === 'subscribe' || c.type === 'footprint-subscribe') {
@@ -30,7 +35,7 @@ export class StagingFeedService {
       let group = this.groups.get(key);
       if (!group) {
         if (this.groups.size >= 16) return;
-        group = { key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
+        group = { views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
           busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0 };
         this.groups.set(key, group);
       }
@@ -39,6 +44,7 @@ export class StagingFeedService {
       if (group.bars.length && group.lastStatus) this.publish(group, { type: 'footprint-snapshot', key, ids: [...group.ids], generation: group.generation, batchId: 0, bars: group.bars, retentionStart: group.bars[0]?.time ?? null, status: group.lastStatus });
       this.status(group, 'loading', rowPrice === undefined ? 'Staging · loading native Binance candles' : 'Staging · loading retained aggregate executions');
       if (!group.ws) void this.load(group);
+    } else if(c.type==='footprint-viewport'){const key=this.clients.get(c.id),g=key?this.groups.get(key):undefined;if(!g||g.rowPrice===undefined||!this.usePrepared||!Number.isFinite(c.from)||!Number.isFinite(c.to)||c.from>=c.to)return;const step=duration[g.series.interval],to=Math.min(Math.ceil(c.to/step)*step,Math.floor(this.now()/step)*step),from=Math.max(step,Math.floor(Math.max(c.from,c.to-14400000)/step)*step);if(from>=to)return;const viewKey=`${from}:${to}`,old=g.views.get(c.id);if(old?.key===viewKey)return;old?.abort?.abort();g.views.set(c.id,{from,to,key:viewKey});this.status(g,g.lastStatus?.state??'loading','Staging · loading visible footprints');if(g.accumulator)void this.loadViewport(g,c.id);
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
     else if (c.type === 'footprint-ack') {
       const g = this.groups.get(c.key);
@@ -51,20 +57,21 @@ export class StagingFeedService {
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {
-        if (!c.online) { g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
+        if (!c.online) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
         else { g.retryAt = 0; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
       }
     }
   }
   private unsubscribe(id: string) {
     const key = this.clients.get(id); this.clients.delete(id); const g = key && this.groups.get(key);
-    if (!g) return; g.ids.delete(id);
-    if (!g.ids.size) { g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
+    if (!g) return;g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
+    if (!g.ids.size) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
   private refresh() {
     for (const g of this.groups.values()) {
       if (g.ws && g.streamAt && this.now() - g.streamAt > 15000) { g.ws.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · stream heartbeat expired; replay pending'); }
       if (!g.ws && this.online && this.now() >= g.retryAt) { if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      if(this.online&&this.usePrepared&&g.accumulator)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=g.retryAt)void this.loadViewport(g,id);
       if (this.online && g.history && g.history.next > g.history.target && !g.historyBusy && !g.historyError && g.cursor !== undefined) void this.loadOlder(g);
     }
   }
@@ -130,7 +137,7 @@ export class StagingFeedService {
   private footprintStatus(g: Group, state: FootprintStatus['state'], message: string, data?: any): FootprintStatus {
     const coverage = data?.coverage;
     const historicalGaps = coverage?.gaps?.filter((gap: any) => gap.reason !== 'not yet confirmed by durable execution watermark') ?? [];
-    return { state, message: this.historyMessage(g, message), lastUpdate: g.lastUpdate, tickSize: data?.tickSize ?? null, rowSize: g.rowPrice ?? null,
+    return { history:this.historyState(g),state, message: this.historyMessage(g, message), lastUpdate: g.lastUpdate, tickSize: data?.tickSize ?? null, rowSize: g.rowPrice ?? null,
       collectionStartedAt: coverage?.confirmedFrom ?? null, firstTradeAt: g.bars[0]?.time ? g.bars[0].time * 1000 : null,
       lastTradeAt: coverage?.confirmedTo ?? null, eventTime: null, outages: historicalGaps.length, capacityDrops: data?.aggregation?.capacityDrops ?? g.accumulator?.drops ?? 0,
       unknownSideRecords: 0, unknownSideVolume: 0, lateRecords: 0, retentionStart: g.bars[0]?.time ?? null,
@@ -138,7 +145,7 @@ export class StagingFeedService {
   }
   private status(g: Group, state: FootprintStatus['state'], message: string) {
     if (g.rowPrice === undefined) this.emit({ type: 'status', key: g.key, ids: [...g.ids], status: { state, message, lastUpdate: g.lastUpdate } });
-    else this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, status: g.lastStatus ? { ...g.lastStatus, state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message) });
+    else this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, status: g.lastStatus ? { ...g.lastStatus, history:this.historyState(g),state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message) });
   }
   private async load(g: Group) {
     if (g.busy || !this.online || this.dead || this.now() < g.retryAt) return;
@@ -180,7 +187,7 @@ export class StagingFeedService {
         this.publish(g, { type: snapshot ? 'footprint-snapshot' : 'footprint-patch', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, bars: changed, retentionStart: g.bars[0]?.time ?? null, status });
       }
       g.failures = 0; g.retryAt = 0; this.connect(g);
-      if (g.rowPrice !== undefined) {
+      if (g.rowPrice !== undefined && !this.usePrepared) {
         const step = duration[g.series.interval];
         const end = Math.floor(from / step) * step;
         const target = Math.max(Math.floor((to - (FOOTPRINT_MAX_BARS - 1) * step) / step) * step, Math.floor(data.coverage.confirmedFrom / step) * step);
@@ -193,6 +200,15 @@ export class StagingFeedService {
       this.status(g, g.bars.length || g.candles.length ? 'stale' : 'failed', `Staging unavailable · ${error instanceof Error ? error.message : 'request failed'} · retrying; Retry available`);
     } finally { clearTimeout(timeout); g.busy = false; g.abort = undefined; }
   }
+  private async loadViewport(g:Group,id:string){const view=g.views.get(id);if(!view||view.busy||!g.accumulator)return;view.busy=true;view.abort=new AbortController();g.historyBusy=true;g.historyError=undefined;
+    try{await this.prepared.load(view.from,view.to,g.series.interval,g.rowPrice!,view.abort.signal,(bars,complete,validated)=>{if(view.abort!.signal.aborted||g.views.get(id)!==view||this.groups.get(g.key)!==g||!g.accumulator)return;if(!bars.every(validBackendBar))throw Error('Invalid historical footprint bars');
+      // Closed viewport responses never advance the durable live execution cursor.
+      const liveStart=Math.floor(this.now()/duration[g.series.interval])*duration[g.series.interval];const merged=boundedFootprintHistory([...g.bars.filter(b=>!complete||!validated||b.time*1000<view.from||b.time*1000>=Math.min(view.to,liveStart)),...bars.filter(b=>b.time*1000<liveStart)]);g.bars=merged;g.accumulator.restore(merged);view.loaded=complete;if(complete)view.validatedAt=this.now();
+      const status=this.footprintStatus(g,g.lastStatus?.state??'loading',`Staging · ${validated?'validated':'cached; validating'} visible footprints${complete?'':' · loading history'}`,{coverage:g.lastCoverage,tickSize:.1});g.lastStatus=status;this.publish(g,{type:'footprint-snapshot',key:g.key,ids:[...g.ids],generation:g.generation,batchId:0,bars:g.bars,retentionStart:g.bars[0]?.time??null,status});});
+    }catch(e){if(!view.abort.signal.aborted){g.historyError=e instanceof Error?e.message:String(e);g.retryAt=this.now()+2000;this.status(g,'stale',`Staging visible footprints · ${g.historyError}`);}}
+    finally{view.busy=false;g.historyBusy=[...g.views.values()].some(v=>v.busy);}
+  }
+  private historyState(g:Group){const views=[...g.views.values()];return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined)};}
   private historyMessage(g: Group, message: string) {
     return message + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
   }
@@ -235,8 +251,8 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
-  dispose() { this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
+  diagnostics() { return { scheduler:historyScheduler.diagnostics(),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
 export function validBackendBar(b: any): b is FootprintBar {

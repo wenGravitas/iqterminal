@@ -12,6 +12,7 @@ export class FeedClient {
   private watchRequests=new Map<number,{resolve:(value:unknown)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
   watchRequest<T=unknown>(path:string,body?:unknown,key:string=crypto.randomUUID()):Promise<T>{if(this.watchRequests.size>=8)return Promise.reject(new Error('Watch request capacity; retry'));const id=++this.sequence;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.watchRequests.delete(id);reject(new Error('Watch request timed out; refresh before retrying a mutation'));},15000);this.watchRequests.set(id,{resolve:value=>resolve(value as T),reject,timer});this.worker.postMessage({type:'watch-rpc',id,path,body,key});});}
   subscribeWatches(listener:(snapshot:WatchSnapshot|undefined,error?:string)=>void){this.watchListeners.add(listener);if(this.watchSnapshot||this.watchError)listener(this.watchSnapshot,this.watchError);if(!this.watchStarted){this.watchStarted=true;this.worker.postMessage({type:'watch-start'});}return ()=>{this.watchListeners.delete(listener);};}
+  readonly historyApply={footprintMs:0,heatmapMs:0,footprintBatches:0,heatmapBatches:0};
   diagnostics:Record<string,unknown>={};
   constructor(fixture=false, alignFixtureToNow=false) {
     // Explicit diagnostic build mode only, never automatic fallback.
@@ -23,15 +24,15 @@ export class FeedClient {
       if(wm.type==='watch-result'){const request=this.watchRequests.get(wm.id);if(request){clearTimeout(request.timer);this.watchRequests.delete(wm.id);if(wm.error)request.reject(new Error(wm.error));else request.resolve(wm.value);}return;}
       if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot?.events)this.worker.postMessage({type:'watch-ack',cursor:wm.snapshot.cursor});}return;}
       const e=message.data;
-      if(e.type==='diagnostics'){this.diagnostics=e.data;return;}
+      if(e.type==='diagnostics'){this.diagnostics={...e.data,historyApply:{...this.historyApply}};return;}
       try {
         for(const id of e.ids){
           try {
             if(e.type==='ticker-batch'){const ticker=this.tickerListeners.get(id);if(ticker?.revision===e.configRevision)ticker.callback(e);}
             const l=this.listeners.get(id);if(l&&'key'in e&&l.key===e.key)l.callback(e);
-            const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key)heatmap.callback(e);
+            const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key){const start=performance.now();heatmap.callback(e);this.historyApply.heatmapMs+=performance.now()-start;this.historyApply.heatmapBatches++;}
             const depth=this.depthListeners.get(id);depth?.(e);
-            const footprint=this.footprintListeners.get(id);if(footprint&&'key'in e&&footprint.key===e.key&&e.type.startsWith('footprint-'))footprint.callback(e);
+            const footprint=this.footprintListeners.get(id);if(footprint&&'key'in e&&footprint.key===e.key&&e.type.startsWith('footprint-')){const start=performance.now();footprint.callback(e);this.historyApply.footprintMs+=performance.now()-start;this.historyApply.footprintBatches++;}
           } catch(error) { console.error('Market data subscriber callback failed',error); }
         }
       } finally {
@@ -61,6 +62,7 @@ export class FeedClient {
     return ()=>{this.heatmapListeners.delete(token);if(this.currentHeatmap.get(id)===token)this.currentHeatmap.delete(id);this.send({type:'heatmap-unsubscribe',id:token});};
   }
   requestHeatmapViewport(id:string,viewport:import('./staging-heatmap').HeatmapViewport){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentHeatmap.get(id);if(token)this.send({type:'heatmap-viewport',id:token,viewport});}
+  requestFootprintViewport(id:string,from:number,to:number){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentFootprint.get(id);if(token)this.send({type:'footprint-viewport',id:token,from,to});}
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {
     if(series.venue!=='binance'||marketOf(series)!=='perpetual')return ()=>{};

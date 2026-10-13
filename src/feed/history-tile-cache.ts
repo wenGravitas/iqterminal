@@ -1,0 +1,12 @@
+export interface TileCache {getMany(keys:string[]):Promise<Map<string,any>>;putMany(entries:{key:string;value:any}[]):Promise<void>;dispose?():void;}
+/** Asynchronous individual-tile LRU. The budget counts serialized bytes exactly;
+ * each record is small (one 64-row tile or a bounded revision manifest). */
+export class HistoryTileCache implements TileCache {
+ private database?:Promise<IDBDatabase|undefined>;
+ constructor(readonly maxBytes=24*1024*1024){}
+ private open(){return this.database??=new Promise(resolve=>{if(typeof indexedDB==='undefined'){resolve(undefined);return;}const r=indexedDB.open('iqterminal-history-tiles-v1',1);r.onupgradeneeded=()=>{const s=r.result.createObjectStore('tiles',{keyPath:'key'});s.createIndex('usedAt','usedAt');};r.onsuccess=()=>resolve(r.result);r.onerror=r.onblocked=()=>resolve(undefined);});}
+ async getMany(keys:string[]){const db=await this.open(),values=new Map<string,any>();if(!db||keys.length>4096)return values;return new Promise<Map<string,any>>(resolve=>{try{const tx=db.transaction('tiles','readwrite'),store=tx.objectStore('tiles');for(const key of keys){const r=store.get(key);r.onsuccess=()=>{if(r.result){values.set(key,r.result.value);if(Date.now()-r.result.usedAt>=60000)store.put({...r.result,usedAt:Date.now()});}};}tx.oncomplete=tx.onerror=tx.onabort=()=>resolve(values);}catch{resolve(values);}});}
+ async putMany(entries:{key:string;value:any}[]){const db=await this.open();if(!db||entries.length>512)return;const records=entries.map(e=>({...e,bytes:new TextEncoder().encode(JSON.stringify(e)).byteLength,usedAt:Date.now()})).filter(e=>e.bytes<=512*1024);await new Promise<void>(resolve=>{try{const tx=db.transaction('tiles','readwrite'),store=tx.objectStore('tiles');for(const r of records)store.put(r);const scan=store.index('usedAt').openCursor();const ordered:{key:IDBValidKey;bytes:number}[]=[];let bytes=0;scan.onsuccess=()=>{const c=scan.result;if(c){bytes+=c.value.bytes;ordered.push({key:c.primaryKey,bytes:c.value.bytes});c.continue();}else {let count=ordered.length;for(const r of ordered){if(bytes<=this.maxBytes&&count<=4096)break;store.delete(r.key);bytes-=r.bytes;count--;}}};tx.oncomplete=tx.onerror=tx.onabort=()=>resolve();}catch{resolve();}});}
+ dispose(){void this.database?.then(db=>db?.close());}
+}
+export const tileKey=(m:{version:number;feed:string;timeMs:number;rowPrice:number;from:number;revision:number},block:number)=>`${m.feed}:${m.version}:${m.timeMs}:${Math.round(m.rowPrice*10)}:${m.from}:${block}:${m.revision}`;

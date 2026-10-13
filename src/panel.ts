@@ -342,6 +342,7 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
+    this.engine.onFootprintViewport=(from,to)=>{if(this.footprintHasInitialView)this.feed.requestFootprintViewport(this.params.api.id,from,to);};
     this.engine.onHeatmapViewport = viewport => {
       if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
       this.feed.requestHeatmapViewport(this.params.api.id, viewport);

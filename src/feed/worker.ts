@@ -54,7 +54,7 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     if ((c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe' || c.type === 'retry') && stagingClients.has(c.id)) {
       staging.command(c); if (c.type !== 'retry') stagingClients.delete(c.id); return;
     }
-    if (c.type === 'footprint-ack' || c.type === 'footprint-retry') { staging.command(c); return; }
+    if (c.type === 'footprint-viewport' || c.type === 'footprint-ack' || c.type === 'footprint-retry') { staging.command(c); return; }
     if(c.type.startsWith('heatmap-')){stagingHeatmap?.command(c);return;}
     if(c.type==='online'||c.type==='depth-retry')stagingHeatmap?.command(c);
     if (c.type === 'online') staging.command(c);

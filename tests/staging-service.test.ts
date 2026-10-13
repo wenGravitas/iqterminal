@@ -1,8 +1,8 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { StagingFeedService, stagingMarket, validBackendBar, boundedFootprintHistory } from '../src/feed/staging-service';
 import { FootprintAccumulator } from '../src/feed/footprint';
 import type { Event } from '../src/feed/protocol';
-afterEach(() => vi.useRealTimers());
+beforeEach(()=>vi.stubEnv('VITE_HISTORY_TILES','0'));afterEach(() => {vi.useRealTimers();vi.unstubAllEnvs();});
 const series = { venue: 'binance', market: 'perpetual', interval: '1m' } as const;
 const bar = { time: 60, revision: 2, cells: [{ price: 84000, bidVol: 1, askVol: 2, bidNotional: 84000, askNotional: 168002 }],
   open: 84000, high: 84001, low: 84000, close: 84001, delta: 1, minDelta: -1, maxDelta: 1, rowSize: 25,

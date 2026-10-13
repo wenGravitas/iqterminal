@@ -539,6 +539,7 @@ export class OpenAlgoCandleChart {
     this.footprintIndexSeries = null;
   }
 
+  onFootprintViewport?: (from:number,to:number)=>void;
   onHeatmapViewport?: (viewport:import('../feed/staging-heatmap').HeatmapViewport)=>void;
   draw() {
     if (!this.visible || document.hidden || this.disposed) return;
@@ -551,6 +552,7 @@ export class OpenAlgoCandleChart {
       callback();
       this.stats.draws++;
     }
+    if(this.mode==='footprint'&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
     if(this.heatmap&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     // Cursor invalidation repaints only OpenAlgo's overlay, through our existing RAF scheduler.
     if (this.footprintActivity.needsFrame) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
