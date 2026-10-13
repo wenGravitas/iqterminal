@@ -30,7 +30,7 @@ export interface FootprintViewOptions {
   imbalanceRatio: 2 | 3 | 4;
   imbalanceThreshold: number;
 }
-export interface PanelConfig extends CanonicalSeries { indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
+export interface PanelConfig extends CanonicalSeries { indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; wheelMode: 'tradingview' | 'both-axes'; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
 function legacyConfig(value: unknown) {
   const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const series = canonicalSeries(value) ?? { venue: 'binance' as const, market: 'perpetual' as const, interval: '1m' as const };
@@ -56,6 +56,7 @@ function legacyConfig(value: unknown) {
   const wantsFootprint = source.type === 'footprint' && supportsDepth(series);
   return { ...series, type: wantsFootprint ? 'footprint' as const : 'candle' as const, rowPrice,
     grid: typeof source.grid === 'boolean' ? source.grid : true,
+    wheelMode: source.wheelMode === 'both-axes' ? 'both-axes' as const : 'tradingview' as const,
     footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' as const : 'btc' as const, footprint, heatmap: heatmapSettings(source.heatmap), studies: validStudyPins(source.studies) };
 }
 
@@ -109,6 +110,7 @@ export class CandlePanel implements IContentRenderer {
   private chartSettings = document.createElement('button');
   private chartSettingsDialog = document.createElement('dialog');
   private gridCheckbox = document.createElement('input');
+  private wheelMode = document.createElement('select');
   private footprintUnits = document.createElement('select');
   private overlays = document.createElement('div');
   private activeIndicators = document.createElement('details');
@@ -268,6 +270,7 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
+    this.wheelMode.value = this.selection.wheelMode;
     this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
     params.api.updateParameters(this.selection);
     this.instrument.value = instrumentKey(this.selection); this.marketButton.textContent = instrumentLabel(this.selection);
@@ -332,9 +335,18 @@ export class CandlePanel implements IContentRenderer {
       this.engine?.setGridVisible(this.selection.grid);
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
+    this.wheelMode.addEventListener('change', () => {
+      this.selection = { ...this.selection, wheelMode: this.wheelMode.value === 'both-axes' ? 'both-axes' : 'tradingview' };
+      this.engine?.setWheelMode(this.selection.wheelMode);
+      this.params.api.updateParameters(this.selection); this.save();
+    }, options);
     if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
-    this.engine.onHeatmapViewport = viewport => this.feed.requestHeatmapViewport(this.params.api.id, viewport);
+    this.engine.onHeatmapViewport = viewport => {
+      if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
+      this.feed.requestHeatmapViewport(this.params.api.id, viewport);
+    };
+    this.engine.setWheelMode(this.selection.wheelMode);
     this.engine.setGridVisible(this.selection.grid); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     if (this.selection.type === 'footprint') this.engine.setDisplayMode('footprint');
     this.applyFootprintOptions();
@@ -387,6 +399,15 @@ export class CandlePanel implements IContentRenderer {
     this.gridCheckbox.type = 'checkbox'; gridLabel.append(gridText, this.gridCheckbox); chartFields.append(gridLabel);
     const baseLabel = document.createElement('label'); baseLabel.className = 'indicator-setting-field'; const baseText = document.createElement('span'); baseText.textContent = 'Show base candles'; baseLabel.append(baseText, this.baseVisible); chartFields.append(baseLabel);
     const baseHint = document.createElement('p'); baseHint.className = 'dialog-status'; baseHint.textContent = 'Base style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.'; chartFields.append(baseHint);
+    const wheelLabel = document.createElement('label'); wheelLabel.className = 'indicator-setting-field';
+    const wheelText = document.createElement('span'); wheelText.textContent = 'Mouse wheel';
+    this.wheelMode.setAttribute('aria-label', 'Mouse wheel behavior');
+    this.wheelMode.add(new Option('TradingView style', 'tradingview'));
+    this.wheelMode.add(new Option('Time + price at cursor (previous)', 'both-axes'));
+    wheelLabel.append(wheelText, this.wheelMode); chartFields.append(wheelLabel);
+    const wheelHint = document.createElement('p'); wheelHint.className = 'dialog-status';
+    wheelHint.textContent = 'TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.';
+    chartFields.append(wheelHint);
     chartForm.append(chartHeader, chartFields); this.chartSettingsDialog.append(chartForm);
 
     this.picker.className = 'indicator-picker';

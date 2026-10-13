@@ -1,0 +1,534 @@
+{
+  "started": 1791890390031,
+  "events": [
+    {
+      "at": 10041,
+      "ms": 4166,
+      "query": "from=1791889800000&to=1791890395898&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "at": 11046,
+      "ms": 770,
+      "query": "from=1791890100000&to=1791890400297&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "at": 12706,
+      "ms": 1426,
+      "query": "from=1791890100000&to=1791890401298&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 16689,
+      "ms": 3489,
+      "query": "from=1791890100000&to=1791890401298&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 3089,
+      "cells": 284,
+      "head": 904814
+    },
+    {
+      "at": 22628,
+      "ms": 5933,
+      "query": "from=1791876300000&to=1791876900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 5902,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 29777,
+      "ms": 7159,
+      "query": "from=1791876900000&to=1791877500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6156,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 35900,
+      "ms": 6132,
+      "query": "from=1791877500000&to=1791878100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6109,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 41027,
+      "ms": 5135,
+      "query": "from=1791878100000&to=1791878700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6060,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 46255,
+      "ms": 5232,
+      "query": "from=1791878700000&to=1791879300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6014,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 51975,
+      "ms": 5733,
+      "query": "from=1791879300000&to=1791879900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5969,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 57476,
+      "ms": 5520,
+      "query": "from=1791879900000&to=1791880500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5917,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 63121,
+      "ms": 5642,
+      "query": "from=1791880500000&to=1791881100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6173,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 67858,
+      "ms": 4734,
+      "query": "from=1791881100000&to=1791881700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6123,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 73780,
+      "ms": 5925,
+      "query": "from=1791881700000&to=1791882300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6071,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 78944,
+      "ms": 5173,
+      "query": "from=1791882300000&to=1791882900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6028,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 83617,
+      "ms": 4678,
+      "query": "from=1791882900000&to=1791883500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5982,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 88658,
+      "ms": 5052,
+      "query": "from=1791883500000&to=1791884100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5935,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 94039,
+      "ms": 5387,
+      "query": "from=1791884100000&to=1791884700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6172,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 100926,
+      "ms": 6894,
+      "query": "from=1791884700000&to=1791885300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6127,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 113483,
+      "ms": 12552,
+      "query": "from=1791885300000&to=1791885900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6081,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 139342,
+      "ms": 25868,
+      "query": "from=1791885900000&to=1791886500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 6020,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 164326,
+      "ms": 24976,
+      "query": "from=1791886500000&to=1791887100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5958,
+      "cells": 284,
+      "head": 904838
+    },
+    {
+      "at": 177848,
+      "ms": 13531,
+      "query": "from=1791887100000&to=1791887700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=904838",
+      "status": 200,
+      "records": 5906,
+      "cells": 284,
+      "head": 904838
+    }
+  ],
+  "samples": [
+    {
+      "at": 15157,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": null,
+        "retentionStart": null,
+        "capacityLimited": true
+      },
+      "buckets": 0,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 25163,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 35170,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 45175,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 55179,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 65184,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 75193,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 85199,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 95206,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 105216,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 115230,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 125236,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 135243,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 145252,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 155259,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 165270,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 175285,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 185295,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791890100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    }
+  ]
+}

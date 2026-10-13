@@ -15,7 +15,7 @@ export interface LiquidityBucket {
 export interface HeatmapResolution { rowPrice: number; bucketMs: 250 | 500; rowAlignment?: 'footprint'; candleMs?: number }
 export interface HeatmapSettings extends HeatmapResolution {
   enabled: boolean; mode: 'average' | 'peak'; opacity: number; intensity: number;
-  minimum: number; labels: 'auto' | 'off'; bids: boolean; asks: boolean;
+  contrast: 'enhanced' | 'muted'; minimum: number; labels: 'auto' | 'off'; bids: boolean; asks: boolean;
 }
 export interface HeatmapStatus {
   state: 'syncing' | 'live' | 'stale' | 'failed'; message: string; tickSize: number | null;
@@ -23,12 +23,12 @@ export interface HeatmapStatus {
 }
 export const HEATMAP_LIMITS = Object.freeze({ configurations: 4, buckets: 240, rows: 128, cells: 16384, bytes: 2 * 1024 * 1024 });
 export const DEFAULT_HEATMAP: HeatmapSettings = Object.freeze({ enabled: false, rowPrice: 10, bucketMs: 500,
-  mode: 'average', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true });
+  mode: 'average', contrast: 'enhanced', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true });
 export function heatmapSettings(value: unknown): HeatmapSettings {
   const v = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const bounded = (key: string, low: number, high: number, fallback: number) => typeof v[key] === 'number' && Number.isFinite(v[key]) && Number(v[key]) >= low && Number(v[key]) <= high ? Number(v[key]) : fallback;
   return { enabled: v.enabled === true, rowPrice: bounded('rowPrice', .000001, 10000, 10), bucketMs: v.bucketMs === 250 ? 250 : 500,
-    mode: v.mode === 'peak' ? 'peak' : 'average', opacity: bounded('opacity', 0, 1, .85), intensity: bounded('intensity', .01, 10000, 100),
+    mode: v.mode === 'peak' ? 'peak' : 'average', contrast: v.contrast === 'muted' ? 'muted' : 'enhanced', opacity: bounded('opacity', 0, 1, .85), intensity: bounded('intensity', .01, 10000, 100),
     minimum: bounded('minimum', 0, 10000, .01), labels: v.labels === 'off' ? 'off' : 'auto', bids: v.bids !== false, asks: v.asks !== false };
 }
 export function heatmapKey(resolution: HeatmapResolution) { return resolution.candleMs === undefined ? `${resolution.rowPrice}:${resolution.bucketMs}` : `${resolution.rowPrice}:candle:${resolution.candleMs}`; }

@@ -24,7 +24,7 @@ export function parseDisplayMinimum(text:string):number|null {
 export interface TickerConfig { version: 1; columns: TickerColumn[]; markets: ConnectionKey[]; scope: ConnectionKey[]; tiers: Tier[]; displayMinimum: number; displayUnit: TickerUnit; side: 'both' | 'buy' | 'sell' | 'unknown'; muted: boolean; histogram: boolean; histogramSeconds: number; histogramOpacity: number }
 export interface ClassifiedTrade { execution: NormalizedExecution; receivedAt: number; tier: Tier | null; notify: boolean }
 export interface TickerBatch { type: 'ticker-batch'; ids: string[]; configRevision: number; generation: number; batchId: number; records: ClassifiedTrade[]; status: Status; dropped: number }
-export const TICKER_MAX_ROWS = 500, TICKER_BATCH_LIMIT = 256, TICKER_MAX_RECENT = 8192, TICKER_MAX_WIDGETS = 8;
+export const TICKER_MAX_ROWS = 500, TICKER_DISPLAY_ROWS = 100, TICKER_BATCH_LIMIT = 256, TICKER_MAX_RECENT = 8192, TICKER_MAX_WIDGETS = 8;
 export function defaultTiers(): Tier[] {
   return [0,100000,1000000].map((minimum, i) => ({ id: `tier-${i}`, name: ['Small','Large','Very large'][i], minimum, unit: 'USDT', buyColor: ['#426b4a','#65b873','#85d894'][i], sellColor: ['#79534e','#d17872','#e8a29c'][i], bold: i > 0, pulse: i === 2, sound: (['silent','bell','alarm'] as const)[i], volume: .5, toast: i === 2 }));
 }
@@ -76,10 +76,29 @@ export class TickerPipeline {
 /** UI scrolling pauses a snapshot, not ingestion. */
 export class TickerTape {
   rows: ClassifiedTrade[] = []; private frozen: ClassifiedTrade[] | null = null; private frozenAt: number | null = null;
-  ingest(records: ClassifiedTrade[]) { this.rows.push(...records); if (this.rows.length > TICKER_MAX_ROWS) this.rows.splice(0,this.rows.length-TICKER_MAX_ROWS); }
-  pause(now=Date.now()) { this.frozen = [...this.rows]; this.frozenAt=now; }
-  live() { this.frozen = null; this.frozenAt=null; }
+  private matching: ClassifiedTrade[] = []; private frozenMatching: ClassifiedTrade[] | null = null;
+  private config = tickerConfig({}); private filterKey = '';
+  configure(config: TickerConfig) {
+    const key = JSON.stringify([config.markets,config.side,config.displayUnit,config.displayMinimum]);
+    this.config = config; if (key === this.filterKey) return; this.filterKey = key;
+    // Matching prints evicted from the raw buffer are older than all remaining raw prints.
+    // Reuse both bounded tapes on an explicit filter edit, without duplicating their overlap.
+    const select = (matching: ClassifiedTrade[], raw: ClassifiedTrade[]) => {
+      const ids = new Set(raw.map(r=>r.execution.executionId));
+      return [...matching.filter(r=>!ids.has(r.execution.executionId)),...raw]
+        .filter(r=>displayed(r.execution,config)).slice(-TICKER_DISPLAY_ROWS);
+    };
+    this.matching = select(this.matching,this.rows);
+    if (this.frozen && this.frozenMatching) this.frozenMatching = select(this.frozenMatching,this.frozen);
+  }
+  ingest(records: ClassifiedTrade[]) {
+    this.rows.push(...records); if (this.rows.length > TICKER_MAX_ROWS) this.rows.splice(0,this.rows.length-TICKER_MAX_ROWS);
+    this.matching.push(...records.filter(r=>displayed(r.execution,this.config)));
+    if (this.matching.length > TICKER_DISPLAY_ROWS) this.matching.splice(0,this.matching.length-TICKER_DISPLAY_ROWS);
+  }
+  pause(now=Date.now()) { this.frozen = [...this.rows]; this.frozenMatching = [...this.matching]; this.frozenAt=now; }
+  live() { this.frozen = null; this.frozenMatching = null; this.frozenAt=null; }
   snapshot(now=Date.now()) { return { records: this.frozen ?? this.rows, now: this.frozenAt ?? now }; }
   get paused() { return this.frozen !== null; }
-  visible(config: TickerConfig) { return (this.frozen ?? this.rows).filter(r => displayed(r.execution,config)).slice(-100).reverse(); }
+  visible(config: TickerConfig) { this.configure(config); return [...(this.frozenMatching ?? this.matching)].reverse(); }
 }

@@ -1,0 +1,24 @@
+{
+  "source": "Recorded ten-minute depth window replayed inside the existing one-CPU staging app container; JSON parsed before each timed reconstruction. Modes run in alternating implementation order.",
+  "records": 6028,
+  "cells": 284,
+  "equal": true,
+  "timings": [
+    {
+      "mode": "average",
+      "referenceMs": 3446.5883839999997,
+      "optimizedMs": 1368.0972659999998
+    },
+    {
+      "mode": "peak",
+      "referenceMs": 3068.435547,
+      "optimizedMs": 1453.901342
+    },
+    {
+      "mode": "last",
+      "referenceMs": 3124.823504,
+      "optimizedMs": 1266.2561999999998
+    }
+  ],
+  "limits": "Replay computation only; excludes database fetch, payload parse, worker transport, HTTP transfer and browser rendering. One recorded window, not a worst-case throughput guarantee."
+}

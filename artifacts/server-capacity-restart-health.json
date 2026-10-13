@@ -1,0 +1,130 @@
+{
+  "before": {
+    "version": 1,
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1791889686869,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 897978,
+        "at": 1791889686338,
+        "epoch": 1791872639286
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable standard diff-depth · RPI excluded · partial outer regions",
+        "epoch": 1791872639286,
+        "lastUpdate": 1791889687053,
+        "bidFloor": 83543.8,
+        "askCeiling": 83810.2,
+        "sequence": 11805158149108
+      },
+      "metrics": {
+        "events": 661403,
+        "changes": 83646287,
+        "wireBytes": 1864684162,
+        "storedPayloadBytes": 6954542813,
+        "overflows": 0,
+        "reconnects": 2,
+        "queue": 7,
+        "levels": 102067,
+        "startAt": 1791822216710
+      },
+      "retention": {
+        "lastRun": 1791888817289,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 3,
+      "overflows": 0,
+      "recoveries": 1,
+      "exchangeToReceiveMs": 130,
+      "receiveToDurableMs": 258,
+      "ingestionLagMs": 748
+    },
+    "disk": {
+      "bytes": 2177912016,
+      "free": 227413999616,
+      "paused": false
+    },
+    "watermark": {
+      "id": 3483402948,
+      "timeMs": 1791889686329
+    },
+    "tickSize": 0.1,
+    "oi": {
+      "lastObservedAt": 1791889658571,
+      "error": null,
+      "stale": false
+    }
+  },
+  "after": {
+    "version": 1,
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1791889738802,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 898263,
+        "at": 1791889738255,
+        "epoch": 1791889718628
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable standard diff-depth · RPI excluded · partial outer regions",
+        "epoch": 1791889718628,
+        "lastUpdate": 1791889738868,
+        "bidFloor": 83007.6,
+        "askCeiling": 83265.4,
+        "sequence": 11805163591052
+      },
+      "metrics": {
+        "events": 174,
+        "changes": 19411,
+        "wireBytes": 441424,
+        "storedPayloadBytes": 476375,
+        "overflows": 0,
+        "reconnects": 1,
+        "queue": 6,
+        "levels": 4194,
+        "startAt": 1791889718519
+      },
+      "retention": {
+        "lastRun": 1791889718656,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 0,
+      "overflows": 0,
+      "recoveries": 1,
+      "exchangeToReceiveMs": 131,
+      "receiveToDurableMs": 459,
+      "ingestionLagMs": 553
+    },
+    "disk": {
+      "bytes": 2063431038,
+      "free": 227535335424,
+      "paused": false
+    },
+    "watermark": {
+      "id": 3483403569,
+      "timeMs": 1791889738402
+    },
+    "tickSize": 0.1,
+    "oi": {
+      "lastObservedAt": 1791889719216,
+      "error": null,
+      "stale": false
+    }
+  }
+}

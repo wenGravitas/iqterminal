@@ -16,7 +16,7 @@ source /home/daz/.nvm/nvm.sh
 pnpm dev:staging
 ```
 
-Open **http://127.0.0.1:5173/**. On the Binance USD-M chart, Indicators → Footprint loads the latest approximately 15 minutes of retained executions, then receives acknowledged durable execution batches over WebSocket. Settings and chart selections still persist through the existing layout storage; collected data is fetched again on reload. Native candles remain Binance native OHLCV for OpenScript. Execution-derived OHLC and actual price × quantity notionals belong to Footprints and the separate backend execution-candle endpoint.
+Open **http://127.0.0.1:5173/**. On the Binance USD-M chart, Indicators → Footprint loads the latest approximately 15 minutes of retained executions, starts acknowledged durable execution streaming, then progressively loads older complete bars at a fixed durable watermark. History is bounded to the newest 300 bars and 18,000 cells (about 25 hours on a 5-minute chart; fine price rows can shorten this). Older pages never replace newer live values. Unrecorded and incomplete boundaries remain explicit; failed older-page loads expose Retry. Settings and chart selections still persist through the existing layout storage; collected data is fetched again on reload. Native candles remain Binance native OHLCV for OpenScript. Execution-derived OHLC and actual price × quantity notionals belong to Footprints and the separate backend execution-candle endpoint.
 
 The footer distinguishes staging, loading, stale/recovery and coverage gaps. Complete retained closed bars reproduce across reloads. The forming bar, truncated request boundaries, unrecorded history, recovery gaps and capacity limits remain incomplete. No synthetic empty bars or automatic direct-feed fallback. Retry is available; backoff is capped at 30 seconds and prior data stays visible on failure.
 
@@ -67,7 +67,7 @@ Versioned endpoints under `/market-data/v1/`:
 | `oi?from=&to=` | Observed BTC OI samples, venue/observation times, gaps, truncation |
 | WebSocket `stream` | Bounded acknowledged execution cursor replay, native kline updates and ingestion health |
 
-Raw/aggregate history requests are at most four hours; raw pages are at most 1,000 records, aggregation at most 250,000 input records, 300 bars/18,000 cells/512 cells per bar. Query-limit errors require a smaller range. Initial browser history covers approximately 15 minutes. The worker restores the shared accumulator from that snapshot, then processes at most 1,000 executions per acknowledged stream batch without retaining a raw execution dataset. The accumulator remains bounded to 300 bars/18,000 cells. Subscriptions share a stream per configuration; reconnects resume the last applied execution cursor. Native candles refresh native REST history on reconnect before resuming their stream. Shared configurations reuse worker subscriptions; IPC allows one unacknowledged footprint message and one coalesced latest snapshot. Native changes and footprint revisions use incremental patches after initial load.
+Raw/aggregate history requests are at most four hours; raw pages are at most 1,000 records, aggregation at most 250,000 input records, 300 bars/18,000 cells/512 cells per bar. Query-limit errors require a smaller range. The first browser snapshot covers approximately 15 minutes; older complete bars then load in sequential pages at the snapshot watermark, within the same 300-bar/18,000-cell cache. The worker restores the shared accumulator from that snapshot, then processes at most 1,000 executions per acknowledged stream batch without retaining a raw execution dataset. The accumulator remains bounded to 300 bars/18,000 cells. Subscriptions share a stream per configuration; reconnects resume the last applied execution cursor. Native candles refresh native REST history on reconnect before resuming their stream. Shared configurations reuse worker subscriptions; IPC allows one unacknowledged footprint message and one coalesced latest snapshot. Native changes and footprint revisions use incremental patches after initial load.
 
 ## Coverage, storage and limitations
 
@@ -97,7 +97,7 @@ On staging, `tests/integration.mjs` verifies complete-boundary 1m/5m base and ac
 
 The worker loads a bounded footprint snapshot and its `cursor`, then sends `{type:"subscribe", version:1, after:cursor, from:historyStart}` to `/market-data/v1/stream`. The server replays database rows strictly after that cursor through its captured durable head; live notifications trigger the same bounded database replay path. Each `executions` packet contains `after`, `cursor`, `watermark`, at most1,000 normalized executions, coverage, collector state, tickSize and sentAt. The worker applies each batch once, coalesces bounded UI patches and sends `{type:"ack",cursor}`. One batch may await ACK per socket; after15s the server disconnects it. One IPC envelope plus one complete coalesced snapshot may await the UI. An invalid or expired resume requests a visible reset, followed by new bounded history. No REST footprint polling remains.
 
-Native subscriptions send `interval`; their events identify `binance-native-kline`. History and live native klines preserve script inputs. OI remains observed REST every30s. Health messages arrive every5s; absent heartbeat15s makes the worker stale. Exchange heartbeats use the existing ws automatic pong support, plus a5s watchdog; planned23h connection rotation uses the normal recovery path. Retry backoff caps30s. A maximum16 sockets,1MiB outbound buffer and shared4-query capacity limit bound slow consumers.
+Native subscriptions send `interval`; their events identify `binance-native-kline`. History and live native klines preserve script inputs. OI remains observed REST every30s. Health messages arrive every5s; absent heartbeat15s makes the worker stale. Exchange heartbeats use the existing ws automatic pong support, plus a5s watchdog; planned23h connection rotation uses the normal recovery path. Retry backoff caps30s. A maximum16 sockets,1MiB outbound buffer and shared4-query capacity limit bound slow consumers. HTTP history work occupies at most three slots, reserving capacity for durable execution cursor replay. The server admits one entire heatmap query before database/replay work; contention returns HTTP503 with Retry-After:1 rather than launching overlapping heavy replays.
 
 The existing `ws` dependency was retained after inspecting Binance's official connector. Its generated wrapper delegates transport and automatic reconnect to `@binance/common`; direct ws gives this collector explicit payload limits, termination, bounded queue ownership and receipt timestamps with one recovery owner. No exchange credentials or new package are required.
 
@@ -127,4 +127,50 @@ Evidence: [staging-heatmap-verification.json](../artifacts/staging-heatmap-verif
 
 Final depth client validation:192 unit tests pass, with typecheck/build. A final ordinary candle chart (without Footprint) also loaded1540 real historical/live heatmap bins with zero page errors; see `artifacts/staging-candle-heatmap-final.json`. The original full fixture browser-suite limitations above remain distinct from these successful focused actual-service checks.
 
+## Heatmap reload path
+
+The feed worker keeps up to four recent viewport cache records in IndexedDB, each bounded to2MiB of cell payload (plus browser storage overhead), valid for five minutes. Only closed, fully durable time tiles are stored; existing side coverage, gaps, units and exact displayed values remain intact. Cached historical tiles appear with `checking coverage and loading live`, then authoritative server tiles replace them. This is a small browser viewport cache, not a copy of the database or a restored live book. Price/time resolution mismatch, expired data or cache failure uses server loading; no venue fallback. Cold loading paints recent columns before the earlier viewport. Footprint startup waits for its initial view before requesting liquidity. The worker serializes heatmap requests across its panels, backs off capacity retries and divides historical replay into at most twenty-minute fragments (smaller after replay-budget, deadline or worker-memory errors). Fragments share one durable watermark; coarse-column averages combine observed-duration totals, peaks take maxima, and unknown durations remain partial. Closed historical viewports do not repeatedly replay on live-head updates. The display keeps its four-hour viewport query limit; this does not reduce server retention.
+
+The backend replays one seed checkpoint plus subsequent deltas/snapshots/gaps; redundant intermediate checkpoints remain stored for recovery but are excluded from query replay. Responses larger than4KiB use gzip when accepted, reducing private-tunnel transfer cost. `node scripts/verify-heatmap-reload.mjs` performs three actual-service reloads, distinguishes first visible liquidity from full viewport validation, and checks closed-row equality. Measured evidence: `artifacts/heatmap-reload-latency.json`.
+
+Final actual Pi samples: cached historical liquidity appeared255–419ms after the footprint became ready (2629/2735/2704ms from page reload); full server validation finished6726/4518/4483ms from reload.41 overlapping historical rows were identical and no page errors occurred. Warm cache timings are distinct from cold/network loading and are not a frame-rate claim. Client198 unit tests and explicit staging typecheck/build pass; backend21 tests plus real execution/OI/depth duplicate integration pass.
+
 Level Watch is available in staging mode through the same tunnel/proxy. See [its workflow, API and operating limits](level-watch.md). The observer binds an additional **staging-only loopback** port, 18781; no new Pi forward is required.
+
+### Wide historical heatmap replay
+
+The staging replay worker integrates a price row when that row changes, at a
+continuity boundary, and at the query end. Unchanged rows no longer repeat BigInt
+multiplications for every depth message. Per-row integration still splits at time
+bucket boundaries and preserves zero-duration observations for simultaneous peaks,
+actual-price quote totals, known-zero durations, epoch gaps and partial outer
+coverage. The server retains the existing one-worker/256 MiB/12-second limits.
+
+The client starts with at most twenty-minute fragments and halves them after replay
+budget, deadline or worker-memory errors, down to one minute. It publishes each
+completed historical fragment, reports loading progress,
+and retains the completed fragments and captured watermark across transient
+retries. A viewport change or expired server watermark discards unfinished progress. Coarse columns continue
+to merge by observed duration, and live overlap is replaced rather than added.
+
+The recorded-data replay comparison is in
+`artifacts/heatmap-replay-performance.json`: 6,028 events and 284 cells matched the
+previous implementation exactly in average, peak and last modes. Average replay
+computation fell from 3.45 s to 1.37 s in the same one-CPU staging container. This
+measurement excludes database, worker transport and browser costs. Backend tests
+include randomized differential checks against the preserved old implementation;
+client tests cover progressive publication, failed-page resume, stable watermarks
+and viewport cancellation.
+
+Final Pi browser evidence: the fixed four-hour historical viewport showed older
+fragments by 15.9 s and all 48 five-minute columns by 85.9 s. A dense final fragment
+hit the unchanged worker heap limit and recovered with two ten-minute requests
+without reloading completed pages. A separate live-edge run completed by 165.5 s
+despite a viewport change, reconnect and capacity retry. Before the fix, the
+diagnostic still showed only its two-column preview at 185.3 s. These are distinct
+live runs with variable network/market conditions, not a controlled end-to-end
+speed ratio. See `artifacts/heatmap-performance-summary.json`,
+`wide-heatmap-fixed-performance.json` and `wide-heatmap-performance-final.json`.
+Validation: 217 client tests, 38 backend tests, client staging/server builds and
+recorded/deployed API parity passed. After the app-only restart both collectors
+advanced durable heads, with no overflows, no disk pause and fresh OI.

@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { StagingFeedService, stagingMarket, validBackendBar } from '../src/feed/staging-service';
+import { StagingFeedService, stagingMarket, validBackendBar, boundedFootprintHistory } from '../src/feed/staging-service';
 import { FootprintAccumulator } from '../src/feed/footprint';
 import type { Event } from '../src/feed/protocol';
 afterEach(() => vi.useRealTimers());
@@ -58,4 +58,27 @@ test('restore plus replay has parity with uninterrupted aggregation, including e
 });
 test('unsupported markets and malformed footprint values are rejected',()=>{
  expect(stagingMarket({...series,market:'spot'})).toBe(false);expect(stagingMarket({venue:'hyperliquid',interval:'1m'})).toBe(false);expect(validBackendBar(bar)).toBe(true);expect(validBackendBar({...bar,cells:[{...bar.cells[0],askNotional:NaN}]})).toBe(false);
+});
+
+test('older complete pages use one watermark, preserve live changes and restore bounded history',async()=>{
+ vi.useFakeTimers(); const now=120*60000, events:any[]=[], sockets:Socket[]=[], urls:string[]=[];let resolveOlder:any;
+ const latest={...bar,time:Math.floor((now-60000)/60000)*60};
+ const initial={...response(),bars:[latest],watermark:10,cursor:10,coverage:{confirmedFrom:100*60000,confirmedTo:now,gaps:[]},status:{state:'live',lastUpdate:now}};
+ const older={...bar,time:100*60};
+ const request:any=async(url:string)=>{urls.push(url);if(url.includes('watermark='))return new Promise(r=>resolveOlder=()=>r(new Response(JSON.stringify({...initial,bars:[older]}))));return new Response(JSON.stringify(initial));};
+ let service:StagingFeedService|undefined;
+ try{service=new StagingFeedService(e=>{events.push(e);if(e.type.startsWith('footprint-'))service?.command({type:'footprint-ack',key:(e as any).key,generation:(e as any).generation,batchId:(e as any).batchId});},request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ service.command({type:'footprint-subscribe',id:'a',series,rowPrice:25});await vi.advanceTimersByTimeAsync(0);
+ expect(urls).toHaveLength(2);expect(urls[1]).toContain('watermark=10');const p=new URL(urls[1]!,'http://localhost').searchParams;expect(Number(p.get('to'))).toBe(105*60000);expect(Number(p.get('from'))).toBe(100*60000);
+ sockets[0]!.receive({...packet(10,[11]),executions:[{...trade(11),timeMs:latest.time*1000+1}],coverage:initial.coverage,collector:initial.status,sentAt:now});
+ resolveOlder();await vi.advanceTimersByTimeAsync(0);
+ const full=events.filter(e=>e.type==='footprint-snapshot').at(-1);expect(full.bars.map((b:any)=>b.time)).toEqual([older.time,latest.time]);expect(full.bars[1].aggregateRecordCount).toBe(3);expect(service.diagnostics().streams[0].cursor).toBe(11);expect(sockets[0]!.sent.at(-1)).toEqual({type:'ack',cursor:11});
+ }finally{service?.dispose();vi.useRealTimers();}
+});
+
+test('history merge keeps latest live revision and evicts whole oldest bars at both bounds',()=>{
+ const bars=Array.from({length:301},(_,i)=>({...bar,time:60+i*60,cells:Array.from({length:100},()=>({...bar.cells[0]}))}));
+ const newest={...bars.at(-1)!,revision:99};const merged=boundedFootprintHistory([...bars,newest]);
+ expect(merged).toHaveLength(180);expect(merged[0]!.time).toBe(bars[121]!.time);expect(merged.at(-1)!.revision).toBe(99);
+ expect(boundedFootprintHistory(bars.map(b=>({...b,cells:[...bar.cells]})))).toHaveLength(300);
 });

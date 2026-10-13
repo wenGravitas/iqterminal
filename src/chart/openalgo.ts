@@ -171,12 +171,15 @@ export class OpenAlgoCandleChart {
     this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
-    // OpenAlgo 2.6.0 zooms only time on a plot wheel. Apply its matching
-    // price-scale gesture first so the time zoom cannot autoscale it away.
-    container.addEventListener('wheel', event => this.zoomPriceWithWheel(event, container), {
+    // Keep native axis zoom, Ctrl/Meta cursor zoom and Shift/trackpad pan.
+    // The plot gesture selects right-anchored time zoom or legacy two-axis zoom.
+    container.addEventListener('wheel', event => this.handleWheel(event, container), {
       capture: true, passive: false, signal: this.inputAbort.signal,
     });
   }
+
+  private wheelMode: 'tradingview' | 'both-axes' = 'tradingview';
+  setWheelMode(mode: 'tradingview' | 'both-axes') { this.wheelMode = mode; }
 
   setGridVisible(visible: boolean) { this.axisGrid.setEnabled(visible); }
 
@@ -202,14 +205,13 @@ export class OpenAlgoCandleChart {
       return bar?.time === timeMs / 1000 && bar.cells.some(cell => cell.price < high && cell.price + bar.rowSize > low);
     });
     this.heatmap.setInterval(intervalMs); this.heatmap.setOptions(options);
-    this.heatmap.setFootprintLayout(this.mode === 'footprint' ? this.footprintOptions : undefined);
   }
   updateHeatmap(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) { this.heatmap?.update(buckets, snapshot, retentionStart); }
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
   heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
 
-  private zoomPriceWithWheel(event: WheelEvent, container: HTMLElement) {
-    if (this.disposed || !this.visible || !Number.isFinite(event.deltaY)) return;
+  private handleWheel(event: WheelEvent, container: HTMLElement) {
+    if (this.disposed || !this.visible || !Number.isFinite(event.deltaY) || (event.target instanceof Element && event.target.closest('.active-indicators'))) return;
     const bounds = container.getBoundingClientRect();
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? bounds.height : 1;
     const dy = event.deltaY * unit;
@@ -220,6 +222,14 @@ export class OpenAlgoCandleChart {
       const plot = this.chart.plotRect(index);
       if (!plot || x < plot.left || x >= plot.left + plot.width || y < plot.top || y >= plot.top + plot.height) continue;
       // Same normalized, bounded wheel sensitivity as the installed library.
+      if (this.wheelMode === 'tradingview') {
+        if (event.ctrlKey || event.metaKey) return; // Native cursor-focused time zoom.
+        this.chart.timeScale.zoomAtX(this.chart.timeScale.width, Math.exp(Math.max(-2, Math.min(2, -dy * Math.log(1.1) / 100))));
+        event.preventDefault();
+        event.stopImmediatePropagation(); // Prevent the native cursor zoom running a second time.
+        this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Full));
+        return;
+      }
       const factor = Math.exp(Math.max(-2, Math.min(2, dy * Math.log(1.1) / 100)));
       this.chart.panes()[index]!.priceScale.scaleAtY(y - plot.top, factor);
       event.preventDefault();
@@ -254,7 +264,6 @@ export class OpenAlgoCandleChart {
     if (this.disposed || this.mode === mode) return;
     this.pendingView = preserveView ? this.captureView() : null;
     this.mode = mode;
-    this.heatmap?.setFootprintLayout(mode === 'footprint' ? this.footprintOptions : undefined);
     this.series.applyOptions({
       visible: mode === 'candle' && this.basePriceVisible,
       priceLineVisible: mode === 'candle' && this.basePriceVisible,
@@ -464,7 +473,6 @@ export class OpenAlgoCandleChart {
 
   setFootprintOptions(options: Partial<FootprintOptions>) {
     this.footprintOptions = { ...this.footprintOptions, ...options };
-    if (this.mode === 'footprint') this.heatmap?.setFootprintLayout(this.footprintOptions);
     const threshold = this.footprintOptions.imbalanceThreshold;
     this.footprint?.setOptions({ ...options, imbalanceThreshold: this.footprintUnits === 'usdt' && threshold < Number.MAX_VALUE
       ? Math.min(Number.MAX_VALUE, threshold * (this.latestBar?.close ?? 1)) : threshold });

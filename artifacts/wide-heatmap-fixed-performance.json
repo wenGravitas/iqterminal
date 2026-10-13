@@ -1,0 +1,285 @@
+{
+  "started": 1791893927204,
+  "fixed": true,
+  "events": [
+    {
+      "at": 10181,
+      "ms": 4279,
+      "query": "from=1791891000000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 5924,
+      "cells": 284,
+      "head": 939319
+    },
+    {
+      "at": 15714,
+      "ms": 5543,
+      "query": "from=1791877200000&to=1791878400000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 12014,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 21377,
+      "ms": 5661,
+      "query": "from=1791878400000&to=1791879600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11921,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 26431,
+      "ms": 5049,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11823,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 31633,
+      "ms": 5201,
+      "query": "from=1791880800000&to=1791882000000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 12028,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 37657,
+      "ms": 6022,
+      "query": "from=1791882000000&to=1791883200000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11933,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 42606,
+      "ms": 4943,
+      "query": "from=1791883200000&to=1791884400000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11845,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 47730,
+      "ms": 5123,
+      "query": "from=1791884400000&to=1791885600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 12028,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 52413,
+      "ms": 4682,
+      "query": "from=1791885600000&to=1791886800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11927,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 57929,
+      "ms": 5514,
+      "query": "from=1791886800000&to=1791888000000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11817,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 63302,
+      "ms": 5362,
+      "query": "from=1791888000000&to=1791889200000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11996,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 69812,
+      "ms": 6509,
+      "query": "from=1791889200000&to=1791890400000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 11648,
+      "cells": 568,
+      "head": 939361
+    },
+    {
+      "at": 73776,
+      "ms": 3946,
+      "query": "from=1791890400000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 79526,
+      "ms": 5751,
+      "query": "from=1791890400000&to=1791891000000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 5985,
+      "cells": 284,
+      "head": 939361
+    },
+    {
+      "at": 83992,
+      "ms": 4453,
+      "query": "from=1791891000000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=939361",
+      "status": 200,
+      "records": 5924,
+      "cells": 284,
+      "head": 939361
+    }
+  ],
+  "samples": [
+    {
+      "at": 15886,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 8%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 6,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 25902,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 16%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 10,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 35915,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 33%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 18,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 45924,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 50%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 26,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 55927,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 66%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 34,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 65931,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 83%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 42,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 75936,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 91%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 46,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 85941,
+      "status": {
+        "state": "live",
+        "message": "Staging durable depth · partial outer coverage · 1 coverage gap(s) · RPI excluded",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791877200000,
+        "capacityLimited": false
+      },
+      "buckets": 48,
+      "range": {
+        "from": 939,
+        "to": 987
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    }
+  ]
+}

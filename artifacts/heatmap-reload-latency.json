@@ -1,0 +1,67 @@
+{
+  "requests": [
+    {
+      "ms": 1458,
+      "status": 200,
+      "encoding": "gzip",
+      "from": 1791802560000,
+      "to": 1791802675752
+    },
+    {
+      "ms": 1856,
+      "status": 200,
+      "encoding": "gzip",
+      "from": 1791802320000,
+      "to": 1791802675752
+    },
+    {
+      "ms": 2007,
+      "status": 200,
+      "encoding": "gzip",
+      "from": 1791802380000,
+      "to": 1791802683906
+    },
+    {
+      "ms": 1850,
+      "status": 200,
+      "encoding": "gzip",
+      "from": 1791802380000,
+      "to": 1791802688544
+    },
+    {
+      "ms": 1839,
+      "status": 200,
+      "encoding": "gzip",
+      "from": 1791802380000,
+      "to": 1791802693085
+    }
+  ],
+  "reloads": [
+    {
+      "footprintReadyMs": 2374,
+      "firstLiquidityMs": 2629,
+      "afterFootprintMs": 255,
+      "initialStatus": "Staging depth · cached closed history; checking coverage and loading live",
+      "viewportCompleteMs": 6726
+    },
+    {
+      "footprintReadyMs": 2316,
+      "firstLiquidityMs": 2735,
+      "afterFootprintMs": 419,
+      "initialStatus": "Staging depth · cached closed history; checking coverage and loading live",
+      "viewportCompleteMs": 4518
+    },
+    {
+      "footprintReadyMs": 2367,
+      "firstLiquidityMs": 2704,
+      "afterFootprintMs": 337,
+      "initialStatus": "Staging depth · cached closed history; checking coverage and loading live",
+      "viewportCompleteMs": 4483
+    }
+  ],
+  "errors": [],
+  "reloadEquality": {
+    "time": 1791802500000,
+    "matchedRows": 41
+  }
+}

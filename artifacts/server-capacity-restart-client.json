@@ -1,0 +1,15 @@
+{
+  "retainedFootprintUnchanged": true,
+  "heatmap": {
+    "status": {
+      "state": "live",
+      "message": "Staging durable depth · partial outer coverage · 1 coverage gap(s) · RPI excluded",
+      "tickSize": 0.1,
+      "collectionStart": 1791872640831,
+      "retentionStart": 1791889560000,
+      "capacityLimited": false
+    },
+    "buckets": 8
+  },
+  "scope": "recent seven-minute viewport; broad native-candle viewport did not complete within 180 seconds"
+}

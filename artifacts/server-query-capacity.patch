@@ -1,0 +1,67 @@
+--- a/src/server.ts
++++ b/src/server.ts
+@@ -1,3 +1,4 @@
++import { QueryAdmission } from './query-admission.ts';
+ import {gzip} from 'node:zlib';import {promisify} from 'node:util';
+ const gzipResponse=promisify(gzip);
+ import {retainDepth} from './depth-retention.ts';
+@@ -104,18 +105,18 @@
+ // Serialize checkpoint writes: collector is the owner; OI status is captured in its next checkpoint.
+ const sockets=new Set<WebSocket>();
+ const consumers=new Map<WebSocket,{after:number,from:number,interval?:string,depth?:boolean,busy:boolean,pending?:number,sentAt?:number}>();
+-async function pump(ws:WebSocket){const c=consumers.get(ws);if(!c||c.interval||c.depth||c.busy||c.pending!==undefined||ws.readyState!==WebSocket.OPEN)return;if(activeQueries>=4){setTimeout(()=>void pump(ws),250);return;}c.busy=true;activeQueries++;
++async function pump(ws:WebSocket){const c=consumers.get(ws);if(!c||c.interval||c.depth||c.busy||c.pending!==undefined||ws.readyState!==WebSocket.OPEN)return;const release=admission.acquire('stream');if(!release){setTimeout(()=>void pump(ws),250);return;}c.busy=true;
+  try{const head=state.last?.id??0;if(c.after>head)throw new Error('Cursor beyond durable head');
+  const rows=await executions(c.from,Date.now()+1,c.after,head,1000);
+  if(ws.readyState!==WebSocket.OPEN)return;
+  if(rows.length){const cursor=rows.at(-1).id;c.pending=cursor;c.sentAt=Date.now();send(ws,{type:'executions',version:1,after:c.after,cursor,watermark:head,executions:rows,coverage:coverageFor(c.from,Date.now(),state),collector,tickSize,sentAt:c.sentAt});}
+- }catch(e:any){send(ws,{type:'reset',reason:e.message});ws.close(1013,'Replay unavailable');}finally{activeQueries--;c.busy=false;if(c.pending===undefined&&c.after<(state.last?.id??0)&&ws.readyState===WebSocket.OPEN)setTimeout(()=>void pump(ws),250);}}
++ }catch(e:any){send(ws,{type:'reset',reason:e.message});ws.close(1013,'Replay unavailable');}finally{release();c.busy=false;if(c.pending===undefined&&c.after<(state.last?.id??0)&&ws.readyState===WebSocket.OPEN)setTimeout(()=>void pump(ws),250);}}
+ function send(ws:WebSocket,data:any){if(ws.bufferedAmount>1048576){ws.close(1013,'Slow consumer');return;}if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(data));}
+ function broadcastDepth(){for(const [ws,c] of consumers)if(c.depth&&c.pending===undefined&&c.after<depth.head.cursor){c.pending=depth.head.cursor;c.sentAt=Date.now();send(ws,{type:'depth-head',version:1,watermark:depth.head,status:depth.status,sentAt:c.sentAt});}}
+ function broadcast(){for(const ws of sockets)void pump(ws);}
+ function broadcastNative(interval:string,candle:any){for(const [ws,c] of consumers)if(c.interval===interval)send(ws,{type:'native-candle',source:'binance-native-kline',interval,candle});}
+ const streamTimer=setInterval(()=>{for(const ws of sockets){const c=consumers.get(ws);if(c?.sentAt&&Date.now()-c.sentAt>15000){ws.close(1013,'ACK timeout');continue;}send(ws,{type:'health',collector,depth:{head:depth.head,status:depth.status},watermark:state.last,metrics:{...metrics,queue:queue.size,ingestionLagMs:Math.max(0,Date.now()-(state.last?.timeMs??Date.now()))},sentAt:Date.now()});}},5000);
+-const cache=new Map<string,{at:number,value:any}>();let activeQueries=0;
++const cache=new Map<string,{at:number,value:any}>();const admission=new QueryAdmission();
+ async function executions(from:number,to:number,after:number,watermark:number,limit:number){return (await query(`SELECT * FROM iqterminal.executions FINAL WHERE timeMs>=${from} AND timeMs<${to} AND id>${after} AND id<=${watermark} ORDER BY id LIMIT ${limit}`)).map(hydrate);}
+ async function endpoint(u:URL){
+  const p=u.searchParams;
+@@ -143,7 +144,7 @@
+  throw new Error('Unknown endpoint');
+ }
+ function putCache(key:string,value:any){if(cache.size>=16)cache.delete(cache.keys().next().value!);cache.set(key,{at:Date.now(),value});}
+-const server=http.createServer(async(req,res)=>{if(req.url?.startsWith('/v1/level-watches')){proxyWatch(req,res);return;}res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');if(req.method!=='GET'){res.writeHead(405);res.end('{}');return;}if(activeQueries>=4){res.writeHead(503);res.end('{"error":"Query capacity; retry"}');return;}activeQueries++;try{const result=await endpoint(new URL(req.url??'/', 'http://127.0.0.1'));const body=JSON.stringify(result);if(body.length>4096&&/\bgzip\b/.test(req.headers['accept-encoding']??'')){const compressed=await gzipResponse(body,{level:1});res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding');res.end(compressed);}else res.end(body);}catch(e:any){res.writeHead(e.message.startsWith('ClickHouse')||e.message.startsWith('Binance')?503:400);res.end(JSON.stringify({error:e.message}));}finally{activeQueries--;}});
++const server=http.createServer(async(req,res)=>{if(req.url?.startsWith('/v1/level-watches')){proxyWatch(req,res);return;}res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');if(req.method!=='GET'){res.writeHead(405);res.end('{}');return;}const url=new URL(req.url??'/', 'http://127.0.0.1');const release=admission.acquire(url.pathname==='/v1/heatmap'?'heatmap':url.pathname==='/v1/health'?'health':'http');if(!release){res.writeHead(503,{'Retry-After':'1'});res.end(JSON.stringify({error:url.pathname==='/v1/heatmap'?'Depth query capacity; retry':'Query capacity; retry'}));return;}try{const result=await endpoint(url);const body=JSON.stringify(result);if(body.length>4096&&/\bgzip\b/.test(req.headers['accept-encoding']??'')){const compressed=await gzipResponse(body,{level:1});res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding');res.end(compressed);}else res.end(body);}catch(e:any){res.writeHead(e.message.startsWith('ClickHouse')||e.message.startsWith('Binance')?503:400);res.end(JSON.stringify({error:e.message}));}finally{release();}});
+ server.requestTimeout=20000;server.headersTimeout=10000;
+ const wss=new WebSocketServer({noServer:true,maxPayload:1024});
+ server.on('upgrade',(req,socket,head)=>{if(req.url==='/v1/stream'){wss.handleUpgrade(req,socket,head,ws=>wss.emit('connection',ws,req));return;}if(req.url==='/v1/level-watches/stream'){const upstream=net.connect(18781,'127.0.0.1',()=>{upstream.write(`${req.method} ${req.url} HTTP/${req.httpVersion}\r\n`+Object.entries(req.headers).map(([k,v])=>`${k}: ${v}`).join('\r\n')+'\r\n\r\n');if(head.length)upstream.write(head);socket.pipe(upstream).pipe(socket);});upstream.on('error',()=>socket.destroy());socket.on('error',()=>upstream.destroy());socket.on('close',()=>upstream.destroy());return;}socket.destroy();});
+--- /dev/null
++++ b/src/query-admission.ts
+@@ -0,0 +1,10 @@
++/** Bound expensive HTTP work and leave one of four slots available for cursor replay. */
++export class QueryAdmission {
++ private active=0; private heatmaps=0;
++ acquire(kind:'http'|'heatmap'|'stream'|'health'): (()=>void)|undefined {
++  if(this.active >= (kind==='http'||kind==='heatmap'?3:4) || (kind==='heatmap'&&this.heatmaps)) return;
++  this.active++; if(kind==='heatmap')this.heatmaps++;
++  let released=false;
++  return ()=>{if(released)return;released=true;this.active--;if(kind==='heatmap')this.heatmaps--;};
++ }
++}
+--- /dev/null
++++ b/tests/query-admission.test.ts
+@@ -0,0 +1,13 @@
++import {test} from 'node:test';import assert from 'node:assert/strict';
++import {QueryAdmission} from '../src/query-admission.ts';
++test('HTTP saturation leaves capacity for durable cursor replay',()=>{
++ const a=new QueryAdmission(), releases=Array.from({length:3},()=>a.acquire('http'));
++ assert.ok(releases.every(Boolean));assert.equal(a.acquire('http'),undefined);
++ const replay=a.acquire('stream');assert.ok(replay);assert.equal(a.acquire('stream'),undefined);
++ releases[0]!();assert.equal(a.acquire('http'),undefined);replay!();replay!();assert.ok(a.acquire('http'));assert.ok(a.acquire('stream'));assert.equal(a.acquire('stream'),undefined);
++});
++test('admit one complete heatmap query before any database or worker work',()=>{
++ const a=new QueryAdmission(), heatmap=a.acquire('heatmap');assert.ok(heatmap);
++ assert.equal(a.acquire('heatmap'),undefined);assert.ok(a.acquire('http'));assert.ok(a.acquire('stream'));
++ heatmap!();assert.ok(a.acquire('heatmap'));assert.ok(a.acquire('health'));assert.equal(a.acquire('stream'),undefined);
++});

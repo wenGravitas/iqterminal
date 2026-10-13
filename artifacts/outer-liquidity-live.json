@@ -1,0 +1,20 @@
+{
+  "errors": [],
+  "source": "actual Pi dev proxy to staging",
+  "fixtures": false,
+  "observed": {
+    "status": {
+      "state": "live",
+      "message": "Staging durable depth · partial outer coverage · 0 coverage gap(s) · RPI excluded",
+      "tickSize": 0.1,
+      "collectionStart": 1791802537863,
+      "retentionStart": 1791805320000,
+      "capacityLimited": false
+    },
+    "positiveOuterBins": 275,
+    "partialOuterBins": 275,
+    "low": 71800,
+    "high": 94200
+  },
+  "quantitiesAndCoverageUnchanged": true
+}

@@ -27,7 +27,7 @@ Worker classification is separate from visible DOM filtering and from applicatio
 | Ticker widgets | 8, independently of the 8-chart limit |
 | Tiers | 1–12 per widget |
 | Retained prints | 500 per worker pipeline and UI tape |
-| Visible rows | Latest 100 matching prints, virtualized to visible rows; paused snapshot bounded to 500 |
+| Visible rows | Latest 100 matching prints retained independently of the raw buffer, virtualized to visible rows; pause freezes both bounded tapes |
 | Transport | 256 pending records per widget, one acknowledged batch in flight |
 | Publication / DOM paint | Worker nominal 100ms; visible DOM nominal 200ms, via existing RAF scheduler |
 | Deduplication | 8,192 recent execution IDs per pipeline; shared service also bounded |
@@ -68,3 +68,5 @@ Each sell row has a quiet red bar extending inward from the left; each buy row h
 Settings → Background volume bars offers visibility (default on), scale window (default 60 seconds; 5–300 seconds), and opacity (default 18%; 0–60%). The reference includes all known-side prints from the selected ticker markets within the exchange-timestamp window, independent of display minimum, side filter and notification ladder scope. It is limited to the existing 500 retained prints, so during busy periods it can cover less than the requested time. This is explicitly shown as a window of **up to 500 prints**, not a complete rolling volume statistic. Older visible rows use the current reference and clamp at maximum width; their tooltip identifies that they are outside the scale window. When no current reference remains, bars disappear. The footer tooltip gives the reference maximum and units.
 
 Pause freezes both the bounded row snapshot and reference clock; Return to live resumes current scaling. Hidden panels collect as before without painting. Scale expiry checks run at most once per second while visible (incoming data uses the existing 200ms paint cadence). The implementation scans at most 500 existing records per paint and uses native row background gradients: no new socket, raw tape, canvas, per-frame animation or independent render loop. Settings persist per widget and legacy layouts receive safe defaults.
+
+The display tape retains the latest 100 matching prints independently of the 500-print raw buffer used by volume-bar scaling. Hidden small trades or opposite-side trades cannot evict an already displayed print. Only a new matching print evicts the oldest matching print when the display tape fills. Explicit filter changes rebuild from the retained matching tape plus recent raw prints, without replaying alerts; this is bounded session history, so lowering a filter cannot recover previously discarded hidden prints. Pausing freezes display rows and raw scale while live ingestion continues. Volume-bar widths remain rolling, independently of fixed execution values.

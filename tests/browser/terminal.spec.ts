@@ -1187,6 +1187,9 @@ test('a single $25 footprint row opens at text height and respects manual price 
   await expect.poll(rowHeight).toBeLessThanOrEqual(17);
   await page.screenshot({path:'artifacts/footprint-single-row-720x860.png'});
   const stage=(await panel.locator('.chart-stage').boundingBox())!;
+  await panel.getByRole('button',{name:'Chart settings',exact:true}).click();
+  await panel.getByRole('combobox',{name:'Mouse wheel behavior'}).selectOption('both-axes');
+  await panel.locator('.chart-settings').getByRole('button',{name:'Close',exact:true}).click();
   const originalHeight=await rowHeight();
   await page.mouse.move(Math.round(stage.x+stage.width*.4),Math.round(stage.y+stage.height*.4));
   await page.mouse.wheel(0,-100);
@@ -1207,6 +1210,10 @@ test('a single $25 footprint row opens at text height and respects manual price 
 });
 
 test('plot wheel zooms both axes around the cursor and Latest restores autoscale',async({page})=>{
+  const panel=page.locator('.candle-panel').first();
+  await panel.getByRole('button',{name:'Chart settings',exact:true}).click();
+  await panel.getByRole('combobox',{name:'Mouse wheel behavior'}).selectOption('both-axes');
+  await panel.locator('.chart-settings').getByRole('button',{name:'Close',exact:true}).click();
   const point=await page.evaluate(()=>{
     const panel=[...(window as any).__terminal.panels.values()][0],plot=panel.engine.chart.plotRect(0);
     const bounds=panel.element.querySelector('.chart-stage').getBoundingClientRect();

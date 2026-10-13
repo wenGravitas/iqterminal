@@ -80,3 +80,16 @@ test('inward buy/sell bars share a scale, freeze on pause and persist appearance
   await page.setViewportSize({width:720,height:860});await page.locator('#theme').selectOption('light');await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();await page.screenshot({path:'artifacts/ticker-volume-bars-720x860.png'});await settings.getByLabel('Show volume bars',{exact:true}).uncheck();await settings.getByRole('button',{name:'Apply',exact:true}).click();expect((await widths()).every(r=>r.width==='0%')).toBe(true);
   await page.waitForTimeout(400);await page.reload();await page.locator('.trade-ticker').getByRole('button',{name:'Trade Ticker settings',exact:true}).click();await expect(page.locator('.ticker-settings').getByLabel('Show volume bars',{exact:true})).not.toBeChecked();await expect(page.locator('.ticker-settings').getByLabel('Scale window (seconds)',{exact:true})).toHaveValue('30');await expect(page.locator('.ticker-settings').getByLabel('Bar opacity (%)',{exact:true})).toHaveValue('25');
 });
+
+test('hidden prints cannot evict an already printed matching trade',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const worker=await installTradeFixture(page);
+  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
+  await ticker.getByRole('combobox',{name:'Minimum trade size',exact:true}).fill('100K');await ticker.getByRole('combobox',{name:'Minimum trade size',exact:true}).press('Tab');
+  await worker.evaluate(()=>(self as any).__tradeFixture.emit(10));const row=ticker.locator('.ticker-row');await expect(row).toHaveCount(1);const id=await row.getAttribute('data-execution-id'),text=await row.textContent();
+  for(let batch=0;batch<6;batch++){await worker.evaluate(()=>{for(let n=0;n<100;n++)(self as any).__tradeFixture.emit(.01);});await page.waitForTimeout(300);}
+  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.tickers.values()][0].diagnostics().retained)).toBe(500);
+  await expect(row).toHaveCount(1);await expect(row).toHaveAttribute('data-execution-id',id!);await expect(row).toHaveText(text!);
+  await worker.evaluate(()=>(self as any).__tradeFixture.emit(2));await expect(row).toHaveCount(2);await expect(row.last()).toHaveAttribute('data-execution-id',id!);
+  await ticker.getByRole('button',{name:'Pause',exact:true}).click();await worker.evaluate(()=>(self as any).__tradeFixture.emit(3));await page.waitForTimeout(350);await expect(row).toHaveCount(2);await ticker.getByRole('button',{name:'Return to live'}).click();await expect(row).toHaveCount(3);expect(errors).toEqual([]);
+});

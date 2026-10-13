@@ -1,0 +1,400 @@
+{
+  "started": 1791893587237,
+  "events": [
+    {
+      "at": 12696,
+      "ms": 3756,
+      "query": "from=1791893100000&to=1791893596133&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 4797,
+      "cells": 284,
+      "head": 936006
+    },
+    {
+      "at": 18773,
+      "ms": 6086,
+      "query": "from=1791879300000&to=1791880500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 11851,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 19612,
+      "ms": 837,
+      "query": "from=1791880500000&to=1791881700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 26220,
+      "ms": 6111,
+      "query": "from=1791880500000&to=1791881700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 12055,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 32911,
+      "ms": 6683,
+      "query": "from=1791881700000&to=1791882900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 11953,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 33897,
+      "ms": 997,
+      "query": "from=1791882900000&to=1791884100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 40363,
+      "ms": 5977,
+      "query": "from=1791882900000&to=1791884100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 11864,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 46400,
+      "ms": 6035,
+      "query": "from=1791884100000&to=1791885300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 12054,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 51176,
+      "ms": 4792,
+      "query": "from=1791885300000&to=1791886500000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 11963,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 57727,
+      "ms": 6550,
+      "query": "from=1791886500000&to=1791887700000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 11840,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 66200,
+      "ms": 8472,
+      "query": "from=1791887700000&to=1791888900000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 12021,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 73030,
+      "ms": 6825,
+      "query": "from=1791888900000&to=1791890100000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 200,
+      "records": 11673,
+      "cells": 568,
+      "head": 936038
+    },
+    {
+      "at": 78824,
+      "ms": 5788,
+      "query": "from=1791890100000&to=1791891300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 84419,
+      "ms": 4523,
+      "query": "from=1791890100000&to=1791891300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 91033,
+      "ms": 4539,
+      "query": "from=1791890100000&to=1791891300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 99406,
+      "ms": 4312,
+      "query": "from=1791890100000&to=1791891300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 112724,
+      "ms": 5129,
+      "query": "from=1791890100000&to=1791891300000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&watermark=936038",
+      "status": 400,
+      "error": "Worker terminated due to reaching memory limit: JS heap out of memory"
+    },
+    {
+      "at": 113380,
+      "ms": 379,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "at": 114664,
+      "ms": 1060,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 116208,
+      "ms": 1053,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 118017,
+      "ms": 813,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 503,
+      "error": "Depth query capacity; retry"
+    },
+    {
+      "at": 126653,
+      "ms": 6644,
+      "query": "from=1791879600000&to=1791880800000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+      "status": 200,
+      "records": 11823,
+      "cells": 568,
+      "head": 937101
+    }
+  ],
+  "samples": [
+    {
+      "at": 18642,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+        "tickSize": 0.1,
+        "collectionStart": 1791889721143,
+        "retentionStart": 1791893100000,
+        "capacityLimited": false
+      },
+      "buckets": 2,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 28650,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 16%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 10,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 38670,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 25%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 14,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 48679,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 41%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 22,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 58683,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 58%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 30,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 68693,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 67%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 34,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 78698,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 75%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 38,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 88704,
+      "status": {
+        "state": "stale",
+        "message": "Staging depth · Worker terminated due to reaching memory limit: JS heap out of memory · retrying",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 38,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 98769,
+      "status": {
+        "state": "stale",
+        "message": "Staging depth · Worker terminated due to reaching memory limit: JS heap out of memory · retrying",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 38,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 108775,
+      "status": {
+        "state": "stale",
+        "message": "Staging depth · Worker terminated due to reaching memory limit: JS heap out of memory · retrying",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 38,
+      "range": {
+        "from": 924.7142857142857,
+        "to": 1003
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 118783,
+      "status": {
+        "state": "stale",
+        "message": "Staging depth · Worker terminated due to reaching memory limit: JS heap out of memory · retrying",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879300000,
+        "capacityLimited": true
+      },
+      "buckets": 38,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    },
+    {
+      "at": 128787,
+      "status": {
+        "state": "syncing",
+        "message": "Staging depth · loading history 8%",
+        "tickSize": 0.1,
+        "collectionStart": 1791872640831,
+        "retentionStart": 1791879600000,
+        "capacityLimited": true
+      },
+      "buckets": 37,
+      "range": {
+        "from": 925.7142857142857,
+        "to": 1004
+      },
+      "min": 82978.6,
+      "max": 84262.59999999999
+    }
+  ]
+}

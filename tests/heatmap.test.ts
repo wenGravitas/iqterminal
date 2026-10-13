@@ -113,10 +113,28 @@ describe('resting liquidity tiles', () => {
   });
 });
 describe('heatmap chart boundary', () => {
-  it('fits quantity-only labels and aligns footprint ladder bounds including its candle gutter', () => {
+  it('joins adjacent liquidity columns on shared device pixels at fractional zoom', () => {
+    const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1); c.transition(state(), 0, 1); c.advance(500);
+    const first = c.snapshot()[0]!;
+    const p = new OrderBookHeatmap(60000);
+    p.update([first, { ...first, id: 'next', start: 60000, end: 60500 }], true, 0);
+    p.setOptions({ ...heatmapSettings(null), labels: 'off' });
+    const fills: number[][] = [];
+    const ctx = { save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, fillRect(...r: number[]) { fills.push(r); }, moveTo() {}, lineTo() {}, stroke() {} };
+    const rc = { dpr: 1.25, plotWidth: 600, plotHeight: 300,
+      timeScale: { visibleRange: () => ({ from: 0, to: 2 }), indexToX: (i: number) => 20.3+(i+.5)*7.25 },
+      priceScale: { priceRange: () => ({ min: 80, max: 120 }), priceToY: (v: number) => 600-v*5 },
+      dataLayer: { timeToIndex: (s: number) => s/60, indexToTime: () => 0 } };
+    p.draw(ctx as any, rc as any);
+    const row = fills.filter(r => r[1] === 50*rc.dpr).sort((a,b) => a[0]!-b[0]!);
+    expect(row).toHaveLength(2);
+    expect(row[0]![0]!+row[0]![2]!).toBe(row[1]![0]);
+    expect(row.every(r => Number.isInteger(r[0]) && Number.isInteger(r[2]))).toBe(true);
+  });
+
+  it('fits quantity-only labels across full time slots and preserves footprint row occlusion', () => {
     const c = new LiquidityCollector({ rowPrice: 10, bucketMs: 500 }, 1); c.transition(state(), 0, 1); c.advance(500);
     const p = new OrderBookHeatmap(60000); p.update(c.snapshot(), true, 0);
-    p.setFootprintLayout({ widthFactor: .96, showCandle: true });
     const labels: { text: string; font: string }[] = [], fills: number[] = [];
     const context = { font: '', save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, fillRect(_x: number, y: number) { fills.push(y); },
       fillText(text: string) { labels.push({ text, font: this.font }); }, moveTo() {}, lineTo() {}, stroke() {} };
@@ -127,12 +145,12 @@ describe('heatmap chart boundary', () => {
     p.draw(context as any, rc as any);
     expect(labels.length).toBeGreaterThan(0);
     for (const label of labels) { expect(label.text).toMatch(/^\d+(\.\d+)?[KM]?$/); expect(parseFloat(label.font)).toBeGreaterThan(10); expect(parseFloat(label.font)).toBeLessThanOrEqual(12); }
-    expect(p.hoverAt(1, 95)).toBeNull(); expect(p.hoverAt(2, 95)?.side).toBe('bid');
-    expect(p.hoverAt(97, 95)?.side).toBe('bid'); expect(p.hoverAt(98, 95)).toBeNull();
+    expect(p.hoverAt(0, 95)?.side).toBe('bid'); expect(p.hoverAt(1, 95)?.side).toBe('bid');
+    expect(p.hoverAt(99.99, 95)?.side).toBe('bid'); expect(p.hoverAt(100, 95)).toBeNull();
     p.setUnits('usdt'); labels.length = 0; p.draw(context as any, rc as any);
     expect(labels.map(l => l.text)).toContain('2K');
     expect(p.hoverAt(50,95)).toMatchObject({ units: 'usdt', quantity: 2000 });
-    p.setUnits('btc'); p.setFootprintLayout(); p.draw(context as any, rc as any); expect(p.hoverAt(1, 95)?.side).toBe('bid');
+    p.setUnits('btc'); p.draw(context as any, rc as any); expect(p.hoverAt(1, 95)?.side).toBe('bid');
     labels.length = 0; fills.length = 0; p.setFootprintOcclusion((_time, low) => low === 100); p.draw(context as any, rc as any);
     expect(labels.map(l => l.text)).not.toContain('20'); expect(fills).not.toContain(50); expect(p.hoverAt(50, 95)).toBeNull();
     expect(labels.map(l => l.text)).toContain('5');
@@ -249,4 +267,21 @@ it('shares candle collection only for matching timeframes and validates chart du
   expect(heatmapKey({ rowPrice: 10, bucketMs: 500, candleMs: 60000 })).not.toBe(heatmapKey({ rowPrice: 10, bucketMs: 500, candleMs: 300000 }));
   expect(validResolution({ rowPrice: 10, bucketMs: 500, candleMs: 60000 })).toBe(true);
   expect(validResolution({ rowPrice: 10, bucketMs: 500, candleMs: 60001 })).toBe(false);
+});
+
+describe('outer liquidity visibility', () => {
+  it('lifts weak signals on a fixed density curve without changing scale or quantity', () => {
+    const muted = intensityIndex(1, 100, 100, 'muted');
+    const enhanced = intensityIndex(1, 100, 100, 'enhanced');
+    expect(enhanced).toBeGreaterThan(muted);
+    expect(intensityIndex(1, 100, 100, 'enhanced')).toBe(intensityIndex(2, 200, 100, 'enhanced'));
+    expect(intensityIndex(0, 100, 100, 'enhanced')).toBe(0);
+    expect(intensityIndex(100, 10, 100, 'enhanced')).toBe(255);
+    expect(intensityIndex(100, 10, 100, 'muted')).toBe(255);
+  });
+  it('defaults old layouts to enhanced and retains an explicit muted preference', () => {
+    expect(heatmapSettings(null).contrast).toBe('enhanced');
+    expect(heatmapSettings({ contrast: 'invalid' }).contrast).toBe('enhanced');
+    expect(config({ heatmap: { contrast: 'muted' } }).heatmap.contrast).toBe('muted');
+  });
 });

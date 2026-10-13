@@ -1,0 +1,28 @@
+{
+  "concurrentHeatmaps": [
+    {
+      "status": 200,
+      "error": null,
+      "cells": 40,
+      "retryAfter": null
+    },
+    {
+      "status": 503,
+      "error": "Depth query capacity; retry",
+      "retryAfter": "1"
+    },
+    {
+      "status": 503,
+      "error": "Depth query capacity; retry",
+      "retryAfter": "1"
+    },
+    {
+      "status": 503,
+      "error": "Depth query capacity; retry",
+      "retryAfter": "1"
+    }
+  ],
+  "healthStatus": 200,
+  "collector": "live",
+  "depth": "live"
+}

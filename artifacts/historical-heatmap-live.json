@@ -1,0 +1,14 @@
+{
+  "source": "actual retained depth, older viewport approximately four hours ago",
+  "status": {
+    "state": "live",
+    "message": "Staging durable depth · snapshot-covered viewport · 0 coverage gap(s) · RPI excluded",
+    "tickSize": 0.1,
+    "collectionStart": 1791872640831,
+    "retentionStart": 1791873600000,
+    "capacityLimited": false
+  },
+  "buckets": 6,
+  "first": 1791873600000,
+  "last": 1791875400000
+}

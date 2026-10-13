@@ -46,3 +46,10 @@ describe('axis-bound chart grid', () => {
     grid.detached(); grid.setEnabled(true); expect(requests).toBe(1);
   });
 });
+
+it('defaults old layouts to TradingView wheel mode and preserves explicit legacy choice', () => {
+  expect(config({}).wheelMode).toBe('tradingview');
+  expect(config({ wheelMode: 'unknown' }).wheelMode).toBe('tradingview');
+  expect(config({ wheelMode: 'both-axes' }).wheelMode).toBe('both-axes');
+  expect(config(config({ wheelMode: 'both-axes' })).wheelMode).toBe('both-axes');
+});

@@ -1,0 +1,174 @@
+diff --git a/src/depth-book.ts b/src/depth-book.ts
+index f56f738..23a5e9f 100644
+--- a/src/depth-book.ts
++++ b/src/depth-book.ts
+@@ -21,30 +21,80 @@ export class DurableBook {
+ export interface DepthRecord { cursor:number; epoch:number; at:number; kind:'snapshot'|'checkpoint'|'delta'|'gap'; payload:any; }
+ export interface HeatmapRequest {from:number;to:number;low:number;high:number;rowPrice:number;timeMs:number;mode:'average'|'peak'|'last';}
+ export function validateHeatmap(p:HeatmapRequest){if(![p.from,p.to,p.timeMs].every(Number.isSafeInteger)||p.from<=0||p.to<=p.from||p.to-p.from>14400000||![p.low,p.high,p.rowPrice].every(Number.isFinite)||p.low<0||p.high<=p.low||p.rowPrice<.1||Math.abs(p.rowPrice*10-Math.round(p.rowPrice*10))>1e-6||p.timeMs<1000||p.timeMs>14400000||60000%p.timeMs!==0&&p.timeMs%60000!==0||!['average','peak','last'].includes(p.mode))throw new Error('Invalid bounded heatmap request');if(Math.ceil((p.high-p.low)/p.rowPrice)>512||Math.ceil((p.to-p.from)/p.timeMs)*Math.ceil((p.high-p.low)/p.rowPrice)>16384)throw new Error('Heatmap rendering budget; choose coarser resolution');}
+-/** Time integration of simultaneous price sums; missing durations never become zeros. */
++/** Integrate each row only when its value changes, at continuity boundaries, or at the query end. */
+ export function reconstruct(records:DepthRecord[],p:HeatmapRequest,headAt:number){
+- validateHeatmap(p);const book=new DurableBook();let values:Map<number,any>|undefined;const units=(v:string)=>{const [a,b='']=v.split('.');return BigInt(a+b.padEnd(8,'0'));};let valid=false;let at=p.from;const cells=new Map<string,any>();const spans:any[]=[];
+- const integrate=(end:number,instant=false)=>{const from=Math.max(at,p.from),to=instant?Math.min(from+1,p.to,headAt):Math.min(end,p.to,headAt);if(!valid||to<=from)return;
+-  const first=Math.floor(p.low/p.rowPrice),last=Math.ceil(p.high/p.rowPrice);if(!values){values=new Map<number,any>();
+-  for(let row=first;row<last;row++)values.set(row,{bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidKnown:0,askKnown:0});
+-  for(const [side,map] of [['bid',book.bids],['ask',book.asks]] as const)for(const [price,q] of map){const value=Number(price),row=Math.floor(value/p.rowPrice+1e-8),v=values.get(row);if(v){v[side]+=units(q);v[side+'Quote']+=units(price)*units(q);v[side+'Known']++;}}}
+-  for(let t=from;t<to;){const start=Math.floor(t/p.timeMs)*p.timeMs,until=Math.min(to,start+p.timeMs),dt=instant?0:until-t;
+-   for(const [row,v] of values){const low=row*p.rowPrice,high=low+p.rowPrice;const bidComplete=low>=book.bidFloor,askComplete=high<=book.askCeiling+.0000001;
+-    if(!bidComplete&&!askComplete&&!v.bidKnown&&!v.askKnown)continue;
+-    const key=start+':'+row;let c=cells.get(key);if(!c){c={time:start,low,high,bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidPeak:0n,askPeak:0n,bidQuotePeak:0n,askQuotePeak:0n,bidLast:0n,askLast:0n,bidQuoteLast:0n,askQuoteLast:0n,bidDuration:0,askDuration:0,bidCompleteDuration:0,askCompleteDuration:0,epochs:new Set<number>()};cells.set(key,c);}
+-    for(const side of ['bid','ask'] as const){if((side==='bid'?bidComplete:askComplete)||v[side+'Known']){c[side]+=v[side]*BigInt(dt);c[side+'Quote']+=v[side+'Quote']*BigInt(dt);if(v[side]>c[side+'Peak'])c[side+'Peak']=v[side];if(v[side+'Quote']>c[side+'QuotePeak'])c[side+'QuotePeak']=v[side+'Quote'];c[side+'Last']=v[side];c[side+'QuoteLast']=v[side+'Quote'];c[side+'Duration']+=dt;}if(side==='bid'?bidComplete:askComplete)c[side+'CompleteDuration']+=dt;}
+-    c.epochs.add(book.epoch);
+-   }t=until;
++ validateHeatmap(p);
++ const book=new DurableBook(),cells=new Map<string,any>(),spans:any[]=[];
++ const units=(v:string)=>{const [a,b='']=v.split('.');return BigInt(a+b.padEnd(8,'0'));};
++ let valid=false,lastObservation=-Infinity;
++ let values=new Map<number,any>();
++ const first=Math.floor(p.low/p.rowPrice),last=Math.ceil(p.high/p.rowPrice);
++ const add=(row:number,v:any,start:number,dt:number)=>{
++  const low=row*p.rowPrice,high=low+p.rowPrice;
++  const bidComplete=low>=book.bidFloor,askComplete=high<=book.askCeiling+.0000001;
++  if(!bidComplete&&!askComplete&&!v.bidKnown&&!v.askKnown)return;
++  const key=start+':'+row;let c=cells.get(key);
++  if(!c){c={time:start,low,high,bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidPeak:0n,askPeak:0n,bidQuotePeak:0n,askQuotePeak:0n,bidLast:0n,askLast:0n,bidQuoteLast:0n,askQuoteLast:0n,bidDuration:0,askDuration:0,bidCompleteDuration:0,askCompleteDuration:0,epochs:new Set<number>()};cells.set(key,c);}
++  const elapsed=BigInt(dt);
++  for(const side of ['bid','ask'] as const){
++   if((side==='bid'?bidComplete:askComplete)||v[side+'Known']){
++    if(dt){c[side]+=v[side]*elapsed;c[side+'Quote']+=v[side+'Quote']*elapsed;c[side+'Duration']+=dt;}
++    if(v[side]>c[side+'Peak'])c[side+'Peak']=v[side];
++    if(v[side+'Quote']>c[side+'QuotePeak'])c[side+'QuotePeak']=v[side+'Quote'];
++    c[side+'Last']=v[side];c[side+'QuoteLast']=v[side+'Quote'];
++   }
++   if(side==='bid'?bidComplete:askComplete)c[side+'CompleteDuration']+=dt;
+   }
++  c.epochs.add(book.epoch);
+  };
+- const seen=new Set<string>();for(const r of records){const key=r.kind+':'+r.cursor;if(seen.has(key))continue;seen.add(key);if(r.at>p.to)break;integrate(r.at);at=r.at;
+-  if(r.kind==='snapshot'||r.kind==='checkpoint'){book.restore(r.payload);values=undefined;book.bridged=r.kind!=="snapshot";valid=true;spans.push({epoch:r.epoch,from:Math.max(r.at,p.from),bidFloor:book.bidFloor,askCeiling:book.askCeiling});}
+-  else if(r.kind==='gap'){valid=false;spans.push({epoch:r.epoch,from:r.at,gap:r.payload.reason});}
+-  else {if(!valid)continue;
+-   if(values)for(const [side,map,levels] of [['bid',book.bids,r.payload.b],['ask',book.asks,r.payload.a]] as const){const changed=new Map<string,string>(levels);for(const [price,q] of changed){const v=values.get(Math.floor(Number(price)/p.rowPrice+1e-8));if(!v)continue;const difference=units(q)-units(map.get(price)??'0');v[side]+=difference;v[side+'Quote']+=units(price)*difference;if(!map.has(price))v[side+'Known']++;}}
++ const flush=(row:number,v:any,end:number)=>{
++  // A quiet row may have been observed at a bucket boundary before a same-ms
++  // change. Preserve that zero-duration peak even when no elapsed time is due.
++  if(lastObservation>=v.at)instant(row,v,lastObservation);
++  const to=Math.min(end,p.to,headAt);
++  for(let t=Math.max(v.at,p.from);t<to;){const start=Math.floor(t/p.timeMs)*p.timeMs,until=Math.min(to,start+p.timeMs);add(row,v,start,until-t);t=until;}
++  v.at=Math.max(v.at,to);
++ };
++ const instant=(row:number,v:any,at:number)=>{if(at>=p.from&&at<Math.min(p.to,headAt))add(row,v,Math.floor(at/p.timeMs)*p.timeMs,0);};
++ const flushAll=(at:number)=>{if(valid)for(const [row,v] of values)flush(row,v,at);};
++ const restore=(at:number)=>{
++  values=new Map();for(let row=first;row<last;row++)values.set(row,{at:Math.max(at,p.from),bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidKnown:0,askKnown:0});
++  for(const [side,map] of [['bid',book.bids],['ask',book.asks]] as const)for(const [price,q] of map){const v=values.get(Math.floor(Number(price)/p.rowPrice+1e-8));if(v){const quantity=units(q);v[side]+=quantity;v[side+'Quote']+=units(price)*quantity;v[side+'Known']++;}}
++  for(const [row,v] of values)instant(row,v,at);
++ };
++ const seen=new Set<string>();
++ for(const r of records){
++  const key=r.kind+':'+r.cursor;if(seen.has(key))continue;seen.add(key);if(r.at>p.to)break;
++  if(r.kind==='snapshot'||r.kind==='checkpoint'){
++   flushAll(r.at);book.restore(r.payload);book.bridged=r.kind!=='snapshot';valid=true;restore(r.at);
++   spans.push({epoch:r.epoch,from:Math.max(r.at,p.from),bidFloor:book.bidFloor,askCeiling:book.askCeiling});
++  }else if(r.kind==='gap'){
++   flushAll(r.at);valid=false;spans.push({epoch:r.epoch,from:r.at,gap:r.payload.reason});
++  }else{
++   if(!valid)continue;
++   // A rejected duplicate sequence cannot modify the reconstructed quantities.
++   if(r.payload.u<book.sequence||book.bridged&&r.payload.u===book.sequence)continue;
++   const touched=new Map<number,any>(),updates:{side:'bid'|'ask';v:any;difference:bigint;price:bigint;known:boolean}[]=[];
++   for(const [side,map,levels] of [['bid',book.bids,r.payload.b],['ask',book.asks,r.payload.a]] as const){
++    for(const [price,q] of new Map<string,string>(levels)){
++     const row=Math.floor(Number(price)/p.rowPrice+1e-8),v=values.get(row);if(!v)continue;
++     const previous=map.get(price);if(previous===q)continue;
++     const difference=units(q)-units(previous??'0');if(difference===0n&&previous!==undefined)continue;
++     touched.set(row,v);updates.push({side,v,difference,price:units(price),known:previous===undefined});
++    }
++   }
++   for(const [row,v] of touched)flush(row,v,r.at);
++   // All price replacements in a message are simultaneous; capture the peak only afterwards.
+    book.apply(r.payload,r.at);
++   for(const {side,v,difference,price,known} of updates){v[side]+=difference;v[side+'Quote']+=price*difference;if(known)v[side+'Known']++;}
++   for(const [row,v] of touched)instant(row,v,r.at);
+   }
+-  if(valid&&r.at>=p.from)integrate(r.at,true);
++  if(valid&&r.at>=p.from)lastObservation=r.at;
+  }
+- integrate(Math.min(p.to,headAt));return {cells:[...cells.values()].map(c=>{const expected=Math.min(p.to,c.time+p.timeMs,headAt)-Math.max(p.from,c.time);const epochs=[...c.epochs];const value=(side:string,quote=false)=>{if(!c[side+"Duration"])return null;const name=side+(quote?'Quote':'');const scale=quote?1e16:1e8;return p.mode==='peak'?Number(c[name+'Peak'])/scale:p.mode==='last'?Number(c[name+'Last'])/scale:c[side+'Duration']?Number(c[name])/(scale*c[side+'Duration']):null;};return {time:c.time,low:c.low,high:c.high,bid:value('bid'),ask:value('ask'),bidQuote:value('bid',true),askQuote:value('ask',true),bidPeak:Number(c.bidPeak)/1e8,askPeak:Number(c.askPeak)/1e8,bidQuotePeak:Number(c.bidQuotePeak)/1e16,askQuotePeak:Number(c.askQuotePeak)/1e16,bidDuration:c.bidDuration,askDuration:c.askDuration,bidComplete:c.bidCompleteDuration===expected&&epochs.length===1,askComplete:c.askCompleteDuration===expected&&epochs.length===1,epochs};}),spans};
++ flushAll(Math.min(p.to,headAt));
++ return {cells:[...cells.values()].sort((a,b)=>a.time-b.time||a.low-b.low).map(c=>{
++  const expected=Math.min(p.to,c.time+p.timeMs,headAt)-Math.max(p.from,c.time),epochs=[...c.epochs];
++  const value=(side:string,quote=false)=>{if(!c[side+'Duration'])return null;const name=side+(quote?'Quote':''),scale=quote?1e16:1e8;return p.mode==='peak'?Number(c[name+'Peak'])/scale:p.mode==='last'?Number(c[name+'Last'])/scale:Number(c[name])/(scale*c[side+'Duration']);};
++  return {time:c.time,low:c.low,high:c.high,bid:value('bid'),ask:value('ask'),bidQuote:value('bid',true),askQuote:value('ask',true),bidPeak:Number(c.bidPeak)/1e8,askPeak:Number(c.askPeak)/1e8,bidQuotePeak:Number(c.bidQuotePeak)/1e16,askQuotePeak:Number(c.askQuotePeak)/1e16,bidDuration:c.bidDuration,askDuration:c.askDuration,bidComplete:c.bidCompleteDuration===expected&&epochs.length===1,askComplete:c.askCompleteDuration===expected&&epochs.length===1,epochs};
++ }),spans};
+ }
+diff --git a/tests/depth-reference.ts b/tests/depth-reference.ts
+new file mode 100644
+index 0000000..c84e1cd
+--- /dev/null
++++ b/tests/depth-reference.ts
+@@ -0,0 +1,29 @@
++// Preserved pre-optimization replay oracle for equivalence tests only.
++import {DurableBook,validateHeatmap,type DepthRecord,type HeatmapRequest} from '../src/depth-book.ts';
++/** Time integration of simultaneous price sums; missing durations never become zeros. */
++export function referenceReconstruct(records:DepthRecord[],p:HeatmapRequest,headAt:number){
++ validateHeatmap(p);const book=new DurableBook();let values:Map<number,any>|undefined;const units=(v:string)=>{const [a,b='']=v.split('.');return BigInt(a+b.padEnd(8,'0'));};let valid=false;let at=p.from;const cells=new Map<string,any>();const spans:any[]=[];
++ const integrate=(end:number,instant=false)=>{const from=Math.max(at,p.from),to=instant?Math.min(from+1,p.to,headAt):Math.min(end,p.to,headAt);if(!valid||to<=from)return;
++  const first=Math.floor(p.low/p.rowPrice),last=Math.ceil(p.high/p.rowPrice);if(!values){values=new Map<number,any>();
++  for(let row=first;row<last;row++)values.set(row,{bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidKnown:0,askKnown:0});
++  for(const [side,map] of [['bid',book.bids],['ask',book.asks]] as const)for(const [price,q] of map){const value=Number(price),row=Math.floor(value/p.rowPrice+1e-8),v=values.get(row);if(v){v[side]+=units(q);v[side+'Quote']+=units(price)*units(q);v[side+'Known']++;}}}
++  for(let t=from;t<to;){const start=Math.floor(t/p.timeMs)*p.timeMs,until=Math.min(to,start+p.timeMs),dt=instant?0:until-t;
++   for(const [row,v] of values){const low=row*p.rowPrice,high=low+p.rowPrice;const bidComplete=low>=book.bidFloor,askComplete=high<=book.askCeiling+.0000001;
++    if(!bidComplete&&!askComplete&&!v.bidKnown&&!v.askKnown)continue;
++    const key=start+':'+row;let c=cells.get(key);if(!c){c={time:start,low,high,bid:0n,ask:0n,bidQuote:0n,askQuote:0n,bidPeak:0n,askPeak:0n,bidQuotePeak:0n,askQuotePeak:0n,bidLast:0n,askLast:0n,bidQuoteLast:0n,askQuoteLast:0n,bidDuration:0,askDuration:0,bidCompleteDuration:0,askCompleteDuration:0,epochs:new Set<number>()};cells.set(key,c);}
++    for(const side of ['bid','ask'] as const){if((side==='bid'?bidComplete:askComplete)||v[side+'Known']){c[side]+=v[side]*BigInt(dt);c[side+'Quote']+=v[side+'Quote']*BigInt(dt);if(v[side]>c[side+'Peak'])c[side+'Peak']=v[side];if(v[side+'Quote']>c[side+'QuotePeak'])c[side+'QuotePeak']=v[side+'Quote'];c[side+'Last']=v[side];c[side+'QuoteLast']=v[side+'Quote'];c[side+'Duration']+=dt;}if(side==='bid'?bidComplete:askComplete)c[side+'CompleteDuration']+=dt;}
++    c.epochs.add(book.epoch);
++   }t=until;
++  }
++ };
++ const seen=new Set<string>();for(const r of records){const key=r.kind+':'+r.cursor;if(seen.has(key))continue;seen.add(key);if(r.at>p.to)break;integrate(r.at);at=r.at;
++  if(r.kind==='snapshot'||r.kind==='checkpoint'){book.restore(r.payload);values=undefined;book.bridged=r.kind!=="snapshot";valid=true;spans.push({epoch:r.epoch,from:Math.max(r.at,p.from),bidFloor:book.bidFloor,askCeiling:book.askCeiling});}
++  else if(r.kind==='gap'){valid=false;spans.push({epoch:r.epoch,from:r.at,gap:r.payload.reason});}
++  else {if(!valid)continue;
++   if(values)for(const [side,map,levels] of [['bid',book.bids,r.payload.b],['ask',book.asks,r.payload.a]] as const){const changed=new Map<string,string>(levels);for(const [price,q] of changed){const v=values.get(Math.floor(Number(price)/p.rowPrice+1e-8));if(!v)continue;const difference=units(q)-units(map.get(price)??'0');v[side]+=difference;v[side+'Quote']+=units(price)*difference;if(!map.has(price))v[side+'Known']++;}}
++   book.apply(r.payload,r.at);
++  }
++  if(valid&&r.at>=p.from)integrate(r.at,true);
++ }
++ integrate(Math.min(p.to,headAt));return {cells:[...cells.values()].map(c=>{const expected=Math.min(p.to,c.time+p.timeMs,headAt)-Math.max(p.from,c.time);const epochs=[...c.epochs];const value=(side:string,quote=false)=>{if(!c[side+"Duration"])return null;const name=side+(quote?'Quote':'');const scale=quote?1e16:1e8;return p.mode==='peak'?Number(c[name+'Peak'])/scale:p.mode==='last'?Number(c[name+'Last'])/scale:c[side+'Duration']?Number(c[name])/(scale*c[side+'Duration']):null;};return {time:c.time,low:c.low,high:c.high,bid:value('bid'),ask:value('ask'),bidQuote:value('bid',true),askQuote:value('ask',true),bidPeak:Number(c.bidPeak)/1e8,askPeak:Number(c.askPeak)/1e8,bidQuotePeak:Number(c.bidQuotePeak)/1e16,askQuotePeak:Number(c.askQuotePeak)/1e16,bidDuration:c.bidDuration,askDuration:c.askDuration,bidComplete:c.bidCompleteDuration===expected&&epochs.length===1,askComplete:c.askCompleteDuration===expected&&epochs.length===1,epochs};}),spans};
++}
+diff --git a/tests/depth-performance.test.ts b/tests/depth-performance.test.ts
+new file mode 100644
+index 0000000..0778ee8
+--- /dev/null
++++ b/tests/depth-performance.test.ts
+@@ -0,0 +1,28 @@
++import {test} from 'node:test';import assert from 'node:assert/strict';
++import {DurableBook,reconstruct,type DepthRecord} from '../src/depth-book.ts';
++import {referenceReconstruct} from './depth-reference.ts';
++const sorted=(r:any)=>({...r,cells:r.cells.toSorted((a:any,b:any)=>a.time-b.time||a.low-b.low)});
++test('lazy row integration is identical across quiet rows, same-time changes, gaps, epochs and checkpoints',()=>{
++ for(let seed=1;seed<=12;seed++){
++  let random=seed;const rand=()=>{random=(Math.imul(random,1664525)+1013904223)>>>0;return random/4294967296;};
++  const book=new DurableBook(),records:DepthRecord[]=[];let cursor=0,epoch=1,at=1000,seq=10;
++  const checkpoint=()=>{book.snapshot({lastUpdateId:seq,bids:[['100','2'],['90','0'],['70','3.00000001']],asks:[['110','4'],['120','5']]},epoch,at);book.bridged=true;records.push({cursor:++cursor,epoch,at,kind:'checkpoint',payload:book.save()});};checkpoint();
++  for(let i=0;i<220;i++){
++   at+=[0,0,100,700,2500][Math.floor(rand()*5)]!;
++   if(i===70||i===140){records.push({cursor:++cursor,epoch,at,kind:'gap',payload:{reason:'test continuity gap'}});at+=1700;epoch++;checkpoint();continue;}
++   const levels=()=>Array.from({length:1+Math.floor(rand()*4)},()=>[(50+Math.floor(rand()*101)).toFixed(1),rand()<.2?'0':(rand()*9).toFixed(8)] as [string,string]);
++   const payload={e:'depthUpdate' as const,s:'BTCUSDT' as const,E:at,T:at,U:seq+1,u:seq+1,pu:seq,b:levels(),a:levels()};seq++;book.apply(payload,at);records.push({cursor:++cursor,epoch,at,kind:'delta',payload});
++   if(i%43===0)records.push({cursor:++cursor,epoch,at,kind:'checkpoint',payload:book.save()});
++   if(i%37===0)records.push(records.at(-1)!);
++  }
++  for(const mode of ['average','peak','last'] as const)for(const timeMs of [1000,5000,60000])for(const from of [1000,1700,17000]){
++   const p={from,to:at+3000,low:50,high:160,rowPrice:10,timeMs,mode};
++   assert.deepEqual(sorted(reconstruct(records,p,at+1000)),sorted(referenceReconstruct(records,p,at+1000)),`seed ${seed}, ${mode}, ${timeMs}, ${from}`);
++  }
++ }
++});
++test('a repeated sequence with a new record cursor cannot change quantities',()=>{
++ const b=new DurableBook();b.snapshot({lastUpdateId:10,bids:[['100','2']],asks:[['110','4']]},1,1000);
++ const rows:DepthRecord[]=[{cursor:1,epoch:1,at:1000,kind:'checkpoint',payload:b.save()},{cursor:2,epoch:1,at:1500,kind:'delta',payload:{U:10,u:10,pu:9,b:[['100','999']],a:[]}}];
++ const out=reconstruct(rows,{from:1000,to:2000,low:90,high:120,rowPrice:10,timeMs:1000,mode:'average'},2000);assert.equal(out.cells.find(c=>c.low===100)?.bid,2);
++});

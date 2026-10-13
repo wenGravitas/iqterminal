@@ -1,0 +1,51 @@
+{
+  "before": {
+    "artifact": "wide-heatmap-diagnosis.json",
+    "firstHistoricalPaintObservedMs": null,
+    "completeObservedMs": null,
+    "lastObservedMs": 185295,
+    "lastState": "syncing",
+    "lastBuckets": 2,
+    "successfulRequests": 20,
+    "capacityResponses": 1,
+    "resourceResponses": 0,
+    "abortedRequests": 2
+  },
+  "liveAfter": {
+    "artifact": "wide-heatmap-performance-final.json",
+    "firstHistoricalPaintObservedMs": 35332,
+    "completeObservedMs": 165461,
+    "lastObservedMs": 165461,
+    "lastState": "live",
+    "lastBuckets": 48,
+    "successfulRequests": 18,
+    "capacityResponses": 1,
+    "resourceResponses": 1,
+    "abortedRequests": 1
+  },
+  "fixedHistoricalAfter": {
+    "artifact": "wide-heatmap-fixed-performance.json",
+    "firstHistoricalPaintObservedMs": 15886,
+    "completeObservedMs": 85941,
+    "lastObservedMs": 85941,
+    "lastState": "live",
+    "lastBuckets": 48,
+    "successfulRequests": 14,
+    "capacityResponses": 0,
+    "resourceResponses": 1,
+    "abortedRequests": 0
+  },
+  "validation": {
+    "clientTests": 217,
+    "serverTests": 38,
+    "clientStagingBuild": "pass",
+    "serverBuild": "pass",
+    "recordedReplayModesEqual": [
+      "average",
+      "peak",
+      "last"
+    ],
+    "deployedTwentyMinuteApiEqual": true
+  },
+  "limits": "Browser observations include startup, network and server contention. Fixed historical and live-edge viewports differ; no controlled end-to-end speedup ratio or worst-case latency guarantee. The replay-only comparison uses identical recorded inputs in the same container."
+}

@@ -1,6 +1,5 @@
-import { footprintColumn } from './terminal-footprint';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
-import { compactVol, type FootprintOptions } from 'openalgo-charts/profile';
+import { compactVol } from 'openalgo-charts/profile';
 import { DEFAULT_HEATMAP, HEATMAP_LIMITS, HEATMAP_STRIDE, HEATMAP_PEAK_STRIDE, type HeatmapSettings, type LiquidityBucket } from '../feed/heatmap-model';
 
 /** Map observations to their candle centre. Missing host intervals have no display slot. */
@@ -93,28 +92,32 @@ const palette = (stops: number[][]) => Array.from({ length: 256 }, (_, n) => {
 });
 export const LIQUIDITY_PALETTE = palette(stops);
 const LIGHT_LIQUIDITY_PALETTE = palette(lightStops);
-function backgroundPalette(background: string) {
+const ENHANCED_PALETTE = palette([[51, 28, 74], [39, 75, 111], [34, 122, 128], [91, 151, 112], [205, 185, 105]]);
+const ENHANCED_LIGHT_PALETTE = palette([[225, 213, 235], [194, 214, 235], [161, 213, 208], [165, 206, 153], [213, 197, 133]]);
+function backgroundPalette(background: string, contrast: HeatmapSettings['contrast'] = 'muted') {
   const rgb = /^#[\da-f]{6}$/i.test(background) ? [1, 3, 5].map(i => parseInt(background.slice(i, i + 2), 16)) : [9, 9, 9];
-  return rgb[0]! * .2126 + rgb[1]! * .7152 + rgb[2]! * .0722 > 128 ? LIGHT_LIQUIDITY_PALETTE : LIQUIDITY_PALETTE;
+  const light = rgb[0]! * .2126 + rgb[1]! * .7152 + rgb[2]! * .0722 > 128;
+  return contrast === 'enhanced' ? light ? ENHANCED_LIGHT_PALETTE : ENHANCED_PALETTE : light ? LIGHT_LIQUIDITY_PALETTE : LIQUIDITY_PALETTE;
 }
 /** Choose contrast after compositing liquidity opacity over the actual chart background. */
-export function liquidityTextColor(index: number, opacity: number, background: string) {
-  const fill = backgroundPalette(background)[index]!.match(/\d+/g)!.map(Number);
+export function liquidityTextColor(index: number, opacity: number, background: string, contrast: HeatmapSettings['contrast'] = 'muted') {
+  const fill = backgroundPalette(background, contrast)[index]!.match(/\d+/g)!.map(Number);
   const hex = /^#[\da-f]{6}$/i.test(background) ? background : '#090909';
   const channels = fill.map((value, i) => (value * opacity + parseInt(hex.slice(1+i*2,3+i*2),16)*(1-opacity))/255);
   const linear = channels.map(v => v <= .04045 ? v/12.92 : ((v+.055)/1.055)**2.4);
   const luminance = linear[0]!*.2126 + linear[1]!*.7152 + linear[2]!*.0722;
   return luminance > .179 ? '#485567' : '#bcc3ce';
 }
-export function intensityIndex(quantity: number, priceWidth: number, fixedScale: number) {
+export function intensityIndex(quantity: number, priceWidth: number, fixedScale: number, contrast: HeatmapSettings['contrast'] = 'muted') {
   // Density in BTC per $10 prevents wider price bins looking like stronger individual walls.
-  return Math.round(255 * Math.min(1, Math.log1p(quantity * 10 / priceWidth / fixedScale) / Math.log(2)));
+  const strength = Math.min(1, Math.log1p(quantity * 10 / priceWidth / fixedScale) / Math.log(2));
+  // A fixed transfer curve lifts faint recorded liquidity without viewport normalization.
+  return Math.round(255 * (contrast === 'enhanced' ? Math.sqrt(strength) : strength));
 }
 export class OrderBookHeatmap implements IPrimitive {
   private units: 'btc' | 'usdt' = 'btc';
   setUnits(units: 'btc' | 'usdt') { this.units = units; this.host?.requestUpdate(); }
   private rowOccluded?: (timeMs: number, low: number, high: number) => boolean;
-  private footprintLayout?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'> & Partial<Pick<FootprintOptions, 'statsPosition'>>;
   private host?: PrimitiveHost; private buckets: LiquidityBucket[] = []; private options: HeatmapSettings = { ...DEFAULT_HEATMAP };
   private version = 0; private cacheKey = ''; private bins: HeatmapBin[] = [];
   private durations: number[] = [];
@@ -129,9 +132,6 @@ export class OrderBookHeatmap implements IPrimitive {
   setInterval(intervalMs: number) { if (this.intervalMs !== intervalMs) { this.intervalMs = intervalMs; this.cacheKey = ''; this.host?.requestUpdate(); } }
   setOptions(options: HeatmapSettings) { this.options = { ...options }; this.version++; this.host?.requestUpdate(); }
   setFootprintOcclusion(test: (timeMs: number, low: number, high: number) => boolean) { this.rowOccluded = test; }
-  setFootprintLayout(options?: Pick<FootprintOptions, 'widthFactor' | 'cellWidth' | 'showCandle'> & Partial<Pick<FootprintOptions, 'statsPosition'>>) {
-    this.footprintLayout = options ? { ...options } : undefined; this.version++; this.host?.requestUpdate();
-  }
   update(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) {
     const map = new Map(snapshot ? [] : this.buckets.map(b => [b.id, b]));
     for (const b of buckets) {
@@ -147,7 +147,7 @@ export class OrderBookHeatmap implements IPrimitive {
   }
   draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const started = performance.now(), o = this.options, dpr = rc.dpr;
-    const colors = backgroundPalette(rc.theme?.background ?? '#090909');
+    const colors = backgroundPalette(rc.theme?.background ?? '#090909', o.contrast);
     const range = rc.timeScale.visibleRange(), prices = rc.priceScale.priceRange();
     const key = `${this.version}:${this.intervalMs}:${range.from}:${range.to}:${prices.min}:${prices.max}:${rc.plotWidth}:${rc.plotHeight}:${dpr}:${rc.dataLayer.indexToTime(0)}`;
     if (this.cacheKey !== key) {
@@ -157,16 +157,7 @@ export class OrderBookHeatmap implements IPrimitive {
         const rows = groupPriceRows(b, factor); this.priceCache.set(b.id, { revision: b.revision, factor, rows }); this.stats.priceCacheBuilds++;
         return rows;
       });
-      if (this.footprintLayout) {
-        // Match the terminal ladder’s outer edges, including its central candle gutter.
-        const o = this.footprintLayout, spacing = rc.timeScale.barSpacing;
-        const { column } = footprintColumn(o, spacing);
-        for (const bin of this.bins) {
-          const centre = (bin.x + bin.right) / 2;
-          const span=(bin.columnEnd-bin.columnStart)/this.intervalMs;
-          bin.x = centre - column * span / 2; bin.right = bin.x + column * span;
-        }
-      }
+      // Liquidity spans the entire time slot, independently of footprint candle spacing.
       this.cacheKey = key; this.stats.rebuilds++;
     }
     this.stats.draws++; this.stats.labels = 0; this.stats.bins = this.bins.length;
@@ -182,10 +173,13 @@ export class OrderBookHeatmap implements IPrimitive {
         const quantity = b[side]; if (quantity < o.minimum) continue;
         // If both sides occupy a coarse row, keep separate vertical halves and readouts.
         const split = sides.length === 2, y = b.y + (split && side === 'bid' ? h / 2 : 0), height = split ? h / 2 : h;
-        ctx.globalAlpha = o.opacity * (b.incomplete ? .55 : 1);
-        const intensity = intensityIndex(quantity, b.high - b.low, o.intensity);
+        const alpha = o.opacity * (b.incomplete ? o.contrast === 'enhanced' ? .8 : .55 : 1);
+        ctx.globalAlpha = alpha;
+        const intensity = intensityIndex(quantity, b.high - b.low, o.intensity, o.contrast);
         ctx.fillStyle = colors[intensity]!;
-        ctx.fillRect(b.x * dpr, y * dpr, w * dpr, height * dpr);
+        // Shared pixel boundaries prevent alpha seams at fractional bar spacing.
+        const leftPixel = Math.round(b.x * dpr), rightPixel = Math.round(b.right * dpr);
+        ctx.fillRect(leftPixel, y * dpr, rightPixel - leftPixel, height * dpr);
         if (b.incomplete && w > 4 && height > 4) {
           ctx.strokeStyle = '#858585'; ctx.globalAlpha = .3; ctx.lineWidth = dpr;
           ctx.beginPath(); ctx.moveTo(b.x * dpr, (y + height) * dpr); ctx.lineTo(Math.min(b.right, b.x + height) * dpr, y * dpr); ctx.stroke();
@@ -195,7 +189,7 @@ export class OrderBookHeatmap implements IPrimitive {
         const labelWidth = labelRight - labelLeft, labelHeight = labelBottom - labelTop;
         const font = Math.min(12, labelHeight * .65, (labelWidth - 8) / (text.length * .62));
         if (o.labels === 'auto' && font >= 9 && labelHeight >= 14) {
-          ctx.globalAlpha = 1; ctx.fillStyle = liquidityTextColor(intensity, o.opacity * (b.incomplete ? .55 : 1), rc.theme?.background ?? '#090909');
+          ctx.globalAlpha = 1; ctx.fillStyle = liquidityTextColor(intensity, alpha, rc.theme?.background ?? '#090909', o.contrast);
           ctx.font = `${font * dpr}px ui-monospace, monospace`;
           ctx.fillText(text, (labelLeft + labelWidth / 2) * dpr, (labelTop + labelHeight / 2) * dpr, (labelWidth - 8) * dpr); this.stats.labels++;
         }

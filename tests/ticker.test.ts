@@ -40,3 +40,25 @@ it('parses bounded editable quick-filter sizes without coercing invalid text to 
   for(const [text,value] of [['100K',100000],['1m',1e6],['.25',.25],['0',0],[' 2.5 k ',2500]] as const)expect(parseDisplayMinimum(text)).toBe(value);
   for(const text of ['','-1','Infinity','1e20','1e3','1000001M','<script>'])expect(parseDisplayMinimum(text)).toBeNull();
 });
+
+it('retains displayed prints through hidden traffic and evicts only at the matching-row limit',()=>{
+  const config=tickerConfig({displayMinimum:100000,side:'buy'}),pipeline=new TickerPipeline(config,now-1),tape=new TickerTape();tape.configure(config);
+  const first=pipeline.accept(execution('fixed',1000000),now,now-1)!;tape.ingest([first]);
+  const original=JSON.stringify(first);
+  for(let n=0;n<1000;n++)tape.ingest([pipeline.accept(execution(`hidden-${n}`,n%2?1000:1000000,n%2?'buy':'sell'),now,now-1)!]);
+  expect(tape.rows).toHaveLength(500);expect(tape.rows).not.toContain(first);expect(tape.visible(config)).toEqual([first]);expect(JSON.stringify(first)).toBe(original);
+  for(let n=0;n<99;n++)tape.ingest([pipeline.accept(execution(`match-${n}`),now,now-1)!]);
+  expect(tape.visible(config)).toHaveLength(100);expect(tape.visible(config).at(-1)).toBe(first);
+  tape.ingest([pipeline.accept(execution('next'),now,now-1)!]);expect(tape.visible(config)).toHaveLength(100);expect(tape.visible(config)).not.toContain(first);expect(tape.visible(config)[0].execution.executionId).toContain('next');
+});
+it('keeps paused matching rows independent and rebuilds only on explicit display-filter edits',()=>{
+  const config=tickerConfig({displayMinimum:100000}),pipeline=new TickerPipeline(config,now-1),tape=new TickerTape();tape.configure(config);
+  const first=pipeline.accept(execution('first'),now,now-1)!;tape.ingest([first]);tape.pause(now);
+  for(let n=0;n<600;n++)tape.ingest([pipeline.accept(execution(`small-${n}`,1000),now,now-1)!]);
+  const next=pipeline.accept(execution('next'),now,now-1)!;tape.ingest([next]);
+  expect(tape.visible(config)).toEqual([first]);expect(tape.snapshot(now+10000).now).toBe(now);
+  tape.configure({...config,displayMinimum:2000000});expect(tape.visible({...config,displayMinimum:2000000})).toEqual([]);
+  tape.configure(config);expect(tape.visible(config)).toEqual([first]);tape.live();expect(tape.visible(config)).toEqual([next]);
+  // Lowering the filter reuses recent raw history, without duplicate retained overlap.
+  const lower={...config,displayMinimum:0};const visible=tape.visible(lower);expect(visible).toHaveLength(100);expect(new Set(visible.map(r=>r.execution.executionId)).size).toBe(100);expect(visible[0]).toBe(next);
+});

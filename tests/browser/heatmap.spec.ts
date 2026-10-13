@@ -12,11 +12,9 @@ async function expectCandleColumns(page: Page) {
       const key = `${b.columnStart}:${b.low}:${b.high}`;
       const duplicate = seen.has(key); seen.add(key);
       const index = engine.chart.dataLayer.timeToIndex(b.columnStart / 1000);
-      const centre = engine.chart.timeScale.indexToX(index), spacing = engine.chart.timeScale.barSpacing;
-      const opts = engine.footprintOptions, column = Math.max(.1, Math.min(opts.cellWidth ?? spacing * opts.widthFactor, spacing * .96));
-      const candle = opts.showCandle && column >= 20 ? Math.min(9, column * .15) : 0;
-      return { duplicate, leftError: b.x - (engine.mode === 'footprint' ? centre-column/2 : engine.chart.timeScale.indexToX(index - .5)),
-        rightError: b.right - (engine.mode === 'footprint' ? centre+column/2 : engine.chart.timeScale.indexToX(index + .5)) };
+      const span=(b.columnEnd-b.columnStart)/engine.heatmap.intervalMs;
+      return { duplicate, leftError: b.x - engine.chart.timeScale.indexToX(index - .5),
+        rightError: b.right - engine.chart.timeScale.indexToX(index + span - .5) };
     });
   });
   expect(columns.length).toBeGreaterThan(0);
@@ -29,6 +27,8 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  // Pin the fixture's view to its supplied depth range, independent of autoscale/clock boundaries.
+  await page.evaluate(() => { const e = ([...(window as any).__terminal.panels.values()][0] as any).engine; e.chart.panes()[0].priceScale.setAutoScale(false); e.chart.panes()[0].priceScale.setPriceRange({min:82650,max:83350}); });
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);
   await expectCandleColumns(page);
   const first = await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap);
@@ -168,10 +168,12 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   const plot = await panel.locator('.chart-stage').boundingBox();
   const priceRange = () => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.panes()[0].priceScale.priceRange());
   const beforeWheel = await priceRange();
-  await page.mouse.move(plot!.x + plot!.width / 2, plot!.y + plot!.height / 2);
+  const axis = await page.evaluate(() => { const e = ([...(window as any).__terminal.panels.values()][0] as any).engine, p=e.chart.plotRect(0), b=document.querySelector('.chart-stage')!.getBoundingClientRect(); e.chart.panes()[0].priceScale.setPriceRange({min:82950,max:83050}); return {x:b.left+p.left+p.width+8,y:b.top+p.top+p.height/2}; });
+  await page.mouse.move(axis.x, axis.y);
   await page.mouse.wheel(0, -180);
   await expect.poll(async () => { const r = await priceRange(); return r.max - r.min; }).toBeLessThan(beforeWheel.max - beforeWheel.min);
   const beforePan = await priceRange();
+  await page.mouse.move(plot!.x + plot!.width / 2, plot!.y + plot!.height / 2);
   await page.mouse.down(); await page.mouse.move(plot!.x + plot!.width / 2 + 30, plot!.y + plot!.height / 2 + 30, { steps: 8 }); await page.mouse.up();
   await expect.poll(async () => (await priceRange()).min).not.toBe(beforePan.min);
   // The layer neither captures pan gestures nor forces autoscale back to captured book depth.
@@ -187,10 +189,15 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.labels)).toBe(0);
   await page.setViewportSize({ width: 720, height: 860 });
   await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
+  await expect(panel.getByLabel('Liquidity contrast', { exact: true })).toHaveValue('enhanced');
+  await panel.getByLabel('Liquidity contrast', { exact: true }).selectOption('muted');
   await page.screenshot({ path: 'artifacts/orderbook-heatmap-settings-720x860.png' });
-  await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
+  await panel.locator('.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
   await page.waitForTimeout(400); await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.stats().panels[0].series.heatmap.enabled);
   await expect(panel.getByRole('button', { name: 'Hide Order-book Heatmap', exact: true })).toHaveAttribute('aria-pressed','true');
+  await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
+  await expect(panel.getByLabel('Liquidity contrast', { exact: true })).toHaveValue('muted');
+  await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
   await chooseChartMarket(panel,'Binance · BTCUSDT Spot');
   await expect(panel.locator('.heatmap-notice')).toContainText('unavailable');
 });

@@ -1,0 +1,59 @@
+{
+  "scope": "Read-only runtime investigation; profiling copy in /tmp, no deployed code or restart changes",
+  "browser": {
+    "elapsedMs": 185295,
+    "completedHistorySlices": 19,
+    "meanHistorySliceMs": 8487.157894736842,
+    "maxHistorySliceMs": 25868,
+    "capacityRejections": 1,
+    "initialAborts": 2,
+    "visibleBuckets": 2,
+    "status": {
+      "state": "syncing",
+      "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+      "tickSize": 0.1,
+      "collectionStart": 1791889721143,
+      "retentionStart": 1791890100000,
+      "capacityLimited": false
+    }
+  },
+  "profile": [
+    {
+      "stage": "coverage",
+      "ms": 17.835853999999998,
+      "rows": 1
+    },
+    {
+      "stage": "seed",
+      "ms": 699.092217,
+      "rows": 1
+    },
+    {
+      "stage": "records",
+      "ms": 450.285571,
+      "rows": 6028
+    },
+    {
+      "stage": "replay_worker",
+      "ms": 3358.4812810000003,
+      "records": 6028,
+      "payloadBytes": 17881571
+    },
+    {
+      "stage": "total",
+      "ms": 4527.548161000001,
+      "cells": 284
+    }
+  ],
+  "containerSample": {
+    "appCpuPercent": 100.2,
+    "clickhouseCpuPercent": 13.75,
+    "appCpuLimit": 1
+  },
+  "findings": [
+    "Four-hour history requires approximately 24 sequential ten-minute replays",
+    "Completed history fragments are buffered until the entire read completes",
+    "Replay CPU dominates the profiled request; network capacity rejections were not the dominant delay",
+    "Completed in-memory fragments are discarded when a load fails or its viewport is superseded"
+  ]
+}

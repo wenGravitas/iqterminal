@@ -1,0 +1,191 @@
+{
+  "source": "Pi browser -> private SSH tunnel -> staging, no fixtures or server restart",
+  "errors": [],
+  "footprint": {
+    "bars": 300,
+    "status": {
+      "state": "live",
+      "message": "Staging · durable execution stream · delivery 114ms",
+      "lastUpdate": 1791889515293,
+      "tickSize": 0.1,
+      "rowSize": 25,
+      "collectionStartedAt": 1791788760000,
+      "firstTradeAt": 1791799800000,
+      "lastTradeAt": 1791889514664,
+      "eventTime": null,
+      "outages": 0,
+      "capacityDrops": 0,
+      "unknownSideRecords": 0,
+      "unknownSideVolume": 0,
+      "lateRecords": 0,
+      "retentionStart": 1791799800,
+      "coverage": "partial",
+      "transport": {
+        "cursor": 3483400702,
+        "backendSentAtMs": 1791889515300,
+        "workerReceivedAtMs": 1791889515414,
+        "workerAppliedAtMs": 1791889515415
+      }
+    },
+    "first": 1791799800,
+    "last": 1791889500
+  },
+  "heatmap": {
+    "status": {
+      "state": "live",
+      "message": "Staging durable depth · partial outer coverage · 0 coverage gap(s) · RPI excluded",
+      "tickSize": 0.1,
+      "collectionStart": 1791872640831,
+      "retentionStart": 1791887400000,
+      "capacityLimited": false
+    },
+    "buckets": 7,
+    "first": 1791887400000,
+    "last": 1791889490791
+  },
+  "parity": {
+    "time": 1791844800,
+    "local": {
+      "time": 1791844800,
+      "revision": 2833,
+      "cells": [
+        {
+          "price": 82575,
+          "bidVol": 7.736000000000005,
+          "askVol": 6.182000000000002,
+          "bidNotional": 638839.7882999999,
+          "askNotional": 510503.7225000001
+        },
+        {
+          "price": 82550,
+          "bidVol": 12.516000000000009,
+          "askVol": 22.559000000000026,
+          "bidNotional": 1033359.1361000005,
+          "askNotional": 1862510.3265000007
+        },
+        {
+          "price": 82525,
+          "bidVol": 7.542999999999996,
+          "askVol": 10.888999999999994,
+          "bidNotional": 622538.9474000001,
+          "askNotional": 898714.2599999995
+        },
+        {
+          "price": 82500,
+          "bidVol": 74.58599999999996,
+          "askVol": 26.400000000000027,
+          "bidNotional": 6153572.511600002,
+          "askNotional": 2178183.9384999983
+        },
+        {
+          "price": 82475,
+          "bidVol": 10.845999999999995,
+          "askVol": 29.771000000000026,
+          "bidNotional": 894723.1145999999,
+          "askNotional": 2455868.774900002
+        },
+        {
+          "price": 82450,
+          "bidVol": 62.925,
+          "askVol": 12.848999999999998,
+          "bidNotional": 5188428.8099,
+          "askNotional": 1059620.1234
+        },
+        {
+          "price": 82425,
+          "bidVol": 5.848999999999999,
+          "askVol": 7.097999999999999,
+          "bidNotional": 482198.4479999999,
+          "askNotional": 585187.1294000001
+        }
+      ],
+      "delta": -66.2529999999995,
+      "minDelta": -97.53900000000016,
+      "maxDelta": 1.68,
+      "quoteDelta": -5463072.480699989,
+      "minQuoteDelta": -8044786.1335999835,
+      "maxQuoteDelta": 138555.74129999994,
+      "rowSize": 25,
+      "open": 82473.3,
+      "high": 82582.1,
+      "low": 82440,
+      "close": 82560.6,
+      "aggregateRecordCount": 2833,
+      "source": "binance-usdm-aggtrade",
+      "granularity": "aggregate-trade",
+      "coverage": "observed",
+      "gapBefore": false
+    },
+    "server": {
+      "time": 1791844800,
+      "revision": 2833,
+      "cells": [
+        {
+          "price": 82575,
+          "bidVol": 7.736000000000005,
+          "askVol": 6.182000000000002,
+          "bidNotional": 638839.7882999999,
+          "askNotional": 510503.7225000001
+        },
+        {
+          "price": 82550,
+          "bidVol": 12.516000000000009,
+          "askVol": 22.559000000000026,
+          "bidNotional": 1033359.1361000005,
+          "askNotional": 1862510.3265000007
+        },
+        {
+          "price": 82525,
+          "bidVol": 7.542999999999996,
+          "askVol": 10.888999999999994,
+          "bidNotional": 622538.9474000001,
+          "askNotional": 898714.2599999995
+        },
+        {
+          "price": 82500,
+          "bidVol": 74.58599999999996,
+          "askVol": 26.400000000000027,
+          "bidNotional": 6153572.511600002,
+          "askNotional": 2178183.9384999983
+        },
+        {
+          "price": 82475,
+          "bidVol": 10.845999999999995,
+          "askVol": 29.771000000000026,
+          "bidNotional": 894723.1145999999,
+          "askNotional": 2455868.774900002
+        },
+        {
+          "price": 82450,
+          "bidVol": 62.925,
+          "askVol": 12.848999999999998,
+          "bidNotional": 5188428.8099,
+          "askNotional": 1059620.1234
+        },
+        {
+          "price": 82425,
+          "bidVol": 5.848999999999999,
+          "askVol": 7.097999999999999,
+          "bidNotional": 482198.4479999999,
+          "askNotional": 585187.1294000001
+        }
+      ],
+      "delta": -66.2529999999995,
+      "minDelta": -97.53900000000016,
+      "maxDelta": 1.68,
+      "quoteDelta": -5463072.480699989,
+      "minQuoteDelta": -8044786.1335999835,
+      "maxQuoteDelta": 138555.74129999994,
+      "rowSize": 25,
+      "open": 82473.3,
+      "high": 82582.1,
+      "low": 82440,
+      "close": 82560.6,
+      "aggregateRecordCount": 2833,
+      "source": "binance-usdm-aggtrade",
+      "granularity": "aggregate-trade",
+      "coverage": "observed",
+      "gapBefore": false
+    }
+  }
+}

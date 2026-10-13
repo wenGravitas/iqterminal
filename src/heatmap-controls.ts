@@ -25,11 +25,12 @@ export class HeatmapControls {
     number('rowPrice', 'Price row (USDT)', .000001, 10000, 'any');
     select('units', 'Quantity units', [['btc', 'BTC'], ['usdt', 'USDT notional']]);
     select('mode', 'Resting quantity', [['average', 'Time-weighted average'], ['peak', 'Observed peak']]);
+    select('contrast', 'Liquidity contrast', [['enhanced', 'Enhanced (faint walls visible)'], ['muted', 'Muted (previous)']]);
     number('opacity', 'Opacity', 0, 1, '.05'); number('intensity', 'Full intensity (BTC / $10)', .01, 10000, 'any');
     number('minimum', 'Minimum quantity (BTC)', 0, 10000, 'any');
     select('labels', 'Quantity labels', [['auto', 'Auto'], ['off', 'Off']]);
     for (const name of ['bids', 'asks']) { const input = document.createElement('input'); input.type = 'checkbox'; this.field(fields, name, `Show ${name}`, input); }
-    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Stripes indicate incomplete coverage.';
+    const hint = document.createElement('p'); hint.className = 'dialog-status'; hint.textContent = 'Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.';
     this.rowHint.className = 'dialog-status';
     const footer = document.createElement('footer'), apply = document.createElement('button'), retryButton = document.createElement('button');
     apply.type = 'submit'; apply.textContent = 'Apply'; retryButton.type = 'button'; retryButton.textContent = 'Retry depth'; footer.append(retryButton, apply);
