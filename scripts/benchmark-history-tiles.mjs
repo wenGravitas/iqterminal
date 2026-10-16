@@ -6,6 +6,7 @@ const option=(name,fallback)=>process.argv.find(a=>a.startsWith(`--${name}=`))?.
 const phase=option('phase','baseline'),scenario=option('scenario','fixed'),panelCount=Number(option('panels','1')),samples=Number(option('samples','5')),timeout=Number(option('timeout','300000'));
 if(!/^[a-z0-9-]+$/.test(phase))throw Error('Invalid phase label');
 const fixed={from:Number(option('from','1791877200000')),to:Number(option('to','1791891600000')),low:Number(option('low',scenario==='wide'?'50000':'82910')),high:Number(option('high',scenario==='wide'?'150000':'84330')),rowPrice:Number(option('rowPrice','10')),timeMs:300000};
+if(scenario==='first-use'&&(fixed.from!==1791877200000||fixed.to!==1791891600000||fixed.rowPrice!==10))throw Error('First-use eviction is restricted to the documented fixed benchmark configuration');
 const output=option('output',`artifacts/history-tiles/${phase}-${scenario}.json`),result={phase,scenario,source:'Actual local Pi Chromium through existing SSH/Vite route; no fixtures',fixed,samples:[],started:new Date().toISOString()};
 await mkdir('artifacts/history-tiles',{recursive:true});
 const browser=await launch(false);let shared;
