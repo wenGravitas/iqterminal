@@ -1,0 +1,204 @@
+{
+  "at": 1792137533625,
+  "collector": {
+    "version": 1,
+    "collector": {
+      "state": "live",
+      "message": "Durable WebSocket aggregate executions",
+      "lastUpdate": 1792137533288,
+      "retries": 0
+    },
+    "depth": {
+      "head": {
+        "cursor": 3334945,
+        "at": 1792137533265,
+        "epoch": 1792085503341
+      },
+      "status": {
+        "state": "live",
+        "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+        "epoch": 1792085503341,
+        "lastUpdate": 1792137533570,
+        "bidFloor": 82194.6,
+        "askCeiling": 82459.5,
+        "sequence": 11834633416022
+      },
+      "metrics": {
+        "events": 2260814,
+        "changes": 305078223,
+        "wireBytes": 6776633088,
+        "storedPayloadBytes": 24800392984,
+        "overflows": 0,
+        "reconnects": 4,
+        "queue": 3,
+        "levels": 120726,
+        "startAt": 1791906886276
+      },
+      "retention": {
+        "lastRun": 1792137286448,
+        "error": null
+      }
+    },
+    "metrics": {
+      "transport": "websocket",
+      "queue": 1,
+      "overflows": 0,
+      "recoveries": 3,
+      "exchangeToReceiveMs": 135,
+      "receiveToDurableMs": 405,
+      "ingestionLagMs": 1029
+    },
+    "disk": {
+      "bytes": 4166285158,
+      "free": 224967479296,
+      "paused": false
+    },
+    "watermark": {
+      "id": 3487318122,
+      "timeMs": 1792137532598
+    },
+    "tickSize": 0.1,
+    "oi": {
+      "lastObservedAt": 1792137528461,
+      "error": null,
+      "stale": false
+    }
+  },
+  "history": {
+    "enabled": true,
+    "metrics": {
+      "requests": 268,
+      "rejected": 0,
+      "bytes": 3708029,
+      "serializeMs": 561.829471989271,
+      "legacyHeatmap": 0,
+      "legacyFootprint": 47,
+      "closedTileReads": 0,
+      "manifests": 52,
+      "peakRss": 116035584,
+      "active": 1,
+      "rss": 90038272
+    },
+    "materializer": {
+      "version": 1,
+      "head": {
+        "cursor": 3334945,
+        "at": 1792137533265,
+        "epoch": 1792085503341
+      },
+      "live": {
+        "cursor": 3334945,
+        "at": 1792137533265,
+        "from": 1792137300000,
+        "widths": [
+          10,
+          25,
+          50,
+          100,
+          250,
+          1000
+        ]
+      },
+      "metrics": {
+        "startedAt": 1791915613833,
+        "lastPoll": 1792137533604,
+        "lastPersist": 1792137300720,
+        "records": 2175291,
+        "closedBuckets": 4434,
+        "liveLagMs": 0,
+        "derivedBytes": 403215824,
+        "freeBytes": 224973402112,
+        "paused": false,
+        "error": "",
+        "pages": 1369882,
+        "pageMs": 7574218.95108781,
+        "accumulateMs": 2516082.9590322836,
+        "persistMs": 141793.02431828371,
+        "peakRss": 269676544,
+        "sourceHeadAgeMs": 364,
+        "liveAgeMs": 364,
+        "rss": 172834816
+      },
+      "backlog": []
+    }
+  },
+  "services": [
+    {
+      "name": "/iqterminal-server",
+      "id": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+      "started": "2026-10-13T15:54:46.038970032Z",
+      "status": "running",
+      "health": "healthy",
+      "restarts": 0,
+      "cpu": 1000000000,
+      "memoryLimit": 1073741824,
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "name": "/iqterminal-history-api",
+      "id": "12d180afc053d11e13b82bbe653cdaba0c772c4a1b297f4af720d2186e10c710",
+      "started": "2026-10-13T18:20:12.582420834Z",
+      "status": "running",
+      "health": "healthy",
+      "restarts": 0,
+      "cpu": 1000000000,
+      "memoryLimit": 536870912,
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "name": "/iqterminal-history-materializer",
+      "id": "d0afc0aa2dc33a5b852f759b4b63c65324fcbdd67cf5e229f563759c95898a5b",
+      "started": "2026-10-13T18:20:12.585491303Z",
+      "status": "running",
+      "health": "healthy",
+      "restarts": 0,
+      "cpu": 1000000000,
+      "memoryLimit": 1073741824,
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "name": "/iqterminal-clickhouse",
+      "id": "fb960ae453033b8f2fd2b6f7e763a32b72410e0cd3c761828474725e8c2c7d14",
+      "started": "2026-10-12T07:43:51.395635629Z",
+      "status": "running",
+      "health": "healthy",
+      "restarts": 0,
+      "cpu": 2000000000,
+      "memoryLimit": 4294967296,
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    {
+      "name": "/iqterminal-level-watch",
+      "id": "60d0b8cde5d7fb969e6426a6c9220ffe55eaed69fa491e69cfa0aecf5b086c1d",
+      "started": "2026-10-12T16:34:25.54595647Z",
+      "status": "running",
+      "health": "healthy",
+      "restarts": 0,
+      "cpu": 750000000,
+      "memoryLimit": 805306368,
+      "restartPolicy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    }
+  ],
+  "cgroups": {
+    "iqterminal-server": "371392512\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "iqterminal-history-api": "84324352\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "iqterminal-history-materializer": "267046912\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n"
+  },
+  "stateBytes": "12812711",
+  "listeners": "LISTEN 0      4096                     127.0.0.1:19000      0.0.0.0:*          \nLISTEN 0      511                      127.0.0.1:18780      0.0.0.0:*          \nLISTEN 0      511                      127.0.0.1:18782      0.0.0.0:*          \nLISTEN 0      511                      127.0.0.1:18784      0.0.0.0:*          \nLISTEN 0      4096                     127.0.0.1:18123      0.0.0.0:*          "
+}

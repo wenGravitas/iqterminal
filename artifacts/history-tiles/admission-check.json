@@ -1,0 +1,65 @@
+{
+  "samples": [
+    {
+      "status": 200,
+      "retry": null,
+      "tiles": 144
+    },
+    {
+      "status": 200,
+      "retry": null,
+      "tiles": 144
+    },
+    {
+      "status": 200,
+      "retry": null,
+      "tiles": 144
+    },
+    {
+      "status": 200,
+      "retry": null,
+      "tiles": 144
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    },
+    {
+      "status": 503,
+      "retry": "1",
+      "error": "Tile read capacity; retry"
+    }
+  ],
+  "invalid": 400
+}

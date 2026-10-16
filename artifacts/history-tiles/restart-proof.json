@@ -1,0 +1,33 @@
+{
+  "from": 1791885600000,
+  "to": 1791889200000,
+  "timeMs": 900000,
+  "rowPrice": 19,
+  "collectorBefore": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+  "collectorAfter": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+  "epoch": 1791906886388,
+  "resumedCursor": 858132,
+  "referenceCells": 85,
+  "revision": 1791913446835000,
+  "repeatRevision": 1791913446835000,
+  "metrics": {
+    "startedAt": 1791913437622,
+    "lastPoll": 1791913474796,
+    "lastPersist": 1791913474643,
+    "records": 35066,
+    "closedBuckets": 4,
+    "liveLagMs": 0,
+    "derivedBytes": 101947856,
+    "freeBytes": 227429613568,
+    "paused": false,
+    "error": "",
+    "pages": 273,
+    "pageMs": 6978.597991999983,
+    "accumulateMs": 9128.89065699996,
+    "persistMs": 263.962228999997,
+    "peakRss": 250654720,
+    "sourceHeadAgeMs": 613,
+    "liveAgeMs": 613,
+    "rss": 229507072
+  }
+}

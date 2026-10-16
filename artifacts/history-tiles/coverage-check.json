@@ -1,0 +1,32 @@
+{
+  "from": 1791877200000,
+  "to": 1791891600000,
+  "rowPrice": 1000,
+  "viewport": [
+    50000,
+    150000
+  ],
+  "timeBuckets": 48,
+  "cells": 4800,
+  "positivePriceBounds": [
+    50000,
+    148000
+  ],
+  "bidSnapshotFloorRange": [
+    83007.6,
+    83543.8
+  ],
+  "askSnapshotCeilingRange": [
+    83265.4,
+    83810.2
+  ],
+  "fullyObservedBothSides": 0,
+  "partialPositiveCells": 3895,
+  "knownZeroBidCells": 3165,
+  "unknownBidCells": 0,
+  "unknownAskCells": 838,
+  "epochs": [
+    1791872639286,
+    1791889718628
+  ]
+}

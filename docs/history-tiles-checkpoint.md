@@ -1,57 +1,40 @@
-# Prepared history goal checkpoint
+# Prepared history checkpoint
 
-Active goal: durable prepared heatmap tiles, viewport-first shared history loading,
-exact coverage/aggregation, broad recorded liquidity, five-sample Pi-to-staging
-measurements, supervised services and reversible rollout. No push authorized.
+Implementation is deployed. No push was performed by this goal. Local source
+commits include cca0927 (viewport/tile integration), the subsequently supplied
+fb9fc77 (history implementation and evidence), and 0580948 (restored regression
+tests and benchmark safety). Backend source commits are 9fe396b, b366aac, a66b781;
+operations are 8ee4a3f. The existing backend replay/admission edits remain untouched
+and uncommitted. The supplied local commit already includes the prior POC styling.
 
-Initial local HEAD: 5fcc000. Preserve the unrelated uncommitted dotted POC change
-in src/chart/terminal-footprint.ts; exclude it from this goal's commits.
-Backend root verified /opt/iqterminal on staging. Existing uncommitted replay and
-admission changes predate this goal; preserve separately. No backend AGENTS.md
-found at / or /opt or repository root. Source data stays on staging.
+The API, collector and materializer are independent Compose services under the
+existing `/opt/iqterminal` Git root. All listeners stay private. Collector ID
+3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae has not changed
+since the one intentional lifecycle split at 2026-10-13T15:54:46Z. Later depth epochs
+come from normal retained-epoch/reconnect handling, not serving deployments.
 
-Baseline fixed visible window: 2026-10-13 07:40:00 through 11:40:00 UTC
-(1791877200000..1791891600000), 5m / $10, Binance USD-M BTCUSDT standard
-diff-depth, RPI excluded. Record actual normalized query bounds and visible edge
-coverage; the legacy four-hour query clamp can consume margin at the left edge.
-Use current four-hour view separately. Backend collection currently healthy,
-~2.37 GB total ClickHouse parts, ~227 GB filesystem free, no disk pause/overflows.
+Final local validation: 236 tests, typecheck/build and real Chromium cache check.
+Final backend validation: 48 tests/typecheck, migration reapplication, exact real
+replay comparisons, durable restart/correction proof and admission limits.
+`closure-rollout` deployed successfully but its immediate coverage probe ran before
+readiness; `final-validation` passed against the ready services on October 16.
+Routine rollout now waits for health and asserts unchanged collector identity.
 
-Plan and order:
-1. Instrument and measure unchanged history paths, footprint/heatmap competition,
-   server stage timings and resources. Restore the absent Pi tunnel (done).
-2. Durable sparse sufficient-statistic tiles; exact directly accumulated price
-   resolutions, aligned 5m time and bounded price blocks, versioned manifests.
-3. Supervised materializer with bounded resumable backfill/live checkpoints;
-   separate serving lifecycle from the sole collector with a private gateway.
-4. Shared client scheduler, viewport-first footprint history, individual tile
-   cache/revision validation, bounded merging and broad-price resolution choice.
-5. Differential/restart/correction/load tests, additive migration and deployment,
-   five comparable end-to-end samples per scenario, bottleneck iteration.
-6. Documentation, rollback evidence and focused local commits, no push.
+Five complete October 13 A/B/C/D/E trials are retained in `release-*`. The later
+`verified-*` A/B/D/E trials use final guards and the resumed Pi environment. Do not
+pool the series: the later Pi is under other workloads and route transfer delay
+is greater. See `history-performance.md`, `history-completion-audit.md` and artifact
+README for accepted evidence, actual target misses and excluded experiments.
+The current scenario centers its fixed-width price range on the latest price;
+`offprice-current` preserves the earlier verification that used stale price bounds.
 
-Provisional conservative geometry: 5m buckets, 64-row price blocks, prepared
-$10/$25/$50/$100/$250/$1000 rows; choose only after checking existing UI and
-measuring sparse footprint/storage costs. Other resolutions remain explicit exact
-on-demand reusable materializations. Do not derive coarse-price peaks by summing
-finer peaks. BigInt integrals, known-zero coverage intervals and sparse observed
-outer rows must be preserved. These are design choices under validation, not
-implemented or accepted results.
+The old fixed raw-depth window has expired under unchanged retention. Its prepared
+tiles remain available. The eviction helper now refuses to discard those tiles;
+use the retained five first-use trials, or review a new fixed window and exact
+backup/eviction predicates before a later first-use benchmark.
 
-Implementation checkpoint: client code commit cca0927; backend instrumentation
-9fe396b and materialization/lifecycle b366aac. No push. Preexisting POC styling and
-backend replay/admission edits remain outside these commits. The final measured
-series is `release-*`, with five A/B/D/E samples complete and five C trials running.
-A: 5.935s median/7.247s worst. B cached heatmap: .532s/.641s; validated2.182s/3.978s.
-D wide two-panel:3.324s/6.446s. E current:5.007s/21.372s; worst had16-17s response-header
-wait despite28ms footprint/302ms heatmap server work. That wait includes the
-private transport/local proxy path, which is not isolated by server timings.
-
-Post-measurement correctness checks remain before final acceptance: apply
-/tmp/iqterminal-post-benchmark.py and append /tmp/iqterminal-footprint-merge-tests.txt.
-This isolates closed footprints from replay, carries tile revisions into bar
-render revisions, pins visible history over offscreen cache, and tests reconnect
-handling in the incremental current path. Backend source has checkpoint identity
-guards and unavailable-tile filtering pending final tests/deployment. Do not call
-the goal complete until these are applied, verified, measured as relevant, and
-committed with final docs. Collector remains independent/live throughout.
+Local development uses `pnpm tunnel:staging` and `pnpm dev:staging` on loopback 5173.
+Staging long jobs/logs use named tmux `iqterminal-history`, bounded log files and
+`.exit` records under `logs/history-tiles`. Docker, not tmux, supervises services.
+No duplicate collectors, new exchange connections or public data ports were added.
+Rollback and operational commands are in both repositories' `docs/HISTORY-TILES.md`.

@@ -1,0 +1,3749 @@
+{
+  "window": [
+    1791913756197,
+    1791916336887
+  ],
+  "samples": 480,
+  "stats": {
+    "sourceAgeMs": {
+      "samples": 480,
+      "median": 711.0,
+      "max": 1586,
+      "first": 352,
+      "last": 444
+    },
+    "materializedAgeMs": {
+      "samples": 480,
+      "median": 720.5,
+      "max": 1586,
+      "first": 965,
+      "last": 444
+    },
+    "cursorLagMs": {
+      "samples": 480,
+      "median": 0.0,
+      "max": 0,
+      "first": 0,
+      "last": 0
+    },
+    "executionLagMs": {
+      "samples": 480,
+      "median": 730.0,
+      "max": 4097,
+      "first": 850,
+      "last": 731
+    },
+    "materializerRss": {
+      "samples": 480,
+      "median": 225812480.0,
+      "max": 270905344,
+      "first": 191442944,
+      "last": 167825408
+    },
+    "apiRss": {
+      "samples": 480,
+      "median": 116342784.0,
+      "max": 128319488,
+      "first": 102146048,
+      "last": 77762560
+    },
+    "derivedBytes": {
+      "samples": 480,
+      "median": 150037507.0,
+      "max": 173072184,
+      "first": 108068941,
+      "last": 173072184
+    },
+    "sourceBytes": {
+      "samples": 480,
+      "median": 2287577831.0,
+      "max": 2486303339,
+      "first": 2031007548,
+      "last": 2123051774
+    }
+  },
+  "depthOverflows": 0,
+  "executionOverflows": 0,
+  "resourceSamples": [
+    [
+      {
+        "BlockIO": "0B / 183MB",
+        "CPUPerc": "5.72%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "8.91%",
+        "MemUsage": "91.29MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.24%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "9.76%",
+        "MemUsage": "49.97MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.37GB",
+        "CPUPerc": "3.56%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "13.30%",
+        "MemUsage": "136.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "72.91%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.40%",
+        "MemUsage": "1.976GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.6GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 184MB",
+        "CPUPerc": "3.49%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "9.13%",
+        "MemUsage": "93.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.07%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "9.77%",
+        "MemUsage": "50.04MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.43GB",
+        "CPUPerc": "2.34%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "12.83%",
+        "MemUsage": "131.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "69.35%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "48.79%",
+        "MemUsage": "1.952GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.6GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 185MB",
+        "CPUPerc": "3.01%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.51%",
+        "MemUsage": "107.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.23%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "9.80%",
+        "MemUsage": "50.18MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.52GB",
+        "CPUPerc": "14.91%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "13.67%",
+        "MemUsage": "139.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "60.42%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.03%",
+        "MemUsage": "1.961GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.6GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 186MB",
+        "CPUPerc": "14.44%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.75%",
+        "MemUsage": "120.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.45%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "9.84%",
+        "MemUsage": "50.36MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.58GB",
+        "CPUPerc": "2.90%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.01%",
+        "MemUsage": "143.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "69.45%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.83%",
+        "MemUsage": "1.993GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.6GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 187MB",
+        "CPUPerc": "4.78%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.24%",
+        "MemUsage": "125.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.50%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.41%",
+        "MemUsage": "68.67MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.64GB",
+        "CPUPerc": "2.89%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.66%",
+        "MemUsage": "150.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "96.01%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.62%",
+        "MemUsage": "2.065GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.7GB",
+        "PIDs": "296"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 188MB",
+        "CPUPerc": "3.68%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.40%",
+        "MemUsage": "127MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.09%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.43%",
+        "MemUsage": "68.74MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.7GB",
+        "CPUPerc": "4.47%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.66%",
+        "MemUsage": "150.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "66.00%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.26%",
+        "MemUsage": "1.97GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.7GB",
+        "PIDs": "296"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 189MB",
+        "CPUPerc": "5.61%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.81%",
+        "MemUsage": "131.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.81%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "10.43%",
+        "MemUsage": "53.41MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.76GB",
+        "CPUPerc": "3.89%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.67%",
+        "MemUsage": "150.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "65.29%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.33%",
+        "MemUsage": "1.973GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.7GB",
+        "PIDs": "296"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 190MB",
+        "CPUPerc": "7.65%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "13.69%",
+        "MemUsage": "140.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "6.70%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "10.56%",
+        "MemUsage": "54.07MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.82GB",
+        "CPUPerc": "2.54%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.02%",
+        "MemUsage": "143.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "72.18%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.28%",
+        "MemUsage": "2.011GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.8GB",
+        "PIDs": "296"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 191MB",
+        "CPUPerc": "4.44%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "14.26%",
+        "MemUsage": "146MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.73%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "14.81%",
+        "MemUsage": "75.84MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.89GB",
+        "CPUPerc": "2.55%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.03%",
+        "MemUsage": "143.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "67.92%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.56%",
+        "MemUsage": "1.982GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.8GB",
+        "PIDs": "296"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 192MB",
+        "CPUPerc": "4.13%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "14.88%",
+        "MemUsage": "152.4MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.35%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.12%",
+        "MemUsage": "67.17MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 1.97GB",
+        "CPUPerc": "3.14%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.72%",
+        "MemUsage": "150.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "64.93%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.76%",
+        "MemUsage": "1.99GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.9GB",
+        "PIDs": "297"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 193MB",
+        "CPUPerc": "4.87%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "14.89%",
+        "MemUsage": "152.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.50%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "10.26%",
+        "MemUsage": "52.55MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.03GB",
+        "CPUPerc": "3.16%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.73%",
+        "MemUsage": "150.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "76.28%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.24%",
+        "MemUsage": "2.01GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 80.9GB",
+        "PIDs": "297"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 194MB",
+        "CPUPerc": "9.45%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.47%",
+        "MemUsage": "107.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.29%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.59%",
+        "MemUsage": "69.57MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.1GB",
+        "CPUPerc": "1.95%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.73%",
+        "MemUsage": "150.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "78.78%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.55%",
+        "MemUsage": "2.022GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 81GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 195MB",
+        "CPUPerc": "15.22%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.39%",
+        "MemUsage": "126.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.50%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "10.34%",
+        "MemUsage": "52.94MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.17GB",
+        "CPUPerc": "2.89%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "14.07%",
+        "MemUsage": "144.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "69.93%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.75%",
+        "MemUsage": "1.99GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 81GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 196MB",
+        "CPUPerc": "3.97%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.51%",
+        "MemUsage": "128.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.16%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "11.00%",
+        "MemUsage": "56.33MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.36GB",
+        "CPUPerc": "71.91%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.36%",
+        "MemUsage": "167.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "45.96%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.27%",
+        "MemUsage": "2.051GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.7GB / 81.1GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 197MB",
+        "CPUPerc": "7.60%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.11%",
+        "MemUsage": "124MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.30%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "11.62%",
+        "MemUsage": "59.5MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.61GB",
+        "CPUPerc": "66.02%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.97%",
+        "MemUsage": "173.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "60.74%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.36%",
+        "MemUsage": "2.055GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.8GB / 81.2GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 198MB",
+        "CPUPerc": "2.63%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.10%",
+        "MemUsage": "123.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.38%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "11.86%",
+        "MemUsage": "60.71MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 2.86GB",
+        "CPUPerc": "61.05%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.08%",
+        "MemUsage": "174.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "40.60%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.77%",
+        "MemUsage": "2.071GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.8GB / 81.2GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 199MB",
+        "CPUPerc": "11.16%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.38%",
+        "MemUsage": "106.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.10%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "11.87%",
+        "MemUsage": "60.76MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 3.14GB",
+        "CPUPerc": "68.29%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.39%",
+        "MemUsage": "178MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "40.24%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.13%",
+        "MemUsage": "2.085GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.8GB / 81.3GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 200MB",
+        "CPUPerc": "1.91%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.20%",
+        "MemUsage": "125MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.55%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "11.88%",
+        "MemUsage": "60.82MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 3.45GB",
+        "CPUPerc": "74.78%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.20%",
+        "MemUsage": "186.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "41.62%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.41%",
+        "MemUsage": "2.056GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.9GB / 81.4GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 200MB",
+        "CPUPerc": "2.78%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.68%",
+        "MemUsage": "109.4MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.32%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "12.43%",
+        "MemUsage": "63.62MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 3.72GB",
+        "CPUPerc": "65.48%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.13%",
+        "MemUsage": "175.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "43.80%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.21%",
+        "MemUsage": "2.048GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "16.9GB / 81.4GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 201MB",
+        "CPUPerc": "2.33%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.27%",
+        "MemUsage": "125.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.34%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "12.45%",
+        "MemUsage": "63.77MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 4GB",
+        "CPUPerc": "63.37%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.29%",
+        "MemUsage": "177MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "43.80%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.33%",
+        "MemUsage": "2.133GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17GB / 81.5GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 202MB",
+        "CPUPerc": "8.06%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.15%",
+        "MemUsage": "114.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.15%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "12.46%",
+        "MemUsage": "63.79MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 4.17GB",
+        "CPUPerc": "73.37%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.76%",
+        "MemUsage": "171.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "52.03%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.83%",
+        "MemUsage": "2.153GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17GB / 81.6GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 203MB",
+        "CPUPerc": "3.89%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.64%",
+        "MemUsage": "108.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.40%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "12.50%",
+        "MemUsage": "64.02MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 4.29GB",
+        "CPUPerc": "68.80%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.28%",
+        "MemUsage": "166.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "44.39%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.62%",
+        "MemUsage": "2.145GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17GB / 81.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 204MB",
+        "CPUPerc": "4.52%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.26%",
+        "MemUsage": "115.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.92%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "12.52%",
+        "MemUsage": "64.1MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 4.51GB",
+        "CPUPerc": "59.96%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.04%",
+        "MemUsage": "174.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "51.59%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.14%",
+        "MemUsage": "2.046GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17GB / 81.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 205MB",
+        "CPUPerc": "2.48%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.46%",
+        "MemUsage": "127.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.37%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.22%",
+        "MemUsage": "67.68MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 4.76GB",
+        "CPUPerc": "63.87%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.60%",
+        "MemUsage": "180.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "49.91%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.65%",
+        "MemUsage": "2.066GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.1GB / 81.8GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 206MB",
+        "CPUPerc": "6.03%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.42%",
+        "MemUsage": "117MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.18%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.22%",
+        "MemUsage": "67.7MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 5.01GB",
+        "CPUPerc": "57.97%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.45%",
+        "MemUsage": "178.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "45.47%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.25%",
+        "MemUsage": "2.09GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.1GB / 81.9GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 207MB",
+        "CPUPerc": "5.24%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.64%",
+        "MemUsage": "129.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.26%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.25%",
+        "MemUsage": "67.86MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 5.28GB",
+        "CPUPerc": "68.52%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.01%",
+        "MemUsage": "184.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "52.38%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.59%",
+        "MemUsage": "2.104GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.1GB / 81.9GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 208MB",
+        "CPUPerc": "9.29%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.38%",
+        "MemUsage": "126.7MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.53%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.27%",
+        "MemUsage": "67.95MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 5.55GB",
+        "CPUPerc": "70.27%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.62%",
+        "MemUsage": "180.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "47.34%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.57%",
+        "MemUsage": "2.103GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.2GB / 82GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 209MB",
+        "CPUPerc": "4.48%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.07%",
+        "MemUsage": "123.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.24%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.27%",
+        "MemUsage": "67.96MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 5.82GB",
+        "CPUPerc": "66.07%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.68%",
+        "MemUsage": "181MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "52.32%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.30%",
+        "MemUsage": "2.092GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.2GB / 82.1GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 210MB",
+        "CPUPerc": "1.58%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "13.48%",
+        "MemUsage": "138MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.42%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.29%",
+        "MemUsage": "68.02MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 6.13GB",
+        "CPUPerc": "78.89%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.68%",
+        "MemUsage": "170.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.23TB",
+        "CPUPerc": "49.32%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.61%",
+        "MemUsage": "2.144GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.3GB / 82.1GB",
+        "PIDs": "295"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 211MB",
+        "CPUPerc": "2.06%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.04%",
+        "MemUsage": "123.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "2.50%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.34%",
+        "MemUsage": "68.3MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 6.28GB",
+        "CPUPerc": "3.20%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.50%",
+        "MemUsage": "179.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "72.52%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "54.41%",
+        "MemUsage": "2.176GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.3GB / 82.2GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 212MB",
+        "CPUPerc": "8.24%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.38%",
+        "MemUsage": "106.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.36%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.31%",
+        "MemUsage": "68.15MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 6.43GB",
+        "CPUPerc": "63.52%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.39%",
+        "MemUsage": "188.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "40.59%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.01%",
+        "MemUsage": "2.08GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.3GB / 82.3GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 212MB",
+        "CPUPerc": "6.96%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.28%",
+        "MemUsage": "125.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.55%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.32%",
+        "MemUsage": "68.19MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 6.66GB",
+        "CPUPerc": "72.22%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.41%",
+        "MemUsage": "178.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "74.16%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "56.32%",
+        "MemUsage": "2.253GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.3GB / 82.3GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 214MB",
+        "CPUPerc": "4.31%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.87%",
+        "MemUsage": "111.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.15%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.32%",
+        "MemUsage": "68.18MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 6.9GB",
+        "CPUPerc": "65.28%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.46%",
+        "MemUsage": "178.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "38.27%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.42%",
+        "MemUsage": "2.097GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.4GB / 82.4GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 215MB",
+        "CPUPerc": "7.10%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.19%",
+        "MemUsage": "114.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.55%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.32%",
+        "MemUsage": "68.19MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 7.16GB",
+        "CPUPerc": "66.19%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.09%",
+        "MemUsage": "185.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "47.65%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.22%",
+        "MemUsage": "2.089GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.4GB / 82.5GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 216MB",
+        "CPUPerc": "7.66%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.15%",
+        "MemUsage": "114.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "5.06%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.47MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 7.43GB",
+        "CPUPerc": "69.43%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.34%",
+        "MemUsage": "187.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "37.34%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.41%",
+        "MemUsage": "2.096GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.4GB / 82.5GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 217MB",
+        "CPUPerc": "2.74%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.30%",
+        "MemUsage": "115.7MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.23%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.45MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 7.7GB",
+        "CPUPerc": "64.03%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.10%",
+        "MemUsage": "185.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "55.62%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.72%",
+        "MemUsage": "2.109GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.5GB / 82.6GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 218MB",
+        "CPUPerc": "3.42%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.55%",
+        "MemUsage": "128.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.26%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.45MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 7.98GB",
+        "CPUPerc": "75.48%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.18%",
+        "MemUsage": "186.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "56.74%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.81%",
+        "MemUsage": "2.112GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.5GB / 82.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 219MB",
+        "CPUPerc": "2.35%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.38%",
+        "MemUsage": "116.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.19%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.45MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 8.21GB",
+        "CPUPerc": "74.47%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.26%",
+        "MemUsage": "176.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "38.84%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.17%",
+        "MemUsage": "2.127GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.6GB / 82.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 220MB",
+        "CPUPerc": "3.34%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.32%",
+        "MemUsage": "126.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.42%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.46MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 8.37GB",
+        "CPUPerc": "3.41%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.97%",
+        "MemUsage": "184MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "73.03%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.92%",
+        "MemUsage": "2.077GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.6GB / 82.8GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 221MB",
+        "CPUPerc": "2.55%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "15.15%",
+        "MemUsage": "155.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "3.41%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.38%",
+        "MemUsage": "68.48MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 8.45GB",
+        "CPUPerc": "35.51%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.35%",
+        "MemUsage": "177.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "60.02%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.52%",
+        "MemUsage": "2.061GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.6GB / 82.8GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 221MB",
+        "CPUPerc": "13.23%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.34%",
+        "MemUsage": "126.4MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.08%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.37%",
+        "MemUsage": "68.47MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 8.72GB",
+        "CPUPerc": "77.58%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.93%",
+        "MemUsage": "183.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "52.77%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.06%",
+        "MemUsage": "2.122GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.6GB / 82.9GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 222MB",
+        "CPUPerc": "2.33%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.29%",
+        "MemUsage": "125.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.28%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.38%",
+        "MemUsage": "68.49MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 8.96GB",
+        "CPUPerc": "68.21%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.00%",
+        "MemUsage": "184.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "38.85%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.63%",
+        "MemUsage": "2.105GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.6GB / 83GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 223MB",
+        "CPUPerc": "1.63%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.65%",
+        "MemUsage": "129.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.17%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.43%",
+        "MemUsage": "68.75MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 9.21GB",
+        "CPUPerc": "64.36%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.08%",
+        "MemUsage": "185.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "42.46%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.81%",
+        "MemUsage": "2.112GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.7GB / 83.1GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 224MB",
+        "CPUPerc": "2.66%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.72%",
+        "MemUsage": "130.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.47%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.43%",
+        "MemUsage": "68.77MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 9.48GB",
+        "CPUPerc": "60.47%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.11%",
+        "MemUsage": "185.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "47.32%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.76%",
+        "MemUsage": "2.111GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.7GB / 83.1GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 225MB",
+        "CPUPerc": "2.28%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.13%",
+        "MemUsage": "124.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.95%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.47%",
+        "MemUsage": "68.95MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 9.75GB",
+        "CPUPerc": "63.77%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.21%",
+        "MemUsage": "186.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "38.74%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.76%",
+        "MemUsage": "2.11GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.8GB / 83.2GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 226MB",
+        "CPUPerc": "2.99%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.71%",
+        "MemUsage": "109.6MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.71%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.47%",
+        "MemUsage": "68.95MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 10GB",
+        "CPUPerc": "69.29%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.24%",
+        "MemUsage": "186.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "36.34%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.17%",
+        "MemUsage": "2.087GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.8GB / 83.2GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 226MB",
+        "CPUPerc": "1.83%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.22%",
+        "MemUsage": "125.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.18%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.47%",
+        "MemUsage": "68.95MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 10.3GB",
+        "CPUPerc": "75.04%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.56%",
+        "MemUsage": "190.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "30.45%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.71%",
+        "MemUsage": "2.108GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.8GB / 83.3GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 227MB",
+        "CPUPerc": "3.28%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.67%",
+        "MemUsage": "129.7MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "8.56%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.50%",
+        "MemUsage": "69.1MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 10.5GB",
+        "CPUPerc": "67.23%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.66%",
+        "MemUsage": "180.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "43.72%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.25%",
+        "MemUsage": "2.09GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.9GB / 83.4GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 228MB",
+        "CPUPerc": "4.60%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.55%",
+        "MemUsage": "108MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.50%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.50%",
+        "MemUsage": "69.1MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 10.6GB",
+        "CPUPerc": "71.19%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.31%",
+        "MemUsage": "177.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "49.37%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.78%",
+        "MemUsage": "2.151GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.9GB / 83.5GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 229MB",
+        "CPUPerc": "1.89%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.01%",
+        "MemUsage": "112.7MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.52%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.53%",
+        "MemUsage": "69.26MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 10.8GB",
+        "CPUPerc": "84.85%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.77%",
+        "MemUsage": "181.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "35.22%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "54.08%",
+        "MemUsage": "2.163GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.9GB / 83.5GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 230MB",
+        "CPUPerc": "2.00%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.45%",
+        "MemUsage": "127.4MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.41%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.53%",
+        "MemUsage": "69.26MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 11.1GB",
+        "CPUPerc": "65.72%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.37%",
+        "MemUsage": "177.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "45.35%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.02%",
+        "MemUsage": "2.121GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "17.9GB / 83.6GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 231MB",
+        "CPUPerc": "2.53%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.30%",
+        "MemUsage": "115.7MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.38%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.57%",
+        "MemUsage": "69.5MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 11.3GB",
+        "CPUPerc": "57.21%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.47%",
+        "MemUsage": "178.9MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "56.51%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.14%",
+        "MemUsage": "2.126GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18GB / 83.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 232MB",
+        "CPUPerc": "8.35%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.57%",
+        "MemUsage": "128.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.52%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.63%",
+        "MemUsage": "69.77MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 11.7GB",
+        "CPUPerc": "85.29%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.70%",
+        "MemUsage": "191.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "64.24%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.06%",
+        "MemUsage": "2.122GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18GB / 83.7GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 233MB",
+        "CPUPerc": "4.44%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.44%",
+        "MemUsage": "117.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.29%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.63%",
+        "MemUsage": "69.78MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 11.9GB",
+        "CPUPerc": "71.22%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "18.84%",
+        "MemUsage": "193MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "45.46%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.90%",
+        "MemUsage": "2.116GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.1GB / 83.8GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 234MB",
+        "CPUPerc": "2.02%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.34%",
+        "MemUsage": "126.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "5.02%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.71%",
+        "MemUsage": "70.18MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 12.2GB",
+        "CPUPerc": "65.61%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.65%",
+        "MemUsage": "180.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "22.42%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.06%",
+        "MemUsage": "2.122GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.1GB / 83.9GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 235MB",
+        "CPUPerc": "2.52%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "13.43%",
+        "MemUsage": "137.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.19%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.71%",
+        "MemUsage": "70.18MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "8.19kB / 12.5GB",
+        "CPUPerc": "67.98%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.61%",
+        "MemUsage": "170MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.24TB",
+        "CPUPerc": "43.71%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "54.80%",
+        "MemUsage": "2.192GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.1GB / 83.9GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 235MB",
+        "CPUPerc": "3.63%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.12%",
+        "MemUsage": "124.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.01%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.66%",
+        "MemUsage": "69.92MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "8.19kB / 12.6GB",
+        "CPUPerc": "55.29%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "17.63%",
+        "MemUsage": "180.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "46.27%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "53.33%",
+        "MemUsage": "2.133GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.1GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 236MB",
+        "CPUPerc": "2.27%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "13.46%",
+        "MemUsage": "137.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.25%",
+        "Container": "iqterminal-history-api",
+        "ID": "6510728d9dbd",
+        "MemPerc": "13.65%",
+        "MemUsage": "69.89MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "8.19kB / 12.7GB",
+        "CPUPerc": "1.89%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "716ccad30117",
+        "MemPerc": "16.56%",
+        "MemUsage": "169.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "63.43%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "52.01%",
+        "MemUsage": "2.08GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 237MB",
+        "CPUPerc": "8.90%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.48%",
+        "MemUsage": "107.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.23%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "3.73%",
+        "MemUsage": "19.09MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 66.8MB",
+        "CPUPerc": "2.41%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "15.24%",
+        "MemUsage": "156.1MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "66.03%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.86%",
+        "MemUsage": "2.034GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 238MB",
+        "CPUPerc": "2.51%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.09%",
+        "MemUsage": "123.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.71%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.05%",
+        "MemUsage": "20.73MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 134MB",
+        "CPUPerc": "3.16%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "14.54%",
+        "MemUsage": "148.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "74.13%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.76%",
+        "MemUsage": "2.031GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 238MB",
+        "CPUPerc": "2.71%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.64%",
+        "MemUsage": "108.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.21%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.28%",
+        "MemUsage": "21.89MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 200MB",
+        "CPUPerc": "2.52%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "13.92%",
+        "MemUsage": "142.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "64.82%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.22%",
+        "MemUsage": "2.049GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 239MB",
+        "CPUPerc": "3.80%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.74%",
+        "MemUsage": "109.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "5.62%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.31%",
+        "MemUsage": "22.05MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 267MB",
+        "CPUPerc": "4.83%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "15.07%",
+        "MemUsage": "154.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "75.68%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.10%",
+        "MemUsage": "2.004GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 240MB",
+        "CPUPerc": "4.72%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.85%",
+        "MemUsage": "111.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.32%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.32%",
+        "MemUsage": "22.09MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 334MB",
+        "CPUPerc": "3.25%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "10.18%",
+        "MemUsage": "104.2MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "72.15%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.35%",
+        "MemUsage": "2.014GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 241MB",
+        "CPUPerc": "4.96%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.33%",
+        "MemUsage": "126.3MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.14%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.32%",
+        "MemUsage": "22.12MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 424MB",
+        "CPUPerc": "12.76%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.81%",
+        "MemUsage": "100.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "60.63%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.44%",
+        "MemUsage": "2.018GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 242MB",
+        "CPUPerc": "3.33%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.14%",
+        "MemUsage": "114MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.14%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.37%",
+        "MemUsage": "22.38MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 491MB",
+        "CPUPerc": "2.61%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "11.65%",
+        "MemUsage": "119.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "76.70%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.13%",
+        "MemUsage": "2.045GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "294"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 242MB",
+        "CPUPerc": "4.24%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.22%",
+        "MemUsage": "114.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.15%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.40%",
+        "MemUsage": "22.51MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 558MB",
+        "CPUPerc": "2.41%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "10.80%",
+        "MemUsage": "110.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "84.82%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "51.40%",
+        "MemUsage": "2.056GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 243MB",
+        "CPUPerc": "7.51%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.23%",
+        "MemUsage": "115MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.22%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.42%",
+        "MemUsage": "22.62MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 626MB",
+        "CPUPerc": "2.97%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.93%",
+        "MemUsage": "101.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "65.40%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.66%",
+        "MemUsage": "1.987GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 244MB",
+        "CPUPerc": "5.13%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.35%",
+        "MemUsage": "116.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.32%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.44%",
+        "MemUsage": "22.75MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 702MB",
+        "CPUPerc": "2.73%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.85%",
+        "MemUsage": "100.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "71.36%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.81%",
+        "MemUsage": "2.032GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 245MB",
+        "CPUPerc": "3.89%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.45%",
+        "MemUsage": "127.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.32%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.48%",
+        "MemUsage": "22.95MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 769MB",
+        "CPUPerc": "7.35%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "7.94%",
+        "MemUsage": "81.33MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "61.81%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.88%",
+        "MemUsage": "1.995GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 245MB",
+        "CPUPerc": "2.50%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.34%",
+        "MemUsage": "116.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.19%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.52%",
+        "MemUsage": "23.16MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 837MB",
+        "CPUPerc": "2.77%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.90%",
+        "MemUsage": "101.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "62.69%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.75%",
+        "MemUsage": "1.99GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 246MB",
+        "CPUPerc": "2.99%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "11.32%",
+        "MemUsage": "115.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.37%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.54%",
+        "MemUsage": "23.26MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 927MB",
+        "CPUPerc": "2.41%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.96%",
+        "MemUsage": "102MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "81.88%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.10%",
+        "MemUsage": "2.004GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 247MB",
+        "CPUPerc": "3.99%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.90%",
+        "MemUsage": "132.1MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.27%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.57%",
+        "MemUsage": "23.39MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 994MB",
+        "CPUPerc": "3.97%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.81%",
+        "MemUsage": "100.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "74.52%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.66%",
+        "MemUsage": "2.026GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 247MB",
+        "CPUPerc": "3.13%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.60%",
+        "MemUsage": "129MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.37%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.60%",
+        "MemUsage": "23.55MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.06GB",
+        "CPUPerc": "2.85%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "10.32%",
+        "MemUsage": "105.6MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "70.08%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.97%",
+        "MemUsage": "1.999GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 248MB",
+        "CPUPerc": "3.48%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.60%",
+        "MemUsage": "129MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.12%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.71%",
+        "MemUsage": "24.13MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.13GB",
+        "CPUPerc": "3.34%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "11.18%",
+        "MemUsage": "114.5MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "71.30%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.62%",
+        "MemUsage": "1.985GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 248MB",
+        "CPUPerc": "3.33%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.77%",
+        "MemUsage": "130.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.29%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.74%",
+        "MemUsage": "24.25MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.2GB",
+        "CPUPerc": "2.56%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "11.90%",
+        "MemUsage": "121.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "70.10%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.20%",
+        "MemUsage": "2.008GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 249MB",
+        "CPUPerc": "4.72%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "12.19%",
+        "MemUsage": "124.9MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.25%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.77%",
+        "MemUsage": "24.44MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.27GB",
+        "CPUPerc": "2.68%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "11.31%",
+        "MemUsage": "115.8MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "69.68%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "49.70%",
+        "MemUsage": "1.988GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 250MB",
+        "CPUPerc": "4.46%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.53%",
+        "MemUsage": "107.8MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.11%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.80%",
+        "MemUsage": "24.57MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.34GB",
+        "CPUPerc": "4.05%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.52%",
+        "MemUsage": "97.46MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "71.10%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "50.66%",
+        "MemUsage": "2.026GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 251MB",
+        "CPUPerc": "5.01%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.76%",
+        "MemUsage": "110.2MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.17%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.82%",
+        "MemUsage": "24.67MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.43GB",
+        "CPUPerc": "6.45%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "9.90%",
+        "MemUsage": "101.4MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "60.54%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "48.60%",
+        "MemUsage": "1.944GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 252MB",
+        "CPUPerc": "3.55%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.80%",
+        "MemUsage": "110.5MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.22%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.86%",
+        "MemUsage": "24.88MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.5GB",
+        "CPUPerc": "2.59%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "10.33%",
+        "MemUsage": "105.7MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "71.61%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "48.76%",
+        "MemUsage": "1.95GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ],
+    [
+      {
+        "BlockIO": "0B / 252MB",
+        "CPUPerc": "4.96%",
+        "Container": "iqterminal-server",
+        "ID": "3df0acd82749",
+        "MemPerc": "10.78%",
+        "MemUsage": "110.4MiB / 1GiB",
+        "Name": "iqterminal-server",
+        "NetIO": "0B / 0B",
+        "PIDs": "12"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.42%",
+        "Container": "iqterminal-history-api",
+        "ID": "12d180afc053",
+        "MemPerc": "4.88%",
+        "MemUsage": "24.97MiB / 512MiB",
+        "Name": "iqterminal-history-api",
+        "NetIO": "0B / 0B",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 1.57GB",
+        "CPUPerc": "3.36%",
+        "Container": "iqterminal-history-materializer",
+        "ID": "d0afc0aa2dc3",
+        "MemPerc": "11.17%",
+        "MemUsage": "114.3MiB / 1GiB",
+        "Name": "iqterminal-history-materializer",
+        "NetIO": "0B / 0B",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "2.06GB / 1.25TB",
+        "CPUPerc": "65.84%",
+        "Container": "iqterminal-clickhouse",
+        "ID": "fb960ae45303",
+        "MemPerc": "48.67%",
+        "MemUsage": "1.947GiB / 4GiB",
+        "Name": "iqterminal-clickhouse",
+        "NetIO": "18.2GB / 84.1GB",
+        "PIDs": "292"
+      }
+    ]
+  ]
+}
