@@ -82,3 +82,4 @@ test('history merge keeps latest live revision and evicts whole oldest bars at b
  expect(merged).toHaveLength(180);expect(merged[0]!.time).toBe(bars[121]!.time);expect(merged.at(-1)!.revision).toBe(99);
  expect(boundedFootprintHistory(bars.map(b=>({...b,cells:[...bar.cells]})))).toHaveLength(300);
 });
+                                                                        

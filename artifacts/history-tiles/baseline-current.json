@@ -1,0 +1,2371 @@
+{
+  "phase": "baseline",
+  "scenario": "current",
+  "source": "Actual local Pi Chromium through existing SSH/Vite route; no fixtures",
+  "fixed": {
+    "from": 1791877200000,
+    "to": 1791891600000,
+    "low": 82910,
+    "high": 84330,
+    "rowPrice": 10,
+    "timeMs": 300000
+  },
+  "samples": [
+    {
+      "sample": 0,
+      "window": {
+        "from": 1791892200000,
+        "to": 1791906600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "configuredMs": 15193,
+      "firstFootprintMs": 15198,
+      "firstHeatmapMs": 26583,
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791905400000&to=1791906316400&interval=5m&rowPrice=25",
+          "at": 7820,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791905400000&to=1791906316836&interval=5m&rowPrice=10",
+          "at": 14801,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906316839.0168,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 2.247,
+            "responseStart": 6980.037,
+            "responseEnd": 6983.413
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2633,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791903600000&to=1791905400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 16396,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906323830.958,
+            "domainLookupStart": 0.291,
+            "domainLookupEnd": 0.316,
+            "connectStart": 0.316,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.716,
+            "requestStart": 1.432,
+            "responseStart": 1584.106,
+            "responseEnd": 1590.299
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5508,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791901800000&to=1791903600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 21703,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906325421.154,
+            "domainLookupStart": 0.224,
+            "domainLookupEnd": 0.325,
+            "connectStart": 0.325,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.634,
+            "requestStart": 0.764,
+            "responseStart": 5295.698,
+            "responseEnd": 5298.204
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4777,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791906000000&to=1791906324325&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average",
+          "at": 26446,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906324333.222,
+            "domainLookupStart": 0.202,
+            "domainLookupEnd": 0.221,
+            "connectStart": 0.221,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.519,
+            "requestStart": 0.664,
+            "responseStart": 11115.931,
+            "responseEnd": 11118.062
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 17116,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791900000000&to=1791901800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 30597,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906330722.513,
+            "domainLookupStart": 0.195,
+            "domainLookupEnd": 0.281,
+            "connectStart": 0.281,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.622,
+            "requestStart": 0.754,
+            "responseStart": 8863.098,
+            "responseEnd": 8867.684
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6786,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791898200000&to=1791900000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 32287,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906339603.4019,
+            "domainLookupStart": 0.36,
+            "domainLookupEnd": 0.398,
+            "connectStart": 0.398,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.002,
+            "requestStart": 6.7,
+            "responseStart": 1704.507,
+            "responseEnd": 1707.247
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6999,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791896400000&to=1791898200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 33796,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906341314.0618,
+            "domainLookupStart": 0.691,
+            "domainLookupEnd": 0.787,
+            "connectStart": 0.787,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.048,
+            "requestStart": 1.182,
+            "responseStart": 1496.31,
+            "responseEnd": 1500.313
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4233,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791894600000&to=1791896400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 34991,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906342827.8909,
+            "domainLookupStart": 0.297,
+            "domainLookupEnd": 0.377,
+            "connectStart": 0.377,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.645,
+            "requestStart": 0.779,
+            "responseStart": 1183.177,
+            "responseEnd": 1186.058
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4382,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791892800000&to=1791894600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 36238,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906344017.703,
+            "domainLookupStart": 0.237,
+            "domainLookupEnd": 0.351,
+            "connectStart": 0.351,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.752,
+            "requestStart": 0.904,
+            "responseStart": 1236.021,
+            "responseEnd": 1239.912
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4441,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791892200000&to=1791893400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average",
+          "at": 37495,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906335477.5078,
+            "domainLookupStart": 0.264,
+            "domainLookupEnd": 0.288,
+            "connectStart": 0.288,
+            "secureConnectionStart": -1,
+            "connectEnd": 2.623,
+            "requestStart": 2.786,
+            "responseStart": 10933.916,
+            "responseEnd": 11039.13
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 35285,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791891000000&to=1791892800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 37527,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906345260.724,
+            "domainLookupStart": 0.222,
+            "domainLookupEnd": 0.328,
+            "connectStart": 0.328,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.687,
+            "requestStart": 0.865,
+            "responseStart": 1277.633,
+            "responseEnd": 1280.835
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4239,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791889200000&to=1791891000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 38712,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906346543.7751,
+            "domainLookupStart": 0.248,
+            "domainLookupEnd": 0.269,
+            "connectStart": 0.269,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.801,
+            "requestStart": 1.18,
+            "responseStart": 1179.82,
+            "responseEnd": 1181.597
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6169,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791887400000&to=1791889200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 40664,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906347728.669,
+            "domainLookupStart": 0.202,
+            "domainLookupEnd": 0.301,
+            "connectStart": 0.301,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.596,
+            "requestStart": 0.757,
+            "responseStart": 1957.367,
+            "responseEnd": 1959.589
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4201,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791885600000&to=1791887400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 41868,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906349696.5151,
+            "domainLookupStart": 0.218,
+            "domainLookupEnd": 0.314,
+            "connectStart": 0.314,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.586,
+            "requestStart": 0.717,
+            "responseStart": 1179.974,
+            "responseEnd": 1183.607
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3793,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791883800000&to=1791885600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 43489,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906350890.135,
+            "domainLookupStart": 0.358,
+            "domainLookupEnd": 0.54,
+            "connectStart": 0.54,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.112,
+            "requestStart": 4.378,
+            "responseStart": 1616.659,
+            "responseEnd": 1621.93
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4268,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791893400000&to=1791894600000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 44087,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906346521.041,
+            "domainLookupStart": 0.251,
+            "domainLookupEnd": 0.4,
+            "connectStart": 0.4,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.897,
+            "requestStart": 1.078,
+            "responseStart": 6569.377,
+            "responseEnd": 6572.52
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 34515,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791882000000&to=1791883800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 44318,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906352511.123,
+            "domainLookupStart": 0.203,
+            "domainLookupEnd": 0.315,
+            "connectStart": 0.315,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.931,
+            "requestStart": 2.065,
+            "responseStart": 823.971,
+            "responseEnd": 825.953
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4477,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791880200000&to=1791882000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 45304,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906353342.57,
+            "domainLookupStart": 0.213,
+            "domainLookupEnd": 0.233,
+            "connectStart": 0.233,
+            "secureConnectionStart": -1,
+            "connectEnd": 2.183,
+            "requestStart": 2.433,
+            "responseStart": 984.312,
+            "responseEnd": 986.704
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3897,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791878400000&to=1791880200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 46563,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906354334.4238,
+            "domainLookupStart": 0.274,
+            "domainLookupEnd": 0.394,
+            "connectStart": 0.394,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.798,
+            "requestStart": 0.972,
+            "responseStart": 1235.944,
+            "responseEnd": 1238.339
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4329,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791876600000&to=1791878400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 47748,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906355577.84,
+            "domainLookupStart": 0.188,
+            "domainLookupEnd": 0.287,
+            "connectStart": 0.287,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.759,
+            "requestStart": 1.932,
+            "responseStart": 1186.502,
+            "responseEnd": 1189.078
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5111,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791874800000&to=1791876600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 48992,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906356774.3489,
+            "domainLookupStart": 0.284,
+            "domainLookupEnd": 0.415,
+            "connectStart": 0.415,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.946,
+            "requestStart": 1.13,
+            "responseStart": 1233.31,
+            "responseEnd": 1236.565
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4082,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791873000000&to=1791874800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 50255,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906358013.616,
+            "domainLookupStart": 0.207,
+            "domainLookupEnd": 0.306,
+            "connectStart": 0.306,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.619,
+            "requestStart": 0.75,
+            "responseStart": 1242.247,
+            "responseEnd": 1244.059
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2870,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791894600000&to=1791895800000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 51542,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906353109.258,
+            "domainLookupStart": 0.262,
+            "domainLookupEnd": 0.288,
+            "connectStart": 0.288,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.645,
+            "requestStart": 0.787,
+            "responseStart": 7326.108,
+            "responseEnd": 7362.438
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 34951,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791871200000&to=1791873000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 51543,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906359271.177,
+            "domainLookupStart": 0.38,
+            "domainLookupEnd": 0.584,
+            "connectStart": 0.584,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.186,
+            "requestStart": 1.447,
+            "responseStart": 1254.408,
+            "responseEnd": 1261.269
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3135,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791869400000&to=1791871200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 52823,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906360581.423,
+            "domainLookupStart": 0.302,
+            "domainLookupEnd": 0.327,
+            "connectStart": 0.327,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.6,
+            "requestStart": 2.042,
+            "responseStart": 1229.559,
+            "responseEnd": 1258.347
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3034,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791867600000&to=1791869400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 53962,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906361839.338,
+            "domainLookupStart": 0.572,
+            "domainLookupEnd": 0.853,
+            "connectStart": 0.853,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.888,
+            "requestStart": 2.39,
+            "responseStart": 1135.795,
+            "responseEnd": 1141.73
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5205,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791865800000&to=1791867600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 55354,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906362984.493,
+            "domainLookupStart": 0.261,
+            "domainLookupEnd": 0.384,
+            "connectStart": 0.384,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.776,
+            "requestStart": 0.908,
+            "responseStart": 1365.023,
+            "responseEnd": 1366.922
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4162,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791864000000&to=1791865800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 56317,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906364382.9238,
+            "domainLookupStart": 0.35,
+            "domainLookupEnd": 0.523,
+            "connectStart": 0.523,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.168,
+            "requestStart": 1.42,
+            "responseStart": 938.802,
+            "responseEnd": 950.921
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4078,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791895800000&to=1791897000000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 57748,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906360579.217,
+            "domainLookupStart": 0.232,
+            "domainLookupEnd": 0.335,
+            "connectStart": 0.335,
+            "secureConnectionStart": -1,
+            "connectEnd": 3.772,
+            "requestStart": 3.978,
+            "responseStart": 6164.259,
+            "responseEnd": 6198.07
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 34313,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791862200000&to=1791864000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 58807,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906365335.2417,
+            "domainLookupStart": 1.983,
+            "domainLookupEnd": 2.017,
+            "connectStart": 2.017,
+            "secureConnectionStart": -1,
+            "connectEnd": 2.622,
+            "requestStart": 2.813,
+            "responseStart": 2475.975,
+            "responseEnd": 2479.591
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6669,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791860400000&to=1791862200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 61114,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906367822.776,
+            "domainLookupStart": 1.338,
+            "domainLookupEnd": 1.533,
+            "connectStart": 1.533,
+            "secureConnectionStart": -1,
+            "connectEnd": 2.104,
+            "requestStart": 2.337,
+            "responseStart": 2298.696,
+            "responseEnd": 2302.191
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4053,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791858600000&to=1791860400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 63899,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906370131.0088,
+            "domainLookupStart": 0.406,
+            "domainLookupEnd": 0.614,
+            "connectStart": 0.614,
+            "secureConnectionStart": -1,
+            "connectEnd": 3.535,
+            "requestStart": 5.752,
+            "responseStart": 2778.254,
+            "responseEnd": 2782.579
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4823,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791897000000&to=1791898200000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 65219,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906366785.812,
+            "domainLookupStart": 0.492,
+            "domainLookupEnd": 0.703,
+            "connectStart": 0.703,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.379,
+            "requestStart": 1.679,
+            "responseStart": 7451.613,
+            "responseEnd": 7456.98
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 34306,
+            "responseHeadersSize": 202
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791856800000&to=1791858600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 66303,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906372928.604,
+            "domainLookupStart": 1.202,
+            "domainLookupEnd": 1.326,
+            "connectStart": 1.326,
+            "secureConnectionStart": -1,
+            "connectEnd": 3.699,
+            "requestStart": 3.885,
+            "responseStart": 2395.669,
+            "responseEnd": 2398.911
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4892,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791855000000&to=1791856800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 67417,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906375334.039,
+            "domainLookupStart": 0.448,
+            "domainLookupEnd": 0.642,
+            "connectStart": 0.642,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.296,
+            "requestStart": 1.542,
+            "responseStart": 1082.193,
+            "responseEnd": 1089.275
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5114,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 68472,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906374253.1118,
+            "domainLookupStart": 0.978,
+            "domainLookupEnd": 1.102,
+            "connectStart": 1.102,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.86,
+            "requestStart": 2.125,
+            "responseStart": 3225.917,
+            "responseEnd": 3227.75
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791853200000&to=1791855000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 68809,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906376442.652,
+            "domainLookupStart": 0.473,
+            "domainLookupEnd": 0.629,
+            "connectStart": 0.629,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.052,
+            "requestStart": 1.309,
+            "responseStart": 1279.978,
+            "responseEnd": 1299.449
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5987,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791851400000&to=1791853200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 70127,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906377754.529,
+            "domainLookupStart": 0.392,
+            "domainLookupEnd": 0.647,
+            "connectStart": 0.647,
+            "secureConnectionStart": -1,
+            "connectEnd": 4.429,
+            "requestStart": 4.823,
+            "responseStart": 1376.029,
+            "responseEnd": 1378.886
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6882,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791849600000&to=1791851400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 71633,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906379150.4438,
+            "domainLookupStart": 0.205,
+            "domainLookupEnd": 0.469,
+            "connectStart": 0.469,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.787,
+            "requestStart": 0.926,
+            "responseStart": 1491.633,
+            "responseEnd": 1499.787
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 7366,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 71947,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906378525.1929,
+            "domainLookupStart": 0.294,
+            "domainLookupEnd": 0.325,
+            "connectStart": 0.325,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.784,
+            "requestStart": 0.888,
+            "responseStart": 2439.539,
+            "responseEnd": 2441.427
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791847800000&to=1791849600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 72748,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906380667.2927,
+            "domainLookupStart": 0.427,
+            "domainLookupEnd": 0.673,
+            "connectStart": 0.673,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.363,
+            "requestStart": 1.636,
+            "responseStart": 1100.305,
+            "responseEnd": 1105.909
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4691,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791846000000&to=1791847800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 76725,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906381779.4312,
+            "domainLookupStart": 0.305,
+            "domainLookupEnd": 1.768,
+            "connectStart": 1.768,
+            "secureConnectionStart": -1,
+            "connectEnd": 2.331,
+            "requestStart": 2.549,
+            "responseStart": 3946.271,
+            "responseEnd": 3950.454
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 6682,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 77709,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906383030.493,
+            "domainLookupStart": 0.328,
+            "domainLookupEnd": 0.53,
+            "connectStart": 0.53,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.076,
+            "requestStart": 1.267,
+            "responseStart": 3687.212,
+            "responseEnd": 3697.156
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791844200000&to=1791846000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 79928,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906385740.171,
+            "domainLookupStart": 0.397,
+            "domainLookupEnd": 0.572,
+            "connectStart": 0.572,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.081,
+            "requestStart": 1.293,
+            "responseStart": 3197.95,
+            "responseEnd": 3204.553
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 5289,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791842400000&to=1791844200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 81651,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906388959.246,
+            "domainLookupStart": 0.202,
+            "domainLookupEnd": 0.305,
+            "connectStart": 0.305,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.799,
+            "requestStart": 3.792,
+            "responseStart": 1695.26,
+            "responseEnd": 1703.166
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4218,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791840600000&to=1791842400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 83149,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906390666.612,
+            "domainLookupStart": 0.428,
+            "domainLookupEnd": 0.637,
+            "connectStart": 0.637,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.304,
+            "requestStart": 1.547,
+            "responseStart": 1412.772,
+            "responseEnd": 1417.664
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4907,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791838800000&to=1791840600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 83900,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906392110.808,
+            "domainLookupStart": 0.307,
+            "domainLookupEnd": 0.433,
+            "connectStart": 0.433,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.796,
+            "requestStart": 1.024,
+            "responseStart": 806.283,
+            "responseEnd": 814.677
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3391,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 84187,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906390824.343,
+            "domainLookupStart": 0.19,
+            "domainLookupEnd": 0.209,
+            "connectStart": 0.209,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.499,
+            "requestStart": 0.619,
+            "responseStart": 2342.192,
+            "responseEnd": 2344.58
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791837000000&to=1791838800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 84886,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906392975.121,
+            "domainLookupStart": 0.327,
+            "domainLookupEnd": 0.358,
+            "connectStart": 0.358,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.843,
+            "requestStart": 1.037,
+            "responseStart": 845.647,
+            "responseEnd": 847.766
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2763,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791835200000&to=1791837000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 86060,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906393848.782,
+            "domainLookupStart": 0.221,
+            "domainLookupEnd": 0.347,
+            "connectStart": 0.347,
+            "secureConnectionStart": -1,
+            "connectEnd": 11.131,
+            "requestStart": 33.756,
+            "responseStart": 1177.8,
+            "responseEnd": 1180.158
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3461,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791833400000&to=1791835200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 87915,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906395058.965,
+            "domainLookupStart": 0.459,
+            "domainLookupEnd": 0.682,
+            "connectStart": 0.682,
+            "secureConnectionStart": -1,
+            "connectEnd": 13.72,
+            "requestStart": 14.017,
+            "responseStart": 1782.719,
+            "responseEnd": 1797.236
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3313,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791831600000&to=1791833400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 88611,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906396965.867,
+            "domainLookupStart": 0.266,
+            "domainLookupEnd": 3.634,
+            "connectStart": 3.634,
+            "secureConnectionStart": -1,
+            "connectEnd": 4.293,
+            "requestStart": 6.143,
+            "responseStart": 648.541,
+            "responseEnd": 679.283
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4241,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791829800000&to=1791831600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 89421,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906397657.4312,
+            "domainLookupStart": 0.197,
+            "domainLookupEnd": 0.217,
+            "connectStart": 0.217,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.519,
+            "requestStart": 0.636,
+            "responseStart": 762.094,
+            "responseEnd": 768.273
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3107,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791828000000&to=1791829800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 96882,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906398442.0728,
+            "domainLookupStart": 0.272,
+            "domainLookupEnd": 0.367,
+            "connectStart": 0.367,
+            "secureConnectionStart": -1,
+            "connectEnd": 6.975,
+            "requestStart": 7.204,
+            "responseStart": 7453.604,
+            "responseEnd": 7457.936
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2696,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 99403,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906401229.3489,
+            "domainLookupStart": 1.141,
+            "domainLookupEnd": 1.331,
+            "connectStart": 1.331,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.901,
+            "requestStart": 2.119,
+            "responseStart": 7178.494,
+            "responseEnd": 7184.929
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791826200000&to=1791828000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 99854,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906405916.734,
+            "domainLookupStart": 0.359,
+            "domainLookupEnd": 0.555,
+            "connectStart": 0.555,
+            "secureConnectionStart": -1,
+            "connectEnd": 1.359,
+            "requestStart": 3.807,
+            "responseStart": 2941.948,
+            "responseEnd": 2944.629
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3591,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791824400000&to=1791826200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 102008,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906408884.9238,
+            "domainLookupStart": 0.208,
+            "domainLookupEnd": 0.229,
+            "connectStart": 0.229,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.532,
+            "requestStart": 0.646,
+            "responseStart": 2132.738,
+            "responseEnd": 2134.721
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4039,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791822600000&to=1791824400000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 104124,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906411034.791,
+            "domainLookupStart": 0.229,
+            "domainLookupEnd": 0.33,
+            "connectStart": 0.33,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.675,
+            "requestStart": 0.831,
+            "responseStart": 2093.51,
+            "responseEnd": 2100.88
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 4220,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791820800000&to=1791822600000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 105399,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906413172.086,
+            "domainLookupStart": 0.374,
+            "domainLookupEnd": 0.492,
+            "connectStart": 0.492,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.925,
+            "requestStart": 1.089,
+            "responseStart": 1242.06,
+            "responseEnd": 1252.674
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3606,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791819000000&to=1791820800000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 106291,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906414431.8362,
+            "domainLookupStart": 0.198,
+            "domainLookupEnd": 0.301,
+            "connectStart": 0.301,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.591,
+            "requestStart": 0.705,
+            "responseStart": 866.926,
+            "responseEnd": 870.928
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3433,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791817200000&to=1791819000000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 108024,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906415325.949,
+            "domainLookupStart": 0.718,
+            "domainLookupEnd": 0.762,
+            "connectStart": 0.762,
+            "secureConnectionStart": -1,
+            "connectEnd": 3.511,
+            "requestStart": 3.722,
+            "responseStart": 1683.908,
+            "responseEnd": 1688.204
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 3814,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791816600000&to=1791817200000&interval=5m&rowPrice=10&watermark=3483723593",
+          "at": 110115,
+          "status": 200,
+          "timing": {
+            "startTime": 1791906417035.614,
+            "domainLookupStart": 0.337,
+            "domainLookupEnd": 0.372,
+            "connectStart": 0.372,
+            "secureConnectionStart": -1,
+            "connectEnd": 6.09,
+            "requestStart": 6.463,
+            "responseStart": 2091.208,
+            "responseEnd": 2093.89
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2004,
+            "responseHeadersSize": 201
+          }
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/heatmap?from=1791898200000&to=1791899400000&low=82830&high=84410&rowPrice=10&timeMs=300000&mode=average&watermark=1061349",
+          "at": 118942,
+          "status": 400,
+          "timing": {
+            "startTime": 1791906424424.69,
+            "domainLookupStart": 0.272,
+            "domainLookupEnd": 0.404,
+            "connectStart": 0.404,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.804,
+            "requestStart": 0.964,
+            "responseStart": 3512.766,
+            "responseEnd": 3515.577
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 444,
+            "responseBodySize": 77,
+            "responseHeadersSize": 183
+          }
+        }
+      ],
+      "errors": [],
+      "snapshots": [
+        {
+          "at": 15198,
+          "footprintBars": 4,
+          "heatmapBuckets": 0,
+          "footprintComplete": false,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained aggTrades · 4 bars · 0 coverage gap(s)",
+            "lastUpdate": 1791906323279,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791905400000,
+            "lastTradeAt": 1791906322800,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791905400,
+            "coverage": "partial"
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 13
+        },
+        {
+          "at": 20361,
+          "footprintBars": 10,
+          "heatmapBuckets": 0,
+          "footprintComplete": false,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (10 bars)",
+            "lastUpdate": 1791906323279,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791903600000,
+            "lastTradeAt": 1791906322800,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791903600,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading recorded viewport",
+            "tickSize": 0.1,
+            "collectionStart": null,
+            "retentionStart": null,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 21
+        },
+        {
+          "at": 25536,
+          "footprintBars": 16,
+          "heatmapBuckets": 0,
+          "footprintComplete": false,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (16 bars)",
+            "lastUpdate": 1791906323279,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791901800000,
+            "lastTradeAt": 1791906322800,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791901800,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading recorded viewport",
+            "tickSize": 0.1,
+            "collectionStart": null,
+            "retentionStart": null,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 27
+        },
+        {
+          "at": 30719,
+          "footprintBars": 22,
+          "heatmapBuckets": 2,
+          "footprintComplete": false,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (22 bars)",
+            "lastUpdate": 1791906335988,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791900000000,
+            "lastTradeAt": 1791906335367,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791900000,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+            "tickSize": 0.1,
+            "collectionStart": 1791893241079,
+            "retentionStart": 1791906000000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 47
+        },
+        {
+          "at": 35786,
+          "footprintBars": 40,
+          "heatmapBuckets": 2,
+          "footprintComplete": false,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 145ms · loading older history (40 bars)",
+            "lastUpdate": 1791906344069,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791894600000,
+            "lastTradeAt": 1791906343316,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791894600,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483723841,
+              "backendSentAtMs": 1791906344396,
+              "workerReceivedAtMs": 1791906344541,
+              "workerAppliedAtMs": 1791906344541
+            }
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · recent liquidity loaded; loading earlier recorded viewport",
+            "tickSize": 0.1,
+            "collectionStart": 1791893241079,
+            "retentionStart": 1791906000000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 214
+        },
+        {
+          "at": 40999,
+          "footprintBars": 48,
+          "heatmapBuckets": 6,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 182ms · loading older history (64 bars)",
+            "lastUpdate": 1791906349394,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791887400000,
+            "lastTradeAt": 1791906348764,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791887400,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724137,
+              "backendSentAtMs": 1791906349581,
+              "workerReceivedAtMs": 1791906349762,
+              "workerAppliedAtMs": 1791906349763
+            }
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 8%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 346
+        },
+        {
+          "at": 46076,
+          "footprintBars": 48,
+          "heatmapBuckets": 10,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 136ms · loading older history (88 bars)",
+            "lastUpdate": 1791906354424,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791880200000,
+            "lastTradeAt": 1791906353773,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791880200,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724225,
+              "backendSentAtMs": 1791906354485,
+              "workerReceivedAtMs": 1791906354621,
+              "workerAppliedAtMs": 1791906354621
+            }
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 16%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 515
+        },
+        {
+          "at": 51262,
+          "footprintBars": 48,
+          "heatmapBuckets": 10,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 212ms · loading older history (112 bars)",
+            "lastUpdate": 1791906359480,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791873000000,
+            "lastTradeAt": 1791906358953,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791873000,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724249,
+              "backendSentAtMs": 1791906359835,
+              "workerReceivedAtMs": 1791906360046,
+              "workerAppliedAtMs": 1791906360047
+            }
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 16%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 651
+        },
+        {
+          "at": 56444,
+          "footprintBars": 48,
+          "heatmapBuckets": 14,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 137ms · loading older history (142 bars)",
+            "lastUpdate": 1791906364990,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791864000000,
+            "lastTradeAt": 1791906364580,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791864000,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724313,
+              "backendSentAtMs": 1791906365201,
+              "workerReceivedAtMs": 1791906365336,
+              "workerAppliedAtMs": 1791906365338
+            }
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 25%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 708
+        },
+        {
+          "at": 61502,
+          "footprintBars": 48,
+          "heatmapBuckets": 18,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (154 bars)",
+            "lastUpdate": 1791906369404,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791860400000,
+            "lastTradeAt": 1791906368843,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791860400,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 33%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 768
+        },
+        {
+          "at": 66660,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (166 bars)",
+            "lastUpdate": 1791906374058,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791856800000,
+            "lastTradeAt": 1791906373433,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791856800,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading history 42%",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 822
+        },
+        {
+          "at": 71764,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (190 bars)",
+            "lastUpdate": 1791906379885,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791849600000,
+            "lastTradeAt": 1791906379493,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791849600,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 877
+        },
+        {
+          "at": 76767,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (202 bars)",
+            "lastUpdate": 1791906384037,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791846000000,
+            "lastTradeAt": 1791906383501,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791846000,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 909
+        },
+        {
+          "at": 81942,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (214 bars)",
+            "lastUpdate": 1791906390062,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791842400000,
+            "lastTradeAt": 1791906389532,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791842400,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 927
+        },
+        {
+          "at": 87324,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 489ms · loading older history (238 bars)",
+            "lastUpdate": 1791906395434,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791835200000,
+            "lastTradeAt": 1791906394996,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791835200,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724618,
+              "backendSentAtMs": 1791906395537,
+              "workerReceivedAtMs": 1791906396025,
+              "workerAppliedAtMs": 1791906396026
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 954
+        },
+        {
+          "at": 92439,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 147ms · loading older history (256 bars)",
+            "lastUpdate": 1791906398464,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791829800000,
+            "lastTradeAt": 1791906398037,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791829800,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724644,
+              "backendSentAtMs": 1791906398731,
+              "workerReceivedAtMs": 1791906398878,
+              "workerAppliedAtMs": 1791906398880
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 984
+        },
+        {
+          "at": 97520,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · retained history and durable live executions · loading older history (262 bars)",
+            "lastUpdate": 1791906402874,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791828000000,
+            "lastTradeAt": 1791906402567,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791828000,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 996
+        },
+        {
+          "at": 102546,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 258ms · loading older history (274 bars)",
+            "lastUpdate": 1791906410637,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791824400000,
+            "lastTradeAt": 1791906410024,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791824400,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724829,
+              "backendSentAtMs": 1791906410964,
+              "workerReceivedAtMs": 1791906411222,
+              "workerAppliedAtMs": 1791906411223
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1039
+        },
+        {
+          "at": 107603,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 158ms · loading older history (292 bars)",
+            "lastUpdate": 1791906415582,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791819000000,
+            "lastTradeAt": 1791906415213,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791819000,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724900,
+              "backendSentAtMs": 1791906415932,
+              "workerReceivedAtMs": 1791906416090,
+              "workerAppliedAtMs": 1791906416091
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1083
+        },
+        {
+          "at": 112605,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 181ms",
+            "lastUpdate": 1791906421074,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791816600000,
+            "lastTradeAt": 1791906420655,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791816600,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724929,
+              "backendSentAtMs": 1791906421138,
+              "workerReceivedAtMs": 1791906421319,
+              "workerAppliedAtMs": 1791906421322
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1148
+        },
+        {
+          "at": 117612,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 109ms",
+            "lastUpdate": 1791906425933,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791816600000,
+            "lastTradeAt": 1791906425353,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791816600,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483724950,
+              "backendSentAtMs": 1791906425993,
+              "workerReceivedAtMs": 1791906426102,
+              "workerAppliedAtMs": 1791906426103
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1220
+        },
+        {
+          "at": 122636,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 131ms",
+            "lastUpdate": 1791906431047,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791816600000,
+            "lastTradeAt": 1791906430637,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791816600,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483725195,
+              "backendSentAtMs": 1791906431164,
+              "workerReceivedAtMs": 1791906431295,
+              "workerAppliedAtMs": 1791906431296
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1258
+        },
+        {
+          "at": 127780,
+          "footprintBars": 48,
+          "heatmapBuckets": 22,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 171ms",
+            "lastUpdate": 1791906435767,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791816600000,
+            "lastTradeAt": 1791906435318,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791816600,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483725239,
+              "backendSentAtMs": 1791906435773,
+              "workerReceivedAtMs": 1791906435944,
+              "workerAppliedAtMs": 1791906435952
+            }
+          },
+          "heatmapStatus": {
+            "state": "stale",
+            "message": "Staging depth · Cannot read properties of undefined (reading 'length') · retrying",
+            "tickSize": 0.1,
+            "collectionStart": 1791889721143,
+            "retentionStart": 1791892200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791892200,
+            "to": 1791906600
+          },
+          "draws": 1319
+        }
+      ]
+    }
+  ],
+  "started": "2026-10-13T15:45:07.154Z"
+}

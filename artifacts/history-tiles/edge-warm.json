@@ -1,0 +1,2872 @@
+{
+  "phase": "edge",
+  "scenario": "warm",
+  "source": "Actual local Pi Chromium through existing SSH/Vite route; no fixtures",
+  "fixed": {
+    "from": 1791877200000,
+    "to": 1791891600000,
+    "low": 82910,
+    "high": 84330,
+    "rowPrice": 10,
+    "timeMs": 300000
+  },
+  "samples": [
+    {
+      "sample": 0,
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908635213&interval=5m&rowPrice=10",
+          "at": 2861,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908635215.9011,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.396,
+            "responseStart": 1010.174,
+            "responseEnd": 1012.72
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2648,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=34.62, dbdecode;dur=21.01, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=76.90, legacy;dur=81.55"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908400000&interval=5m&rowPrice=10&known=",
+          "at": 3020,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908636498&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 4837,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908636514.859,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.443,
+            "responseStart": 1681.595,
+            "responseEnd": 1683.413
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1353,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.66, project;dur=0.00, serialize;dur=0.31, total;dur=5.11"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908636383&interval=5m&rowPrice=10",
+          "at": 4848,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908636385.286,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.507,
+            "responseStart": 1818.054,
+            "responseEnd": 1819.681
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2616,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=24.79, dbdecode;dur=19.26, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=56.74, legacy;dur=61.22"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908400000&interval=5m&rowPrice=10&known=",
+          "at": 5316,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908638235.997,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.344,
+            "responseStart": 444.698,
+            "responseEnd": 446.222
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 2725,
+            "responseHeadersSize": 329
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.67, total;dur=4.82"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/tiles?timeMs=300000&rowPrice=10&keys=1791906600000%3A1791907473472000%3A130%2C1791906900000%3A1791907200855000%3A130%2C1791907200000%3A1791907500583000%3A130%2C1791907500000%3A1791907800823000%3A130%2C1791907800000%3A1791908100787000%3A130%2C1791908100000%3A1791908400481000%3A130",
+          "at": 5358,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908638216.243,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.406,
+            "responseStart": 505.904,
+            "responseEnd": 507.492
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 499,
+            "responseBodySize": 13635,
+            "responseHeadersSize": 350
+          },
+          "serverTiming": "admission;dur=0, db;dur=46.32, project;dur=1.58, serialize;dur=1.07, total;dur=49.18"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908638997&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 6211,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908639006.9138,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.358,
+            "responseStart": 559.923,
+            "responseEnd": 561.685
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1350,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.07, project;dur=0.00, serialize;dur=0.32, total;dur=5.57"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908638997&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 6887,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908639593.3918,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.412,
+            "responseStart": 644.351,
+            "responseEnd": 645.635
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2784,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.67, total;dur=30.19"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908641897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 9379,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908641924.498,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.519,
+            "responseStart": 805.954,
+            "responseEnd": 807.865
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=14.36, project;dur=0.00, serialize;dur=1.11, total;dur=15.81"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908641897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 9804,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908642763.031,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.807,
+            "responseStart": 403.411,
+            "responseEnd": 406.584
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2835,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.63, total;dur=12.43"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908644297&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 11444,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908644312.444,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.626,
+            "responseStart": 481.423,
+            "responseEnd": 483.221
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.31, project;dur=0.00, serialize;dur=0.37, total;dur=5.82"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908644297&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 12314,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908644822.9548,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.613,
+            "responseStart": 850.662,
+            "responseEnd": 852.473
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2814,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.64, total;dur=13.24"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908646797&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 13869,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908646821.75,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.546,
+            "responseStart": 411.269,
+            "responseEnd": 413.011
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=6.12, project;dur=0.00, serialize;dur=0.37, total;dur=6.71"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908646797&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 14225,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908647247.007,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.36,
+            "responseStart": 338.564,
+            "responseEnd": 340.358
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2814,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.79, total;dur=19.11"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908648697&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 15967,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908648716.895,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.314,
+            "responseStart": 613.018,
+            "responseEnd": 614.728
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=12.82, project;dur=0.00, serialize;dur=1.08, total;dur=14.23"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908648697&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 16397,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908649348.8801,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.388,
+            "responseStart": 412.855,
+            "responseEnd": 417.15
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2813,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.46, total;dur=11.61"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908650897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 18016,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908650918.935,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.717,
+            "responseStart": 451.965,
+            "responseEnd": 454.818
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.70, project;dur=0.00, serialize;dur=0.46, total;dur=6.30"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908650897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 18655,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908651396.131,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.909,
+            "responseStart": 618.282,
+            "responseEnd": 620.354
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2819,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.55, total;dur=11.61"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908653297&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20444,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908653330.843,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.398,
+            "responseStart": 470.957,
+            "responseEnd": 474.755
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=13.50, project;dur=0.00, serialize;dur=1.18, total;dur=14.94"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908653297&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20981,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908653822.6777,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.354,
+            "responseStart": 521.645,
+            "responseEnd": 526.672
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2823,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.56, total;dur=16.53"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908655497&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 22787,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908655518.9988,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.347,
+            "responseStart": 634.126,
+            "responseEnd": 636.043
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1350,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=11.24, project;dur=0.00, serialize;dur=0.35, total;dur=11.79"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908655497&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 23432,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908656167.1108,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.593,
+            "responseStart": 626.114,
+            "responseEnd": 627.569
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2811,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.46, total;dur=12.47"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908657897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 25202,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908657927.772,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 3.637,
+            "responseStart": 629.245,
+            "responseEnd": 633.906
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.17, project;dur=0.00, serialize;dur=0.26, total;dur=4.52"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908657897&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 25784,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908658571.122,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.541,
+            "responseStart": 574.611,
+            "responseEnd": 577.134
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2814,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.50, total;dur=13.09"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908660300&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 27383,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908660352.0059,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.412,
+            "responseStart": 390.287,
+            "responseEnd": 394.269
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=15.81, project;dur=0.00, serialize;dur=0.31, total;dur=16.36"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908660300&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 27875,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908660758.9822,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.469,
+            "responseStart": 468.944,
+            "responseEnd": 470.761
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2822,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.57, total;dur=29.47"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908662397&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 29504,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908662417.167,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.421,
+            "responseStart": 438.474,
+            "responseEnd": 441.925
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.50, project;dur=0.00, serialize;dur=0.27, total;dur=4.86"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908662397&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 30046,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908662885.066,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.43,
+            "responseStart": 517.237,
+            "responseEnd": 520.887
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2820,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.42, total;dur=29.97"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908664697&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 31761,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908664731.246,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 2.425,
+            "responseStart": 389.39,
+            "responseEnd": 391.21
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1349,
+            "responseHeadersSize": 348
+          },
+          "serverTiming": "admission;dur=0, db;dur=9.54, project;dur=0.00, serialize;dur=0.40, total;dur=10.28"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908664697&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 32217,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908665138.974,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.372,
+            "responseStart": 439.126,
+            "responseEnd": 441.297
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2811,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=1.68, total;dur=23.69"
+        }
+      ],
+      "errors": [
+        "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Add Footprint', exact: true })\u001b[22m\n"
+      ],
+      "snapshots": []
+    },
+    {
+      "sample": 1,
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908668745&interval=5m&rowPrice=10",
+          "at": 3665,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908668747.026,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.709,
+            "responseStart": 1830.276,
+            "responseEnd": 1832.173
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2648,
+            "responseHeadersSize": 414
+          },
+          "serverTiming": "admission;dur=0, db;dur=28.62, dbdecode;dur=21.34, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.06, total;dur=124.97, legacy;dur=126.77"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908400000&interval=5m&rowPrice=10&known=1791906900000%3A1791907332069000%2C1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000",
+          "at": 3833,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908670931&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 5503,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908670964.5588,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.336,
+            "responseStart": 1461.365,
+            "responseEnd": 1463.023
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1353,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=10.85, project;dur=0.00, serialize;dur=0.34, total;dur=11.39"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908670756&interval=5m&rowPrice=10",
+          "at": 5523,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908670759.237,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.785,
+            "responseStart": 1685.926,
+            "responseEnd": 1688.641
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2649,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=41.17, dbdecode;dur=19.43, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=65.76, legacy;dur=67.29"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908670931&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 5565,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908400000&interval=5m&rowPrice=10&known=1791906900000%3A1791907332069000%2C1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000",
+          "at": 6169,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908672502.277,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.559,
+            "responseStart": 589.123,
+            "responseEnd": 591.161
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 219,
+            "responseHeadersSize": 328
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.63, total;dur=9.24"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908672730&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 6744,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908672744.779,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.457,
+            "responseStart": 919.878,
+            "responseEnd": 921.576
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1350,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.27, project;dur=0.00, serialize;dur=0.34, total;dur=4.73"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908672730&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 7245,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908673683.923,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.734,
+            "responseStart": 473.714,
+            "responseEnd": 476.952
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2817,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.65, total;dur=13.88"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908675330&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 8815,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908675351.2668,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.469,
+            "responseStart": 388.166,
+            "responseEnd": 389.451
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=7.31, project;dur=0.00, serialize;dur=0.32, total;dur=7.80"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908675330&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 9297,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908675751.432,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.299,
+            "responseStart": 466.905,
+            "responseEnd": 468.474
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2824,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.57, total;dur=28.88"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908677330&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 10952,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908677350.4932,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.385,
+            "responseStart": 513.093,
+            "responseEnd": 515.632
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=14.32, project;dur=0.00, serialize;dur=0.99, total;dur=15.60"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908677330&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 11396,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908677884.701,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.528,
+            "responseStart": 427.186,
+            "responseEnd": 431.477
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2830,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.64, total;dur=22.22"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908679530&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 13138,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908679601.5051,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 4.845,
+            "responseStart": 435.949,
+            "responseEnd": 441.992
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=8.27, project;dur=0.00, serialize;dur=0.48, total;dur=8.87"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908679530&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 13636,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908680082.542,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.661,
+            "responseStart": 454.278,
+            "responseEnd": 461.304
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2823,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.78, total;dur=21.33"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908681730&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 15176,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908681782.139,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.027,
+            "responseStart": 307.046,
+            "responseEnd": 309.823
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=15.91, project;dur=0.00, serialize;dur=1.98, total;dur=18.15"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908681730&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 15833,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908682130.081,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 2.137,
+            "responseStart": 612.367,
+            "responseEnd": 615.217
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2850,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.58, total;dur=11.96"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908683931&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 17648,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908684037.2378,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.554,
+            "responseStart": 501.194,
+            "responseEnd": 506.041
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=6.13, project;dur=0.00, serialize;dur=0.64, total;dur=6.89"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908683931&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 18067,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908684614.32,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 7.437,
+            "responseStart": 342.151,
+            "responseEnd": 347.476
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2866,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.81, total;dur=12.58"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908686230&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 19887,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908686295.46,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.684,
+            "responseStart": 489.526,
+            "responseEnd": 495.202
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1351,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.99, project;dur=0.00, serialize;dur=0.28, total;dur=4.36"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908686230&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20457,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908686828.402,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.837,
+            "responseStart": 551.108,
+            "responseEnd": 554.13
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2851,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.54, total;dur=12.55"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908688630&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 22179,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908688647.8,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.415,
+            "responseStart": 418.608,
+            "responseEnd": 420.485
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1349,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.22, project;dur=0.00, serialize;dur=0.23, total;dur=4.55"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908688630&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 22703,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908689118.413,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.452,
+            "responseStart": 483.677,
+            "responseEnd": 491.777
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2861,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.41, total;dur=11.94"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908690830&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 24473,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908690872.296,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 3.171,
+            "responseStart": 510.565,
+            "responseEnd": 518.801
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.72, project;dur=0.00, serialize;dur=0.46, total;dur=5.28"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908690830&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 25025,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908691410.342,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.611,
+            "responseStart": 533.169,
+            "responseEnd": 536.727
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2847,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.48, total;dur=11.72"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908693031&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 26503,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908693075.553,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.625,
+            "responseStart": 343.194,
+            "responseEnd": 346.432
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1355,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.00, project;dur=0.00, serialize;dur=0.32, total;dur=5.43"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908693031&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 26963,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908693448.608,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.505,
+            "responseStart": 431.366,
+            "responseEnd": 434.786
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2866,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.52, total;dur=28.34"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908695030&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 28758,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908695048.0098,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.921,
+            "responseStart": 612.582,
+            "responseEnd": 614.247
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1355,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.80, project;dur=0.00, serialize;dur=0.39, total;dur=4.26"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908695030&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 29366,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908695696.168,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.51,
+            "responseStart": 569.316,
+            "responseEnd": 571.843
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2844,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=1.06, total;dur=10.16"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908697530&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 31511,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908697629.636,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.493,
+            "responseStart": 779.014,
+            "responseEnd": 780.407
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1352,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.32, project;dur=0.00, serialize;dur=0.41, total;dur=3.83"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908400000&to=1791908697530&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 31900,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908698453.5942,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 3.064,
+            "responseStart": 344.579,
+            "responseEnd": 348.857
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2856,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.50, total;dur=14.89"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906600000&to=1791908700130&low=83200&high=83680&rowPrice=10&timeMs=300000&mode=average",
+          "at": 34009,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908700000&interval=5m&rowPrice=10&known=1791906900000%3A1791907332069000%2C1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000",
+          "at": 34009,
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "errors": [
+        "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Add Footprint', exact: true })\u001b[22m\n"
+      ],
+      "snapshots": []
+    },
+    {
+      "sample": 2,
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908703744&interval=5m&rowPrice=10",
+          "at": 10014,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908703745.765,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.341,
+            "responseStart": 7473.596,
+            "responseEnd": 7475.439
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2401,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=24.07, dbdecode;dur=12.82, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.06, total;dur=54.54, legacy;dur=59.01"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000",
+          "at": 10348,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908711742&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 12047,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908711808.27,
+            "domainLookupStart": 0.413,
+            "domainLookupEnd": 0.571,
+            "connectStart": 0.571,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.999,
+            "requestStart": 1.481,
+            "responseStart": 1427.61,
+            "responseEnd": 1430.055
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=18.13, project;dur=0.00, serialize;dur=1.22, total;dur=19.65"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908711547&interval=5m&rowPrice=10",
+          "at": 12142,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908711551.725,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.033,
+            "responseStart": 1740.483,
+            "responseEnd": 1744.935
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2405,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=41.38, dbdecode;dur=15.04, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=66.02, legacy;dur=69.90"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/tiles?timeMs=300000&rowPrice=10&keys=1791908400000%3A1791908700647000%3A130",
+          "at": 12212,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000",
+          "at": 14251,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908713433.503,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.82,
+            "responseStart": 2031.409,
+            "responseEnd": 2032.638
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 989,
+            "responseHeadersSize": 329
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=1.27, total;dur=12.65"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908713736&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 14292,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908713771.8708,
+            "domainLookupStart": 0.29,
+            "domainLookupEnd": 0.323,
+            "connectStart": 0.323,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.805,
+            "requestStart": 1.014,
+            "responseStart": 1728.058,
+            "responseEnd": 1730.972
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1101,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.59, project;dur=0.00, serialize;dur=0.38, total;dur=6.08"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/tiles?timeMs=300000&rowPrice=10&keys=1791908400000%3A1791908700647000%3A130",
+          "at": 14859,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908715601.41,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.575,
+            "responseStart": 460.756,
+            "responseEnd": 465.041
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 499,
+            "responseBodySize": 2908,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=17.80, project;dur=0.11, serialize;dur=0.70, total;dur=18.72"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908713736&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 15655,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908716256.5652,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.76,
+            "responseStart": 590.717,
+            "responseEnd": 594.337
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2454,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.51, total;dur=25.94"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908718036&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 17380,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908718070.9077,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.992,
+            "responseStart": 497.134,
+            "responseEnd": 500.263
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=19.66, project;dur=0.00, serialize;dur=1.21, total;dur=21.23"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908718036&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 18117,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908718598.441,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 2.85,
+            "responseStart": 720.574,
+            "responseEnd": 727.137
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2439,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.72, total;dur=13.68"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908720636&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 19913,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908720700.6982,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.615,
+            "responseStart": 389.302,
+            "responseEnd": 396.179
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.89, project;dur=0.00, serialize;dur=0.38, total;dur=5.39"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908720636&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20313,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908721140.941,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 4.22,
+            "responseStart": 358.658,
+            "responseEnd": 362.601
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2433,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.64, total;dur=16.42"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908722737&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 22970,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908722788.4,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 2.148,
+            "responseStart": 1372.121,
+            "responseEnd": 1378.39
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1099,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=7.60, project;dur=0.00, serialize;dur=0.69, total;dur=8.44"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908722737&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 24453,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908724209.361,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.706,
+            "responseStart": 1436.37,
+            "responseEnd": 1453.684
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2425,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.36, total;dur=12.12"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908727037&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 27503,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908727078.1099,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.511,
+            "responseStart": 1629.983,
+            "responseEnd": 1632.068
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1100,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=17.14, project;dur=0.00, serialize;dur=1.24, total;dur=18.68"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908727037&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 29149,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908728743.104,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.431,
+            "responseStart": 1610.39,
+            "responseEnd": 1612.402
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2442,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.52, total;dur=10.52"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908731539&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 34576,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908731570.948,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.495,
+            "responseStart": 4216.987,
+            "responseEnd": 4219.438
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=11.33, project;dur=0.00, serialize;dur=0.74, total;dur=12.37"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908731539&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 37324,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908735800.2651,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.305,
+            "responseStart": 2724.216,
+            "responseEnd": 2725.808
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2449,
+            "responseHeadersSize": 329
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.40, total;dur=6.31"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908739736&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 39397,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908739757.914,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.462,
+            "responseStart": 851.861,
+            "responseEnd": 854.298
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=6.00, project;dur=0.00, serialize;dur=0.31, total;dur=6.46"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908739736&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 40715,
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "errors": [
+        "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Add Footprint', exact: true })\u001b[22m\n"
+      ],
+      "snapshots": []
+    },
+    {
+      "sample": 3,
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908743915&interval=5m&rowPrice=10",
+          "at": 9770,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908743917.773,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 5.037,
+            "responseStart": 8212.613,
+            "responseEnd": 8220.875
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2403,
+            "responseHeadersSize": 413
+          },
+          "serverTiming": "admission;dur=0, db;dur=46.51, dbdecode;dur=19.32, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=83.80, legacy;dur=126.07"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000%2C1791908400000%3A1791908705407000",
+          "at": 10168,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908752569&interval=5m&rowPrice=10",
+          "at": 13821,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908752580.68,
+            "domainLookupStart": 0.294,
+            "domainLookupEnd": 1.179,
+            "connectStart": 1.179,
+            "secureConnectionStart": -1,
+            "connectEnd": 4.353,
+            "requestStart": 4.87,
+            "responseStart": 3606.827,
+            "responseEnd": 3618.208
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2407,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=30.93, dbdecode;dur=14.72, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=55.65, legacy;dur=58.88"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908752699&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 14107,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908756698&low=83250&high=83730&rowPrice=10&timeMs=300000&mode=average",
+          "at": 14349,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000%2C1791908400000%3A1791908705407000",
+          "at": 18378,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908756590.6758,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 12.216,
+            "responseStart": 4160.13,
+            "responseEnd": 4175.981
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 219,
+            "responseHeadersSize": 328
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.32, total;dur=4.16"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908756996&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 18384,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908757041.5352,
+            "domainLookupStart": 0.411,
+            "domainLookupEnd": 0.452,
+            "connectStart": 0.452,
+            "secureConnectionStart": -1,
+            "connectEnd": 5.515,
+            "requestStart": 5.815,
+            "responseStart": 3717.409,
+            "responseEnd": 3728.416
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.43, project;dur=0.00, serialize;dur=0.97, total;dur=6.49"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908756996&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20188,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908760929.757,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.348,
+            "responseStart": 1645.657,
+            "responseEnd": 1648.565
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2460,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.65, total;dur=28.14"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908765598&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 28638,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908765655.7212,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.035,
+            "responseStart": 5362.18,
+            "responseEnd": 5369.901
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.48, project;dur=0.00, serialize;dur=0.45, total;dur=4.04"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908765598&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 29429,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908771085.724,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 5.289,
+            "responseStart": 703.136,
+            "responseEnd": 714.676
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2448,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.45, total;dur=19.83"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908773097&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 31332,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908773165.3618,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.435,
+            "responseStart": 560.769,
+            "responseEnd": 562.379
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=2.81, project;dur=0.00, serialize;dur=0.20, total;dur=3.09"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908773097&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 32127,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908773825.468,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.52,
+            "responseStart": 682.369,
+            "responseEnd": 687.942
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2468,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.47, total;dur=23.87"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908775998&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 34533,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908776042.9202,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.643,
+            "responseStart": 865.637,
+            "responseEnd": 870.183
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1098,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.24, project;dur=0.00, serialize;dur=0.32, total;dur=3.63"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908775998&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 35002,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908776968.9373,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 3.33,
+            "responseStart": 420.748,
+            "responseEnd": 428.607
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2454,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.50, total;dur=24.52"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908778700&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 36881,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908778758.7122,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.505,
+            "responseStart": 515.611,
+            "responseEnd": 522.989
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1096,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.35, project;dur=0.00, serialize;dur=0.55, total;dur=3.98"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908778700&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 37431,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908779322.71,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.77,
+            "responseStart": 498.255,
+            "responseEnd": 511.961
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2442,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.52, total;dur=13.43"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908781196&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 39597,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908781252.693,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.681,
+            "responseStart": 712.959,
+            "responseEnd": 722.871
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1099,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.66, project;dur=0.00, serialize;dur=0.37, total;dur=4.16"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908781196&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 40213,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908782026.871,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.371,
+            "responseStart": 566.728,
+            "responseEnd": 573.012
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2442,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.79, total;dur=16.01"
+        }
+      ],
+      "errors": [
+        "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Add Footprint', exact: true })\u001b[22m\n"
+      ],
+      "snapshots": []
+    },
+    {
+      "sample": 4,
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000
+      },
+      "completed": false,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908786085&interval=5m&rowPrice=10",
+          "at": 4456,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908786102.6008,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.441,
+            "responseStart": 2044.093,
+            "responseEnd": 2061.438
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2446,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=20.15, dbdecode;dur=22.58, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=64.50, legacy;dur=67.34"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000%2C1791908400000%3A1791908705407000",
+          "at": 4902,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907800000&to=1791908788633&interval=5m&rowPrice=10",
+          "at": 7251,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908788638.05,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.737,
+            "responseStart": 2290.908,
+            "responseEnd": 2294.831
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2436,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=17.59, dbdecode;dur=13.59, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=41.26, legacy;dur=43.99"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908788675&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 7260,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908788741.864,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.538,
+            "responseStart": 2197.997,
+            "responseEnd": 2201.508
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.12, project;dur=0.00, serialize;dur=0.25, total;dur=3.47"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908788675&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 7345,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907200000&to=1791908700000&interval=5m&rowPrice=10&known=1791907200000%3A1791907501713000%2C1791907500000%3A1791907801032000%2C1791907800000%3A1791908294304000%2C1791908100000%3A1791908521967000%2C1791908400000%3A1791908705407000",
+          "at": 9368,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908791102.1711,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.746,
+            "responseStart": 1979.034,
+            "responseEnd": 1981.912
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 219,
+            "responseHeadersSize": 328
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.95, total;dur=5.10"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908791469&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 9378,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908791517.669,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.379,
+            "responseStart": 1572.689,
+            "responseEnd": 1574.467
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1094,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.31, project;dur=0.00, serialize;dur=1.36, total;dur=6.81"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908791469&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 10657,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908793273.214,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.597,
+            "responseStart": 1113.076,
+            "responseEnd": 1115.815
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2470,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.51, total;dur=11.83"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908796468&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 13762,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908796514.724,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.481,
+            "responseStart": 979.734,
+            "responseEnd": 981.435
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1096,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=5.47, project;dur=0.00, serialize;dur=0.42, total;dur=6.05"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908796468&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 14383,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908797520.935,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.447,
+            "responseStart": 592.74,
+            "responseEnd": 597.365
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2454,
+            "responseHeadersSize": 329
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.56, total;dur=7.24"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908799269&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 15919,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908799295.2822,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.736,
+            "responseStart": 344.089,
+            "responseEnd": 347.247
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1099,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=2.70, project;dur=0.00, serialize;dur=0.44, total;dur=3.21"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908799269&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 16584,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908799673.419,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.437,
+            "responseStart": 643.51,
+            "responseEnd": 646.162
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2458,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.56, total;dur=28.12"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908801768&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 20310,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908801827.6272,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.469,
+            "responseStart": 2211.608,
+            "responseEnd": 2214.448
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1099,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.28, project;dur=0.00, serialize;dur=0.34, total;dur=3.81"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908801768&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 21706,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908804067.372,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.398,
+            "responseStart": 1368.464,
+            "responseEnd": 1370.287
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2470,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.41, total;dur=13.54"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908806568&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 24085,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908806595.9102,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.257,
+            "responseStart": 1223.913,
+            "responseEnd": 1226.02
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=3.94, project;dur=0.00, serialize;dur=0.52, total;dur=4.54"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908806568&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 25207,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908807843.616,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.423,
+            "responseStart": 1087.523,
+            "responseEnd": 1090.628
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2469,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.46, total;dur=11.71"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908810168&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 27737,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908810189.469,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.485,
+            "responseStart": 1275.071,
+            "responseEnd": 1277.814
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1099,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.29, project;dur=0.00, serialize;dur=0.39, total;dur=4.79"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908810168&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 29365,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908811489.947,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.742,
+            "responseStart": 1589.583,
+            "responseEnd": 1594.747
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2463,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.82, total;dur=11.80"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791906900000&to=1791908814269&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 32324,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908814309.165,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.026,
+            "responseStart": 1753.776,
+            "responseEnd": 1756.098
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 1097,
+            "responseHeadersSize": 347
+          },
+          "serverTiming": "admission;dur=0, db;dur=4.27, project;dur=0.00, serialize;dur=0.39, total;dur=4.76"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/current?from=1791908700000&to=1791908814269&low=83240&high=83720&rowPrice=10&timeMs=300000&mode=average",
+          "at": 33901,
+          "status": 200,
+          "timing": {
+            "startTime": 1791908816082.873,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.592,
+            "responseStart": 1546.162,
+            "responseEnd": 1550.492
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 501,
+            "responseBodySize": 2466,
+            "responseHeadersSize": 330
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.54, total;dur=19.51"
+        }
+      ],
+      "errors": [
+        "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Add Footprint', exact: true })\u001b[22m\n"
+      ],
+      "snapshots": []
+    }
+  ],
+  "started": "2026-10-13T16:23:38.953Z",
+  "prime": {
+    "sample": -1,
+    "window": {
+      "from": 1791877200000,
+      "to": 1791891600000,
+      "low": 82910,
+      "high": 84330,
+      "rowPrice": 10,
+      "timeMs": 300000
+    },
+    "viewportStartedMs": 5859,
+    "configuredMs": 6235,
+    "firstFootprintMs": 8093,
+    "firstHeatmapMs": 11922,
+    "completeMs": 12075,
+    "historyCompleteMs": 6216,
+    "firstFootprintHistoryMs": 2234,
+    "firstHeatmapHistoryMs": 6063,
+    "legacyRequestedCompleteMs": 11922,
+    "completed": true,
+    "events": [
+      {
+        "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908624012&interval=5m&rowPrice=25",
+        "at": 3984,
+        "error": "net::ERR_ABORTED"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791907500000&to=1791908624355&interval=5m&rowPrice=10",
+        "at": 5855,
+        "status": 200,
+        "timing": {
+          "startTime": 1791908624356.636,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.712,
+          "responseStart": 1860.687,
+          "responseEnd": 1862.425
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 447,
+          "responseBodySize": 2613,
+          "responseHeadersSize": 412
+        },
+        "serverTiming": "admission;dur=0, db;dur=27.62, dbdecode;dur=16.38, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.05, total;dur=57.19, legacy;dur=62.02"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791906900000&to=1791908400000&interval=5m&rowPrice=10&known=",
+        "at": 5942,
+        "error": "net::ERR_ABORTED"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791877200000&to=1791891600000&interval=5m&rowPrice=10&known=",
+        "at": 7929,
+        "status": 200,
+        "timing": {
+          "startTime": 1791908626322.499,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 1.403,
+          "responseStart": 1972.184,
+          "responseEnd": 1974.457
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 455,
+          "responseBodySize": 26493,
+          "responseHeadersSize": 331
+        },
+        "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=3.91, total;dur=17.46"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791877200000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&include=tiles",
+        "at": 11459,
+        "status": 200,
+        "timing": {
+          "startTime": 1791908626657.032,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.53,
+          "responseStart": 2978.112,
+          "responseEnd": 5167.902
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 502,
+          "responseBodySize": 203868,
+          "responseHeadersSize": 352
+        },
+        "serverTiming": "admission;dur=0, db;dur=8.48, project;dur=0.00, serialize;dur=16.91, total;dur=248.95"
+      }
+    ],
+    "errors": [],
+    "snapshots": [
+      {
+        "at": 6239,
+        "footprintBars": 0,
+        "heatmapBuckets": 0,
+        "footprintComplete": false,
+        "heatmapComplete": false,
+        "footprintStatus": {
+          "state": "live",
+          "message": "Staging · retained aggTrades · 4 bars · 0 coverage gap(s)",
+          "lastUpdate": 1791908625787,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791907500000,
+          "lastTradeAt": 1791908625362,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791907500,
+          "coverage": "partial"
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 13
+      },
+      {
+        "at": 11388,
+        "footprintBars": 48,
+        "heatmapBuckets": 0,
+        "footprintComplete": true,
+        "heatmapComplete": false,
+        "footprintStatus": {
+          "state": "live",
+          "message": "Staging · validated visible footprints · loading older history (52 bars)",
+          "lastUpdate": 1791908626912,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791877200000,
+          "lastTradeAt": 1791908626521,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791877200,
+          "coverage": "partial"
+        },
+        "heatmapStatus": {
+          "state": "syncing",
+          "message": "Staging depth · loading prepared visible history",
+          "tickSize": 0.1,
+          "collectionStart": null,
+          "retentionStart": null,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 19
+      },
+      {
+        "at": 12075,
+        "footprintBars": 48,
+        "heatmapBuckets": 48,
+        "footprintComplete": true,
+        "heatmapComplete": true,
+        "footprintStatus": {
+          "state": "reconnecting",
+          "message": "Staging · replaying durable cursor · delivery 3687ms",
+          "lastUpdate": 1791908627889,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791877200000,
+          "lastTradeAt": 1791908627470,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791877200,
+          "coverage": "partial",
+          "transport": {
+            "cursor": 3483753232,
+            "backendSentAtMs": 1791908628182,
+            "workerReceivedAtMs": 1791908631869,
+            "workerAppliedAtMs": 1791908631871
+          }
+        },
+        "heatmapStatus": {
+          "state": "live",
+          "message": "Staging prepared depth · $10 rows · validated · partial depth/time coverage · 1 coverage gap(s) · RPI excluded",
+          "tickSize": 0.1,
+          "collectionStart": 1791889500000,
+          "retentionStart": 1791877200000,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 23
+      }
+    ]
+  }
+}

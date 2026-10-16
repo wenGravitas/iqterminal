@@ -1,0 +1,831 @@
+{
+  "phase": "warm-check",
+  "scenario": "warm",
+  "source": "Actual local Pi Chromium through existing SSH/Vite route; no fixtures",
+  "fixed": {
+    "from": 1791877200000,
+    "to": 1791891600000,
+    "low": 82910,
+    "high": 84330,
+    "rowPrice": 10,
+    "timeMs": 300000
+  },
+  "samples": [
+    {
+      "sample": 0,
+      "panelCount": 1,
+      "diagnostics": {
+        "feed": {},
+        "historyApply": {
+          "footprintMs": 20.300000000745058,
+          "heatmapMs": 4.399999998509884,
+          "footprintBatches": 10,
+          "heatmapBatches": 4
+        },
+        "longTasks": [
+          455,
+          85,
+          104,
+          56,
+          105,
+          52,
+          198,
+          74,
+          102,
+          70,
+          65,
+          71,
+          141,
+          118,
+          70
+        ],
+        "heap": {
+          "used": 35585404,
+          "total": 62870028
+        }
+      },
+      "window": {
+        "from": 1791877200000,
+        "to": 1791891600000,
+        "low": 82910,
+        "high": 84330,
+        "rowPrice": 10,
+        "timeMs": 300000,
+        "panelCount": 1
+      },
+      "viewportStartedMs": 9631,
+      "configuredMs": 10497,
+      "firstFootprintMs": 10548,
+      "firstHeatmapMs": 10878,
+      "completeMs": 12216,
+      "historyCompleteMs": 2585,
+      "firstFootprintHistoryMs": 917,
+      "firstHeatmapHistoryMs": 1247,
+      "legacyRequestedCompleteMs": 12016,
+      "completed": true,
+      "events": [
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791908400000&to=1791909319284&interval=5m&rowPrice=25",
+          "at": 6237,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791908400000&to=1791909319578&interval=5m&rowPrice=10",
+          "at": 9616,
+          "status": 200,
+          "timing": {
+            "startTime": 1791909319580.972,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.754,
+            "responseStart": 3372.867,
+            "responseEnd": 3375.321
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 447,
+            "responseBodySize": 2526,
+            "responseHeadersSize": 412
+          },
+          "serverTiming": "admission;dur=0, db;dur=20.98, dbdecode;dur=12.46, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.04, total;dur=44.33, legacy;dur=47.01"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907800000&to=1791909300000&interval=5m&rowPrice=10&known=",
+          "at": 9702,
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791877200000&to=1791891600000&interval=5m&rowPrice=10&known=1791877200000%3A1791907178121000%2C1791877500000%3A1791907178121000%2C1791877800000%3A1791907178121000%2C1791878100000%3A1791907178121000%2C1791878400000%3A1791907178121000%2C1791878700000%3A1791907178121000%2C1791879000000%3A1791907178397000%2C1791879300000%3A1791907178397000%2C1791879600000%3A1791907178397000%2C1791879900000%3A1791907178397000%2C1791880200000%3A1791907178397000%2C1791880500000%3A1791907178397000%2C1791880800000%3A1791907178626000%2C1791881100000%3A1791907178626000%2C1791881400000%3A1791907178626000%2C1791881700000%3A1791907178626000%2C1791882000000%3A1791907178626000%2C1791882300000%3A1791907178626000%2C1791882600000%3A1791907178832000%2C1791882900000%3A1791907178832000%2C1791883200000%3A1791907178832000%2C1791883500000%3A1791907178832000%2C1791883800000%3A1791907178832000%2C1791884100000%3A1791907178832000%2C1791884400000%3A1791907179038000%2C1791884700000%3A1791907179038000%2C1791885000000%3A1791907179038000%2C1791885300000%3A1791907179038000%2C1791885600000%3A1791907179038000%2C1791885900000%3A1791907179038000%2C1791886200000%3A1791907179266000%2C1791886500000%3A1791907179266000%2C1791886800000%3A1791907179266000%2C1791887100000%3A1791907179266000%2C1791887400000%3A1791907179266000%2C1791887700000%3A1791907179266000%2C1791888000000%3A1791907179489000%2C1791888300000%3A1791907179489000%2C1791888600000%3A1791907179489000%2C1791888900000%3A1791907179489000%2C1791889200000%3A1791907179489000%2C1791889500000%3A1791907179489000%2C1791889800000%3A1791907179804000%2C1791890100000%3A1791907179804000%2C1791890400000%3A1791907179804000%2C1791890700000%3A1791907179804000%2C1791891000000%3A1791907179804000%2C1791891300000%3A1791907179804000",
+          "at": 10894,
+          "status": 200,
+          "timing": {
+            "startTime": 1791909323099.267,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.348,
+            "responseStart": 1133.576,
+            "responseEnd": 1137.75
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 455,
+            "responseBodySize": 372,
+            "responseHeadersSize": 329
+          },
+          "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=0.95, total;dur=12.45"
+        },
+        {
+          "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791877200000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average",
+          "at": 11761,
+          "status": 200,
+          "timing": {
+            "startTime": 1791909324018.0671,
+            "domainLookupStart": 0.371,
+            "domainLookupEnd": 0.467,
+            "connectStart": 0.467,
+            "secureConnectionStart": -1,
+            "connectEnd": 0.753,
+            "requestStart": 0.963,
+            "responseStart": 1074.768,
+            "responseEnd": 1077.62
+          },
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 502,
+            "responseBodySize": 4875,
+            "responseHeadersSize": 349
+          },
+          "serverTiming": "admission;dur=0, db;dur=10.98, project;dur=0.00, serialize;dur=3.55, total;dur=14.83"
+        }
+      ],
+      "errors": [],
+      "snapshots": [
+        {
+          "at": 10548,
+          "footprintBars": 48,
+          "heatmapBuckets": 0,
+          "footprintValidated": false,
+          "footprintComplete": true,
+          "heatmapComplete": false,
+          "footprintStatus": {
+            "history": {
+              "views": 1,
+              "ready": false,
+              "validated": false
+            },
+            "state": "live",
+            "message": "Staging · cached; validating visible footprints · loading history · loading older history (52 bars)",
+            "lastUpdate": 1791909322685,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791877200000,
+            "lastTradeAt": 1791909322206,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791877200,
+            "coverage": "partial"
+          },
+          "heatmapStatus": {
+            "state": "syncing",
+            "message": "Staging depth · loading prepared visible history",
+            "tickSize": 0.1,
+            "collectionStart": null,
+            "retentionStart": null,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791877200,
+            "to": 1791891600
+          },
+          "draws": 16,
+          "panels": [
+            {
+              "footprintBars": 48,
+              "heatmapBuckets": 0,
+              "footprintValidated": false,
+              "footprintComplete": true,
+              "heatmapComplete": false,
+              "footprintStatus": {
+                "history": {
+                  "views": 1,
+                  "ready": false,
+                  "validated": false
+                },
+                "state": "live",
+                "message": "Staging · cached; validating visible footprints · loading history · loading older history (52 bars)",
+                "lastUpdate": 1791909322685,
+                "tickSize": 0.1,
+                "rowSize": 10,
+                "collectionStartedAt": 1791788760000,
+                "firstTradeAt": 1791877200000,
+                "lastTradeAt": 1791909322206,
+                "eventTime": null,
+                "outages": 0,
+                "capacityDrops": 0,
+                "unknownSideRecords": 0,
+                "unknownSideVolume": 0,
+                "lateRecords": 0,
+                "retentionStart": 1791877200,
+                "coverage": "partial"
+              },
+              "heatmapStatus": {
+                "state": "syncing",
+                "message": "Staging depth · loading prepared visible history",
+                "tickSize": 0.1,
+                "collectionStart": null,
+                "retentionStart": null,
+                "capacityLimited": false
+              },
+              "range": {
+                "from": 1791877200,
+                "to": 1791891600
+              },
+              "draws": 16
+            }
+          ]
+        },
+        {
+          "at": 12216,
+          "footprintBars": 48,
+          "heatmapBuckets": 48,
+          "footprintValidated": true,
+          "footprintComplete": true,
+          "heatmapComplete": true,
+          "footprintStatus": {
+            "history": {
+              "views": 1,
+              "ready": true,
+              "validated": true
+            },
+            "state": "live",
+            "message": "Staging · durable execution stream · delivery 107ms",
+            "lastUpdate": 1791909324730,
+            "tickSize": 0.1,
+            "rowSize": 10,
+            "collectionStartedAt": 1791788760000,
+            "firstTradeAt": 1791877200000,
+            "lastTradeAt": 1791909324264,
+            "eventTime": null,
+            "outages": 0,
+            "capacityDrops": 0,
+            "unknownSideRecords": 0,
+            "unknownSideVolume": 0,
+            "lateRecords": 0,
+            "retentionStart": 1791877200,
+            "coverage": "partial",
+            "transport": {
+              "cursor": 3483759327,
+              "backendSentAtMs": 1791909324736,
+              "workerReceivedAtMs": 1791909324843,
+              "workerAppliedAtMs": 1791909324844
+            }
+          },
+          "heatmapStatus": {
+            "state": "live",
+            "message": "Staging prepared depth · $10 rows · validated · partial depth/time coverage · 1 coverage gap(s) · RPI excluded",
+            "tickSize": 0.1,
+            "collectionStart": 1791889500000,
+            "retentionStart": 1791877200000,
+            "capacityLimited": false
+          },
+          "range": {
+            "from": 1791877200,
+            "to": 1791891600
+          },
+          "draws": 23,
+          "panels": [
+            {
+              "footprintBars": 48,
+              "heatmapBuckets": 48,
+              "footprintValidated": true,
+              "footprintComplete": true,
+              "heatmapComplete": true,
+              "footprintStatus": {
+                "history": {
+                  "views": 1,
+                  "ready": true,
+                  "validated": true
+                },
+                "state": "live",
+                "message": "Staging · durable execution stream · delivery 107ms",
+                "lastUpdate": 1791909324730,
+                "tickSize": 0.1,
+                "rowSize": 10,
+                "collectionStartedAt": 1791788760000,
+                "firstTradeAt": 1791877200000,
+                "lastTradeAt": 1791909324264,
+                "eventTime": null,
+                "outages": 0,
+                "capacityDrops": 0,
+                "unknownSideRecords": 0,
+                "unknownSideVolume": 0,
+                "lateRecords": 0,
+                "retentionStart": 1791877200,
+                "coverage": "partial",
+                "transport": {
+                  "cursor": 3483759327,
+                  "backendSentAtMs": 1791909324736,
+                  "workerReceivedAtMs": 1791909324843,
+                  "workerAppliedAtMs": 1791909324844
+                }
+              },
+              "heatmapStatus": {
+                "state": "live",
+                "message": "Staging prepared depth · $10 rows · validated · partial depth/time coverage · 1 coverage gap(s) · RPI excluded",
+                "tickSize": 0.1,
+                "collectionStart": 1791889500000,
+                "retentionStart": 1791877200000,
+                "capacityLimited": false
+              },
+              "range": {
+                "from": 1791877200,
+                "to": 1791891600
+              },
+              "draws": 23
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "started": "2026-10-13T16:34:49.150Z",
+  "prime": {
+    "sample": -1,
+    "panelCount": 1,
+    "diagnostics": {
+      "feed": {},
+      "historyApply": {
+        "footprintMs": 11.399999998509884,
+        "heatmapMs": 19.599999997764826,
+        "footprintBatches": 6,
+        "heatmapBatches": 3
+      },
+      "longTasks": [
+        430,
+        98,
+        62,
+        60,
+        63,
+        53,
+        51,
+        72,
+        250,
+        137
+      ],
+      "heap": {
+        "used": 34809418,
+        "total": 50027642
+      }
+    },
+    "window": {
+      "from": 1791877200000,
+      "to": 1791891600000,
+      "low": 82910,
+      "high": 84330,
+      "rowPrice": 10,
+      "timeMs": 300000,
+      "panelCount": 1
+    },
+    "viewportStartedMs": 10372,
+    "configuredMs": 11024,
+    "firstFootprintMs": 13173,
+    "firstHeatmapMs": 21715,
+    "completeMs": 21868,
+    "historyCompleteMs": 11496,
+    "firstFootprintHistoryMs": 2801,
+    "firstHeatmapHistoryMs": 11343,
+    "legacyRequestedCompleteMs": 21715,
+    "completed": true,
+    "events": [
+      {
+        "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791908100000&to=1791909299410&interval=5m&rowPrice=25",
+        "at": 8661,
+        "error": "net::ERR_ABORTED"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v1/footprints?from=1791908100000&to=1791909299818&interval=5m&rowPrice=10",
+        "at": 10358,
+        "status": 200,
+        "timing": {
+          "startTime": 1791909299819.299,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.443,
+          "responseStart": 1680.704,
+          "responseEnd": 1681.996
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 447,
+          "responseBodySize": 2800,
+          "responseHeadersSize": 413
+        },
+        "serverTiming": "admission;dur=0, db;dur=31.39, dbdecode;dur=26.21, worker;dur=0.00, reconstruction;dur=0.00, rawdecode;dur=0.00, serialize;dur=0.06, total;dur=76.20, legacy;dur=132.87"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791907500000&to=1791909300000&interval=5m&rowPrice=10&known=",
+        "at": 10461,
+        "error": "net::ERR_ABORTED"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/footprints?from=1791877200000&to=1791891600000&interval=5m&rowPrice=10&known=",
+        "at": 13054,
+        "status": 200,
+        "timing": {
+          "startTime": 1791909301622.148,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.455,
+          "responseStart": 2572.849,
+          "responseEnd": 2575.429
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 455,
+          "responseBodySize": 26493,
+          "responseHeadersSize": 331
+        },
+        "serverTiming": "admission;dur=0, db;dur=0.00, project;dur=0.00, serialize;dur=3.88, total;dur=13.91"
+      },
+      {
+        "url": "http://127.0.0.1:5173/market-data/v2/history/manifest?from=1791877200000&to=1791891600000&low=82910&high=84330&rowPrice=10&timeMs=300000&mode=average&include=tiles",
+        "at": 21279,
+        "status": 200,
+        "timing": {
+          "startTime": 1791909302030.6719,
+          "domainLookupStart": 0.338,
+          "domainLookupEnd": 0.36,
+          "connectStart": 0.36,
+          "secureConnectionStart": -1,
+          "connectEnd": 33.876,
+          "requestStart": 34.629,
+          "responseStart": 3369.712,
+          "responseEnd": 10411.352
+        },
+        "sizes": {
+          "requestBodySize": 0,
+          "requestHeadersSize": 502,
+          "responseBodySize": 203870,
+          "responseHeadersSize": 352
+        },
+        "serverTiming": "admission;dur=0, db;dur=8.16, project;dur=0.00, serialize;dur=16.64, total;dur=284.18"
+      }
+    ],
+    "errors": [],
+    "snapshots": [
+      {
+        "at": 11030,
+        "footprintBars": 0,
+        "heatmapBuckets": 0,
+        "footprintValidated": false,
+        "footprintComplete": false,
+        "heatmapComplete": false,
+        "footprintStatus": {
+          "history": {
+            "views": 1,
+            "ready": false,
+            "validated": false
+          },
+          "state": "live",
+          "message": "Staging · loading visible footprints · loading older history (4 bars)",
+          "lastUpdate": 1791909300475,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791908100000,
+          "lastTradeAt": 1791909299715,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791908100,
+          "coverage": "partial"
+        },
+        "heatmapStatus": {
+          "state": "syncing",
+          "message": "Staging depth · loading prepared visible history",
+          "tickSize": 0.1,
+          "collectionStart": null,
+          "retentionStart": null,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 13,
+        "panels": [
+          {
+            "footprintBars": 0,
+            "heatmapBuckets": 0,
+            "footprintValidated": false,
+            "footprintComplete": false,
+            "heatmapComplete": false,
+            "footprintStatus": {
+              "history": {
+                "views": 1,
+                "ready": false,
+                "validated": false
+              },
+              "state": "live",
+              "message": "Staging · loading visible footprints · loading older history (4 bars)",
+              "lastUpdate": 1791909300475,
+              "tickSize": 0.1,
+              "rowSize": 10,
+              "collectionStartedAt": 1791788760000,
+              "firstTradeAt": 1791908100000,
+              "lastTradeAt": 1791909299715,
+              "eventTime": null,
+              "outages": 0,
+              "capacityDrops": 0,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0,
+              "retentionStart": 1791908100,
+              "coverage": "partial"
+            },
+            "heatmapStatus": {
+              "state": "syncing",
+              "message": "Staging depth · loading prepared visible history",
+              "tickSize": 0.1,
+              "collectionStart": null,
+              "retentionStart": null,
+              "capacityLimited": false
+            },
+            "range": {
+              "from": 1791877200,
+              "to": 1791891600
+            },
+            "draws": 13
+          }
+        ]
+      },
+      {
+        "at": 16056,
+        "footprintBars": 48,
+        "heatmapBuckets": 0,
+        "footprintValidated": true,
+        "footprintComplete": true,
+        "heatmapComplete": false,
+        "footprintStatus": {
+          "history": {
+            "views": 1,
+            "ready": true,
+            "validated": true
+          },
+          "state": "live",
+          "message": "Staging · validated visible footprints · loading older history (52 bars)",
+          "lastUpdate": 1791909300475,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791877200000,
+          "lastTradeAt": 1791909299715,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791877200,
+          "coverage": "partial"
+        },
+        "heatmapStatus": {
+          "state": "syncing",
+          "message": "Staging depth · loading prepared visible history",
+          "tickSize": 0.1,
+          "collectionStart": null,
+          "retentionStart": null,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 16,
+        "panels": [
+          {
+            "footprintBars": 48,
+            "heatmapBuckets": 0,
+            "footprintValidated": true,
+            "footprintComplete": true,
+            "heatmapComplete": false,
+            "footprintStatus": {
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true
+              },
+              "state": "live",
+              "message": "Staging · validated visible footprints · loading older history (52 bars)",
+              "lastUpdate": 1791909300475,
+              "tickSize": 0.1,
+              "rowSize": 10,
+              "collectionStartedAt": 1791788760000,
+              "firstTradeAt": 1791877200000,
+              "lastTradeAt": 1791909299715,
+              "eventTime": null,
+              "outages": 0,
+              "capacityDrops": 0,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0,
+              "retentionStart": 1791877200,
+              "coverage": "partial"
+            },
+            "heatmapStatus": {
+              "state": "syncing",
+              "message": "Staging depth · loading prepared visible history",
+              "tickSize": 0.1,
+              "collectionStart": null,
+              "retentionStart": null,
+              "capacityLimited": false
+            },
+            "range": {
+              "from": 1791877200,
+              "to": 1791891600
+            },
+            "draws": 16
+          }
+        ]
+      },
+      {
+        "at": 21201,
+        "footprintBars": 48,
+        "heatmapBuckets": 0,
+        "footprintValidated": true,
+        "footprintComplete": true,
+        "heatmapComplete": false,
+        "footprintStatus": {
+          "history": {
+            "views": 1,
+            "ready": true,
+            "validated": true
+          },
+          "state": "live",
+          "message": "Staging · validated visible footprints · loading older history (52 bars)",
+          "lastUpdate": 1791909300475,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791877200000,
+          "lastTradeAt": 1791909299715,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791877200,
+          "coverage": "partial"
+        },
+        "heatmapStatus": {
+          "state": "syncing",
+          "message": "Staging depth · loading prepared visible history",
+          "tickSize": 0.1,
+          "collectionStart": null,
+          "retentionStart": null,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 16,
+        "panels": [
+          {
+            "footprintBars": 48,
+            "heatmapBuckets": 0,
+            "footprintValidated": true,
+            "footprintComplete": true,
+            "heatmapComplete": false,
+            "footprintStatus": {
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true
+              },
+              "state": "live",
+              "message": "Staging · validated visible footprints · loading older history (52 bars)",
+              "lastUpdate": 1791909300475,
+              "tickSize": 0.1,
+              "rowSize": 10,
+              "collectionStartedAt": 1791788760000,
+              "firstTradeAt": 1791877200000,
+              "lastTradeAt": 1791909299715,
+              "eventTime": null,
+              "outages": 0,
+              "capacityDrops": 0,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0,
+              "retentionStart": 1791877200,
+              "coverage": "partial"
+            },
+            "heatmapStatus": {
+              "state": "syncing",
+              "message": "Staging depth · loading prepared visible history",
+              "tickSize": 0.1,
+              "collectionStart": null,
+              "retentionStart": null,
+              "capacityLimited": false
+            },
+            "range": {
+              "from": 1791877200,
+              "to": 1791891600
+            },
+            "draws": 16
+          }
+        ]
+      },
+      {
+        "at": 21868,
+        "footprintBars": 48,
+        "heatmapBuckets": 48,
+        "footprintValidated": true,
+        "footprintComplete": true,
+        "heatmapComplete": true,
+        "footprintStatus": {
+          "history": {
+            "views": 1,
+            "ready": true,
+            "validated": true
+          },
+          "state": "live",
+          "message": "Staging · validated visible footprints · loading older history (52 bars)",
+          "lastUpdate": 1791909300475,
+          "tickSize": 0.1,
+          "rowSize": 10,
+          "collectionStartedAt": 1791788760000,
+          "firstTradeAt": 1791877200000,
+          "lastTradeAt": 1791909299715,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1791877200,
+          "coverage": "partial"
+        },
+        "heatmapStatus": {
+          "state": "live",
+          "message": "Staging prepared depth · $10 rows · validated · partial depth/time coverage · 1 coverage gap(s) · RPI excluded",
+          "tickSize": 0.1,
+          "collectionStart": 1791889500000,
+          "retentionStart": 1791877200000,
+          "capacityLimited": false
+        },
+        "range": {
+          "from": 1791877200,
+          "to": 1791891600
+        },
+        "draws": 17,
+        "panels": [
+          {
+            "footprintBars": 48,
+            "heatmapBuckets": 48,
+            "footprintValidated": true,
+            "footprintComplete": true,
+            "heatmapComplete": true,
+            "footprintStatus": {
+              "history": {
+                "views": 1,
+                "ready": true,
+                "validated": true
+              },
+              "state": "live",
+              "message": "Staging · validated visible footprints · loading older history (52 bars)",
+              "lastUpdate": 1791909300475,
+              "tickSize": 0.1,
+              "rowSize": 10,
+              "collectionStartedAt": 1791788760000,
+              "firstTradeAt": 1791877200000,
+              "lastTradeAt": 1791909299715,
+              "eventTime": null,
+              "outages": 0,
+              "capacityDrops": 0,
+              "unknownSideRecords": 0,
+              "unknownSideVolume": 0,
+              "lateRecords": 0,
+              "retentionStart": 1791877200,
+              "coverage": "partial"
+            },
+            "heatmapStatus": {
+              "state": "live",
+              "message": "Staging prepared depth · $10 rows · validated · partial depth/time coverage · 1 coverage gap(s) · RPI excluded",
+              "tickSize": 0.1,
+              "collectionStart": 1791889500000,
+              "retentionStart": 1791877200000,
+              "capacityLimited": false
+            },
+            "range": {
+              "from": 1791877200,
+              "to": 1791891600
+            },
+            "draws": 17
+          }
+        ]
+      }
+    ]
+  }
+}

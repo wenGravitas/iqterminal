@@ -7,7 +7,7 @@ import { duration, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, ty
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
 interface View {from:number;to:number;key:string;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 interface Group {
-  views:Map<string,View>;
+  preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
   bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number;
@@ -35,7 +35,7 @@ export class StagingFeedService {
       let group = this.groups.get(key);
       if (!group) {
         if (this.groups.size >= 16) return;
-        group = { views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
+        group = { preparedTimes:new Set(),views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
           busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0 };
         this.groups.set(key, group);
       }
@@ -111,8 +111,10 @@ export class StagingFeedService {
           g.lastCoverage = data.coverage; g.lagMs = Math.max(0, this.now() - data.sentAt);
           const previousBars = new Map(g.bars.map(b => [b.time,b]));
           const bars = g.accumulator.snapshot();
-          g.bars = bars.map(b => { const start=b.time*1000,end=start+duration[g.series.interval]; const gaps=data.coverage.gaps.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark');
+          const liveBars:FootprintBar[] = bars.map(b => { const start=b.time*1000,end=start+duration[g.series.interval]; const gaps=data.coverage.gaps.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark');
             return { ...b, coverage: b.coverage === 'capacity-limited' ? b.coverage : gaps.some((x:any)=>x.to>start&&x.from<end) ? 'gapped' : start>=data.coverage.confirmedFrom && end<=data.coverage.confirmedTo ? 'observed' : 'partial' }; });
+          const liveStart=Math.floor(this.now()/duration[g.series.interval])*duration[g.series.interval];
+          const candidates=[...g.bars,...liveBars.filter(b=>b.time*1000>=liveStart||!g.preparedTimes.has(b.time))];g.bars=this.usePrepared?boundedFootprintHistory(candidates,this.visibleTimes(g,candidates)):liveBars;
           const dirty = new Set(g.accumulator.drainDirty().map(b => b.time));
           const status = this.footprintStatus(g, data.collector.state === 'live' && g.cursor === data.watermark ? 'live' : 'reconnecting', `Staging · durable execution stream · delivery ${g.lagMs}ms`, data); status.transport = { cursor: g.cursor!, backendSentAtMs: data.sentAt, workerReceivedAtMs: receivedAt, workerAppliedAtMs: this.now() }; g.lastStatus = status;
           this.publish(g, { type: 'footprint-patch', key:g.key, ids:[...g.ids], generation:g.generation,batchId:0,bars:g.bars.filter(b=>dirty.has(b.time) || previousBars.get(b.time)?.coverage !== b.coverage),retentionStart:g.bars[0]?.time??null,status });
@@ -176,7 +178,7 @@ export class StagingFeedService {
         const oldBars = g.bars;
         g.bars = data.bars; g.cursor = data.cursor ?? data.watermark; g.from = from;
         const ticks = footprintTicksForPrice(g.rowPrice!, data.tickSize); if (ticks === null) throw new Error('Invalid staging tick size');
-        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);
+        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);g.preparedTimes.clear();for(const v of g.views.values()){v.loaded=false;v.validatedAt=undefined;}
         g.lastCoverage = data.coverage; g.lastUpdate = Number(data.status?.lastUpdate ?? 0);
         const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
         const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
@@ -203,11 +205,20 @@ export class StagingFeedService {
   private async loadViewport(g:Group,id:string){const view=g.views.get(id);if(!view||view.busy||!g.accumulator)return;view.busy=true;view.abort=new AbortController();g.historyBusy=true;g.historyError=undefined;
     try{await this.prepared.load(view.from,view.to,g.series.interval,g.rowPrice!,view.abort.signal,(bars,complete,validated)=>{if(view.abort!.signal.aborted||g.views.get(id)!==view||this.groups.get(g.key)!==g||!g.accumulator)return;if(!bars.every(validBackendBar))throw Error('Invalid historical footprint bars');
       // Closed viewport responses never advance the durable live execution cursor.
-      const liveStart=Math.floor(this.now()/duration[g.series.interval])*duration[g.series.interval];const merged=boundedFootprintHistory([...g.bars.filter(b=>!complete||!validated||b.time*1000<view.from||b.time*1000>=Math.min(view.to,liveStart)),...bars.filter(b=>b.time*1000<liveStart)]);g.bars=merged;g.accumulator.restore(merged);view.loaded=complete;if(complete)view.validatedAt=this.now();
+      const step=duration[g.series.interval],liveStart=Math.floor(this.now()/step)*step;
+      for(const b of bars)if(b.time*1000<liveStart)g.preparedTimes.add(b.time);
+      if(complete&&validated)for(let at=view.from;at<Math.min(view.to,liveStart);at+=step)g.preparedTimes.add(at/1000);
+      const candidates=[...g.bars.filter(b=>!complete||!validated||b.time*1000<view.from||b.time*1000>=Math.min(view.to,liveStart)),...bars.filter(b=>b.time*1000<liveStart)];
+      g.bars=boundedFootprintHistory(candidates,this.visibleTimes(g,candidates));
+      const retained=new Set(g.bars.map(b=>b.time));g.preparedTimes=new Set([...g.preparedTimes].sort((a,b)=>Number(retained.has(b))-Number(retained.has(a))||b-a).slice(0,FOOTPRINT_MAX_BARS));
+      // Prepared closed bars are presentation replacements. The live accumulator
+      // keeps its own acknowledged cursor state and never re-ingests their totals.
+      view.loaded=complete;if(complete)view.validatedAt=this.now();
       const status=this.footprintStatus(g,g.lastStatus?.state??'loading',`Staging · ${validated?'validated':'cached; validating'} visible footprints${complete?'':' · loading history'}`,{coverage:g.lastCoverage,tickSize:.1});g.lastStatus=status;this.publish(g,{type:'footprint-snapshot',key:g.key,ids:[...g.ids],generation:g.generation,batchId:0,bars:g.bars,retentionStart:g.bars[0]?.time??null,status});});
     }catch(e){if(!view.abort.signal.aborted){g.historyError=e instanceof Error?e.message:String(e);g.retryAt=this.now()+2000;this.status(g,'stale',`Staging visible footprints · ${g.historyError}`);}}
     finally{view.busy=false;g.historyBusy=[...g.views.values()].some(v=>v.busy);}
   }
+  private visibleTimes(g:Group,bars:FootprintBar[]){return new Set(bars.filter(b=>b.time===g.accumulator?.latestTime||[...g.views.values()].some(v=>b.time*1000>=v.from&&b.time*1000<v.to)).map(b=>b.time));}
   private historyState(g:Group){const views=[...g.views.values()];return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined)};}
   private historyMessage(g: Group, message: string) {
     return message + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
@@ -251,7 +262,7 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { scheduler:historyScheduler.diagnostics(),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  diagnostics() { return { scheduler:historyScheduler.diagnostics(),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
   dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
@@ -265,7 +276,8 @@ export function validBackendBar(b: any): b is FootprintBar {
 }
 
 /** Whole oldest bars are evicted; a historical response never overwrites a newer live bar. */
-export function boundedFootprintHistory(bars: FootprintBar[]): FootprintBar[] {
+export function boundedFootprintHistory(bars: FootprintBar[],visible?:Set<number>): FootprintBar[] {
+  if(visible?.size){const candidates=[...new Map(bars.map(b=>[b.time,b])).values()].sort((a,b)=>Number(visible.has(b.time))-Number(visible.has(a.time))||b.time-a.time),kept:FootprintBar[]=[];let cells=0;for(const b of candidates){if(kept.length===FOOTPRINT_MAX_BARS)break;if(cells+b.cells.length>FOOTPRINT_MAX_CELLS)continue;kept.push(b);cells+=b.cells.length;}return kept.sort((a,b)=>a.time-b.time);}
   const sorted = [...new Map(bars.map(b => [b.time, b])).values()].sort((a, b) => a.time - b.time).slice(-FOOTPRINT_MAX_BARS);
   let cells = sorted.reduce((n, b) => n + b.cells.length, 0), start = 0;
   while (cells > FOOTPRINT_MAX_CELLS && start < sorted.length) cells -= sorted[start++]!.cells.length;

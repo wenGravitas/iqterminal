@@ -1,0 +1,833 @@
+[
+  {
+    "file": "artifacts/history-tiles/accepted-fixed.json",
+    "phase": "accepted",
+    "scenario": "fixed",
+    "window": {
+      "from": 1791877200000,
+      "to": 1791891600000,
+      "low": 82910,
+      "high": 84330,
+      "rowPrice": 10,
+      "timeMs": 300000
+    },
+    "count": 5,
+    "completed": 5,
+    "firstFootprintMs": {
+      "median": 1807.3999999985099,
+      "worst": 4212.5
+    },
+    "firstHeatmapMs": {
+      "median": 6508,
+      "worst": 11304.5
+    },
+    "completeMs": {
+      "median": 6625,
+      "worst": 11486
+    },
+    "bytes": {
+      "median": 230364,
+      "worst": 230365
+    },
+    "visibleRequests": {
+      "median": 2,
+      "worst": 2
+    },
+    "samples": [
+      {
+        "sample": 0,
+        "completed": true,
+        "firstFootprintMs": 1647.9000000022352,
+        "firstHeatmapMs": 11104.10000000149,
+        "completeMs": 11307,
+        "visibleRequests": 2,
+        "bytes": 230365,
+        "cancelled": 3,
+        "transferMs": 7615.295,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 33.68,
+            "worst": 64.11
+          },
+          "dbdecode": {
+            "median": 4.675000000000001,
+            "worst": 9.21
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 10.27,
+            "worst": 16.12
+          },
+          "total": {
+            "median": 245.52,
+            "worst": 482.72
+          }
+        },
+        "heap": {
+          "used": 39825385,
+          "total": 50006865
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 33.100000001490116,
+          "heatmapMs": 3.7000000029802322,
+          "footprintBatches": 11,
+          "heatmapBatches": 4
+        }
+      },
+      {
+        "sample": 1,
+        "completed": true,
+        "firstFootprintMs": 1807.3999999985099,
+        "firstHeatmapMs": 6117.599999997765,
+        "completeMs": 6266,
+        "visibleRequests": 2,
+        "bytes": 230364,
+        "cancelled": 3,
+        "transferMs": 2860.1190000000006,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 36.185,
+            "worst": 68.86
+          },
+          "dbdecode": {
+            "median": 3.875,
+            "worst": 7.61
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 7.19,
+            "worst": 10.38
+          },
+          "total": {
+            "median": 138.425,
+            "worst": 268.24
+          }
+        },
+        "heap": {
+          "used": 45120819,
+          "total": 55249063
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 47.70000000298023,
+          "heatmapMs": 4.0999999940395355,
+          "footprintBatches": 10,
+          "heatmapBatches": 4
+        }
+      },
+      {
+        "sample": 2,
+        "completed": true,
+        "firstFootprintMs": 4212.5,
+        "firstHeatmapMs": 11304.5,
+        "completeMs": 11486,
+        "visibleRequests": 2,
+        "bytes": 230365,
+        "cancelled": 3,
+        "transferMs": 4996.101,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 45.315,
+            "worst": 85.06
+          },
+          "dbdecode": {
+            "median": 4.33,
+            "worst": 8.43
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 15.855,
+            "worst": 28.69
+          },
+          "total": {
+            "median": 166.135,
+            "worst": 322.59
+          }
+        },
+        "heap": {
+          "used": 34654078,
+          "total": 48956182
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 15.100000001490116,
+          "heatmapMs": 8.900000002235174,
+          "footprintBatches": 6,
+          "heatmapBatches": 4
+        }
+      },
+      {
+        "sample": 3,
+        "completed": true,
+        "firstFootprintMs": 1847.3999999985099,
+        "firstHeatmapMs": 5834.5,
+        "completeMs": 6029,
+        "visibleRequests": 2,
+        "bytes": 230363,
+        "cancelled": 2,
+        "transferMs": 2826.15,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 44.6,
+            "worst": 85.44
+          },
+          "dbdecode": {
+            "median": 4.0600000000000005,
+            "worst": 7.95
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 9.915,
+            "worst": 16.07
+          },
+          "total": {
+            "median": 286.895,
+            "worst": 565.53
+          }
+        },
+        "heap": {
+          "used": 35981155,
+          "total": 58131523
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 12.5,
+          "heatmapMs": 2.2999999970197678,
+          "footprintBatches": 11,
+          "heatmapBatches": 3
+        }
+      },
+      {
+        "sample": 4,
+        "completed": true,
+        "firstFootprintMs": 1547.199999999255,
+        "firstHeatmapMs": 6508,
+        "completeMs": 6625,
+        "visibleRequests": 2,
+        "bytes": 230360,
+        "cancelled": 2,
+        "transferMs": 3129.3379999999993,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 62.5,
+            "worst": 111.92
+          },
+          "dbdecode": {
+            "median": 4.655,
+            "worst": 8.24
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 14.125,
+            "worst": 14.4
+          },
+          "total": {
+            "median": 170.48,
+            "worst": 309.57
+          }
+        },
+        "heap": {
+          "used": 43297907,
+          "total": 53411575
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 7.799999997019768,
+          "heatmapMs": 2.199999999254942,
+          "footprintBatches": 8,
+          "heatmapBatches": 3
+        }
+      }
+    ]
+  },
+  {
+    "file": "artifacts/history-tiles/accepted-warm.json",
+    "phase": "accepted",
+    "scenario": "warm",
+    "window": {
+      "from": 1791877200000,
+      "to": 1791891600000,
+      "low": 82910,
+      "high": 84330,
+      "rowPrice": 10,
+      "timeMs": 300000
+    },
+    "count": 5,
+    "completed": 5,
+    "firstFootprintMs": {
+      "median": 103.5,
+      "worst": 929.5
+    },
+    "firstHeatmapMs": {
+      "median": 1031.9000000022352,
+      "worst": 1660.199999999255
+    },
+    "completeMs": {
+      "median": 2877,
+      "worst": 11622
+    },
+    "bytes": {
+      "median": 5250,
+      "worst": 5253
+    },
+    "visibleRequests": {
+      "median": 2,
+      "worst": 2
+    },
+    "samples": [
+      {
+        "sample": 0,
+        "completed": true,
+        "firstFootprintMs": 74.5,
+        "firstHeatmapMs": 1031.9000000022352,
+        "completeMs": 2877,
+        "visibleRequests": 2,
+        "bytes": 5253,
+        "cancelled": 5,
+        "transferMs": 3.8360000000000127,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 4.265000000000001,
+            "worst": 4.62
+          },
+          "dbdecode": {
+            "median": 0.16499999999999998,
+            "worst": 0.18
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 0.765,
+            "worst": 0.87
+          },
+          "total": {
+            "median": 5.609999999999999,
+            "worst": 6.18
+          }
+        },
+        "heap": {
+          "used": 39675119,
+          "total": 62346899
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 18.900000002235174,
+          "heatmapMs": 3.699999999254942,
+          "footprintBatches": 15,
+          "heatmapBatches": 5
+        }
+      },
+      {
+        "sample": 1,
+        "completed": true,
+        "firstFootprintMs": 103.5,
+        "firstHeatmapMs": 587.5999999977648,
+        "completeMs": 2178,
+        "visibleRequests": 2,
+        "bytes": 5249,
+        "cancelled": 2,
+        "transferMs": 2.7959999999998217,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 5.720000000000001,
+            "worst": 7.28
+          },
+          "dbdecode": {
+            "median": 0.34,
+            "worst": 0.55
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 0.51,
+            "worst": 0.64
+          },
+          "total": {
+            "median": 16.84,
+            "worst": 25.16
+          }
+        },
+        "heap": {
+          "used": 33687337,
+          "total": 65230741
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 19.700000002980232,
+          "heatmapMs": 2.600000001490116,
+          "footprintBatches": 11,
+          "heatmapBatches": 4
+        }
+      },
+      {
+        "sample": 2,
+        "completed": true,
+        "firstFootprintMs": 704.1000000014901,
+        "firstHeatmapMs": 1506.7000000029802,
+        "completeMs": 3011,
+        "visibleRequests": 2,
+        "bytes": 5248,
+        "cancelled": 2,
+        "transferMs": 20.62799999999993,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 4.359999999999999,
+            "worst": 4.77
+          },
+          "dbdecode": {
+            "median": 0.35000000000000003,
+            "worst": 0.56
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 0.47,
+            "worst": 0.64
+          },
+          "total": {
+            "median": 82.445,
+            "worst": 159.1
+          }
+        },
+        "heap": {
+          "used": 34669526,
+          "total": 53169974
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 60.600000001490116,
+          "heatmapMs": 5.300000000745058,
+          "footprintBatches": 14,
+          "heatmapBatches": 5
+        }
+      },
+      {
+        "sample": 3,
+        "completed": true,
+        "firstFootprintMs": 929.5,
+        "firstHeatmapMs": 1660.199999999255,
+        "completeMs": 11622,
+        "visibleRequests": 2,
+        "bytes": 5250,
+        "cancelled": 2,
+        "transferMs": 11.46900000000096,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 4.529999999999999,
+            "worst": 4.59
+          },
+          "dbdecode": {
+            "median": 0.38,
+            "worst": 0.64
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 0.64,
+            "worst": 0.97
+          },
+          "total": {
+            "median": 5.83,
+            "worst": 6.02
+          }
+        },
+        "heap": {
+          "used": 31045920,
+          "total": 53960044
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 20.299999993294477,
+          "heatmapMs": 20.700000002980232,
+          "footprintBatches": 12,
+          "heatmapBatches": 5
+        }
+      },
+      {
+        "sample": 4,
+        "completed": true,
+        "firstFootprintMs": 94.30000000074506,
+        "firstHeatmapMs": 531.9000000022352,
+        "completeMs": 2857,
+        "visibleRequests": 2,
+        "bytes": 5252,
+        "cancelled": 2,
+        "transferMs": 5.8279999999999745,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 3.7649999999999997,
+            "worst": 3.84
+          },
+          "dbdecode": {
+            "median": 0.18,
+            "worst": 0.22
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 0.6499999999999999,
+            "worst": 0.95
+          },
+          "total": {
+            "median": 6.3100000000000005,
+            "worst": 8.14
+          }
+        },
+        "heap": {
+          "used": 38785266,
+          "total": 55005310
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 8.899999998509884,
+          "heatmapMs": 2.2000000029802322,
+          "footprintBatches": 8,
+          "heatmapBatches": 4
+        }
+      }
+    ]
+  },
+  {
+    "file": "artifacts/history-tiles/accepted-wide.json",
+    "phase": "accepted",
+    "scenario": "wide",
+    "window": {
+      "from": 1791877200000,
+      "to": 1791891600000,
+      "low": 50000,
+      "high": 150000,
+      "rowPrice": 10,
+      "timeMs": 300000
+    },
+    "count": 5,
+    "completed": 5,
+    "firstFootprintMs": {
+      "median": 3269,
+      "worst": 4168.29999999702
+    },
+    "firstHeatmapMs": {
+      "median": 5298,
+      "worst": 9441.29999999702
+    },
+    "completeMs": {
+      "median": 5881,
+      "worst": 9699
+    },
+    "bytes": {
+      "median": 96555,
+      "worst": 96556
+    },
+    "visibleRequests": {
+      "median": 2,
+      "worst": 2
+    },
+    "samples": [
+      {
+        "sample": 0,
+        "completed": true,
+        "firstFootprintMs": 1004.6000000014901,
+        "firstHeatmapMs": 4151.60000000149,
+        "completeMs": 4521,
+        "visibleRequests": 2,
+        "bytes": 96556,
+        "cancelled": 3,
+        "transferMs": 658.629,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 26.49,
+            "worst": 48.43
+          },
+          "dbdecode": {
+            "median": 2.925,
+            "worst": 5.64
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 6.220000000000001,
+            "worst": 8.99
+          },
+          "total": {
+            "median": 203.12,
+            "worst": 397.26
+          }
+        },
+        "heap": {
+          "used": 32507066,
+          "total": 68766974
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 24.599999982863665,
+          "heatmapMs": 4.799999989569187,
+          "footprintBatches": 31,
+          "heatmapBatches": 7
+        }
+      },
+      {
+        "sample": 1,
+        "completed": true,
+        "firstFootprintMs": 1130.1000000014901,
+        "firstHeatmapMs": 3352.199999999255,
+        "completeMs": 3453,
+        "visibleRequests": 2,
+        "bytes": 96555,
+        "cancelled": 4,
+        "transferMs": 863.3769999999998,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 35.175,
+            "worst": 60.96
+          },
+          "dbdecode": {
+            "median": 3.425,
+            "worst": 5.8
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 9.72,
+            "worst": 10.64
+          },
+          "total": {
+            "median": 100.995,
+            "worst": 181.41
+          }
+        },
+        "heap": {
+          "used": 46643373,
+          "total": 57758769
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 26.299999997019768,
+          "heatmapMs": 4.5,
+          "footprintBatches": 29,
+          "heatmapBatches": 8
+        }
+      },
+      {
+        "sample": 2,
+        "completed": true,
+        "firstFootprintMs": 4168.29999999702,
+        "firstHeatmapMs": 9441.29999999702,
+        "completeMs": 9699,
+        "visibleRequests": 2,
+        "bytes": 96551,
+        "cancelled": 5,
+        "transferMs": 665.052000000001,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 40.375,
+            "worst": 76.19
+          },
+          "dbdecode": {
+            "median": 4.86,
+            "worst": 9.09
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 6.175000000000001,
+            "worst": 9.47
+          },
+          "total": {
+            "median": 98.305,
+            "worst": 188.03
+          }
+        },
+        "heap": {
+          "used": 35522459,
+          "total": 67458599
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 37.49999999627471,
+          "heatmapMs": 3.899999998509884,
+          "footprintBatches": 29,
+          "heatmapBatches": 8
+        }
+      },
+      {
+        "sample": 3,
+        "completed": true,
+        "firstFootprintMs": 3269,
+        "firstHeatmapMs": 5298,
+        "completeMs": 5881,
+        "visibleRequests": 2,
+        "bytes": 96555,
+        "cancelled": 4,
+        "transferMs": 956.8540000000003,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 33.46,
+            "worst": 54.51
+          },
+          "dbdecode": {
+            "median": 3.21,
+            "worst": 5.91
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 8.379999999999999,
+            "worst": 9.36
+          },
+          "total": {
+            "median": 100.365,
+            "worst": 179.72
+          }
+        },
+        "heap": {
+          "used": 41949386,
+          "total": 70628806
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 27.50000000372529,
+          "heatmapMs": 4.899999998509884,
+          "footprintBatches": 25,
+          "heatmapBatches": 7
+        }
+      },
+      {
+        "sample": 4,
+        "completed": true,
+        "firstFootprintMs": 3326.2999999970198,
+        "firstHeatmapMs": 7911,
+        "completeMs": 8092,
+        "visibleRequests": 2,
+        "bytes": 96553,
+        "cancelled": 5,
+        "transferMs": 1293.8539999999998,
+        "stages": {
+          "admission": {
+            "median": 0,
+            "worst": 0
+          },
+          "db": {
+            "median": 27.470000000000002,
+            "worst": 51.77
+          },
+          "dbdecode": {
+            "median": 2.565,
+            "worst": 5
+          },
+          "project": {
+            "median": 0,
+            "worst": 0
+          },
+          "serialize": {
+            "median": 4.33,
+            "worst": 5.85
+          },
+          "total": {
+            "median": 80.41,
+            "worst": 153.81
+          }
+        },
+        "heap": {
+          "used": 42975389,
+          "total": 61165773
+        },
+        "client": {},
+        "apply": {
+          "footprintMs": 45.099999997764826,
+          "heatmapMs": 8.599999994039536,
+          "footprintBatches": 25,
+          "heatmapBatches": 8
+        }
+      }
+    ]
+  }
+]

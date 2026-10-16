@@ -123,8 +123,9 @@ export class TerminalFootprint extends Footprint {
                 }
               }
               if (poc) {
-                target.save(); target.setLineDash([]);
-                target.strokeStyle = '#ffffff';
+                // Match the quiet one-pixel dotted VAH/VAL reference lines.
+                target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
+                target.strokeStyle = '#ffffff'; target.globalAlpha = 1;
                 target.lineWidth = Math.min(this.dpr, args[3] / 3, args[2] / 3);
                 try { return (target[key] as Function).apply(target, args); } finally { target.restore(); }
               }
