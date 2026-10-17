@@ -15,6 +15,13 @@ it('uses exchange timestamps, expires the window, excludes unselected and unknow
   expect(histogramScale([boundary],c,now+1).maximum).toBe(0);
   expect(histogramWidth(record(1,'unknown'),2,c)).toBe(0);expect(histogramWidth(record(1),0,c)).toBe(0);
 });
+it('keeps retained visible rows proportional after they leave the rolling window',()=>{
+  const c=tickerConfig({histogramSeconds:60,displayUnit:'USDT'}),old=record(11.996,'sell',now-70000),current=record(5.849,'buy',now-41000);
+  const scale=histogramScale([old,current],c,now,[old,current]);
+  expect(scale.maximum).toBe(1199600);expect(histogramWidth(old,scale.maximum,c)).toBe(45);
+  expect(histogramWidth(current,scale.maximum,c)).toBeCloseTo(5.849/11.996*45,6);
+  expect(histogramScale([old,current],c,now).maximum).toBe(584900);
+});
 it('uses BTC or actual USDT notional, bounds widths and respects off',()=>{
   const c=tickerConfig({displayUnit:'BTC'}),r=record(4,'sell',now,200000);
   expect(histogramScale([r],c,now).maximum).toBe(4);expect(histogramScale([r],{...c,displayUnit:'USDT'},now).maximum).toBe(800000);

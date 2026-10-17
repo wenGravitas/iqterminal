@@ -20,7 +20,7 @@ test('installed footprint draws larger fitted text and translucent cells without
     dataLayer: { timeToIndex: () => 0 } };
   p.draw(ctx, rc);
   expect(fills).toEqual([.85, .85]);
-  expect(outlines).toContainEqual({ width: 1, color: '#ffffff' });
+  expect(outlines).toContainEqual({ width: 1.25, color: '#ffffff' });
   expect(p.cellFont).toBe(24);
   expect(labels.some(l => l.font.startsWith('600 24px'))).toBe(true);
   expect(labels.every(l => l.alpha === 1)).toBe(true);
@@ -59,9 +59,9 @@ test('bid and ask cells leave a central execution-candle gutter with matching ho
   expect(p.hoverAt(150, 150)).toBeNull();
   expect(p.options().showCandle).toBe(true);
   expect(dashes).toContainEqual([1, 3]);
-  expect(valueAreaStrokes).toContainEqual({ color: '#ffffff', alpha: 1, width: 1 });
+  expect(valueAreaStrokes).toContainEqual({ color: '#ffffff', alpha: 1, width: 1.25 });
   expect(lines).toHaveLength(4);
-  [[66, 100], [234, 100], [66, 200], [234, 200]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
+  [[58, 100], [242, 100], [58, 200], [242, 200]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
   expect(cells[0][0]).toBeCloseTo(66); expect(cells[1][0] + cells[1][2]).toBeCloseTo(234);
   p.setOptions({ showValueArea: false }); lines.length = 0; p.draw(ctx, rc); expect(lines).toEqual([]);
   p.detached(); expect(p.hoverAt(80, 150)).toBeNull();
@@ -97,6 +97,28 @@ test('paired volume profiles retain central OHLC, dotted value area and per-cand
   expect(p.stats()[0]).toMatchObject({ volume: 25, delta: 5 });
   expect(labels).toContainEqual({ text: 'V: 25', font: '12px ui-monospace, SFMono-Regular, Menlo, monospace' });
   expect(labels).toContainEqual({ text: 'Δ: +5', font: '12px ui-monospace, SFMono-Regular, Menlo, monospace' });
+});
+
+test('profile level guides and POC outline extend symmetrically around the candle and stop at plot edges',()=>{
+  const p=new TerminalFootprint({...DEFAULT_FOOTPRINT_OPTIONS,cellStyle:'profile',displayMode:'volume',widthFactor:.5,showCandle:false,showPoc:true,pocStyle:'outline',showValueArea:true,valueAreaColor:'#ffffff',statsRows:[],tableRows:[]});
+  p.setBars([{time:0,rowSize:25,delta:3,cells:[{price:112.5,bidVol:0,askVol:2},{price:87.5,bidVol:0,askVol:1}]}]);
+  const lines:number[][]=[],outlines:number[][]=[];
+  const canvas:any={globalAlpha:1,font:'',measureText:()=>({width:1}),roundRect(){},beginPath(){},moveTo:(...args:number[])=>lines.push(args),lineTo:(...args:number[])=>lines.push(args),strokeRect:(...args:number[])=>outlines.push(args)};
+  const ctx=new Proxy(canvas,{get:(target,key)=>key in target?target[key]:()=>{}});
+  const rc:any={dpr:1,plotWidth:600,plotHeight:400,theme:{background:'#090909',axisText:'#cccccc',upColor:'#58a65c',downColor:'#ad5858'},timeScale:{barSpacing:200,visibleRange:()=>({from:0,to:1}),indexToX:()=>150},priceScale:{priceRange:()=>({min:50,max:150}),priceToY:(price:number)=>600-price*4},dataLayer:{timeToIndex:()=>0}};
+  p.draw(ctx,rc);
+  expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
+  expect(lines[1][0]-lines[0][0]).toBe(116);expect(lines[3][0]-lines[2][0]).toBe(116);
+  expect((lines[1][0]+lines[0][0])/2).toBe(150);expect((lines[3][0]+lines[2][0])/2).toBe(150);
+  expect(outlines[0][2]).toBe(116);expect(outlines[0][0]+outlines[0][2]/2).toBe(150);
+  lines.length=0;outlines.length=0;rc.plotWidth=205;p.draw(ctx,rc);
+  expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
+  expect(lines[0][0]).toBe(92);expect(lines[1][0]).toBe(205);expect(lines[2][0]).toBe(92);expect(lines[3][0]).toBe(205);
+  expect(outlines[0][0]).toBe(92);expect(outlines[0][0]+outlines[0][2]).toBe(205);
+  lines.length=0;outlines.length=0;rc.plotWidth=600;rc.timeScale.indexToX=()=>50;p.draw(ctx,rc);
+  expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
+  expect(lines[0][0]).toBe(0);expect(lines[1][0]).toBe(108);expect(lines[2][0]).toBe(0);expect(lines[3][0]).toBe(108);
+  expect(outlines[0][0]).toBe(0);expect(outlines[0][0]+outlines[0][2]).toBe(108);
 });
 
 test('large profile labels do not erase a smaller proportional bid bar', () => {

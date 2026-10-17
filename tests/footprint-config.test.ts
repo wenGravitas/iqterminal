@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest';
 import { config } from '../src/panel';
 
-it('migrates an existing candle panel and rejects Footprint on unsupported instruments', () => {
+it('migrates existing candle panels and enables native Footprint only on supported Binance markets', () => {
   const legacy = config({ venue: 'binance', interval: '1m', type: 'candle' });
   expect(legacy).toMatchObject({ venue: 'binance', market: 'perpetual', type: 'candle', rowPrice: 25 });
-  expect(config({ venue: 'binance', market: 'spot', interval: '1m', type: 'footprint' })).toMatchObject({ market: 'spot', type: 'candle' });
+  expect(config({ venue: 'binance', market: 'spot', interval: '1m', type: 'footprint' })).toMatchObject({ market: 'spot', type: 'footprint' });
   expect(config({ venue: 'hyperliquid', interval: '1m', type: 'footprint' })).toMatchObject({ venue: 'hyperliquid', type: 'candle' });
   expect(config({ venue: 'binance', market: 'perpetual', interval: '1m', type: 'footprint', rowTicks: 10 }).rowPrice).toBe(25);
   expect(config({ venue: 'binance', market: 'perpetual', interval: '1m', type: 'footprint', rowTicks: 20 }).rowPrice).toBe(2);

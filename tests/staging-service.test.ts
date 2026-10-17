@@ -19,15 +19,17 @@ class Socket {
 const trade = (id: number) => ({ id,timeMs:60002+id,price:84001,quantity:1,quoteNotional:84001,side:'buy' });
 const packet = (after:number, ids:number[]) => ({type:'executions',version:1,after,cursor:ids.at(-1),watermark:ids.at(-1),executions:ids.map(trade),coverage:response().coverage,collector:{state:'live',lastUpdate:900000},sentAt:900000,tickSize:.1});
 async function setup() {
-  vi.useFakeTimers(); const events: Event[] = []; const sockets: Socket[]=[];
+  vi.useFakeTimers(); const events: Event[] = []; const sockets: Socket[]=[];const socketUrls:string[]=[];
   const request=vi.fn(async()=>new Response(JSON.stringify(response())));
-  const service=new StagingFeedService(e=>events.push(e),request,()=>900000,()=>{const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
+  const service=new StagingFeedService(e=>events.push(e),request,()=>900000,url=>{socketUrls.push(url);const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
   service.command({type:'footprint-subscribe',id:'a',series,rowPrice:25});await vi.advanceTimersByTimeAsync(1);
   const ack=()=>{const e:any=events.at(-1);service.command({type:'footprint-ack',key:e.key,generation:e.generation,batchId:e.batchId});};
-  ack();ack();sockets[0]!.onopen?.();return {service,events,sockets,request,ack};
+  ack();ack();sockets[0]!.onopen?.();return {service,events,sockets,socketUrls,request,ack};
 }
 test('history seeds shared accumulator; durable batches update incrementally without periodic HTTP',async()=>{
-  const {service,events,sockets,request}=await setup();
+  const {service,events,sockets,socketUrls,request}=await setup();
+  expect(new URL(socketUrls[0]!).pathname).toBe('/market-data/v1/stream');
+  expect(new URL(socketUrls[0]!).searchParams.has('market')).toBe(false);
   expect(sockets[0]!.sent[0].after).toBe(10);
   sockets[0]!.receive(packet(10,[11,12]));
   const patch:any=events.at(-1);expect(patch.type).toBe('footprint-patch');expect(patch.bars[0].aggregateRecordCount).toBe(4);expect(patch.bars[0].cells[0].askNotional).toBe(336004);
@@ -56,8 +58,26 @@ test('restore plus replay has parity with uninterrupted aggregation, including e
   const rows=Array.from({length:100},(_,i)=>({...trade(i+1),timeMs:60001+i*1000,side:i%2?'sell':'buy'}));
   rows.slice(0,47).forEach(t=>all.ingest(t as any));resumed.restore(all.snapshot());rows.slice(47).forEach(t=>{all.ingest(t as any);resumed.ingest(t as any);});expect(resumed.snapshot()).toEqual(all.snapshot());
 });
-test('unsupported markets and malformed footprint values are rejected',()=>{
- expect(stagingMarket({...series,market:'spot'})).toBe(false);expect(stagingMarket({venue:'hyperliquid',interval:'1m'})).toBe(false);expect(validBackendBar(bar)).toBe(true);expect(validBackendBar({...bar,cells:[{...bar.cells[0],askNotional:NaN}]})).toBe(false);
+test('unsupported venues and malformed footprint values are rejected while Binance Spot is staged',()=>{
+ const spotBar={...bar,source:'binance-spot-aggtrade'} as const;
+ expect(stagingMarket({...series,market:'spot'})).toBe(true);expect(stagingMarket({venue:'hyperliquid',interval:'1m'})).toBe(false);expect(validBackendBar(bar)).toBe(true);expect(validBackendBar(spotBar,'spot')).toBe(true);expect(validBackendBar(spotBar)).toBe(false);expect(validBackendBar({...bar,cells:[{...bar.cells[0],askNotional:NaN}]})).toBe(false);
+});
+
+test('Spot footprints select Spot history and replay the Spot durable execution stream',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[],urls:string[]=[],socketUrls:string[]=[],spotBar={...bar,source:'binance-spot-aggtrade'};
+ const spotResponse={...response(),source:'binance-spot-aggtrade',bars:[spotBar]};
+ const request:any=async(url:string)=>{urls.push(url);return new Response(JSON.stringify(spotResponse));};
+ let service:StagingFeedService|undefined;service=new StagingFeedService(e=>{events.push(e);if(e.type.startsWith('footprint-'))service?.command({type:'footprint-ack',key:(e as any).key,generation:(e as any).generation,batchId:(e as any).batchId});},request,()=>900000,url=>{socketUrls.push(url);const socket=new Socket();sockets.push(socket);return socket as any;});
+ try{
+   service.command({type:'footprint-subscribe',id:'spot',series:{...series,market:'spot'},rowPrice:25});
+   await vi.advanceTimersByTimeAsync(0);
+   expect(new URL(urls[0]!, 'http://localhost').searchParams.get('market')).toBe('spot');
+   expect(new URL(socketUrls[0]!).pathname).toBe('/market-data/v1/stream');
+   expect(new URL(socketUrls[0]!).searchParams.get('market')).toBe('spot');
+   sockets[0]!.onopen?.();expect(sockets[0]!.sent[0]).toMatchObject({type:'subscribe',market:'spot'});
+   sockets[0]!.receive({...packet(10,[11]),executions:[{...trade(11),timeMs:60003,market:'spot'}],coverage:spotResponse.coverage});
+   expect((events.filter(event=>event.type==='footprint-patch').at(-1) as any).bars[0].source).toBe('binance-spot-aggtrade');
+ }finally{service.dispose();vi.useRealTimers();}
 });
 
 test('older complete pages use one watermark, preserve live changes and restore bounded history',async()=>{

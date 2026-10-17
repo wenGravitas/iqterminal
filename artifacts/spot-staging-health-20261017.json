@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-17T11:11:08Z",
+  "host": "sd-fn-01 staging",
+  "services": [
+    {
+      "service": "clickhouse",
+      "container": "iqterminal-clickhouse",
+      "shortId": "fb960ae45303",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18123/ping",
+      "httpStatus": 200,
+      "response": "Ok."
+    },
+    {
+      "service": "app gateway",
+      "container": "iqterminal-history-api",
+      "shortId": "aa4e4a753d56",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18780/v1/health",
+      "httpStatus": 200,
+      "collector": "live",
+      "depth": "live"
+    },
+    {
+      "service": "Perpetual history materializer",
+      "container": "iqterminal-history-materializer",
+      "shortId": "d0afc0aa2dc3",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18782/health",
+      "httpStatus": 200,
+      "liveLagMs": 0,
+      "paused": false,
+      "backlog": []
+    },
+    {
+      "service": "Level Watch",
+      "container": "iqterminal-level-watch",
+      "shortId": "60d0b8cde5d7",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18781/v1/level-watches/health",
+      "httpStatus": 200,
+      "serviceState": "ready"
+    },
+    {
+      "service": "Perpetual collector",
+      "container": "iqterminal-server",
+      "shortId": "3df0acd82749",
+      "fullId": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+      "startedAtUtc": "2026-10-13T15:54:46.038970032Z",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18784/v1/health",
+      "httpStatus": 200,
+      "collector": "live",
+      "depth": "live"
+    },
+    {
+      "service": "Spot history materializer",
+      "container": "iqterminal-spot-history-materializer",
+      "shortId": "f13465264d41",
+      "fullId": "f13465264d416adcd2fa9f5cbd61472db590daaab80745c2cdc45c6e6108ae27",
+      "startedAtUtc": "2026-10-17T10:52:50.949429456Z",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18783/health",
+      "httpStatus": 200,
+      "liveLagMs": 0,
+      "paused": false,
+      "backlog": []
+    },
+    {
+      "service": "Spot collector",
+      "container": "iqterminal-spot-server",
+      "shortId": "64633566f740",
+      "fullId": "64633566f740847f2b847a2e113ea505b564435d16dbfbd26cfc145da20608d3",
+      "startedAtUtc": "2026-10-17T10:52:50.952198029Z",
+      "state": "running",
+      "health": "healthy",
+      "endpoint": "http://127.0.0.1:18785/v1/health?market=spot",
+      "httpStatus": 200,
+      "market": "spot",
+      "collector": "live",
+      "depth": "live"
+    }
+  ],
+  "PerpetualHistoryMaterializer": {
+    "fullId": "d0afc0aa2dc33a5b852f759b4b63c65324fcbdd67cf5e229f563759c95898a5b",
+    "startedAtUtc": "2026-10-13T18:20:12.585491303Z"
+  },
+  "notes": "Read-only container and endpoint snapshot. Perpetual collector and history materializer IDs/start times match pre-rollout values; no existing Perpetual service was restarted."
+}

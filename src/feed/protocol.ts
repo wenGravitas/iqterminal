@@ -41,7 +41,9 @@ export function canonicalSeries(value: unknown): CanonicalSeries | null {
   if (s.venue === 'hyperliquid' && market !== 'perpetual') return null;
   return { venue: s.venue, market, interval: s.interval as Interval };
 }
-export function supportsDepth(s: Series) { return s.venue === 'binance' && marketOf(s) === 'perpetual'; }
+export function supportsDepth(s: Series) { return s.venue === 'binance'; }
+/** Script depth-series consumers still use the direct USD-M book adapter. */
+export function supportsScriptDepth(s: Series) { return s.venue === 'binance' && marketOf(s) === 'perpetual'; }
 // All times are UTC epoch milliseconds; volume is cumulative base BTC, never a delta.
 export interface Candle { t: number; o: number; h: number; l: number; c: number; v: number; revision: number; closed: boolean }
 export type FeedState = 'loading' | 'live' | 'reconnecting' | 'stale' | 'failed';
@@ -104,7 +106,7 @@ export interface FootprintBar {
   minQuoteDelta?: number;
   maxQuoteDelta?: number;
   rowSize: number;
-  source: 'binance-usdm-aggtrade';
+  source: 'binance-usdm-aggtrade' | 'binance-spot-aggtrade';
   granularity: 'aggregate-trade';
   coverage: 'partial' | 'observed' | 'gapped' | 'capacity-limited';
   gapBefore: boolean;
@@ -131,7 +133,7 @@ export interface FootprintStatus extends Status {
   retentionStart: number | null;
   coverage: 'waiting' | 'partial' | 'continuous' | 'gapped' | 'capacity-limited' | 'unclassified';
 }
-export type Command = {type:'footprint-viewport';id:string;from:number;to:number} | { type: 'heatmap-viewport'; id: string; viewport: import('./staging-heatmap').HeatmapViewport } | { type: 'ticker-update'; id: string; configRevision: number; config: import('../ticker/model').TickerConfig } | { type: 'ticker-subscribe'; id: string; configRevision: number; config: import('../ticker/model').TickerConfig } | { type: 'ticker-unsubscribe'; id: string } | { type: 'ticker-ack'; id: string; generation: number; batchId: number } | { type: 'heatmap-subscribe'; id: string; resolution: HeatmapResolution } | { type: 'heatmap-unsubscribe'; id: string } | { type: 'heatmap-ack'; key: string; generation: number; batchId: number } | { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' } | { type: 'footprint-subscribe'; id: string; series: Series; rowPrice: number } | { type: 'footprint-unsubscribe'; id: string } | { type: 'footprint-retry' } | { type: 'footprint-ack'; key: string; generation: number; batchId: number };
+export type Command = {type:'footprint-viewport';id:string;from:number;to:number} | { type: 'heatmap-viewport'; id: string; viewport: import('./staging-heatmap').HeatmapViewport } | { type: 'ticker-update'; id: string; configRevision: number; config: import('../ticker/model').TickerConfig } | { type: 'ticker-subscribe'; id: string; configRevision: number; config: import('../ticker/model').TickerConfig } | { type: 'ticker-unsubscribe'; id: string } | { type: 'ticker-ack'; id: string; generation: number; batchId: number } | { type: 'heatmap-subscribe'; id: string; resolution: HeatmapResolution; market?: Market } | { type: 'heatmap-unsubscribe'; id: string } | { type: 'heatmap-ack'; key: string; generation: number; batchId: number } | { type: 'subscribe'; id: string; series: Series } | { type: 'unsubscribe'; id: string } | { type: 'retry'; id: string } | { type: 'online'; online: boolean } | { type: 'diagnostics' } | { type: 'fixture'; rate: number } | { type: 'depth-subscribe'; id: string; bandPercent: number } | { type: 'depth-unsubscribe'; id: string } | { type: 'depth-retry' } | { type: 'footprint-subscribe'; id: string; series: Series; rowPrice: number } | { type: 'footprint-unsubscribe'; id: string } | { type: 'footprint-retry' } | { type: 'footprint-ack'; key: string; generation: number; batchId: number };
 export type Event = import('../ticker/model').TickerBatch | { type: 'heatmap-batch'; ids: string[]; key: string; generation: number; batchId: number; snapshot: boolean; buckets: LiquidityBucket[]; status: HeatmapStatus } | { type: 'snapshot' | 'patch'; key: string; ids: string[]; candles: Candle[] } | { type: 'status'; key: string; ids: string[]; status: Status } | { type: 'depth-status'; ids: string[]; status: DepthStatus } | { type: 'depth-history'; ids: string[]; bandPercent: number; observations: DepthObservation[] } | { type: 'depth-sample'; ids: string[]; observation: DepthObservation } | { type: 'footprint-snapshot' | 'footprint-patch'; key: string; ids: string[]; bars: FootprintBar[]; retentionStart: number | null; generation: number; batchId: number; status: FootprintStatus } | { type: 'footprint-status'; key: string; ids: string[]; status: FootprintStatus; generation: number; batchId: number } | { type: 'diagnostics'; data: Record<string, unknown> };
 export function validSeries(s: unknown): s is Series {
   return canonicalSeries(s) !== null;

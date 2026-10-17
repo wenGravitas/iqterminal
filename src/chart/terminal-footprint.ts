@@ -1,6 +1,8 @@
 import type { PrimitiveRenderContext, PrimitiveHost } from 'openalgo-charts';
 import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type FootprintHover } from 'openalgo-charts/profile';
 
+const PROFILE_LEVEL_EXTENSION = 8;
+
 /** Presentation wrapper for pinned OpenAlgo 2.6.0, using its public drawing boundary. */
 export function footprintColumn(options: Pick<FootprintOptions, 'cellWidth' | 'widthFactor' | 'showCandle'> & Partial<Pick<FootprintOptions, 'displayMode' | 'statsPosition'>>, spacing: number) {
   const annotation = options.statsPosition === 'bar' && spacing >= 140 ? Math.min(84, spacing * .42) : 0;
@@ -32,6 +34,11 @@ export class TerminalFootprint extends Footprint {
   private shiftedX(x: number) {
     const centre = this.centres.find(c => Math.abs(x / this.dpr - c) <= this.renderWidth / 2 + 1);
     return centre === undefined ? x : x + (x / this.dpr < centre ? -this.gap / 2 : this.gap / 2) * this.dpr;
+  }
+  private extendProfileLevel(x: number, side: 'left' | 'right') {
+    const edge = this.rc ? this.rc.plotWidth * this.dpr : Infinity;
+    const endpoint = x + (side === 'left' ? -1 : 1) * PROFILE_LEVEL_EXTENSION * this.dpr;
+    return Math.max(0, Math.min(edge, endpoint));
   }
   private readonly contexts = new WeakMap<CanvasRenderingContext2D, CanvasRenderingContext2D>();
   constructor(options: FootprintOptions) { super({ ...options, showCandle: false }); this.style = { ...options }; this.statsHeight = options.statsRowHeight; }
@@ -95,10 +102,11 @@ export class TerminalFootprint extends Footprint {
               if (this.valueAreaPath) {
                 if (key === 'stroke') {
                   target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
-                  target.strokeStyle = '#ffffff'; target.globalAlpha = 1; target.lineWidth = this.dpr;
+                  target.strokeStyle = '#ffffff'; target.globalAlpha = 1; target.lineWidth = 1.25 * this.dpr;
                   try { return (target.stroke as Function).apply(target, args); } finally { target.restore(); }
                 }
                 if (this.gap) args[0] = this.shiftedX(args[0]);
+                args[0] = this.extendProfileLevel(args[0], key === 'moveTo' ? 'left' : 'right');
               }
               return (target[key] as Function).apply(target, args);
             });
@@ -123,10 +131,13 @@ export class TerminalFootprint extends Footprint {
                 }
               }
               if (poc) {
-                // Match the quiet one-pixel dotted VAH/VAL reference lines.
+                const left = this.extendProfileLevel(args[0], 'left');
+                const right = this.extendProfileLevel(args[0] + args[2], 'right');
+                args[0] = left; args[2] = Math.max(0, right - left);
+                // Keep the POC outline quiet and dotted like VAH/VAL.
                 target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
                 target.strokeStyle = '#ffffff'; target.globalAlpha = 1;
-                target.lineWidth = Math.min(this.dpr, args[3] / 3, args[2] / 3);
+                target.lineWidth = Math.min(1.25 * this.dpr, args[3] / 3, args[2] / 3);
                 try { return (target[key] as Function).apply(target, args); } finally { target.restore(); }
               }
               return (target[key] as Function).apply(target, args);

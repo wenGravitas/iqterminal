@@ -1,19 +1,25 @@
-import { canonicalFootprintRowPrice, canonicalSeries, duration, footprintTicksForPrice, marketOf, validFootprintRowPrice, type Event, type FootprintBar, type FootprintRowTicks, type FootprintStatus, type Interval, type Series } from './protocol';
+import { canonicalFootprintRowPrice, canonicalSeries, duration, footprintTicksForPrice, marketOf, validFootprintRowPrice, type Event, type FootprintBar, type FootprintRowTicks, type FootprintStatus, type Interval, type Market, type Series } from './protocol';
 import {
   FOOTPRINT_FLUSH_MS, FOOTPRINT_MAX_PENDING, FOOTPRINT_MAX_RECENT_IDS,
   DEFAULT_FOOTPRINT_LIMITS,
-  FootprintAccumulator, parseBinanceAggTrade, parseBinanceBtcUsdtTickSize,
+  FootprintAccumulator, parseBinanceAggTrade, parseBinanceSpotAggTrade, parseBinanceBtcUsdtTickSize,
   type AggTradeObservation, type AggTradeReject, type FootprintLimits,
 } from './footprint';
 
 type ExecutionConsumer = (trades: readonly AggTradeObservation[], status: import('./protocol').Status, liveSince: number) => void;
-const AGG_TRADE_SOCKET = 'wss://fstream.binance.com/market/ws/btcusdt@aggTrade';
-const EXCHANGE_INFO = 'https://fapi.binance.com/fapi/v1/exchangeInfo?symbol=BTCUSDT';
+const AGG_TRADE_SOCKET: Record<Market,string> = {
+  perpetual: 'wss://fstream.binance.com/market/ws/btcusdt@aggTrade',
+  spot: 'wss://stream.binance.com:9443/ws/btcusdt@aggTrade',
+};
+const EXCHANGE_INFO: Record<Market,string> = {
+  perpetual: 'https://fapi.binance.com/fapi/v1/exchangeInfo?symbol=BTCUSDT',
+  spot: 'https://api.binance.com/api/v3/exchangeInfo?symbol=BTCUSDT',
+};
 const STALE_AFTER_MS = 15_000;
 const MAX_ACTIVE_GROUPS = 8;
 
 export interface FootprintTransport {
-  metadata(signal: AbortSignal): Promise<unknown>;
+  metadata(signal: AbortSignal, market?: Market): Promise<unknown>;
   socket(url: string): WebSocket;
   now(): number;
   setInterval(callback: () => void, ms: number): ReturnType<typeof setInterval>;
@@ -23,9 +29,9 @@ export interface FootprintTransport {
 }
 
 const browserTransport: FootprintTransport = {
-  async metadata(signal) {
-    const response = await fetch(EXCHANGE_INFO, { signal });
-    if (!response.ok) throw new Error(`Binance exchangeInfo HTTP ${response.status}`);
+  async metadata(signal, market = 'perpetual') {
+    const response = await fetch(EXCHANGE_INFO[market], { signal });
+    if (!response.ok) throw new Error(`Binance ${market} exchangeInfo HTTP ${response.status}`);
     return response.json();
   },
   socket: url => new WebSocket(url),
@@ -38,6 +44,7 @@ const browserTransport: FootprintTransport = {
 
 interface Group {
   key: string;
+  market: Market;
   interval: Interval;
   rowPrice: number;
   rowTicks: FootprintRowTicks | null;
@@ -65,7 +72,7 @@ interface Group {
 
 type FootprintTransportEvent = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
 
-/** One public BTCUSDT USD-M aggTrade socket, shared by timeframe/row configurations. */
+/** One public BTCUSDT aggTrade socket per market, shared by its configurations. */
 export class BinanceFootprintService {
   private executionConsumers = new Map<string, ExecutionConsumer>();
   private liveSince = 0;
@@ -125,6 +132,7 @@ export class BinanceFootprintService {
     private readonly transport: FootprintTransport = browserTransport,
     limits: Partial<FootprintLimits> = {},
     private readonly measureAggregation = false,
+    private readonly market: Market = 'perpetual',
   ) {
     this.limits = {
       maxBars: boundedLimit(limits.maxBars, DEFAULT_FOOTPRINT_LIMITS.maxBars),
@@ -142,26 +150,26 @@ export class BinanceFootprintService {
 
   subscribe(id: string, input: Series, rowPrice: number) {
     const series = canonicalSeries(input);
-    if (!id || !series || series.venue !== 'binance' || marketOf(series) !== 'perpetual' || this.dead) return;
+    if (!id || !series || series.venue !== 'binance' || marketOf(series) !== this.market || this.dead) return;
     if (!validFootprintRowPrice(rowPrice)) {
       const safePrice = Number.isFinite(rowPrice) ? rowPrice : 0;
-      const key = groupKey(series.interval, safePrice);
+      const key = groupKey(this.market, series.interval, safePrice);
       this.emit({ type: 'footprint-status', key, ids: [id], generation: ++this.nextGeneration, batchId: ++this.nextBatchId,
         status: this.statusFor(null, 'failed', 'Enter a price level greater than $0 and no more than $10,000 USDT') });
       return;
     }
     rowPrice = canonicalFootprintRowPrice(rowPrice);
     this.unsubscribe(id);
-    if (!this.groups.has(groupKey(series.interval, rowPrice)) && this.groups.size >= MAX_ACTIVE_GROUPS) {
-      const key = groupKey(series.interval, rowPrice);
+    if (!this.groups.has(groupKey(this.market, series.interval, rowPrice)) && this.groups.size >= MAX_ACTIVE_GROUPS) {
+      const key = groupKey(this.market, series.interval, rowPrice);
       this.emit({ type: 'footprint-status', key, ids: [id], generation: ++this.nextGeneration, batchId: ++this.nextBatchId, status: this.statusFor(null, 'failed', `Footprint is limited to ${MAX_ACTIVE_GROUPS} active configurations`) });
       return;
     }
-    const key = groupKey(series.interval, rowPrice);
+    const key = groupKey(this.market, series.interval, rowPrice);
     let group = this.groups.get(key);
     if (!group) {
       group = {
-        key, interval: series.interval, rowPrice, rowTicks: this.tickSize === null ? null : footprintTicksForPrice(rowPrice, this.tickSize), generation: ++this.nextGeneration, ids: new Set(),
+        key, market: this.market, interval: series.interval, rowPrice, rowTicks: this.tickSize === null ? null : footprintTicksForPrice(rowPrice, this.tickSize), generation: ++this.nextGeneration, ids: new Set(),
         collectionStartedAt: this.transport.now(), firstTradeAt: null, lastTradeAt: null, eventTime: null,
         lastUpdate: 0, dirty: false, outages: 0, unknownSideRecords: 0, unknownSideVolume: 0,
         lateRecords: 0, buyVolume: 0, sellVolume: 0, pendingSnapshot: false, pendingBars: new Map(),
@@ -213,7 +221,7 @@ export class BinanceFootprintService {
       this.closeSocket();
       this.clearRetry();
       this.discardPending();
-      this.setStatus('stale', 'Offline · Binance aggTrade collection paused');
+      this.setStatus('stale', `Offline · Binance ${this.market} aggTrade collection paused`);
     } else if (this.hasConsumers()) {
       this.attempts = 0;
       this.start();
@@ -224,7 +232,7 @@ export class BinanceFootprintService {
     return {
       subscribers: this.clients.size, executionConsumers: this.executionConsumers.size,
       groups: [...this.groups.values()].map(group => ({
-        key: group.key, clients: group.ids.size, bars: group.accumulator?.barCount ?? 0,
+        key: group.key, market: group.market, clients: group.ids.size, bars: group.accumulator?.barCount ?? 0,
         cells: group.accumulator?.cellCount ?? 0, rowPrice: group.rowPrice, rowTicks: group.rowTicks, maxBars: this.limits.maxBars,
         rowSize: this.tickSize === null || group.rowTicks === null ? null : this.tickSize * group.rowTicks,
         firstTradeAt: group.firstTradeAt, lastTradeAt: group.lastTradeAt,
@@ -284,17 +292,18 @@ export class BinanceFootprintService {
     } else if (this.ws && this.ws.readyState <= 1) return;
     this.epoch++;
     const epoch = this.epoch;
-    this.setStatus('loading', this.tickSize === null ? 'Loading Binance USD-M BTCUSDT tick size…' : 'Connecting to Binance BTCUSDT USD-M aggTrade…');
+    const marketLabel = this.market === 'spot' ? 'Spot' : 'USD-M perpetual';
+    this.setStatus('loading', this.tickSize === null ? `Loading Binance ${marketLabel} BTCUSDT tick size…` : `Connecting to Binance BTCUSDT ${marketLabel} aggTrade…`);
     try {
       if (this.tickSize === null) {
         const controller = new AbortController();
         this.abort = controller;
         const timer = this.transport.setTimeout(() => controller.abort(), 12_000);
         try {
-          const raw = await this.transport.metadata(controller.signal);
+          const raw = await this.transport.metadata(controller.signal, this.market);
           if (this.dead || epoch !== this.epoch || controller.signal.aborted) return;
-          const tickSize = parseBinanceBtcUsdtTickSize(raw);
-          if (tickSize === null) throw new Error('Binance exchangeInfo did not contain a valid BTCUSDT PRICE_FILTER.tickSize');
+          const tickSize = parseBinanceBtcUsdtTickSize(raw, this.market);
+          if (tickSize === null) throw new Error(`Binance ${marketLabel} exchangeInfo did not contain a valid BTCUSDT PRICE_FILTER.tickSize`);
           this.tickSize = tickSize;
           for (const group of this.groups.values()) {
             if (group.rowTicks !== null || group.configurationError) continue;
@@ -320,7 +329,7 @@ export class BinanceFootprintService {
   }
 
   private openSocket(epoch: number) {
-    const socket = this.transport.socket(AGG_TRADE_SOCKET);
+    const socket = this.transport.socket(AGG_TRADE_SOCKET[this.market]);
     this.ws = socket;
     this.opened = false;
     this.openingTimer = this.transport.setTimeout(() => { if (socket.readyState === 0) socket.close(); }, 12_000);
@@ -332,20 +341,20 @@ export class BinanceFootprintService {
       this.outageOpen = false;
       this.attempts = 0;
       this.counters.socketOpens++;
-      this.setStatus('loading', 'Connected · waiting for the first Binance aggregate trade; no classified history');
+      this.setStatus('loading', `Connected · waiting for the first Binance ${this.market} aggregate trade; no classified history`);
     };
     socket.onmessage = event => {
       if (this.epoch !== epoch || this.ws !== socket) return;
       this.counters.messages++;
       let raw: unknown;
       try { raw = JSON.parse(String(event.data)); } catch { this.rejected.market++; return; }
-      const parsed = parseBinanceAggTrade(raw);
+      const parsed = this.market === 'spot' ? parseBinanceSpotAggTrade(raw) : parseBinanceAggTrade(raw);
       if ('ignored' in parsed) return;
       if ('rejected' in parsed) { this.rejected[parsed.rejected]++; return; }
       this.queue(parsed.trade);
     };
     socket.onerror = () => {
-      if (this.epoch === epoch && this.ws === socket) this.setStatus('stale', 'Binance aggTrade connection error · reconnecting');
+      if (this.epoch === epoch && this.ws === socket) this.setStatus('stale', `Binance ${this.market} aggTrade connection error · reconnecting`);
     };
     socket.onclose = () => {
       if (this.openingTimer) this.transport.clearTimeout(this.openingTimer);
@@ -356,7 +365,7 @@ export class BinanceFootprintService {
       this.discardPending();
       this.markOutage();
       this.counters.reconnects++;
-      this.setStatus('stale', 'Binance aggTrade disconnected · reconnecting; affected bars are marked gapped');
+      this.setStatus('stale', `Binance ${this.market} aggTrade disconnected · reconnecting; affected bars are marked gapped`);
       this.scheduleRetry();
     };
   }
@@ -474,7 +483,7 @@ export class BinanceFootprintService {
   private check() {
     if (this.state === 'live' && this.lastUpdate && this.transport.now() - this.lastUpdate > STALE_AFTER_MS) {
       this.markOutage();
-      this.setStatus('stale', 'No valid Binance aggTrade observation for 15s · retained coverage marked gapped; waiting for reconnect or new trades');
+      this.setStatus('stale', `No valid Binance ${this.market} aggTrade observation for 15s · retained coverage marked gapped; waiting for reconnect or new trades`);
     }
   }
 
@@ -487,7 +496,7 @@ export class BinanceFootprintService {
     if (late) return `Live · ${late} late aggregate observation${late === 1 ? '' : 's'} discarded; affected retained bars are marked gapped`;
     if (outages) return `Live · ${outages} observation outage${outages === 1 ? '' : 's'} marked in bar coverage`;
     if (unknown) return `Live · ${unknown} aggregate observation${unknown === 1 ? '' : 's'} excluded because aggressor side is unknown`;
-    return 'Live · partial first interval; Binance aggTrade observations only';
+    return `Live · partial first interval; Binance ${this.market} aggTrade observations only`;
   }
 
   private setStatus(state: FootprintStatus['state'], message: string) {
@@ -616,7 +625,7 @@ export class BinanceFootprintService {
     if (this.retryTimer || this.dead || !this.online || !this.hasConsumers()) return;
     this.attempts++;
     if (this.attempts > 5) {
-      this.setStatus('failed', 'Binance aggTrade repeatedly failed · use Retry');
+      this.setStatus('failed', `Binance ${this.market} aggTrade repeatedly failed · use Retry`);
       return;
     }
     const wait = Math.min(30_000, 1000 * 2 ** Math.min(this.attempts, 5)) * .75;
@@ -666,8 +675,8 @@ export class BinanceFootprintService {
   }
 }
 
-function groupKey(interval: Interval, rowPrice: number) {
-  return `binance:perpetual:BTCUSDT:footprint:${interval}:p${canonicalFootprintRowPrice(rowPrice)}`;
+function groupKey(market: Market, interval: Interval, rowPrice: number) {
+  return `binance:${market}:BTCUSDT:footprint:${interval}:p${canonicalFootprintRowPrice(rowPrice)}`;
 }
 
 function formatPrice(value: number) {

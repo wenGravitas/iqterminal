@@ -5,6 +5,7 @@ import {
   FOOTPRINT_MAX_BARS,
   parseBinanceAggTrade,
   parseBinanceBtcUsdtTickSize,
+  parseBinanceSpotAggTrade,
   type AggTradeObservation,
 } from '../src/feed/footprint';
 import type { Event, Series } from '../src/feed/protocol';
@@ -59,6 +60,32 @@ describe('Binance USD-M aggregate trade normalization', () => {
     expect(parseBinanceBtcUsdtTickSize(exchangeInfo)).toBe(0.1);
     expect(parseBinanceBtcUsdtTickSize({ symbols: [...exchangeInfo.symbols, ...exchangeInfo.symbols] })).toBeNull();
     expect(parseBinanceBtcUsdtTickSize({ symbols: [{ ...exchangeInfo.symbols[0], filters: [{ filterType: 'PRICE_FILTER', tickSize: '0' }] }] })).toBeNull();
+  });
+});
+
+describe('Binance Spot aggregate trade normalization', () => {
+  const spotInfo = { symbols: [{ symbol: 'BTCUSDT', status: 'TRADING', baseAsset: 'BTC', quoteAsset: 'USDT',
+    filters: [{ filterType: 'PRICE_FILTER', tickSize: '0.01' }] }] };
+
+  it('accepts REST rows and websocket events while preserving exact decimal quote notional', () => {
+    const rest = parseBinanceSpotAggTrade({ a: 91, f: 100, l: 104, T: base + 1_000, p: '83000.1', q: '0.004', m: true });
+    expect(rest).toMatchObject({ trade: {
+      market: 'spot', executionId: 'binance:spot:BTCUSDT:agg:91', id: 91,
+      firstTradeId: 100, lastTradeId: 104, timeMs: base + 1_000,
+      priceText: '83000.1', quantityText: '0.004', quoteNotionalText: '332.0004', side: 'sell',
+    } });
+    const websocket = parseBinanceSpotAggTrade({ ...record(92), e: 'aggTrade', st: undefined });
+    expect(websocket).toMatchObject({ trade: { market: 'spot', id: 92, side: 'buy' } });
+  });
+
+  it('uses the Spot PRICE_FILTER tickSize and retains Spot source identity in accumulated bars', () => {
+    expect(parseBinanceBtcUsdtTickSize(spotInfo, 'spot')).toBe(0.01);
+    expect(parseBinanceBtcUsdtTickSize(spotInfo)).toBeNull();
+    const parsed = parseBinanceSpotAggTrade({ a: 93, f: 110, l: 110, T: base + 1_000, p: '83000.1', q: '0.004', m: false });
+    if (!('trade' in parsed)) throw new Error('Expected a valid Spot aggregate trade');
+    const book = new FootprintAccumulator('1m', 0.01, 250);
+    expect(book.ingest(parsed.trade)).toBe('applied');
+    expect(book.snapshot()[0]).toMatchObject({ source: 'binance-spot-aggtrade', cells: [{ askVol: 0.004, askNotional: 332.0004 }] });
   });
 });
 
@@ -177,14 +204,15 @@ class MockSocket {
 let service: BinanceFootprintService;
 afterEach(() => { service?.dispose(); vi.useRealTimers(); });
 
-function setup(autoAcknowledge = true, measureAggregation = false) {
+function setup(autoAcknowledge = true, measureAggregation = false, market: 'spot' | 'perpetual' = 'perpetual') {
   vi.useFakeTimers();
   const sockets: MockSocket[] = [];
+  const socketUrls: string[] = [];
   const events: Event[] = [];
   let now = base;
   const transport: FootprintTransport = {
-    metadata: vi.fn(async () => exchangeInfo),
-    socket: () => { const socket = new MockSocket(); sockets.push(socket); return socket as unknown as WebSocket; },
+    metadata: vi.fn(async () => market === 'spot' ? { symbols: [{ symbol: 'BTCUSDT', status: 'TRADING', baseAsset: 'BTC', quoteAsset: 'USDT', filters: [{ filterType: 'PRICE_FILTER', tickSize: '0.01' }] }] } : exchangeInfo),
+    socket: url => { socketUrls.push(url); const socket = new MockSocket(); sockets.push(socket); return socket as unknown as WebSocket; },
     now: () => now,
     setInterval, clearInterval, setTimeout, clearTimeout,
   };
@@ -193,11 +221,25 @@ function setup(autoAcknowledge = true, measureAggregation = false) {
     if (autoAcknowledge && (event.type === 'footprint-status' || event.type === 'footprint-snapshot' || event.type === 'footprint-patch')) {
       service.acknowledge(event.key, event.generation, event.batchId);
     }
-  }, transport, { maxBars: 12 }, measureAggregation);
-  return { sockets, events, transport, advance: async (ms: number) => { now += ms; await vi.advanceTimersByTimeAsync(ms); } };
+  }, transport, { maxBars: 12 }, measureAggregation, market);
+  return { sockets, socketUrls, events, transport, advance: async (ms: number) => { now += ms; await vi.advanceTimersByTimeAsync(ms); } };
 }
 
 describe('shared Binance footprint worker service', () => {
+  it('collects Spot footprints from the Spot exchangeInfo and aggTrade endpoints', async () => {
+    const test = setup(true, false, 'spot');
+    const spot: Series = { venue: 'binance', market: 'spot', interval: '1m' };
+    service.subscribe('spot', spot, 25);
+    await test.advance(0);
+    expect(test.transport.metadata).toHaveBeenCalledWith(expect.any(AbortSignal), 'spot');
+    expect(test.socketUrls).toEqual(['wss://stream.binance.com:9443/ws/btcusdt@aggTrade']);
+    test.sockets[0]!.open();
+    test.sockets[0]!.update({ a: 5, f: 100, l: 104, T: base + 1_000, p: '83000.10', q: '0.004', m: false });
+    await test.advance(100);
+    expect(service.diagnostics().groups[0]).toMatchObject({ market: 'spot', key: 'binance:spot:BTCUSDT:footprint:1m:p25' });
+    expect(test.events.some(event => event.type === 'footprint-patch' && event.bars[0]?.source === 'binance-spot-aggtrade')).toBe(true);
+  });
+
   it('shares equivalent quote widths and validates configured rows against fetched PRICE_FILTER metadata', async () => {
     const test = setup();
     const one: Series = { venue: 'binance', market: 'perpetual', interval: '1m' };

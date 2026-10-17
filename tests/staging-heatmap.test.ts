@@ -1,4 +1,24 @@
-import {expect,test} from 'vitest';import {viewportRequest,heatmapTiles,mergeHeatmapResponses} from '../src/feed/staging-heatmap';import {heatmapBins} from '../src/chart/orderbook-heatmap';import {heatmapSettings} from '../src/feed/heatmap-model';
+import {expect,test} from 'vitest';import {viewportRequest,heatmapTiles,mergeHeatmapResponses,mergePreparedSnapshot} from '../src/feed/staging-heatmap';import {heatmapBins} from '../src/chart/orderbook-heatmap';import {heatmapSettings} from '../src/feed/heatmap-model';
+const preparedTile=(start:number,end:number,revision:number,bid=1)=>({preaggregated:true,timeMs:60000,id:`depth:${start}`,start,end,epoch:1,rowSize:25,revision,capacityLimited:false,cells:new Float64Array([81000,bid*60000,0,bid,0,60000,60000,60000,60000,bid*81000*60000,0,bid*81000,0]),peaks:new Float64Array()});
+const activeView={from:0,to:300000,low:80990,high:81030};
+test('incomplete prepared viewport snapshots retain valid overlap and current tiles until replacement',()=>{
+ const historical=preparedTile(60000,120000,10),current=preparedTile(120000,180000,12),incoming=preparedTile(180000,210000,3);
+ const merged=mergePreparedSnapshot([historical,current],[incoming],[{from:60000,to:120000,state:'ready'},{from:120000,to:180000,state:'building'}],activeView,60000,25,185000,false);
+ expect(merged.map(b=>b.start)).toEqual([60000,120000,180000]);expect(merged.find(b=>b.start===60000)?.revision).toBe(10);expect(merged.find(b=>b.start===120000)?.revision).toBe(12);
+ const gap=mergePreparedSnapshot([historical,current],[incoming],[{from:60000,to:120000,state:'gap'},{from:120000,to:180000,state:'building'}],activeView,60000,25,185000,false);
+ expect(gap.map(b=>b.start)).toEqual([120000,180000]);
+ const closed=preparedTile(120000,180000,13,2),revised=mergePreparedSnapshot([current],[closed],[{from:120000,to:180000,state:'ready'}],activeView,60000,25,185000,true);
+ expect(revised).toHaveLength(1);expect(revised[0]?.revision).toBe(13);
+});
+test('prepared snapshots accept a confirmed empty replacement and age out an unclosed prior interval',()=>{
+ const current=preparedTile(120000,180000,12),empty={...preparedTile(120000,180000,13),cells:new Float64Array()};
+ const confirmed=mergePreparedSnapshot([current],[empty],[{from:120000,to:180000,state:'ready'}],activeView,60000,25,185000,true);
+ expect(confirmed).toHaveLength(1);expect(confirmed[0]?.cells).toHaveLength(0);
+ const rollover=mergePreparedSnapshot([current],[],[{from:180000,to:240000,state:'building'}],activeView,60000,25,180001,true);
+ expect(rollover).toEqual([current]);
+ const expired=mergePreparedSnapshot(rollover,[],[],activeView,60000,25,240001,true);
+ expect(expired).toEqual([]);
+});
 test('viewport price/time resolutions bound display without limiting collection to near-price rows',()=>{const q=viewportRequest({from:100000,to:14500000,low:50000,high:150000,width:800,height:400},60000,1,14500000);expect((q.high-q.low)/q.rowPrice).toBeLessThanOrEqual(512);expect(Math.ceil((q.to-q.from)/q.timeMs)).toBeLessThanOrEqual(240);expect(q.rowPrice).toBeGreaterThan(128);expect(q.low).toBeLessThanOrEqual(50000);expect(q.high).toBeGreaterThanOrEqual(150000);});
 test('historical tiles preserve means, simultaneous peaks, quote notionals and partial coverage',()=>{const data={watermark:9,resolution:{timeMs:60000,rowPrice:10},coverage:{confirmedTo:60000},cells:[{time:0,low:100,bid:2.5,ask:0,bidQuote:251.5,askQuote:0,bidPeak:3,askPeak:0,bidQuotePeak:303,askQuotePeak:0,bidDuration:60000,askDuration:60000,bidComplete:false,askComplete:true,epochs:[1]}]};const tiles=heatmapTiles(data,0,60000);const draw=(mode:'average'|'peak')=>heatmapBins(tiles,{...heatmapSettings(null),mode},60000,()=>0,i=>300+i*100,p=>200-p,800,500)[0]!;expect(draw('average').bid).toBe(2.5);expect(draw('average').bidQuote).toBe(251.5);expect(draw('peak').bid).toBe(3);expect(draw('peak').bidQuote).toBe(303);expect(draw('average').incomplete).toBe(true);});
 test('server-resolved coarse time columns span their recorded host slots',()=>{const tiles=heatmapTiles({watermark:1,resolution:{timeMs:120000,rowPrice:10},coverage:{confirmedTo:120000},cells:[{time:0,low:100,bid:1,ask:null,bidQuote:100,askQuote:null,bidDuration:120000,askDuration:0,bidComplete:true,askComplete:false,epochs:[1]}]},0,120000);const b=heatmapBins(tiles,heatmapSettings(null),60000,()=>0,i=>100+i*40,p=>200-p,800,500)[0]!;expect(b.right-b.x).toBe(80);expect(b.columnEnd).toBe(120000);expect(b.askObserved).toBe(false);});
@@ -6,12 +26,22 @@ test('server-resolved coarse time columns span their recorded host slots',()=>{c
 test('partial observed time uses its actual duration and preserves known zero',()=>{const data={watermark:1,resolution:{timeMs:60000,rowPrice:10},coverage:{confirmedTo:60000},cells:[{time:0,low:100,bid:5,ask:0,bidQuote:500,askQuote:0,bidPeak:6,askPeak:0,bidQuotePeak:600,askQuotePeak:0,bidDuration:30000,askDuration:60000,bidComplete:false,askComplete:true,epochs:[1]}]};const tiles=heatmapTiles(data,0,60000);const b=heatmapBins(tiles,heatmapSettings(null),60000,()=>0,i=>300+i*100,p=>200-p,800,500)[0]!;expect(b.bid).toBe(5);expect(b.ask).toBe(0);expect(b.bidObserved).toBe(true);expect(b.askObserved).toBe(true);expect(b.incomplete).toBe(true);});
 
 import {vi,beforeEach,afterEach} from 'vitest';beforeEach(()=>vi.stubEnv('VITE_HISTORY_TILES','0'));afterEach(()=>vi.unstubAllEnvs());import {StagingHeatmapService} from '../src/feed/staging-heatmap';
+test('Spot depth history and live subscription use the Spot feed identity and tick size',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(10_000_000);const calls:string[]=[],socketUrls:string[]=[],sockets:any[]=[],spotFeed='binance:spot:BTCUSDT:spot-diff-depth';
+ const request:any=async(url:string)=>{calls.push(url);const q=new URL(url,'http://localhost').searchParams;return new Response(JSON.stringify({version:1,source:spotFeed,watermark:1,resolution:{timeMs:Number(q.get('timeMs')),rowPrice:Number(q.get('rowPrice'))},coverage:{from:Number(q.get('from')),to:Number(q.get('to')),confirmedTo:Date.now(),epochs:[],gaps:[]},status:{state:'live'},cells:[],availability:[]}));};
+ const socket=(url:string)=>{socketUrls.push(url);const ws:any={send:vi.fn(),close:vi.fn()};sockets.push(ws);return ws;};
+ const events:any[]=[],cache={read:async()=>undefined,write:async()=>{}};const service=new StagingHeatmapService(e=>events.push(e),request,()=>Date.now(),socket,cache as any);
+ try{service.command({type:'heatmap-subscribe',id:'spot',market:'spot',resolution:{rowPrice:25,bucketMs:500,candleMs:60000}});service.command({type:'heatmap-viewport',id:'spot',viewport:{from:9_880_000,to:10_000_000,low:83_000,high:83_100,width:800,height:400}});await vi.advanceTimersByTimeAsync(500);
+  expect(calls.length).toBeGreaterThan(0);expect(calls.every(url=>new URL(url,'http://localhost').searchParams.get('market')==='spot')).toBe(true);expect(service.diagnostics().groups[0]).toMatchObject({market:'spot'});expect(events.at(-1).status.tickSize).toBe(.01);expect(service.diagnostics().groups[0]?.status?.tickSize).toBe(.01);
+  expect(sockets).toHaveLength(1);expect(new URL(socketUrls[0]!).pathname).toBe('/market-data/v1/stream');expect(new URL(socketUrls[0]!).searchParams.get('market')).toBe('spot');sockets[0].onopen?.();expect(JSON.parse(sockets[0].send.mock.calls[0]![0])).toMatchObject({type:'subscribe',channel:'depth',market:'spot'});
+ }finally{service.dispose();vi.useRealTimers();}
+});
 test('worker coalesces resolved viewport motion, shares one stream and replaces live overlap',async()=>{
- vi.useFakeTimers();vi.setSystemTime(10000000);let s:StagingHeatmapService|undefined;let now=10000000,cursor=1,quantity=5,requests=0;const packets:any[]=[];const sockets:any[]=[];
- const socket=()=>{const ws:any={send:vi.fn(),close:vi.fn()};sockets.push(ws);return ws;};
+ vi.useFakeTimers();vi.setSystemTime(10000000);let s:StagingHeatmapService|undefined;let now=10000000,cursor=1,quantity=5,requests=0;const packets:any[]=[],socketUrls:string[]=[],sockets:any[]=[];
+ const socket=(url:string)=>{socketUrls.push(url);const ws:any={send:vi.fn(),close:vi.fn()};sockets.push(ws);return ws;};
  const request:any=async()=>{requests++;return new Response(JSON.stringify({version:1,source:'usd-m-standard-diff-depth-rpi-excluded',watermark:cursor,resolution:{timeMs:60000,rowPrice:10},coverage:{confirmedTo:now,epochs:[{from:9900000}],gaps:[]},status:{state:'live'},cells:[{time:9960000,low:1000,bid:quantity,ask:0,bidQuote:quantity*1000,askQuote:0,bidDuration:40000,askDuration:40000,bidComplete:true,askComplete:true,epochs:[1]}]}));};
  try{s=new StagingHeatmapService(e=>{packets.push(e);if(e.type==='heatmap-batch')s?.command({type:'heatmap-ack',key:e.key,generation:e.generation,batchId:e.batchId});},request,()=>Date.now(),socket);
- const view={from:9900000,to:10010000,low:1002,high:1102,width:800,height:400};s.command({type:'heatmap-subscribe',id:'a',resolution:{rowPrice:10,bucketMs:500,candleMs:60000}});s.command({type:'heatmap-viewport',id:'a',viewport:view});await vi.advanceTimersByTimeAsync(500);expect(requests).toBe(1);
+ const view={from:9900000,to:10010000,low:1002,high:1102,width:800,height:400};s.command({type:'heatmap-subscribe',id:'a',resolution:{rowPrice:10,bucketMs:500,candleMs:60000}});s.command({type:'heatmap-viewport',id:'a',viewport:view});await vi.advanceTimersByTimeAsync(500);expect(requests).toBe(1);expect(new URL(socketUrls[0]!).searchParams.has('market')).toBe(false);
  s.command({type:'heatmap-viewport',id:'a',viewport:{...view,low:1002.01,high:1102.01}});await vi.advanceTimersByTimeAsync(500);expect(requests).toBe(1);
  s.command({type:'heatmap-subscribe',id:'b',resolution:{rowPrice:10,bucketMs:500,candleMs:60000}});s.command({type:'heatmap-viewport',id:'b',viewport:view});await vi.advanceTimersByTimeAsync(500);expect(sockets).toHaveLength(1);
  quantity=6;cursor=2;sockets[0].onmessage({data:JSON.stringify({type:'depth-head',watermark:{cursor,at:now}})});await vi.advanceTimersByTimeAsync(500);

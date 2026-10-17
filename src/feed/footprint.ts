@@ -28,13 +28,17 @@ export interface NormalizedExecution {
   eventTimeMs: number;
   price: number;
   quantity: number;
+  /** Exact exchange decimal strings; quoteNotionalText preserves p×q before Number conversion. */
+  priceText?: string;
+  quantityText?: string;
+  quoteNotionalText?: string;
   side: AggressorSide;
 }
 
 /** Binance-specific wire sequence fields retained for ordered aggTrade ingestion. */
 export interface AggTradeObservation extends NormalizedExecution {
   venue: 'binance';
-  market: 'perpetual';
+  market: Market;
   nativeSymbol: 'BTCUSDT';
   granularity: 'aggregate-trade';
   id: number;
@@ -73,19 +77,54 @@ export function parseBinanceAggTrade(raw: unknown): AggTradeParse {
   if (price === null) return { rejected: 'price' };
   const quantity = positiveNumber(value.q);
   if (quantity === null) return { rejected: 'quantity' };
+  const priceText = decimalText(value.p), quantityText = decimalText(value.q);
 
   return {
     trade: {
       venue: 'binance', market: 'perpetual', nativeSymbol: 'BTCUSDT', granularity: 'aggregate-trade',
       executionId: `binance:perpetual:BTCUSDT:agg:${id}`,
       id, firstTradeId, lastTradeId, timeMs, eventTimeMs, price, quantity,
+      ...(priceText && quantityText ? { priceText, quantityText, quoteNotionalText: multiplyDecimalText(priceText, quantityText) } : {}),
       side: value.m ? 'sell' : 'buy',
     },
   };
 }
 
+/** Decode Binance Spot REST aggTrades rows and Spot aggTrade websocket events. */
+export function parseBinanceSpotAggTrade(raw: unknown): AggTradeParse {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { ignored: true };
+  const value = raw as Record<string, unknown>;
+  if (value.e !== undefined && value.e !== 'aggTrade') return { ignored: true };
+  if (value.st !== undefined) return { rejected: 'contract' };
+  if (value.s !== undefined && value.s !== 'BTCUSDT') return { rejected: 'symbol' };
+  if (typeof value.m !== 'boolean') return { rejected: 'maker-side' };
+
+  const id = safeInteger(value.a);
+  const firstTradeId = safeInteger(value.f);
+  const lastTradeId = safeInteger(value.l);
+  if (id === null || firstTradeId === null || lastTradeId === null || firstTradeId > lastTradeId) return { rejected: 'trade-id' };
+
+  const timeMs = safeInteger(value.T);
+  const eventTimeMs = value.E === undefined ? timeMs : safeInteger(value.E);
+  if (timeMs === null || eventTimeMs === null || timeMs <= 0 || eventTimeMs < timeMs
+    || timeMs > MAX_DATE_TIME_MS || eventTimeMs > MAX_DATE_TIME_MS) return { rejected: 'time' };
+  const price = positiveNumber(value.p);
+  if (price === null) return { rejected: 'price' };
+  const quantity = positiveNumber(value.q);
+  if (quantity === null) return { rejected: 'quantity' };
+  const priceText = decimalText(value.p), quantityText = decimalText(value.q);
+
+  return { trade: {
+    venue: 'binance', market: 'spot', nativeSymbol: 'BTCUSDT', granularity: 'aggregate-trade',
+    executionId: `binance:spot:BTCUSDT:agg:${id}`,
+    id, firstTradeId, lastTradeId, timeMs, eventTimeMs, price, quantity,
+    ...(priceText && quantityText ? { priceText, quantityText, quoteNotionalText: multiplyDecimalText(priceText, quantityText) } : {}),
+    side: value.m ? 'sell' : 'buy',
+  } };
+}
+
 /** Public USD-M contract metadata: use PRICE_FILTER.tickSize, never pricePrecision. */
-export function parseBinanceBtcUsdtTickSize(raw: unknown): number | null {
+export function parseBinanceBtcUsdtTickSize(raw: unknown, market: Market = 'perpetual'): number | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const symbols = (raw as Record<string, unknown>).symbols;
   if (!Array.isArray(symbols)) return null;
@@ -93,8 +132,9 @@ export function parseBinanceBtcUsdtTickSize(raw: unknown): number | null {
     !!entry && typeof entry === 'object' && !Array.isArray(entry) && (entry as Record<string, unknown>).symbol === 'BTCUSDT');
   if (matches.length !== 1) return null;
   const symbol = matches[0]!;
-  if (symbol.status !== 'TRADING' || symbol.contractType !== 'PERPETUAL' || symbol.baseAsset !== 'BTC'
-    || symbol.quoteAsset !== 'USDT' || symbol.marginAsset !== 'USDT') return null;
+  if (symbol.status !== 'TRADING' || symbol.baseAsset !== 'BTC' || symbol.quoteAsset !== 'USDT'
+    || (market === 'perpetual' && (symbol.contractType !== 'PERPETUAL' || symbol.marginAsset !== 'USDT'))
+    || (market === 'spot' && (symbol.contractType !== undefined || symbol.marginAsset !== undefined))) return null;
   if (!Array.isArray(symbol.filters)) return null;
   const filters = symbol.filters.filter((entry): entry is Record<string, unknown> =>
     !!entry && typeof entry === 'object' && !Array.isArray(entry) && (entry as Record<string, unknown>).filterType === 'PRICE_FILTER');
@@ -105,6 +145,7 @@ export function parseBinanceBtcUsdtTickSize(raw: unknown): number | null {
 
 interface MutableCell { row: number; bidVol: number; askVol: number; bidNotional: number; askNotional: number }
 interface MutableBar {
+  market: Market;
   time: number;
   revision: number;
   cells: Map<number, MutableCell>;
@@ -159,7 +200,7 @@ export class FootprintAccumulator {
     if (bars.length > this.limits.maxBars || bars.reduce((n, b) => n + b.cells.length, 0) > this.limits.maxCells
       || bars.some((b, i) => b.rowSize !== this.tickSize * this.rowTicks || b.cells.length > this.limits.maxCellsPerBar || (i > 0 && b.time <= bars[i - 1]!.time))) throw new Error('Invalid footprint snapshot bounds');
     this.dispose();
-    this.bars = bars.map(b => ({ ...b, quoteDelta: b.quoteDelta ?? 0, minQuoteDelta: b.minQuoteDelta ?? 0, maxQuoteDelta: b.maxQuoteDelta ?? 0,
+    this.bars = bars.map(b => ({ ...b, market: b.source === 'binance-spot-aggtrade' ? 'spot' : 'perpetual', quoteDelta: b.quoteDelta ?? 0, minQuoteDelta: b.minQuoteDelta ?? 0, maxQuoteDelta: b.maxQuoteDelta ?? 0,
       cells: new Map(b.cells.map(c => { const row = Math.round(c.price / b.rowSize); return [row, { row, bidVol: c.bidVol, askVol: c.askVol, bidNotional: c.bidNotional ?? 0, askNotional: c.askNotional ?? 0 }]; })) }));
     this.current = this.bars.at(-1); this.cells = bars.reduce((n, b) => n + b.cells.length, 0); this.nextPartial = !this.current;
   }
@@ -178,7 +219,9 @@ export class FootprintAccumulator {
     const row = Math.floor(tickIndex / this.rowTicks);
     if (!Number.isSafeInteger(row)) return 'invalid-grid';
     const barTime = Math.floor(trade.timeMs / duration[this.interval]) * duration[this.interval] / 1000;
+    const market = trade.market ?? 'perpetual';
     if (this.current && barTime < this.current.time) return 'late';
+    if (this.current && this.current.market !== market) return 'invalid-grid';
 
     let bar: MutableBar;
     if (this.current?.time === barTime) {
@@ -196,7 +239,7 @@ export class FootprintAccumulator {
       this.makeRoomForBarCell();
       if (this.cells >= this.limits.maxCells) { this.capacityDrops++; return 'capacity'; }
       bar = {
-        time: barTime, revision: 0, cells: new Map(), delta: 0, minDelta: 0, maxDelta: 0,
+        market, time: barTime, revision: 0, cells: new Map(), delta: 0, minDelta: 0, maxDelta: 0,
         quoteDelta: 0, minQuoteDelta: 0, maxQuoteDelta: 0,
         open: trade.price, high: trade.price, low: trade.price, close: trade.price, aggregateRecordCount: 0,
         coverage: this.nextPartial ? 'partial' : 'observed', gapBefore: this.nextGapBefore,
@@ -235,7 +278,8 @@ export class FootprintAccumulator {
     const nextBid = cell.bidVol + (trade.side === 'sell' ? trade.quantity : 0);
     const nextAsk = cell.askVol + (trade.side === 'buy' ? trade.quantity : 0);
     const nextDelta = bar.delta + (trade.side === 'sell' ? -trade.quantity : trade.quantity);
-    const notional = trade.price * trade.quantity;
+    const exactNotional = trade.quoteNotionalText === undefined ? null : Number(trade.quoteNotionalText);
+    const notional = exactNotional !== null && Number.isFinite(exactNotional) ? exactNotional : trade.price * trade.quantity;
     const nextBidNotional = cell.bidNotional + (trade.side === 'sell' ? notional : 0);
     const nextAskNotional = cell.askNotional + (trade.side === 'buy' ? notional : 0);
     const nextQuoteDelta = bar.quoteDelta + (trade.side === 'sell' ? -notional : notional);
@@ -338,7 +382,7 @@ function freezeBar(bar: MutableBar, rowSize: number): FootprintBar {
     time: bar.time, revision: bar.revision, cells, delta: bar.delta, minDelta: bar.minDelta, maxDelta: bar.maxDelta,
     quoteDelta: bar.quoteDelta, minQuoteDelta: bar.minQuoteDelta, maxQuoteDelta: bar.maxQuoteDelta,
     rowSize, open: bar.open, high: bar.high, low: bar.low, close: bar.close, aggregateRecordCount: bar.aggregateRecordCount,
-    source: 'binance-usdm-aggtrade', granularity: 'aggregate-trade',
+    source: bar.market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade', granularity: 'aggregate-trade',
     coverage: bar.coverage, gapBefore: bar.gapBefore,
   };
 }
@@ -359,4 +403,22 @@ function positiveNumber(value: unknown): number | null {
     ? value
     : typeof value === 'string' && /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value) ? Number(value) : NaN;
   return Number.isFinite(parsed) && parsed > 0 && parsed <= Number.MAX_SAFE_INTEGER ? parsed : null;
+}
+
+function decimalText(value: unknown): string | null {
+  return typeof value === 'string' && /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value) && Number.isFinite(Number(value)) && Number(value) > 0
+    ? value.replace(/^\./, '0.') : null;
+}
+
+/** Multiply plain exchange decimal strings without first rounding either operand. */
+function multiplyDecimalText(left: string, right: string): string {
+  const parts = (value: string) => {
+    const [whole = '0', fraction = ''] = value.split('.');
+    return { coefficient: BigInt(`${whole || '0'}${fraction}`), scale: fraction.length };
+  };
+  const a = parts(left), b = parts(right), coefficient = a.coefficient * b.coefficient, scale = a.scale + b.scale;
+  if (!scale) return coefficient.toString();
+  const digits = coefficient.toString().padStart(scale + 1, '0');
+  const whole = digits.slice(0, -scale), fraction = digits.slice(-scale).replace(/0+$/, '');
+  return fraction ? `${whole}.${fraction}` : whole;
 }

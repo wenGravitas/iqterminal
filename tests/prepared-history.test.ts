@@ -8,3 +8,53 @@ test('a historical correction invalidates only the changed revision',async()=>{c
 test('two panels coalesce identical tile and manifest reads',async()=>{const f=fixture(),cache=new Cache(),scheduler=new HistoryScheduler(),a=new PreparedHistory(f.request,cache,scheduler),b=new PreparedHistory(f.request,cache,scheduler);await Promise.all([a.load(bounds,new AbortController().signal,()=>{}),b.load(bounds,new AbortController().signal,()=>{})]);expect(f.calls.filter(x=>x.includes('/manifest?'))).toHaveLength(1);expect(f.calls.filter(x=>x.includes('/tiles?'))).toHaveLength(1);});
 test('a split aligned viewport retains the forming result from its last manifest',async()=>{const calls:string[]=[];const request:any=async(url:string)=>{calls.push(url);const from=Number(new URL(url,'http://localhost').searchParams.get('from'));return new Response(JSON.stringify({version:1,feed,head:{cursor:from,at:from},buckets:[],tiles:[],...(from===14700000?{current:{state:'ready',bucket:{from:14700000}}}:{})}));};const client=new PreparedHistory(request,new Cache(),new HistoryScheduler());const result=await (client as any).manifest({...bounds,from:300000,to:15000000},new AbortController().signal,true);expect(calls).toHaveLength(2);expect(result.current.bucket.from).toBe(14700000);});
 test('vertical panning fetches an uncovered edge without treating a partial block as complete',async()=>{const cache=new Cache(),calls:string[]=[],m={version:1,feed,timeMs:300000,rowPrice:10,from:900000,to:1200000,revision:1,cursor:50,spans:[{from:900000,to:1200000,epoch:1,bidFloor:100,askCeiling:120}],blocks:[0],state:'ready'};const cell=(low:number)=>({time:900000,low,high:low+10,bid:1,ask:0,bidQuote:low,askQuote:0,bidPeak:1,askPeak:0,bidQuotePeak:low,askQuotePeak:0,bidDuration:300000,askDuration:300000,bidComplete:true,askComplete:true,epochs:[1]});const request:any=async(url:string)=>{calls.push(url);const u=new URL(url,'http://localhost');return new Response(JSON.stringify(u.pathname.endsWith('/manifest')?{version:1,feed,resolution:{timeMs:300000,baseTimeMs:300000,rowPrice:10},head:{cursor:50,at:1500000},buckets:[m],tiles:u.searchParams.has('include')?[{...m,block:0,firstRow:10,rowCount:1,cells:[cell(100)]}]:[]}:{version:1,tiles:[{...m,block:0,cells:[cell(100),cell(110)]}]}));};const client=new PreparedHistory(request,cache,new HistoryScheduler()),signal=new AbortController().signal;await client.load({...bounds,high:110},signal,()=>{});expect(calls.filter(x=>x.includes('/tiles?'))).toHaveLength(0);let last:any;await client.load(bounds,signal,(data,_v,complete)=>{if(complete)last=data;});expect(calls.filter(x=>x.includes('/tiles?'))).toHaveLength(1);expect(last.cells.map((c:any)=>c.low)).toEqual([100,110]);await client.load({...bounds,low:110},signal,()=>{});expect(calls.filter(x=>x.includes('/tiles?'))).toHaveLength(1);});
+
+test('prepared Spot heatmap queries validate the Spot feed and isolate cache entries',async()=>{
+ const calls:string[]=[],spotFeed='binance:spot:BTCUSDT:spot-diff-depth';
+ const request:any=async(url:string)=>{calls.push(url);const u=new URL(url,'http://localhost');const selected=u.searchParams.get('market')==='spot'?spotFeed:feed;return new Response(JSON.stringify({version:1,feed:selected,resolution:{timeMs:300000,baseTimeMs:300000,rowPrice:10},head:{cursor:50,at:1500000},buckets:[]}));};
+ const cache=new Cache(),client=new PreparedHistory(request,cache,new HistoryScheduler()),signal=new AbortController().signal,events:any[]=[];
+ await client.load(bounds,signal,(data,_validated,complete)=>{if(complete)events.push(data);});
+ await client.load({...bounds,market:'spot'},signal,(data,_validated,complete)=>{if(complete)events.push(data);});
+ expect(calls.map(url=>new URL(url,'http://localhost').searchParams.get('market'))).toEqual([null,'spot']);
+ expect(events.map(data=>data.source)).toEqual(['usd-m-standard-diff-depth-rpi-excluded',spotFeed]);
+ expect([...cache.values.keys()].some(key=>key.startsWith('manifest:spot:'))).toBe(true);
+});
+
+test('Spot prepared history rejects a Futures manifest feed',async()=>{
+ const request:any=async()=>new Response(JSON.stringify({version:1,feed,resolution:{timeMs:300000,baseTimeMs:300000,rowPrice:10},head:{cursor:50,at:1500000},buckets:[]}));
+ const client=new PreparedHistory(request,new Cache(),new HistoryScheduler());
+ await expect(client.load({...bounds,market:'spot'},new AbortController().signal,()=>{})).rejects.toThrow('Invalid prepared history manifest');
+});
+
+test('Spot prepared tiles validate market and feed identity at the envelope and each tile',async()=>{
+ const spotFeed='binance:spot:BTCUSDT:spot-diff-depth';
+ const bucket={version:1,feed:spotFeed,timeMs:300000,rowPrice:10,from:900000,to:1200000,revision:1,cursor:50,spans:[{from:900000,to:1200000,epoch:1,bidFloor:100,askCeiling:120}],blocks:[0],state:'ready'};
+ const cell={time:900000,low:100,high:110,bid:1,ask:0,bidQuote:100,askQuote:0,bidPeak:1,askPeak:0,bidQuotePeak:100,askQuotePeak:0,bidDuration:300000,askDuration:300000,bidComplete:true,askComplete:true,epochs:[1]};
+ const response=(url:string,invalid?:'market'|'feed'|'tile-feed'|'missing-market'|'missing-feed'|'missing-tile-feed')=>{
+  if(url.includes('/manifest?'))return {version:1,feed:spotFeed,resolution:{timeMs:300000,baseTimeMs:300000,rowPrice:10},head:{cursor:50,at:1500000},buckets:[bucket]};
+  const result:any={version:1,market:invalid==='market'?'perpetual':'spot',feed:invalid==='feed'?feed:spotFeed,tiles:[{...bucket,feed:invalid==='tile-feed'?feed:spotFeed,block:0,cells:[cell]}]};
+  if(invalid==='missing-market')delete result.market;if(invalid==='missing-feed')delete result.feed;if(invalid==='missing-tile-feed')delete result.tiles[0].feed;
+  return result;
+ };
+ const validCalls:string[]=[],validRequest:any=async(url:string)=>{validCalls.push(url);return new Response(JSON.stringify(response(url)));};
+ const validClient=new PreparedHistory(validRequest,new Cache(),new HistoryScheduler()),events:any[]=[];
+ await validClient.load({...bounds,market:'spot'},new AbortController().signal,(data,_validated,complete)=>{if(complete)events.push(data);});
+ expect(validCalls.filter(url=>url.includes('/tiles?')).every(url=>new URL(url,'http://localhost').searchParams.get('market')==='spot')).toBe(true);
+ expect(events[0].source).toBe(spotFeed);
+ for(const invalid of ['market','feed','tile-feed','missing-market','missing-feed','missing-tile-feed'] as const){
+  const request:any=async(url:string)=>new Response(JSON.stringify(response(url,invalid)));
+  const client=new PreparedHistory(request,new Cache(),new HistoryScheduler());
+  await expect(client.load({...bounds,market:'spot'},new AbortController().signal,()=>{})).rejects.toThrow('Invalid prepared tile response');
+ }
+});
+
+test('legacy Perp tile responses may omit market and feed identity fields',async()=>{
+ const f=fixture(),request:any=async(url:string,init:any)=>{
+  const data=await(await f.request(url,init)).json();
+  if(url.includes('/tiles?'))return new Response(JSON.stringify({version:data.version,tiles:data.tiles.map((tile:any)=>{const {feed:_feed,...legacy}=tile;return legacy;})}));
+  return new Response(JSON.stringify(data));
+ };
+ const client=new PreparedHistory(request,new Cache(),new HistoryScheduler()),events:any[]=[];
+ await client.load(bounds,new AbortController().signal,(data,_validated,complete)=>{if(complete)events.push(data);});
+ expect(events).toHaveLength(1);expect(events[0].source).toBe('usd-m-standard-diff-depth-rpi-excluded');
+});

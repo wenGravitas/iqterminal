@@ -77,6 +77,7 @@ export class TickerPipeline {
 export class TickerTape {
   rows: ClassifiedTrade[] = []; private frozen: ClassifiedTrade[] | null = null; private frozenAt: number | null = null;
   private matching: ClassifiedTrade[] = []; private frozenMatching: ClassifiedTrade[] | null = null;
+  private clearedAt = Number.NEGATIVE_INFINITY;
   private config = tickerConfig({}); private filterKey = '';
   configure(config: TickerConfig) {
     const key = JSON.stringify([config.markets,config.side,config.displayUnit,config.displayMinimum]);
@@ -92,9 +93,18 @@ export class TickerTape {
     if (this.frozen && this.frozenMatching) this.frozenMatching = select(this.frozenMatching,this.frozen);
   }
   ingest(records: ClassifiedTrade[]) {
-    this.rows.push(...records); if (this.rows.length > TICKER_MAX_ROWS) this.rows.splice(0,this.rows.length-TICKER_MAX_ROWS);
-    this.matching.push(...records.filter(r=>displayed(r.execution,this.config)));
+    const fresh = records.filter(record => record.receivedAt > this.clearedAt);
+    this.rows.push(...fresh); if (this.rows.length > TICKER_MAX_ROWS) this.rows.splice(0,this.rows.length-TICKER_MAX_ROWS);
+    this.matching.push(...fresh.filter(r=>displayed(r.execution,this.config)));
     if (this.matching.length > TICKER_DISPLAY_ROWS) this.matching.splice(0,this.matching.length-TICKER_DISPLAY_ROWS);
+  }
+  /** Clear this panel's bounded tape and ignore batches accepted by the worker before the clear. */
+  clear(now=Date.now()) {
+    this.clearedAt = now;
+    this.rows = []; this.matching = [];
+    if (this.frozen !== null) this.frozen = [];
+    if (this.frozenMatching !== null) this.frozenMatching = [];
+    if (this.frozenAt !== null) this.frozenAt = now;
   }
   pause(now=Date.now()) { this.frozen = [...this.rows]; this.frozenMatching = [...this.matching]; this.frozenAt=now; }
   live() { this.frozen = null; this.frozenMatching = null; this.frozenAt=null; }

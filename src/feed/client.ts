@@ -1,6 +1,6 @@
 import type {WatchMessage,WatchSnapshot} from '../level-watch/types';
 import { heatmapKey, type HeatmapResolution } from './heatmap-model';
-import { type Command, type Event, type Series, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
+import { type Command, type Event, type Market, type Series, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
 export class FeedClient {
   private sequence=0;private current=new Map<string,string>();private currentDepth=new Map<string,string>();private currentFootprint=new Map<string,string>();private worker:Worker;private listeners=new Map<string,{key:string;callback:(e:Event)=>void}>();private depthListeners=new Map<string,(e:Event)=>void>();private footprintListeners=new Map<string,{key:string;callback:(e:Event)=>void}>();
   private tickerListeners = new Map<string,{revision:number;callback:(e: import('../ticker/model').TickerBatch) => void}>();
@@ -55,17 +55,17 @@ export class FeedClient {
     const token=`depth:${id}:${++this.sequence}`;this.currentDepth.set(id,token);this.depthListeners.set(token,callback);this.send({type:'depth-subscribe',id:token,bandPercent});
     return ()=>{this.depthListeners.delete(token);if(this.currentDepth.get(id)===token)this.currentDepth.delete(id);this.send({type:'depth-unsubscribe',id:token});};
   }
-  subscribeHeatmap(id:string,resolution:HeatmapResolution,callback:(e:Event)=>void) {
+  subscribeHeatmap(id:string,resolution:HeatmapResolution,callback:(e:Event)=>void,market:Market='perpetual') {
     const previous=this.currentHeatmap.get(id);if(previous){this.heatmapListeners.delete(previous);this.send({type:'heatmap-unsubscribe',id:previous});}
     const token=`heatmap:${id}:${++this.sequence}`;this.currentHeatmap.set(id,token);this.heatmapListeners.set(token,{key:heatmapKey(resolution),callback});
-    this.send({type:'heatmap-subscribe',id:token,resolution});
+    this.send({type:'heatmap-subscribe',id:token,resolution,...(market==='spot'?{market:'spot'}:{})});
     return ()=>{this.heatmapListeners.delete(token);if(this.currentHeatmap.get(id)===token)this.currentHeatmap.delete(id);this.send({type:'heatmap-unsubscribe',id:token});};
   }
   requestHeatmapViewport(id:string,viewport:import('./staging-heatmap').HeatmapViewport){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentHeatmap.get(id);if(token)this.send({type:'heatmap-viewport',id:token,viewport});}
   requestFootprintViewport(id:string,from:number,to:number){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentFootprint.get(id);if(token)this.send({type:'footprint-viewport',id:token,from,to});}
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {
-    if(series.venue!=='binance'||marketOf(series)!=='perpetual')return ()=>{};
+    if(series.venue!=='binance')return ()=>{};
     if(!validFootprintRowPrice(rowPrice))throw new RangeError('Price level must be greater than $0 and no more than $10,000 USDT');
     const previous=this.currentFootprint.get(id);if(previous){this.footprintListeners.delete(previous);this.send({type:'footprint-unsubscribe',id:previous});}
     const token=`footprint:${id}:${++this.sequence}`;const key=footprintKeyOf(series,rowPrice);this.currentFootprint.set(id,token);this.footprintListeners.set(token,{key,callback});this.send({type:'footprint-subscribe',id:token,series,rowPrice});

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "scenario": "simultaneous read-only Spot and legacy Perpetual WebSocket delivery through the staging gateway",
+  "capturedAtUtc": "2026-10-17T10:57:17Z",
+  "endpoint": "wss://staging-gateway/v1/stream (Spot additionally selects ?market=spot)",
+  "result": "pass",
+  "streams": [
+    {
+      "market": "spot",
+      "instrument": "binance:spot:BTCUSDT",
+      "feed": "binance:spot:BTCUSDT:aggregate-trade",
+      "initialCursor": 4091838806,
+      "firstDeliveryCursor": 4091838814,
+      "acknowledgedCursor": 4091838814,
+      "cursorAfterAck": 4091838824,
+      "rowsMatchedMarketAndInstrument": true
+    },
+    {
+      "market": "perpetual",
+      "selector": "omitted legacy default",
+      "initialCursor": 3488432907,
+      "firstDeliveryCursor": 3488432915,
+      "acknowledgedCursor": 3488432915,
+      "cursorAfterAck": 3488432917,
+      "legacyRowsOmitMarketAndInstrument": true,
+      "spotRowsObserved": false
+    }
+  ],
+  "assertions": [
+    "Spot cursor advanced after its own ACK",
+    "Perpetual cursor advanced after its own ACK",
+    "Spot identity stayed explicit on Spot records",
+    "No Spot identity appeared on the legacy Perpetual stream"
+  ],
+  "limitations": "This bounded cursor/ACK probe verifies concurrent delivery and independent acknowledgement only; it is not an outage/reconnect soak or completeness guarantee."
+}

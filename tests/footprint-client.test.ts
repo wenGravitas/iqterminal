@@ -68,3 +68,14 @@ it('acknowledges a shared batch after callback failure and continues delivering 
   expect(errorLog).toHaveBeenCalledOnce(); expect(good).toHaveBeenCalledOnce();
   expect(worker.messages.at(-1)).toMatchObject({ type: 'footprint-ack', generation: 7, batchId: 9 });
 });
+
+it('routes Spot footprint and heatmap requests with explicit Spot market identity', () => {
+  const { client, worker } = setup();
+  const spot = { venue: 'binance', market: 'spot', interval: '1m' } as const;
+  client.subscribeFootprint('spot-chart', spot, 25, () => {});
+  expect(worker.messages.find(command => command.type === 'footprint-subscribe')).toMatchObject({
+    type: 'footprint-subscribe', series: spot, rowPrice: 25,
+  });
+  client.subscribeHeatmap('spot-chart', { rowPrice: 25, bucketMs: 500, candleMs: 60_000 }, () => {}, 'spot');
+  expect(worker.messages.find(command => command.type === 'heatmap-subscribe')).toMatchObject({ type: 'heatmap-subscribe', market: 'spot' });
+});

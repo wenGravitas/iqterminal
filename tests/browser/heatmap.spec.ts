@@ -199,5 +199,5 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   await expect(panel.getByLabel('Liquidity contrast', { exact: true })).toHaveValue('muted');
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
   await chooseChartMarket(panel,'Binance · BTCUSDT Spot');
-  await expect(panel.locator('.heatmap-notice')).toContainText('unavailable');
+  await expect(panel.locator('.heatmap-notice')).toContainText('requires the staged depth service');
 });

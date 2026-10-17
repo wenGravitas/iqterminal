@@ -1,6 +1,6 @@
 import { registerIndicator, type Bar, type IndicatorApi } from 'openalgo-charts';
 import { FeedClient } from '../feed/client';
-import { depthSeriesNames, duration, type Candle, type DepthObservation, type DepthStatus, type Event, type Series, instrumentLabel, marketOf, supportsDepth } from '../feed/protocol';
+import { depthSeriesNames, duration, type Candle, type DepthObservation, type DepthStatus, type Event, type Series, instrumentLabel, marketOf, supportsScriptDepth } from '../feed/protocol';
 import { OpenAlgoCandleChart } from '../chart/openalgo';
 import { browserScriptWorker, ScriptWorkerClient } from './client';
 import { createScriptChartBridge, depthBandFor, requiresDepth } from './chart-adapter';
@@ -117,7 +117,7 @@ export class ScriptStudyHost {
   pins(): StudyPin[] { return validStudyPins([...this.pendingPins, ...[...this.studies.values()].map(study => pinOf(study)), ...[...this.restoreErrors.values()].map(pinOf)]).filter((p,i,a) => a.findIndex(v => v.attachmentId === p.attachmentId) === i); }
 
   depthNotices(): DepthNotice[] {
-    const unsupported = !supportsDepth(this.series);
+    const unsupported = !supportsScriptDepth(this.series);
     const unitsByBand = new Map<number, Set<string>>();
     let hasUnsupportedStudy = false;
     for (const study of this.studies.values()) {
@@ -174,7 +174,7 @@ export class ScriptStudyHost {
     for (const study of this.studies.values()) {
       const needsDepth = study.depthBand !== null || study.depthUnavailable;
       study.depthBand = null;
-      study.depthUnavailable = needsDepth && !supportsDepth(series);
+      study.depthUnavailable = needsDepth && !supportsScriptDepth(series);
       study.status = 'reloading for the selected market';
       study.needsHistory = true;
     }
@@ -422,7 +422,7 @@ export class ScriptStudyHost {
       if (needsDepth) {
         nextDepthBand = depthBandFor(result, draft.settings);
         if (nextDepthBand === null) throw new Error('Depth band must be between 0.01% and 0.25% in 0.01% steps.');
-        depthUnavailable = !supportsDepth(this.series);
+        depthUnavailable = !supportsScriptDepth(this.series);
       }
       candidateDepthBand = nextDepthBand;
       const revision = await this.library.pinRevision(draft.scriptId, draft.source, requiredScriptCapabilities(result.program));
@@ -673,7 +673,7 @@ function lowerBound(candles: readonly Candle[], time: number) {
 }
 
 function depthStatusText(status: DepthStatus | null, unsupported: boolean, series: Series, coverage?: DepthObservation) {
-  if (unsupported || !supportsDepth(series)) return 'Depth study · Binance BTCUSDT USD-M Perp only';
+  if (unsupported || !supportsScriptDepth(series)) return 'Depth study · Binance BTCUSDT USD-M Perp only';
   if (!status) return 'Depth study · syncing Binance snapshot; no historical depth is available before collection starts';
   const collection = status.collectionStartedAt === null
     ? ' · earlier candles have no depth history; collection starts after sync'

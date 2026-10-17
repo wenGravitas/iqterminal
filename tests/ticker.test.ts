@@ -21,13 +21,39 @@ it('deduplicates executions while independent filters leave classification and n
 });
 it('suppresses stale, reconnect backlog and pre-subscription events',()=>{const p=new TickerPipeline(tickerConfig({}),now-1000);expect(p.accept(execution('old',1e6,'buy',now-10000),now,now-1000)?.notify).toBe(false);expect(p.accept(execution('reconnect',1e6,'buy',now-500),now,now)?.notify).toBe(false);expect(p.accept(execution('fresh'),now,now-1000)?.notify).toBe(true);});
 it('paused tape ingests bounded rows and catches up without mutating its frozen view',()=>{const p=new TickerPipeline(tickerConfig({}),now-1),tape=new TickerTape();tape.ingest([p.accept(execution(),now,now-1)!]);tape.pause();for(let n=0;n<600;n++)tape.ingest([p.accept(execution(String(n+2)),now,now-1)!]);expect(tape.rows.length).toBe(500);expect(tape.visible(p.config)).toHaveLength(1);tape.live();expect(tape.visible(p.config)).toHaveLength(100);expect(p.retained.length).toBe(500);});
-it('caps dedup memory and preserves stable configured scope without silently adding inputs',()=>{const p=new TickerPipeline(tickerConfig({}),now);for(let n=0;n<TICKER_MAX_RECENT+10;n++)p.accept(execution(String(n)),now,now);expect((p as any).recent.size).toBe(TICKER_MAX_RECENT);expect(classify(execution(),tickerConfig({scope:[]}))).toBeNull();expect(executionMarkets(['binance:perpetual','binance:perpetual','binance:spot','hyperliquid:perpetual'])).toEqual(['binance:perpetual']);});
+it('clears its bounded tape, ignores pre-clear batches, and keeps collecting while paused',()=>{
+  const config=tickerConfig({}),pipeline=new TickerPipeline(config,now),tape=new TickerTape();
+  const first=pipeline.accept(execution('first'),now,now)!;
+  const queued=pipeline.accept(execution('queued'),now,now)!;
+  tape.ingest([first]);tape.pause(now);tape.clear(now);
+  expect(tape.rows).toEqual([]);expect(tape.visible(config)).toEqual([]);expect(tape.snapshot(now+1000)).toEqual({records:[],now});expect(tape.paused).toBe(true);
+  tape.ingest([first,queued]);expect(tape.rows).toEqual([]);
+  const fresh=pipeline.accept(execution('fresh',1e6,'buy',now+1),now+1,now)!;tape.ingest([fresh]);
+  expect(tape.rows).toEqual([fresh]);expect(tape.visible(config)).toEqual([]);
+  tape.live();expect(tape.visible(config)).toEqual([fresh]);
+});
+it('caps dedup memory and preserves stable configured scope without silently adding inputs',()=>{const p=new TickerPipeline(tickerConfig({}),now);for(let n=0;n<TICKER_MAX_RECENT+10;n++)p.accept(execution(String(n)),now,now);expect((p as any).recent.size).toBe(TICKER_MAX_RECENT);expect(classify(execution(),tickerConfig({scope:[]}))).toBeNull();expect(executionMarkets(['binance:perpetual','binance:perpetual','binance:spot','hyperliquid:perpetual'])).toEqual(['binance:perpetual','binance:spot']);});
 it('persists settings and validates versioned ticker layouts without breaking legacy charts',()=>{const c=tickerConfig({muted:true,displayMinimum:123});expect(tickerConfig(JSON.parse(JSON.stringify(c)))).toEqual(c);const layout={grid:{},panels:{'ticker-one':{contentComponent:'trade-ticker',params:c}}};expect(restoreValue(JSON.stringify({version:4,layout}))).toEqual(layout);expect(restoreValue(JSON.stringify({version:3,layout}))).toBeNull();});
 it('notification gate deduplicates, rate limits, mutes and suppresses hidden/stale events',()=>{const g=new NotificationGate(),r={eventId:'event',ruleId:'ticker-a:large',owner:'ticker-a',timeMs:now,fresh:true,title:'Large',text:'Trade',sound:'bell' as const,volume:.5,toast:true};expect(g.accept(r,now,false)).toBe(true);expect(g.accept(r,now,false)).toBe(false);expect(g.accept({...r,eventId:'stale'},now+4000,false)).toBe(false);expect(g.accept({...r,eventId:'hidden'},now,true)).toBe(false);expect(g.accept({...r,eventId:'muted',muted:true},now,false)).toBe(false);expect(g.accept({...r,eventId:'cool'},now+100,false)).toBe(false);g.release('ticker-a');expect(g.diagnostics().cooldowns).toBe(0);});
 it('notification state remains bounded under many independent rules',()=>{const g=new NotificationGate();for(let n=0;n<3000;n++)g.accept({eventId:String(n),ruleId:`ticker:${n}`,owner:'ticker',timeMs:now+n*1000,fresh:true,title:'x',text:'x',sound:'silent',volume:0,toast:false},now+n*1000,false);expect(g.diagnostics().recent).toBeLessThanOrEqual(2048);expect(g.diagnostics().cooldowns).toBeLessThanOrEqual(128);});
 it('worker backpressure caps pending prints, rejects stale acknowledgements and releases consumers',()=>{
   vi.useFakeTimers();const listeners=new Map<string,Function>(),releases=vi.fn();const feed={subscribeExecutions(id:string,callback:Function){listeners.set(id,callback);return()=>{listeners.delete(id);releases();};}};const events:any[]=[];const service=new TickerService(feed as any,e=>events.push(e),()=>now);
   service.subscribe('one',{});service.subscribe('two',{});expect(listeners.size).toBe(2);const first=events[0];listeners.get('one')!(Array.from({length:1000},(_,i)=>execution(String(i))),{state:'live',message:'live',lastUpdate:now},now-1000);service.flush();expect(service.diagnostics().subscribers[0].pending).toBe(256);expect(service.diagnostics().subscribers[0].dropped).toBe(744);service.ack('one',first.generation+1,first.batchId);expect(events.length).toBe(2);service.ack('one',first.generation,first.batchId);expect(events[2].records.length).toBe(256);service.update('one',{tiers:[{...defaultTiers()[0],name:'Edited'}]},1);expect(listeners.size).toBe(2);expect(releases).not.toHaveBeenCalled();service.unsubscribe('one');expect(listeners.size).toBe(1);service.dispose();expect(releases).toHaveBeenCalledTimes(2);expect(vi.getTimerCount()).toBe(0);
+});
+
+it('subscribes Spot and USD-M separately and preserves their independent execution identities',()=>{
+  vi.useFakeTimers();const feeds=new Map<string,Function>(),makeFeed=(name:string)=>({subscribeExecutions(id:string,callback:Function){feeds.set(`${name}:${id}`,callback);return()=>{feeds.delete(`${name}:${id}`);};}});
+  const events:any[]=[],service=new TickerService({spot:makeFeed('spot') as any,perpetual:makeFeed('perpetual') as any},event=>events.push(event),()=>now);
+  service.subscribe('both',{markets:['binance:spot','binance:perpetual']});
+  expect([...feeds.keys()]).toEqual(['spot:both:spot','perpetual:both:perpetual']);
+  const status={state:'live',message:'live',lastUpdate:now};
+  feeds.get('spot:both:spot')!([{...execution('1'),market:'spot',executionId:'binance:spot:BTCUSDT:agg:1'}],status,now-1000);
+  feeds.get('perpetual:both:perpetual')!([execution('1')],status,now-1000);
+  for(let i=0;i<events.length;i++){const event=events[i];service.ack('both',event.generation,event.batchId);}
+  const records=events.flatMap(event=>event.records??[]).map(record=>record.execution);
+  expect(records.map(item=>item.market).sort()).toEqual(['perpetual','spot']);
+  expect(new Set(records.map(item=>item.executionId)).size).toBe(2);
+  service.dispose();expect(feeds.size).toBe(0);expect(vi.getTimerCount()).toBe(0);
 });
 
 it('keeps time mandatory and validates optional columns without losing explicit empty choices',()=>{

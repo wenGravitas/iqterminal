@@ -1,0 +1,1479 @@
+{
+  "schemaVersion": 1,
+  "scenario": "real staging Spot + Perp concurrent footprint and heatmap on Raspberry Pi Chromium",
+  "startedAt": "2026-10-17T11:03:59.990Z",
+  "endedAt": "2026-10-17T11:05:09.669Z",
+  "durationMs": 69679,
+  "rolloverAt": "2026-10-17T11:05:00.000Z",
+  "rolloverSampled": true,
+  "samePanelMarketSwitch": {
+    "spotToPerpetual": "perpetual",
+    "perpetualToSpot": "spot"
+  },
+  "browser": {
+    "version": "154.0.8037.92",
+    "viewport": {
+      "width": 1366,
+      "height": 860
+    },
+    "renderBackends": [
+      "canvas2d",
+      "canvas2d"
+    ],
+    "acceleration": "headless Chromium SwiftShader software rendering; not Pi hardware-GPU evidence"
+  },
+  "ready": true,
+  "initialLive": [
+    {
+      "market": "perpetual",
+      "chart": "live",
+      "chartMessage": "Staging \u00b7 Binance native kline stream",
+      "footprint": "live",
+      "heatmap": "live",
+      "bins": 225
+    },
+    {
+      "market": "spot",
+      "chart": "live",
+      "chartMessage": "Staging \u00b7 native Binance candle history loaded; connecting stream",
+      "footprint": "live",
+      "heatmap": "live",
+      "bins": 230
+    }
+  ],
+  "panResults": [
+    {
+      "panel": 0,
+      "before": {
+        "time": {
+          "from": 995.7232142857143,
+          "to": 1001
+        },
+        "price": {
+          "min": 81081.25,
+          "max": 82193.75
+        }
+      },
+      "after": {
+        "time": {
+          "from": 995.3214285714287,
+          "to": 1000.5982142857143
+        },
+        "price": {
+          "min": 81131.98396740682,
+          "max": 82105.51603259318
+        },
+        "heatmapBins": 240,
+        "latestTile": 1792235040000
+      }
+    },
+    {
+      "panel": 1,
+      "before": {
+        "time": {
+          "from": 994.7232142857143,
+          "to": 1000
+        },
+        "price": {
+          "min": 80537.5,
+          "max": 82762.5
+        }
+      },
+      "after": {
+        "time": {
+          "from": 994.3214285714287,
+          "to": 999.5982142857143
+        },
+        "price": {
+          "min": 80638.96793481364,
+          "max": 82586.03206518636
+        },
+        "heatmapBins": 240,
+        "latestTile": 1792235040000
+      }
+    }
+  ],
+  "samples": [
+    {
+      "at": 1792235049895,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 28
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "syncing",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 28
+        }
+      ]
+    },
+    {
+      "at": 1792235051915,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 34
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 34
+        }
+      ]
+    },
+    {
+      "at": 1792235053923,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 35
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 37
+        }
+      ]
+    },
+    {
+      "at": 1792235055927,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 43
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 44
+        }
+      ]
+    },
+    {
+      "at": 1792235057935,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 48
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 50
+        }
+      ]
+    },
+    {
+      "at": 1792235059942,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 54
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 53
+        }
+      ]
+    },
+    {
+      "at": 1792235061947,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 56
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 57
+        }
+      ]
+    },
+    {
+      "at": 1792235063955,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 64
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 63
+        }
+      ]
+    },
+    {
+      "at": 1792235065960,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 67
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 69
+        }
+      ]
+    },
+    {
+      "at": 1792235067968,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 73
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 73
+        }
+      ]
+    },
+    {
+      "at": 1792235069979,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 77
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 78
+        }
+      ]
+    },
+    {
+      "at": 1792235071986,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 83
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 81
+        }
+      ]
+    },
+    {
+      "at": 1792235073994,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 91
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 85
+        }
+      ]
+    },
+    {
+      "at": 1792235076008,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 99
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 91
+        }
+      ]
+    },
+    {
+      "at": 1792235078013,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 101
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 94
+        }
+      ]
+    },
+    {
+      "at": 1792235080019,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 108
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 103
+        }
+      ]
+    },
+    {
+      "at": 1792235082026,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 115
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 110
+        }
+      ]
+    },
+    {
+      "at": 1792235084030,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 121
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 113
+        }
+      ]
+    },
+    {
+      "at": 1792235086046,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 123
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 118
+        }
+      ]
+    },
+    {
+      "at": 1792235088052,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 132
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 123
+        }
+      ]
+    },
+    {
+      "at": 1792235090057,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 138
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 126
+        }
+      ]
+    },
+    {
+      "at": 1792235092062,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 141
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 130
+        }
+      ]
+    },
+    {
+      "at": 1792235094070,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 145
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 135
+        }
+      ]
+    },
+    {
+      "at": 1792235096074,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 150
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 140
+        }
+      ]
+    },
+    {
+      "at": 1792235098080,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 157
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 143
+        }
+      ]
+    },
+    {
+      "at": 1792235100087,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 0,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 158
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235040000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 16
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 0,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 149
+        }
+      ]
+    },
+    {
+      "at": 1792235102097,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 17
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235100000,
+          "heatmapDraws": 174
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 streaming \u00b7 delivery 0ms",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 17
+          },
+          "heatmapState": "syncing",
+          "heatmapBins": 200,
+          "liveTileStarts": 0,
+          "liveColumnBins": 0,
+          "latestTileStart": 1792235040000,
+          "heatmapDraws": 155
+        }
+      ]
+    },
+    {
+      "at": 1792235104131,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 17
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235100000,
+          "heatmapDraws": 179
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 17
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235100000,
+          "heatmapDraws": 165
+        }
+      ]
+    },
+    {
+      "at": 1792235106144,
+      "panels": [
+        {
+          "market": "perpetual",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-usdm-aggtrade": 17
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235100000,
+          "heatmapDraws": 184
+        },
+        {
+          "market": "spot",
+          "candleState": "live",
+          "candleMessage": "Staging \u00b7 Binance native kline stream",
+          "latestCandleMs": 1792235100000,
+          "footprintState": "live",
+          "footprintSourceCounts": {
+            "binance-spot-aggtrade": 17
+          },
+          "heatmapState": "live",
+          "heatmapBins": 240,
+          "liveTileStarts": 1,
+          "liveColumnBins": 40,
+          "latestTileStart": 1792235100000,
+          "heatmapDraws": 173
+        }
+      ]
+    }
+  ],
+  "finalPanels": [
+    {
+      "market": "perpetual",
+      "interval": "1m",
+      "candles": 17,
+      "latestCandle": {
+        "t": 1792235100000,
+        "o": 81614.2,
+        "h": 81617.4,
+        "l": 81614.2,
+        "c": 81617.3,
+        "v": 2.3769999999999984
+      },
+      "chartState": "live",
+      "heatmap": {
+        "state": "live",
+        "bins": 240,
+        "draws": 188
+      },
+      "footprint": {
+        "state": "live",
+        "bars": 17,
+        "latest": {
+          "time": 1792235100,
+          "revision": 30,
+          "cellCount": 1,
+          "coverage": "partial",
+          "gapBefore": false,
+          "open": 81614.2,
+          "high": 81617.4,
+          "low": 81614.2,
+          "close": 81617.3,
+          "delta": 2.1289999999999987
+        },
+        "transport": {
+          "cursor": 3488435033,
+          "backendSentAtMs": 1792235107755,
+          "workerReceivedAtMs": 1792235107875,
+          "workerAppliedAtMs": 1792235107875
+        },
+        "primitiveSets": 80
+      }
+    },
+    {
+      "market": "spot",
+      "interval": "1m",
+      "candles": 17,
+      "latestCandle": {
+        "t": 1792235100000,
+        "o": 81650.26,
+        "h": 81650.26,
+        "l": 81650.25,
+        "c": 81650.26,
+        "v": 0.21585000000000001
+      },
+      "chartState": "live",
+      "heatmap": {
+        "state": "live",
+        "bins": 240,
+        "draws": 178
+      },
+      "footprint": {
+        "state": "live",
+        "bars": 17,
+        "latest": {
+          "time": 1792235100,
+          "revision": 29,
+          "cellCount": 1,
+          "coverage": "partial",
+          "gapBefore": false,
+          "open": 81650.26,
+          "high": 81650.26,
+          "low": 81650.25,
+          "close": 81650.26,
+          "delta": 0.20317000000000002
+        },
+        "transport": {
+          "cursor": 4091843639,
+          "backendSentAtMs": 1792235107700,
+          "workerReceivedAtMs": 1792235107794,
+          "workerAppliedAtMs": 1792235107795
+        },
+        "primitiveSets": 96
+      }
+    }
+  ],
+  "performance": {
+    "sampledSec": 60.21027700000013,
+    "processTimeSec": 15.740000000000002,
+    "threadTimeSec": 9.2158,
+    "scriptDurationSec": 5.795972,
+    "taskDurationSec": 11.037571,
+    "longTasks": 16,
+    "frameIntervalSamples": 2000,
+    "frameIntervalMaxMs": 183.39999999999418,
+    "chartDraws": [
+      1501,
+      1634
+    ]
+  },
+  "stagingHistoryHealth": {
+    "spot": {
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "metrics": {
+          "requests": 185,
+          "rejected": 0,
+          "bytes": 759473,
+          "serializeMs": 156.01220000044486,
+          "legacyHeatmap": 0,
+          "legacyFootprint": 19,
+          "closedTileReads": 11,
+          "manifests": 54,
+          "peakRss": 109297664,
+          "active": 1,
+          "rss": 105328640
+        },
+        "materializer": {
+          "version": 1,
+          "head": {
+            "cursor": 7367,
+            "at": 1792235108650,
+            "epoch": 1792234371109
+          },
+          "live": {
+            "cursor": 7367,
+            "at": 1792235108650,
+            "from": 1792235100000,
+            "widths": [
+              10,
+              25,
+              50,
+              100,
+              250,
+              1000
+            ]
+          },
+          "metrics": {
+            "startedAt": 1792234371098,
+            "lastPoll": 1792235109041,
+            "lastPersist": 1792235101380,
+            "records": 29429,
+            "closedBuckets": 136,
+            "liveLagMs": 0,
+            "derivedBytes": 522051029,
+            "freeBytes": 213344477184,
+            "paused": false,
+            "error": "",
+            "pages": 9571,
+            "pageMs": 52450.80509099753,
+            "accumulateMs": 2830.7270010008506,
+            "persistMs": 1671.9119199998968,
+            "peakRss": 142888960,
+            "sourceHeadAgeMs": 430,
+            "liveAgeMs": 430,
+            "rss": 141934592
+          },
+          "backlog": []
+        }
+      }
+    },
+    "perpetual": {
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "metrics": {
+          "requests": 186,
+          "rejected": 0,
+          "bytes": 759955,
+          "serializeMs": 157.00125100054356,
+          "legacyHeatmap": 0,
+          "legacyFootprint": 19,
+          "closedTileReads": 11,
+          "manifests": 54,
+          "peakRss": 109297664,
+          "active": 1,
+          "rss": 105328640
+        },
+        "materializer": {
+          "version": 1,
+          "head": {
+            "cursor": 4294342,
+            "at": 1792235108768,
+            "epoch": 1792225022082
+          },
+          "live": {
+            "cursor": 4294342,
+            "at": 1792235108768,
+            "from": 1792235100000,
+            "widths": [
+              10,
+              25,
+              50,
+              100,
+              250,
+              1000
+            ]
+          },
+          "metrics": {
+            "startedAt": 1791915613833,
+            "lastPoll": 1792235109496,
+            "lastPersist": 1792235101072,
+            "records": 4377415,
+            "closedBuckets": 6583,
+            "liveLagMs": 0,
+            "derivedBytes": 522442591,
+            "freeBytes": 213333934080,
+            "paused": false,
+            "error": "",
+            "pages": 2000957,
+            "pageMs": 10985792.904545791,
+            "accumulateMs": 3617059.754366742,
+            "persistMs": 223755.59669507138,
+            "peakRss": 269676544,
+            "sourceHeadAgeMs": 782,
+            "liveAgeMs": 782,
+            "rss": 181051392
+          },
+          "backlog": []
+        }
+      }
+    }
+  },
+  "webSockets": [
+    {
+      "url": "ws://127.0.0.1:5174/?token=h5endve5-1Sb",
+      "frames": 1,
+      "closed": false
+    },
+    {
+      "url": "wss://api.hyperliquid.xyz/ws",
+      "frames": 0,
+      "closed": true
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/level-watches/stream",
+      "frames": 66,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream",
+      "frames": 82,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream?market=spot",
+      "frames": 0,
+      "closed": true
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream",
+      "frames": 83,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream",
+      "frames": 116,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream?market=spot",
+      "frames": 93,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream?market=spot",
+      "frames": 114,
+      "closed": false
+    },
+    {
+      "url": "ws://127.0.0.1:5174/market-data/v1/stream?market=spot",
+      "frames": 43,
+      "closed": false
+    }
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "abortedViewportRequests": 8,
+  "rolloverAnalysis": {
+    "classification": "brief wait for new Spot forming tile availability; prior tile deletion was not observed",
+    "gapObservedMs": 2034,
+    "before": {
+      "at": 1792235098080,
+      "candleMs": 1792235040000,
+      "heatmapState": "live",
+      "heatmapBins": 240,
+      "liveColumnBins": 40,
+      "latestTileStart": 1792235040000
+    },
+    "during": {
+      "at": 1792235102097,
+      "candleMs": 1792235100000,
+      "heatmapState": "syncing",
+      "heatmapBins": 200,
+      "liveColumnBins": 0,
+      "latestTileStart": 1792235040000
+    },
+    "after": {
+      "at": 1792235104131,
+      "candleMs": 1792235100000,
+      "heatmapState": "live",
+      "heatmapBins": 240,
+      "liveColumnBins": 40,
+      "latestTileStart": 1792235100000
+    },
+    "interpretation": "At the middle sample the host candle had rolled, but the latest tile marker remained on the previous minute. The new current tile appeared by the next sample. The sampled trace therefore supports a short initial-availability delay for the forming tile and does not show evidence that the prior tile was deleted. It does not establish gap-free rollover."
+  }
+}

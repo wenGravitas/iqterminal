@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { history, parseLive, socketURL, subscription } from '../src/feed/adapters';
-import { canonicalSeries, connectionKey, keyOf, seriesForInstrument, supportsDepth } from '../src/feed/protocol';
+import { canonicalSeries, connectionKey, keyOf, seriesForInstrument, supportsDepth, supportsScriptDepth } from '../src/feed/protocol';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -37,12 +37,14 @@ it('keeps Spot stream, perpetual stream, and persisted series identity separate'
   expect(seriesForInstrument('binance:spot', '1m')).toEqual(spot);
 });
 
-it('parses native BTCUSDT Spot kline payloads and keeps depth capability USD-M only', () => {
+it('parses native BTCUSDT Spot kline payloads and exposes native Spot depth while keeping scripts USD-M only', () => {
   const raw = { e: 'kline', E: 100, s: 'BTCUSDT', k: { s: 'BTCUSDT', i: '1m', t: 1791558000000, T: 1791558059999, o: '83000', h: '83100', l: '82900', c: '83050', v: '1.25', x: false } };
   expect(parseLive(raw, spot)).toMatchObject([{ v: 1.25, c: 83050, closed: false }]);
   expect(parseLive(raw, { ...spot, interval: '5m' })).toEqual([]);
-  expect(supportsDepth(spot)).toBe(false);
+  expect(supportsDepth(spot)).toBe(true);
+  expect(supportsScriptDepth(spot)).toBe(false);
   expect(supportsDepth(perpetual)).toBe(true);
+  expect(supportsScriptDepth(perpetual)).toBe(true);
 });
 
 it('normalizes old persisted series to perpetual and rejects invalid market combinations', () => {

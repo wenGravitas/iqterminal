@@ -14,7 +14,8 @@ interface Group {
   history?: { next: number; target: number; watermark: number }; historyAbort?: AbortController; historyBusy?: boolean; historyError?: string;
   lastStatus?: FootprintStatus; accumulator?: FootprintAccumulator; cursor?: number; from?: number; ws?: WebSocket; streamAt?: number; lastCoverage?: any; lagMs?: number;
 }
-export const stagingMarket = (series: Series) => series.venue === 'binance' && marketOf(series) === 'perpetual';
+export const stagingMarket = (series: Series) => series.venue === 'binance';
+const footprintSource = (market: ReturnType<typeof marketOf>) => market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade';
 
 /** Worker-owned snapshot restore + durable cursor replay, with bounded shared caches and acknowledged IPC. */
 export class StagingFeedService {
@@ -80,8 +81,10 @@ export class StagingFeedService {
     if (g.rowPrice !== undefined && g.lastUpdate && this.now() - g.lastUpdate >= 4 * 3600000) { g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; this.status(g, 'loading', 'Staging · resume exceeds bounded replay window; reloading retained history'); void this.load(g); return; }
     try {
       const base = typeof location === 'undefined' ? 'http://127.0.0.1:5173' : location.origin;
-      const ws = this.socket(base.replace(/^http/, 'ws') + '/market-data/v1/stream'); g.ws = ws; g.streamAt = this.now();
-      ws.onopen = () => { if (g.ws !== ws) return; ws.send(JSON.stringify({ type: 'subscribe', after: g.cursor ?? 0, from: Math.max(g.from ?? this.now() - 900000, this.now() - 4 * 3600000 + 1000), ...(g.rowPrice === undefined ? { interval: g.series.interval } : {}) })); };
+      const url = new URL('/market-data/v1/stream', base.replace(/^http/, 'ws'));
+      if (marketOf(g.series) === 'spot') url.searchParams.set('market', 'spot');
+      const ws = this.socket(url.href); g.ws = ws; g.streamAt = this.now();
+      ws.onopen = () => { if (g.ws !== ws) return; ws.send(JSON.stringify({ type: 'subscribe', after: g.cursor ?? 0, from: Math.max(g.from ?? this.now() - 900000, this.now() - 4 * 3600000 + 1000), ...(g.rowPrice === undefined ? { interval: g.series.interval } : {}), ...(marketOf(g.series) === 'spot' ? { market: 'spot' } : {}) })); };
       ws.onmessage = event => {
         if (g.ws !== ws || this.dead || !this.online) return;
         try {
@@ -103,10 +106,11 @@ export class StagingFeedService {
           let previous = g.cursor!;
           for (const t of data.executions) {
             if (!Number.isSafeInteger(t.id) || t.id <= previous || ![t.timeMs,t.price,t.quantity,t.quoteNotional].every(Number.isFinite) || t.price <= 0 || t.quantity <= 0 || !['buy','sell'].includes(t.side)) throw new Error('Invalid execution cursor/values');
+            if (t.market !== undefined && t.market !== marketOf(g.series)) throw new Error('Execution market mismatch');
             previous = t.id;
           }
           if (previous !== data.cursor) throw new Error('Batch cursor mismatch');
-          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest(t); g.cursor = t.id; }
+          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest({ ...t, market: marketOf(g.series) }); g.cursor = t.id; }
           g.lastUpdate = data.collector.lastUpdate; const priorGaps = g.lastCoverage?.gaps?.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark') ?? []; data.coverage.gaps = [...new Map([...data.coverage.gaps, ...priorGaps].map((x:any)=>[`${x.from}:${x.to}:${x.reason}`,x])).values()].slice(-512);
           g.lastCoverage = data.coverage; g.lagMs = Math.max(0, this.now() - data.sentAt);
           const previousBars = new Map(g.bars.map(b => [b.time,b]));
@@ -156,8 +160,9 @@ export class StagingFeedService {
     try {
       // Identical UTC boundaries across timeframe changes; each response captures one committed watermark.
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
-      const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}`
-        : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}`;
+      const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
+      const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
+        : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? `HTTP ${response.status}`);
@@ -174,7 +179,8 @@ export class StagingFeedService {
         if (initial || changes.length) this.emit({ type: initial ? 'snapshot' : 'patch', key: g.key, ids: [...g.ids], candles: initial ? g.candles : changes });
         g.cursor = 0; g.from = from; this.status(g, 'live', 'Staging · native Binance candle history loaded; connecting stream');
       } else {
-        if (data.version !== 1 || data.source !== 'binance-usdm-aggtrade' || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every(validBackendBar) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
+        const source = footprintSource(marketOf(g.series));
+        if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
         const oldBars = g.bars;
         g.bars = data.bars; g.cursor = data.cursor ?? data.watermark; g.from = from;
         const ticks = footprintTicksForPrice(g.rowPrice!, data.tickSize); if (ticks === null) throw new Error('Invalid staging tick size');
@@ -203,7 +209,7 @@ export class StagingFeedService {
     } finally { clearTimeout(timeout); g.busy = false; g.abort = undefined; }
   }
   private async loadViewport(g:Group,id:string){const view=g.views.get(id);if(!view||view.busy||!g.accumulator)return;view.busy=true;view.abort=new AbortController();g.historyBusy=true;g.historyError=undefined;
-    try{await this.prepared.load(view.from,view.to,g.series.interval,g.rowPrice!,view.abort.signal,(bars,complete,validated)=>{if(view.abort!.signal.aborted||g.views.get(id)!==view||this.groups.get(g.key)!==g||!g.accumulator)return;if(!bars.every(validBackendBar))throw Error('Invalid historical footprint bars');
+    try{await this.prepared.load(view.from,view.to,g.series.interval,g.rowPrice!,view.abort.signal,(bars,complete,validated)=>{if(view.abort!.signal.aborted||g.views.get(id)!==view||this.groups.get(g.key)!==g||!g.accumulator)return;if(!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))))throw Error('Invalid historical footprint bars');
       // Closed viewport responses never advance the durable live execution cursor.
       const step=duration[g.series.interval],liveStart=Math.floor(this.now()/step)*step;
       for(const b of bars)if(b.time*1000<liveStart)g.preparedTimes.add(b.time);
@@ -214,7 +220,7 @@ export class StagingFeedService {
       // Prepared closed bars are presentation replacements. The live accumulator
       // keeps its own acknowledged cursor state and never re-ingests their totals.
       view.loaded=complete;if(complete)view.validatedAt=this.now();
-      const status=this.footprintStatus(g,g.lastStatus?.state??'loading',`Staging · ${validated?'validated':'cached; validating'} visible footprints${complete?'':' · loading history'}`,{coverage:g.lastCoverage,tickSize:.1});g.lastStatus=status;this.publish(g,{type:'footprint-snapshot',key:g.key,ids:[...g.ids],generation:g.generation,batchId:0,bars:g.bars,retentionStart:g.bars[0]?.time??null,status});});
+      const status=this.footprintStatus(g,g.lastStatus?.state??'loading',`Staging · ${validated?'validated':'cached; validating'} visible footprints${complete?'':' · loading history'}`,{coverage:g.lastCoverage,tickSize:.1});g.lastStatus=status;this.publish(g,{type:'footprint-snapshot',key:g.key,ids:[...g.ids],generation:g.generation,batchId:0,bars:g.bars,retentionStart:g.bars[0]?.time??null,status});},marketOf(g.series));
     }catch(e){if(!view.abort.signal.aborted){g.historyError=e instanceof Error?e.message:String(e);g.retryAt=this.now()+2000;this.status(g,'stale',`Staging visible footprints · ${g.historyError}`);}}
     finally{view.busy=false;g.historyBusy=[...g.views.values()].some(v=>v.busy);}
   }
@@ -234,7 +240,8 @@ export class StagingFeedService {
       while (g.history.next > g.history.target && !abort.signal.aborted && this.online) {
         const history: NonNullable<Group['history']> = g.history;
         const to = history.next, from = Math.max(history.target, to - pageMs);
-        const path = `/market-data/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}&watermark=${history.watermark}`;
+        const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
+        const path = `/market-data/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}&watermark=${history.watermark}${marketQuery}`;
         let data: any;
         for (let attempt = 0; ; attempt++) {
           const r = await this.request(path, { signal: AbortSignal.any([abort.signal, AbortSignal.timeout(20000)]) });
@@ -246,7 +253,7 @@ export class StagingFeedService {
         }
         if (abort.signal.aborted || this.groups.get(g.key) !== g || !g.accumulator || g.history !== history) return;
         if (!data.bars) continue; // Retry the smaller complete-bar page.
-        if (data.version !== 1 || data.watermark !== history.watermark || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((b: any) => validBackendBar(b) && b.time * 1000 >= from && b.time * 1000 < to)) throw new Error('Invalid older footprint history');
+        if (data.version !== 1 || data.watermark !== history.watermark || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((b: any) => validBackendBar(b, marketOf(g.series)) && b.time * 1000 >= from && b.time * 1000 < to)) throw new Error('Invalid older footprint history');
         const merged = boundedFootprintHistory([...data.bars, ...g.bars]);
         const full = merged.length === FOOTPRINT_MAX_BARS || merged.length < data.bars.length + g.bars.length;
         g.accumulator.restore(merged); g.bars = merged; history.next = from;
@@ -266,10 +273,10 @@ export class StagingFeedService {
   dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
-export function validBackendBar(b: any): b is FootprintBar {
+export function validBackendBar(b: any, market: ReturnType<typeof marketOf> = 'perpetual'): b is FootprintBar {
   return b && Number.isSafeInteger(b.time) && b.time > 0 && Number.isSafeInteger(b.revision)
     && ['partial', 'observed', 'gapped', 'capacity-limited'].includes(b.coverage)
-    && b.source === 'binance-usdm-aggtrade' && b.granularity === 'aggregate-trade'
+    && b.source === footprintSource(market) && b.granularity === 'aggregate-trade'
     && [b.open, b.high, b.low, b.close, b.delta, b.minDelta, b.maxDelta, b.rowSize].every(Number.isFinite)
     && b.low > 0 && b.high >= Math.max(b.open, b.close, b.low) && b.low <= Math.min(b.open, b.close)
     && Array.isArray(b.cells) && b.cells.length <= 512 && b.cells.every((c: any) => [c.price, c.bidVol, c.askVol, c.bidNotional, c.askNotional].every(Number.isFinite) && c.bidVol >= 0 && c.askVol >= 0 && c.bidNotional >= 0 && c.askNotional >= 0);

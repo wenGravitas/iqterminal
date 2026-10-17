@@ -64,7 +64,9 @@ export class HeatmapControls {
   private renderStatus() {
     if (!this.current.enabled) return;
     const s = this.status;
-    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${s.message.startsWith('Staging') ? ' · '+s.message : ''}${s.capacityLimited ? ' · row limit' : ''} · ${s.collectionStart ? `since ${utc(s.collectionStart)}` : 'collecting…'}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
+    const detail=s&&(s.state==='failed'||s.message.startsWith('Staging'))?` · ${s.message}`:'';
+    const collection=s?.collectionStart?` · since ${utc(s.collectionStart)}`:s?.state==='failed'?'':' · collecting…';
+    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${detail}${s.capacityLimited ? ' · row limit' : ''}${collection}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
     this.notice.title = !this.supported ? this.notice.textContent : `${this.notice.textContent}\n${s?.message ?? 'Waiting for synchronized depth'}`;
   }
   hover(hit: ReturnType<OrderBookHeatmap['hoverAt']>) {

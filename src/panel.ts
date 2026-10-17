@@ -9,7 +9,7 @@ import type { Bar, CrosshairMoveEvent } from 'openalgo-charts';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
 import { FeedClient } from './feed/client';
-import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, validFootprintRowPrice, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status } from './feed/protocol';
+import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status } from './feed/protocol';
 import { OpenAlgoCandleChart } from './chart/openalgo';
 import type { Scheduler } from './chart/scheduler';
 import { footprintForUnits, type FootprintUnits } from './chart/footprint-units';
@@ -248,7 +248,8 @@ export class CandlePanel implements IContentRenderer {
     this.chartSettings.setAttribute('aria-label', 'Chart settings');
     this.chartSettings.title = 'Chart settings';
     this.latest.className = 'chart-latest-button';
-    this.latest.textContent = 'Latest';
+    this.latest.append(indicatorIcon('latest'));
+    this.latest.setAttribute('aria-label', 'Latest');
     this.latest.title = 'Return to the latest candle and restore price autoscale (Home or double click)';
     this.indicators.textContent = 'Indicators';
     this.indicators.title = 'Add a study or open the local OpenScript library';
@@ -742,7 +743,7 @@ export class CandlePanel implements IContentRenderer {
       const definition = nativeDefinition(instance.definitionId), study = views.find(v => v.attachmentId === instance.instanceId);
       const name = definition?.name ?? instance.script?.title ?? instance.definitionId;
       const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
-      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && !supportsDepth(this.selection) ? 'Unavailable · Binance USD-M only'
+      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
         : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
           : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
             : study ? study.inputs.filter(i => i.kind !== 'color').map(i => `${i.label} ${study.settings[i.key] ?? i.defaultValue}`).join(' · ') : 'Restoring pinned revision…';
@@ -806,16 +807,16 @@ export class CandlePanel implements IContentRenderer {
       for (const definition of matches) {
         const native = definition.implementation === 'builtin';
         const existing = native && this.selection.indicators.some(i => i.definitionId === definition.id);
-        const unsupported = definition.dataRequirements.some(r => ['executions','synchronized-book','depth-series'].includes(r)) && !supportsDepth(this.selection);
+        const unsupported = definition.implementation === 'scripted' && definition.dataRequirements.includes('depth-series') && !supportsScriptDepth(this.selection);
         const row = document.createElement('button'); row.type = 'button'; row.className = 'indicator-option';
         if (native) row.dataset.addNative = definition.id; else row.dataset.addScript = definition.id.slice(7);
         row.setAttribute('aria-label', `${existing ? 'Configure' : 'Add'} ${definition.name}`);
         row.disabled = this.pickerBusy || (!native && (activeCount >= MAX_STUDIES_PER_CHART || unsupported));
-        row.title = existing ? 'Configure the existing singleton' : unsupported ? 'Available on Binance BTCUSDT USD-M Perp only; chart market will stay selected' : `Add ${definition.name} with its default settings`;
+        row.title = existing ? 'Configure the existing singleton' : unsupported ? 'Available on Binance BTCUSDT Spot or USD-M Perp only; chart market will stay selected' : `Add ${definition.name} with its default settings`;
         const copy = document.createElement('div'); copy.className = 'indicator-option-copy';
         const title = document.createElement('strong'); title.textContent = definition.name;
         const description = document.createElement('span'); description.textContent = definition.description;
-        const kind = document.createElement('small'); kind.textContent = native ? 'Built-in · one per chart' : 'Scripted · editable source'; if (unsupported) kind.textContent += ' · Binance BTCUSDT USD-M Perp only'; copy.append(title, description, kind);
+        const kind = document.createElement('small'); kind.textContent = native ? 'Built-in · one per chart' : 'Scripted · editable source'; if (unsupported) kind.textContent += ' · Binance BTCUSDT Spot or USD-M Perp only'; copy.append(title, description, kind);
         const action = document.createElement('span'); action.className = 'indicator-option-action'; action.textContent = existing ? 'Settings' : 'Add'; action.setAttribute('aria-hidden','true');
         row.append(copy, action); section.append(row); shown++;
       }
@@ -994,7 +995,7 @@ export class CandlePanel implements IContentRenderer {
     const settings: HeatmapSettings = { ...(footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' as const } : this.selection.heatmap), candleMs: duration[this.selection.interval] };
     this.heatmapControls.sync(settings, supported, footprint); this.heatmapControls.setUnits(this.selection.footprintUnits);
     this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported }, duration[this.selection.interval]);
-    const key = this.nativeIndicator(HEATMAP_ID) && supported ? heatmapKey(settings) : '';
+    const key = this.nativeIndicator(HEATMAP_ID) && supported ? `${instrumentKey(this.selection)}:${heatmapKey(settings)}` : '';
     if (key === this.heatmapSubscriptionKey) return;
     this.releaseHeatmap?.(); this.releaseHeatmap = undefined; this.heatmapSubscriptionKey = key;
     const generation = ++this.heatmapGeneration; this.heatmapStatus = undefined; this.heatmapControls.setStatus(undefined); this.heatmapControls.hover(null);
@@ -1005,7 +1006,7 @@ export class CandlePanel implements IContentRenderer {
       this.heatmapStatus = event.status;
       this.engine?.updateHeatmap(event.buckets, event.snapshot, event.status.retentionStart);
       if (this.visible && !document.hidden) this.heatmapControls.setStatus(event.status);
-    });
+    }, marketOf(this.selection));
   }
 
   private subscribeFootprint() {
@@ -1019,7 +1020,7 @@ export class CandlePanel implements IContentRenderer {
     const epoch = this.selectionEpoch;
     const selection = this.selection;
     this.footprintStatus = {
-      state: 'loading', message: 'Connecting to Binance BTCUSDT USD-M aggTrade…', lastUpdate: 0,
+      state: 'loading', message: `Connecting to ${instrumentLabel(selection)} aggregate trades…`, lastUpdate: 0,
       tickSize: null, rowSize: null, collectionStartedAt: null, firstTradeAt: null, lastTradeAt: null, eventTime: null,
       outages: 0, lateRecords: 0, capacityDrops: 0, unknownSideRecords: 0, unknownSideVolume: 0,
       coverage: 'waiting', retentionStart: null,
