@@ -1,0 +1,79 @@
+[
+  {
+    "id": "fb960ae453033b8f2fd2b6f7e763a32b72410e0cd3c761828474725e8c2c7d14",
+    "name": "iqterminal-clickhouse",
+    "service": "clickhouse",
+    "imageTag": "clickhouse/clickhouse-server:25.8.16.34",
+    "imageId": "sha256:86e6acceeacb49202fd694b77b4f7fcd6e022b52a29b0568fbfb4b05e8f6b2e7",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-12T07:43:51.395635629Z",
+    "created": "2026-10-12T07:15:51.9214044Z"
+  },
+  {
+    "id": "6eda5d62cce77d09d760f502d14015b4743540108c188c0ae997b99e42888ed1",
+    "name": "iqterminal-history-api",
+    "service": "app",
+    "imageTag": "iqterminal-history:local",
+    "imageId": "sha256:ff98db346902e0fe89214ba2e81a1030e31f42b29e237d0e138ecbe776217676",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-17T15:15:50.073948876Z",
+    "created": "2026-10-17T15:15:49.630350105Z"
+  },
+  {
+    "id": "d0afc0aa2dc33a5b852f759b4b63c65324fcbdd67cf5e229f563759c95898a5b",
+    "name": "iqterminal-history-materializer",
+    "service": "materializer",
+    "imageTag": "iqterminal-history:local",
+    "imageId": "sha256:19fbf70d445bf78b30806cd894898a1d957983ad1a16288a3cce699c5e4a4dc0",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-13T18:20:12.585491303Z",
+    "created": "2026-10-13T18:20:11.899910579Z"
+  },
+  {
+    "id": "60d0b8cde5d7fb969e6426a6c9220ffe55eaed69fa491e69cfa0aecf5b086c1d",
+    "name": "iqterminal-level-watch",
+    "service": "level-watch",
+    "imageTag": "iqterminal-server-level-watch",
+    "imageId": "sha256:68bdb5a912b1c1141cf20bc5246c1c446b870b6cb20b44f480b5166561238492",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-12T16:34:25.54595647Z",
+    "created": "2026-10-12T16:34:24.970777117Z"
+  },
+  {
+    "id": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+    "name": "iqterminal-server",
+    "service": "collector",
+    "imageTag": "iqterminal-history:local",
+    "imageId": "sha256:d50658c2a941359a89729ec8c6ef5a169e0379f729cc31f9ff9baef5b14dd65b",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-13T15:54:46.038970032Z",
+    "created": "2026-10-13T15:54:45.922772927Z"
+  },
+  {
+    "id": "f13465264d416adcd2fa9f5cbd61472db590daaab80745c2cdc45c6e6108ae27",
+    "name": "iqterminal-spot-history-materializer",
+    "service": "spot-materializer",
+    "imageTag": "iqterminal-spot-history:local",
+    "imageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-17T10:52:50.949429456Z",
+    "created": "2026-10-17T10:52:50.719188311Z"
+  },
+  {
+    "id": "64633566f740847f2b847a2e113ea505b564435d16dbfbd26cfc145da20608d3",
+    "name": "iqterminal-spot-server",
+    "service": "spot-collector",
+    "imageTag": "iqterminal-spot-history:local",
+    "imageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+    "state": "running",
+    "health": "healthy",
+    "startedAt": "2026-10-17T10:52:50.952198029Z",
+    "created": "2026-10-17T10:52:50.717250698Z"
+  }
+]

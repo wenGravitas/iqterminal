@@ -1,0 +1,61 @@
+{
+  "capturedAtUtc": "2026-10-17T15:16:44.724901+00:00",
+  "probes": [
+    {
+      "name": "fixed-100m",
+      "parameters": {
+        "from": 1792242360000,
+        "to": 1792248356363,
+        "after": 0,
+        "limit": 1000
+      },
+      "rangeMs": 5996363,
+      "status": 200,
+      "elapsedMs": 1865,
+      "responseBytes": 2271855,
+      "retryAfter": null,
+      "error": null,
+      "watermark": 4442833,
+      "returnedObservations": 1036,
+      "page": {
+        "after": 4365635,
+        "nextAfter": 4366671,
+        "hasMore": true,
+        "lastAt": 1792242461682,
+        "limit": 1000,
+        "observations": 1036,
+        "sameMillisecondClosed": true
+      },
+      "partial": false,
+      "seedCursor": 4365635
+    },
+    {
+      "name": "fresh-trailing-60s",
+      "parameters": {
+        "from": 1792250144612,
+        "to": 1792250204612,
+        "after": 0,
+        "limit": 1000
+      },
+      "rangeMs": 60000,
+      "status": 200,
+      "elapsedMs": 1552,
+      "responseBytes": 1648357,
+      "retryAfter": null,
+      "error": null,
+      "watermark": 4442853,
+      "returnedObservations": 775,
+      "page": {
+        "after": 4442061,
+        "nextAfter": 4442836,
+        "hasMore": false,
+        "lastAt": 1792250204555,
+        "limit": 1000,
+        "observations": 775,
+        "sameMillisecondClosed": true
+      },
+      "partial": false,
+      "seedCursor": 4442061
+    }
+  ]
+}

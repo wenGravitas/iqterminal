@@ -5,25 +5,38 @@ import {heatmapKey,HEATMAP_STRIDE,type HeatmapResolution,type HeatmapStatus,type
 import {depthSource,preparedDepthFeed} from './prepared-history';
 import type {Command,Event,Market} from './protocol';
 export interface HeatmapViewport {from:number;to:number;low:number;high:number;width:number;height:number;}
+export type DepthHeadNotice = { type:'head'; cursor:number; at:number; epoch:number } | { type:'stale'; message:string } | { type:'reset'; message:string };
+type DepthHeadObserver = { market:Market; callback:(notice:DepthHeadNotice)=>void };
 interface HistoryProgress {serial:number;range:ReturnType<typeof viewportRequest>;at:number;span:number;combined?:any;}
 interface Group {validatedAt?:number;formingFrom?:number;history?:HistoryProgress;id:string;key:string;market:Market;resolution:HeatmapResolution;generation:number;view?:HeatmapViewport;requestKey?:string;serial:number;abort?:AbortController;ws?:WebSocket;head:number;at:number;busy:boolean;dirty:boolean;retry:number;retryAt:number;streamAt:number;loadedSerial?:number;cacheEnd?:number;gaps?:any[];lastStatus?:HeatmapStatus;buckets:LiquidityBucket[];inFlight?:number;pending?:Extract<Event,{type:'heatmap-batch'}>;}
 /** Viewport queries run in the feed worker; durable server collection never depends on subscriptions. */
 export class StagingHeatmapService {
  private prepared:PreparedHistory;private usePrepared=import.meta.env.VITE_HISTORY_TILES!=='0';
- private groups=new Map<string,Group>();private streams=new Map<Market,WebSocket>();private generation=0;private batch=0;private online=true;private timer:ReturnType<typeof setInterval>;
+ private groups=new Map<string,Group>();private streams=new Map<Market,WebSocket>();private headObservers=new Map<string,DepthHeadObserver>();private marketHeads=new Map<Market,{cursor:number;at:number;epoch:number}>();private marketStreamAt=new Map<Market,number>();private marketRetryAt=new Map<Market,number>();private generation=0;private batch=0;private online=true;private timer:ReturnType<typeof setInterval>;
  constructor(private emit:(e:Event)=>void,private request:typeof fetch=(...a)=>fetch(...a),private now=Date.now,private socket:(url:string)=>WebSocket=url=>new WebSocket(url),private cache:HeatmapHistoryCache=new IndexedHeatmapCache()) {this.prepared=new PreparedHistory(request);this.timer=setInterval(()=>this.refresh(),100);}
  command(c:Command){
   if(c.type==='heatmap-subscribe'){this.remove(c.id);if(this.groups.size>=16)return;this.groups.set(c.id,{id:c.id,key:heatmapKey(c.resolution),market:c.market??'perpetual',resolution:c.resolution,generation:++this.generation,serial:0,head:0,at:0,busy:false,dirty:false,retry:0,retryAt:0,streamAt:0,buckets:[]});}
   else if(c.type==='heatmap-viewport'){const g=this.groups.get(c.id);if(!g)return;const view=c.viewport;if(![view.from,view.to,view.low,view.high,view.width,view.height].every(Number.isFinite)||view.from>=view.to||view.low>=view.high)return;g.view=view;const request=viewportRequest(view,g.resolution.candleMs??60000,g.resolution.rowPrice,this.now());const key=JSON.stringify({...request,from:Math.floor(request.from/request.timeMs),to:Math.ceil(view.to/request.timeMs)});if(key!==g.requestKey){g.requestKey=key;g.serial++;g.history=undefined;g.abort?.abort();g.dirty=true;g.retryAt=this.now()+(this.usePrepared?50:150);}}
   else if(c.type==='heatmap-unsubscribe')this.remove(c.id);
   else if(c.type==='heatmap-ack'){for(const g of this.groups.values())if(g.key===c.key&&g.generation===c.generation&&g.inFlight===c.batchId){g.inFlight=undefined;const pending=g.pending;g.pending=undefined;if(pending)this.publish(g,pending);}}
-  else if(c.type==='online'){this.online=c.online;for(const g of this.groups.values()){if(!c.online){g.abort?.abort();g.ws?.close();g.ws=undefined;this.status(g,'stale','Staging depth · offline; historical observations preserved');}else{g.retryAt=0;g.dirty=true;}}if(!c.online){this.streams.clear();}}
-  else if(c.type==='depth-retry'){for(const g of this.groups.values()){g.retry=0;g.retryAt=0;g.dirty=true;}}
+  else if(c.type==='online'){this.online=c.online;for(const g of this.groups.values()){if(!c.online){g.abort?.abort();g.ws?.close();g.ws=undefined;this.status(g,'stale','Staging depth · offline; historical observations preserved');}else{g.retryAt=0;g.dirty=true;}}if(!c.online){for(const market of this.observedMarkets())this.notifyHeadObservers(market,{type:'stale',message:'Staging depth · offline'});for(const ws of this.streams.values())ws.close();this.streams.clear();this.marketStreamAt.clear();}else for(const market of this.observedMarkets())this.connectMarket(market,this.marketHeads.get(market)?.cursor??0);}
+  else if(c.type==='depth-retry'){for(const g of this.groups.values()){g.retry=0;g.retryAt=0;g.dirty=true;}for(const market of this.observedMarkets()){this.marketRetryAt.set(market,0);this.connectMarket(market,this.marketHeads.get(market)?.cursor??0);}}
  }
- private remove(id:string){const g=this.groups.get(id);g?.abort?.abort();this.groups.delete(id);if(g&&!([...this.groups.values()].some(x=>x.market===g.market))){this.streams.get(g.market)?.close();this.streams.delete(g.market);}}
+ observeDepthHeads(id:string,market:Market,after:number,callback:(notice:DepthHeadNotice)=>void){
+  if(!id||!Number.isSafeInteger(after)||after<0)return ()=>{};
+  this.headObservers.set(id,{market,callback});
+  const known=this.marketHeads.get(market);if(known)callback({type:'head',...known});
+  if(this.online)this.connectMarket(market,Math.max(after,known?.cursor??0));
+  return ()=>{this.headObservers.delete(id);this.closeIfUnused(market);};
+ }
+ private observedMarkets(){return [...new Set([...this.headObservers.values()].map(x=>x.market))];}
+ private hasMarketConsumer(market:Market){return [...this.groups.values()].some(x=>x.market===market)||[...this.headObservers.values()].some(x=>x.market===market);}
+ private closeIfUnused(market:Market){if(!this.hasMarketConsumer(market)){this.streams.get(market)?.close();this.streams.delete(market);}}
+ private notifyHeadObservers(market:Market,notice:DepthHeadNotice){for(const x of this.headObservers.values())if(x.market===market){try{x.callback(notice);}catch(error){console.error('Depth head observer failed',error);}}}
+ private remove(id:string){const g=this.groups.get(id);g?.abort?.abort();this.groups.delete(id);if(g)this.closeIfUnused(g.market);}
  private status(g:Group,state:HeatmapStatus['state'],message:string){g.lastStatus={state,message,tickSize:marketTickSize(g.market),collectionStart:g.lastStatus?.collectionStart??null,retentionStart:g.buckets[0]?.start??null,capacityLimited:Boolean(g.view&&g.view.to-g.view.from>14400000)};this.publish(g,{type:'heatmap-batch',key:g.key,ids:[g.id],generation:g.generation,batchId:0,snapshot:true,buckets:g.buckets,status:g.lastStatus});}
  private publish(g:Group,event:Extract<Event,{type:'heatmap-batch'}>){if(g.inFlight!==undefined){g.pending=g.pending?.snapshot&&!event.snapshot?{...event,snapshot:true,buckets:g.buckets}:event;return;}event={...event,batchId:++this.batch};g.inFlight=event.batchId;this.emit(event);}
- private refresh(){for(const g of this.groups.values()){if(this.usePrepared&&g.loadedSerial===g.serial&&this.now()-(g.validatedAt??g.at)>30000)g.dirty=true;if(g.ws&&this.now()-g.streamAt>15000){g.ws.close();g.ws=undefined;g.dirty=true;this.status(g,'stale','Staging depth heartbeat stale');}}if(!this.online||!this.usePrepared&&[...this.groups.values()].some(g=>g.busy))return;const ready=[...this.groups.values()].filter(g=>!g.busy&&g.view&&this.now()>=g.retryAt&&(g.dirty||!g.ws)).sort((a,b)=>a.at-b.at);if(ready[0])void this.load(ready[0]);}
+ private refresh(){for(const g of this.groups.values())if(this.usePrepared&&g.loadedSerial===g.serial&&this.now()-(g.validatedAt??g.at)>30000)g.dirty=true;for(const [market,ws]of this.streams){if(this.now()-(this.marketStreamAt.get(market)??this.now())>15000){this.marketRetryAt.set(market,this.now()+1000);this.notifyHeadObservers(market,{type:'stale',message:'Staging depth heartbeat stale'});ws.close();}}if(this.online)for(const market of this.observedMarkets())if(!this.streams.has(market))this.connectMarket(market,this.marketHeads.get(market)?.cursor??0);if(!this.online||!this.usePrepared&&[...this.groups.values()].some(g=>g.busy))return;const ready=[...this.groups.values()].filter(g=>!g.busy&&g.view&&this.now()>=g.retryAt&&(g.dirty||!g.ws)).sort((a,b)=>a.at-b.at);if(ready[0])void this.load(ready[0]);}
  private async load(g:Group){if(this.usePrepared)return this.loadPrepared(g);if(!g.view)return;g.busy=true;g.dirty=false;const serial=g.serial;const abort=new AbortController();g.abort=abort;
  try{if(!g.buckets.length)this.status(g,'syncing','Staging depth · loading recorded viewport');const bounds={...(g.history?.serial===serial?g.history.range:viewportRequest(g.view,g.resolution.candleMs??60000,g.resolution.rowPrice,this.now())),market:g.market};
  if(!g.buckets.length){const saved=await Promise.race([this.cache.read(bounds.rowPrice,bounds.timeMs,g.market).catch(()=>undefined),new Promise<undefined>(resolve=>setTimeout(()=>resolve(undefined),200))]);if(this.groups.get(g.id)!==g||serial!==g.serial||abort.signal.aborted)return;const tiles=cachedTiles(saved,bounds,this.now());if(tiles.length){g.buckets=tiles;this.status(g,'syncing','Staging depth · cached closed history; checking coverage and loading live');}}
@@ -81,13 +94,48 @@ export class StagingHeatmapService {
  }catch(e){if(!abort.signal.aborted&&this.groups.get(g.id)===g){g.dirty=true;g.retry=Math.min(g.retry+1,7);g.retryAt=this.now()+Math.min(10000,500*2**g.retry);this.status(g,'stale',`Staging prepared depth · ${e instanceof Error?e.message:String(e)} · retrying`);}}
  finally{g.busy=false;if(g.serial!==serial)g.dirty=true;}
  }
- private connect(g:Group){if(g.ws)return;const existing=this.streams.get(g.market);if(existing){g.ws=existing;g.streamAt=this.now();return;}const origin=typeof location==='undefined'?'http://127.0.0.1:5173':location.origin;const url=new URL('/market-data/v1/stream',origin.replace(/^http/,'ws'));if(g.market==='spot')url.searchParams.set('market','spot');const ws=this.socket(url.href);this.streams.set(g.market,ws);for(const x of this.groups.values())if(x.market===g.market){x.ws=ws;x.streamAt=this.now();}
- ws.onopen=()=>ws.send(JSON.stringify({type:'subscribe',version:1,channel:'depth',after:g.head,...(g.market==='spot'?{market:'spot'}:{})}));
- ws.onmessage=e=>{if(this.streams.get(g.market)!==ws)return;try{const m=JSON.parse(String(e.data));for(const x of this.groups.values()){if(x.market!==g.market)continue;x.streamAt=this.now();if(m.type==='depth-head'){if(!Number.isSafeInteger(m.watermark?.cursor))throw new Error('Invalid depth head');if(m.watermark.cursor>x.head){if(x.loadedSerial===x.serial&&x.view&&x.view.to<this.now()-2*(x.resolution.candleMs??60000)){x.head=m.watermark.cursor;continue;}x.dirty=true;x.retryAt=Math.max(x.retryAt,this.now()+100);}}else if(m.type==='health'&&m.depth?.status.state!=='live'){x.validatedAt=0;this.status(x,'stale',`Staging depth · ${m.depth?.status.message??'recovery pending'}`);}}if(m.type==='depth-head')ws.send(JSON.stringify({type:'ack',cursor:m.watermark.cursor}));else if(m.type==='reset')throw new Error(m.reason);}catch{ws.close();}};
- ws.onerror=()=>ws.close();ws.onclose=()=>{if(this.streams.get(g.market)!==ws)return;this.streams.delete(g.market);for(const x of this.groups.values()){if(x.market!==g.market)continue;x.ws=undefined;x.validatedAt=0;x.dirty=true;x.retryAt=this.now()+1000;this.status(x,'stale','Staging depth · reconnecting; retained history preserved');}};
+ private connect(g:Group){this.connectMarket(g.market,g.head);g.ws=this.streams.get(g.market);if(g.ws)g.streamAt=this.marketStreamAt.get(g.market)??this.now();}
+ /** Heatmap and order-wall consumers share this one durable-head stream per market. */
+ private connectMarket(market:Market,after:number){
+  if(!this.online||!this.hasMarketConsumer(market)||this.streams.has(market)||this.now()<(this.marketRetryAt.get(market)??0))return;
+  const origin=typeof location==='undefined'?'http://127.0.0.1:5173':location.origin,url=new URL('/market-data/v1/stream',origin.replace(/^http/,'ws'));
+  if(market==='spot')url.searchParams.set('market','spot');
+  let ws:WebSocket;try{ws=this.socket(url.href);}catch{this.marketRetryAt.set(market,this.now()+1000);this.notifyHeadObservers(market,{type:'stale',message:'Staging depth · connection unavailable'});return;}
+  this.streams.set(market,ws);this.marketStreamAt.set(market,this.now());
+  for(const g of this.groups.values())if(g.market===market){g.ws=ws;g.streamAt=this.now();}
+  const cursor=Math.max(after,this.marketHeads.get(market)?.cursor??0);
+  ws.onopen=()=>{if(this.streams.get(market)===ws)ws.send(JSON.stringify({type:'subscribe',version:1,channel:'depth',after:cursor,...(market==='spot'?{market:'spot'}:{})}));};
+  ws.onmessage=e=>{
+   if(this.streams.get(market)!==ws)return;const at=this.now();this.marketStreamAt.set(market,at);
+   for(const g of this.groups.values())if(g.market===market)g.streamAt=at;
+   try{
+    const m=JSON.parse(String(e.data));
+    if(m.type==='depth-head'){
+     const head=m.watermark;if(!Number.isSafeInteger(head?.cursor)||head.cursor<0)throw new Error('Invalid depth head');
+     const prior=this.marketHeads.get(market),headAt=Number.isFinite(head.at)?head.at:at,headEpoch=Number.isSafeInteger(head.epoch)?head.epoch:prior?.epoch??0;
+     if(!prior||head.cursor>prior.cursor||headEpoch!==prior.epoch||headAt>prior.at)this.marketHeads.set(market,{cursor:head.cursor,at:headAt,epoch:headEpoch});
+     // A valid same-cursor head after a stale/reconnect notice confirms that the
+     // retained watermark is still authoritative even though no cursor advanced.
+     this.notifyHeadObservers(market,{type:'head',cursor:head.cursor,at:headAt,epoch:headEpoch});
+     ws.send(JSON.stringify({type:'ack',cursor:head.cursor}));
+     for(const g of this.groups.values())if(g.market===market&&head.cursor>g.head){if(g.loadedSerial===g.serial&&g.view&&g.view.to<this.now()-2*(g.resolution.candleMs??60000)){g.head=head.cursor;continue;}g.dirty=true;g.retryAt=Math.max(g.retryAt,this.now()+100);}
+    }else if(m.type==='health'&&m.depth?.status.state!=='live'){
+     const message=`Staging depth · ${m.depth?.status.message??'recovery pending'}`;this.notifyHeadObservers(market,{type:'stale',message});
+     for(const g of this.groups.values())if(g.market===market){g.validatedAt=0;this.status(g,'stale',message);}
+    }else if(m.type==='reset'){
+     this.notifyHeadObservers(market,{type:'reset',message:m.reason??'Depth stream reset'});this.marketRetryAt.set(market,this.now()+1000);ws.close();
+    }
+   }catch{this.marketRetryAt.set(market,this.now()+1000);ws.close();}
+  };
+  ws.onerror=()=>ws.close();
+  ws.onclose=()=>{
+   if(this.streams.get(market)!==ws)return;this.streams.delete(market);this.marketStreamAt.delete(market);this.marketRetryAt.set(market,this.now()+1000);
+   for(const g of this.groups.values())if(g.market===market){g.ws=undefined;g.validatedAt=0;g.dirty=true;g.retryAt=this.now()+1000;this.status(g,'stale','Staging depth · reconnecting; retained history preserved');}
+   this.notifyHeadObservers(market,{type:'stale',message:'Staging depth · reconnecting; retained history preserved'});
+  };
  }
  diagnostics(){return {prepared:this.prepared.metrics,scheduler:historyScheduler.diagnostics(),configurations:this.groups.size,streams:[...this.streams.keys()],groups:[...this.groups.values()].map(g=>({key:g.key,market:g.market,cursor:g.head,buckets:g.buckets.length,loading:g.busy,status:g.lastStatus}))};}
- dispose(){this.prepared.dispose();this.cache.dispose?.();clearInterval(this.timer);for(const id of this.groups.keys())this.remove(id);}
+ dispose(){this.prepared.dispose();this.cache.dispose?.();clearInterval(this.timer);for(const id of this.groups.keys())this.remove(id);for(const ws of this.streams.values())ws.close();this.streams.clear();this.headObservers.clear();}
 }
 /** Keep the last validated viewport visible while a new prepared snapshot is incomplete. */
 export function mergePreparedSnapshot(previous:LiquidityBucket[],incoming:LiquidityBucket[],availability:{from:number;to:number;state:string}[],view:Pick<HeatmapViewport,'from'|'to'|'low'|'high'>,timeMs:number,rowPrice:number,now:number,complete:boolean):LiquidityBucket[]{

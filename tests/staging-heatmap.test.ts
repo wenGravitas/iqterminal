@@ -49,6 +49,23 @@ test('worker coalesces resolved viewport motion, shares one stream and replaces 
  s.dispose();expect(sockets[0].close).toHaveBeenCalled();}finally{s?.dispose();vi.useRealTimers();}
 });
 
+test('a valid same-cursor depth head clears observer staleness after reconnect',()=>{
+ vi.useFakeTimers();vi.setSystemTime(10000000);const sockets:any[]=[],notices:any[]=[];
+ const socket=(url:string)=>{const ws:any={url,send:vi.fn(),close:vi.fn()};sockets.push(ws);return ws;};
+ const s=new StagingHeatmapService(()=>{},async()=>new Response('{}'),()=>Date.now(),socket);
+ try{
+  s.observeDepthHeads('walls','perpetual',0,notice=>notices.push(notice));
+  expect(sockets).toHaveLength(1);
+  const head={type:'depth-head',watermark:{cursor:2,at:9999000,epoch:1}};
+  sockets[0].onmessage({data:JSON.stringify(head)});
+  sockets[0].onmessage({data:JSON.stringify({type:'health',depth:{status:{state:'stale',message:'recovery pending'}}})});
+  expect(notices.map(notice=>notice.type)).toEqual(['head','stale']);
+  sockets[0].onmessage({data:JSON.stringify(head)});
+  expect(notices.map(notice=>notice.type)).toEqual(['head','stale','head']);
+  expect(notices.at(-1)).toMatchObject({type:'head',cursor:2,epoch:1});
+ }finally{s.dispose();vi.useRealTimers();}
+});
+
 test('worker discards history responses after subscription disposal',async()=>{
  vi.useFakeTimers();vi.setSystemTime(10000000);let resolve:any;const events:any[]=[];const request:any=()=>new Promise(r=>resolve=r);const s=new StagingHeatmapService(e=>events.push(e),request,()=>Date.now(),()=>({close(){}} as any));try{
  s.command({type:'heatmap-subscribe',id:'a',resolution:{rowPrice:10,bucketMs:500,candleMs:60000}});s.command({type:'heatmap-viewport',id:'a',viewport:{from:9900000,to:10010000,low:1000,high:1100,width:800,height:400}});await vi.advanceTimersByTimeAsync(500);s.command({type:'heatmap-unsubscribe',id:'a'});const before=events.length;resolve(new Response(JSON.stringify({version:1,cells:[],watermark:1})));await vi.advanceTimersByTimeAsync(500);expect(events).toHaveLength(before);expect(s.diagnostics().configurations).toBe(0);

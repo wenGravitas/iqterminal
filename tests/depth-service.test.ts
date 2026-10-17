@@ -79,6 +79,27 @@ describe('shared Binance depth service', () => {
     expect(service.diagnostics()).toMatchObject({ subscribers: 0, sockets: 0 });
   });
 
+  it('lets Order Walls observe the shared confirmed book without opening a second socket', async () => {
+    const x = setup(), bookStates: Array<Map<number, number>|null> = [];
+    service.subscribe('heatmap-depth', .05);
+    const release = service.observeBook('order-walls', (book) => {
+      if (!book) { bookStates.push(null); return; }
+      const bids = new Map<number, number>();
+      book.visitLevels((side, price, quantity) => { if (side === 'bid') bids.set(price, quantity); });
+      bookStates.push(bids);
+    });
+    expect(x.sockets).toHaveLength(1);
+    x.sockets[0].open(); x.sockets[0].update(depth(100, 101, 99)); await x.advance(0);
+    expect(bookStates.at(-1)?.get(99)).toBe(3);
+    x.sockets[0].update({ ...depth(102, 102, 101), b: [['99', '7']], a: [] });
+    expect(bookStates.at(-1)?.get(99)).toBe(7);
+    expect(x.sockets).toHaveLength(1);
+    release();
+    expect(service.diagnostics()).toMatchObject({ subscribers: 1, bookObservers: 0, sockets: 1 });
+    service.unsubscribe('heatmap-depth');
+    expect(service.diagnostics().sockets).toBe(0);
+  });
+
   it('drops book trust across a sequence gap and reconnects before sampling again', async () => {
     let snapshots = 0;
     const x = setup(async () => ({ ...snapshot, lastUpdateId: snapshots++ === 0 ? 100 : 104 }));

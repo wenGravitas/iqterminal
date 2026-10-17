@@ -1,0 +1,104 @@
+TOPN_DEPLOY_START 2026-10-17T17:15:47+02:00
+BUILD_SCOPE=app
+ Image iqterminal-spot-history:local Building
+ Image iqterminal-spot-history:local Building
+ Image iqterminal-history:local Building
+ Image iqterminal-history:local Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.74kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile:
+#2 transferring dockerfile: 375B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:22.22.0-bookworm-slim
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 103B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build 1/7] FROM docker.io/library/node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94
+#6 resolve docker.io/library/node:22.22.0-bookworm-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 0.0s done
+#6 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 31.38kB done
+#5 DONE 0.0s
+
+#7 [build 2/7] WORKDIR /app
+#7 CACHED
+
+#8 [build 3/7] COPY package*.json ./
+#8 CACHED
+
+#9 [build 4/7] RUN npm ci
+#9 CACHED
+
+#10 [build 5/7] COPY src src
+#10 DONE 0.2s
+
+#11 [build 6/7] COPY tsconfig.json ./
+#11 DONE 0.1s
+
+#12 [build 7/7] RUN npm run build
+#12 0.379
+#12 0.379 > iqterminal-server@0.1.0 build
+#12 0.379 > esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.mjs && esbuild src/depth-worker.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/depth-worker.mjs && esbuild src/watch-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/watch-server.mjs && esbuild src/history-gateway.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-gateway.mjs && esbuild src/history-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-materializer.mjs
+#12 0.379
+#12 0.387
+#12 0.387   dist/server.mjs  86.7kb
+#12 0.387
+#12 0.387 ⚡ Done in 5ms
+#12 0.390
+#12 0.390   dist/depth-worker.mjs  9.8kb
+#12 0.390
+#12 0.390 ⚡ Done in 1ms
+#12 0.394
+#12 0.394   dist/watch-server.mjs  44.6kb
+#12 0.394
+#12 0.394 ⚡ Done in 3ms
+#12 0.400
+#12 0.400   dist/history-gateway.mjs  57.8kb
+#12 0.400
+#12 0.400 ⚡ Done in 4ms
+#12 0.409
+#12 0.409   dist/history-materializer.mjs  53.2kb
+#12 0.409
+#12 0.409 ⚡ Done in 5ms
+#12 DONE 0.4s
+
+#13 [stage-1 4/5] RUN npm ci --omit=dev && npm cache clean --force
+#13 CACHED
+
+#14 [stage-1 5/5] COPY --from=build /app/dist dist
+#14 DONE 0.2s
+
+#15 exporting to image
+#15 exporting layers 0.1s done
+#15 exporting manifest sha256:2adda1f4c2492c8a71d817caea5ee0a45546a7209b4faf27acdb81809db2ad77 0.0s done
+#15 exporting config sha256:9fc2e3212a3ad831d6d2c014c5b3428516e1dbf50037b2e3fe8c6ab2fb70b95d 0.0s done
+#15 exporting attestation manifest sha256:b45109a7f9d334b2234f74ef55e1c8700cc97c9044d3ea1671a4849a8a3f0543 0.1s done
+#15 exporting manifest list sha256:ff98db346902e0fe89214ba2e81a1030e31f42b29e237d0e138ecbe776217676
+#15 exporting manifest list sha256:ff98db346902e0fe89214ba2e81a1030e31f42b29e237d0e138ecbe776217676 0.0s done
+#15 naming to docker.io/library/iqterminal-history:local done
+#15 unpacking to docker.io/library/iqterminal-history:local 0.0s done
+#15 DONE 0.4s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.0s
+ Image iqterminal-history:local Built
+APP_BUILD_COMPLETE 2026-10-17T17:15:49+02:00
+ Container iqterminal-history-api Recreate
+ Container iqterminal-history-api Recreated
+ Container iqterminal-history-api Starting
+ Container iqterminal-history-api Started
+APP_RECREATE_COMPLETE 2026-10-17T17:15:50+02:00
+{"Command":"\"docker-entrypoint.s…\"","CreatedAt":"2026-10-17 17:15:49 +0200 CEST","ExitCode":0,"Health":"starting","ID":"6eda5d62cce7","Image":"iqterminal-history:local","Labels":"com.docker.compose.replace=iqterminal-history-api,com.docker.compose.service=app,com.docker.compose.container-number=1,com.docker.compose.image=sha256:ff98db346902e0fe89214ba2e81a1030e31f42b29e237d0e138ecbe776217676,com.docker.compose.oneoff=False,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.version=5.1.4,com.docker.compose.config-hash=ecd08f3d0b6b06a0ffd6359acfd77f3f5674e8e212f496a48424fa59a8f812e8,com.docker.compose.depends_on=,com.docker.compose.project.working_dir=/opt/iqterminal","LocalVolumes":"0","Mounts":"","Name":"iqterminal-history-api","Names":"iqterminal-history-api","Networks":"host","Ports":"","Project":"iqterminal-server","Publishers":[],"RunningFor":"1 second ago","Service":"app","Size":"0B","State":"running","Status":"Up Less than a second (health: starting)"}
+TOPN_DEPLOY_COMPLETE 2026-10-17T17:15:50+02:00
+DEPLOY_EXIT_CODE=0

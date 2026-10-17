@@ -1,0 +1,49 @@
+{
+  "capturedAtUtc": "2026-10-17T15:14:43.488120+00:00",
+  "probes": [
+    {
+      "name": "fixed-100m",
+      "parameters": {
+        "from": 1792242360000,
+        "to": 1792248356363,
+        "after": 0,
+        "limit": 1000
+      },
+      "rangeMs": 5996363,
+      "status": 503,
+      "elapsedMs": 14037,
+      "responseBytes": 24,
+      "retryAfter": "1",
+      "error": null,
+      "errorBody": "{\"error\":\"fetch failed\"}"
+    },
+    {
+      "name": "fresh-trailing-60s",
+      "parameters": {
+        "from": 1792250021488,
+        "to": 1792250081488,
+        "after": 0,
+        "limit": 1000
+      },
+      "rangeMs": 60000,
+      "status": 200,
+      "elapsedMs": 10056,
+      "responseBytes": 1666095,
+      "retryAfter": null,
+      "error": null,
+      "watermark": 4441777,
+      "returnedObservations": 757,
+      "page": {
+        "after": 4440868,
+        "nextAfter": 4441625,
+        "hasMore": false,
+        "lastAt": 1792250081439,
+        "limit": 1000,
+        "observations": 757,
+        "sameMillisecondClosed": true
+      },
+      "partial": false,
+      "seedCursor": 4440868
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "mode": "explicit development fixture visual smoke",
+  "url": "http://127.0.0.1:5174/?fixture=1",
+  "passed": true,
+  "browser": "/usr/bin/chromium 154.0.8037.92 (headless, arm64 Raspberry Pi)",
+  "chartBackend": "canvas2d",
+  "theme": "dark",
+  "viewport": {
+    "width": 1366,
+    "height": 860
+  },
+  "activeIndicators": [
+    "native.footprint",
+    "native.order-walls",
+    "native.orderbook-heatmap"
+  ],
+  "injectedRendererFixture": {
+    "footprintBars": 13,
+    "wallSegments": 20,
+    "heatmapBuckets": 12
+  },
+  "renderedDiagnostics": {
+    "footprintSurfaceMounted": true,
+    "orderWalls": {
+      "mounted": true,
+      "retainedSegments": 20,
+      "retainedDrawables": 19
+    },
+    "heatmap": {
+      "mounted": true,
+      "bins": 156
+    }
+  },
+  "settingsDialog": {
+    "opened": true,
+    "priceAggregation": 50
+  },
+  "pageErrors": [],
+  "screenshots": [
+    "artifacts/order-walls/fixture-coexistence.png",
+    "artifacts/order-walls/fixture-order-walls-settings.png"
+  ],
+  "limits": [
+    "The bars, wall segments and heatmap buckets were deterministic browser-side renderer injections.",
+    "The smoke checks overlay coexistence and settings UI only; it is not live collection, exchange history, or performance evidence."
+  ]
+}

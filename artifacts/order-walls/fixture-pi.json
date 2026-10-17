@@ -1,0 +1,926 @@
+{
+  "schemaVersion": 1,
+  "mode": "fixture",
+  "baseUrl": "http://127.0.0.1:5174/",
+  "startedAt": "2026-10-17T14:02:05.336Z",
+  "machine": {
+    "platform": "linux",
+    "arch": "arm64",
+    "release": "6.12.109+rpt-rpi-v8",
+    "node": "v22.19.0"
+  },
+  "browser": {
+    "version": "154.0.8037.92",
+    "executable": "/usr/bin/chromium",
+    "headless": true,
+    "viewport": {
+      "width": 1366,
+      "height": 860
+    },
+    "deviceScaleFactor": 1
+  },
+  "method": "Explicit deterministic segments and heatmap buckets injected into the native chart primitives. Renderer comparison only; no exchange or gateway calls.",
+  "cases": [
+    {
+      "scenario": "candles-only",
+      "sample": 1,
+      "source": "explicit deterministic renderer fixture",
+      "viewport": {
+        "logicalRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "timeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "priceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "close": 83518.97673352211,
+        "bars": 5000,
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [],
+          "rowPrice": 25,
+          "grid": true,
+          "wheelMode": "tradingview",
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "statsPosition": "bottom",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showValueArea": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "contrast": "enhanced",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [],
+          "basePriceVisible": true
+        },
+        "candleState": "stale"
+      },
+      "fixture": {
+        "visibleRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "visibleTimeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "start": 1792245000000,
+        "end": 1792245780000,
+        "centre": 83520,
+        "segmentCount": 0,
+        "bucketCount": 0,
+        "heatmapCellRows": 0,
+        "chartBackend": "canvas2d",
+        "bars": 5000,
+        "fixedPriceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "syntheticWallSegments": 0
+      },
+      "workload": {
+        "updateCount": 20,
+        "updateDelayMs": 75,
+        "panZoomMs": 609.5436759999993,
+        "liveWindowMs": 3000
+      },
+      "renderer": {
+        "wall": {
+          "before": {
+            "mounted": false,
+            "retainedSegments": 0,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          },
+          "after": {
+            "mounted": false,
+            "retainedSegments": 0,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          }
+        },
+        "heatmap": {
+          "before": {
+            "mounted": false,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          },
+          "after": {
+            "mounted": false,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          }
+        },
+        "wallPatchRoundTripMs": {
+          "p50": 3.280507999999827,
+          "p95": 17.34676000000036,
+          "max": 52.75779000000057
+        },
+        "explicitUpdateDispatchMs": {
+          "p50": 0,
+          "p95": 0,
+          "max": 0.09999999776482582
+        }
+      },
+      "frames": {
+        "samples": 284,
+        "p50Ms": 16.699999999999818,
+        "p95Ms": 16.700000000000728,
+        "maxMs": 33.399999999999636,
+        "over16_7ms": 57,
+        "over33ms": 5,
+        "over50ms": 0,
+        "over100ms": 0,
+        "heapFirstBytes": 22098586,
+        "heapMaxBytes": 22491073,
+        "heapLastBytes": 22491073
+      },
+      "longTasks": [
+        617,
+        117
+      ],
+      "screenshot": "artifacts/order-walls/fixture-candles-only-sample-1.png",
+      "errors": [],
+      "network": {
+        "requestCount": 0,
+        "byKind": {},
+        "requests": []
+      }
+    },
+    {
+      "scenario": "candles-order-walls",
+      "sample": 1,
+      "source": "explicit deterministic renderer fixture",
+      "viewport": {
+        "logicalRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "timeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "priceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "close": 83518.97673352211,
+        "bars": 5000,
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [],
+          "rowPrice": 25,
+          "grid": true,
+          "wheelMode": "tradingview",
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "statsPosition": "bottom",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showValueArea": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "contrast": "enhanced",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [],
+          "basePriceVisible": true
+        },
+        "candleState": "stale"
+      },
+      "fixture": {
+        "visibleRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "visibleTimeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "start": 1792245000000,
+        "end": 1792245780000,
+        "centre": 83520,
+        "segmentCount": 160,
+        "bucketCount": 0,
+        "heatmapCellRows": 0,
+        "chartBackend": "canvas2d",
+        "bars": 5000,
+        "fixedPriceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "syntheticWallSegments": 160
+      },
+      "workload": {
+        "updateCount": 20,
+        "updateDelayMs": 75,
+        "panZoomMs": 559.885162999999,
+        "liveWindowMs": 3000
+      },
+      "renderer": {
+        "wall": {
+          "before": {
+            "draws": 1,
+            "rebuilds": 1,
+            "patchProjects": 38,
+            "segments": 38,
+            "visible": 38,
+            "bytes": 7296,
+            "renderMs": 2.800000000745058,
+            "maxRenderMs": 2.800000000745058,
+            "retainedSegments": 160,
+            "retainedDrawables": 38,
+            "p95RenderMs": 2.800000000745058,
+            "mounted": true,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          },
+          "after": {
+            "draws": 23,
+            "rebuilds": 3,
+            "patchProjects": 134,
+            "segments": 38,
+            "visible": 38,
+            "bytes": 7296,
+            "renderMs": 6.399999987334013,
+            "maxRenderMs": 2.800000000745058,
+            "retainedSegments": 160,
+            "retainedDrawables": 38,
+            "p95RenderMs": 0.30000000074505806,
+            "mounted": true,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          }
+        },
+        "heatmap": {
+          "before": {
+            "mounted": false,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          },
+          "after": {
+            "mounted": false,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          }
+        },
+        "wallPatchRoundTripMs": {
+          "p50": 3.5438500000018394,
+          "p95": 6.819060999998328,
+          "max": 7.371060999998008
+        },
+        "explicitUpdateDispatchMs": {
+          "p50": 0.10000000149011612,
+          "p95": 0.5,
+          "max": 0.8000000007450581
+        }
+      },
+      "frames": {
+        "samples": 276,
+        "p50Ms": 16.699999999999818,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.399999999999636,
+        "over16_7ms": 47,
+        "over33ms": 1,
+        "over50ms": 0,
+        "over100ms": 0,
+        "heapFirstBytes": 21742676,
+        "heapMaxBytes": 23128635,
+        "heapLastBytes": 23128635
+      },
+      "longTasks": [
+        549,
+        63,
+        53,
+        65
+      ],
+      "screenshot": "artifacts/order-walls/fixture-candles-order-walls-sample-1.png",
+      "errors": [],
+      "network": {
+        "requestCount": 0,
+        "byKind": {},
+        "requests": []
+      }
+    },
+    {
+      "scenario": "candles-heatmap",
+      "sample": 1,
+      "source": "explicit deterministic renderer fixture",
+      "viewport": {
+        "logicalRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "timeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "priceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "close": 83518.97673352211,
+        "bars": 5000,
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [],
+          "rowPrice": 25,
+          "grid": true,
+          "wheelMode": "tradingview",
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "statsPosition": "bottom",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showValueArea": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "contrast": "enhanced",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [],
+          "basePriceVisible": true
+        },
+        "candleState": "stale"
+      },
+      "fixture": {
+        "visibleRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "visibleTimeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "start": 1792245000000,
+        "end": 1792245780000,
+        "centre": 83520,
+        "segmentCount": 0,
+        "bucketCount": 13,
+        "heatmapCellRows": 416,
+        "chartBackend": "canvas2d",
+        "bars": 5000,
+        "fixedPriceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "syntheticWallSegments": 0
+      },
+      "workload": {
+        "updateCount": 20,
+        "updateDelayMs": 75,
+        "panZoomMs": 560.7580570000027,
+        "liveWindowMs": 3000
+      },
+      "renderer": {
+        "wall": {
+          "before": {
+            "mounted": false,
+            "retainedSegments": 0,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          },
+          "after": {
+            "mounted": false,
+            "retainedSegments": 0,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          }
+        },
+        "heatmap": {
+          "before": {
+            "priceCacheBuilds": 13,
+            "draws": 1,
+            "rebuilds": 1,
+            "renderMs": 16.900000002235174,
+            "maxRenderMs": 16.900000002235174,
+            "labels": 0,
+            "bins": 416,
+            "bytes": 46592,
+            "cachedPriceTiles": 13,
+            "cachedPriceRows": 416,
+            "p95RenderMs": 16.900000002235174,
+            "mounted": true,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          },
+          "after": {
+            "priceCacheBuilds": 33,
+            "draws": 23,
+            "rebuilds": 23,
+            "renderMs": 136.90000000596046,
+            "maxRenderMs": 16.900000002235174,
+            "labels": 0,
+            "bins": 416,
+            "bytes": 46592,
+            "cachedPriceTiles": 13,
+            "cachedPriceRows": 416,
+            "p95RenderMs": 7.600000001490116,
+            "mounted": true,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          }
+        },
+        "wallPatchRoundTripMs": {
+          "p50": 3.4758050000018557,
+          "p95": 5.0826710000001185,
+          "max": 5.378163000001223
+        },
+        "explicitUpdateDispatchMs": {
+          "p50": 0.19999999925494194,
+          "p95": 0.4000000022351742,
+          "max": 1.3999999985098839
+        }
+      },
+      "frames": {
+        "samples": 274,
+        "p50Ms": 16.699999999999818,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.399999999999636,
+        "over16_7ms": 53,
+        "over33ms": 2,
+        "over50ms": 0,
+        "over100ms": 0,
+        "heapFirstBytes": 21651786,
+        "heapMaxBytes": 26025930,
+        "heapLastBytes": 24631509
+      },
+      "longTasks": [
+        335,
+        76,
+        59
+      ],
+      "screenshot": "artifacts/order-walls/fixture-candles-heatmap-sample-1.png",
+      "errors": [],
+      "network": {
+        "requestCount": 0,
+        "byKind": {},
+        "requests": []
+      }
+    },
+    {
+      "scenario": "candles-both",
+      "sample": 1,
+      "source": "explicit deterministic renderer fixture",
+      "viewport": {
+        "logicalRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "timeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "priceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "close": 83518.97673352211,
+        "bars": 5000,
+        "series": {
+          "venue": "binance",
+          "market": "perpetual",
+          "interval": "1m",
+          "type": "candle",
+          "studies": [],
+          "rowPrice": 25,
+          "grid": true,
+          "wheelMode": "tradingview",
+          "footprintUnits": "btc",
+          "footprint": {
+            "displayMode": "bidask",
+            "cellStyle": "ladder",
+            "statsPosition": "bottom",
+            "opacity": 0.85,
+            "showCandle": true,
+            "showPoc": true,
+            "showValueArea": true,
+            "showDiagonalImbalances": true,
+            "stackedImbalances": false,
+            "imbalanceRatio": 3,
+            "imbalanceThreshold": 0.01
+          },
+          "heatmap": {
+            "enabled": false,
+            "rowPrice": 10,
+            "bucketMs": 500,
+            "mode": "average",
+            "contrast": "enhanced",
+            "opacity": 0.85,
+            "intensity": 100,
+            "minimum": 0.01,
+            "labels": "auto",
+            "bids": true,
+            "asks": true
+          },
+          "indicatorVersion": 1,
+          "indicators": [],
+          "basePriceVisible": true
+        },
+        "candleState": "stale"
+      },
+      "fixture": {
+        "visibleRange": {
+          "from": 4987,
+          "to": 5000
+        },
+        "visibleTimeRange": {
+          "from": 1792245000,
+          "to": 1792245780
+        },
+        "start": 1792245000000,
+        "end": 1792245780000,
+        "centre": 83520,
+        "segmentCount": 160,
+        "bucketCount": 13,
+        "heatmapCellRows": 416,
+        "chartBackend": "canvas2d",
+        "bars": 5000,
+        "fixedPriceRange": {
+          "min": 83310,
+          "max": 83720
+        },
+        "syntheticWallSegments": 160
+      },
+      "workload": {
+        "updateCount": 20,
+        "updateDelayMs": 75,
+        "panZoomMs": 559.3482250000015,
+        "liveWindowMs": 3000
+      },
+      "renderer": {
+        "wall": {
+          "before": {
+            "draws": 1,
+            "rebuilds": 1,
+            "patchProjects": 38,
+            "segments": 38,
+            "visible": 38,
+            "bytes": 7296,
+            "renderMs": 1.7000000029802322,
+            "maxRenderMs": 1.7000000029802322,
+            "retainedSegments": 160,
+            "retainedDrawables": 38,
+            "p95RenderMs": 1.7000000029802322,
+            "mounted": true,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          },
+          "after": {
+            "draws": 22,
+            "rebuilds": 3,
+            "patchProjects": 134,
+            "segments": 38,
+            "visible": 38,
+            "bytes": 7296,
+            "renderMs": 7.199999999254942,
+            "maxRenderMs": 1.7000000029802322,
+            "retainedSegments": 160,
+            "retainedDrawables": 38,
+            "p95RenderMs": 0.6999999992549419,
+            "mounted": true,
+            "valueRuns": 0,
+            "settings": {
+              "enabled": false,
+              "showHistory": true,
+              "method": "relative",
+              "thresholdUsd": 500000,
+              "relativeFloorUsd": 250000,
+              "relativePercentile": 95,
+              "exitRatio": 0.85,
+              "minDurationMs": 0,
+              "aggregation": "auto",
+              "colorMode": "heat",
+              "opacity": 0.85,
+              "thicknessPx": 2
+            }
+          }
+        },
+        "heatmap": {
+          "before": {
+            "priceCacheBuilds": 13,
+            "draws": 1,
+            "rebuilds": 1,
+            "renderMs": 26.5,
+            "maxRenderMs": 26.5,
+            "labels": 0,
+            "bins": 416,
+            "bytes": 46592,
+            "cachedPriceTiles": 13,
+            "cachedPriceRows": 416,
+            "p95RenderMs": 26.5,
+            "mounted": true,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          },
+          "after": {
+            "priceCacheBuilds": 32,
+            "draws": 22,
+            "rebuilds": 22,
+            "renderMs": 177.90000000223517,
+            "maxRenderMs": 26.5,
+            "labels": 0,
+            "bins": 416,
+            "bytes": 46592,
+            "cachedPriceTiles": 13,
+            "cachedPriceRows": 416,
+            "p95RenderMs": 12.199999999254942,
+            "mounted": true,
+            "settings": {
+              "enabled": false,
+              "rowPrice": 10,
+              "bucketMs": 500,
+              "mode": "average",
+              "contrast": "enhanced",
+              "opacity": 0.85,
+              "intensity": 100,
+              "minimum": 0.01,
+              "labels": "auto",
+              "bids": true,
+              "asks": true
+            }
+          }
+        },
+        "wallPatchRoundTripMs": {
+          "p50": 4.773486999998568,
+          "p95": 8.270126000003074,
+          "max": 36.65425899999536
+        },
+        "explicitUpdateDispatchMs": {
+          "p50": 0.3999999985098839,
+          "p95": 0.6000000014901161,
+          "max": 2.099999997764826
+        }
+      },
+      "frames": {
+        "samples": 234,
+        "p50Ms": 16.699999999999818,
+        "p95Ms": 50,
+        "maxMs": 166.69999999999982,
+        "over16_7ms": 55,
+        "over33ms": 20,
+        "over50ms": 8,
+        "over100ms": 3,
+        "heapFirstBytes": 24587792,
+        "heapMaxBytes": 28045631,
+        "heapLastBytes": 28045631
+      },
+      "longTasks": [
+        755,
+        116,
+        86,
+        73,
+        94
+      ],
+      "screenshot": "artifacts/order-walls/fixture-candles-both-sample-1.png",
+      "errors": [],
+      "network": {
+        "requestCount": 0,
+        "byKind": {},
+        "requests": []
+      }
+    }
+  ],
+  "limits": {
+    "frameIntervals": "Observed requestAnimationFrame gaps only; no FPS guarantee or inferred frame rate.",
+    "memory": "Chromium performance.memory JavaScript heap when exposed, worker cache counters, and renderer-retained byte estimates. Excludes total process RSS, GPU surfaces, and some worker/canvas allocations.",
+    "rendering": "Pi /usr/bin/chromium in Playwright headless mode, without forced SwiftShader arguments. Backend is recorded from the running app."
+  },
+  "endedAt": "2026-10-17T14:02:45.301Z",
+  "durationMs": 38797
+}

@@ -3,6 +3,9 @@ import type {LevelWatch} from '../level-watch/types';
 import { AxisGrid } from './axis-grid';
 import { OrderBookHeatmap } from './orderbook-heatmap';
 import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
+import { OrderWallsPrimitive } from './order-walls';
+import { ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
+import type { OrderWallHit, OrderWallPatch, OrderWallSegment, OrderWallsSettings, OrderWallStatus } from '../feed/order-walls';
 import {
   createChart,
   epochMsToUtcSeconds,
@@ -64,6 +67,12 @@ interface ViewAnchor { fromTime: number; toTime: number; fromOffset: number; toO
 export class OpenAlgoCandleChart {
   visible = false;
   private heatmap: OrderBookHeatmap | null = null;
+  private orderWalls: OrderWallsPrimitive | null = null;
+  private orderWallSegments = new Map<string, OrderWallSegment>();
+  private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
+  private orderWallValueQueueStart = 0;
+  private orderWallValueCount = 0;
+  private orderWallStatus: OrderWallStatus = { state: 'loading' };
   readonly chart: OpenAlgoChart;
   private readonly axisGrid = new AxisGrid();
   readonly series: SeriesApi;
@@ -209,6 +218,97 @@ export class OpenAlgoCandleChart {
   updateHeatmap(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) { this.heatmap?.update(buckets, snapshot, retentionStart); }
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
   heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
+
+  setOrderWalls(settings: OrderWallsSettings, intervalMs: number) {
+    if (!settings.enabled) {
+      if (this.orderWalls) this.chart.removePrimitive(this.orderWalls);
+      this.orderWalls = null;
+      return;
+    }
+    if (!this.orderWalls) {
+      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs);
+      this.chart.addPrimitive(this.orderWalls, 0);
+      this.orderWalls.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
+    } else {
+      this.orderWalls.setSettings(settings);
+      this.orderWalls.setInterval(intervalMs);
+    }
+  }
+  setOrderWallSnapshot(segments: OrderWallSegment[], status?: OrderWallStatus) {
+    this.orderWallSegments.clear();
+    for (const segment of segments.slice(-ORDER_WALL_MAX_SEGMENTS)) this.orderWallSegments.set(segment.id, segment);
+    this.rebuildOrderWallValueQueue();
+    this.orderWallStatus = status ?? { state: 'loading' };
+    this.orderWalls?.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
+  }
+  patchOrderWalls(patches: OrderWallPatch[], status: OrderWallStatus) {
+    this.orderWallStatus = status;
+    const applied: OrderWallPatch[] = [];
+    for (const patch of patches) {
+      if (!patch.segment) { this.dropOrderWallSegment(patch.id); applied.push(patch); }
+      else {
+        const previous = this.orderWallSegments.get(patch.id);
+        const incoming = patch.segment.valueRuns ?? [];
+        const fullRuns = patch.replaceValueRuns === true || incoming.length > 0 && (!previous || incoming.length > previous.valueRuns.length);
+        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) : [...(previous?.valueRuns ?? [])] };
+        if (previous && fullRuns) this.orderWallValueCount = Math.max(0, this.orderWallValueCount - previous.valueRuns.length);
+        if (fullRuns) {
+          if (segment.valueRuns.length < incoming.length) segment.valueRunsTruncated = true;
+          for (const point of segment.valueRuns) { this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++; }
+        } else for (const point of patch.valuePoints ?? []) this.appendOrderWallValue(segment, point);
+        this.orderWallSegments.delete(patch.id);
+        this.orderWallSegments.set(patch.id, segment);
+        applied.push({ ...patch, segment });
+      }
+    }
+    while (this.orderWallSegments.size > ORDER_WALL_MAX_SEGMENTS) this.dropOrderWallSegment(this.orderWallSegments.keys().next().value!);
+    this.trimOrderWallValues();
+    this.orderWalls?.patch(applied, status);
+  }
+  setOrderWallStatus(status?: OrderWallStatus) { this.orderWallStatus = status ?? { state: 'loading' }; this.orderWalls?.setStatus(this.orderWallStatus); }
+  orderWallAt(x: number, y: number): OrderWallHit | null { return this.orderWalls?.orderWallAt(x, y) ?? null; }
+  orderWallsDiagnostics() { return { ...(this.orderWalls?.diagnostics() ?? {}), mounted: Boolean(this.orderWalls),
+    retainedSegments: this.orderWallSegments.size, valueRuns: this.orderWallValueCount }; }
+
+  private dropOrderWallSegment(id: string) {
+    const segment=this.orderWallSegments.get(id);
+    if(segment)this.orderWallValueCount=Math.max(0,this.orderWallValueCount-segment.valueRuns.length);
+    this.orderWallSegments.delete(id);
+  }
+
+  private rebuildOrderWallValueQueue() {
+    const entries = [...this.orderWallSegments.values()].flatMap(segment => segment.valueRuns.map(point => ({ id: segment.id, point })));
+    entries.sort((a,b)=>a.point.at-b.point.at);
+    this.orderWallValueQueue = entries; this.orderWallValueQueueStart = 0; this.orderWallValueCount = entries.length;
+    this.trimOrderWallValues();
+  }
+  private appendOrderWallValue(segment: OrderWallSegment, point: OrderWallSegment['valueRuns'][number]) {
+    const runs = segment.valueRuns, last = runs.at(-1);
+    if (last?.at === point.at) {
+      if (last.usd === point.usd && last.percentile === point.percentile) return;
+      runs[runs.length - 1] = point;
+      this.orderWallValueQueue.push({ id: segment.id, point });
+    } else if (!last || last.at < point.at) {
+      runs.push(point); this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++;
+    }
+    while (runs.length > ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) { runs.shift(); segment.valueRunsTruncated = true; this.orderWallValueCount--; }
+  }
+  private trimOrderWallValues() {
+    while (this.orderWallValueCount > ORDER_WALL_MAX_VALUE_RUNS) {
+      const oldest = this.orderWallValueQueue[this.orderWallValueQueueStart++];
+      if (!oldest) break;
+      const segment = this.orderWallSegments.get(oldest.id);
+      if (segment?.valueRuns[0] === oldest.point) { segment.valueRuns.shift(); segment.valueRunsTruncated = true; this.orderWallValueCount--; }
+    }
+    if (this.orderWallValueQueueStart > 4_096 && this.orderWallValueQueueStart * 2 > this.orderWallValueQueue.length) {
+      this.orderWallValueQueue = this.orderWallValueQueue.slice(this.orderWallValueQueueStart); this.orderWallValueQueueStart = 0;
+    }
+    if(this.orderWallValueQueue.length>ORDER_WALL_MAX_VALUE_RUNS*2){
+      const entries=[...this.orderWallSegments.values()].flatMap(segment=>segment.valueRuns.map(point=>({id:segment.id,point}))).sort((a,b)=>a.point.at-b.point.at);
+      this.orderWallValueQueue=entries;this.orderWallValueQueueStart=0;this.orderWallValueCount=entries.length;
+      while(this.orderWallValueCount>ORDER_WALL_MAX_VALUE_RUNS){const oldest=this.orderWallValueQueue[this.orderWallValueQueueStart++]!;const segment=this.orderWallSegments.get(oldest.id);if(segment?.valueRuns[0]===oldest.point){segment.valueRuns.shift();segment.valueRunsTruncated=true;this.orderWallValueCount--;}}
+    }
+  }
 
   private handleWheel(event: WheelEvent, container: HTMLElement) {
     if (this.disposed || !this.visible || !Number.isFinite(event.deltaY) || (event.target instanceof Element && event.target.closest('.active-indicators'))) return;
@@ -553,7 +653,7 @@ export class OpenAlgoCandleChart {
       this.stats.draws++;
     }
     if(this.mode==='footprint'&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
-    if(this.heatmap&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
+    if((this.heatmap||this.orderWalls)&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     // Cursor invalidation repaints only OpenAlgo's overlay, through our existing RAF scheduler.
     if (this.footprintActivity.needsFrame) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
   }
@@ -565,6 +665,8 @@ export class OpenAlgoCandleChart {
     this.removeFootprintSurface();
     if (this.heatmap) this.chart.removePrimitive(this.heatmap);
     this.heatmap = null;
+    if (this.orderWalls) this.chart.removePrimitive(this.orderWalls);
+    this.orderWalls = null;
     this.chart.removePrimitive(this.watchZones);
     this.chart.removePrimitive(this.axisGrid);
     this.chart.destroy();

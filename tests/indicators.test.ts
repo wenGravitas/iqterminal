@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { config } from '../src/panel';
 import { FOOTPRINT_ID, HEATMAP_ID, IndicatorLifecycle, nativeInstance, studyPins, withStudyPins, validateInstances } from '../src/indicators/model';
+import { ORDER_WALLS_ID, DEFAULT_ORDER_WALLS_SETTINGS } from '../src/feed/order-walls';
 import { ScriptStudyHost, type StudyPin } from '../src/scripts/host';
 const pin: StudyPin = { attachmentId: 'ema20', scriptId: 'builtin.ema', revisionId: 'a'.repeat(64), title: 'EMA', description: 'Average', settings: { length: 20 }, visible: true };
 const legacy = { venue: 'binance', interval: '1m', type: 'footprint', rowPrice: 25, footprintUnits: 'usdt', footprint: { opacity: .35, displayMode: 'delta' }, heatmap: { enabled: true, opacity: .65, mode: 'peak' }, studies: [pin], unrelated: { preserved: true } };
@@ -37,6 +38,24 @@ describe('unified indicator configuration', () => {
     expect(c.type).toBe('candle'); expect(config(c).indicators).toEqual(c.indicators); expect(c.indicators[0]!.settings.range).toEqual([1,2]);
     expect(config({ ...legacy, venue: 'hyperliquid' }).indicators.some(i => i.definitionId === FOOTPRINT_ID)).toBe(true);
     expect(config({ ...legacy, venue: 'hyperliquid' }).type).toBe('candle');
+  });
+  it('registers Order Walls independently with bounded per-instance settings persistence', () => {
+    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, method: 'absolute' as const, thresholdUsd: 725_000, aggregation: 100 as const, colorMode: 'bid-ask' as const, opacity: .7, thicknessPx: 3, showHistory: false };
+    const walls = nativeInstance(ORDER_WALLS_ID, settings);
+    const saved = config({ ...legacy, indicators: [walls] });
+    expect(saved.indicators.map(i => i.definitionId)).toEqual([ORDER_WALLS_ID]);
+    expect(saved.indicators[0]!.settings).toMatchObject(settings);
+    expect(saved.indicators[0]!.settings.relativeFloorUsd).toBe(250_000);
+    expect(saved.indicators[0]!.settings.relativePercentile).toBe(95);
+    expect(saved.indicators[0]!.settings.thicknessPx).toBe(3);
+    expect(saved.indicators.some(i => i.definitionId === HEATMAP_ID)).toBe(false);
+    expect(config(JSON.parse(JSON.stringify(saved))).indicators[0]!.settings).toEqual(saved.indicators[0]!.settings);
+    const moved = config({ ...saved, venue: 'hyperliquid', market: 'perpetual', interval: '5m' });
+    expect(moved.venue).toBe('hyperliquid'); expect(moved.interval).toBe('5m');
+    expect(moved.indicators[0]!.settings).toEqual(settings);
+    expect(config({ ...moved, venue: 'binance', market: 'spot' }).indicators[0]!.settings).toEqual(settings);
+    const duplicate = { ...walls, instanceId: 'another-wall-instance' };
+    expect(validateInstances([walls, duplicate])).toHaveLength(1);
   });
 });
 describe('indicator lifecycle', () => {

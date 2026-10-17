@@ -1,0 +1,16 @@
+{
+  "services": 7,
+  "healthy": 7,
+  "appBeforeId": "aa4e4a753d567800eb181d09c4b9f5990b4bb70d7daec7bba9708f232ed8fc1a",
+  "appAfterId": "b2c4187c31d9030b400fd2e5784c225b751bf2d5ebf44cad0f0b41ca2b1e7f5e",
+  "appBeforeImageId": "sha256:95b5e36bcfd25acb96e6e20c3e5f89f8f8b76a4e1d40862c65d9a2acaae91ef7",
+  "appAfterImageId": "sha256:f31cffe5d186c9ab0c67636b6659d88e8e8e54ea2a173a975983309e4795eb17",
+  "unchangedServices": [
+    "clickhouse",
+    "collector",
+    "level-watch",
+    "materializer",
+    "spot-collector",
+    "spot-materializer"
+  ]
+}

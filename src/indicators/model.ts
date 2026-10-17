@@ -1,5 +1,7 @@
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
 import type { ScriptRecord } from '../scripts/library';
+import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from '../feed/order-walls';
+export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
 export const FOOTPRINT_ID = 'native.footprint';
@@ -36,6 +38,20 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'labels', label: 'Quantity labels', kind: 'select', defaultValue: 'auto' },
       ...['bids', 'asks'].map(key => ({ key, label: `Show ${key}`, kind: 'boolean', defaultValue: true }))],
     placements: ['overlay'], dataRequirements: ['synchronized-book'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: ORDER_WALLS_ID, name: 'Order Walls', description: 'Observed resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M Perp', category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { ...DEFAULT_ORDER_WALLS_SETTINGS }, settingsSchema: [
+      { key: 'method', label: 'Detection', kind: 'select', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.method },
+      { key: 'relativePercentile', label: 'Relative percentile', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.relativePercentile },
+      { key: 'relativeFloorUsd', label: 'Relative USD floor', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.relativeFloorUsd },
+      { key: 'thresholdUsd', label: 'Absolute notional (USD)', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.thresholdUsd },
+      { key: 'aggregation', label: 'Price aggregation', kind: 'select', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.aggregation },
+      { key: 'colorMode', label: 'Wall colour', kind: 'select', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.colorMode },
+      { key: 'thicknessPx', label: 'Line thickness (px)', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.thicknessPx },
+      { key: 'opacity', label: 'Opacity', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.opacity },
+      { key: 'showHistory', label: 'Show historical walls', kind: 'boolean', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.showHistory },
+      { key: 'exitRatio', label: 'Exit threshold ratio', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.exitRatio },
+      { key: 'minDurationMs', label: 'Minimum confirmation (ms)', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.minDurationMs }],
+    placements: ['overlay'], dataRequirements: ['order-book-history'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
 ];
 export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptInputView[] = []): IndicatorDefinition {
   const revision = record.revisions.find(r => r.id === record.currentRevision);
@@ -72,6 +88,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     try { const json = JSON.stringify(raw); if (json.length > 12000) continue; copy = JSON.parse(json); } catch { continue; }
     copy.visible = raw.visible !== false; copy.source = raw.source && typeof raw.source === 'object' && typeof raw.source.kind === 'string' ? copy.source : { kind: 'chart' };
     copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
+    if (copy.definitionId === ORDER_WALLS_ID && copy.settingsVersion === 1) copy.settings = { ...orderWallsSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];
       if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source };

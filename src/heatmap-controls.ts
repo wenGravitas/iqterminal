@@ -10,6 +10,7 @@ export class HeatmapControls {
   private units: 'btc' | 'usdt' = 'btc';
   setUnits(units: 'btc' | 'usdt') { this.units = units; this.readout.textContent = ''; this.renderStatus(); }
   private current = heatmapSettings(null); private supported = true; private status?: HeatmapStatus;
+  private externalTooltip = '';
   constructor(private changed: (settings: HeatmapSettings, units: 'btc' | 'usdt') => void, private retry: () => void, signal: AbortSignal) {
     this.dialog.className = 'indicator-settings heatmap-settings'; this.dialog.setAttribute('aria-label', 'Order-book heatmap settings');
     this.notice.className = 'heatmap-notice'; this.notice.setAttribute('role', 'status'); this.readout.className = 'heatmap-readout';
@@ -57,7 +58,7 @@ export class HeatmapControls {
   sync(settings: HeatmapSettings, supported: boolean, footprint = false) {
     const row = this.inputs.get('rowPrice') as HTMLInputElement; row.disabled = footprint; row.value = String(settings.rowPrice); row.setCustomValidity('');
     this.rowHint.hidden = !footprint; this.rowHint.textContent = 'Price rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.';
-    this.current = settings; this.supported = supported;
+    this.current = settings; this.supported = supported; this.externalTooltip = '';
     this.notice.hidden = !settings.enabled; this.readout.hidden = !settings.enabled; this.renderStatus();
   }
   setStatus(status?: HeatmapStatus) { this.status = status; this.renderStatus(); }
@@ -70,9 +71,16 @@ export class HeatmapControls {
     this.notice.title = !this.supported ? this.notice.textContent : `${this.notice.textContent}\n${s?.message ?? 'Waiting for synchronized depth'}`;
   }
   hover(hit: ReturnType<OrderBookHeatmap['hoverAt']>) {
-    if (!hit || !this.current.enabled) { this.readout.textContent = ''; return; }
+    this.externalTooltip = '';
+    if (!hit || !this.current.enabled) { this.readout.textContent = ''; this.readout.hidden = !this.current.enabled; return; }
+    this.readout.hidden = false;
     const b = hit.bin;
     this.readout.textContent = `Resting ${hit.side} · ${hit.quantity.toLocaleString('en-US', { maximumFractionDigits: hit.units === 'btc' ? 4 : 2 })} ${hit.units.toUpperCase()} · ${hit.mode === 'peak' ? 'observed peak' : 'time-weighted average'}\n${utc(b.start)}–${utc(b.end)} UTC · $${b.low.toFixed(2)}–$${b.high.toFixed(2)} · ${b.incomplete ? 'incomplete / unknown subtotal' : 'covered observations'}${b.partial ? ' · partial interval' : ''}`;
+  }
+  showSharedTooltip(text: string | null) {
+    this.externalTooltip = text ?? '';
+    if (!this.externalTooltip) { this.hover(null); return; }
+    this.readout.textContent = this.externalTooltip; this.readout.hidden = false;
   }
   open() {
     for (const [name, input] of this.inputs) {

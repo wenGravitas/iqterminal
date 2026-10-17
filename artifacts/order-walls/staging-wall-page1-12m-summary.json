@@ -1,0 +1,90 @@
+{
+  "capturedAt": "Sat, 17 Oct 2026 15:24:22 GMT",
+  "request": {
+    "method": "GET",
+    "path": "/market-data/v1/depth-observations",
+    "query": {
+      "from": 1792249560000,
+      "to": 1792250345006,
+      "after": 0,
+      "limit": 1000
+    }
+  },
+  "http": {
+    "status": 200,
+    "contentLengthBytes": 2211071,
+    "serverTiming": "admission;dur=0, db;dur=209.71, dbdecode;dur=15.88, serialize;dur=2282.24, total;dur=2282.29",
+    "contentType": "application/json"
+  },
+  "response": {
+    "version": 1,
+    "market": "perpetual",
+    "instrument": "binance:perpetual:BTCUSDT",
+    "feed": "usd-m-standard-diff-depth-rpi-excluded",
+    "from": 1792249560000,
+    "to": 1792250345006,
+    "watermark": 4447316,
+    "head": {
+      "cursor": 4447316,
+      "epoch": 1792225022082,
+      "at": 1792250660004,
+      "kind": "delta"
+    },
+    "page": {
+      "after": 4436397,
+      "nextAfter": 4437495,
+      "hasMore": true,
+      "observations": 1098
+    },
+    "actualObservationCount": 1098,
+    "firstCursor": 4436398,
+    "lastCursor": 4437495,
+    "coverage": {
+      "requestedFrom": 1792249560000,
+      "requestedTo": 1792250345006,
+      "seedAt": 1792249549914,
+      "seedEpoch": 1792225022082,
+      "confirmedTo": 1792250345006,
+      "earliestRetainedAt": 1792150848053,
+      "gaps": [],
+      "gapsTruncated": false,
+      "partial": false
+    },
+    "seed": {
+      "at": 1792249549914,
+      "epoch": 1792225022082,
+      "bidLevels": 5000,
+      "askLevels": 5000,
+      "bookScope": {
+        "maxLevelsPerSide": 5000,
+        "membership": "exact-observed",
+        "snapshotLevels": {
+          "bids": 1000,
+          "asks": 1000
+        },
+        "bids": {
+          "observedLevels": 14897,
+          "returnedLevels": 5000,
+          "complete": false,
+          "truncated": true,
+          "lowerBound": 81581.6,
+          "storedLevels": 39059
+        },
+        "asks": {
+          "observedLevels": 11892,
+          "returnedLevels": 5000,
+          "complete": false,
+          "truncated": true,
+          "upperBound": 81835.7,
+          "storedLevels": 26047
+        },
+        "outerCoverage": "snapshot-bounded"
+      }
+    }
+  },
+  "limits": [
+    "This is one successful raw API page capture after the browser matrix stopped.",
+    "Observation body is retained verbatim in staging-wall-page1-12m.json; response headers are in staging-wall-page1-12m.headers.",
+    "The query after=0 returned page.after and nextAfter as shown; the browser worker still reported pages=0/cursor=0."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "mode": "staging",
+  "baseUrl": "http://127.0.0.1:5173/",
+  "startedAt": "2026-10-17T14:03:17.626Z",
+  "machine": {
+    "platform": "linux",
+    "arch": "arm64",
+    "release": "6.12.109+rpt-rpi-v8",
+    "node": "v22.19.0"
+  },
+  "browser": {
+    "version": "154.0.8037.92",
+    "executable": "/usr/bin/chromium",
+    "headless": true,
+    "viewport": {
+      "width": 1366,
+      "height": 860
+    },
+    "deviceScaleFactor": 1
+  },
+  "method": "Actual Binance USD-M perpetual candles, staged raw depth-observation API, existing worker, live head stream, and native renderers. New Playwright browser context per sample; warm retry reuses that context worker cache.",
+  "cases": [
+    {
+      "scenario": "candles-only",
+      "sample": 1,
+      "failed": "page.waitForFunction: Target page, context or browser has been closed",
+      "errors": [],
+      "requests": {
+        "requestCount": 0,
+        "byKind": {},
+        "requests": []
+      }
+    }
+  ],
+  "limits": {
+    "frameIntervals": "Observed requestAnimationFrame gaps only; no FPS guarantee or inferred frame rate.",
+    "memory": "Chromium performance.memory JavaScript heap when exposed, worker cache counters, and renderer-retained byte estimates. Excludes total process RSS, GPU surfaces, and some worker/canvas allocations.",
+    "rendering": "Pi /usr/bin/chromium in Playwright headless mode, without forced SwiftShader arguments. Backend is recorded from the running app."
+  },
+  "endedAt": "2026-10-17T14:03:38.092Z",
+  "durationMs": 16572
+}

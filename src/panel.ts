@@ -1,9 +1,11 @@
 import type {LevelWatch} from './level-watch/types';
 import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
-import { FOOTPRINT_ID, HEATMAP_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
+import { FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
 import { HeatmapControls } from './heatmap-controls';
 import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
+import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, resolveAutoOrderWallPriceWidth, type OrderWallHit, type OrderWallStatus, type OrderWallsSettings } from './feed/order-walls';
+import { OrderWallsControls } from './order-walls-controls';
 import { duration } from './feed/protocol';
 import type { Bar, CrosshairMoveEvent } from 'openalgo-charts';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
@@ -89,10 +91,18 @@ function legacyRowPrice(value: unknown) {
 export class CandlePanel implements IContentRenderer {
   readonly element = document.createElement('section');
   private heatmapControls!: HeatmapControls;
+  private orderWallsControls!: OrderWallsControls;
   private releaseHeatmap?: () => void;
   private heatmapSubscriptionKey = '';
   private heatmapGeneration = 0;
   private heatmapStatus?: HeatmapStatus;
+  private releaseOrderWalls?: () => void;
+  private orderWallsSubscriptionKey = '';
+  private orderWallsSettingsKey = '';
+  private orderWallsViewportKey = '';
+  private orderWallsGeneration = 0;
+  private orderWallsAutoPriceWidth = 50;
+  private orderWallsStatus?: OrderWallStatus;
   private toolbarWrap = document.createElement('div');
   private chart = document.createElement('div');
   private chartFooter = document.createElement('footer');
@@ -256,6 +266,7 @@ export class CandlePanel implements IContentRenderer {
     this.retry.textContent = 'Retry';
     this.retry.setAttribute('aria-label', 'Retry market data');
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
+    this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
     this.overlays.className = 'chart-top-overlays';
@@ -264,7 +275,7 @@ export class CandlePanel implements IContentRenderer {
     this.activeSummary.textContent = 'Indicators'; this.activeRows.className = 'active-indicator-rows';
     this.activeIndicators.append(this.activeSummary, this.activeRows);
     this.buildDialogs();
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.chartSettingsDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog);
   }
 
   init(params: IDockviewPanelProps) {
@@ -346,7 +357,8 @@ export class CandlePanel implements IContentRenderer {
     this.engine.onFootprintViewport=(from,to)=>{if(this.footprintHasInitialView)this.feed.requestFootprintViewport(this.params.api.id,from,to);};
     this.engine.onHeatmapViewport = viewport => {
       if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
-      this.feed.requestHeatmapViewport(this.params.api.id, viewport);
+      if (this.nativeIndicator(HEATMAP_ID) && supportsDepth(this.selection)) this.feed.requestHeatmapViewport(this.params.api.id, viewport);
+      this.updateOrderWallsViewport(viewport.from, viewport.to, viewport.low, viewport.high, viewport.height);
     };
     this.engine.setWheelMode(this.selection.wheelMode);
     this.engine.setGridVisible(this.selection.grid); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
@@ -370,7 +382,7 @@ export class CandlePanel implements IContentRenderer {
     );
     this.overlays.append(this.readout, this.activeIndicators);
     this.chart.append(this.overlays, this.heatmapControls.readout);
-    this.chartFooter.append(this.heatmapControls.notice, this.statusNode);
+    this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
     this.register(params.api.id, this);
     this.subscribe();
@@ -681,7 +693,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine.setFootprintBars(this.footprintBars, true); this.footprintNeedsSync = false;
       this.focusFootprintOnce();
     }
-    this.syncHeatmap(); this.hoveredBar = null; this.hoveredFootprint = null;
+    this.syncHeatmap(); this.syncOrderWalls(); this.hoveredBar = null; this.hoveredFootprint = null;
     this.updateFootprintControls(); this.refreshReadout(); this.updateStatus();
   }
 
@@ -696,7 +708,8 @@ export class CandlePanel implements IContentRenderer {
     const existing = this.selection.indicators.find(i => i.definitionId === definitionId);
     if (!existing) {
       const settings = definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
-        : { ...this.selection.heatmap, enabled: true };
+        : definitionId === HEATMAP_ID ? { ...this.selection.heatmap, enabled: true }
+          : { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true };
       this.selection = config({ ...this.selection, indicators: [...this.selection.indicators, nativeInstance(definitionId, settings)] });
       this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
       this.renderPicker(`${definition.name} added with its default settings.`);
@@ -709,6 +722,7 @@ export class CandlePanel implements IContentRenderer {
     if (instance.settingsVersion !== 1) return;
     if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
     else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
+    else if (instance.definitionId === ORDER_WALLS_ID) this.orderWallsControls.open(orderWallsSettings(instance.settings));
     else if (instance.script) void this.openAttachmentSettings(instance.instanceId);
   }
 
@@ -743,9 +757,11 @@ export class CandlePanel implements IContentRenderer {
       const definition = nativeDefinition(instance.definitionId), study = views.find(v => v.attachmentId === instance.instanceId);
       const name = definition?.name ?? instance.script?.title ?? instance.definitionId;
       const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
-      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
+      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
         : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
           : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
+            : instance.definitionId === ORDER_WALLS_ID ? this.selection.venue === 'hyperliquid' ? 'Unavailable · Hyperliquid order-book history is not supported'
+              : `${orderWallsSettings(instance.settings).method === 'relative' ? `Relative p${orderWallsSettings(instance.settings).relativePercentile}` : `Absolute $${orderWallsSettings(instance.settings).thresholdUsd.toLocaleString('en-US')}`} · ${orderWallsSettings(instance.settings).aggregation === 'auto' ? 'Auto' : `$${orderWallsSettings(instance.settings).aggregation}`} · ${this.orderWallsStatus?.state ?? 'loading'}`
             : study ? study.inputs.filter(i => i.kind !== 'color').map(i => `${i.label} ${study.settings[i.key] ?? i.defaultValue}`).join(' · ') : 'Restoring pinned revision…';
       const error = study && study.diagnostics.length ? study.status : study && !study.inputs.length && study.status !== 'Study ready' ? study.status : '';
       if (error) summary = error;
@@ -770,7 +786,8 @@ export class CandlePanel implements IContentRenderer {
         const label = action === 'visibility' ? `${row.instance.visible ? 'Hide' : 'Show'} ${row.name}` : action === 'settings' ? `${row.name} settings` : action === 'source' ? `Edit Script for ${row.name}` : `${action === 'remove' ? 'Remove' : 'Duplicate'} ${row.name}`;
         button.setAttribute('aria-label', label); button.title = label;
         if (action === 'visibility') button.setAttribute('aria-pressed', String(row.instance.visible));
-        button.disabled = row.unavailable && action !== 'remove'; button.append(indicatorIcon(action)); controls.append(button);
+        const wallMarketUnsupported = row.instance.definitionId === ORDER_WALLS_ID && this.selection.venue === 'hyperliquid';
+        button.disabled = row.unavailable && action !== 'remove' || wallMarketUnsupported && action === 'visibility'; button.append(indicatorIcon(action)); controls.append(button);
       }
       element.append(copy, controls); this.activeRows.append(element);
     }
@@ -968,6 +985,7 @@ export class CandlePanel implements IContentRenderer {
         if (this.resetViewOnSnapshot && this.selection.type === 'candle') this.engine?.resetView();
         this.resetViewOnSnapshot = false;
         this.hoveredBar = null;
+        this.syncOrderWalls();
         if (this.visible) this.refreshReadout();
       } else if (event.type === 'patch') {
         this.mergeCandles(event.candles);
@@ -980,6 +998,7 @@ export class CandlePanel implements IContentRenderer {
     this.syncHeatmap();
     this.subscribeFootprint();
     this.reconcileIndicators();
+    this.syncOrderWalls();
   }
 
   private changeHeatmap(settings: HeatmapSettings, units: FootprintUnits) {
@@ -989,6 +1008,13 @@ export class CandlePanel implements IContentRenderer {
       i.instanceId === instance.instanceId ? { ...i, settings: { ...settings, rowPrice: this.nativeIndicator(FOOTPRINT_ID) ? this.selection.heatmap.rowPrice : settings.rowPrice } }
         : i.definitionId === FOOTPRINT_ID && i.settingsVersion === 1 && i.source.kind === 'chart' ? { ...i, settings: { ...i.settings, units } } : i) });
     this.params.api.updateParameters(this.selection); this.reconcileIndicators(); if (previousUnits !== this.selection.footprintUnits) this.syncNativeIndicators(); this.save();
+  }
+  private changeOrderWalls(settings: OrderWallsSettings) {
+    const instance = this.nativeIndicator(ORDER_WALLS_ID); if (!instance) return;
+    const normalized = orderWallsSettings({ ...settings, enabled: true });
+    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(i =>
+      i.instanceId === instance.instanceId ? { ...i, settings: normalized } : i) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
   private syncHeatmap() {
     const supported = supportsDepth(this.selection), footprint = Boolean(this.nativeIndicator(FOOTPRINT_ID));
@@ -1007,6 +1033,113 @@ export class CandlePanel implements IContentRenderer {
       this.engine?.updateHeatmap(event.buckets, event.snapshot, event.status.retentionStart);
       if (this.visible && !document.hidden) this.heatmapControls.setStatus(event.status);
     }, marketOf(this.selection));
+  }
+
+  private syncOrderWalls() {
+    const instance = this.nativeIndicator(ORDER_WALLS_ID);
+    const supported = this.selection.venue === 'binance';
+    const settings = orderWallsSettings(instance?.settings ?? DEFAULT_ORDER_WALLS_SETTINGS);
+    this.orderWallsControls.sync(settings, supported, Boolean(instance), Boolean(instance?.visible));
+    this.engine?.setOrderWalls({ ...settings, enabled: Boolean(instance?.visible && settings.enabled) }, duration[this.selection.interval]);
+    if (!instance?.visible) this.heatmapControls.showSharedTooltip(null);
+
+    const sourceKey = orderWallMarket(this.selection);
+    if (this.orderWallsSubscriptionKey && this.orderWallsSubscriptionKey !== sourceKey) {
+      this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+      this.orderWallsGeneration++; this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsStatus = undefined; this.engine?.setOrderWallSnapshot([], { state: 'loading', message: 'Waiting for the selected Binance book source.' });
+    }
+
+    if (!instance || !supported) {
+      const status: OrderWallStatus | undefined = instance && !supported
+        ? { state: 'unavailable', message: 'Hyperliquid order-book history is not supported by an available source.' }
+        : undefined;
+      const hadSource = Boolean(this.orderWallsSubscriptionKey || this.releaseOrderWalls);
+      this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+      if (hadSource) this.orderWallsGeneration++;
+      this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsStatus = status;
+      this.engine?.setOrderWallSnapshot([], status ?? { state: 'loading', message: 'Order Walls is detached.' });
+      this.orderWallsControls.setStatus(status);
+      this.heatmapControls.showSharedTooltip(null);
+      return;
+    }
+
+    this.orderWallsControls.setStatus(this.orderWallsStatus);
+    this.updateOrderWallsViewport();
+  }
+
+  private updateOrderWallsViewport(from?: number, to?: number, low?: number, high?: number, height?: number) {
+    const instance = this.nativeIndicator(ORDER_WALLS_ID);
+    if (!instance || this.selection.venue !== 'binance') return;
+    const visible = from === undefined || to === undefined ? this.engine?.visibleTimeRange() : null;
+    const requestedFrom = from ?? (visible ? visible.from * 1000 : NaN);
+    const requestedTo = to ?? (visible ? visible.to * 1000 : NaN);
+    if (![requestedFrom, requestedTo].every(Number.isFinite) || requestedFrom >= requestedTo) return;
+    const intervalMs = duration[this.selection.interval];
+    const requestKey = `${Math.floor(requestedFrom / intervalMs) * intervalMs}:${Math.ceil(requestedTo / intervalMs) * intervalMs}`;
+    const range = this.orderWallsRange(from, to);
+    if (range) {
+      const settings = orderWallsSettings(instance.settings), tickSize = this.selection.market === 'spot' ? 0.01 : 0.1;
+      if (settings.aggregation === 'auto' && [low, high, height].every(Number.isFinite)) {
+        this.orderWallsAutoPriceWidth = resolveAutoOrderWallPriceWidth(low!, high!, height!, tickSize);
+      }
+      const followLive = requestedTo >= Date.now() - intervalMs;
+      this.ensureOrderWallsSubscription(range.from, range.to, settings,
+        settings.aggregation === 'auto' ? this.orderWallsAutoPriceWidth : undefined, followLive, requestKey);
+    }
+  }
+
+  private orderWallsRange(from?: number, to?: number) {
+    const visible = from === undefined || to === undefined ? this.engine?.visibleTimeRange() : null;
+    const visibleFrom = from ?? (visible ? visible.from * 1000 : NaN);
+    const visibleTo = to ?? (visible ? visible.to * 1000 : NaN);
+    if (!Number.isFinite(visibleFrom) || !Number.isFinite(visibleTo) || visibleFrom >= visibleTo) return null;
+    const intervalMs = duration[this.selection.interval];
+    const paddedFrom = Math.floor(visibleFrom / intervalMs) * intervalMs - intervalMs;
+    const paddedTo = Math.ceil(visibleTo / intervalMs) * intervalMs + intervalMs;
+    const retainedFrom = this.orderWallsStatus?.retentionStart;
+    const range = { from: Math.max(0, retainedFrom ?? 0, paddedFrom), to: Math.min(Date.now(), paddedTo) };
+    return range.from < range.to ? range : null;
+  }
+
+  private ensureOrderWallsSubscription(from: number, to: number, settings: OrderWallsSettings, autoPriceWidth?: number, followLive = false, requestKey = `${from}:${to}`) {
+    const market = orderWallMarket(this.selection);
+    const sourceKey = market;
+    const settingsKey = JSON.stringify(settings);
+    if (this.orderWallsSubscriptionKey && this.orderWallsSubscriptionKey !== sourceKey) {
+      this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+      this.orderWallsGeneration++; this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsStatus = undefined; this.engine?.setOrderWallSnapshot([], { state: 'loading', message: 'Waiting for the selected Binance book source.' });
+    }
+    if (this.orderWallsSubscriptionKey === sourceKey) {
+      if (settingsKey !== this.orderWallsSettingsKey) {
+        this.feed.updateOrderWalls(this.params.api.id, settings); this.orderWallsSettingsKey = settingsKey;
+      }
+      const rangeKey = `${requestKey}:${settings.aggregation === 'auto' ? autoPriceWidth : ''}:${followLive ? 1 : 0}`;
+      if (rangeKey !== this.orderWallsViewportKey) {
+        this.feed.updateOrderWallsViewport(this.params.api.id, from, to, autoPriceWidth); this.orderWallsViewportKey = rangeKey;
+      }
+      return;
+    }
+
+    this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+    this.orderWallsSubscriptionKey = sourceKey; this.orderWallsSettingsKey = settingsKey;
+    this.orderWallsViewportKey = `${requestKey}:${settings.aggregation === 'auto' ? autoPriceWidth : ''}:${followLive ? 1 : 0}`;
+    const generation = ++this.orderWallsGeneration;
+    this.orderWallsStatus = { state: 'loading', message: 'Loading walls for the visible chart range…' };
+    this.engine?.setOrderWallSnapshot([], this.orderWallsStatus);
+    this.orderWallsControls.setStatus(this.orderWallsStatus);
+    this.releaseOrderWalls = this.feed.subscribeOrderWalls(this.params.api.id, { market, from, to, settings,
+      ...(autoPriceWidth !== undefined ? { autoPriceWidth } : {}), followLive }, event => {
+      if (this.dead || generation !== this.orderWallsGeneration || !this.nativeIndicator(ORDER_WALLS_ID)) return;
+      this.orderWallsStatus = event.status;
+      if (event.kind === 'snapshot') this.engine?.setOrderWallSnapshot(event.segments ?? [], event.status);
+      else this.engine?.patchOrderWalls(event.patches ?? [], event.status);
+      this.orderWallsControls.setStatus(event.status);
+      this.renderActiveIndicators();
+      if (event.status.retentionStart !== undefined) this.updateOrderWallsViewport();
+    });
   }
 
   private subscribeFootprint() {
@@ -1081,7 +1214,9 @@ export class CandlePanel implements IContentRenderer {
   private crosshair(event: CrosshairMoveEvent) {
     const plot = this.engine?.chart.plotRect(0);
     const point = event.point;
-    this.heatmapControls.hover(point && plot ? this.engine?.heatmapAt(point.x - plot.left, point.y - plot.top) ?? null : null);
+    const wallHit: OrderWallHit | null = point && plot ? this.engine?.orderWallAt(point.x - plot.left, point.y - plot.top) ?? null : null;
+    if (wallHit && this.nativeIndicator(ORDER_WALLS_ID)?.visible) this.heatmapControls.showSharedTooltip(this.orderWallsControls.tooltip(wallHit, this.selection, this.orderWallsStatus));
+    else this.heatmapControls.hover(point && plot ? this.engine?.heatmapAt(point.x - plot.left, point.y - plot.top) ?? null : null);
     if (event.point === null || event.time === null) {
       this.hoveredBar = null;
       this.hoveredFootprint = null;
@@ -1309,6 +1444,8 @@ export class CandlePanel implements IContentRenderer {
         hover: this.hoveredFootprint,
       },
       heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
+      orderWalls: { ...this.engine?.orderWallsDiagnostics(), status: this.orderWallsStatus,
+        settings: orderWallsSettings(this.nativeIndicator(ORDER_WALLS_ID)?.settings ?? DEFAULT_ORDER_WALLS_SETTINGS) },
       studies: this.studyHost?.diagnostics(),
     };
   }
@@ -1326,6 +1463,7 @@ export class CandlePanel implements IContentRenderer {
     if (this.chartSettingsDialog.open) this.chartSettingsDialog.close();
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
+    this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();
     this.releaseFootprint?.(); this.footprintGeneration++;
     this.indicatorLifecycle?.dispose();
     this.subscriptions.forEach(subscription => subscription.dispose());

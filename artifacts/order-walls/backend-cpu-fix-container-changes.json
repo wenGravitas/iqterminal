@@ -1,0 +1,62 @@
+{
+  "services": {
+    "clickhouse": {
+      "beforeId": "fb960ae453033b8f2fd2b6f7e763a32b72410e0cd3c761828474725e8c2c7d14",
+      "afterId": "fb960ae453033b8f2fd2b6f7e763a32b72410e0cd3c761828474725e8c2c7d14",
+      "beforeImageId": "sha256:86e6acceeacb49202fd694b77b4f7fcd6e022b52a29b0568fbfb4b05e8f6b2e7",
+      "afterImageId": "sha256:86e6acceeacb49202fd694b77b4f7fcd6e022b52a29b0568fbfb4b05e8f6b2e7",
+      "beforeStartedAt": "2026-10-12T07:43:51.395635629Z",
+      "afterStartedAt": "2026-10-12T07:43:51.395635629Z"
+    },
+    "app": {
+      "beforeId": "51b28665487550ec48be00d3cffe72e89486490279ebbcb95ad03674d830938c",
+      "afterId": "6eda5d62cce77d09d760f502d14015b4743540108c188c0ae997b99e42888ed1",
+      "beforeImageId": "sha256:5f6c3b550097e12eef597041c6aa509691e09112542485a5a55ffa193ae8b6f1",
+      "afterImageId": "sha256:ff98db346902e0fe89214ba2e81a1030e31f42b29e237d0e138ecbe776217676",
+      "beforeStartedAt": "2026-10-17T15:04:23.82091425Z",
+      "afterStartedAt": "2026-10-17T15:15:50.073948876Z"
+    },
+    "materializer": {
+      "beforeId": "d0afc0aa2dc33a5b852f759b4b63c65324fcbdd67cf5e229f563759c95898a5b",
+      "afterId": "d0afc0aa2dc33a5b852f759b4b63c65324fcbdd67cf5e229f563759c95898a5b",
+      "beforeImageId": "sha256:19fbf70d445bf78b30806cd894898a1d957983ad1a16288a3cce699c5e4a4dc0",
+      "afterImageId": "sha256:19fbf70d445bf78b30806cd894898a1d957983ad1a16288a3cce699c5e4a4dc0",
+      "beforeStartedAt": "2026-10-13T18:20:12.585491303Z",
+      "afterStartedAt": "2026-10-13T18:20:12.585491303Z"
+    },
+    "level-watch": {
+      "beforeId": "60d0b8cde5d7fb969e6426a6c9220ffe55eaed69fa491e69cfa0aecf5b086c1d",
+      "afterId": "60d0b8cde5d7fb969e6426a6c9220ffe55eaed69fa491e69cfa0aecf5b086c1d",
+      "beforeImageId": "sha256:68bdb5a912b1c1141cf20bc5246c1c446b870b6cb20b44f480b5166561238492",
+      "afterImageId": "sha256:68bdb5a912b1c1141cf20bc5246c1c446b870b6cb20b44f480b5166561238492",
+      "beforeStartedAt": "2026-10-12T16:34:25.54595647Z",
+      "afterStartedAt": "2026-10-12T16:34:25.54595647Z"
+    },
+    "collector": {
+      "beforeId": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+      "afterId": "3df0acd82749bc112019313fcdccb7fff537cb12371fc0ef5bbf635f84091aae",
+      "beforeImageId": "sha256:d50658c2a941359a89729ec8c6ef5a169e0379f729cc31f9ff9baef5b14dd65b",
+      "afterImageId": "sha256:d50658c2a941359a89729ec8c6ef5a169e0379f729cc31f9ff9baef5b14dd65b",
+      "beforeStartedAt": "2026-10-13T15:54:46.038970032Z",
+      "afterStartedAt": "2026-10-13T15:54:46.038970032Z"
+    },
+    "spot-materializer": {
+      "beforeId": "f13465264d416adcd2fa9f5cbd61472db590daaab80745c2cdc45c6e6108ae27",
+      "afterId": "f13465264d416adcd2fa9f5cbd61472db590daaab80745c2cdc45c6e6108ae27",
+      "beforeImageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+      "afterImageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+      "beforeStartedAt": "2026-10-17T10:52:50.949429456Z",
+      "afterStartedAt": "2026-10-17T10:52:50.949429456Z"
+    },
+    "spot-collector": {
+      "beforeId": "64633566f740847f2b847a2e113ea505b564435d16dbfbd26cfc145da20608d3",
+      "afterId": "64633566f740847f2b847a2e113ea505b564435d16dbfbd26cfc145da20608d3",
+      "beforeImageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+      "afterImageId": "sha256:ab642faf7bbae047a103ef2fb2934ecb8db3ec77c4e28c8de5df22c4ade6c88e",
+      "beforeStartedAt": "2026-10-17T10:52:50.952198029Z",
+      "afterStartedAt": "2026-10-17T10:52:50.952198029Z"
+    }
+  },
+  "allHealthy": true,
+  "onlyAppReplaced": true
+}

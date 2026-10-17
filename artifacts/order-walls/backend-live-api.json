@@ -1,0 +1,51 @@
+{
+  "generatedAtMs": 1792245306076,
+  "markets": {
+    "perpetual": {
+      "healthHttp": 200,
+      "market": "perpetual",
+      "instrument": "binance:perpetual:BTCUSDT",
+      "feed": "usd-m-standard-diff-depth-rpi-excluded",
+      "requestedFrom": 1792245244080,
+      "requestedTo": 1792245304080,
+      "watermark": 4394645,
+      "seedCursor": 4394025,
+      "seedAt": 1792245242416,
+      "firstPageAfter": 4394025,
+      "firstPageNextAfter": 4394042,
+      "firstPageHasMore": true,
+      "firstPageObservationCount": 17,
+      "secondPageAfter": 4394042,
+      "secondPageNextAfter": 4394043,
+      "secondPageObservationCount": 1,
+      "earliestRetainedAt": 1792150848053,
+      "coveragePartial": false,
+      "coverageGapCount": 0,
+      "page1Bytes": 230703,
+      "page2Bytes": 1767
+    },
+    "spot": {
+      "healthHttp": 200,
+      "market": "spot",
+      "instrument": "binance:spot:BTCUSDT",
+      "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+      "requestedFrom": 1792245245044,
+      "requestedTo": 1792245305044,
+      "watermark": 109646,
+      "seedCursor": 108740,
+      "seedAt": 1792245216347,
+      "firstPageAfter": 108740,
+      "firstPageNextAfter": 109027,
+      "firstPageHasMore": true,
+      "firstPageObservationCount": 287,
+      "secondPageAfter": 109027,
+      "secondPageNextAfter": 109028,
+      "secondPageObservationCount": 1,
+      "earliestRetainedAt": 1792234374157,
+      "coveragePartial": false,
+      "coverageGapCount": 0,
+      "page1Bytes": 513220,
+      "page2Bytes": 1515
+    }
+  }
+}
