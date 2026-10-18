@@ -8,7 +8,7 @@ import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, reso
 import { OrderWallsControls } from './order-walls-controls';
 import { duration } from './feed/protocol';
 import type { Bar, ChartObjectSnapshot, CrosshairMoveEvent } from 'openalgo-charts';
-import { drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
+import { coerceSettingValue, drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
 import { FeedClient } from './feed/client';
@@ -19,10 +19,48 @@ import { footprintForUnits, type FootprintUnits } from './chart/footprint-units'
 import { MAX_STUDIES_PER_CHART, ScriptStudyHost, validStudyPins, type ScriptInputView, type StudyPin } from './scripts/host';
 import type { ScriptLibrary, ScriptRecord } from './scripts/library';
 import { makeInputControl, readInputSettings } from './scripts/input-controls';
-import { captureDrawingSettings, drawingDisplayName, drawingSettingsPatch, initialDrawingMetadata, IQ_DRAWING_META_VERSION, iqDrawingSettingsSchema } from './chart/drawing-settings';
+import { captureDrawingSettings, drawingDisplayName, drawingSettingsPatch, initialDrawingMetadata, IQ_DRAWING_META_VERSION, iqDrawingSettingsSchema, sameDrawingSetting } from './chart/drawing-settings';
 import { captureIQDrawingTemplateSettings, createLocalStorageDrawingTemplateStorage, createMemoryDrawingTemplateStorage, IQDrawingTemplateRepository, type IQDrawingTemplateCatalog, type IQDrawingTemplateRecord } from './chart/drawing-templates';
 
 const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'long-position', 'short-position']);
+const DRAWING_TOOL_GROUPS = [
+  { id: 'lines', label: 'Lines', tools: ['trend-line', 'horizontal-line', 'horizontal-ray'], defaultTool: 'trend-line' },
+  { id: 'shapes', label: 'Shapes and Fibonacci', tools: ['rectangle', 'fib-retracement'], defaultTool: 'rectangle' },
+  { id: 'positions', label: 'Position tools', tools: ['long-position', 'short-position'], defaultTool: 'long-position' },
+] as const;
+const DRAWING_GROUP_BY_TOOL: Map<string, string> = new Map(DRAWING_TOOL_GROUPS.flatMap(group => group.tools.map(tool => [tool, group.id] as const)));
+const DRAWING_ICON_MARKUP: Record<string, string> = {
+  cursor: '<path d="M4 2.5 15 11l-5 .3-2.2 5.2L4 2.5Z"/>',
+  'trend-line': '<path d="M3 15 14 4m-6 0h6v6"/>',
+  'horizontal-line': '<path d="M2.5 10h13"/>',
+  'horizontal-ray': '<path d="M2.5 10h13m-4-4 4 4-4 4"/>',
+  rectangle: '<rect x="3" y="4" width="12" height="10"/>',
+  'fib-retracement': '<path d="M4 3v13m0-12h11M4 7h8M4 11h11M4 15h8"/>',
+  text: '<path d="M3 4h14M10 4v12m-3 0h6"/>',
+  'long-position': '<rect x="3" y="4" width="12" height="11"/><path d="M9 12V5m-3 3 3-3 3 3"/>',
+  'short-position': '<rect x="3" y="4" width="12" height="11"/><path d="M9 7v7m-3-3 3 3 3-3"/>',
+  anchor: '<path d="M10 3a2.5 2.5 0 1 0 0 .1M10 6v10m-6-7h12M4 9c.3 4 2.3 6 6 7 3.7-1 5.7-3 6-7"/>',
+  undo: '<path d="M6 6 3 9l3 3M3 9h8a4 4 0 0 1 4 4v1"/>',
+  redo: '<path d="m14 6 3 3-3 3m3-3H9a4 4 0 0 0-4 4v1"/>',
+  eraser: '<path d="m3 11 7-7 7 7-6 6H6l-3-3 3-3m6 6 5-5"/>',
+  settings: '<path d="M8 1.5 9.3 2l.5 1.4 1.3.8 1.5-.2 1 1.8-.9 1.2v1.5l.9 1.2-1 1.8-1.5-.2-1.3.8-.5 1.4-1.3.5-1.3-.5-.5-1.4-1.3-.8-1.5.2-1-1.8L3.3 8V6.5l-.9-1.2 1-1.8 1.5.2 1.3-.8L6.7 2 8 1.5Z M8 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>',
+  templates: '<path d="M4 2.5h9l3 3v10H4zM13 2.5v3h3M6.5 9h7M6.5 12h7"/>',
+  objects: '<path d="M4 3h11v4H4zM4 9h11v4H4zM6 5h.1M6 11h.1"/>',
+  chevron: '<path d="m5 7 3 3 3-3"/>',
+};
+
+function drawingSidebarIcon(name: string): SVGSVGElement {
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icon.setAttribute('aria-hidden', 'true');
+  icon.setAttribute('viewBox', '0 0 20 20');
+  icon.setAttribute('focusable', 'false');
+  icon.innerHTML = DRAWING_ICON_MARKUP[name] ?? DRAWING_ICON_MARKUP.cursor!;
+  return icon;
+}
+
+function drawingToolName(id: string): string {
+  return registeredDrawingTools().find(tool => tool.id === id)?.name ?? id;
+}
 
 interface SharedObjectsView {
   panel: HTMLDetailsElement;
@@ -35,6 +73,7 @@ interface SharedObjectsView {
 }
 let sharedObjectsView: SharedObjectsView | undefined;
 let sharedObjectsOwner: CandlePanel | undefined;
+let nextDrawingSidebarId = 0;
 
 function getSharedObjectsView(): SharedObjectsView {
   if (sharedObjectsView) return sharedObjectsView;
@@ -138,6 +177,10 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsAutoPriceWidth = 50;
   private orderWallsStatus?: OrderWallStatus;
   private toolbarWrap = document.createElement('div');
+  private chartWorkspace = document.createElement('div');
+  private drawingSidebar = document.createElement('aside');
+  private drawingSidebarToolbar = document.createElement('div');
+  private drawingSidebarMenuLayer = document.createElement('div');
   private chart = document.createElement('div');
   private chartFooter = document.createElement('footer');
   private toolbar = document.createElement('div');
@@ -160,8 +203,8 @@ export class CandlePanel implements IContentRenderer {
   private activeIndicators = document.createElement('details');
   private activeSummary = document.createElement('summary');
   private activeRows = document.createElement('div');
-  private drawTool = document.createElement('select');
-  private drawMagnet = document.createElement('select');
+  private drawSelect = document.createElement('button');
+  private drawSnap = document.createElement('button');
   private drawPlacementState = document.createElement('span');
   private drawUndo = document.createElement('button');
   private drawRedo = document.createElement('button');
@@ -169,6 +212,13 @@ export class CandlePanel implements IContentRenderer {
   private drawSettings = document.createElement('button');
   private drawTemplates = document.createElement('button');
   private objectsToggle = document.createElement('button');
+  private drawingPrimaryButtons = new Map<string, HTMLButtonElement>();
+  private drawingToolButtons = new Map<string, HTMLButtonElement[]>();
+  private drawingFlyoutButtons = new Map<string, HTMLButtonElement>();
+  private drawingFlyouts = new Map<string, HTMLDivElement>();
+  private drawingLastToolByGroup = new Map<string, string>();
+  private openDrawingFlyoutGroup?: string;
+  private readonly drawingSidebarId = ++nextDrawingSidebarId;
   private objectsPanel!: HTMLDetailsElement;
   private objectsSummary!: HTMLElement;
   private objectsRows!: HTMLDivElement;
@@ -181,6 +231,7 @@ export class CandlePanel implements IContentRenderer {
   private drawingStatus = document.createElement('div');
   private drawingTarget = '';
   private drawingSchema?: SettingsSchema;
+  private drawingSettingsBaseline: Record<string, unknown> = {};
   private templatesDialog = document.createElement('dialog');
   private templatesName = document.createElement('input');
   private templatesIncludeLabel = document.createElement('input');
@@ -277,6 +328,15 @@ export class CandlePanel implements IContentRenderer {
     this.element.className = 'candle-panel';
     this.toolbarWrap.className = 'chart-toolbar-wrap';
     this.toolbar.className = 'chart-toolbar';
+    this.chartWorkspace.className = 'chart-workspace';
+    this.drawingSidebar.className = 'drawing-sidebar';
+    this.drawingSidebar.setAttribute('aria-label', 'Drawing tools and actions');
+    this.drawingSidebarToolbar.className = 'drawing-sidebar-toolbar';
+    this.drawingSidebarToolbar.setAttribute('role', 'group');
+    this.drawingSidebarToolbar.setAttribute('aria-label', 'Drawings');
+    this.drawingSidebarToolbar.setAttribute('aria-orientation', 'vertical');
+    this.drawingSidebarMenuLayer.className = 'drawing-sidebar-menu-layer';
+    this.drawingSidebarMenuLayer.setAttribute('aria-live', 'off');
     this.toolbarCue.className = 'toolbar-overflow-cue';
     this.toolbarCue.type = 'button';
     this.toolbarCue.textContent = '›';
@@ -341,27 +401,10 @@ export class CandlePanel implements IContentRenderer {
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
-    this.drawTool.setAttribute('aria-label', 'Drawing tool');
-    this.drawTool.title = 'Select a drawing tool';
-    this.drawTool.className = 'drawing-tool-select';
-    this.drawMagnet.setAttribute('aria-label', 'Drawing magnet');
-    this.drawMagnet.title = 'Snap drawing anchors to candle values';
-    this.drawMagnet.className = 'drawing-magnet-select';
-    this.drawMagnet.add(new Option('Snap weak', 'weak'));
-    this.drawMagnet.add(new Option('Snap strong', 'strong'));
-    this.drawMagnet.add(new Option('Snap off', 'off'));
     this.drawPlacementState.className = 'drawing-placement-state';
     this.drawPlacementState.setAttribute('role', 'status');
     this.drawPlacementState.setAttribute('aria-live', 'polite');
-    this.drawPlacementState.hidden = true;
-    this.drawUndo.type = 'button'; this.drawUndo.className = 'drawing-toolbar-action'; this.drawUndo.textContent = 'Undo'; this.drawUndo.title = 'Undo drawing change (Ctrl/⌘+Z)';
-    this.drawRedo.type = 'button'; this.drawRedo.className = 'drawing-toolbar-action'; this.drawRedo.textContent = 'Redo'; this.drawRedo.title = 'Redo drawing change (Ctrl/⌘+Shift+Z)';
-    this.drawEraser.type = 'button'; this.drawEraser.className = 'drawing-toolbar-action'; this.drawEraser.textContent = 'Erase'; this.drawEraser.title = 'Erase drawings';
-    this.drawSettings.type = 'button'; this.drawSettings.className = 'drawing-toolbar-action'; this.drawSettings.textContent = 'Style'; this.drawSettings.title = 'Edit the selected drawing';
-    this.drawTemplates.type = 'button'; this.drawTemplates.className = 'drawing-toolbar-action'; this.drawTemplates.textContent = 'Templates'; this.drawTemplates.title = 'Manage drawing settings templates';
-    this.objectsToggle.type = 'button'; this.objectsToggle.className = 'drawing-toolbar-action chart-objects-toggle'; this.objectsToggle.textContent = 'Objects'; this.objectsToggle.title = 'Show chart objects';
-    this.drawTool.add(new Option('Cursor', ''));
-    this.toolbar.append(this.drawTool, this.drawMagnet, this.drawPlacementState, this.drawUndo, this.drawRedo, this.drawEraser, this.drawSettings, this.drawTemplates, this.objectsToggle);
+    this.buildDrawingSidebar();
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
     this.overlays.className = 'chart-top-overlays';
     this.activeIndicators.className = 'active-indicators'; this.activeIndicators.open = true;
@@ -372,14 +415,126 @@ export class CandlePanel implements IContentRenderer {
     this.objectsPanel.append(this.objectsSummary, this.objectsRows);
     this.buildDialogs();
     this.buildDrawingDialogs();
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.drawingSidebarMenuLayer);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+  }
+
+  private sidebarButton(label: string, title: string, iconName: string, extraClass = '') {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `drawing-sidebar-button${extraClass ? ` ${extraClass}` : ''}`;
+    button.setAttribute('aria-label', label);
+    button.title = title;
+    button.append(drawingSidebarIcon(iconName));
+    return button;
+  }
+
+  private rememberDrawingToolButton(tool: string, button: HTMLButtonElement) {
+    const buttons = this.drawingToolButtons.get(tool) ?? [];
+    buttons.push(button);
+    this.drawingToolButtons.set(tool, buttons);
+  }
+
+  private buildDrawingSidebar() {
+    const divider = () => {
+      const line = document.createElement('span');
+      line.className = 'drawing-sidebar-divider';
+      line.setAttribute('aria-hidden', 'true');
+      return line;
+    };
+
+    this.drawSelect = this.sidebarButton('Select drawings', 'Select and edit drawings · Esc', 'cursor', 'drawing-sidebar-tool-main drawing-sidebar-select');
+    this.drawSelect.dataset.sidebarAction = 'select';
+    this.drawSelect.setAttribute('aria-pressed', 'true');
+    this.drawingSidebarToolbar.append(this.drawSelect, divider());
+
+    const textName = drawingToolName('text');
+    const textTool = this.sidebarButton(`Use ${textName} tool`, `Annotate with ${textName}`, 'text', 'drawing-sidebar-tool-main drawing-sidebar-direct-tool');
+    textTool.dataset.drawingTool = 'text';
+    textTool.dataset.toolName = textName;
+    textTool.setAttribute('aria-pressed', 'false');
+    this.rememberDrawingToolButton('text', textTool);
+
+    for (const group of DRAWING_TOOL_GROUPS) {
+      const defaultTool = group.defaultTool;
+      const toolName = drawingToolName(defaultTool);
+      this.drawingLastToolByGroup.set(group.id, defaultTool);
+      const row = document.createElement('div');
+      row.className = 'drawing-sidebar-group';
+      row.dataset.drawingGroup = group.id;
+
+      const primary = this.sidebarButton(`Use ${toolName} tool`, `Use ${toolName}`, defaultTool, 'drawing-sidebar-tool-main drawing-sidebar-primary');
+      primary.dataset.drawingTool = defaultTool;
+      primary.dataset.toolName = toolName;
+      primary.dataset.drawingGroup = group.id;
+      primary.setAttribute('aria-pressed', 'false');
+      this.drawingPrimaryButtons.set(group.id, primary);
+
+      const menuId = `drawing-tools-${this.drawingSidebarId}-${group.id}`;
+      const toolsLabel = group.label.replace(/ tools$/, '');
+      const menuToggle = this.sidebarButton(`Open ${toolsLabel} tools`, `Show ${toolsLabel.toLowerCase()} drawings`, 'chevron', 'drawing-sidebar-menu-toggle');
+      menuToggle.dataset.drawingGroup = group.id;
+      menuToggle.setAttribute('aria-controls', menuId);
+      menuToggle.setAttribute('aria-expanded', 'false');
+      this.drawingFlyoutButtons.set(group.id, menuToggle);
+
+      const flyout = document.createElement('div');
+      flyout.id = menuId;
+      flyout.className = 'drawing-sidebar-flyout';
+      flyout.dataset.drawingGroup = group.id;
+      flyout.setAttribute('role', 'group');
+      flyout.setAttribute('aria-label', `${toolsLabel} drawing tools`);
+      flyout.hidden = true;
+      const heading = document.createElement('strong');
+      heading.className = 'drawing-sidebar-flyout-heading';
+      heading.textContent = group.label;
+      flyout.append(heading);
+      for (const id of group.tools) {
+        const name = drawingToolName(id);
+        const option = this.sidebarButton(`Use ${name} tool`, `Use ${name}`, id, 'drawing-sidebar-flyout-tool');
+        option.dataset.drawingTool = id;
+        option.dataset.toolName = name;
+        option.dataset.drawingGroup = group.id;
+        option.setAttribute('aria-pressed', 'false');
+        const text = document.createElement('span');
+        text.className = 'drawing-sidebar-flyout-label';
+        text.textContent = name;
+        option.append(text);
+        this.rememberDrawingToolButton(id, option);
+        flyout.append(option);
+      }
+      row.append(primary, menuToggle);
+      this.drawingSidebarToolbar.append(row);
+      if (group.id === 'positions') this.drawingSidebarToolbar.append(textTool);
+      this.drawingSidebarMenuLayer.append(flyout);
+      this.drawingFlyouts.set(group.id, flyout);
+    }
+
+    this.drawingSidebarToolbar.append(divider());
+    this.drawSnap = this.sidebarButton('Anchor snapping: Weak', 'Anchor snapping: Weak · click for Strong', 'anchor', 'drawing-sidebar-snap');
+    this.drawSnap.dataset.magnet = 'weak';
+    this.drawSnap.setAttribute('aria-pressed', 'true');
+    this.drawingSidebarToolbar.append(this.drawSnap, divider());
+
+    this.drawUndo = this.sidebarButton('Undo', 'Undo drawing change (Ctrl/⌘+Z)', 'undo', 'drawing-sidebar-action');
+    this.drawRedo = this.sidebarButton('Redo', 'Redo drawing change (Ctrl/⌘+Shift+Z)', 'redo', 'drawing-sidebar-action');
+    this.drawEraser = this.sidebarButton('Erase', 'Erase drawings', 'eraser', 'drawing-sidebar-action');
+    this.drawSettings = this.sidebarButton('Style', 'Edit the selected drawing', 'settings', 'drawing-sidebar-action');
+    this.drawTemplates = this.sidebarButton('Templates', 'Manage drawing settings templates', 'templates', 'drawing-sidebar-action');
+    this.objectsToggle = this.sidebarButton('Objects', 'Show chart objects', 'objects', 'drawing-sidebar-action chart-objects-toggle');
+    this.drawUndo.setAttribute('aria-keyshortcuts', 'Control+Z Meta+Z');
+    this.drawRedo.setAttribute('aria-keyshortcuts', 'Control+Shift+Z Meta+Shift+Z');
+    this.drawEraser.setAttribute('aria-pressed', 'false');
+    this.objectsToggle.setAttribute('aria-pressed', 'false');
+    this.drawingSidebarToolbar.append(this.drawUndo, this.drawRedo, this.drawEraser, this.drawSettings, this.drawTemplates, this.objectsToggle, this.drawPlacementState);
+    this.drawingSidebar.append(this.drawingSidebarToolbar);
   }
 
   init(params: IDockviewPanelProps) {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
-    this.drawMagnet.value = this.selection.drawingMagnet;
+    this.updateDrawingSnapButton();
     this.wheelMode.value = this.selection.wheelMode;
     this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
     params.api.updateParameters(this.selection);
@@ -390,10 +545,30 @@ export class CandlePanel implements IContentRenderer {
     const options = { signal: this.abort.signal };
     this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
     this.interval.addEventListener('change', () => this.select(), options);
-    this.drawTool.addEventListener('change', () => this.setDrawingTool(this.drawTool.value || null), options);
-    this.drawMagnet.addEventListener('change', () => {
-      const drawingMagnet = this.drawMagnet.value as MagnetMode;
+    this.drawingSidebar.addEventListener('click', event => this.drawingSidebarClick(event), options);
+    this.drawingSidebarMenuLayer.addEventListener('click', event => this.drawingFlyoutClick(event), options);
+    this.drawingSidebarMenuLayer.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && this.openDrawingFlyoutGroup) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeDrawingFlyout(true);
+      }
+    }, options);
+    document.addEventListener('pointerdown', event => {
+      const target = event.target as Node | null;
+      if (target && !this.drawingSidebar.contains(target) && !this.drawingSidebarMenuLayer.contains(target)) this.closeDrawingFlyout();
+    }, options);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && this.openDrawingFlyoutGroup) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeDrawingFlyout(true);
+      }
+    }, options);
+    this.drawSnap.addEventListener('click', () => {
+      const drawingMagnet: MagnetMode = this.selection.drawingMagnet === 'off' ? 'weak' : this.selection.drawingMagnet === 'weak' ? 'strong' : 'off';
       this.selection = config({ ...this.selection, drawingMagnet });
+      this.updateDrawingSnapButton();
       this.engine?.drawings.setOptions({ magnet: drawingMagnet });
       params.api.updateParameters(this.selection); this.save();
     }, options);
@@ -491,11 +666,10 @@ export class CandlePanel implements IContentRenderer {
       setVisible: visible => { this.watchZonesVisible = visible; this.engine?.setWatchZones(visible ? this.watchList : []); },
       focus: () => { const watch = this.watchList.find(item => item.state === 'armed' || item.state === 'draft'); if (watch) this.focusWatch(watch); },
     });
-    for (const tool of registeredDrawingTools()) if (DRAWING_TOOL_IDS.has(tool.id)) this.drawTool.add(new Option(tool.name, tool.id));
     this.loadDrawingTemplates();
     this.subscriptions.push({ dispose: this.engine.objects.subscribe(() => this.renderDrawingObjects()) });
     this.subscriptions.push(
-      { dispose: this.engine.chart.on('draw:tool', payload => { const event = payload as { tool: string | null }; this.drawTool.value = event.tool ?? ''; this.syncDrawingActions(); }) },
+      { dispose: this.engine.chart.on('draw:tool', () => this.syncDrawingActions()) },
       { dispose: this.engine.chart.on('draw:add', payload => {
         const event = payload as DrawingEvent;
         if (!event.history) this.enrichPlacedDrawing(event.drawing);
@@ -812,8 +986,86 @@ export class CandlePanel implements IContentRenderer {
     this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
 
+  private drawingSidebarClick(event: Event) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
+    if (!button) return;
+    const group = button.dataset.drawingGroup;
+    if (button.classList.contains('drawing-sidebar-menu-toggle') && group) {
+      this.toggleDrawingFlyout(group);
+      return;
+    }
+    if (button === this.drawSelect) {
+      this.closeDrawingFlyout();
+      this.setDrawingTool(null);
+      return;
+    }
+    if (button.classList.contains('drawing-sidebar-primary') || button.classList.contains('drawing-sidebar-direct-tool')) {
+      const tool = button.dataset.drawingTool;
+      if (!tool) return;
+      if (group) this.drawingLastToolByGroup.set(group, tool);
+      this.closeDrawingFlyout();
+      this.setDrawingTool(tool);
+    }
+  }
+
+  private drawingFlyoutClick(event: Event) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button.drawing-sidebar-flyout-tool');
+    if (!button?.dataset.drawingTool) return;
+    const { drawingTool: tool, drawingGroup: group } = button.dataset;
+    if (group) this.drawingLastToolByGroup.set(group, tool);
+    this.closeDrawingFlyout();
+    this.setDrawingTool(tool);
+    if (group) this.drawingPrimaryButtons.get(group)?.focus();
+  }
+
+  private toggleDrawingFlyout(group: string) {
+    if (this.openDrawingFlyoutGroup === group) {
+      this.closeDrawingFlyout();
+      return;
+    }
+    this.closeDrawingFlyout();
+    const flyout = this.drawingFlyouts.get(group);
+    const trigger = this.drawingFlyoutButtons.get(group);
+    if (!flyout || !trigger) return;
+    flyout.hidden = false;
+    this.openDrawingFlyoutGroup = group;
+    trigger.setAttribute('aria-expanded', 'true');
+    const workspace = this.chartWorkspace.getBoundingClientRect();
+    const anchor = trigger.getBoundingClientRect();
+    const menu = flyout.getBoundingClientRect();
+    const top = Math.max(4, Math.min(anchor.top - workspace.top - 3, workspace.height - menu.height - 4));
+    flyout.style.top = `${top}px`;
+    flyout.style.left = `${Math.min(this.drawingSidebar.offsetWidth + 3, Math.max(4, workspace.width - menu.width - 4))}px`;
+    requestAnimationFrame(() => flyout.querySelector<HTMLButtonElement>('.drawing-sidebar-flyout-tool')?.focus());
+  }
+
+  private closeDrawingFlyout(restoreFocus = false) {
+    const group = this.openDrawingFlyoutGroup;
+    if (!group) return;
+    const flyout = this.drawingFlyouts.get(group);
+    const trigger = this.drawingFlyoutButtons.get(group);
+    if (flyout) flyout.hidden = true;
+    trigger?.setAttribute('aria-expanded', 'false');
+    this.openDrawingFlyoutGroup = undefined;
+    if (restoreFocus) trigger?.focus();
+  }
+
+  private updateDrawingSnapButton() {
+    const mode = this.selection?.drawingMagnet ?? 'weak';
+    const label = mode === 'strong' ? 'Strong' : mode === 'off' ? 'Off' : 'Weak';
+    const next = mode === 'off' ? 'Weak' : mode === 'weak' ? 'Strong' : 'Off';
+    this.drawSnap.dataset.magnet = mode;
+    this.drawSnap.setAttribute('aria-label', `Anchor snapping: ${label}`);
+    this.drawSnap.setAttribute('aria-pressed', String(mode !== 'off'));
+    this.drawSnap.title = `Anchor snapping: ${label} · click for ${next}`;
+    this.drawSnap.setAttribute('aria-description', `Click to change anchor snapping to ${next}.`);
+  }
+
   private setDrawingTool(tool: string | null) {
     if (!this.engine) return;
+    const group = tool ? DRAWING_GROUP_BY_TOOL.get(tool) : undefined;
+    if (group && tool) this.drawingLastToolByGroup.set(group, tool);
+    this.closeDrawingFlyout();
     this.engine.drawings.setEraser(false);
     this.drawEraser.setAttribute('aria-pressed', 'false');
     this.engine.drawings.setTool(tool);
@@ -842,31 +1094,60 @@ export class CandlePanel implements IContentRenderer {
     this.drawUndo.disabled = !draw.canUndo();
     this.drawRedo.disabled = !draw.canRedo();
     this.drawSettings.disabled = draw.selection().length !== 1;
-    this.drawEraser.setAttribute('aria-pressed', String(draw.erasing()));
     const activeTool = draw.activeTool();
+    const erasing = draw.erasing();
+    const activeGroup = activeTool ? DRAWING_GROUP_BY_TOOL.get(activeTool) : undefined;
+    if (activeGroup && activeTool) this.drawingLastToolByGroup.set(activeGroup, activeTool);
+    this.drawSelect.setAttribute('aria-pressed', String(!activeTool && !erasing));
+    this.drawEraser.setAttribute('aria-pressed', String(erasing));
+    this.drawSnap.setAttribute('data-magnet', this.selection.drawingMagnet);
+    for (const group of DRAWING_TOOL_GROUPS) {
+      const primary = this.drawingPrimaryButtons.get(group.id);
+      const tool = this.drawingLastToolByGroup.get(group.id) ?? group.defaultTool;
+      if (primary) {
+        const name = drawingToolName(tool);
+        if (primary.dataset.drawingTool !== tool) {
+          primary.dataset.drawingTool = tool;
+          primary.dataset.toolName = name;
+          primary.replaceChildren(drawingSidebarIcon(tool));
+        }
+        primary.setAttribute('aria-label', `Use ${name} tool`);
+        primary.title = `Use ${name}`;
+        primary.setAttribute('aria-pressed', String(activeTool === tool));
+      }
+    }
+    for (const [tool, buttons] of this.drawingToolButtons) for (const button of buttons) button.setAttribute('aria-pressed', String(activeTool === tool));
     if (activeTool) {
-      const name = registeredDrawingTools().find(tool => tool.id === activeTool)?.name ?? activeTool;
+      const name = drawingToolName(activeTool);
       this.drawPlacementState.textContent = `Place: ${name}`;
       this.drawPlacementState.hidden = false;
-    } else if (draw.erasing()) {
+    } else if (erasing) {
       this.drawPlacementState.textContent = 'Erase drawings';
       this.drawPlacementState.hidden = false;
     } else {
       this.drawPlacementState.textContent = '';
       this.drawPlacementState.hidden = true;
     }
+    const ownsOpenObjects = this.objectsPanel.open && sharedObjectsOwner === this;
+    this.objectsToggle.setAttribute('aria-pressed', String(ownsOpenObjects));
+    const objectCount = this.objectsToggle.dataset.count ?? '0';
+    this.objectsToggle.setAttribute('aria-label', `Objects (${objectCount})`);
+    this.objectsToggle.setAttribute('aria-expanded', String(ownsOpenObjects));
+    this.objectsToggle.title = `${ownsOpenObjects ? 'Hide' : 'Show'} chart objects (${objectCount})`;
   }
 
   private toggleObjectsPanel() {
     if (sharedObjectsOwner === this && this.objectsPanel.open) {
       this.objectsPanel.open = false;
       sharedObjectsOwner = undefined;
+      this.syncDrawingActions();
       return;
     }
     sharedObjectsOwner = this;
     this.objectsPanel.open = true;
     this.attachObjectsPanel();
     this.objectsPanel.scrollIntoView({ block: 'nearest' });
+    this.syncDrawingActions();
   }
 
   attachObjectsPanel() {
@@ -922,8 +1203,9 @@ export class CandlePanel implements IContentRenderer {
       }
       return true;
     });
-    const toggleLabel = `Objects (${objects.length})`;
-    if (this.objectsToggle.textContent !== toggleLabel) this.objectsToggle.textContent = toggleLabel;
+    this.objectsToggle.dataset.count = String(objects.length);
+    this.objectsToggle.setAttribute('aria-label', `Objects (${objects.length})`);
+    this.objectsToggle.title = `${this.objectsPanel.open ? 'Hide' : 'Show'} chart objects (${objects.length})`;
     if (sharedObjectsOwner !== this || !this.objectsPanel.open) return;
     this.updateObjectsSummary();
     this.objectsPanel.dataset.focused = String(this.params?.api.isFocused ?? false);
@@ -1070,7 +1352,9 @@ export class CandlePanel implements IContentRenderer {
     this.drawingTarget = drawing.id;
     this.drawingSchema = iqDrawingSettingsSchema(drawing.tool);
     this.drawingFields.replaceChildren();
-    const values = captureDrawingSettings(drawing, this.drawingSchema);
+    const theme = this.engine?.chart.theme();
+    const values = captureDrawingSettings(drawing, this.drawingSchema, theme);
+    this.drawingSettingsBaseline = { ...values };
     for (const field of this.drawingSchema.fields) {
       const row = document.createElement('label'); row.className = 'indicator-setting-field';
       const label = document.createElement('span'); label.textContent = field.label;
@@ -1120,14 +1404,34 @@ export class CandlePanel implements IContentRenderer {
     for (const control of this.drawingFields.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-setting-path]')) {
       const field = schema.fields.find(item => item.path === control.dataset.settingPath);
       if (!field) continue;
-      if (field.kind === 'boolean') values[field.path] = (control as HTMLInputElement).checked;
+      let value: unknown;
+      if (field.kind === 'boolean') value = (control as HTMLInputElement).checked;
       else if (field.kind === 'levels') {
-        try { values[field.path] = JSON.parse(control.value); } catch { this.drawingStatus.textContent = `${field.label} must be valid JSON.`; control.focus(); return; }
-      } else values[field.path] = control.value;
+        try { value = JSON.parse(control.value); } catch { this.drawingStatus.textContent = `${field.label} must be valid JSON.`; control.focus(); return; }
+      } else value = control.value;
+      const comparable = coerceSettingValue(field, value);
+      if (!sameDrawingSetting(comparable, this.drawingSettingsBaseline[field.path])) values[field.path] = value;
     }
-    const textColorExplicit = this.drawingFields.querySelector<HTMLElement>('[data-setting-path="text.color"]')?.dataset.userEdited === 'true'
-      ? true : undefined;
-    const patch = drawingSettingsPatch(drawing, values, schema, { textColorExplicit });
+    // The native interval patch replaces both bounds, so carry the untouched
+    // bound through when either endpoint changes.
+    if ('intervals.from' in values || 'intervals.to' in values) {
+      for (const path of ['intervals.from', 'intervals.to']) {
+        const control = this.drawingFields.querySelector<HTMLSelectElement>(`[data-setting-path="${path}"]`);
+        if (control) values[path] = control.value;
+      }
+    }
+    const textColorControl = this.drawingFields.querySelector<HTMLElement>('[data-setting-path="text.color"]');
+    const textColorEdited = textColorControl?.dataset.userEdited === 'true';
+    if (textColorEdited && drawing.props?.iqterminalLabelTextColorExplicit !== true && !('text.color' in values)) {
+      const control = textColorControl as HTMLInputElement | null;
+      if (control) values['text.color'] = control.value;
+    }
+    const markTextColorExplicit = textColorEdited && drawing.props?.iqterminalLabelTextColorExplicit !== true;
+    if (!Object.keys(values).length && !markTextColorExplicit) {
+      this.drawingDialog.close();
+      return;
+    }
+    const patch = drawingSettingsPatch(drawing, values, schema, { textColorExplicit: markTextColorExplicit ? true : undefined });
     if (draw.update(drawing.id, patch)) {
       this.engine?.objects.refresh(); this.drawingDialog.close(); this.syncDrawingActions();
     } else this.drawingStatus.textContent = 'This drawing cannot be edited in its current state.';
@@ -1144,7 +1448,7 @@ export class CandlePanel implements IContentRenderer {
 
   private renderDrawingTemplates() {
     const catalog = this.templateCatalog; const draw = this.engine?.drawings;
-    const selected = draw?.get(draw.selected() ?? ''); const tool = selected?.tool ?? (this.drawTool.value || '');
+    const selected = draw?.get(draw.selected() ?? ''); const tool = selected?.tool ?? (draw?.activeTool() ?? '');
     this.templatesList.replaceChildren();
     if (!catalog || !tool) {
       const empty = document.createElement('p'); empty.className = 'dialog-status'; empty.textContent = catalog ? 'Select a drawing tool or drawing to manage its templates.' : 'Loading local template catalog…';

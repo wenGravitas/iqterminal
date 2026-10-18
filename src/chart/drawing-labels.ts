@@ -1,9 +1,11 @@
-import { getDrawingTool, registerDrawingTool, type DrawContext, type DrawingTool } from 'openalgo-charts/draw';
+import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
+import { getDrawingTool, registerDrawingTool, type DrawContext, type Drawing, type DrawingController, type DrawingTool } from 'openalgo-charts/draw';
 
 const wrappedDraw = Symbol.for('iqterminal.drawing-label-renderer.v1');
 type WrappedDraw = DrawingTool['draw'] & { [wrappedDraw]?: true };
 const labelTools = ['horizontal-line', 'horizontal-ray'] as const;
 const fontStack = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+interface AxisPriceLabel { price: number; y: number; color: string; alpha: number }
 
 /** Add IQTerminal object labels through the public native drawing-tool registry. */
 export function registerIQDrawingLabelRenderers() {
@@ -12,12 +14,115 @@ export function registerIQDrawingLabelRenderers() {
     if ((tool.draw as WrappedDraw)[wrappedDraw]) continue;
     const nativeDraw = tool.draw;
     const draw: WrappedDraw = context => {
-      nativeDraw(context);
+      const axisAvailable = hasPriceAxis(context.rc);
+      // OpenAlgo's DrawingLayer clips tool renderers to the plot. Preserve its
+      // setting on the drawing, but move only its numeric label to the scale.
+      nativeDraw(axisAvailable
+        ? { ...context, style: { ...context.style, showLabels: false } }
+        : context);
       drawIQLabel(context, id);
     };
     Object.defineProperty(draw, wrappedDraw, { value: true });
     registerDrawingTool({ ...tool, draw });
   }
+}
+
+/** One unclipped native primitive per pane paints native horizontal-drawing
+ * labels in the scale column. It reads current controller state every frame so
+ * visibility, interval, pane and scale changes cannot leave stale tags behind. */
+export class DrawingAxisPriceLabels implements IPrimitive {
+  private host?: PrimitiveHost;
+  private paneIndex: number;
+
+  constructor(
+    private readonly drawings: DrawingController,
+    paneIndex: number,
+    private readonly previews: ReadonlyMap<string, Drawing>,
+  ) { this.paneIndex = paneIndex; }
+
+  setPaneIndex(paneIndex: number) { this.paneIndex = paneIndex; }
+  zOrder() { return 'top' as const; }
+  attached(host: PrimitiveHost) { this.host = host; }
+  detached() { this.host = undefined; }
+  autoscaleInfo() { return null; }
+
+  draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
+    if (!hasPriceAxis(rc)) return;
+    const byId = new Map<string, { drawing: Drawing; preview: boolean }>();
+    const currentIds = new Set<string>();
+    for (const drawing of this.drawings.drawings()) {
+      if (drawing.paneIndex === this.paneIndex && drawing.visible !== false && this.drawings.shownOnInterval(drawing.id)) {
+        currentIds.add(drawing.id);
+        byId.set(drawing.id, { drawing, preview: false });
+      }
+    }
+    for (const drawing of this.previews.values()) {
+      if (drawing.paneIndex === this.paneIndex) byId.set(drawing.id, { drawing, preview: !currentIds.has(drawing.id) });
+    }
+
+    const scale = rc.readoutPriceScale ?? rc.priceScale;
+    for (const { drawing, preview } of byId.values()) {
+      if (!labelTools.includes(drawing.tool as typeof labelTools[number]) || drawing.visible === false || drawing.style.showLabels === false) continue;
+      const price = drawing.points[0]?.price;
+      if (!Number.isFinite(price)) continue;
+      const y = scale.priceToY(price!) * rc.dpr;
+      if (!Number.isFinite(y)) continue;
+      drawAxisPriceLabel(ctx, rc, { price: price!, y, color: drawing.style.color ?? rc.theme.lineColor, alpha: preview ? 0.7 : 1 });
+    }
+  }
+}
+
+function hasPriceAxis(rc: PrimitiveRenderContext) {
+  return rc.priceAxisSide !== 'hidden' && Number.isFinite(rc.priceAxisWidth) && rc.priceAxisWidth > 0;
+}
+
+function drawAxisPriceLabel(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext, label: AxisPriceLabel) {
+  const { dpr, priceAxisSide, priceAxisWidth, priceAxisOffset, plotHeight } = rc;
+  if (!(Number.isFinite(dpr) && dpr > 0 && Number.isFinite(priceAxisWidth) && priceAxisWidth > 0 && plotHeight > 0)) return;
+  if (priceAxisSide === 'hidden' || label.y < 0 || label.y > plotHeight * dpr) return;
+
+  const left = priceAxisSide === 'left';
+  const origin = Math.round((Number.isFinite(priceAxisOffset) ? priceAxisOffset! : left ? 0 : rc.plotWidth) * dpr);
+  const axisEnd = Math.round(((Number.isFinite(priceAxisOffset) ? priceAxisOffset! : left ? 0 : rc.plotWidth) + (left ? -priceAxisWidth : priceAxisWidth)) * dpr);
+  const axisWidth = Math.min(Math.abs(axisEnd - origin) - 1, Math.round(priceAxisWidth * dpr) - 1);
+  if (axisWidth < 1) return;
+
+  const text = (rc.readoutPriceScale ?? rc.priceScale).format(label.price);
+  const pad = 4 * dpr;
+  const height = 18 * dpr;
+  ctx.save();
+  ctx.font = `500 ${11 * dpr}px system-ui, sans-serif`;
+  const textWidth = ctx.measureText(text).width;
+  const width = Math.min(axisWidth, textWidth + 2 * pad);
+  const x = left ? origin - 1 - width : origin + 1;
+  const y = Math.max(height / 2, Math.min(plotHeight * dpr - height / 2, label.y));
+  ctx.beginPath();
+  ctx.rect(Math.min(origin, axisEnd), 0, axisWidth + 1, plotHeight * dpr);
+  ctx.clip();
+  ctx.globalAlpha = label.alpha;
+  ctx.fillStyle = label.color;
+  ctx.fillRect(x, y - height / 2, width, height);
+  ctx.fillStyle = contrastingText(label.color);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + pad, y, Math.max(0, width - 2 * pad));
+  ctx.restore();
+}
+
+function contrastingText(color: string) {
+  const hex = /^#([\da-f]{3}|[\da-f]{6})$/i.exec(color.trim());
+  let rgb: [number, number, number] | null = null;
+  if (hex) {
+    const value = hex[1]!.length === 3 ? [...hex[1]!].map(channel => Number.parseInt(channel + channel, 16)) : [0, 2, 4].map(index => Number.parseInt(hex[1]!.slice(index, index + 2), 16));
+    rgb = value as [number, number, number];
+  } else {
+    const match = /^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)/i.exec(color.trim());
+    if (match) rgb = [Number(match[1]), Number(match[2]), Number(match[3])];
+  }
+  if (!rgb) return '#ffffff';
+  const linear = (value: number) => { const channel = value / 255; return channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4; };
+  const luminance = .2126 * linear(rgb[0]) + .7152 * linear(rgb[1]) + .0722 * linear(rgb[2]);
+  return luminance > .42 ? '#10131a' : '#ffffff';
 }
 
 function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {

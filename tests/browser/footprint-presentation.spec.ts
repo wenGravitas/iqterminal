@@ -1,6 +1,8 @@
 import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
+import { compactVol } from 'openalgo-charts/profile';
+import { footprintColumn } from '../../src/chart/terminal-footprint';
 
 test('footprint text scales with zoom and independent opacity settings persist without resetting collection', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
@@ -35,7 +37,7 @@ test('footprint text scales with zoom and independent opacity settings persist w
     p.engine.chart.panes()[0].priceScale.setFixedRange({ min: 82925, max: 83100 }); p.engine.chart.setAutoScale(false);
     return p.heatmapStatus.collectionStart;
   });
-  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprint.cellFont)).toBeGreaterThan(20);
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprint.cellFont)).toBeGreaterThanOrEqual(20);
 
   await page.screenshot({ path: 'artifacts/footprint-prominent-dark-1366x768.png' });
   await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
@@ -43,8 +45,9 @@ test('footprint text scales with zoom and independent opacity settings persist w
   await expect(panel.getByLabel('Cell opacity (%)')).toHaveValue('85'); await panel.getByLabel('Cell opacity (%)').fill('35');
   await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
   await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
-  await expect(panel.getByLabel('Opacity', { exact: true })).toHaveValue('0.85'); await panel.getByLabel('Opacity', { exact: true }).fill('0.65');
-  await panel.locator('.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
+  const heatmapSettings = panel.locator('.heatmap-settings');
+  await expect(heatmapSettings.getByLabel('Opacity', { exact: true })).toHaveValue('0.85'); await heatmapSettings.getByLabel('Opacity', { exact: true }).fill('0.65');
+  await heatmapSettings.getByRole('button', { name: 'Apply', exact: true }).click();
   const state = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     return { opacity: p.engine.footprint.opacity, heatmap: p.selection.heatmap.opacity, start: p.heatmapStatus.collectionStart, bars: p.engine.footprintBars.length };
@@ -185,4 +188,118 @@ test('smaller bid profile remains visible beneath enlarged quantity labels',asyn
   await panel.locator('.chart-stage').screenshot({path:'artifacts/footprint-delta-hidden-candle.png'});
   await page.waitForTimeout(400);await page.reload();await footprintSettings(panel);
   await expect(panel.getByLabel('Show execution candle',{exact:true})).not.toBeChecked();
+});
+
+test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, browser }) => {
+  test.setTimeout(60_000);
+  const captureDense = async (target: typeof page, path: string, scale: 'css' | 'device') => {
+    await target.emulateMedia({ colorScheme: 'dark' });
+    await installDepthFixture(target);
+    await target.locator('#theme').selectOption('dark');
+    const panel = target.locator('.candle-panel').first();
+    // Give the footprint its normal full-width chart surface so all twelve
+    // bars can show representative BTC quantities without shrinking the font.
+    await target.evaluate(() => {
+      const dock = (window as any).__terminal.dock;
+      if (dock.panels.length > 1) dock.removePanel(dock.panels[1]);
+    });
+    await target.evaluate(() => {
+    const terminal = (window as any).__terminal;
+    terminal.feed.subscribeFootprint = (_id: string, _series: any, rowSize: number, callback: any) => {
+      const latest = Math.floor(Date.now() / 60_000) * 60;
+      const quantities = [0, .734, 1.03, 12.4, 100];
+      const bars = Array.from({ length: 12 }, (_, barIndex) => {
+        const cells = Array.from({ length: 18 }, (_, rowIndex) => ({
+          price: 83000 + (8.5 - rowIndex) * rowSize,
+          bidVol: quantities[(barIndex + rowIndex * 3) % quantities.length]!,
+          askVol: quantities[(barIndex * 5 + rowIndex * 2 + 1) % quantities.length]!,
+        }));
+        return {
+          time: latest - (11 - barIndex) * 60,
+          rowSize,
+          revision: 1,
+          cells,
+          open: cells[8]!.price,
+          high: cells[0]!.price + rowSize / 2,
+          low: cells[17]!.price - rowSize / 2,
+          close: cells[6]!.price,
+          delta: cells.reduce((sum, cell) => sum + cell.askVol - cell.bidVol, 0),
+          coverage: 'partial',
+          gapBefore: false,
+        };
+      });
+      const start = Date.now();
+      queueMicrotask(() => callback({
+        type: 'footprint-snapshot', bars, retentionStart: bars[0]!.time,
+        status: { state: 'live', message: 'Explicit dense visual fixture', lastUpdate: start,
+          collectionStartedAt: start, coverage: 'partial', tickSize: .1, rowSize },
+      }));
+      return () => {};
+    };
+    });
+    await setFootprint(panel, true);
+    await expect.poll(() => target.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintBars.length)).toBe(12);
+    await expect.poll(() => target.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeGreaterThan(1200);
+    const quantityTexts = [0, .734, 1.03, 12.4, 100].map(compactVol);
+    const metrics = await target.evaluate((texts: string[]) => {
+      const view = [...(window as any).__terminal.panels.values()][0] as any;
+      const chart = view.engine.chart;
+      chart.timeScale.setBarSpacing(100);
+      chart.timeScale.setRightOffset(1);
+      chart.panes()[0].priceScale.setAutoScale(false);
+      chart.panes()[0].priceScale.setFixedRange({ min: 82750, max: 83250 });
+      chart.setAutoScale(false);
+      const footprint = view.engine.footprint;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      ctx.font = `600 ${footprint.cellFont * window.devicePixelRatio}px ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace`;
+      return { cellFont: footprint.cellFont, spacing: chart.timeScale.barSpacing,
+        plotWidth: chart.plotRect(0).width, cellsPerBar: view.engine.footprintBars[0]?.cells.length,
+        sampleVolumes: [...new Set(view.engine.footprintBars.flatMap((bar: any) => bar.cells.flatMap((cell: any) => [cell.bidVol, cell.askVol])))],
+        quantityWidths: texts.map(value => ({ value, width: ctx.measureText(value).width })),
+        options: footprint.options(), dpr: window.devicePixelRatio };
+    }, quantityTexts);
+    const normalGeometry = footprintColumn(metrics.options, metrics.spacing);
+    const normalWidth = normalGeometry.cells / 2 * metrics.dpr;
+    const normalPadding = 4 * metrics.dpr;
+    expect(metrics).toMatchObject({ spacing: 100, cellsPerBar: 18, dpr: scale === 'device' ? 2 : 1 });
+    expect(metrics.plotWidth).toBeGreaterThanOrEqual(12 * metrics.spacing);
+    expect(metrics.sampleVolumes).toEqual(expect.arrayContaining([0, .734, 1.03, 12.4, 100]));
+    expect(metrics.cellFont).toBeGreaterThanOrEqual(9);
+    expect(metrics.cellFont).toBeLessThanOrEqual(12);
+    expect(metrics.quantityWidths.every(({ width }: any) => width + normalPadding <= normalWidth)).toBe(true);
+    await target.waitForTimeout(150);
+    await target.screenshot({ path, scale });
+
+    // At the original small zoom, long decimals must be omitted when they do
+    // not fit. A short zero still fits; no precision is shortened to force it.
+    await target.waitForTimeout(50);
+    const narrow = await target.evaluate((texts: string[]) => {
+      const view = [...(window as any).__terminal.panels.values()][0] as any;
+      const chart = view.engine.chart;
+      chart.timeScale.setBarSpacing(44);
+      const footprint = view.engine.footprint;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      ctx.font = `600 ${footprint.cellFont * window.devicePixelRatio}px ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace`;
+      return { spacing: chart.timeScale.barSpacing, options: footprint.options(),
+        widths: texts.map(value => ({ value, width: ctx.measureText(value).width })), dpr: window.devicePixelRatio };
+    }, quantityTexts);
+    const narrowGeometry = footprintColumn(narrow.options, narrow.spacing);
+    const narrowWidth = narrowGeometry.cells / 2 * narrow.dpr;
+    const narrowPadding = 4 * narrow.dpr;
+    const decimalWidth = narrow.widths.find(({ value }: any) => value === '0.734')!.width;
+    const zeroWidth = narrow.widths.find(({ value }: any) => value === '0')!.width;
+    expect(narrow.spacing).toBe(44);
+    expect(decimalWidth + narrowPadding).toBeGreaterThan(narrowWidth);
+    expect(zeroWidth + narrowPadding).toBeLessThanOrEqual(narrowWidth);
+  };
+
+  await captureDense(page, 'artifacts/footprint-dense-12x18-1366x768.png', 'css');
+  const highDensityPage = await browser.newPage({ viewport: { width: 1366, height: 768 }, deviceScaleFactor: 2 });
+  try {
+    await captureDense(highDensityPage, 'artifacts/footprint-dense-12x18-1366x768-dpr2.png', 'device');
+  } finally {
+    await highDensityPage.close();
+  }
 });

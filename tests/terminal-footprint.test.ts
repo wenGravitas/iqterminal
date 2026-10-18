@@ -7,10 +7,10 @@ test('installed footprint draws larger fitted text and translucent cells without
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, font: 9, widthFactor: .96, pocStyle: 'outline', statsPosition: 'bottom', statsRows: ['volume', 'delta'] });
   p.setBars([{ time: 0, delta: 32710, rowSize: 25, open: 100, high: 110, low: 100, close: 110, cells: [{ price: 112.5, bidVol: 3990, askVol: 36700 }] }]);
   const outlines: { width: number; color: string }[] = [];
-  const fills: number[] = [], labels: { alpha: number; font: string }[] = [];
+  const fills: number[] = [], labels: { alpha: number; font: string; x: number; y: number; color: string }[] = [];
   const canvas: any = { globalAlpha: 1, font: '', measureText(text: string) { return { width: text.length * parseFloat(this.font.replace('600 ', '')) * .6 }; },
     strokeRect() { outlines.push({ width: this.lineWidth, color: this.strokeStyle }); },
-    fill() { fills.push(this.globalAlpha); }, fillText() { labels.push({ alpha: this.globalAlpha, font: this.font }); } };
+    fill() { fills.push(this.globalAlpha); }, fillText(_text: string, x: number, y: number) { labels.push({ alpha: this.globalAlpha, font: this.font, x, y, color: this.fillStyle }); } };
   const ctx = new Proxy(canvas, { get: (target, key) => key in target ? target[key] : () => {} });
   let spacing = 200, dpr = 1;
   const rc: any = { get dpr() { return dpr; }, plotWidth: 600, plotHeight: 400,
@@ -20,15 +20,17 @@ test('installed footprint draws larger fitted text and translucent cells without
     dataLayer: { timeToIndex: () => 0 } };
   p.draw(ctx, rc);
   expect(fills).toEqual([.85, .85]);
-  expect(outlines).toContainEqual({ width: 1.25, color: '#ffffff' });
+  expect(outlines).toContainEqual({ width: 1, color: '#68c6d2' });
   expect(p.cellFont).toBe(24);
   expect(labels.some(l => l.font.startsWith('600 24px'))).toBe(true);
   expect(labels.every(l => l.alpha === 1)).toBe(true);
+  expect(labels.filter(l => l.font.startsWith('600 ')).every(l => Number.isInteger(l.x) && Number.isInteger(l.y))).toBe(true);
+  expect(labels.filter(l => l.font.startsWith('600 ')).every(l => !l.color.startsWith('rgba('))).toBe(true);
   expect(labels.some(l => l.font.startsWith('8.5px'))).toBe(true);
   spacing = 80; p.setCellOpacity(.3); fills.length = 0; p.draw(ctx, rc);
-  expect(p.cellFont).toBeLessThan(24); expect(fills).toEqual([.3, .3]);
-  dpr = 2; labels.length = 0; p.draw(ctx, rc);
-  expect(labels.some(l => l.font.startsWith(`600 ${p.cellFont*2}px`))).toBe(true);
+  expect(p.cellFont).toBeGreaterThanOrEqual(9); expect(p.cellFont).toBeLessThan(24); expect(fills).toEqual([.3, .3]);
+  spacing = 200; dpr = 2; labels.length = 0; p.draw(ctx, rc);
+  expect(labels.some(l => l.font.startsWith(`600 ${p.cellFont*2}px`)), `cellFont=${p.cellFont}; styleFont=${p.options().font}; fonts=${labels.map(l => l.font).join('|')}`).toBe(true);
 });
 
 test('footprint opacity migrates and validates independently of heatmap opacity', () => {
@@ -59,13 +61,58 @@ test('bid and ask cells leave a central execution-candle gutter with matching ho
   expect(p.hoverAt(150, 150)).toBeNull();
   expect(p.options().showCandle).toBe(true);
   expect(dashes).toContainEqual([1, 3]);
-  expect(valueAreaStrokes).toContainEqual({ color: '#ffffff', alpha: 1, width: 1.25 });
+  expect(valueAreaStrokes).toContainEqual({ color: '#ffffff', alpha: 1, width: 1 });
   expect(lines).toHaveLength(4);
-  [[58, 100], [242, 100], [58, 200], [242, 200]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
+  [[58.5, 100.5], [242.5, 100.5], [58.5, 200.5], [242.5, 200.5]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
   expect(cells[0][0]).toBeCloseTo(66); expect(cells[1][0] + cells[1][2]).toBeCloseTo(234);
   p.setOptions({ showValueArea: false }); lines.length = 0; p.draw(ctx, rc); expect(lines).toEqual([]);
   p.detached(); expect(p.hoverAt(80, 150)).toBeNull();
 });
+
+for (const dpr of [1, 2]) {
+  test(`footprint cell geometry, text and value-area guides align to backing pixels at DPR ${dpr}`, () => {
+    const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'ladder', displayMode: 'bidask', showCandle: true,
+      showPoc: true, pocStyle: 'outline', showValueArea: true, valueAreaColor: '#ffffff', statsRows: [], tableRows: [] });
+    p.setBars([{ time: 0, rowSize: 25, delta: 4, cells: [
+      { price: 112.5, bidVol: 2, askVol: 8 }, { price: 87.5, bidVol: 3, askVol: 1 },
+    ], open: 95, high: 120, low: 90, close: 110 }]);
+    const rects: number[][] = [], candles: number[][] = [], text: { font: string; x: number; y: number }[] = [], lines: number[][] = [];
+    const guides: { color: string; width: number }[] = [], outlines: { args: number[]; color: string; width: number; dash: number[] }[] = [];
+    let dash: number[] = [];
+    const canvas: any = { globalAlpha: 1, font: '', strokeStyle: '', fillStyle: '', lineWidth: 1,
+      measureText(value: string) { return { width: value.length * parseFloat(this.font.replace('600 ', '')) * .6 }; },
+      save() {}, restore() {}, beginPath() {}, fill() {},
+      roundRect(...args: number[]) { rects.push(args); }, fillRect(...args: number[]) { candles.push(args); },
+      fillText(_value: string, x: number, y: number) { text.push({ font: this.font, x, y }); },
+      moveTo(...args: number[]) { lines.push(args); }, lineTo(...args: number[]) { lines.push(args); },
+      stroke() { guides.push({ color: this.strokeStyle, width: this.lineWidth }); }, setLineDash(value: number[]) { dash = value; },
+      strokeRect(...args: number[]) { outlines.push({ args, color: this.strokeStyle, width: this.lineWidth, dash: [...dash] }); },
+    };
+    const ctx = new Proxy(canvas, { get: (target, key) => key in target ? target[key] : () => {} });
+    const rc: any = { dpr, plotWidth: 600, plotHeight: 400,
+      theme: { background: '#f6f4ee', axisText: '#485567', upColor: '#167260', downColor: '#b54436' },
+      timeScale: { barSpacing: 44, visibleRange: () => ({ from: 0, to: 1 }), indexToX: () => 150.25 },
+      priceScale: { priceRange: () => ({ min: 50, max: 150 }), priceToY: (value: number) => 600 - value * 3.17 },
+      dataLayer: { timeToIndex: () => 0 } };
+    p.draw(ctx, rc);
+
+    const offset = dpr === 1 ? .5 : 0;
+    expect(rects.length).toBeGreaterThan(0);
+    expect(rects.every(([x, y, width, height]) => [x, y, width, height].every(Number.isInteger))).toBe(true);
+    const cellLabels = text.filter(label => label.font.startsWith('600 '));
+    expect(cellLabels.length).toBeGreaterThan(0);
+    expect(cellLabels.every(label => Number.isInteger(label.x) && Number.isInteger(label.y))).toBe(true);
+    expect(cellLabels.every(({ font }) => Number.isInteger(Number(font.match(/^600 ([\d.]+)px/)?.[1])))).toBe(true);
+    expect(lines.length).toBeGreaterThan(0);
+    expect(lines.flat().every(value => Number.isInteger(value - offset))).toBe(true);
+    expect(guides).toContainEqual({ color: '#485567', width: dpr });
+    expect(candles).toHaveLength(2);
+    expect(candles.flat().every(Number.isInteger)).toBe(true);
+    expect(outlines).toHaveLength(1);
+    expect(outlines[0]).toMatchObject({ color: '#006a73', width: dpr, dash: [] });
+    expect(outlines[0].args.every((value, index) => index < 2 ? Number.isInteger(value - offset) : Number.isInteger(value))).toBe(true);
+  });
+}
 
 test('small footprint panes retain visible price space above compact statistics', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, statsPosition: 'bottom', statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'] });
@@ -109,16 +156,16 @@ test('profile level guides and POC outline extend symmetrically around the candl
   p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
   expect(lines[1][0]-lines[0][0]).toBe(116);expect(lines[3][0]-lines[2][0]).toBe(116);
-  expect((lines[1][0]+lines[0][0])/2).toBe(150);expect((lines[3][0]+lines[2][0])/2).toBe(150);
-  expect(outlines[0][2]).toBe(116);expect(outlines[0][0]+outlines[0][2]/2).toBe(150);
+  expect((lines[1][0]+lines[0][0])/2).toBe(150.5);expect((lines[3][0]+lines[2][0])/2).toBe(150.5);
+  expect(outlines[0][2]).toBe(116);expect(outlines[0][0]+outlines[0][2]/2).toBe(150.5);
   lines.length=0;outlines.length=0;rc.plotWidth=205;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
-  expect(lines[0][0]).toBe(92);expect(lines[1][0]).toBe(205);expect(lines[2][0]).toBe(92);expect(lines[3][0]).toBe(205);
-  expect(outlines[0][0]).toBe(92);expect(outlines[0][0]+outlines[0][2]).toBe(205);
+  expect(lines[0][0]).toBe(92.5);expect(lines[1][0]).toBe(205.5);expect(lines[2][0]).toBe(92.5);expect(lines[3][0]).toBe(205.5);
+  expect(outlines[0][0]).toBe(92.5);expect(outlines[0][0]+outlines[0][2]).toBe(205.5);
   lines.length=0;outlines.length=0;rc.plotWidth=600;rc.timeScale.indexToX=()=>50;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
-  expect(lines[0][0]).toBe(0);expect(lines[1][0]).toBe(108);expect(lines[2][0]).toBe(0);expect(lines[3][0]).toBe(108);
-  expect(outlines[0][0]).toBe(0);expect(outlines[0][0]+outlines[0][2]).toBe(108);
+  expect(lines[0][0]).toBe(.5);expect(lines[1][0]).toBe(108.5);expect(lines[2][0]).toBe(.5);expect(lines[3][0]).toBe(108.5);
+  expect(outlines[0][0]).toBe(.5);expect(outlines[0][0]+outlines[0][2]).toBe(108.5);
 });
 
 test('large profile labels do not erase a smaller proportional bid bar', () => {

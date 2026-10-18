@@ -17,13 +17,13 @@ import {
   type IPrimitive,
 } from 'openalgo-charts';
 import { ChartObjects } from 'openalgo-charts';
-import { DrawingController, InstrumentDrawings, memoryDrawingStore, registerBuiltinDrawingTools, registeredDrawingTools, type DrawingDocumentStore } from 'openalgo-charts/draw';
+import { DrawingController, InstrumentDrawings, memoryDrawingStore, registerBuiltinDrawingTools, registeredDrawingTools, type Drawing, type DrawingDocumentStore } from 'openalgo-charts/draw';
 import type { CanonicalSeries } from '../feed/protocol';
 import { DEFAULT_FOOTPRINT_OPTIONS, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
 import type { Candle, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
-import { registerIQDrawingLabelRenderers } from './drawing-labels';
+import { DrawingAxisPriceLabels, registerIQDrawingLabelRenderers } from './drawing-labels';
 import { TerminalFootprint } from './terminal-footprint';
 import { FootprintActivity } from './footprint-activity';
 import { footprintForUnits, type FootprintUnits } from './footprint-units';
@@ -91,6 +91,9 @@ export class OpenAlgoCandleChart {
   private nextFrame = 0;
   private disposed = false;
   private readonly inputAbort = new AbortController();
+  private readonly drawingAxisLabels: DrawingAxisPriceLabels[] = [];
+  private readonly drawingPreviews = new Map<string, Drawing>();
+  private readonly drawingSubscriptions: (() => void)[] = [];
   private visibleCallbacks = new Map<() => void, () => void>();
   private latestTime = -Infinity;
   private latestBar: Bar | null = null;
@@ -182,6 +185,23 @@ export class OpenAlgoCandleChart {
     if (!drawingToolsRegistered) { registerBuiltinDrawingTools(); drawingToolsRegistered = true; }
     registerIQDrawingLabelRenderers();
     this.drawings = new DrawingController(this.chart, { magnet: 'weak' });
+    this.syncDrawingAxisLabels();
+    this.drawingSubscriptions.push(
+      this.chart.on('draw:preview', payload => {
+        const previews = (payload as { drawings?: Drawing[] } | null)?.drawings;
+        if (!previews) return;
+        this.drawingPreviews.clear();
+        for (const drawing of previews) this.drawingPreviews.set(drawing.id, drawing);
+      }),
+      this.chart.on('draw:preview-clear', payload => {
+        const ids = (payload as { ids?: string[] } | null)?.ids;
+        if (!ids) { this.drawingPreviews.clear(); return; }
+        for (const id of ids) this.drawingPreviews.delete(id);
+      }),
+      this.chart.on('paneAdded', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneRemoved', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneMoved', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+    );
     this.scopedDrawings = new InstrumentDrawings(this.chart, this.drawings, {
       store: safeDrawingStore(),
       key: instrument => {
@@ -629,6 +649,16 @@ export class OpenAlgoCandleChart {
     this.stats.footprintSets++;
   }
 
+  private syncDrawingAxisLabels() {
+    for (const primitive of this.drawingAxisLabels) this.chart.removePrimitive(primitive);
+    this.drawingAxisLabels.length = 0;
+    this.chart.panes().forEach((_, paneIndex) => {
+      const primitive = new DrawingAxisPriceLabels(this.drawings, paneIndex, this.drawingPreviews);
+      this.drawingAxisLabels.push(primitive);
+      this.chart.addPrimitive(primitive, paneIndex);
+    });
+  }
+
   private ensureFootprintSurface() {
     if (this.footprint && this.footprintIndexSeries) return;
     // Keep a candle chart on its original single-series path. The execution
@@ -696,6 +726,11 @@ export class OpenAlgoCandleChart {
     if (this.disposed) return;
     this.disposed = true;
     this.inputAbort.abort();
+    for (const unsubscribe of this.drawingSubscriptions) unsubscribe();
+    this.drawingSubscriptions.length = 0;
+    for (const primitive of this.drawingAxisLabels) this.chart.removePrimitive(primitive);
+    this.drawingAxisLabels.length = 0;
+    this.drawingPreviews.clear();
     this.objects.destroy();
     this.scopedDrawings.destroy();
     this.drawings.destroy();

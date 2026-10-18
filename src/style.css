@@ -56,13 +56,38 @@ dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
 .heatmap-settings-button[hidden] { display: none; }
 .chart-toolbar button[aria-label="Order-book heatmap"][aria-pressed="true"] { color: var(--accent); }
 
-/* Drawing controls stay native, compact, and inside the existing toolbar scroll lane. */
-.chart-toolbar .drawing-tool-select{width:94px;min-width:94px;max-width:94px;height:23px;padding:1px 3px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
-.chart-toolbar .drawing-magnet-select{width:72px;min-width:72px;max-width:72px;height:23px;padding:1px 3px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
-.chart-toolbar .drawing-placement-state{padding:0 3px;color:var(--accent);font:10px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
-.chart-toolbar .drawing-placement-state[hidden]{display:none}
-.chart-toolbar .drawing-toolbar-action{height:23px;min-width:34px;padding:1px 5px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
-.chart-toolbar .drawing-toolbar-action[aria-pressed=true]{border-color:var(--primary-border);color:var(--accent)}
+/* Compact drawing rail; the canvas keeps the remaining workspace width. */
+.chart-workspace{position:relative;display:flex;flex:1 1 auto;min-width:0;min-height:0;overflow:hidden;background:var(--chart)}
+.chart-workspace>.chart-stage{flex:1 1 auto;min-width:0;margin:5px 4px 0 0}
+.drawing-sidebar{position:relative;z-index:2;flex:0 0 52px;min-width:52px;min-height:0;max-height:100%;margin:5px 0 0 4px;padding:3px 4px 5px;overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--scrollbar) transparent;border-right:1px solid var(--divider);background:var(--chart)}
+.drawing-sidebar-toolbar{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.drawing-sidebar-button{position:relative;display:grid;place-items:center;flex:none;width:29px;min-width:29px;height:28px;min-height:28px;padding:0;border:1px solid transparent;border-radius:0;background:transparent;color:var(--muted);cursor:pointer}
+.drawing-sidebar-button:hover{background:var(--hover);color:var(--text)}
+.drawing-sidebar-button[aria-pressed=true]{border-color:var(--primary-border);background:var(--control);color:var(--accent)}
+.drawing-sidebar-button:disabled{opacity:.4;cursor:default}
+.drawing-sidebar-button svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:square;stroke-linejoin:miter}
+.drawing-sidebar-group{display:grid;grid-template-columns:minmax(0,1fr) 14px;gap:1px;width:43px;height:28px;flex:none}
+.drawing-sidebar-group>.drawing-sidebar-primary{width:28px;min-width:0}
+.drawing-sidebar-menu-toggle{width:14px;min-width:0;padding:0}
+.drawing-sidebar-menu-toggle svg{width:11px;height:11px;stroke-width:1.2}
+.drawing-sidebar-divider{width:29px;height:1px;flex:none;margin:2px 0;border-top:1px solid var(--border-soft)}
+.drawing-sidebar-snap[data-magnet=off]{color:var(--muted)}
+.drawing-sidebar-snap[data-magnet=off]::after{position:absolute;top:13px;left:7px;width:14px;height:1px;background:currentColor;content:"";transform:rotate(-45deg)}
+.drawing-sidebar-snap[data-magnet=weak]::after{position:absolute;bottom:3px;left:13px;width:3px;height:3px;background:currentColor;content:""}
+.drawing-sidebar-snap[data-magnet=strong]{border-color:var(--primary-border);color:var(--accent)}
+.drawing-sidebar-snap[data-magnet=strong]::after{position:absolute;bottom:3px;left:9px;width:11px;height:2px;background:currentColor;content:""}
+.drawing-sidebar-action[aria-pressed=true]{color:var(--accent)}
+.drawing-sidebar .chart-objects-toggle::after{position:absolute;top:0;right:-2px;color:var(--muted);font:8px/9px ui-monospace,SFMono-Regular,Menlo,monospace;content:attr(data-count)}
+.drawing-sidebar-menu-layer{position:absolute;z-index:9;inset:0;overflow:hidden;pointer-events:none}
+.drawing-sidebar-flyout{position:absolute;display:flex;flex-direction:column;gap:2px;width:min(188px,calc(100% - 58px));max-height:calc(100% - 8px);overflow:auto;padding:4px;border:1px solid var(--divider);background:var(--chrome);color:var(--text);pointer-events:auto}
+.drawing-sidebar-flyout[hidden]{display:none}
+.drawing-sidebar-flyout-heading{padding:2px 4px 4px;border-bottom:1px solid var(--border-soft);color:var(--muted);font-size:9px;font-weight:400;line-height:14px}
+.drawing-sidebar-flyout-tool{display:flex;justify-content:flex-start;gap:7px;width:100%;height:27px;min-height:27px;padding:0 5px;border-color:transparent;background:transparent;color:var(--text);text-align:left;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.drawing-sidebar-flyout-tool:hover{background:var(--hover)}
+.drawing-sidebar-flyout-tool[aria-pressed=true]{border-color:var(--primary-border);background:var(--control);color:var(--accent)}
+.drawing-sidebar-flyout-tool svg{width:14px;height:14px;flex:none}
+.drawing-sidebar-flyout-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drawing-placement-state{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .chart-stage .chart-objects-panel{position:absolute;top:7px;right:7px;z-index:7;width:max-content;max-width:calc(100% - 14px);max-height:calc(100% - 14px);overflow:auto;border:1px solid var(--divider);background:var(--overlay);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 4px 18px var(--shadow)}
 .chart-stage .chart-objects-panel[data-focused=true]{border-color:var(--primary-border)}
 .chart-objects-panel>summary{max-width:100%;padding:5px 7px;cursor:pointer;list-style-position:inside;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

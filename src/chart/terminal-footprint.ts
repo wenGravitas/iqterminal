@@ -2,6 +2,7 @@ import type { PrimitiveRenderContext, PrimitiveHost } from 'openalgo-charts';
 import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type FootprintHover } from 'openalgo-charts/profile';
 
 const PROFILE_LEVEL_EXTENSION = 8;
+const FOOTPRINT_FONT_FAMILY = 'ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace';
 
 /** Presentation wrapper for pinned OpenAlgo 2.6.0, using its public drawing boundary. */
 export function footprintColumn(options: Pick<FootprintOptions, 'cellWidth' | 'widthFactor' | 'showCandle'> & Partial<Pick<FootprintOptions, 'displayMode' | 'statsPosition'>>, spacing: number) {
@@ -16,7 +17,8 @@ export class TerminalFootprint extends Footprint {
   private rowSize = 0;
   private longest = 1;
   private opacity = .85;
-  cellFont = 9;
+  cellFont = 10;
+  private cellFontPx = 10;
   private dpr = 1;
   private bars: readonly FootprintBar[] = [];
   private rc?: PrimitiveRenderContext;
@@ -31,6 +33,32 @@ export class TerminalFootprint extends Footprint {
   private centres: number[] = [];
   private cellText = false;
   private valueAreaPath = false;
+  private pixelStrokeWidth() { return Math.max(1, Math.round(this.dpr)); }
+  private alignStroke(value: number) {
+    return Math.round(value) + (this.pixelStrokeWidth() % 2 ? .5 : 0);
+  }
+  private alignCellRect(args: any[]) {
+    const top = Math.round(args[1]);
+    const bottom = Math.max(top + 1, Math.round(args[1] + args[3]));
+    args[1] = top; args[3] = bottom - top;
+    // Profile widths encode volume, so only ladder cells can be snapped horizontally.
+    if (this.style.cellStyle !== 'profile') {
+      const left = Math.round(args[0]), right = Math.max(left + 1, Math.round(args[0] + args[2]));
+      args[0] = left; args[2] = right - left;
+    }
+    if (typeof args[4] === 'number') args[4] = Math.round(args[4]);
+  }
+  private themeIsLight() {
+    const background = this.rc?.theme.background.match(/^#([\da-f]{6})$/i)?.[1];
+    if (!background) return false;
+    const channel = (offset: number) => parseInt(background.slice(offset, offset + 2), 16) / 255;
+    const linear = (value: number) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4;
+    const luminance = .2126 * linear(channel(0)) + .7152 * linear(channel(2)) + .0722 * linear(channel(4));
+    return luminance > .5;
+  }
+  private guideColor() { return this.themeIsLight() ? this.rc?.theme.axisText ?? '#485567' : '#ffffff'; }
+  /** Reserve the terminal's pale cyan accent for the single POC reference. */
+  private pocAccentColor() { return this.themeIsLight() ? '#006a73' : '#68c6d2'; }
   private shiftedX(x: number) {
     const centre = this.centres.find(c => Math.abs(x / this.dpr - c) <= this.renderWidth / 2 + 1);
     return centre === undefined ? x : x + (x / this.dpr < centre ? -this.gap / 2 : this.gap / 2) * this.dpr;
@@ -81,18 +109,21 @@ export class TerminalFootprint extends Footprint {
     const width = geometry.cells / (o.displayMode === 'bidask' ? 2 : 1);
     const step = o.tickSize ?? this.rowSize, range = rc.priceScale.priceRange();
     const height = Math.abs(rc.priceScale.priceToY(range.min + step) - rc.priceScale.priceToY(range.min));
-    this.cellFont = Math.max(9, Math.min(24, height * .75, (width - 6) / (this.longest * .62)));
+    const fittedFont = Math.max(9, Math.min(24, height * .75, (width - 4) / (this.longest * .6)));
+    const minDeviceFont = Math.ceil(9 * this.dpr), maxDeviceFont = Math.floor(24 * this.dpr);
+    this.cellFontPx = Math.min(maxDeviceFont, Math.max(minDeviceFont, Math.floor(fittedFont * this.dpr)));
+    this.cellFont = this.cellFontPx / this.dpr;
     let proxy = this.contexts.get(ctx);
     if (!proxy) {
-      // In 2.6.0 cell backgrounds use path fill; candle/stats use fillRect.
-      // Forward native methods with their real receiver; only cell font and fill opacity change.
+      // Keep renderer-specific presentation corrections at the footprint boundary.
+      // Canvas methods need their real receiver or the native context rejects the call.
       const methods = new Map<PropertyKey, unknown>();
       proxy = new Proxy(ctx, {
         set: (target, key, value) => {
           if (key === 'strokeStyle') this.valueAreaPath = this.style.showValueArea && value === this.style.valueAreaColor;
           this.cellText = key === 'font' ? value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace` : this.cellText;
           if (key === 'font' && value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`) {
-            value = `600 ${this.cellFont * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+            value = `600 ${this.cellFontPx}px ${FOOTPRINT_FONT_FAMILY}`;
           }
           return Reflect.set(target, key, value, target);
         },
@@ -101,12 +132,14 @@ export class TerminalFootprint extends Footprint {
             if (!methods.has(key)) methods.set(key, (...args: any[]) => {
               if (this.valueAreaPath) {
                 if (key === 'stroke') {
-                  target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
-                  target.strokeStyle = '#ffffff'; target.globalAlpha = 1; target.lineWidth = 1.25 * this.dpr;
+                  const dash = this.pixelStrokeWidth();
+                  target.save(); target.setLineDash([dash, dash * 3]);
+                  target.strokeStyle = this.guideColor(); target.globalAlpha = 1; target.lineWidth = dash;
                   try { return (target.stroke as Function).apply(target, args); } finally { target.restore(); }
                 }
                 if (this.gap) args[0] = this.shiftedX(args[0]);
-                args[0] = this.extendProfileLevel(args[0], key === 'moveTo' ? 'left' : 'right');
+                args[0] = this.alignStroke(this.extendProfileLevel(args[0], key === 'moveTo' ? 'left' : 'right'));
+                args[1] = this.alignStroke(args[1]);
               }
               return (target[key] as Function).apply(target, args);
             });
@@ -130,15 +163,26 @@ export class TerminalFootprint extends Footprint {
                   args[index] += this.shiftedX(anchor) - anchor;
                 }
               }
+              if (key === 'roundRect') this.alignCellRect(args);
+              if (key === 'fillText' && this.cellText) { args[1] = Math.round(args[1]); args[2] = Math.round(args[2]); }
               if (poc) {
                 const left = this.extendProfileLevel(args[0], 'left');
                 const right = this.extendProfileLevel(args[0] + args[2], 'right');
-                args[0] = left; args[2] = Math.max(0, right - left);
-                // Keep the POC outline quiet and dotted like VAH/VAL.
-                target.save(); target.setLineDash([this.dpr, 3 * this.dpr]);
-                target.strokeStyle = '#ffffff'; target.globalAlpha = 1;
-                target.lineWidth = Math.min(1.25 * this.dpr, args[3] / 3, args[2] / 3);
+                args[0] = this.alignStroke(left); args[2] = Math.max(0, this.alignStroke(right) - args[0]);
+                const top = this.alignStroke(args[1]), bottom = this.alignStroke(args[1] + args[3]);
+                args[1] = top; args[3] = Math.max(1, bottom - top);
+                target.save(); target.setLineDash([]);
+                target.strokeStyle = this.pocAccentColor(); target.globalAlpha = 1;
+                target.lineWidth = Math.max(1, Math.min(this.pixelStrokeWidth(), Math.floor(args[3]), Math.floor(args[2])));
                 try { return (target[key] as Function).apply(target, args); } finally { target.restore(); }
+              }
+              if (key === 'fillText' && this.cellText && !this.style.textColor && typeof target.fillStyle === 'string') {
+                // The profile renderer fades low-volume text with the cells.
+                // Keep its theme/mode-derived hue, while drawing quantities at
+                // full opacity so they remain legible on dark heatmap fills.
+                const textColor = target.fillStyle;
+                target.fillStyle = opaqueTextColor(textColor);
+                try { return (target[key] as Function).apply(target, args); } finally { target.fillStyle = textColor; }
               }
               return (target[key] as Function).apply(target, args);
             });
@@ -169,9 +213,10 @@ export class TerminalFootprint extends Footprint {
     const o = this.style, spacing = rc.timeScale.barSpacing;
     const { column, annotation } = footprintColumn(o, spacing);
     if (!annotation) return;
-    const dpr = rc.dpr, font = Math.min(12, Math.max(9, annotation / 7)), lineHeight = font + 2;
+    const dpr = rc.dpr, font = Math.min(12, Math.max(9, annotation / 7));
+    const physicalFont = Math.max(1, Math.round(font * dpr)), snappedFont = physicalFont / dpr, lineHeight = snappedFont + 2;
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth*dpr, rc.plotHeight*dpr); ctx.clip();
-    ctx.font = `${font*dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+    ctx.font = `${physicalFont}px ui-monospace, SFMono-Regular, Menlo, monospace`;
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     const stats = this.stats();
     for (let n = 0; n < this.bars.length; n++) {
@@ -189,9 +234,9 @@ export class TerminalFootprint extends Footprint {
       const delta = `Δ: ${totals.delta >= 0 ? '+' : ''}${compactVol(totals.delta / o.volumeDivisor)}`;
       if (Math.max(ctx.measureText(volume).width, ctx.measureText(delta).width) > (right-x)*dpr) continue;
       ctx.fillStyle = o.textColor ?? rc.theme.axisText;
-      ctx.fillText(volume, x*dpr, (bottom - 1.5*lineHeight)*dpr);
+      ctx.fillText(volume, Math.round(x*dpr), Math.round((bottom - 1.5*lineHeight)*dpr));
       ctx.fillStyle = totals.delta === 0 ? o.textColor ?? rc.theme.axisText : totals.delta > 0 ? o.buyTextColor ?? rc.theme.upColor : o.sellTextColor ?? rc.theme.downColor;
-      ctx.fillText(delta, x*dpr, (bottom - .5*lineHeight)*dpr);
+      ctx.fillText(delta, Math.round(x*dpr), Math.round((bottom - .5*lineHeight)*dpr));
     }
     ctx.restore();
   }
@@ -209,8 +254,13 @@ export class TerminalFootprint extends Footprint {
       const high = rc.priceScale.priceToY(bar.high), low = rc.priceScale.priceToY(bar.low);
       const open = rc.priceScale.priceToY(bar.open), close = rc.priceScale.priceToY(bar.close);
       ctx.fillStyle = bar.close >= bar.open ? o.buyColor ?? rc.theme.upColor : o.sellColor ?? rc.theme.downColor;
-      ctx.fillRect((centre - .5) * dpr, Math.min(high, low) * dpr, dpr, Math.max(dpr, Math.abs(low - high) * dpr));
-      ctx.fillRect((centre - bodyWidth / 2) * dpr, Math.min(open, close) * dpr, bodyWidth * dpr, Math.max(dpr, Math.abs(close - open) * dpr));
+      const wickWidth = Math.max(1, Math.round(dpr));
+      const wickLeft = Math.round((centre - .5) * dpr);
+      const wickTop = Math.round(Math.min(high, low) * dpr), wickBottom = Math.round(Math.max(high, low) * dpr);
+      const bodyLeft = Math.round((centre - bodyWidth / 2) * dpr), bodyRight = Math.round((centre + bodyWidth / 2) * dpr);
+      const bodyTop = Math.round(Math.min(open, close) * dpr), bodyBottom = Math.round(Math.max(open, close) * dpr);
+      ctx.fillRect(wickLeft, wickTop, wickWidth, Math.max(wickWidth, wickBottom - wickTop));
+      ctx.fillRect(bodyLeft, bodyTop, Math.max(1, bodyRight - bodyLeft), Math.max(wickWidth, bodyBottom - bodyTop));
     }
     ctx.restore();
   }
@@ -223,4 +273,9 @@ export class TerminalFootprint extends Footprint {
     if (centre === undefined || Math.abs(x - centre) < this.gap / 2) return null;
     return super.hoverAt(x + (x < centre ? this.gap / 2 : -this.gap / 2), y, context);
   }
+}
+
+function opaqueTextColor(color: string) {
+  const rgba = /^rgba\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*[^)]+\)$/i.exec(color);
+  return rgba ? `rgb(${rgba[1]!.trim()}, ${rgba[2]!.trim()}, ${rgba[3]!.trim()})` : color;
 }

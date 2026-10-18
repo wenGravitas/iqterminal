@@ -25,6 +25,30 @@ async function useDarkTheme(page: Page) {
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 }
 
+async function selectDrawingTool(panel: Locator, toolId: string) {
+  const sidebar = panel.locator('.drawing-sidebar');
+  if (!toolId) {
+    await sidebar.getByRole('button', { name: 'Select drawings', exact: true }).click();
+    return;
+  }
+  const direct = sidebar.locator(`button.drawing-sidebar-direct-tool[data-drawing-tool="${toolId}"]`);
+  if (await direct.isVisible()) { await direct.click(); return; }
+  const primary = sidebar.locator(`button.drawing-sidebar-primary[data-drawing-tool="${toolId}"]`);
+  if (await primary.isVisible()) { await primary.click(); return; }
+  const option = panel.locator(`.drawing-sidebar-flyout-tool[data-drawing-tool="${toolId}"]`);
+  const group = await option.getAttribute('data-drawing-group');
+  if (!group) throw new Error(`Drawing tool ${toolId} has no sidebar group`);
+  await sidebar.locator(`.drawing-sidebar-menu-toggle[data-drawing-group="${group}"]`).click();
+  await option.click();
+}
+
+async function drawingToolName(panel: Locator, toolId: string) {
+  const button = panel.locator(`[data-drawing-tool="${toolId}"][data-tool-name]`).first();
+  const name = await button.getAttribute('data-tool-name');
+  if (!name) throw new Error(`Drawing tool ${toolId} has no accessible name`);
+  return name;
+}
+
 async function watchCanvasText(page: Page) {
   await page.addInitScript(() => {
     const prototype = CanvasRenderingContext2D.prototype;
@@ -84,7 +108,7 @@ async function drawingStorageKey(page: Page, panel: Locator) {
 }
 
 async function placeHorizontalLine(page: Page, panel: Locator, offset = 0) {
-  await panel.getByLabel('Drawing tool', { exact: true }).selectOption('horizontal-line');
+  await selectDrawingTool(panel, 'horizontal-line');
   const id = await panel.getAttribute('data-panel-id');
   if (!id) throw new Error('Candle panel id is missing');
   const point = await page.evaluate(panelId => {
@@ -114,11 +138,8 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
-  const tool = panel.getByLabel('Drawing tool', { exact: true });
-  await expect.poll(() => tool.locator('option').count()).toBe(9);
-  expect(await tool.locator('option').evaluateAll(options => options.map(option => (option as HTMLOptionElement).value))).toEqual([
-    '', 'trend-line', 'horizontal-line', 'horizontal-ray', 'rectangle', 'fib-retracement', 'long-position', 'short-position', 'text',
-  ]);
+  const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
+  expect(exposedTools).toEqual(['fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
 
   await placeHorizontalLine(page, panel);
   let state = await drawingState(page, panel);
@@ -194,6 +215,41 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect(drawingRow.getByRole('button', { name: 'Unlock', exact: true })).toBeVisible();
   expect((await drawingState(page, panel)).drawings[0]?.locked).toBe(true);
   await drawingRow.getByRole('button', { name: 'Unlock', exact: true }).click();
+  const beforeDefaultEditor = await drawingState(page, panel);
+  const beforeDefaultStorage = await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel));
+  const defaultTheme = await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.chart.theme(), panelId);
+  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  const defaultSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(defaultSettings.locator('[data-setting-path="style.color"]')).toHaveValue(defaultTheme.lineColor);
+  await expect(defaultSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('1.5');
+  await expect(defaultSettings.locator('[data-setting-path="style.lineStyle"]')).toHaveValue('solid');
+  await expect(defaultSettings.locator('[data-setting-path="text.color"]')).toHaveValue(defaultTheme.lineColor);
+  await expect(defaultSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('11');
+  await expect(defaultSettings.locator('[data-setting-path="intervals.from"]')).toHaveValue('');
+  await expect(defaultSettings.locator('[data-setting-path="intervals.to"]')).toHaveValue('');
+  await expect(defaultSettings.locator('[data-setting-path="props.iqterminalLabelState"]')).toHaveValue('unset');
+  await page.screenshot({ path: 'artifacts/drawing-edit-defaults-1366x768.png' });
+  expect((await drawingState(page, panel)).drawings).toEqual(beforeDefaultEditor.drawings);
+  await defaultSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect(await drawingState(page, panel)).toMatchObject({ drawings: beforeDefaultEditor.drawings, canUndo: beforeDefaultEditor.canUndo, canRedo: beforeDefaultEditor.canRedo });
+
+  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  const noOpSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await noOpSettings.getByRole('button', { name: 'Apply', exact: true }).click();
+  expect(await drawingState(page, panel)).toMatchObject({ drawings: beforeDefaultEditor.drawings, canUndo: beforeDefaultEditor.canUndo, canRedo: beforeDefaultEditor.canRedo });
+  expect(await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel))).toBe(beforeDefaultStorage);
+
+  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  const widthSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await widthSettings.locator('[data-setting-path="style.lineWidth"]').fill('2.5');
+  await widthSettings.getByRole('button', { name: 'Apply', exact: true }).click();
+  const widthEdited = await drawingState(page, panel);
+  expect(widthEdited.drawings[0]).toMatchObject({ id: originalId, points: beforeDefaultEditor.drawings[0]?.points, style: { lineWidth: 2.5 } });
+  await panel.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.style).toEqual(beforeDefaultEditor.drawings[0]?.style);
+  await panel.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.style?.lineWidth).toBe(2.5);
+
   await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
   const settings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(settings.locator('[data-setting-path="props.iqterminalLabelState"]')).toBeVisible();
@@ -234,7 +290,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(() => page.evaluate(() => (window as any).__canvasTextPixels?.some((entry: any) => entry.value === '4H Support' && entry.color === '#f5f5f5' && entry.foregroundPixels >= 4) ?? false)).toBe(true);
   await page.screenshot({ path: 'artifacts/drawing-label-explicit-color-1366x768.png' });
 
-  await tool.selectOption('');
+  await selectDrawingTool(panel, '');
   const drag = await page.evaluate(({ panelId, drawingId }) => {
     const view = (window as any).__terminal.panels.get(panelId);
     const chart = view.engine.chart;
@@ -544,8 +600,24 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const reloadedPanel = page.locator('.candle-panel').first();
   await expect.poll(async () => (await drawingState(page, reloadedPanel)).drawings.length).toBe(3);
+  await reloadedPanel.locator('.chart-objects-panel>summary').click();
+  const restoredDrawing = (await drawingState(page, reloadedPanel)).drawings.find(drawing => drawing.id === originalId);
+  expect(restoredDrawing).toBeDefined();
+  const restoredDrawingRow = reloadedPanel.locator(`.chart-object-row[data-object-id="drawing:${originalId}"]`);
+  await restoredDrawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  const restoredSettings = reloadedPanel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(restoredSettings.locator('[data-setting-path="style.color"]')).toHaveValue('#9aa4af');
+  await expect(restoredSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('2.5');
+  await expect(restoredSettings.locator('[data-setting-path="style.lineStyle"]')).toHaveValue('dashed');
+  await expect(restoredSettings.locator('[data-setting-path="text.color"]')).toHaveValue('#f5f5f5');
+  await expect(restoredSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('11');
+  await expect(restoredSettings.locator('[data-setting-path="intervals.from"]')).toHaveValue('1m');
+  await expect(restoredSettings.locator('[data-setting-path="intervals.to"]')).toHaveValue('15m');
+  await expect(restoredSettings.locator('[data-setting-path="props.iqterminalLabelState"]')).toHaveValue('custom');
+  await expect(restoredSettings.locator('[data-setting-path="props.iqterminalLabel"]')).toHaveValue('');
+  await restoredSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.panels.size)).toBe(3);
-  await reloadedPanel.getByLabel('Drawing tool', { exact: true }).selectOption('horizontal-line');
+  await selectDrawingTool(reloadedPanel, 'horizontal-line');
   await reloadedPanel.getByRole('button', { name: 'Templates', exact: true }).click();
   const reloadedTemplates = reloadedPanel.getByRole('dialog', { name: 'Drawing settings templates' });
   await expect(reloadedTemplates.locator('.drawing-template-row').filter({ hasText: '4H Support' }).getByRole('button', { name: 'Default ✓', exact: true })).toBeVisible();
@@ -566,11 +638,11 @@ test('every exposed native drawing tool completes its required anchors', async (
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
-  const tool = panel.getByLabel('Drawing tool', { exact: true });
-  const magnet = panel.getByLabel('Drawing magnet', { exact: true });
+  const magnet = panel.locator('.drawing-sidebar-snap');
   const stage = panel.locator('.chart-stage');
-  await expect(magnet).toHaveValue('weak');
-  await magnet.selectOption('strong');
+  await expect(magnet).toHaveAttribute('data-magnet', 'weak');
+  await magnet.click();
+  await expect(magnet).toHaveAttribute('data-magnet', 'strong');
   expect(await page.evaluate(id => {
     const view = (window as any).__terminal.panels.get(id);
     return { configured: view.selection.drawingMagnet, active: view.engine.drawings.magnetMode() };
@@ -586,8 +658,8 @@ test('every exposed native drawing tool completes its required anchors', async (
     { id: 'text', anchors: 1 },
   ] as const;
   for (const [index, placement] of placements.entries()) {
-    await tool.selectOption(placement.id);
-    await expect(panel.locator('.drawing-placement-state')).toHaveText(`Place: ${await tool.locator(`option[value="${placement.id}"]`).textContent()}`);
+    await selectDrawingTool(panel, placement.id);
+    await expect(panel.locator('.drawing-placement-state')).toHaveText(`Place: ${await drawingToolName(panel, placement.id)}`);
     const anchors = await page.evaluate(({ panelId, index }) => {
       const view = (window as any).__terminal.panels.get(panelId);
       const plot = view.engine.chart.plotRect(0);
@@ -602,7 +674,7 @@ test('every exposed native drawing tool completes its required anchors', async (
     }
     await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(before + 1);
     expect((await drawingState(page, panel)).drawings.some(drawing => drawing.tool === placement.id)).toBe(true);
-    await tool.selectOption('');
+    await selectDrawingTool(panel, '');
     await expect(panel.locator('.drawing-placement-state')).toBeHidden();
   }
 
@@ -611,21 +683,38 @@ test('every exposed native drawing tool completes its required anchors', async (
     const view = (window as any).__terminal.panels.get(panelId);
     const drawings = view.engine.drawings.drawings();
     const objects = view.engine.objects.list();
-    return Object.fromEntries(['rectangle', 'fib-retracement'].map(toolId => {
+    return Object.fromEntries(['rectangle', 'fib-retracement', 'text'].map(toolId => {
       const drawing = drawings.find((item: any) => item.tool === toolId);
       return [toolId, objects.find((item: any) => item.sourceId === drawing?.id)?.id];
     }));
   }, panelId);
   await panel.locator(`[data-object-id="${nativeIds.rectangle}"]`).getByRole('button', { name: 'Style', exact: true }).click();
   const rectangleSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
-  await expect(rectangleSettings.locator('[data-setting-path="style.fill"]')).toBeVisible();
-  await expect(rectangleSettings.locator('[data-setting-path="style.fillOpacity"]')).toBeVisible();
+  const theme = await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.chart.theme(), panelId);
+  await expect(rectangleSettings.locator('[data-setting-path="style.color"]')).toHaveValue(theme.lineColor);
+  await expect(rectangleSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('1.5');
+  await expect(rectangleSettings.locator('[data-setting-path="style.lineStyle"]')).toHaveValue('solid');
+  await expect(rectangleSettings.locator('[data-setting-path="style.fill"]')).toBeChecked();
+  await expect(rectangleSettings.locator('[data-setting-path="style.fillColor"]')).toHaveValue(theme.lineColor);
+  await expect(rectangleSettings.locator('[data-setting-path="style.fillOpacity"]')).toHaveValue('0.12');
+  await expect(rectangleSettings.locator('[data-setting-path="text.color"]')).toHaveValue(theme.lineColor);
+  await expect(rectangleSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('11');
   await rectangleSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
   await panel.locator(`[data-object-id="${nativeIds['fib-retracement']}"]`).getByRole('button', { name: 'Style', exact: true }).click();
   const fibSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(fibSettings.locator('[data-setting-path="style.levels"]')).toBeVisible();
-  await expect(fibSettings.locator('[data-setting-path="style.fillOpacity"]')).toBeVisible();
+  await expect(fibSettings.locator('[data-setting-path="style.fill"]')).toBeChecked();
+  await expect(fibSettings.locator('[data-setting-path="style.fillOpacity"]')).toHaveValue('0.06');
+  const fibLevels = JSON.parse(await fibSettings.locator('[data-setting-path="style.levels"]').inputValue());
+  expect(fibLevels).toHaveLength(7);
+  expect(fibLevels).toContainEqual({ ratio: 0.618, color: '#089981' });
   await fibSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await panel.locator(`[data-object-id="${nativeIds.text}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  const textSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(textSettings.locator('[data-setting-path="text.value"]')).toHaveValue('Text');
+  await expect(textSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('14');
+  await expect(textSettings.locator('[data-setting-path="text.color"]')).toHaveValue(theme.lineColor);
+  await textSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
   await panel.locator('.chart-objects-panel>summary').click();
 
   const futureAnchor = await page.evaluate(panelId => {
@@ -636,7 +725,7 @@ test('every exposed native drawing tool completes its required anchors', async (
     return { x, y, time: view.engine.chart.coordinateToTime(x), latest: view.engine.latestCandle().time };
   }, panelId);
   expect(futureAnchor.time).toBeGreaterThan(futureAnchor.latest);
-  await tool.selectOption('horizontal-line');
+  await selectDrawingTool(panel, 'horizontal-line');
   await stage.click({ position: { x: futureAnchor.x, y: futureAnchor.y } });
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(9);
   const futureDrawing = (await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'horizontal-line' && drawing.points?.some(point => (point as any).time === futureAnchor.time));
@@ -676,7 +765,6 @@ test('text templates use an included label as native text content and preserve o
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
-  const tool = panel.getByLabel('Drawing tool', { exact: true });
   const stage = panel.locator('.chart-stage');
   const plot = await page.evaluate(id => {
     const chart = (window as any).__terminal.panels.get(id).engine.chart;
@@ -687,15 +775,15 @@ test('text templates use an included label as native text content and preserve o
     { x: Math.round(plot.left + plot.width * .28), y: Math.round(plot.top + plot.height * .35) },
     { x: Math.round(plot.left + plot.width * .63), y: Math.round(plot.top + plot.height * .62) },
   ];
-  await tool.selectOption('text');
+  await selectDrawingTool(panel, 'text');
   const sourceCount = (await drawingState(page, panel)).drawings.length;
   await stage.click({ position: anchors[0]! });
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(sourceCount + 1);
-  await tool.selectOption('');
-  await tool.selectOption('text');
+  await selectDrawingTool(panel, '');
+  await selectDrawingTool(panel, 'text');
   await stage.click({ position: anchors[1]! });
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(sourceCount + 2);
-  await tool.selectOption('');
+  await selectDrawingTool(panel, '');
   let drawings = (await drawingState(page, panel)).drawings.filter(item => item.tool === 'text');
   expect(drawings).toHaveLength(2);
   const sourceId = drawings[0]!.id;
@@ -930,10 +1018,10 @@ test('Level Watch Objects visibility, instrument guard and picking disarm drawin
   await chooseChartMarket(panel, 'Binance · BTCUSDT USD-M Perp');
   await expect(watchButton).toBeEnabled();
 
-  await panel.getByLabel('Drawing tool', { exact: true }).selectOption('horizontal-line');
+  await selectDrawingTool(panel, 'horizontal-line');
   await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).beginWatchZone(() => {}), panelId);
   await expect(panel.locator('.chart-stage')).toHaveClass(/watch-zone-picking/);
-  await expect(panel.getByLabel('Drawing tool', { exact: true })).toHaveValue('');
+  await expect(panel.locator('.drawing-sidebar-select')).toHaveAttribute('aria-pressed', 'true');
   expect(await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.drawings.drawings().length, panelId)).toBe(0);
   await page.keyboard.press('Escape');
   await expect(panel.locator('.chart-stage')).not.toHaveClass(/watch-zone-picking/);
