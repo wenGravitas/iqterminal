@@ -11,6 +11,7 @@ export type OrderWallColorMode = 'heat' | 'bid-ask';
 export interface OrderWallsSettings {
   enabled: boolean;
   showHistory: boolean;
+  showPriceLines: boolean;
   method: 'relative' | 'absolute';
   thresholdUsd: number;
   relativeFloorUsd: number;
@@ -27,6 +28,7 @@ export interface OrderWallsSettings {
 export const DEFAULT_ORDER_WALLS_SETTINGS: Readonly<OrderWallsSettings> = Object.freeze({
   enabled: false,
   showHistory: true,
+  showPriceLines: false,
   method: 'relative',
   thresholdUsd: 500_000,
   relativeFloorUsd: 250_000,
@@ -49,6 +51,7 @@ export function orderWallsSettings(value: unknown): OrderWallsSettings {
   return {
     enabled: v.enabled === true,
     showHistory: v.showHistory !== false,
+    showPriceLines: v.showPriceLines === true,
     method: v.method === 'absolute' ? 'absolute' : 'relative',
     thresholdUsd: bounded(v.thresholdUsd, 1, 1_000_000_000_000, DEFAULT_ORDER_WALLS_SETTINGS.thresholdUsd),
     relativeFloorUsd: bounded(v.relativeFloorUsd, 1, 1_000_000_000_000, DEFAULT_ORDER_WALLS_SETTINGS.relativeFloorUsd),

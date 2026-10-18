@@ -55,6 +55,38 @@ dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
 .heatmap-settings-button { width: 25px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 .heatmap-settings-button[hidden] { display: none; }
 .chart-toolbar button[aria-label="Order-book heatmap"][aria-pressed="true"] { color: var(--accent); }
+
+/* Drawing controls stay native, compact, and inside the existing toolbar scroll lane. */
+.chart-toolbar .drawing-tool-select{width:94px;min-width:94px;max-width:94px;height:23px;padding:1px 3px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-toolbar .drawing-magnet-select{width:72px;min-width:72px;max-width:72px;height:23px;padding:1px 3px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-toolbar .drawing-placement-state{padding:0 3px;color:var(--accent);font:10px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+.chart-toolbar .drawing-placement-state[hidden]{display:none}
+.chart-toolbar .drawing-toolbar-action{height:23px;min-width:34px;padding:1px 5px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+.chart-toolbar .drawing-toolbar-action[aria-pressed=true]{border-color:var(--primary-border);color:var(--accent)}
+.chart-stage .chart-objects-panel{position:absolute;top:7px;right:7px;z-index:7;width:max-content;max-width:calc(100% - 14px);max-height:calc(100% - 14px);overflow:auto;border:1px solid var(--divider);background:var(--overlay);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 4px 18px var(--shadow)}
+.chart-stage .chart-objects-panel[data-focused=true]{border-color:var(--primary-border)}
+.chart-objects-panel>summary{max-width:100%;padding:5px 7px;cursor:pointer;list-style-position:inside;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-objects-panel[open]{width:min(285px,calc(100% - 14px))}
+.chart-objects-panel[open]>summary{border-bottom:1px solid var(--border-soft);color:var(--text)}
+.chart-objects-rows{display:flex;flex-direction:column;gap:2px;padding:4px}
+.chart-object-pane{display:flex;flex-direction:column;gap:2px}
+.chart-object-pane+.chart-object-pane{margin-top:4px}
+.chart-object-pane-heading{padding:3px 2px 2px;border-bottom:1px solid var(--border-soft);color:var(--muted);font-size:9px;letter-spacing:.04em;text-transform:uppercase}
+.chart-object-pane-rows{display:flex;flex-direction:column;gap:2px}
+.chart-object-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:3px;min-width:0;padding:2px;border-bottom:1px solid var(--border-soft)}
+.chart-object-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent;color:var(--text)}
+.chart-object-name[data-hidden-on-interval=true]{color:var(--muted);text-decoration:line-through}
+.chart-object-action{height:21px;min-width:22px;padding:1px 4px;font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-object-action:hover,.chart-object-name:hover{background:var(--hover)}
+.drawing-template-save-row{display:grid;grid-template-columns:minmax(100px,.7fr) minmax(120px,1fr) auto auto;align-items:center;gap:6px;padding:8px 11px;border-bottom:1px solid var(--border-soft);color:var(--muted);font-size:10px}
+.drawing-template-save-row input{min-width:0;height:25px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:4px}
+.drawing-template-include-label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.drawing-template-include-label input{width:12px;min-width:12px;height:12px;margin:0;padding:0;accent-color:var(--primary)}
+.drawing-template-save-row button{height:24px}
+.drawing-template-list{max-height:48vh;overflow:auto;padding:0 11px}
+.drawing-template-row{display:grid;grid-template-columns:minmax(70px,1fr) auto auto auto auto auto;align-items:center;gap:4px;padding:6px 0;border-bottom:1px solid var(--border-soft)}
+.drawing-template-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.drawing-template-row button{height:22px;padding:1px 5px;font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
 .heatmap-notice { position: absolute; z-index: 2; left: 5px; bottom: 25px; max-width: calc(100% - 90px); font-size: 9px; color: var(--muted); background: var(--overlay); pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .heatmap-readout { position: absolute; z-index: 2; top: 63px; left: 6px; max-width: calc(100% - 92px); white-space: pre-line; font-size: 9px; color: var(--text); background: var(--overlay); pointer-events: none; }
 .heatmap-readout:empty { display: none; }

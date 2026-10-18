@@ -209,3 +209,20 @@ checkpoint. No backend migration or new collector was introduced. A healthy
 endpoint and passing deterministic checks are not, by themselves, evidence of
 an accepted live chart or Raspberry Pi performance. Keep fixture, staging
 source, and target-device evidence separate in any final acceptance report.
+
+
+## Optional price guides and size tags
+
+Order Walls settings now include **Price lines and size tags (active walls)**,
+off by default and saved with the indicator. Active, visible walls can show a
+faint dotted price guide and a small square tag near the plot's right edge:
+`B 83,325 · $2.4M`. B/A identifies the resting side; price is the centre of the
+aggregated row, and size is its observed USD notional at the visible endpoint,
+not peak or average size. A `~` prefix marks a non-live source. Ended historical
+walls keep their original segments without guides. Stronger walls win when
+labels overlap; all eligible guides remain. Canvas drawing uses the chart theme
+and DPR, adds no DOM nodes, and changes no book detection or history requests.
+
+Validation: 300 unit tests, typecheck/build, and both Order Walls browser checks
+passed. Fixture screenshots cover desktop/compact Ivory and desktop Dark;
+these demonstrate presentation only, not additional live-market acceptance.

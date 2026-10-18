@@ -43,11 +43,12 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   await settings.getByLabel('Line thickness (px)', { exact: true }).fill('3');
   await settings.getByLabel('Opacity', { exact: true }).fill('.7');
   await settings.getByLabel('Show historical walls', { exact: true }).uncheck();
+  await settings.getByLabel('Price lines and size tags (active walls)', { exact: true }).check();
   expect(await settings.locator('form').evaluate(form => (form as HTMLFormElement).checkValidity())).toBe(true);
   await settings.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(settings).toBeHidden();
   await expect.poll(() => page.evaluate(id => (window as any).__terminal.panels.get(id).diagnostics().series.indicators.find((i: any) => i.definitionId === 'native.order-walls')?.settings, panelId)).toMatchObject({
-    method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false,
+    method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false, showPriceLines: true,
   });
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.settings.length)).toBe(1);
 
@@ -84,7 +85,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
     return { series: p.diagnostics().series, walls: p.diagnostics().series.indicators.find((i: any) => i.definitionId === 'native.order-walls') };
   });
   expect(restored.series.venue).toBe('hyperliquid');
-  expect(restored.walls.settings).toMatchObject({ method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false });
+  expect(restored.walls.settings).toMatchObject({ method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false, showPriceLines: true });
   await expect(page.locator('.candle-panel').first().locator('.order-walls-notice')).toContainText('unavailable');
   expect(errors).toEqual([]);
 });

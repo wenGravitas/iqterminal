@@ -202,3 +202,37 @@ describe('Order Walls chart hit testing', () => {
     expect(primitive.orderWallAt(100, 100)?.priceHigh).toBe(200);
   });
 });
+
+
+describe('optional Order Walls price guides', () => {
+  const wall = (id='active',end:number|null=null):OrderWallSegment => ({
+    id,epoch:1,side:'bid',price:100,start:base,end,peakUsd:2_000_000,meanUsd:900_000,durationMs:120_000,
+    percentile:99,scopePartial:false,startKnown:true,endKnown:end!==null,endReason:end===null?null:'removed',
+    valueRuns:[{at:base,usd:500_000,percentile:95},{at:base+60_000,usd:1_200_000,percentile:99}],valueRunsTruncated:false,
+  });
+  function render(primitive:OrderWallsPrimitive){
+    const texts:string[]=[],paths:CapturedPath[]=[];
+    const ctx=canvas([],paths) as any;
+    ctx.measureText=(text:string)=>({width:text.length*10});ctx.fillRect=()=>{};ctx.strokeRect=()=>{};
+    ctx.fillText=(text:string)=>texts.push(text);
+    const rc=context();(rc as any).theme={background:'#090909',axisText:'#858585'};
+    primitive.draw(ctx,rc);return {texts,paths};
+  }
+  it('is opt-in, uses latest confirmed notional and bucket centre, and excludes ended walls',()=>{
+    const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50},60_000);
+    primitive.setSnapshot([wall(),wall('historical',base+120_000)],{state:'live',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual([]);
+    primitive.setSettings({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50,showPriceLines:true});
+    expect(render(primitive).texts).toEqual(['B 125 · $1.2M']);
+    primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual(['~B 125 · $750K']);
+  });
+  it('suppresses overlapping tags without hiding guides or inventing history',()=>{
+    const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,showPriceLines:true},60_000);
+    primitive.setSnapshot([wall(),wall('second')],{state:'live',lastConfirmedAt:base+120_000});
+    const result=render(primitive);
+    expect(result.texts).toHaveLength(1);
+    expect(result.paths.filter(path=>path.points[0]?.[0]===0)).toHaveLength(2);
+    expect(primitive.diagnostics().retainedSegments).toBe(2);
+  });
+});

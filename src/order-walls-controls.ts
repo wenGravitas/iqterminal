@@ -53,6 +53,7 @@ export class OrderWallsControls {
     this.number('thicknessPx', 'Line thickness (px)', 1, 4, '.5');
     this.number('opacity', 'Opacity', 0, 1, '.05');
     this.checkbox('showHistory', 'Show historical walls');
+    this.checkbox('showPriceLines', 'Price lines and size tags (active walls)');
 
     const advanced = document.createElement('details'); advanced.className = 'order-walls-advanced';
     const summary = document.createElement('summary'); summary.textContent = 'Advanced'; advanced.append(summary);

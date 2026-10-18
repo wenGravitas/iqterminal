@@ -53,3 +53,11 @@ it('defaults old layouts to TradingView wheel mode and preserves explicit legacy
   expect(config({ wheelMode: 'both-axes' }).wheelMode).toBe('both-axes');
   expect(config(config({ wheelMode: 'both-axes' })).wheelMode).toBe('both-axes');
 });
+
+it('persists a bounded drawing magnet mode for new and restored chart panels', () => {
+  expect(config({}).drawingMagnet).toBe('weak');
+  expect(config({ drawingMagnet: 'unsupported' }).drawingMagnet).toBe('weak');
+  expect(config({ drawingMagnet: 'off' }).drawingMagnet).toBe('off');
+  expect(config({ drawingMagnet: 'strong' }).drawingMagnet).toBe('strong');
+  expect(config(config({ drawingMagnet: 'strong' })).drawingMagnet).toBe('strong');
+});

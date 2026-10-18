@@ -7,7 +7,8 @@ import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus }
 import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, resolveAutoOrderWallPriceWidth, type OrderWallHit, type OrderWallStatus, type OrderWallsSettings } from './feed/order-walls';
 import { OrderWallsControls } from './order-walls-controls';
 import { duration } from './feed/protocol';
-import type { Bar, CrosshairMoveEvent } from 'openalgo-charts';
+import type { Bar, ChartObjectSnapshot, CrosshairMoveEvent } from 'openalgo-charts';
+import { drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
 import { FeedClient } from './feed/client';
@@ -18,6 +19,37 @@ import { footprintForUnits, type FootprintUnits } from './chart/footprint-units'
 import { MAX_STUDIES_PER_CHART, ScriptStudyHost, validStudyPins, type ScriptInputView, type StudyPin } from './scripts/host';
 import type { ScriptLibrary, ScriptRecord } from './scripts/library';
 import { makeInputControl, readInputSettings } from './scripts/input-controls';
+import { captureDrawingSettings, drawingDisplayName, drawingSettingsPatch, initialDrawingMetadata, IQ_DRAWING_META_VERSION, iqDrawingSettingsSchema } from './chart/drawing-settings';
+import { captureIQDrawingTemplateSettings, createLocalStorageDrawingTemplateStorage, createMemoryDrawingTemplateStorage, IQDrawingTemplateRepository, type IQDrawingTemplateCatalog, type IQDrawingTemplateRecord } from './chart/drawing-templates';
+
+const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'long-position', 'short-position']);
+
+interface SharedObjectsView {
+  panel: HTMLDetailsElement;
+  summary: HTMLElement;
+  rows: HTMLDivElement;
+  rowCache: Map<string, HTMLDivElement>;
+  paneSections: Map<number, { section: HTMLElement; heading: HTMLDivElement; rows: HTMLDivElement }>;
+  ownerId?: string;
+  emptyMessage: HTMLParagraphElement;
+}
+let sharedObjectsView: SharedObjectsView | undefined;
+let sharedObjectsOwner: CandlePanel | undefined;
+
+function getSharedObjectsView(): SharedObjectsView {
+  if (sharedObjectsView) return sharedObjectsView;
+  const panel = document.createElement('details'); panel.className = 'chart-objects-panel'; panel.setAttribute('aria-label', 'Chart objects');
+  const summary = document.createElement('summary'); summary.textContent = 'Objects';
+  const rows = document.createElement('div'); rows.className = 'chart-objects-rows';
+  const emptyMessage = document.createElement('p'); emptyMessage.className = 'dialog-status'; emptyMessage.textContent = 'No chart objects';
+  panel.append(summary, rows);
+  for (const name of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'wheel', 'dblclick', 'keydown'] as const) panel.addEventListener(name, event => event.stopPropagation());
+  panel.addEventListener('toggle', () => {
+    const owner = sharedObjectsOwner;
+    if (panel.open && owner) owner.attachObjectsPanel();
+  });
+  return sharedObjectsView = { panel, summary, rows, rowCache: new Map(), paneSections: new Map(), emptyMessage };
+}
 
 export interface FootprintViewOptions {
   displayMode: FootprintDisplayMode;
@@ -32,7 +64,7 @@ export interface FootprintViewOptions {
   imbalanceRatio: 2 | 3 | 4;
   imbalanceThreshold: number;
 }
-export interface PanelConfig extends CanonicalSeries { indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; wheelMode: 'tradingview' | 'both-axes'; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
+export interface PanelConfig extends CanonicalSeries { indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; wheelMode: 'tradingview' | 'both-axes'; drawingMagnet: MagnetMode; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
 function legacyConfig(value: unknown) {
   const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const series = canonicalSeries(value) ?? { venue: 'binance' as const, market: 'perpetual' as const, interval: '1m' as const };
@@ -55,10 +87,12 @@ function legacyConfig(value: unknown) {
   const rowPrice = validFootprintRowPrice(source.rowPrice) ? canonicalFootprintRowPrice(source.rowPrice)
     : Object.hasOwn(source, 'rowPrice') ? FOOTPRINT_DEFAULT_ROW_PRICE
       : legacyRowPrice(source.rowTicks);
+  const drawingMagnet: MagnetMode = source.drawingMagnet === 'off' || source.drawingMagnet === 'strong' ? source.drawingMagnet : 'weak';
   const wantsFootprint = source.type === 'footprint' && supportsDepth(series);
   return { ...series, type: wantsFootprint ? 'footprint' as const : 'candle' as const, rowPrice,
     grid: typeof source.grid === 'boolean' ? source.grid : true,
     wheelMode: source.wheelMode === 'both-axes' ? 'both-axes' as const : 'tradingview' as const,
+    drawingMagnet,
     footprintUnits: source.footprintUnits === 'usdt' ? 'usdt' as const : 'btc' as const, footprint, heatmap: heatmapSettings(source.heatmap), studies: validStudyPins(source.studies) };
 }
 
@@ -126,6 +160,38 @@ export class CandlePanel implements IContentRenderer {
   private activeIndicators = document.createElement('details');
   private activeSummary = document.createElement('summary');
   private activeRows = document.createElement('div');
+  private drawTool = document.createElement('select');
+  private drawMagnet = document.createElement('select');
+  private drawPlacementState = document.createElement('span');
+  private drawUndo = document.createElement('button');
+  private drawRedo = document.createElement('button');
+  private drawEraser = document.createElement('button');
+  private drawSettings = document.createElement('button');
+  private drawTemplates = document.createElement('button');
+  private objectsToggle = document.createElement('button');
+  private objectsPanel!: HTMLDetailsElement;
+  private objectsSummary!: HTMLElement;
+  private objectsRows!: HTMLDivElement;
+  private objectRows!: Map<string, HTMLDivElement>;
+  private objectPaneSections!: Map<number, { section: HTMLElement; heading: HTMLDivElement; rows: HTMLDivElement }>;
+  private emptyObjectsMessage?: HTMLParagraphElement;
+  private drawingDialog = document.createElement('dialog');
+  private drawingForm = document.createElement('form');
+  private drawingFields = document.createElement('div');
+  private drawingStatus = document.createElement('div');
+  private drawingTarget = '';
+  private drawingSchema?: SettingsSchema;
+  private templatesDialog = document.createElement('dialog');
+  private templatesName = document.createElement('input');
+  private templatesIncludeLabel = document.createElement('input');
+  private templatesList = document.createElement('div');
+  private templatesStatus = document.createElement('div');
+  private templateRepository?: IQDrawingTemplateRepository;
+  private templateCatalog?: IQDrawingTemplateCatalog;
+  private templateUnsubscribe?: () => void;
+  private templateStorageWarning = '';
+  private coreObjectProviderReleases: (() => void)[] = [];
+  private scriptObjectProviderReleases = new Map<string, () => void>();
   private indicatorLifecycle?: IndicatorLifecycle;
   private indicatorErrors = new Map<string, string>();
   private footprintGeneration = 0;
@@ -156,11 +222,15 @@ export class CandlePanel implements IContentRenderer {
   private studyHost?: ScriptStudyHost;
   private watchList:LevelWatch[]=[];
   private watchButton?:HTMLButtonElement;
+  private watchZonesVisible = true;
+  private releaseWatchObjects?: () => void;
   private cancelWatchPick?:()=>void;
-  setWatchZones(watches:LevelWatch[]){this.watchList=watches;const supported=instrumentKey(this.selection)==='binance:perpetual';if(this.watchButton){this.watchButton.disabled=!supported;this.watchButton.title=supported?'Select two zone boundaries':'Level Watch requires Binance BTCUSDT USD-M perpetual';}this.engine?.setWatchZones(supported?watches:[]);}
+  setWatchZones(watches:LevelWatch[]){this.watchList=watches;const supported=instrumentKey(this.selection)==='binance:perpetual';if(this.watchButton){this.watchButton.disabled=!supported;this.watchButton.title=supported?'Select two zone boundaries':'Level Watch requires Binance BTCUSDT USD-M perpetual';}this.engine?.setWatchZones(supported&&this.watchZonesVisible?watches:[]);this.engine?.objects.refresh();}
   focusWatch(w:LevelWatch){if(instrumentKey(this.selection)!=='binance:perpetual')return;this.params.api.setActive();const padding=Math.max(10,(w.definition.upper-w.definition.invalidation)*.5);this.engine?.focusWatch(w.definition.invalidation-padding,w.definition.upper+padding);}
   beginWatchZone(done:(bounds:{lower:number;upper:number})=>void){
     this.cancelWatchPick?.();if(instrumentKey(this.selection)!=='binance:perpetual'||!this.engine)return;
+    // Zone clicks own the next chart gesture; disarm drawing placement and erase modes first.
+    this.setDrawingTool(null);
     const abort=new AbortController(),hint=document.createElement('div');hint.className='watch-pick-hint';hint.textContent='Watch zone: click first boundary · Escape cancels';this.chart.append(hint);this.chart.classList.add('watch-zone-picking');this.chart.focus();let first:number|undefined,finished=false,timer:ReturnType<typeof setTimeout>|undefined;
     this.cancelWatchPick=()=>{clearTimeout(timer);abort.abort();hint.remove();this.chart.classList.remove('watch-zone-picking');this.cancelWatchPick=undefined;};
     const options={capture:true,signal:abort.signal};for(const name of ['pointerdown','pointerup','mousedown','mouseup','dblclick'] as const)this.chart.addEventListener(name,event=>{event.preventDefault();event.stopImmediatePropagation();},options);
@@ -201,6 +271,9 @@ export class CandlePanel implements IContentRenderer {
     private register: (id: string, panel: CandlePanel | null) => void,
     private openEditor: (chartId: string, attachmentId?: string) => void,
   ) {
+    const objectsView = getSharedObjectsView();
+    this.objectsPanel = objectsView.panel; this.objectsSummary = objectsView.summary; this.objectsRows = objectsView.rows;
+    this.objectRows = objectsView.rowCache; this.objectPaneSections = objectsView.paneSections; this.emptyObjectsMessage = objectsView.emptyMessage;
     this.element.className = 'candle-panel';
     this.toolbarWrap.className = 'chart-toolbar-wrap';
     this.toolbar.className = 'chart-toolbar';
@@ -268,20 +341,45 @@ export class CandlePanel implements IContentRenderer {
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
+    this.drawTool.setAttribute('aria-label', 'Drawing tool');
+    this.drawTool.title = 'Select a drawing tool';
+    this.drawTool.className = 'drawing-tool-select';
+    this.drawMagnet.setAttribute('aria-label', 'Drawing magnet');
+    this.drawMagnet.title = 'Snap drawing anchors to candle values';
+    this.drawMagnet.className = 'drawing-magnet-select';
+    this.drawMagnet.add(new Option('Snap weak', 'weak'));
+    this.drawMagnet.add(new Option('Snap strong', 'strong'));
+    this.drawMagnet.add(new Option('Snap off', 'off'));
+    this.drawPlacementState.className = 'drawing-placement-state';
+    this.drawPlacementState.setAttribute('role', 'status');
+    this.drawPlacementState.setAttribute('aria-live', 'polite');
+    this.drawPlacementState.hidden = true;
+    this.drawUndo.type = 'button'; this.drawUndo.className = 'drawing-toolbar-action'; this.drawUndo.textContent = 'Undo'; this.drawUndo.title = 'Undo drawing change (Ctrl/⌘+Z)';
+    this.drawRedo.type = 'button'; this.drawRedo.className = 'drawing-toolbar-action'; this.drawRedo.textContent = 'Redo'; this.drawRedo.title = 'Redo drawing change (Ctrl/⌘+Shift+Z)';
+    this.drawEraser.type = 'button'; this.drawEraser.className = 'drawing-toolbar-action'; this.drawEraser.textContent = 'Erase'; this.drawEraser.title = 'Erase drawings';
+    this.drawSettings.type = 'button'; this.drawSettings.className = 'drawing-toolbar-action'; this.drawSettings.textContent = 'Style'; this.drawSettings.title = 'Edit the selected drawing';
+    this.drawTemplates.type = 'button'; this.drawTemplates.className = 'drawing-toolbar-action'; this.drawTemplates.textContent = 'Templates'; this.drawTemplates.title = 'Manage drawing settings templates';
+    this.objectsToggle.type = 'button'; this.objectsToggle.className = 'drawing-toolbar-action chart-objects-toggle'; this.objectsToggle.textContent = 'Objects'; this.objectsToggle.title = 'Show chart objects';
+    this.drawTool.add(new Option('Cursor', ''));
+    this.toolbar.append(this.drawTool, this.drawMagnet, this.drawPlacementState, this.drawUndo, this.drawRedo, this.drawEraser, this.drawSettings, this.drawTemplates, this.objectsToggle);
     this.toolbarWrap.append(this.toolbar, this.toolbarCue);
     this.overlays.className = 'chart-top-overlays';
     this.activeIndicators.className = 'active-indicators'; this.activeIndicators.open = true;
     this.activeIndicators.setAttribute('aria-label', 'Active indicators');
     this.activeSummary.textContent = 'Indicators'; this.activeRows.className = 'active-indicator-rows';
     this.activeIndicators.append(this.activeSummary, this.activeRows);
+    this.objectsPanel.className = 'chart-objects-panel';
+    this.objectsPanel.append(this.objectsSummary, this.objectsRows);
     this.buildDialogs();
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog);
+    this.buildDrawingDialogs();
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chart, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
   init(params: IDockviewPanelProps) {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
+    this.drawMagnet.value = this.selection.drawingMagnet;
     this.wheelMode.value = this.selection.wheelMode;
     this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
     params.api.updateParameters(this.selection);
@@ -292,6 +390,19 @@ export class CandlePanel implements IContentRenderer {
     const options = { signal: this.abort.signal };
     this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
     this.interval.addEventListener('change', () => this.select(), options);
+    this.drawTool.addEventListener('change', () => this.setDrawingTool(this.drawTool.value || null), options);
+    this.drawMagnet.addEventListener('change', () => {
+      const drawingMagnet = this.drawMagnet.value as MagnetMode;
+      this.selection = config({ ...this.selection, drawingMagnet });
+      this.engine?.drawings.setOptions({ magnet: drawingMagnet });
+      params.api.updateParameters(this.selection); this.save();
+    }, options);
+    this.drawUndo.addEventListener('click', () => { this.engine?.drawings.undo(); this.syncDrawingActions(); }, options);
+    this.drawRedo.addEventListener('click', () => { this.engine?.drawings.redo(); this.syncDrawingActions(); }, options);
+    this.drawEraser.addEventListener('click', () => { const next = !this.engine?.drawings.erasing(); this.engine?.drawings.setEraser(next); this.drawEraser.setAttribute('aria-pressed', String(next)); this.syncDrawingActions(); }, options);
+    this.drawSettings.addEventListener('click', () => this.openDrawingSettings(), options);
+    this.drawTemplates.addEventListener('click', () => this.openDrawingTemplates(), options);
+    this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
     this.retry.addEventListener('click', () => this.selection.type === 'footprint' ? this.feed.retryFootprint() : this.feed.retry(params.api.id), options);
@@ -328,6 +439,23 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     this.footprintDialog.addEventListener('cancel', event => { if (this.footprintBusy) event.preventDefault(); }, options);
     this.footprintForm.addEventListener('submit', event => { event.preventDefault(); this.applyFootprintSettings(); }, options);
+    this.drawingDialog.addEventListener('click', event => {
+      if (event.target === this.drawingDialog) { this.drawingDialog.close(); return; }
+      const action = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action]')?.dataset.dialogAction;
+      if (action === 'close-drawing-settings') this.drawingDialog.close();
+      else if (action === 'apply-drawing-settings') this.applyDrawingSettingsFromDialog();
+    }, options);
+    this.drawingForm.addEventListener('submit', event => { event.preventDefault(); this.applyDrawingSettingsFromDialog(); }, options);
+    this.templatesDialog.addEventListener('click', event => {
+      if (event.target === this.templatesDialog) { this.templatesDialog.close(); return; }
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-template-action]');
+      if (!button) return;
+      if (button.dataset.dialogAction === 'close-drawing-templates') this.templatesDialog.close();
+      else if (button.dataset.dialogAction === 'save-drawing-template') void this.saveDrawingTemplate();
+      else if (button.dataset.templateAction) void this.templateAction(button.dataset.templateAction, button.dataset.templateId ?? '');
+    }, options);
+    this.drawingDialog.addEventListener('cancel', () => {}, options);
+    this.templatesDialog.addEventListener('cancel', () => {}, options);
     this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.engine?.resetView(); }, options);
     this.chart.addEventListener('keydown', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.keydown(event); }, options);
     for (const name of ['pointerdown', 'mousedown', 'wheel', 'dblclick', 'keydown'] as const) this.activeIndicators.addEventListener(name, event => event.stopPropagation(), options);
@@ -353,7 +481,28 @@ export class CandlePanel implements IContentRenderer {
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
     if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
-    this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d');
+    this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d', params.api.id, this.selection);
+    this.engine.drawings.setOptions({ magnet: this.selection.drawingMagnet });
+    this.releaseWatchObjects = this.engine.objects.register({
+      id: 'level-watch-zones',
+      get: () => instrumentKey(this.selection) === 'binance:perpetual' && this.watchList.some(watch => watch.state === 'armed' || watch.state === 'draft')
+        ? { kind: 'profile', name: 'Level Watch zones', paneIndex: this.engine?.objects.primaryPaneIndex() ?? 0, visible: this.watchZonesVisible }
+        : null,
+      setVisible: visible => { this.watchZonesVisible = visible; this.engine?.setWatchZones(visible ? this.watchList : []); },
+      focus: () => { const watch = this.watchList.find(item => item.state === 'armed' || item.state === 'draft'); if (watch) this.focusWatch(watch); },
+    });
+    for (const tool of registeredDrawingTools()) if (DRAWING_TOOL_IDS.has(tool.id)) this.drawTool.add(new Option(tool.name, tool.id));
+    this.loadDrawingTemplates();
+    this.subscriptions.push({ dispose: this.engine.objects.subscribe(() => this.renderDrawingObjects()) });
+    this.subscriptions.push(
+      { dispose: this.engine.chart.on('draw:tool', payload => { const event = payload as { tool: string | null }; this.drawTool.value = event.tool ?? ''; this.syncDrawingActions(); }) },
+      { dispose: this.engine.chart.on('draw:add', payload => {
+        const event = payload as DrawingEvent;
+        if (!event.history) this.enrichPlacedDrawing(event.drawing);
+      }) },
+      { dispose: this.engine.chart.on('drawing:select', () => this.syncDrawingActions()) },
+      { dispose: this.engine.chart.on('drawing:change', () => this.syncDrawingActions()) },
+    );
     this.engine.onFootprintViewport=(from,to)=>{if(this.footprintHasInitialView)this.feed.requestFootprintViewport(this.params.api.id,from,to);};
     this.engine.onHeatmapViewport = viewport => {
       if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
@@ -369,8 +518,9 @@ export class CandlePanel implements IContentRenderer {
       this.params.api.updateParameters(this.selection);
       this.save();
     });
+    this.registerCoreObjectProviders();
     this.indicatorLifecycle = new IndicatorLifecycle(instance => this.createIndicatorHandle(instance), (instance, error) => { if (!this.dead && this.selection.indicators.some(i => i.instanceId === instance.instanceId)) { this.indicatorErrors.set(instance.instanceId,errorText(error)); this.renderActiveIndicators(); } });
-    this.subscriptions.push({ dispose: this.studyHost.subscribe(() => { this.updateDepthNotice(); this.reconcileIndicators(); }) });
+    this.subscriptions.push({ dispose: this.studyHost.subscribe(() => { this.updateDepthNotice(); this.reconcileIndicators(); this.syncScriptObjectProviders(); }) });
     this.studyHost.restore(this.selection.studies);
     const unsubscribeCrosshair = this.engine.chart.subscribeCrosshairMove(event => this.crosshair(event));
     this.subscriptions.push({ dispose: unsubscribeCrosshair });
@@ -382,8 +532,26 @@ export class CandlePanel implements IContentRenderer {
     );
     this.overlays.append(this.readout, this.activeIndicators);
     this.chart.append(this.overlays, this.heatmapControls.readout);
+    if (!sharedObjectsOwner) sharedObjectsOwner = this;
+    if (sharedObjectsOwner === this) {
+      this.chart.append(this.objectsPanel);
+      getSharedObjectsView().ownerId = params.api.id;
+    }
     this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
+    this.subscriptions.push(params.api.onDidActiveChange(({ isActive }) => {
+      if (!isActive) return;
+      sharedObjectsOwner = this;
+      if (this.objectsPanel.open) this.attachObjectsPanel();
+      else this.updateObjectsSummary();
+    }));
+    this.subscriptions.push(params.api.onDidFocusChange(({ isFocused }) => {
+      this.chart.dataset.focused = String(isFocused);
+      if (isFocused && this.objectsPanel.open) {
+        sharedObjectsOwner = this;
+        this.attachObjectsPanel();
+      } else if (sharedObjectsOwner === this) this.updateObjectsSummary();
+    }));
     this.register(params.api.id, this);
     this.subscribe();
     queueMicrotask(() => {
@@ -513,6 +681,573 @@ export class CandlePanel implements IContentRenderer {
     footprintFooter.append(this.dialogButton('Cancel', 'close-footprint'), this.dialogButton('Apply', 'apply-footprint', true));
     this.footprintForm.append(footprintHeader, this.footprintFields, settingsHint, footprintFooter);
     this.footprintDialog.append(this.footprintForm);
+  }
+
+  private buildDrawingDialogs() {
+    this.drawingDialog.className = 'indicator-settings drawing-settings-dialog';
+    this.drawingDialog.setAttribute('aria-label', 'Drawing settings');
+    this.drawingForm.className = 'indicator-settings-form'; this.drawingForm.noValidate = true;
+    const header = document.createElement('header');
+    const title = document.createElement('h2'); title.className = 'drawing-settings-title'; title.textContent = 'Drawing settings';
+    header.append(title, this.dialogButton('Close', 'close-drawing-settings'));
+    this.drawingFields.className = 'indicator-settings-fields';
+    this.drawingStatus.className = 'dialog-status'; this.drawingStatus.setAttribute('role', 'status');
+    const footer = document.createElement('footer');
+    footer.append(this.dialogButton('Cancel', 'close-drawing-settings'), this.dialogButton('Apply', 'apply-drawing-settings', true));
+    this.drawingForm.append(header, this.drawingFields, this.drawingStatus, footer);
+    this.drawingDialog.append(this.drawingForm);
+
+    this.templatesDialog.className = 'indicator-picker drawing-templates-dialog';
+    this.templatesDialog.setAttribute('aria-label', 'Drawing settings templates');
+    const templateHeader = document.createElement('header');
+    const templateTitle = document.createElement('h2'); templateTitle.textContent = 'Drawing templates';
+    templateHeader.append(templateTitle, this.dialogButton('Close', 'close-drawing-templates'));
+    const saveRow = document.createElement('label'); saveRow.className = 'drawing-template-save-row';
+    const nameLabel = document.createElement('span'); nameLabel.textContent = 'Save selected look';
+    this.templatesName.type = 'text'; this.templatesName.maxLength = 48; this.templatesName.placeholder = 'Template name';
+    this.templatesName.setAttribute('aria-label', 'Drawing template name');
+    const includeLabel = document.createElement('label'); includeLabel.className = 'drawing-template-include-label';
+    this.templatesIncludeLabel.type = 'checkbox'; this.templatesIncludeLabel.setAttribute('aria-label', 'Include label');
+    const includeLabelText = document.createElement('span'); includeLabelText.textContent = 'Include label';
+    includeLabel.append(this.templatesIncludeLabel, includeLabelText);
+    saveRow.append(nameLabel, this.templatesName, includeLabel, this.dialogButton('Save', 'save-drawing-template', true));
+    this.templatesList.className = 'drawing-template-list';
+    this.templatesStatus.className = 'dialog-status'; this.templatesStatus.setAttribute('role', 'status');
+    const templateFooter = document.createElement('footer'); templateFooter.append(this.dialogButton('Done', 'close-drawing-templates'));
+    this.templatesDialog.append(templateHeader, saveRow, this.templatesList, this.templatesStatus, templateFooter);
+  }
+
+  private loadDrawingTemplates() {
+    let repository: IQDrawingTemplateRepository;
+    try {
+      repository = new IQDrawingTemplateRepository(createLocalStorageDrawingTemplateStorage(window.localStorage));
+      this.templateCatalog = repository.load();
+    } catch (error) {
+      // A malformed or inaccessible persistent record stays untouched. This isolated catalog is session-only.
+      this.templateStorageWarning = `Saved template catalog could not be read; using memory for this session (${errorText(error)}).`;
+      repository = new IQDrawingTemplateRepository(createMemoryDrawingTemplateStorage());
+      this.templateCatalog = repository.load();
+    }
+    this.templateRepository = repository;
+    this.templateUnsubscribe = repository.subscribe(next => { this.templateCatalog = next; this.renderDrawingTemplates(); });
+    this.setTemplateStatus(this.templateStorageWarning);
+    this.renderDrawingTemplates();
+  }
+
+  private registerCoreObjectProviders() {
+    if (!this.engine) return;
+    const entries = [
+      { id: FOOTPRINT_ID, kind: 'profile' as const, name: 'Footprint' },
+      { id: HEATMAP_ID, kind: 'indicator' as const, name: 'Order-book Heatmap' },
+      { id: ORDER_WALLS_ID, kind: 'indicator' as const, name: 'Order Walls' },
+    ];
+    this.coreObjectProviderReleases = entries.map(entry => this.engine!.objects.register({
+      id: `iqterminal-${entry.id}`,
+      get: () => {
+        const instance = this.nativeIndicator(entry.id);
+        if (!instance) return null;
+        const settingsEnabled = instance.settings.enabled !== false;
+        return { kind: entry.kind, name: entry.name, paneIndex: this.engine!.objects.primaryPaneIndex(),
+          visible: instance.visible && settingsEnabled && (entry.id !== FOOTPRINT_ID || this.selection.type === 'footprint'),
+          selected: false };
+      },
+      select: () => this.params.api.setActive(),
+      setVisible: visible => this.setIndicatorObjectVisible(entry.id, visible),
+      remove: () => this.removeIndicatorObject(entry.id),
+      openSettings: () => { const instance = this.nativeIndicator(entry.id); if (instance) this.openIndicatorSettings(instance); },
+      focus: () => this.params.api.setActive(),
+    }));
+    this.engine.objects.refresh();
+  }
+
+  private syncScriptObjectProviders() {
+    const engine = this.engine; const host = this.studyHost;
+    if (!engine || !host || this.dead) return;
+    const views = host.views(); const ids = new Set(views.map(view => view.attachmentId));
+    for (const view of views) {
+      if (this.scriptObjectProviderReleases.has(view.attachmentId)) continue;
+      const attachmentId = view.attachmentId;
+      const release = engine.objects.register({
+        id: `script-study-${attachmentId}`,
+        get: () => {
+          const current = this.studyHost?.views().find(item => item.attachmentId === attachmentId);
+          if (!current) return null;
+          const paneIndex = this.engine?.chart.indicators().find(item => item.id === attachmentId)?.paneIndex ?? (current.placement === 'pane' ? 1 : 0);
+          return { kind: 'indicator', name: current.title, paneIndex, visible: current.visible,
+            dataStatus: current.status === 'Study ready' ? { state: 'ready' as const } : { state: 'loading' as const } };
+        },
+        subscribe: listener => this.studyHost?.subscribe(listener) ?? (() => {}),
+        select: () => this.params.api.setActive(),
+        setVisible: visible => { if (this.studyHost?.views().find(item => item.attachmentId === attachmentId)?.visible !== visible) this.studyHost?.setVisibleStudy(attachmentId, visible); },
+        remove: () => { this.studyHost?.remove(attachmentId); },
+        openSettings: () => { void this.openAttachmentSettings(attachmentId); },
+        focus: () => this.params.api.setActive(),
+      });
+      this.scriptObjectProviderReleases.set(attachmentId, release);
+    }
+    for (const [id, release] of this.scriptObjectProviderReleases) if (!ids.has(id)) { release(); this.scriptObjectProviderReleases.delete(id); }
+    engine.objects.refresh();
+  }
+
+  private setIndicatorObjectVisible(definitionId: string, visible: boolean) {
+    const instance = this.nativeIndicator(definitionId); if (!instance) return;
+    if (definitionId === FOOTPRINT_ID && visible && !supportsDepth(this.selection)) return;
+    const change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>> = { visible };
+    if (definitionId === HEATMAP_ID || definitionId === ORDER_WALLS_ID) change.settings = { ...instance.settings, enabled: visible };
+    if (definitionId === FOOTPRINT_ID) this.selection = config({ ...this.selection, type: visible ? 'footprint' : 'candle', indicators: this.selection.indicators.map(item => item.instanceId === instance.instanceId ? { ...item, visible } : item) });
+    else this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(item => item.instanceId === instance.instanceId ? { ...item, ...change } : item) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
+  private removeIndicatorObject(definitionId: string) {
+    const instance = this.nativeIndicator(definitionId); if (!instance) return;
+    this.selection = config({ ...this.selection, ...(definitionId === FOOTPRINT_ID ? { type: 'candle' as const } : {}), indicators: this.selection.indicators.filter(item => item.instanceId !== instance.instanceId) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
+  private removeIndicatorInstance(instanceId: string) {
+    const instance = this.selection.indicators.find(item => item.instanceId === instanceId); if (!instance) return;
+    if (new Set<string>([FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
+    this.selection = config({ ...this.selection, ...(instance.definitionId === FOOTPRINT_ID ? { type: 'candle' as const } : {}), indicators: this.selection.indicators.filter(item => item.instanceId !== instanceId) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
+  private setDrawingTool(tool: string | null) {
+    if (!this.engine) return;
+    this.engine.drawings.setEraser(false);
+    this.drawEraser.setAttribute('aria-pressed', 'false');
+    this.engine.drawings.setTool(tool);
+    this.syncDrawingActions();
+  }
+
+  private enrichPlacedDrawing(placed: Drawing) {
+    const draw = this.engine?.drawings;
+    const live = draw?.get(placed.id);
+    if (!draw || !live || this.dead) return;
+    const iqMetadata = live.props?.iqterminal;
+    if (iqMetadata && typeof iqMetadata === 'object' && (iqMetadata as Record<string, unknown>).version === IQ_DRAWING_META_VERSION) return;
+    const defaultId = this.templateCatalog?.defaults.find(item => item.tool === live.tool)?.templateId;
+    const defaults = this.templateCatalog?.templates.find(item => item.id === defaultId);
+    const initial = initialDrawingMetadata(live, this.selection.interval);
+    const initialProps = initial.props ?? {};
+    const patch = defaults ? this.drawingTemplatePatch(live, defaults, this.selection.interval) : initial;
+    draw.update(live.id, { ...patch, props: { ...initialProps, ...(patch.props ?? {}) } }, { force: true });
+    this.engine?.objects.refresh();
+    this.syncDrawingActions();
+  }
+
+  private syncDrawingActions() {
+    const draw = this.engine?.drawings;
+    if (!draw) return;
+    this.drawUndo.disabled = !draw.canUndo();
+    this.drawRedo.disabled = !draw.canRedo();
+    this.drawSettings.disabled = draw.selection().length !== 1;
+    this.drawEraser.setAttribute('aria-pressed', String(draw.erasing()));
+    const activeTool = draw.activeTool();
+    if (activeTool) {
+      const name = registeredDrawingTools().find(tool => tool.id === activeTool)?.name ?? activeTool;
+      this.drawPlacementState.textContent = `Place: ${name}`;
+      this.drawPlacementState.hidden = false;
+    } else if (draw.erasing()) {
+      this.drawPlacementState.textContent = 'Erase drawings';
+      this.drawPlacementState.hidden = false;
+    } else {
+      this.drawPlacementState.textContent = '';
+      this.drawPlacementState.hidden = true;
+    }
+  }
+
+  private toggleObjectsPanel() {
+    if (sharedObjectsOwner === this && this.objectsPanel.open) {
+      this.objectsPanel.open = false;
+      sharedObjectsOwner = undefined;
+      return;
+    }
+    sharedObjectsOwner = this;
+    this.objectsPanel.open = true;
+    this.attachObjectsPanel();
+    this.objectsPanel.scrollIntoView({ block: 'nearest' });
+  }
+
+  attachObjectsPanel() {
+    const view = getSharedObjectsView();
+    if (view.ownerId !== this.params.api.id) {
+      view.rowCache.clear();
+      view.paneSections.clear();
+      view.rows.replaceChildren();
+      view.ownerId = this.params.api.id;
+    }
+    sharedObjectsOwner = this;
+    this.chart.append(this.objectsPanel);
+    this.renderDrawingObjects();
+  }
+
+  private duplicateDrawings(ids: readonly string[]) {
+    const draw = this.engine?.drawings;
+    if (!draw) return [];
+    const copies = draw.duplicate(ids);
+    this.engine?.objects.refresh();
+    this.syncDrawingActions();
+    return copies;
+  }
+
+  private objectPaneSection(paneIndex: number, primaryPaneIndex: number) {
+    let entry = this.objectPaneSections.get(paneIndex);
+    if (!entry) {
+      const section = document.createElement('section'); section.className = 'chart-object-pane';
+      section.dataset.objectPaneIndex = String(paneIndex);
+      const heading = document.createElement('div'); heading.className = 'chart-object-pane-heading';
+      const rows = document.createElement('div'); rows.className = 'chart-object-pane-rows';
+      section.append(heading, rows);
+      entry = { section, heading, rows };
+      this.objectPaneSections.set(paneIndex, entry);
+    }
+    const resolved = entry!;
+    const label = paneIndex === primaryPaneIndex ? `Main pane · Pane ${paneIndex + 1}` : `Pane ${paneIndex + 1}`;
+    if (resolved.heading.textContent !== label) resolved.heading.textContent = label;
+    return resolved;
+  }
+
+  private renderDrawingObjects() {
+    const listed = this.engine?.objects.list() ?? [];
+    const coreIds = new Set([FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID]);
+    const scriptIds = new Set((this.studyHost?.views() ?? []).map(view => view.attachmentId));
+    const objects = listed.filter(object => {
+      if (object.kind !== 'indicator') return true;
+      const identity = `${object.id} ${object.sourceId}`;
+      if (object.id.startsWith('custom:iqterminal-') || object.id.startsWith('custom:script-study-')) return true;
+      for (const instance of this.selection.indicators) {
+        if (coreIds.has(instance.definitionId) && (identity.includes(instance.instanceId) || identity.includes(instance.definitionId))) return false;
+        if (scriptIds.has(instance.instanceId) && identity.includes(instance.instanceId)) return false;
+      }
+      return true;
+    });
+    const toggleLabel = `Objects (${objects.length})`;
+    if (this.objectsToggle.textContent !== toggleLabel) this.objectsToggle.textContent = toggleLabel;
+    if (sharedObjectsOwner !== this || !this.objectsPanel.open) return;
+    this.updateObjectsSummary();
+    this.objectsPanel.dataset.focused = String(this.params?.api.isFocused ?? false);
+    const activeIds = new Set(objects.map(object => object.id));
+    for (const [id, row] of this.objectRows) {
+      if (activeIds.has(id)) continue;
+      row.remove();
+      this.objectRows.delete(id);
+    }
+    if (!objects.length) {
+      for (const entry of this.objectPaneSections.values()) entry.section.remove();
+      this.objectPaneSections.clear();
+      if (this.objectsRows.childElementCount !== 1 || this.objectsRows.firstElementChild !== this.emptyObjectsMessage) this.objectsRows.replaceChildren(this.emptyObjectsMessage!);
+      return;
+    }
+    this.emptyObjectsMessage?.remove();
+    const grouped = new Map<number, ChartObjectSnapshot[]>();
+    for (const object of objects) {
+      const paneIndex = Number.isInteger(object.paneIndex) && object.paneIndex >= 0 ? object.paneIndex : 0;
+      const group = grouped.get(paneIndex) ?? [];
+      group.push(object);
+      grouped.set(paneIndex, group);
+    }
+    const paneIndexes = [...grouped.keys()].sort((a, b) => a - b);
+    const activePanes = new Set(paneIndexes);
+    for (const [paneIndex, entry] of this.objectPaneSections) {
+      if (activePanes.has(paneIndex)) continue;
+      entry.section.remove();
+      this.objectPaneSections.delete(paneIndex);
+    }
+    const primaryPaneIndex = this.engine?.objects.primaryPaneIndex() ?? 0;
+    paneIndexes.forEach((paneIndex, paneOrder) => {
+      const section = this.objectPaneSection(paneIndex, primaryPaneIndex);
+      const currentSection = this.objectsRows.children.item(paneOrder);
+      if (currentSection !== section.section) this.objectsRows.insertBefore(section.section, currentSection);
+      grouped.get(paneIndex)!.forEach((object, rowOrder) => {
+        const row = this.updateObjectRow(object);
+        row.dataset.objectPaneIndex = String(paneIndex);
+        const currentRow = section.rows.children.item(rowOrder);
+        if (currentRow !== row) section.rows.insertBefore(row, currentRow);
+      });
+    });
+  }
+
+  private updateObjectRow(object: ChartObjectSnapshot) {
+    let row = this.objectRows.get(object.id);
+    if (!row) {
+      row = document.createElement('div');
+      this.objectRows.set(object.id, row);
+    }
+    row.className = `chart-object-row kind-${object.kind}`;
+    row.dataset.objectId = object.id;
+    let name = row.querySelector<HTMLButtonElement>('.chart-object-name');
+    if (!name) {
+      name = document.createElement('button');
+      name.type = 'button';
+      name.className = 'chart-object-name';
+      name.addEventListener('click', () => {
+        const id = row!.dataset.objectId ?? '';
+        const owner = sharedObjectsOwner;
+        if (!owner) return;
+        owner.params.api.setActive();
+        owner.engine?.objects.select(id);
+        owner.engine?.objects.focus(id);
+        owner.syncDrawingActions();
+      });
+    }
+    const drawing = object.kind === 'drawing'
+      ? this.engine?.drawings.get(object.sourceId) ?? this.engine?.drawings.get(object.id)
+      : undefined;
+    const nameText = drawing ? drawingDisplayName(drawing, object.name) : object.name;
+    const nameTitle = `${object.kind} · pane ${object.paneIndex + 1}${object.hiddenOnInterval ? ' · hidden on this timeframe' : ''}`;
+    if (name.textContent !== nameText) name.textContent = nameText;
+    if (name.title !== nameTitle) name.title = nameTitle;
+    if (object.hiddenOnInterval) name.dataset.hiddenOnInterval = 'true';
+    else delete name.dataset.hiddenOnInterval;
+
+    const actions: Array<{ label: string; action: string; title: string }> = [];
+    if (object.capabilities.visibility) actions.push({ label: object.visible ? 'Hide' : 'Show', action: 'visible', title: object.visible ? 'Hide object' : 'Show object' });
+    if (object.capabilities.lock) actions.push({ label: object.locked ? 'Unlock' : 'Lock', action: 'lock', title: object.locked ? 'Unlock object' : 'Lock object' });
+    if (object.kind === 'drawing') actions.push({ label: 'Duplicate', action: 'duplicate', title: 'Duplicate drawing' });
+    if (object.kind === 'drawing' || object.capabilities.settings) actions.push({ label: 'Style', action: 'settings', title: 'Open object settings' });
+    if (object.capabilities.remove) actions.push({ label: '×', action: 'remove', title: 'Remove object' });
+    const actionButtons = actions.map(({ label, action, title }) => {
+      let button = [...row!.querySelectorAll<HTMLButtonElement>('button[data-object-action]')].find(candidate => candidate.dataset.objectAction === action);
+      if (!button) button = this.objectActionButton(label, action, object.id, title);
+      if (button.textContent !== label) button.textContent = label;
+      if (button.title !== title) button.title = title;
+      button.dataset.objectId = object.id;
+      return button;
+    });
+    const actionSet = new Set(actions.map(action => action.action));
+    for (const button of row.querySelectorAll<HTMLButtonElement>('button[data-object-action]')) {
+      if (!actionSet.has(button.dataset.objectAction ?? '')) button.remove();
+    }
+    const children = [name, ...actionButtons];
+    if (children.some((child, index) => row!.children.item(index) !== child) || row.childElementCount !== children.length) row.replaceChildren(...children);
+    return row;
+  }
+
+  private updateObjectsSummary() {
+    const instrument = instrumentOf(this.selection).native;
+    const focus = this.params?.api.isActive ? ' · active' : '';
+    this.objectsSummary.textContent = `Objects · ${instrument} · ${this.selection.interval} · ${this.params?.api.id ?? 'chart'}${focus}`;
+    this.objectsPanel.dataset.focused = String(this.params?.api.isFocused ?? false);
+  }
+
+  private objectActionButton(label: string, action: string, id: string, title: string) {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'chart-object-action';
+    button.textContent = label; button.title = title; button.dataset.objectAction = action; button.dataset.objectId = id;
+    button.addEventListener('click', event => { event.stopPropagation(); sharedObjectsOwner?.drawingObjectAction(event); });
+    return button;
+  }
+
+  private drawingObjectAction(event: Event) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-object-action]');
+    if (!button || !this.engine) return;
+    const id = button.dataset.objectId ?? '';
+    const object = this.engine.objects.get(id);
+    if (!object) return;
+    switch (button.dataset.objectAction) {
+      case 'visible': {
+        if (object.kind === 'drawing') {
+          const drawing = this.engine.drawings.get(object.sourceId);
+          if (drawing) this.engine.drawings.update(drawing.id, { visible: drawing.visible === false });
+        } else this.engine.objects.setVisible(id, !object.visible);
+        break;
+      }
+      case 'lock': this.engine.objects.setLocked(id, !object.locked); break;
+      case 'duplicate': if (object.kind === 'drawing') this.duplicateDrawings([object.sourceId]); break;
+      case 'remove': this.engine.objects.remove(id); break;
+      case 'settings':
+        if (object.kind === 'drawing') this.openDrawingSettings(this.engine.drawings.get(object.sourceId)?.id ?? object.id);
+        else this.engine.objects.openSettings(id);
+        break;
+    }
+    this.engine.objects.refresh(); this.syncDrawingActions();
+  }
+
+  private openDrawingSettings(id?: string) {
+    const draw = this.engine?.drawings;
+    const drawing = id ? draw?.get(id) : draw?.get(draw.selected() ?? '');
+    if (!drawing) return;
+    this.drawingTarget = drawing.id;
+    this.drawingSchema = iqDrawingSettingsSchema(drawing.tool);
+    this.drawingFields.replaceChildren();
+    const values = captureDrawingSettings(drawing, this.drawingSchema);
+    for (const field of this.drawingSchema.fields) {
+      const row = document.createElement('label'); row.className = 'indicator-setting-field';
+      const label = document.createElement('span'); label.textContent = field.label;
+      const control = this.drawingSettingControl(field, values[field.path]);
+      control.dataset.settingPath = field.path;
+      if (field.path === 'text.color') {
+        const markExplicit = () => { control.dataset.userEdited = 'true'; };
+        control.addEventListener('input', markExplicit);
+        control.addEventListener('change', markExplicit);
+      }
+      row.append(label, control); this.drawingFields.append(row);
+    }
+    const title = this.drawingDialog.querySelector('.drawing-settings-title');
+    if (title) title.textContent = `${drawing.tool} settings`;
+    this.drawingStatus.textContent = 'Settings apply to this drawing and are one undo step.';
+    if (!this.drawingDialog.open) this.drawingDialog.showModal();
+  }
+
+  private drawingSettingControl(field: SettingsField, value: unknown): HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement {
+    if (field.kind === 'boolean') { const input = document.createElement('input'); input.type = 'checkbox'; input.checked = value === true; return input; }
+    if (field.kind === 'interval' || field.kind === 'select' || field.kind === 'lineStyle') {
+      const select = document.createElement('select');
+      if (field.kind === 'interval') {
+        select.add(new Option('Any interval', ''));
+        for (const interval of intervals) select.add(new Option(interval, interval));
+      } else {
+        for (const option of field.options ?? []) select.add(new Option(option.label, option.value));
+        if (!field.options?.length && field.kind === 'lineStyle') for (const [id, label] of [['solid', 'Solid'], ['dashed', 'Dashed'], ['dotted', 'Dotted']]) select.add(new Option(label, id));
+      }
+      select.value = typeof value === 'string' ? value : String(field.defaultValue ?? ''); return select;
+    }
+    if (field.kind === 'levels') {
+      const textarea = document.createElement('textarea'); textarea.rows = 5; textarea.value = JSON.stringify(value ?? [], null, 2); return textarea;
+    }
+    const input = document.createElement('input');
+    if (field.kind === 'color' && typeof value === 'string' && /^#[\da-f]{6}$/i.test(value)) input.type = 'color';
+    else if (field.kind === 'number' || field.kind === 'opacity') { input.type = 'number'; input.min = String(field.min ?? (field.kind === 'opacity' ? 0 : -1_000_000)); input.max = String(field.max ?? (field.kind === 'opacity' ? 1 : 1_000_000)); input.step = String(field.step ?? 'any'); }
+    else input.type = 'text';
+    input.value = value === undefined || value === null ? String(field.defaultValue ?? '') : String(value);
+    return input;
+  }
+
+  private applyDrawingSettingsFromDialog() {
+    const draw = this.engine?.drawings; const drawing = draw?.get(this.drawingTarget); const schema = this.drawingSchema;
+    if (!draw || !drawing || !schema) { this.drawingDialog.close(); return; }
+    const values: Record<string, unknown> = {};
+    for (const control of this.drawingFields.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-setting-path]')) {
+      const field = schema.fields.find(item => item.path === control.dataset.settingPath);
+      if (!field) continue;
+      if (field.kind === 'boolean') values[field.path] = (control as HTMLInputElement).checked;
+      else if (field.kind === 'levels') {
+        try { values[field.path] = JSON.parse(control.value); } catch { this.drawingStatus.textContent = `${field.label} must be valid JSON.`; control.focus(); return; }
+      } else values[field.path] = control.value;
+    }
+    const textColorExplicit = this.drawingFields.querySelector<HTMLElement>('[data-setting-path="text.color"]')?.dataset.userEdited === 'true'
+      ? true : undefined;
+    const patch = drawingSettingsPatch(drawing, values, schema, { textColorExplicit });
+    if (draw.update(drawing.id, patch)) {
+      this.engine?.objects.refresh(); this.drawingDialog.close(); this.syncDrawingActions();
+    } else this.drawingStatus.textContent = 'This drawing cannot be edited in its current state.';
+  }
+
+  private openDrawingTemplates() {
+    const draw = this.engine?.drawings;
+    const selected = draw?.get(draw.selected() ?? '');
+    this.templatesIncludeLabel.checked = selected?.props?.iqterminalLabelState === 'custom';
+    this.renderDrawingTemplates();
+    this.setTemplateStatus(this.templateStorageWarning);
+    if (!this.templatesDialog.open) this.templatesDialog.showModal();
+  }
+
+  private renderDrawingTemplates() {
+    const catalog = this.templateCatalog; const draw = this.engine?.drawings;
+    const selected = draw?.get(draw.selected() ?? ''); const tool = selected?.tool ?? (this.drawTool.value || '');
+    this.templatesList.replaceChildren();
+    if (!catalog || !tool) {
+      const empty = document.createElement('p'); empty.className = 'dialog-status'; empty.textContent = catalog ? 'Select a drawing tool or drawing to manage its templates.' : 'Loading local template catalog…';
+      this.templatesList.append(empty); return;
+    }
+    const defaultId = catalog.defaults.find(item => item.tool === tool)?.templateId;
+    const rows = catalog.templates.filter(item => item.tool === tool).sort((a, b) => Number(b.favorite) - Number(a.favorite) || a.name.localeCompare(b.name));
+    const defaultHint = document.createElement('p'); defaultHint.className = 'dialog-status'; defaultHint.textContent = defaultId ? 'New drawings use the saved default look.' : 'New drawings use the tool’s built-in look.'; this.templatesList.append(defaultHint);
+    if (!rows.length) { const empty = document.createElement('p'); empty.className = 'dialog-status'; empty.textContent = 'No saved templates for this tool.'; this.templatesList.append(empty); return; }
+    for (const template of rows) {
+      const row = document.createElement('div'); row.className = 'drawing-template-row';
+      const name = document.createElement('strong'); name.textContent = template.name; row.append(name);
+      const favorite = this.templateActionButton(template.favorite ? '★' : '☆', 'favorite', template.id, 'Toggle favorite');
+      favorite.setAttribute('aria-pressed', String(template.favorite)); row.append(favorite);
+      const isDefault = defaultId === template.id;
+      row.append(this.templateActionButton(isDefault ? 'Default ✓' : 'Set default', 'default', template.id, 'Use for new drawings'));
+      const apply = this.templateActionButton('Apply', 'apply', template.id, 'Apply to selected drawing'); apply.disabled = !selected || selected.tool !== template.tool; row.append(apply);
+      row.append(this.templateActionButton('Rename', 'rename', template.id, 'Rename template'));
+      row.append(this.templateActionButton('Delete', 'delete', template.id, 'Delete template'));
+      this.templatesList.append(row);
+    }
+  }
+
+  private templateActionButton(label: string, action: string, id: string, title: string) {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = label; button.title = title;
+    button.dataset.templateAction = action; button.dataset.templateId = id; return button;
+  }
+
+  private async saveDrawingTemplate() {
+    const draw = this.engine?.drawings; const drawing = draw?.get(draw.selected() ?? ''); const repository = this.templateRepository;
+    const name = this.templatesName.value.trim();
+    if (!repository || !drawing) { this.templatesStatus.textContent = 'Select a drawing before saving its look.'; return; }
+    if (!name) { this.templatesStatus.textContent = 'Enter a name for this template.'; this.templatesName.focus(); return; }
+    try {
+      const updating = this.templateCatalog?.templates.some(template => template.tool === drawing.tool && template.name.toLocaleLowerCase() === name.toLocaleLowerCase()) ?? false;
+      const snapshot = captureIQDrawingTemplateSettings(drawing);
+      snapshot.label = this.templatesIncludeLabel.checked
+        ? { present: true, value: snapshot.label.value }
+        : { present: false, value: '' };
+      this.templateCatalog = repository.saveTemplate(name, drawing.tool, snapshot);
+      this.templatesName.value = ''; this.setTemplateStatus(`${updating ? 'Template updated' : 'Template saved'}. Applying it later changes settings only; drawings remain independent.`);
+      this.renderDrawingTemplates();
+    } catch (error) { this.setTemplateStatus(errorText(error)); }
+  }
+
+  private templateAction(action: string, id: string) {
+    const repository = this.templateRepository; const draw = this.engine?.drawings; const template = this.templateCatalog?.templates.find(item => item.id === id);
+    if (!repository || !template) return;
+    try {
+      let message = '';
+      if (action === 'favorite') {
+        this.templateCatalog = repository.toggleFavorite(id);
+        message = 'Template favorite updated.';
+      } else if (action === 'default') {
+        const current = this.templateCatalog?.defaults.find(item => item.tool === template.tool)?.templateId;
+        this.templateCatalog = repository.setDefault(template.tool, current === template.id ? null : template.id);
+        message = current === template.id ? 'Built-in look will be used for new drawings.' : 'Default template updated for new drawings.';
+      } else if (action === 'apply') {
+        const selected = draw?.get(draw.selected() ?? '');
+        if (!selected || selected.tool !== template.tool || !draw) { this.setTemplateStatus('Select a drawing of the same tool to apply this template.'); return; }
+        draw.update(selected.id, this.drawingTemplatePatch(selected, template));
+        this.engine?.objects.refresh(); message = 'Template applied as one drawing-history step. The drawing’s anchors and identity were kept.';
+      } else if (action === 'rename') {
+        const next = window.prompt('Rename drawing template', template.name);
+        if (next?.trim()) { this.templateCatalog = repository.renameTemplate(id, next.trim()); message = 'Template renamed.'; }
+      } else if (action === 'delete') { this.templateCatalog = repository.removeTemplate(id); message = 'Template deleted.'; }
+      this.setTemplateStatus(message || this.templatesStatus.textContent || this.templateStorageWarning);
+      this.renderDrawingTemplates();
+    } catch (error) { this.setTemplateStatus(errorText(error)); }
+  }
+
+  private drawingTemplatePatch(drawing: Drawing, template: IQDrawingTemplateRecord, placementInterval?: string): DrawingPatch {
+    // Text content is the text tool's visible label. It follows the template's
+    // explicit Include label bit rather than being copied as an ordinary style
+    // field; omitted labels leave the target content intact, including older
+    // catalogs that may contain text.value in nativeValues.
+    const nativeValues = drawing.tool === 'text'
+      ? Object.fromEntries(Object.entries(template.nativeValues).filter(([path]) => path !== 'text.value'))
+      : template.nativeValues;
+    const nativePatch = drawingSettingsPatch(drawing, nativeValues, drawingSettingsSchema(drawing.tool));
+    const textLabelPatch = drawing.tool === 'text' && template.label.present
+      ? { text: { ...drawing.text, ...(nativePatch.text ?? {}), value: template.label.value } }
+      : {};
+    return {
+      ...nativePatch,
+      ...textLabelPatch,
+      visible: template.visibility.visible,
+      intervals: template.visibility.intervals,
+      props: {
+        ...drawing.props,
+        ...(nativePatch.props ?? {}),
+        iqterminal: { version: 1 },
+        ...(template.label.present ? { iqterminalLabelState: 'custom', iqterminalLabel: template.label.value } : {}),
+        iqterminalLabelTextColorExplicit: template.textColorExplicit,
+        iqterminalAnalysisInterval: template.analysisInterval ?? placementInterval ?? '',
+      },
+    };
+  }
+
+  private setTemplateStatus(message: string) {
+    const persistence = this.templateRepository?.error();
+    const warning = persistence ? `Template changes are available for this session only because browser storage failed (${errorText(persistence)}).` : this.templateStorageWarning;
+    this.templatesStatus.textContent = [message, warning].filter(Boolean).join(' ');
   }
 
   private footprintField(labelText: string, control: HTMLInputElement | HTMLSelectElement) {
@@ -681,6 +1416,8 @@ export class CandlePanel implements IContentRenderer {
     if (this.dead) return;
     this.indicatorLifecycle?.reconcile(this.selection.indicators);
     this.renderActiveIndicators();
+    this.engine?.objects.refresh();
+    this.syncScriptObjectProviders();
   }
 
   private syncNativeIndicators() {
@@ -699,7 +1436,11 @@ export class CandlePanel implements IContentRenderer {
 
   private changeIndicator(instanceId: string, change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>>) {
     delete this.activeIndicators.dataset.error; this.indicatorErrors.delete(instanceId);
-    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(i => i.instanceId === instanceId ? { ...i, ...change } : i) });
+    const instance = this.selection.indicators.find(i => i.instanceId === instanceId);
+    const footprintMode = instance?.definitionId === FOOTPRINT_ID && typeof change.visible === 'boolean'
+      ? { type: change.visible ? 'footprint' as const : 'candle' as const }
+      : {};
+    this.selection = config({ ...this.selection, ...footprintMode, indicators: this.selection.indicators.map(i => i.instanceId === instanceId ? { ...i, ...change } : i) });
     this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
 
@@ -735,8 +1476,7 @@ export class CandlePanel implements IContentRenderer {
     else if (action === 'visibility') {
       this.changeIndicator(instance.instanceId, { visible: !instance.visible });
     } else if (action === 'remove') {
-      this.selection = config({ ...this.selection, indicators: this.selection.indicators.filter(i => i.instanceId !== instance.instanceId) });
-      this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+      this.removeIndicatorInstance(instance.instanceId);
     } else if (action === 'source' && instance.script) this.openEditor(this.params.api.id, instance.instanceId);
     else if (action === 'duplicate' && instance.script && this.studyHost) {
       button.disabled = true;
@@ -928,6 +1668,40 @@ export class CandlePanel implements IContentRenderer {
 
   private keydown(event: KeyboardEvent) {
     if (!this.engine) return;
+    const target = event.target;
+    if (target instanceof HTMLElement && (target.matches('input,textarea,select,[contenteditable="true"]') || target.closest('dialog'))) return;
+    const draw = this.engine.drawings;
+    const toolShortcut = matchDrawingShortcut(event);
+    if (toolShortcut && DRAWING_TOOL_IDS.has(toolShortcut)) {
+      draw.setTool(toolShortcut);
+      event.preventDefault();
+      return;
+    }
+    const action = keyToDrawingAction(event, {
+      hasSelection: draw.selection().length > 0,
+      hasTarget: draw.hovered() !== null,
+      editingText: false,
+      placing: Boolean(draw.activeTool()) || draw.erasing(),
+    });
+    if (action) {
+      switch (action.type) {
+        case 'undo': draw.undo(); break;
+        case 'redo': draw.redo(); break;
+        case 'copy': void draw.copy(); break;
+        case 'cut': void draw.cut(); break;
+        case 'paste': void draw.paste(); break;
+        case 'duplicate': this.duplicateDrawings(draw.selection().length ? draw.selection() : draw.hovered() ? [draw.hovered()!] : []); break;
+        case 'delete': draw.removeMany(draw.selection().length ? draw.selection() : draw.hovered() ? [draw.hovered()!] : []); break;
+        case 'nudge': draw.nudge(draw.selection(), action.dx, action.dy); break;
+        case 'cancel': draw.cancel(); break;
+        case 'finish': draw.finish(); break;
+        case 'popAnchor': draw.popAnchor(); break;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.syncDrawingActions();
+      return;
+    }
     const range = this.engine.visibleRange();
     if (event.key === 'Home') this.engine.resetView();
     else if (range && event.key === 'ArrowLeft') this.engine.setRange({ from: range.from - 4, to: range.to - 4 });
@@ -967,6 +1741,7 @@ export class CandlePanel implements IContentRenderer {
     this.release?.();
     const epoch = ++this.selectionEpoch;
     const selection = this.selection;
+    this.engine?.setDrawingContext(selection);
     this.params.api.setTitle(`${instrumentLabel(selection)} · ${selection.interval}`);
     this.chart.setAttribute('aria-label', `${instrumentLabel(selection)} candlestick chart`);
     this.updateInstrumentMetadata();
@@ -1020,7 +1795,8 @@ export class CandlePanel implements IContentRenderer {
     const supported = supportsDepth(this.selection), footprint = Boolean(this.nativeIndicator(FOOTPRINT_ID));
     const settings: HeatmapSettings = { ...(footprint ? { ...this.selection.heatmap, rowPrice: this.selection.rowPrice, rowAlignment: 'footprint' as const } : this.selection.heatmap), candleMs: duration[this.selection.interval] };
     this.heatmapControls.sync(settings, supported, footprint); this.heatmapControls.setUnits(this.selection.footprintUnits);
-    this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported }, duration[this.selection.interval]);
+    const instance = this.nativeIndicator(HEATMAP_ID);
+    this.engine?.setHeatmap({ ...settings, enabled: settings.enabled && supported && (instance?.visible ?? true) }, duration[this.selection.interval]);
     const key = this.nativeIndicator(HEATMAP_ID) && supported ? `${instrumentKey(this.selection)}:${heatmapKey(settings)}` : '';
     if (key === this.heatmapSubscriptionKey) return;
     this.releaseHeatmap?.(); this.releaseHeatmap = undefined; this.heatmapSubscriptionKey = key;
@@ -1453,6 +2229,15 @@ export class CandlePanel implements IContentRenderer {
   dispose() {
     this.cancelWatchPick?.();
     this.dead = true;
+    if (sharedObjectsOwner === this) {
+      sharedObjectsOwner = undefined;
+      this.objectsPanel.open = false;
+      this.objectsPanel.remove();
+      this.objectRows.clear();
+      this.objectPaneSections.clear();
+      getSharedObjectsView().ownerId = undefined;
+      this.objectsRows.replaceChildren();
+    }
     this.selectionEpoch++;
     clearInterval(this.timer);
     this.toolbarResizeObserver?.disconnect();
@@ -1461,6 +2246,12 @@ export class CandlePanel implements IContentRenderer {
     if (this.settingsDialog.open) this.settingsDialog.close();
     if (this.footprintDialog.open) this.footprintDialog.close();
     if (this.chartSettingsDialog.open) this.chartSettingsDialog.close();
+    if (this.drawingDialog.open) this.drawingDialog.close();
+    if (this.templatesDialog.open) this.templatesDialog.close();
+    this.templateUnsubscribe?.(); this.templateUnsubscribe = undefined;
+    this.releaseWatchObjects?.(); this.releaseWatchObjects = undefined;
+    this.coreObjectProviderReleases.forEach(release => release()); this.coreObjectProviderReleases = [];
+    for (const release of this.scriptObjectProviderReleases.values()) release(); this.scriptObjectProviderReleases.clear();
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
     this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();

@@ -101,8 +101,42 @@ export class OrderWallsPrimitive implements IPrimitive {
         x:line.x,right,y:line.y,low:line.low,high:line.high};
     }
     strokeGroup();
+    if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
+  }
+
+  /** Presentation-only guides: never extend the recorded wall timeline itself. */
+  private drawPriceLines(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
+    const active=new Map<string,WallDrawable>();
+    for(const line of this.drawable.values()){
+      const segment=this.segments.get(line.segment.id);
+      if(!segment||segment.end!==null)continue;
+      const previous=active.get(line.segment.id);
+      if(!previous||line.from>previous.from)active.set(line.segment.id,{...line,segment});
+    }
+    const dpr=rc.dpr,occupied:number[]=[];
+    ctx.font=`${10*dpr}px ui-monospace, monospace`;ctx.textBaseline='middle';ctx.textAlign='right';
+    // Strongest labels win crowded rows; guides stay aligned with actual wall prices.
+    const lines=[...active.values()].sort((a,b)=>(b.segment.valueRuns.at(-1)?.usd??0)-(a.segment.valueRuns.at(-1)?.usd??0));
+    for(const line of lines){
+      const value=orderWallValuePointAt(line.segment,Math.min(line.to,this.status.lastConfirmedAt??line.to));
+      if(!value||!Number.isFinite(value.usd)||line.y<8||line.y>rc.plotHeight-8)continue;
+      const color=wallColor(value.percentile,this.settings.colorMode,line.segment.side);
+      ctx.strokeStyle=color;ctx.globalAlpha=this.settings.opacity*.28;ctx.lineWidth=dpr;ctx.setLineDash([2*dpr,4*dpr]);
+      ctx.beginPath();ctx.moveTo(0,line.y*dpr);ctx.lineTo(rc.plotWidth*dpr,line.y*dpr);ctx.stroke();
+      if(occupied.some(y=>Math.abs(y-line.y)<15))continue;
+      const price=((line.low+line.high)/2).toLocaleString('en-US',{maximumFractionDigits:8});
+      const size=value.usd.toLocaleString('en-US',{notation:'compact',maximumFractionDigits:1});
+      const stale=this.status.state!=='live'?'~':'';
+      const text=`${stale}${line.segment.side==='bid'?'B':'A'} ${price} · $${size}`;
+      const width=ctx.measureText(text).width+10*dpr;
+      if(width>rc.plotWidth*dpr-8*dpr)continue;
+      occupied.push(line.y);
+      ctx.globalAlpha=.94;ctx.fillStyle=rc.theme.background;ctx.fillRect(rc.plotWidth*dpr-width-4*dpr,(line.y-7)*dpr,width,14*dpr);
+      ctx.globalAlpha=this.settings.opacity*.45;ctx.strokeStyle=color;ctx.setLineDash([]);ctx.strokeRect(rc.plotWidth*dpr-width-4*dpr,(line.y-7)*dpr,width,14*dpr);
+      ctx.globalAlpha=this.settings.opacity;ctx.fillStyle=rc.theme.axisText;ctx.fillText(text,(rc.plotWidth-9)*dpr,line.y*dpr);
+    }
   }
 
   private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){

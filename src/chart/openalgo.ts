@@ -16,10 +16,14 @@ import {
   type SeriesApi,
   type IPrimitive,
 } from 'openalgo-charts';
+import { ChartObjects } from 'openalgo-charts';
+import { DrawingController, InstrumentDrawings, memoryDrawingStore, registerBuiltinDrawingTools, registeredDrawingTools, type DrawingDocumentStore } from 'openalgo-charts/draw';
+import type { CanonicalSeries } from '../feed/protocol';
 import { DEFAULT_FOOTPRINT_OPTIONS, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
 import type { Candle, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
+import { registerIQDrawingLabelRenderers } from './drawing-labels';
 import { TerminalFootprint } from './terminal-footprint';
 import { FootprintActivity } from './footprint-activity';
 import { footprintForUnits, type FootprintUnits } from './footprint-units';
@@ -62,6 +66,7 @@ function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
 }
 
 interface ViewAnchor { fromTime: number; toTime: number; fromOffset: number; toOffset: number }
+let drawingToolsRegistered = false;
 
 /** Owns the chart engine while routing its frames through the shared visible-panel scheduler. */
 export class OpenAlgoCandleChart {
@@ -74,6 +79,9 @@ export class OpenAlgoCandleChart {
   private orderWallValueCount = 0;
   private orderWallStatus: OrderWallStatus = { state: 'loading' };
   readonly chart: OpenAlgoChart;
+  readonly drawings: DrawingController;
+  readonly objects: ChartObjects;
+  readonly scopedDrawings: InstrumentDrawings;
   private readonly axisGrid = new AxisGrid();
   readonly series: SeriesApi;
   private footprintIndexSeries: SeriesApi | null = null;
@@ -130,7 +138,7 @@ export class OpenAlgoCandleChart {
   };
   private readonly viewSubscriptions: (() => void)[] = [];
 
-  constructor(private readonly container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d') {
+  constructor(private readonly container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d', panelId = 'chart', initialSeries?: CanonicalSeries) {
     this.chart = createChart(container, {
       raf: {
         schedule: callback => {
@@ -169,6 +177,24 @@ export class OpenAlgoCandleChart {
       animAutoscale: false,
       ariaLabel: 'BTC perpetual candlestick chart. Drag to pan time and price, wheel to zoom.',
     });
+    // The drawing tier is deliberately attached only to native candle charts.
+    // It shares this chart's existing renderer and RAF scheduler.
+    if (!drawingToolsRegistered) { registerBuiltinDrawingTools(); drawingToolsRegistered = true; }
+    registerIQDrawingLabelRenderers();
+    this.drawings = new DrawingController(this.chart, { magnet: 'weak' });
+    this.scopedDrawings = new InstrumentDrawings(this.chart, this.drawings, {
+      store: safeDrawingStore(),
+      key: instrument => {
+        if (!instrument.symbol || !instrument.exchange) return null;
+        return `iqterminal:drawings:${encodeURIComponent(panelId)}:${encodeURIComponent(instrument.exchange)}:${encodeURIComponent(instrument.symbol)}`;
+      },
+      onError: error => console.warn(`[drawings] ${error.operation} failed for ${error.key}; keeping this session's drawings in memory`, error.error),
+    });
+    this.objects = new ChartObjects(this.chart, {
+      drawings: this.drawings,
+      drawingName: tool => registeredDrawingTools().find(item => item.id === tool)?.name ?? tool,
+    });
+    if (initialSeries) this.setDrawingContext(initialSeries);
     this.series = this.chart.addSeries('candlestick', {
       style: {
         priceLineVisible: true,
@@ -184,6 +210,14 @@ export class OpenAlgoCandleChart {
     // The plot gesture selects right-anchored time zoom or legacy two-axis zoom.
     container.addEventListener('wheel', event => this.handleWheel(event, container), {
       capture: true, passive: false, signal: this.inputAbort.signal,
+    });
+  }
+
+  setDrawingContext(series: CanonicalSeries) {
+    this.chart.setDataContext({
+      exchange: `${series.venue}:${series.market}`,
+      symbol: series.venue === 'hyperliquid' ? 'BTC' : 'BTCUSDT',
+      interval: series.interval,
     });
   }
 
@@ -662,6 +696,9 @@ export class OpenAlgoCandleChart {
     if (this.disposed) return;
     this.disposed = true;
     this.inputAbort.abort();
+    this.objects.destroy();
+    this.scopedDrawings.destroy();
+    this.drawings.destroy();
     this.removeFootprintSurface();
     if (this.heatmap) this.chart.removePrimitive(this.heatmap);
     this.heatmap = null;
@@ -675,6 +712,34 @@ export class OpenAlgoCandleChart {
     this.times = [];
     this.scheduler.remove(this);
   }
+}
+
+/** A corrupt drawing record must never be silently replaced by an empty save. */
+function safeDrawingStore(): DrawingDocumentStore {
+  let storage: Storage;
+  try { storage = window.localStorage; } catch { return memoryDrawingStore(); }
+  const read = (key: string): unknown => {
+    const raw = storage.getItem(key);
+    if (raw === null) return null;
+    let value: unknown;
+    try { value = JSON.parse(raw); }
+    catch { throw new Error('Stored drawings are not valid JSON; preserving the original record.'); }
+    const legacy = Array.isArray(value);
+    const document = value && typeof value === 'object' ? value as Record<string, unknown> : null;
+    if (!legacy && (!document || !Array.isArray(document.drawings) || ![1, 2, 3].includes(Number(document.version)))) {
+      throw new Error('Stored drawings do not match a supported document; preserving the original record.');
+    }
+    return value;
+  };
+  return {
+    get: read,
+    set(key: string, document: Parameters<DrawingDocumentStore['set']>[1]) {
+      read(key);
+      storage.setItem(key, JSON.stringify(document));
+      return true;
+    },
+    remove(key: string) { read(key); storage.removeItem(key); },
+  };
 }
 
 export type { Bar };
