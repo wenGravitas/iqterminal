@@ -1,0 +1,236 @@
+{
+  "captureStart": "2026-10-19T12:59:52.644Z",
+  "captureBaseline": {
+    "capturedAt": "2026-10-19T13:00:09.506Z",
+    "fixture": false,
+    "chartPanes": 3,
+    "request": "{\"methods\":[\"aggressor-flow-oi\",\"price-oi\"],\"venues\":[\"binance\",\"hyperliquid\"]}",
+    "panes": [
+      {
+        "id": "native.net-longs-estimated",
+        "paneIndex": 1,
+        "method": "price-oi",
+        "venues": [
+          "binance",
+          "hyperliquid"
+        ],
+        "candleCount": 34,
+        "visibleDraws": 24,
+        "visibleBarsDrawn": 65,
+        "sourcePatches": 68,
+        "maxAbsBtc": 101.656,
+        "feeds": {
+          "binance": "live",
+          "hyperliquid": "live"
+        },
+        "units": {
+          "binance": "verified",
+          "hyperliquid": "verified"
+        }
+      },
+      {
+        "id": "native.net-shorts-estimated",
+        "paneIndex": 2,
+        "method": "aggressor-flow-oi",
+        "venues": [
+          "binance",
+          "hyperliquid"
+        ],
+        "candleCount": 34,
+        "visibleDraws": 20,
+        "visibleBarsDrawn": 65,
+        "sourcePatches": 68,
+        "maxAbsBtc": 102.542,
+        "feeds": {
+          "binance": "live",
+          "hyperliquid": "live"
+        },
+        "units": {
+          "binance": "verified",
+          "hyperliquid": "verified"
+        }
+      }
+    ],
+    "histories": [
+      {
+        "snapshots": 2,
+        "patches": 3,
+        "intervalUpdates": 254,
+        "candleRebuilds": 136,
+        "historyIntervals": 126,
+        "bytes": 194744,
+        "candleCount": 34,
+        "method": "price-oi",
+        "candleIntervalMs": 60000
+      },
+      {
+        "snapshots": 0,
+        "patches": 1,
+        "intervalUpdates": 127,
+        "candleRebuilds": 68,
+        "historyIntervals": 127,
+        "bytes": 140565,
+        "candleCount": 34,
+        "method": "aggressor-flow-oi",
+        "candleIntervalMs": 60000
+      }
+    ],
+    "worker": {
+      "requests": 5,
+      "rowsReceived": 256,
+      "rowsChanged": 253,
+      "snapshots": 2,
+      "patches": 4,
+      "errors": 0,
+      "subscribers": 1,
+      "cachedIntervals": 126,
+      "lastPollMs": 2025,
+      "cache": [
+        {
+          "method": "price-oi",
+          "intervals": 126,
+          "venues": [
+            "binance",
+            "hyperliquid"
+          ]
+        },
+        {
+          "method": "aggressor-flow-oi",
+          "intervals": 127,
+          "venues": [
+            "binance",
+            "hyperliquid"
+          ]
+        }
+      ]
+    }
+  },
+  "captureEnd": {
+    "capturedAt": "2026-10-19T13:00:39.803Z",
+    "fixture": false,
+    "chartPanes": 3,
+    "request": "{\"methods\":[\"aggressor-flow-oi\",\"price-oi\"],\"venues\":[\"binance\",\"hyperliquid\"]}",
+    "panes": [
+      {
+        "id": "native.net-longs-estimated",
+        "paneIndex": 1,
+        "method": "price-oi",
+        "venues": [
+          "binance",
+          "hyperliquid"
+        ],
+        "candleCount": 35,
+        "visibleDraws": 92,
+        "visibleBarsDrawn": 67,
+        "sourcePatches": 72,
+        "maxAbsBtc": 101.656,
+        "feeds": {
+          "binance": "live",
+          "hyperliquid": "live"
+        },
+        "units": {
+          "binance": "verified",
+          "hyperliquid": "verified"
+        }
+      },
+      {
+        "id": "native.net-shorts-estimated",
+        "paneIndex": 2,
+        "method": "aggressor-flow-oi",
+        "venues": [
+          "binance",
+          "hyperliquid"
+        ],
+        "candleCount": 35,
+        "visibleDraws": 89,
+        "visibleBarsDrawn": 67,
+        "sourcePatches": 70,
+        "maxAbsBtc": 102.542,
+        "feeds": {
+          "binance": "live",
+          "hyperliquid": "live"
+        },
+        "units": {
+          "binance": "verified",
+          "hyperliquid": "verified"
+        }
+      }
+    ],
+    "histories": [
+      {
+        "snapshots": 2,
+        "patches": 10,
+        "intervalUpdates": 258,
+        "candleRebuilds": 140,
+        "historyIntervals": 130,
+        "bytes": 201001,
+        "candleCount": 35,
+        "method": "price-oi",
+        "candleIntervalMs": 60000
+      },
+      {
+        "snapshots": 0,
+        "patches": 7,
+        "intervalUpdates": 129,
+        "candleRebuilds": 70,
+        "historyIntervals": 129,
+        "bytes": 142792,
+        "candleCount": 35,
+        "method": "aggressor-flow-oi",
+        "candleIntervalMs": 60000
+      }
+    ],
+    "worker": {
+      "requests": 17,
+      "rowsReceived": 335,
+      "rowsChanged": 259,
+      "snapshots": 2,
+      "patches": 17,
+      "errors": 0,
+      "subscribers": 1,
+      "cachedIntervals": 259,
+      "lastPollMs": 701,
+      "cache": [
+        {
+          "method": "price-oi",
+          "intervals": 130,
+          "venues": [
+            "binance",
+            "hyperliquid"
+          ]
+        },
+        {
+          "method": "aggressor-flow-oi",
+          "intervals": 129,
+          "venues": [
+            "binance",
+            "hyperliquid"
+          ]
+        }
+      ]
+    }
+  },
+  "elapsedMs": 47165,
+  "httpResponses": {
+    "count": 17,
+    "all200": true,
+    "methods": [
+      "aggressor-flow-oi",
+      "price-oi"
+    ],
+    "venueSets": [
+      "binance",
+      "binance,hyperliquid",
+      "hyperliquid"
+    ],
+    "sourceTimeQualities": [
+      "collector-sampled",
+      "exchange-event"
+    ],
+    "unitStatuses": [
+      "verified"
+    ]
+  },
+  "pageErrors": [],
+  "interpretation": "A 47-second live staging sample. Cache rows are unique observed source intervals; request rows include overlap and are deduplicated. Counts are collection evidence, not a platform frame-rate claim."
+}

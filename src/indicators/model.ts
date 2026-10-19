@@ -1,11 +1,25 @@
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
 import type { ScriptRecord } from '../scripts/library';
 import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from '../feed/order-walls';
+import type { NetPositioningMethod, NetPositioningVenue } from '../feed/net-positioning';
 export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
 export const FOOTPRINT_ID = 'native.footprint';
 export const HEATMAP_ID = 'native.orderbook-heatmap';
+export const NET_LONGS_ID = 'native.net-longs-estimated';
+export const NET_SHORTS_ID = 'native.net-shorts-estimated';
+export const NET_POSITIONING_IDS = [NET_LONGS_ID, NET_SHORTS_ID] as const;
+export const NET_POSITIONING_HELP = 'Estimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.';
+export interface NetPositioningSettings { method: NetPositioningMethod; venues: NetPositioningVenue[] }
+export function netPositioningSettings(value: unknown): NetPositioningSettings {
+  const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+  const method = raw.method === 'aggressor-flow-oi' ? 'aggressor-flow-oi' : 'price-oi';
+  const input = Array.isArray(raw.venues) ? raw.venues : ['binance'];
+  const selected = new Set(input.filter((venue): venue is NetPositioningVenue => venue === 'binance' || venue === 'hyperliquid'));
+  const venues = (['binance', 'hyperliquid'] as const).filter(venue => selected.has(venue));
+  return { method, venues: venues.length ? [...venues] : ['binance'] };
+}
 export type Placement = 'price-presentation' | 'overlay' | 'pane' | 'attachment';
 export interface SettingField { key: string; label: string; kind: string; defaultValue: unknown }
 export interface IndicatorDefinition {
@@ -52,6 +66,16 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'exitRatio', label: 'Exit threshold ratio', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.exitRatio },
       { key: 'minDurationMs', label: 'Minimum confirmation (ms)', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.minDurationMs }],
     placements: ['overlay'], dataRequirements: ['order-book-history'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: NET_LONGS_ID, name: 'Net Longs — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'] }, settingsSchema: [
+      { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
+      { key: 'venues', label: 'Perpetual venues', kind: 'multi', defaultValue: ['binance'] }],
+    placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: NET_SHORTS_ID, name: 'Net Shorts — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'] }, settingsSchema: [
+      { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
+      { key: 'venues', label: 'Perpetual venues', kind: 'multi', defaultValue: ['binance'] }],
+    placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
 ];
 export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptInputView[] = []): IndicatorDefinition {
   const revision = record.revisions.find(r => r.id === record.currentRevision);
@@ -71,7 +95,8 @@ export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
   return validStudyPins(instances.filter(i => i.settingsVersion === 1 && i.source.kind === 'chart' && i.script && i.definitionId === `script:${i.script.scriptId}`).map(i => ({ ...i.script, attachmentId: i.instanceId, settings: i.settings, visible: i.visible })));
 }
 export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true): IndicatorInstance {
-  return { instanceId: id, definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement: id === FOOTPRINT_ID ? 'price-presentation' : 'overlay', settings };
+  const placement = id === FOOTPRINT_ID ? 'price-presentation' : NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
+  return { instanceId: id, definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings };
 }
 /** Bounded plain configuration. Unknown definitions and future settings versions remain recoverable. */
 export function validateInstances(value: unknown): IndicatorInstance[] {
@@ -89,6 +114,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     copy.visible = raw.visible !== false; copy.source = raw.source && typeof raw.source === 'object' && typeof raw.source.kind === 'string' ? copy.source : { kind: 'chart' };
     copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
     if (copy.definitionId === ORDER_WALLS_ID && copy.settingsVersion === 1) copy.settings = { ...orderWallsSettings(copy.settings) };
+    if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];
       if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source };

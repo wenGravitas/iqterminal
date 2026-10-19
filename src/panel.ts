@@ -1,8 +1,9 @@
 import type {LevelWatch} from './level-watch/types';
 import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
-import { FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, studyPins, withStudyPins, type IndicatorInstance } from './indicators/model';
+import { FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings } from './indicators/model';
 import { HeatmapControls } from './heatmap-controls';
+import { NetPositioningControls } from './indicators/net-positioning-controls';
 import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
 import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, resolveAutoOrderWallPriceWidth, type OrderWallHit, type OrderWallStatus, type OrderWallsSettings } from './feed/order-walls';
 import { OrderWallsControls } from './order-walls-controls';
@@ -12,6 +13,7 @@ import { coerceSettingValue, drawingSettingsSchema, keyToDrawingAction, matchDra
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
 import { FeedClient } from './feed/client';
+import { NetPositioningHistory, type NetPositioningMethod, type NetPositioningVenue } from './feed/net-positioning';
 import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status } from './feed/protocol';
 import { OpenAlgoCandleChart } from './chart/openalgo';
 import type { Scheduler } from './chart/scheduler';
@@ -164,6 +166,12 @@ function legacyRowPrice(value: unknown) {
 export class CandlePanel implements IContentRenderer {
   readonly element = document.createElement('section');
   private heatmapControls!: HeatmapControls;
+  private netPositioningControls!: NetPositioningControls;
+  private releaseNetPositioning?: () => void;
+  private netPositioningRequestKey = '';
+  private netPositioningGeneration = 0;
+  private netPositioningHistories = new Map<NetPositioningMethod, NetPositioningHistory>();
+  private netPositioningErrors = new Map<NetPositioningMethod, string>();
   private orderWallsControls!: OrderWallsControls;
   private releaseHeatmap?: () => void;
   private heatmapSubscriptionKey = '';
@@ -399,6 +407,7 @@ export class CandlePanel implements IContentRenderer {
     this.retry.textContent = 'Retry';
     this.retry.setAttribute('aria-label', 'Retry market data');
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
+    this.netPositioningControls = new NetPositioningControls((id, settings) => this.changeNetPositioning(id, settings), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.drawPlacementState.className = 'drawing-placement-state';
@@ -416,7 +425,7 @@ export class CandlePanel implements IContentRenderer {
     this.buildDialogs();
     this.buildDrawingDialogs();
     this.chartWorkspace.append(this.drawingSidebar, this.chart, this.drawingSidebarMenuLayer);
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
   private sidebarButton(label: string, title: string, iconName: string, extraClass = '') {
@@ -713,6 +722,7 @@ export class CandlePanel implements IContentRenderer {
     }
     this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
+    document.addEventListener('visibilitychange', () => this.syncNetPositioning(), { signal: this.abort.signal });
     this.subscriptions.push(params.api.onDidActiveChange(({ isActive }) => {
       if (!isActive) return;
       sharedObjectsOwner = this;
@@ -1735,7 +1745,83 @@ export class CandlePanel implements IContentRenderer {
       this.focusFootprintOnce();
     }
     this.syncHeatmap(); this.syncOrderWalls(); this.hoveredBar = null; this.hoveredFootprint = null;
+    this.syncNetPositioning();
     this.updateFootprintControls(); this.refreshReadout(); this.updateStatus();
+  }
+
+  private changeNetPositioning(instanceId: string, settings: NetPositioningSettings) {
+    if (!this.selection.indicators.some(item => item.instanceId === instanceId && NET_POSITIONING_IDS.includes(item.definitionId as typeof NET_POSITIONING_IDS[number]))) return;
+    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(item => item.instanceId === instanceId ? { ...item, settings: { ...settings, venues: [...settings.venues] } } : item) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
+  private syncNetPositioning() {
+    const engine = this.engine;
+    if (!engine || this.dead) return;
+    const active = this.selection.indicators.filter(instance => instance.visible && instance.settingsVersion === 1
+      && instance.source.kind === 'chart' && NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]));
+    const activeIds = new Set(active.map(instance => instance.instanceId));
+    for (const id of NET_POSITIONING_IDS) if (!activeIds.has(id)) engine.removeNetPositioningPane(id);
+
+    const intervalMs = duration[this.selection.interval];
+    const venues = [...new Set(active.flatMap(instance => netPositioningSettings(instance.settings).venues))] as NetPositioningVenue[];
+    const methods = [...new Set(active.map(instance => netPositioningSettings(instance.settings).method))] as NetPositioningMethod[];
+    for (const method of methods) {
+      let history = this.netPositioningHistories.get(method);
+      if (!history) this.netPositioningHistories.set(method, history = new NetPositioningHistory(method, intervalMs));
+      history.setCandleInterval(intervalMs, venues);
+    }
+
+    for (const instance of active) {
+      const settings = netPositioningSettings(instance.settings);
+      const side = instance.definitionId === NET_LONGS_ID ? 'longs' : 'shorts';
+      engine.addNetPositioningPane(instance.instanceId, side, settings.method, settings.venues, intervalMs);
+      const history = this.netPositioningHistories.get(settings.method)!;
+      const payload = history.metadata();
+      engine.setNetPositioningSnapshot(instance.instanceId, history.snapshot(), payload?.feeds ?? {}, payload?.unitVerification ?? {}, payload?.pendingIntervals ?? 0, this.netPositioningErrors.get(settings.method) ?? '');
+    }
+
+    const requestKey = methods.length && venues.length ? JSON.stringify({ methods: methods.sort(), venues: venues.sort() }) : '';
+    if (!this.visible || document.hidden || !requestKey) {
+      if (this.releaseNetPositioning) { this.releaseNetPositioning(); this.releaseNetPositioning = undefined; this.netPositioningGeneration++; }
+      this.netPositioningRequestKey = '';
+      return;
+    }
+    if (requestKey === this.netPositioningRequestKey && this.releaseNetPositioning) return;
+    this.releaseNetPositioning?.(); this.releaseNetPositioning = undefined;
+    const generation = ++this.netPositioningGeneration;
+    this.netPositioningRequestKey = requestKey;
+    const request = { methods, venues };
+    this.releaseNetPositioning = this.feed.subscribeNetPositioning(this.params.api.id, request, event => {
+      if (this.dead || generation !== this.netPositioningGeneration) return;
+      if (event.type === 'net-positioning-error') {
+        this.netPositioningErrors.set(event.method, event.message);
+        this.renderNetPositioningMethod(event.method, [], false);
+        return;
+      }
+      const history = this.netPositioningHistories.get(event.payload.method);
+      if (!history) return;
+      this.netPositioningErrors.delete(event.payload.method);
+      if (event.type === 'net-positioning-snapshot') {
+        history.replace(event.payload, venues);
+        this.renderNetPositioningMethod(event.payload.method, history.snapshot(), true);
+      } else {
+        const changed = history.apply(event.payload, event.intervals, venues);
+        this.renderNetPositioningMethod(event.payload.method, changed, false);
+      }
+    });
+  }
+
+  private renderNetPositioningMethod(method: NetPositioningMethod, changed: ReturnType<NetPositioningHistory['snapshot']>, snapshot: boolean) {
+    const history = this.netPositioningHistories.get(method); if (!history || !this.engine) return;
+    const payload = history.metadata(), feeds = payload?.feeds ?? {}, units = payload?.unitVerification ?? {}, pending = payload?.pendingIntervals ?? 0;
+    for (const instance of this.selection.indicators) {
+      if (!instance.visible || instance.settingsVersion !== 1 || instance.source.kind !== 'chart' || !NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) continue;
+      if (netPositioningSettings(instance.settings).method !== method) continue;
+      const error = this.netPositioningErrors.get(method) ?? '';
+      if (snapshot) this.engine.setNetPositioningSnapshot(instance.instanceId, changed, feeds, units, pending, error);
+      else this.engine.patchNetPositioning(instance.instanceId, changed, feeds, units, pending, error);
+    }
   }
 
   private changeIndicator(instanceId: string, change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>>) {
@@ -1752,7 +1838,9 @@ export class CandlePanel implements IContentRenderer {
     const definition = nativeDefinition(definitionId); if (!definition) return;
     const existing = this.selection.indicators.find(i => i.definitionId === definitionId);
     if (!existing) {
-      const settings = definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
+      const settings = NET_POSITIONING_IDS.includes(definitionId as typeof NET_POSITIONING_IDS[number])
+        ? { method: 'price-oi' as const, venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const] }
+        : definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
         : definitionId === HEATMAP_ID ? { ...this.selection.heatmap, enabled: true }
           : { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true };
       this.selection = config({ ...this.selection, indicators: [...this.selection.indicators, nativeInstance(definitionId, settings)] });
@@ -1768,6 +1856,7 @@ export class CandlePanel implements IContentRenderer {
     if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
     else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
     else if (instance.definitionId === ORDER_WALLS_ID) this.orderWallsControls.open(orderWallsSettings(instance.settings));
+    else if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) this.netPositioningControls.open(instance.instanceId, netPositioningSettings(instance.settings));
     else if (instance.script) void this.openAttachmentSettings(instance.instanceId);
   }
 
@@ -1801,9 +1890,10 @@ export class CandlePanel implements IContentRenderer {
       const definition = nativeDefinition(instance.definitionId), study = views.find(v => v.attachmentId === instance.instanceId);
       const name = definition?.name ?? instance.script?.title ?? instance.definitionId;
       const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
-      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
+      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && !NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
         : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
           : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
+            : NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) ? `${netPositioningSettings(instance.settings).method === 'price-oi' ? 'Price + OI' : 'Aggressor Flow + OI'} · ${netPositioningSettings(instance.settings).venues.map(venue => venue === 'binance' ? 'Binance USD-M' : 'Hyperliquid').join(' + ') || 'Binance USD-M'} · recorded intervals`
             : instance.definitionId === ORDER_WALLS_ID ? this.selection.venue === 'hyperliquid' ? 'Unavailable · Hyperliquid order-book history is not supported'
               : `${orderWallsSettings(instance.settings).method === 'relative' ? `Relative p${orderWallsSettings(instance.settings).relativePercentile}` : `Absolute $${orderWallsSettings(instance.settings).thresholdUsd.toLocaleString('en-US')}`} · ${orderWallsSettings(instance.settings).aggregation === 'auto' ? 'Auto' : `$${orderWallsSettings(instance.settings).aggregation}`} · ${this.orderWallsStatus?.state ?? 'loading'}`
             : study ? study.inputs.filter(i => i.kind !== 'color').map(i => `${i.label} ${study.settings[i.key] ?? i.defaultValue}`).join(' · ') : 'Restoring pinned revision…';
@@ -2078,6 +2168,7 @@ export class CandlePanel implements IContentRenderer {
     this.subscribeFootprint();
     this.reconcileIndicators();
     this.syncOrderWalls();
+    this.syncNetPositioning();
   }
 
   private changeHeatmap(settings: HeatmapSettings, units: FootprintUnits) {
@@ -2292,6 +2383,15 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private crosshair(event: CrosshairMoveEvent) {
+    const positioning = event.paneIndex == null ? undefined : this.selection.indicators.find(instance => instance.visible
+      && instance.settingsVersion === 1 && instance.source.kind === 'chart'
+      && NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])
+      && this.engine?.netPositioningPaneIndex(instance.instanceId) === event.paneIndex);
+    if (positioning && event.time !== null) {
+      this.heatmapControls.showSharedTooltip(this.engine?.netPositioningTooltip(positioning.instanceId, event.time * 1000) ?? null);
+      this.hoveredBar = null; this.hoveredFootprint = null; this.refreshReadout();
+      return;
+    }
     const plot = this.engine?.chart.plotRect(0);
     const point = event.point;
     const wallHit: OrderWallHit | null = point && plot ? this.engine?.orderWallAt(point.x - plot.left, point.y - plot.top) ?? null : null;
@@ -2319,6 +2419,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine.visible = this.visible;
       if (this.visible) this.scheduler.invalidate(this.engine);
     }
+    this.syncNetPositioning();
     if (this.visible) {
       this.heatmapControls.setStatus(this.heatmapStatus);
       if (this.selection.type === 'footprint') {
@@ -2524,6 +2625,8 @@ export class CandlePanel implements IContentRenderer {
         hover: this.hoveredFootprint,
       },
       heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
+      netPositioning: { panes: this.engine?.netPositioningDiagnostics() ?? [], request: this.netPositioningRequestKey,
+        histories: [...this.netPositioningHistories.values()].map(history => history.diagnostics()), errors: Object.fromEntries(this.netPositioningErrors) },
       orderWalls: { ...this.engine?.orderWallsDiagnostics(), status: this.orderWallsStatus,
         settings: orderWallsSettings(this.nativeIndicator(ORDER_WALLS_ID)?.settings ?? DEFAULT_ORDER_WALLS_SETTINGS) },
       studies: this.studyHost?.diagnostics(),
@@ -2558,6 +2661,7 @@ export class CandlePanel implements IContentRenderer {
     for (const release of this.scriptObjectProviderReleases.values()) release(); this.scriptObjectProviderReleases.clear();
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
+    this.releaseNetPositioning?.(); this.releaseNetPositioning = undefined; this.netPositioningGeneration++; this.netPositioningControls.dispose();
     this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();
     this.releaseFootprint?.(); this.footprintGeneration++;
     this.indicatorLifecycle?.dispose();

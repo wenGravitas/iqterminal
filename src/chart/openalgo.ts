@@ -4,6 +4,8 @@ import { AxisGrid } from './axis-grid';
 import { OrderBookHeatmap } from './orderbook-heatmap';
 import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
 import { OrderWallsPrimitive } from './order-walls';
+import { NetPositioningPane } from './net-positioning';
+import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
 import { ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
 import type { OrderWallHit, OrderWallPatch, OrderWallSegment, OrderWallsSettings, OrderWallStatus } from '../feed/order-walls';
 import {
@@ -73,6 +75,7 @@ export class OpenAlgoCandleChart {
   visible = false;
   private heatmap: OrderBookHeatmap | null = null;
   private orderWalls: OrderWallsPrimitive | null = null;
+  private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
   private orderWallSegments = new Map<string, OrderWallSegment>();
   private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
   private orderWallValueQueueStart = 0;
@@ -198,9 +201,9 @@ export class OpenAlgoCandleChart {
         if (!ids) { this.drawingPreviews.clear(); return; }
         for (const id of ids) this.drawingPreviews.delete(id);
       }),
-      this.chart.on('paneAdded', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
-      this.chart.on('paneRemoved', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
-      this.chart.on('paneMoved', () => { this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneAdded', payload => { this.shiftNetPositioningPanes('add', payload.paneIndex); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneRemoved', payload => { this.shiftNetPositioningPanes('remove', payload.paneIndex); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneMoved', payload => { this.shiftNetPositioningPanes('move', payload.from, payload.to); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
     );
     this.scopedDrawings = new InstrumentDrawings(this.chart, this.drawings, {
       store: safeDrawingStore(),
@@ -272,6 +275,59 @@ export class OpenAlgoCandleChart {
   updateHeatmap(buckets: LiquidityBucket[], snapshot: boolean, retentionStart: number | null) { this.heatmap?.update(buckets, snapshot, retentionStart); }
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
   heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
+
+  addNetPositioningPane(id: string, side: NetPositioningSide, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number) {
+    let view = this.netPositioningPanes.get(id);
+    if (!view) {
+      const paneIndex = this.chart.panes().length;
+      const primitive = new NetPositioningPane(id, side);
+      const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
+      series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
+      series.priceScale().setPriceFormatter(value => `${Math.abs(value) >= 1 ? value.toLocaleString('en-US', { maximumFractionDigits: 4 }) : value.toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC`);
+      series.setData([]);
+      this.chart.addPrimitive(primitive, paneIndex);
+      view = { series, primitive, paneIndex };
+      this.netPositioningPanes.set(id, view);
+      primitive.setHostSnapshot(this.candlesFromSeries());
+    }
+    view.primitive.setSettings(side, method, venues, intervalMs);
+    return view.paneIndex;
+  }
+
+  private candlesFromSeries() {
+    return this.series.getData().map(bar => ({ t: bar.time * 1000, closed: bar.time !== (this.latestBar?.time ?? -Infinity) }));
+  }
+
+  private shiftNetPositioningPanes(kind: 'add' | 'remove' | 'move', from: number, to?: number) {
+    for (const view of this.netPositioningPanes.values()) {
+      if (kind === 'add' && from <= view.paneIndex) view.paneIndex++;
+      else if (kind === 'remove' && from < view.paneIndex) view.paneIndex--;
+      else if (kind === 'move' && to !== undefined) {
+        if (view.paneIndex === from) view.paneIndex = to;
+        else if (from < to && view.paneIndex > from && view.paneIndex <= to) view.paneIndex--;
+        else if (to < from && view.paneIndex >= to && view.paneIndex < from) view.paneIndex++;
+      }
+    }
+  }
+
+  removeNetPositioningPane(id: string) {
+    const view = this.netPositioningPanes.get(id); if (!view) return;
+    this.netPositioningPanes.delete(id);
+    this.chart.removePrimitive(view.primitive);
+    view.series.remove();
+  }
+
+  setNetPositioningSnapshot(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
+    const view = this.netPositioningPanes.get(id); if (!view) return;
+    view.primitive.setSnapshot(candles); view.primitive.setMetadata(feeds, units, pending, error);
+  }
+  patchNetPositioning(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
+    const view = this.netPositioningPanes.get(id); if (!view) return;
+    view.primitive.patch(candles); view.primitive.setMetadata(feeds, units, pending, error);
+  }
+  netPositioningPaneIndex(id: string) { return this.netPositioningPanes.get(id)?.paneIndex ?? -1; }
+  netPositioningTooltip(id: string, timeMs: number) { return this.netPositioningPanes.get(id)?.primitive.tooltip(timeMs) ?? null; }
+  netPositioningDiagnostics() { return [...this.netPositioningPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, ...view.primitive.diagnostics() })); }
 
   setOrderWalls(settings: OrderWallsSettings, intervalMs: number) {
     if (!settings.enabled) {
@@ -403,6 +459,7 @@ export class OpenAlgoCandleChart {
       });
     } else this.series.setData([]);
     this.candleTimes = bars.map(bar => bar.time);
+    for (const view of this.netPositioningPanes.values()) view.primitive.setHostSnapshot(candles.slice(-MAX_BARS));
     if (this.mode === 'candle') {
       this.times = this.candleTimes;
       this.latestBar = bars.at(-1) ?? null;
@@ -519,6 +576,7 @@ export class OpenAlgoCandleChart {
       }
       if (this.mode === 'candle' && bar.time >= this.latestTime) { this.latestTime = bar.time; this.latestBar = bar; }
     }
+    for (const view of this.netPositioningPanes.values()) view.primitive.patchHostCandles(candles);
     if (trim) {
       const bounded = this.series.getData().slice(-MAX_BARS);
       this.series.setData(bounded);
@@ -734,6 +792,7 @@ export class OpenAlgoCandleChart {
     this.objects.destroy();
     this.scopedDrawings.destroy();
     this.drawings.destroy();
+    for (const id of [...this.netPositioningPanes.keys()]) this.removeNetPositioningPane(id);
     this.removeFootprintSurface();
     if (this.heatmap) this.chart.removePrimitive(this.heatmap);
     this.heatmap = null;

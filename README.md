@@ -29,7 +29,7 @@ The instrument selector distinguishes **Binance BTCUSDT Spot** (USDT quote, BTC 
 
 ## Unified indicators
 
-Use **Indicators** to search and add scripts, Footprint or Order-book Heatmap. Each chart’s collapsible active list provides visibility, settings and removal; scripted entries also provide Edit Script and Duplicate. Hiding native layers retains bounded collection; removing them releases their consumer. Chart settings owns the saved base-candle preference. See [the indicator contract and migration](docs/indicators.md).
+Use **Indicators** to search and add scripts, Footprint, Order-book Heatmap, **Net Longs — Estimated** or **Net Shorts — Estimated**. Each chart’s collapsible active list provides visibility, settings and removal; scripted entries also provide Edit Script and Duplicate. Hiding native layers retains bounded collection; removing them releases their consumer. Chart settings owns the saved base-candle preference. See [the indicator contract and migration](docs/indicators.md) and [Net Positioning coverage and limits](docs/net-positioning.md).
 
 ## Session Footprints
 
