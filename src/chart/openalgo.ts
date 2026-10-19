@@ -6,6 +6,7 @@ import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
 import { OrderWallsPrimitive } from './order-walls';
 import { NetPositioningPane } from './net-positioning';
 import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
+import { ExecutionHoverRay } from './execution-hover-ray';
 import { ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
 import type { OrderWallHit, OrderWallPatch, OrderWallSegment, OrderWallsSettings, OrderWallStatus } from '../feed/order-walls';
 import {
@@ -86,6 +87,7 @@ export class OpenAlgoCandleChart {
   readonly objects: ChartObjects;
   readonly scopedDrawings: InstrumentDrawings;
   private readonly axisGrid = new AxisGrid();
+  private readonly executionHoverRay = new ExecutionHoverRay();
   readonly series: SeriesApi;
   private footprintIndexSeries: SeriesApi | null = null;
   readonly stats = { draws: 0, footprintSets: 0 };
@@ -121,6 +123,8 @@ export class OpenAlgoCandleChart {
   };
   private readonly watchZones = new WatchZones();
   setWatchZones(watches:LevelWatch[]){this.watchZones.set(watches);}
+  setExecutionHoverRay(execution:import('../feed/footprint').NormalizedExecution|null){this.executionHoverRay.setExecution(execution);}
+  executionHoverDiagnostics(){return this.executionHoverRay.diagnostics();}
   watchPriceAt(x:number,y:number){const plot=this.chart.plotRect(0);if(!plot||x<plot.left||x>plot.left+plot.width||y<plot.top||y>plot.top+plot.height)return null;return Math.round(this.chart.panes()[0].yToPrice(y-plot.top)*10)/10;}
   focusWatch(lower:number,upper:number){const scale=this.chart.panes()[0].readoutScale();this.chart.setAutoScale(false);scale.setPriceRange({min:lower,max:upper});this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));}
   private readonly footprintRefresh = () => this.refreshVisibleFootprint();
@@ -143,6 +147,7 @@ export class OpenAlgoCandleChart {
     },
   };
   private readonly viewSubscriptions: (() => void)[] = [];
+  private resizeSubscription?: () => void;
 
   constructor(private readonly container: HTMLElement, private readonly scheduler: Scheduler, renderer: RendererChoice = 'canvas2d', panelId = 'chart', initialSeries?: CanonicalSeries) {
     this.chart = createChart(container, {
@@ -182,6 +187,14 @@ export class OpenAlgoCandleChart {
       animZoom: false,
       animAutoscale: false,
       ariaLabel: 'BTC perpetual candlestick chart. Drag to pan time and price, wheel to zoom.',
+    });
+    // The chart library clears its CanvasLayers while processing a container
+    // resize, then defers repaint through the injected RAF. The host scheduler
+    // may not run until the next frame, so consume this chart's queued resize
+    // work after refreshing the viewport-dependent footprint slice.
+    this.resizeSubscription = this.chart.on('resize', () => {
+      if (this.mode === 'footprint') this.enqueueFootprintRefresh();
+      this.scheduler.flush(this);
     });
     // The drawing tier is deliberately attached only to native candle charts.
     // It shares this chart's existing renderer and RAF scheduler.
@@ -227,6 +240,7 @@ export class OpenAlgoCandleChart {
     });
     this.chart.addPrimitive(this.watchZones, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
+    this.chart.addPrimitive(this.executionHoverRay, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
     // Keep native axis zoom, Ctrl/Meta cursor zoom and Shift/trackpad pan.
@@ -743,7 +757,6 @@ export class OpenAlgoCandleChart {
     this.viewSubscriptions.push(
       this.chart.on('pan', () => this.enqueueFootprintRefresh()),
       this.chart.on('zoom', () => this.enqueueFootprintRefresh()),
-      this.chart.on('resize', () => this.enqueueFootprintRefresh()),
       this.chart.on('paneResized', () => this.enqueueFootprintRefresh()),
     );
   }
@@ -768,14 +781,14 @@ export class OpenAlgoCandleChart {
     const visibleCallbacks = [...this.visibleCallbacks.values()];
     this.visibleCallbacks.clear();
     for (const callback of visibleCallbacks) callback();
+    if(this.mode==='footprint'&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
+    if((this.heatmap||this.orderWalls)&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     const pending = [...this.callbacks.values()];
     this.callbacks.clear();
     for (const callback of pending) {
       callback();
       this.stats.draws++;
     }
-    if(this.mode==='footprint'&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
-    if((this.heatmap||this.orderWalls)&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     // Cursor invalidation repaints only OpenAlgo's overlay, through our existing RAF scheduler.
     if (this.footprintActivity.needsFrame) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
   }
@@ -784,6 +797,8 @@ export class OpenAlgoCandleChart {
     if (this.disposed) return;
     this.disposed = true;
     this.inputAbort.abort();
+    this.resizeSubscription?.();
+    this.resizeSubscription = undefined;
     for (const unsubscribe of this.drawingSubscriptions) unsubscribe();
     this.drawingSubscriptions.length = 0;
     for (const primitive of this.drawingAxisLabels) this.chart.removePrimitive(primitive);
@@ -800,6 +815,7 @@ export class OpenAlgoCandleChart {
     this.orderWalls = null;
     this.chart.removePrimitive(this.watchZones);
     this.chart.removePrimitive(this.axisGrid);
+    this.chart.removePrimitive(this.executionHoverRay);
     this.chart.destroy();
     this.callbacks.clear();
     this.visibleCallbacks.clear();

@@ -42,7 +42,7 @@ test('footprint text scales with zoom and independent opacity settings persist w
   await page.screenshot({ path: 'artifacts/footprint-prominent-dark-1366x768.png' });
   await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
   await expect(panel.getByLabel('Show VAH and VAL')).toBeChecked(); await panel.getByLabel('Show VAH and VAL').uncheck();
-  await expect(panel.getByLabel('Cell opacity (%)')).toHaveValue('85'); await panel.getByLabel('Cell opacity (%)').fill('35');
+  await expect(panel.getByLabel('Histogram background opacity (%)')).toHaveValue('85'); await panel.getByLabel('Histogram background opacity (%)').fill('30');
   await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
   await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   const heatmapSettings = panel.locator('.heatmap-settings');
@@ -52,7 +52,7 @@ test('footprint text scales with zoom and independent opacity settings persist w
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     return { opacity: p.engine.footprint.opacity, heatmap: p.selection.heatmap.opacity, start: p.heatmapStatus.collectionStart, bars: p.engine.footprintBars.length };
   });
-  expect(state).toEqual({ opacity: .35, heatmap: .65, start: before, bars: 1 });
+  expect(state).toEqual({ opacity: .3, heatmap: .65, start: before, bars: 1 });
   await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
   await page.setViewportSize({ width: 720, height: 860 });
   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));
@@ -61,7 +61,138 @@ test('footprint text scales with zoom and independent opacity settings persist w
   await page.waitForTimeout(400); await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   const persisted = await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).selection);
-  expect(persisted.footprint.showValueArea).toBe(false); expect(persisted.footprint.opacity).toBe(.35); expect(persisted.heatmap.opacity).toBe(.65); expect(errors).toEqual([]);
+  expect(persisted.footprint.showValueArea).toBe(false); expect(persisted.footprint.opacity).toBe(.3); expect(persisted.heatmap.opacity).toBe(.65); expect(errors).toEqual([]);
+});
+
+test('18-level footprint shows distinct VAH and VAL with transparent histogram backgrounds', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.addInitScript(() => {
+    const prototype = CanvasRenderingContext2D.prototype;
+    const paths = new WeakMap<CanvasRenderingContext2D, [number, number][]>();
+    const pendingCellRects = new WeakMap<CanvasRenderingContext2D, { x: number; y: number; width: number; height: number }>();
+    (window as any).__footprintVaStrokes = [];
+    (window as any).__footprintPocStrokes = [];
+    (window as any).__footprintTotals = [];
+    (window as any).__footprintCellFills = [];
+    const roundRect = prototype.roundRect;
+    prototype.roundRect = function(x: number, y: number, width: number, height: number, radii?: number | DOMPointInit | Iterable<number | DOMPointInit>) {
+      if (this.font.includes('ui-monospace')) pendingCellRects.set(this, { x, y, width, height });
+      return roundRect.call(this, x, y, width, height, radii as any);
+    };
+    const fill = prototype.fill;
+    prototype.fill = function() {
+      const rect = pendingCellRects.get(this);
+      if (rect) (window as any).__footprintCellFills.push({ ...rect, color: this.fillStyle, alpha: this.globalAlpha });
+      pendingCellRects.delete(this);
+      return fill.apply(this, arguments as any);
+    };
+    const NativePath2D = window.Path2D;
+    class RecordedPath2D extends NativePath2D {
+      points: [number, number][] = [];
+      moveTo(x: number, y: number) { this.points.push([x, y]); return super.moveTo(x, y); }
+      lineTo(x: number, y: number) { this.points.push([x, y]); return super.lineTo(x, y); }
+    }
+    Object.defineProperty(window, 'Path2D', { configurable: true, writable: true, value: RecordedPath2D });
+    const fillText = prototype.fillText;
+    prototype.fillText = function(text: string, x: number, y: number) {
+      if (this.font.startsWith('9px ')) {
+        (window as any).__footprintTotals.push({ text, x, y, align: this.textAlign, alpha: this.globalAlpha, font: this.font });
+      }
+      return fillText.apply(this, arguments as any);
+    };
+    const beginPath = prototype.beginPath;
+    prototype.beginPath = function() { paths.set(this, []); return beginPath.call(this); };
+    const moveTo = prototype.moveTo;
+    prototype.moveTo = function(x: number, y: number) { paths.get(this)?.push([x, y]); return moveTo.call(this, x, y); };
+    const lineTo = prototype.lineTo;
+    prototype.lineTo = function(x: number, y: number) { paths.get(this)?.push([x, y]); return lineTo.call(this, x, y); };
+    const stroke = prototype.stroke;
+    prototype.stroke = function(path?: Path2D) {
+      if (path && this.strokeStyle === '#6d3fa0') {
+        (window as any).__footprintPocStrokes.push({ color: this.strokeStyle, width: this.lineWidth, dash: this.getLineDash(), points: (path as RecordedPath2D).points });
+      } else if (!path && this.strokeStyle === '#6d3fa0' && this.lineWidth >= 2) {
+        (window as any).__footprintVaStrokes.push({ color: this.strokeStyle, width: this.lineWidth, dash: this.getLineDash(), points: [...(paths.get(this) ?? [])] });
+      }
+      return stroke.apply(this, arguments as any);
+    };
+  });
+  await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first();
+  await page.evaluate(() => {
+    const t = (window as any).__terminal; t.profileSubscriptions = 0;
+    t.feed.subscribeFootprint = (_id: string, _s: any, rowSize: number, callback: any) => {
+      t.profileSubscriptions++;
+      const time = Math.floor(Date.now() / 60000) * 60, start = Date.now();
+      const cells = Array.from({ length: 18 }, (_, index) => {
+        const volume = 3 + (9 - Math.abs(index - 8)) * 5, bidVol = Math.floor(volume * .6);
+        return { price: 83000 - index * rowSize, bidVol, askVol: volume - bidVol };
+      });
+      queueMicrotask(() => callback({ type: 'footprint-snapshot', bars: [{ time, rowSize, revision: 1, cells,
+        open: 83000 - rowSize, high: 83000 + rowSize, low: 83000 - rowSize * 2, close: 83000,
+        delta: cells.reduce((total: number, cell: any) => total + cell.askVol - cell.bidVol, 0), coverage: 'partial', gapBefore: false }],
+        retentionStart: time, status: { state: 'live', message: 'Explicit test trades', lastUpdate: start, collectionStartedAt: start, coverage: 'partial', tickSize: .1, rowSize } }));
+      return () => {};
+    };
+  });
+  await setFootprint(panel, true);
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintBars[0]?.cells.length)).toBe(18);
+  const setup = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any;
+    const rowSize = p.selection.rowPrice;
+    p.engine.chart.timeScale.setBarSpacing(200); p.engine.chart.timeScale.setRightOffset(1);
+    p.engine.chart.panes()[0].priceScale.setAutoScale(false);
+    p.engine.chart.panes()[0].priceScale.setFixedRange({ min: 83000 - 17.5 * rowSize, max: 83000 + .5 * rowSize }); p.engine.chart.setAutoScale(false);
+    return { rowSize, start: p.footprintStatus.collectionStartedAt };
+  });
+  await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
+  await expect(panel.getByLabel('Show VAH and VAL')).toBeChecked();
+  await expect(panel.getByLabel('Histogram background opacity (%)')).toHaveValue('85');
+  await page.getByRole('combobox', { name: 'Cell display', exact: true }).selectOption('volume-delta-candle');
+  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveValue('bar');
+  await panel.getByLabel('Histogram background opacity (%)').fill('30');
+  await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__footprintVaStrokes.length)).toBeGreaterThan(0);
+  const rendered = await page.evaluate(() => {
+    const t = (window as any).__terminal, p = [...t.panels.values()][0] as any, stats = p.engine.footprint.stats()[0];
+    const dpr = window.devicePixelRatio, scale = p.engine.chart.panes()[0].priceScale;
+    return { subscriptions: t.profileSubscriptions, collectionStart: p.footprintStatus.collectionStartedAt,
+      opacity: p.engine.footprint.opacity, cells: p.engine.footprintBars[0].cells.length,
+      vah: stats.vah, val: stats.val, poc: stats.poc, volume: stats.volume, delta: stats.delta,
+      options: p.engine.footprint.options(), plotHeight: p.engine.chart.plotRect(0).height,
+      expectedPocY: Math.round(scale.priceToY(stats.poc) * dpr), strokes: (window as any).__footprintVaStrokes,
+      pocStrokes: (window as any).__footprintPocStrokes, cellFills: (window as any).__footprintCellFills,
+      totals: (window as any).__footprintTotals };
+  });
+  expect(rendered).toMatchObject({ subscriptions: 1, collectionStart: setup.start, opacity: .3, cells: 18 });
+  expect(rendered.vah).not.toBe(rendered.val);
+  const pocStroke = rendered.pocStrokes.at(-1)!;
+  expect(pocStroke).toMatchObject({ color: '#6d3fa0', width: 2, dash: [3, 2] });
+  expect(pocStroke.points).toHaveLength(4);
+  const levelStroke = rendered.strokes.at(-1)!;
+  expect(levelStroke.color).toBe('#6d3fa0'); expect(levelStroke.width).toBeGreaterThanOrEqual(2);
+  expect(levelStroke.points).toHaveLength(4);
+  expect(levelStroke.points[0][1]).toBe(levelStroke.points[1][1]);
+  expect(levelStroke.points[2][1]).toBe(levelStroke.points[3][1]);
+  expect(levelStroke.points[0][1]).not.toBe(levelStroke.points[2][1]);
+  const expectedVolume = compactVol(rendered.volume / 1);
+  const expectedDelta = `${rendered.delta >= 0 ? '+' : ''}${compactVol(rendered.delta / 1)}`;
+  const pocFills = [...new Map(rendered.cellFills
+    .filter((rect: any) => rect.alpha === rendered.opacity && Math.abs(rect.y + rect.height / 2 - rendered.expectedPocY) <= 1)
+    .map((rect: any) => [`${rect.x}:${rect.y}:${rect.width}:${rect.height}`, rect])).values()] as any[];
+  expect(pocFills).toHaveLength(2);
+  const fillLeft = Math.min(...pocFills.map(rect => rect.x));
+  const fillRight = Math.max(...pocFills.map(rect => rect.x + rect.width));
+  expect(pocStroke.points[0][0]).toBe(Math.round(fillLeft) + .5);
+  expect(pocStroke.points[2][0]).toBe(Math.round(fillRight) + .5);
+  const totals = [...new Map(rendered.totals.map((label: any) => [`${label.text}:${label.x}:${label.y}`, label])).values()] as any[];
+  const totalLabels = totals.filter(label => label.text === expectedVolume || label.text === expectedDelta);
+  expect(totalLabels.map(label => label.text)).toEqual(expect.arrayContaining([expectedVolume, expectedDelta]));
+  expect(totalLabels.map(label => [label.y, label.alpha])).toEqual([[rendered.expectedPocY, 1], [rendered.expectedPocY, 1]]);
+  const volumeLabel = totalLabels.find(label => label.text === expectedVolume)!;
+  const deltaLabel = totalLabels.find(label => label.text === expectedDelta)!;
+  expect(Math.abs(volumeLabel.x - (pocStroke.points[0][0] - 4))).toBeLessThanOrEqual(.5);
+  expect(Math.abs(deltaLabel.x - (pocStroke.points[2][0] + 4))).toBeLessThanOrEqual(.5);
+  await page.screenshot({ path: 'artifacts/footprint-vah-val-opacity-30-poc-row-totals-1366x768.png' });
 });
 
 test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {
@@ -158,7 +289,7 @@ test('volume delta candle shows paired profiles and per-bar totals without resta
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('volume-delta-candle');
   await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
-  await expect(page.getByRole('combobox', { name: 'Statistics', exact: true })).toHaveValue('bar');
+  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveValue('bar');
   expect(errors).toEqual([]);
 });
 
@@ -188,6 +319,57 @@ test('smaller bid profile remains visible beneath enlarged quantity labels',asyn
   await panel.locator('.chart-stage').screenshot({path:'artifacts/footprint-delta-hidden-candle.png'});
   await page.waitForTimeout(400);await page.reload();await footprintSettings(panel);
   await expect(panel.getByLabel('Show execution candle',{exact:true})).not.toBeChecked();
+});
+
+test('footprint quantity labels remain readable over low-contrast red and green fills', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first();
+  await page.evaluate(() => {
+    const terminal = (window as any).__terminal;
+    const dock = terminal.dock;
+    if (dock.panels.length > 1) dock.removePanel(dock.panels[1]);
+    terminal.feed.subscribeFootprint = (_id: string, _series: any, rowSize: number, callback: any) => {
+      const time = Math.floor(Date.now() / 60_000) * 60;
+      const cells = [
+        { price: 83075, bidVol: 52.2, askVol: 31.5 },
+        { price: 83050, bidVol: 108, askVol: 5.9 },
+        { price: 83025, bidVol: 86.6, askVol: 39.4 },
+        { price: 83000, bidVol: 62.3, askVol: 22.8 },
+        { price: 82975, bidVol: 3.7, askVol: 1.14 },
+        { price: 82950, bidVol: .734, askVol: 0 },
+      ];
+      queueMicrotask(() => callback({ type: 'footprint-snapshot', bars: [{ time, rowSize, revision: 1, cells, delta: -200 }],
+        retentionStart: time, status: { state: 'live', message: 'Explicit contrast fixture', lastUpdate: Date.now(),
+          collectionStartedAt: Date.now(), coverage: 'partial', tickSize: .1, rowSize } }));
+      return () => {};
+    };
+  });
+  await setFootprint(panel, true);
+  await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintBars.length)).toBe(1);
+  await page.evaluate(() => {
+    const view = [...(window as any).__terminal.panels.values()][0] as any;
+    view.engine.setFootprintOptions({ displayMode: 'bidask', cellStyle: 'ladder', textColorMode: 'side',
+      buyColor: '#58a65c', buyTextColor: '#58a65c', sellColor: '#ad5858', sellTextColor: '#ad5858',
+      showCandle: false, showPoc: false, showValueArea: false });
+    view.engine.setFootprintOpacity(.35);
+    view.engine.chart.timeScale.setBarSpacing(200);
+    view.engine.chart.timeScale.setRightOffset(1);
+    view.engine.chart.panes()[0].priceScale.setAutoScale(false);
+    view.engine.chart.panes()[0].priceScale.setFixedRange({ min: 82925, max: 83125 });
+    view.engine.chart.setAutoScale(false);
+  });
+  await page.waitForTimeout(150);
+  await panel.locator('.chart-stage').screenshot({ path: 'artifacts/footprint-text-contrast-dark-1366x768.png' });
+
+  await page.locator('#theme').selectOption('light');
+  await page.evaluate(() => {
+    const view = [...(window as any).__terminal.panels.values()][0] as any;
+    view.engine.setFootprintOpacity(.85);
+    view.engine.chart.timeScale.setBarSpacing(200);
+  });
+  await page.waitForTimeout(150);
+  await panel.locator('.chart-stage').screenshot({ path: 'artifacts/footprint-text-contrast-light-1366x768.png' });
 });
 
 test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, browser }) => {

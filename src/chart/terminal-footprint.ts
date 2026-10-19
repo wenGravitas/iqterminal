@@ -3,11 +3,25 @@ import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type F
 
 const PROFILE_LEVEL_EXTENSION = 8;
 const FOOTPRINT_FONT_FAMILY = 'ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace';
+const FOOTPRINT_LEVEL_COLOR = '#6d3fa0';
+type RgbColor = { r: number; g: number; b: number; a: number };
+type PaintedCell = { x: number; y: number; width: number; height: number; background: RgbColor };
+type QuantityTextStyle = { color: string; alpha: number; outline?: string };
+type BarTotalLabel = {
+  side: 'left' | 'right';
+  value: string;
+  x: number;
+  y: number;
+  width: number;
+  color: string;
+  visible: boolean;
+};
 
 /** Presentation wrapper for pinned OpenAlgo 2.6.0, using its public drawing boundary. */
 export function footprintColumn(options: Pick<FootprintOptions, 'cellWidth' | 'widthFactor' | 'showCandle'> & Partial<Pick<FootprintOptions, 'displayMode' | 'statsPosition'>>, spacing: number) {
-  const annotation = options.statsPosition === 'bar' && spacing >= 140 ? Math.min(84, spacing * .42) : 0;
-  const column = Math.max(.1, Math.min(options.cellWidth ?? spacing * options.widthFactor, spacing * .96, annotation ? spacing - annotation - 12 : Infinity));
+  // Per-bar totals sit on both sides of the POC marker, so reserve symmetric slots.
+  const annotation = options.statsPosition === 'bar' && spacing >= 140 ? Math.min(42, spacing * .21) : 0;
+  const column = Math.max(.1, Math.min(options.cellWidth ?? spacing * options.widthFactor, spacing * .96, annotation ? spacing - annotation * 2 - 12 : Infinity));
   const gap = options.showCandle && options.displayMode === 'bidask' && column >= 32
     ? Math.min(24, Math.max(12, column * .12)) : 0;
   return { column, gap, cells: column - gap, annotation };
@@ -33,6 +47,11 @@ export class TerminalFootprint extends Footprint {
   private centres: number[] = [];
   private cellText = false;
   private valueAreaPath = false;
+  private pendingCellRect: [number, number, number, number] | null = null;
+  private cellHeightPx = 0;
+  private previousCellPaint: PaintedCell | null = null;
+  private lastCellPaint: PaintedCell | null = null;
+  private pocMarkerBounds = new Map<number, [number, number]>();
   private pixelStrokeWidth() { return Math.max(1, Math.round(this.dpr)); }
   private alignStroke(value: number) {
     return Math.round(value) + (this.pixelStrokeWidth() % 2 ? .5 : 0);
@@ -48,17 +67,22 @@ export class TerminalFootprint extends Footprint {
     }
     if (typeof args[4] === 'number') args[4] = Math.round(args[4]);
   }
-  private themeIsLight() {
-    const background = this.rc?.theme.background.match(/^#([\da-f]{6})$/i)?.[1];
-    if (!background) return false;
-    const channel = (offset: number) => parseInt(background.slice(offset, offset + 2), 16) / 255;
-    const linear = (value: number) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4;
-    const luminance = .2126 * linear(channel(0)) + .7152 * linear(channel(2)) + .0722 * linear(channel(4));
-    return luminance > .5;
+  private levelGuideColor() { return FOOTPRINT_LEVEL_COLOR; }
+  private alignedPocBounds(left: number, right: number): [number, number] {
+    const edge = this.rc ? this.rc.plotWidth * this.dpr : Infinity;
+    left = Math.max(0, Math.min(edge, left));
+    right = Math.max(0, Math.min(edge, right));
+    return [this.alignStroke(left), this.alignStroke(right)];
   }
-  private guideColor() { return this.themeIsLight() ? this.rc?.theme.axisText ?? '#485567' : '#ffffff'; }
-  /** Reserve the terminal's pale cyan accent for the single POC reference. */
-  private pocAccentColor() { return this.themeIsLight() ? '#006a73' : '#68c6d2'; }
+  private pocHorizontalBounds(left: number, right: number, centreY: number): [number, number] {
+    const tolerance = Math.max(1, this.dpr);
+    const rowCells = [this.previousCellPaint, this.lastCellPaint].filter((cell): cell is PaintedCell => !!cell
+      && Math.abs(cell.y + cell.height / 2 - centreY) <= tolerance
+      && cell.x >= left - tolerance && cell.x + cell.width <= right + tolerance);
+    const actualLeft = rowCells.length ? Math.min(...rowCells.map(cell => cell.x)) : left;
+    const actualRight = rowCells.length ? Math.max(...rowCells.map(cell => cell.x + cell.width)) : right;
+    return this.alignedPocBounds(actualLeft, actualRight);
+  }
   private shiftedX(x: number) {
     const centre = this.centres.find(c => Math.abs(x / this.dpr - c) <= this.renderWidth / 2 + 1);
     return centre === undefined ? x : x + (x / this.dpr < centre ? -this.gap / 2 : this.gap / 2) * this.dpr;
@@ -90,6 +114,10 @@ export class TerminalFootprint extends Footprint {
   override draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     this.dpr = rc.dpr;
     this.valueAreaPath = false;
+    this.pendingCellRect = null;
+    this.previousCellPaint = null;
+    this.lastCellPaint = null;
+    this.pocMarkerBounds.clear();
     const o = this.style, spacing = rc.timeScale.barSpacing;
     const geometry = footprintColumn(o, spacing);
     this.rc = rc; this.gap = geometry.gap;
@@ -109,6 +137,7 @@ export class TerminalFootprint extends Footprint {
     const width = geometry.cells / (o.displayMode === 'bidask' ? 2 : 1);
     const step = o.tickSize ?? this.rowSize, range = rc.priceScale.priceRange();
     const height = Math.abs(rc.priceScale.priceToY(range.min + step) - rc.priceScale.priceToY(range.min));
+    this.cellHeightPx = height * this.dpr;
     const fittedFont = Math.max(9, Math.min(24, height * .75, (width - 4) / (this.longest * .6)));
     const minDeviceFont = Math.ceil(9 * this.dpr), maxDeviceFont = Math.floor(24 * this.dpr);
     this.cellFontPx = Math.min(maxDeviceFont, Math.max(minDeviceFont, Math.floor(fittedFont * this.dpr)));
@@ -133,8 +162,8 @@ export class TerminalFootprint extends Footprint {
               if (this.valueAreaPath) {
                 if (key === 'stroke') {
                   const dash = this.pixelStrokeWidth();
-                  target.save(); target.setLineDash([dash, dash * 3]);
-                  target.strokeStyle = this.guideColor(); target.globalAlpha = 1; target.lineWidth = dash;
+                  target.save(); target.setLineDash([dash * 3, dash * 2]);
+                  target.strokeStyle = this.levelGuideColor(); target.globalAlpha = 1; target.lineWidth = dash * 2;
                   try { return (target.stroke as Function).apply(target, args); } finally { target.restore(); }
                 }
                 if (this.gap) args[0] = this.shiftedX(args[0]);
@@ -163,26 +192,66 @@ export class TerminalFootprint extends Footprint {
                   args[index] += this.shiftedX(anchor) - anchor;
                 }
               }
-              if (key === 'roundRect') this.alignCellRect(args);
+              if (key === 'roundRect') {
+                this.alignCellRect(args);
+                this.pendingCellRect = this.isCellBackground([args[0], args[1], args[2], args[3]])
+                  ? [args[0], args[1], args[2], args[3]] : null;
+              }
+              if (key === 'fillRect' && this.cellText) {
+                this.rememberCellPaint([args[0], args[1], args[2], args[3]], target.fillStyle, target.globalAlpha);
+              }
               if (key === 'fillText' && this.cellText) { args[1] = Math.round(args[1]); args[2] = Math.round(args[2]); }
               if (poc) {
-                const left = this.extendProfileLevel(args[0], 'left');
-                const right = this.extendProfileLevel(args[0] + args[2], 'right');
-                args[0] = this.alignStroke(left); args[2] = Math.max(0, this.alignStroke(right) - args[0]);
+                const rawLeft = args[0], rawRight = args[0] + args[2];
+                const centreY = args[1] + args[3] / 2;
+                const [left, right] = this.pocHorizontalBounds(rawLeft, rawRight, centreY);
+                this.pocMarkerBounds.set(Math.round((rawLeft + rawRight) / 2), [left, right]);
+                args[0] = left; args[2] = Math.max(0, right - args[0]);
                 const top = this.alignStroke(args[1]), bottom = this.alignStroke(args[1] + args[3]);
                 args[1] = top; args[3] = Math.max(1, bottom - top);
-                target.save(); target.setLineDash([]);
-                target.strokeStyle = this.pocAccentColor(); target.globalAlpha = 1;
-                target.lineWidth = Math.max(1, Math.min(this.pixelStrokeWidth(), Math.floor(args[3]), Math.floor(args[2])));
-                try { return (target[key] as Function).apply(target, args); } finally { target.restore(); }
+                const rightEdge = args[0] + args[2], bottomEdge = args[1] + args[3];
+                const dash = this.pixelStrokeWidth();
+                target.save(); target.setLineDash([dash * 3, dash * 2]);
+                target.strokeStyle = this.levelGuideColor(); target.globalAlpha = 1;
+                target.lineWidth = dash * 2;
+                try {
+                  // Use an isolated path so POC paint cannot replace the native VA path.
+                  const marker = new Path2D();
+                  marker.moveTo(args[0], top); marker.lineTo(args[0], bottomEdge);
+                  marker.moveTo(rightEdge, top); marker.lineTo(rightEdge, bottomEdge);
+                  return target.stroke(marker);
+                } finally { target.restore(); }
               }
-              if (key === 'fillText' && this.cellText && !this.style.textColor && typeof target.fillStyle === 'string') {
-                // The profile renderer fades low-volume text with the cells.
-                // Keep its theme/mode-derived hue, while drawing quantities at
-                // full opacity so they remain legible on dark heatmap fills.
+              if (key === 'fillText' && this.cellText && typeof target.fillStyle === 'string') {
                 const textColor = target.fillStyle;
-                target.fillStyle = opaqueTextColor(textColor);
-                try { return (target[key] as Function).apply(target, args); } finally { target.fillStyle = textColor; }
+                const textAlpha = target.globalAlpha;
+                const backgrounds = this.cellTextBackgrounds(args, target);
+                const adjusted = readableTextColor(textColor, backgrounds, textAlpha, !this.style.textColor);
+                // OpenAlgo uses rgba alpha to fade quantities along with cell
+                // intensity. Keep the hue when it has enough contrast, but make
+                // default quantities fully opaque; use a neutral only when the
+                // resulting foreground would be hard to read on its cell fill.
+                target.fillStyle = adjusted?.color ?? opaqueTextColor(textColor);
+                if (adjusted) target.globalAlpha = adjusted.alpha;
+                try {
+                  if (adjusted?.outline) {
+                    target.save();
+                    try {
+                      target.strokeStyle = adjusted.outline;
+                      target.lineWidth = this.pixelStrokeWidth();
+                      target.lineJoin = 'round';
+                      target.setLineDash([]);
+                      target.shadowBlur = 0; target.shadowOffsetX = 0; target.shadowOffsetY = 0;
+                      target.shadowColor = 'rgba(0,0,0,0)';
+                      if (typeof args[3] === 'number') target.strokeText(String(args[0]), args[1], args[2], args[3]);
+                      else target.strokeText(String(args[0]), args[1], args[2]);
+                    } finally { target.restore(); }
+                  }
+                  return (target[key] as Function).apply(target, args);
+                }
+                finally {
+                  target.fillStyle = textColor; target.globalAlpha = textAlpha;
+                }
               }
               return (target[key] as Function).apply(target, args);
             });
@@ -191,7 +260,12 @@ export class TerminalFootprint extends Footprint {
           if (key === 'fill') {
             if (!methods.has(key)) methods.set(key, (...args: Parameters<CanvasRenderingContext2D['fill']>) => {
               const alpha = target.globalAlpha;
-              target.globalAlpha = alpha * this.opacity;
+              const cellBackground = this.pendingCellRect !== null;
+              if (cellBackground) {
+                this.rememberCellPaint(this.pendingCellRect!, target.fillStyle, alpha * this.opacity);
+              }
+              this.pendingCellRect = null;
+              if (cellBackground) target.globalAlpha = alpha * this.opacity;
               try { target.fill(...args); } finally { target.globalAlpha = alpha; }
             });
             return methods.get(key);
@@ -208,35 +282,127 @@ export class TerminalFootprint extends Footprint {
     if (o.statsPosition === 'bar') this.drawBarTotals(ctx, rc);
     if (this.bars.length && o.showCandle) this.drawCandles(ctx, rc);
   }
-  /** Totals use the inter-column gutter, leaving the heatmap beneath each bar unobstructed. */
+  private rememberCellPaint(rect: [number, number, number, number], fillStyle: unknown, alpha: number) {
+    if (typeof fillStyle !== 'string') return;
+    const fill = parseRgbColor(fillStyle), base = parseRgbColor(this.rc?.theme.background ?? '');
+    if (!fill || !base) return;
+    const opacity = Math.max(0, Math.min(1, alpha * fill.a));
+    this.previousCellPaint = this.lastCellPaint;
+    this.lastCellPaint = {
+      x: rect[0], y: rect[1], width: rect[2], height: rect[3],
+      background: compositeColor(fill, base, opacity),
+    };
+  }
+  private isCellBackground(rect: [number, number, number, number]) {
+    const [x, y, width, height] = rect, rc = this.rc;
+    const rows = this.style.tableRows.length || (this.style.statsPosition === 'bottom' ? this.style.statsRows.length : 0);
+    const contentHeight = rc ? Math.max(0, rc.plotHeight - rows * this.statsHeight) * this.dpr : 0;
+    if (!rc || this.cellHeightPx <= 0
+      || Math.abs(height - this.cellHeightPx) > Math.max(2, this.dpr)
+      || width <= 0 || width > this.renderWidth * this.dpr + 1
+      || y + height <= 0 || y >= contentHeight) return false;
+    const halfBar = (this.renderWidth + this.gap) * this.dpr / 2 + 1;
+    return this.centres.some(centre => x >= centre * this.dpr - halfBar
+      && x + width <= centre * this.dpr + halfBar);
+  }
+  private cellTextBackgrounds(args: any[], target: CanvasRenderingContext2D) {
+    const cell = this.lastCellPaint, themeBackground = parseRgbColor(this.rc?.theme.background ?? '');
+    const backgrounds = themeBackground ? [themeBackground] : [];
+    if (!cell) return backgrounds;
+    const width = target.measureText(String(args[0])).width;
+    const anchor = args[1];
+    const left = target.textAlign === 'center' ? anchor - width / 2 : target.textAlign === 'right' || target.textAlign === 'end' ? anchor - width : anchor;
+    const right = left + width;
+    const outlinePad = this.pixelStrokeWidth() / 2;
+    const textTop = args[2] - this.cellFontPx / 2 - outlinePad, textBottom = args[2] + this.cellFontPx / 2 + outlinePad;
+    const intersects = right > cell.x && left < cell.x + cell.width
+      && textBottom > cell.y && textTop < cell.y + cell.height;
+    if (!intersects) return backgrounds;
+    const entirelyInside = left - outlinePad >= cell.x && right + outlinePad <= cell.x + cell.width
+      && textTop >= cell.y && textBottom <= cell.y + cell.height;
+    if (entirelyInside) return [cell.background];
+    if (!backgrounds.some(background => background.r === cell.background.r && background.g === cell.background.g && background.b === cell.background.b)) {
+      backgrounds.push(cell.background);
+    }
+    return backgrounds;
+  }
+  /** Native per-bar totals use the complete gap to each neighbouring histogram. */
   private drawBarTotals(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const o = this.style, spacing = rc.timeScale.barSpacing;
     const { column, annotation } = footprintColumn(o, spacing);
     if (!annotation) return;
-    const dpr = rc.dpr, font = Math.min(12, Math.max(9, annotation / 7));
-    const physicalFont = Math.max(1, Math.round(font * dpr)), snappedFont = physicalFont / dpr, lineHeight = snappedFont + 2;
-    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth*dpr, rc.plotHeight*dpr); ctx.clip();
-    ctx.font = `${physicalFont}px ui-monospace, SFMono-Regular, Menlo, monospace`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    const dpr = rc.dpr, physicalFont = Math.max(1, Math.round(9 * dpr)), gap = 4;
+    const footerRows = o.tableRows.length ? o.tableRows.length : 0;
+    const contentHeight = Math.max(0, rc.plotHeight - footerRows * this.statsHeight);
+    const background = parseRgbColor(rc.theme.background);
+    const neutralColor = o.textColor ?? rc.theme.axisText;
     const stats = this.stats();
+    const centres = this.bars.map(bar => {
+      const index = rc.dataLayer.timeToIndex(bar.time);
+      return index === undefined ? undefined : rc.timeScale.indexToX(index);
+    });
+    const labels: BarTotalLabel[] = [];
+    const leftLabels: (BarTotalLabel | undefined)[] = [];
+    const rightLabels: (BarTotalLabel | undefined)[] = [];
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth * dpr, contentHeight * dpr); ctx.clip();
+    ctx.font = `${physicalFont}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+    ctx.textBaseline = 'middle'; ctx.globalAlpha = 1;
     for (let n = 0; n < this.bars.length; n++) {
       const bar = this.bars[n], totals = stats[n];
       const index = rc.dataLayer.timeToIndex(bar.time);
       if (index === undefined || !totals || !bar.cells.length) continue;
-      const centre = rc.timeScale.indexToX(index), x = centre + column / 2 + 6;
-      const right = Math.min(rc.plotWidth, centre + spacing - column / 2 - 6);
-      if (x < 0 || x >= right) continue;
-      let bottom = -Infinity;
-      for (const cell of bar.cells) bottom = Math.max(bottom, rc.priceScale.priceToY(cell.price - (o.tickSize ?? bar.rowSize ?? 0) / 2));
-      if (o.showCandle && bar.low !== undefined) bottom = Math.max(bottom, rc.priceScale.priceToY(bar.low));
-      if (bottom < 2*lineHeight || bottom > rc.plotHeight) continue;
-      const volume = `V: ${compactVol(totals.volume / o.volumeDivisor)}`;
-      const delta = `Δ: ${totals.delta >= 0 ? '+' : ''}${compactVol(totals.delta / o.volumeDivisor)}`;
-      if (Math.max(ctx.measureText(volume).width, ctx.measureText(delta).width) > (right-x)*dpr) continue;
-      ctx.fillStyle = o.textColor ?? rc.theme.axisText;
-      ctx.fillText(volume, Math.round(x*dpr), Math.round((bottom - 1.5*lineHeight)*dpr));
-      ctx.fillStyle = totals.delta === 0 ? o.textColor ?? rc.theme.axisText : totals.delta > 0 ? o.buyTextColor ?? rc.theme.upColor : o.sellTextColor ?? rc.theme.downColor;
-      ctx.fillText(delta, Math.round(x*dpr), Math.round((bottom - .5*lineHeight)*dpr));
+      const centre = rc.timeScale.indexToX(index), y = Math.round(rc.priceScale.priceToY(totals.poc) * dpr);
+      if (!Number.isFinite(y) || y < 0 || y > contentHeight * dpr) continue;
+      const marks = this.pocMarkerBounds.get(Math.round(centre * dpr));
+      const [leftMark, rightMark] = marks ?? this.alignedPocBounds((centre - column / 2) * dpr, (centre + column / 2) * dpr);
+      const previousCentre = centres[n - 1], nextCentre = centres[n + 1];
+      const leftSlot = Math.max(0, previousCentre === undefined ? 0 : previousCentre + column / 2);
+      const rightSlot = Math.min(rc.plotWidth, nextCentre === undefined ? rc.plotWidth : nextCentre - column / 2);
+      const leftX = Math.round((leftMark / dpr - gap) * dpr), rightX = Math.round((rightMark / dpr + gap) * dpr);
+      const leftAvailable = Math.max(0, leftMark / dpr - gap - leftSlot) * dpr;
+      const rightAvailable = Math.max(0, rightSlot - rightMark / dpr - gap) * dpr;
+      const volume = compactVol(totals.volume / o.volumeDivisor);
+      const delta = `${totals.delta >= 0 ? '+' : ''}${compactVol(totals.delta / o.volumeDivisor)}`;
+      const volumeWidth = ctx.measureText(volume).width, deltaWidth = ctx.measureText(delta).width;
+      const deltaColor = totals.delta === 0 ? neutralColor
+        : totals.delta > 0 ? o.buyTextColor ?? rc.theme.upColor : o.sellTextColor ?? rc.theme.downColor;
+      if (volumeWidth <= leftAvailable) {
+        const label = { side: 'left' as const, value: volume, x: leftX, y, width: volumeWidth, color: neutralColor, visible: true };
+        labels.push(label); leftLabels[n] = label;
+      }
+      if (deltaWidth <= rightAvailable) {
+        const label = { side: 'right' as const, value: delta, x: rightX, y, width: deltaWidth, color: deltaColor, visible: true };
+        labels.push(label); rightLabels[n] = label;
+      }
+    }
+    // Adjacent candles share the space between histograms. If opposite-side
+    // labels really overlap in both axes, keep the shorter string and omit the
+    // other rather than shifting either away from its native POC row.
+    for (let n = 0; n + 1 < this.bars.length; n++) {
+      const delta = rightLabels[n], volume = leftLabels[n + 1];
+      if (!delta || !volume) continue;
+      const horizontal = Math.max(delta.x, volume.x - volume.width) < Math.min(delta.x + delta.width, volume.x) - 1;
+      const vertical = Math.abs(delta.y - volume.y) < physicalFont;
+      if (!horizontal || !vertical) continue;
+      if (delta.width <= volume.width) volume.visible = false;
+      else delta.visible = false;
+    }
+    for (const label of labels) {
+      if (!label.visible) continue;
+      const readable = readableTextColor(label.color, background ? [background] : [], 1, true)
+        ?? { color: opaqueTextColor(label.color), alpha: 1 };
+      ctx.textAlign = label.side === 'left' ? 'right' : 'left';
+      ctx.fillStyle = readable.color; ctx.globalAlpha = 1;
+      if (readable.outline) {
+        ctx.save();
+        try {
+          ctx.strokeStyle = readable.outline; ctx.lineWidth = this.pixelStrokeWidth();
+          ctx.lineJoin = 'round'; ctx.setLineDash([]); ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.shadowColor = 'rgba(0,0,0,0)';
+          ctx.strokeText(label.value, label.x, label.y);
+        } finally { ctx.restore(); }
+      }
+      ctx.fillText(label.value, label.x, label.y);
     }
     ctx.restore();
   }
@@ -278,4 +444,83 @@ export class TerminalFootprint extends Footprint {
 function opaqueTextColor(color: string) {
   const rgba = /^rgba\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*[^)]+\)$/i.exec(color);
   return rgba ? `rgb(${rgba[1]!.trim()}, ${rgba[2]!.trim()}, ${rgba[3]!.trim()})` : color;
+}
+
+function parseRgbColor(color: string): RgbColor | null {
+  const key = color.trim();
+  if (RGB_COLOR_CACHE.has(key)) return RGB_COLOR_CACHE.get(key) ?? null;
+  const parsed = parseRgbColorUncached(key);
+  RGB_COLOR_CACHE.set(key, parsed);
+  if (RGB_COLOR_CACHE.size > 64) RGB_COLOR_CACHE.delete(RGB_COLOR_CACHE.keys().next().value!);
+  return parsed;
+}
+
+const RGB_COLOR_CACHE = new Map<string, RgbColor | null>();
+
+function parseRgbColorUncached(color: string): RgbColor | null {
+  const hex = /^#([\da-f]{3}|[\da-f]{6})$/i.exec(color);
+  if (hex) {
+    const value = hex[1]!.length === 3 ? [...hex[1]!].map(channel => channel + channel).join('') : hex[1]!;
+    return { r: parseInt(value.slice(0, 2), 16), g: parseInt(value.slice(2, 4), 16), b: parseInt(value.slice(4, 6), 16), a: 1 };
+  }
+  const match = /^rgba?\(([^)]+)\)$/i.exec(color);
+  if (!match) return null;
+  const parts = match[1]!.trim().split(/[\s,/]+/);
+  if (parts.length < 3) return null;
+  const channel = (part: string) => {
+    const value = Number.parseFloat(part);
+    return Number.isFinite(value) ? Math.max(0, Math.min(255, part.endsWith('%') ? value * 2.55 : value)) : NaN;
+  };
+  const r = channel(parts[0]!), g = channel(parts[1]!), b = channel(parts[2]!);
+  const alphaValue = parts[3] === undefined ? 1 : Number.parseFloat(parts[3]);
+  if (![r, g, b, alphaValue].every(Number.isFinite)) return null;
+  return { r, g, b, a: Math.max(0, Math.min(1, alphaValue)) };
+}
+
+function compositeColor(foreground: RgbColor, background: RgbColor, alpha: number): RgbColor {
+  return {
+    r: foreground.r * alpha + background.r * (1 - alpha),
+    g: foreground.g * alpha + background.g * (1 - alpha),
+    b: foreground.b * alpha + background.b * (1 - alpha),
+    a: 1,
+  };
+}
+
+function relativeLuminance(color: RgbColor) {
+  const linear = (value: number) => {
+    const channel = value / 255;
+    return channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4;
+  };
+  return .2126 * linear(color.r) + .7152 * linear(color.g) + .0722 * linear(color.b);
+}
+
+function contrastRatio(first: RgbColor, second: RgbColor) {
+  const a = relativeLuminance(first), b = relativeLuminance(second);
+  return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+}
+
+function readableTextColor(color: string, backgrounds: readonly RgbColor[], globalAlpha: number, forceOpaque: boolean): QuantityTextStyle | null {
+  const foreground = parseRgbColor(color);
+  if (!foreground) return null;
+  const opaque = { ...foreground, a: 1 };
+  const effectiveAlpha = Math.max(0, Math.min(1, globalAlpha * (forceOpaque ? 1 : foreground.a)));
+  const visible = backgrounds.map(background => compositeColor(foreground, background, effectiveAlpha));
+  if (visible.every((colorAtCell, index) => contrastRatio(colorAtCell, backgrounds[index]!) >= 4.5)) {
+    return { color: forceOpaque ? `rgb(${Math.round(opaque.r)}, ${Math.round(opaque.g)}, ${Math.round(opaque.b)})` : color, alpha: globalAlpha };
+  }
+  const black = { r: 0, g: 0, b: 0, a: 1 }, white = { r: 255, g: 255, b: 255, a: 1 };
+  const minimumContrast = (foreground: RgbColor) => backgrounds.length
+    ? Math.min(...backgrounds.map(background => contrastRatio(foreground, background))) : 0;
+  const whiteContrast = minimumContrast(white), blackContrast = minimumContrast(black);
+  if (whiteContrast >= 4.5 || blackContrast >= 4.5) {
+    return whiteContrast >= blackContrast
+      ? { color: 'rgb(255, 255, 255)', alpha: 1 }
+      : { color: 'rgb(0, 0, 0)', alpha: 1 };
+  }
+  // A profile bar can cross the text while the rest of its glyph sits over the
+  // chart. When neither neutral reaches 4.5 on both surfaces, a one-pixel
+  // opposite-color keyline preserves legibility without covering bar data.
+  return whiteContrast >= blackContrast
+    ? { color: 'rgb(255, 255, 255)', alpha: 1, outline: 'rgb(0, 0, 0)' }
+    : { color: 'rgb(0, 0, 0)', alpha: 1, outline: 'rgb(255, 255, 255)' };
 }

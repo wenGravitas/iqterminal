@@ -10,14 +10,28 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
   const sidebar = panel.locator('.drawing-sidebar');
   const linesTrigger = sidebar.getByRole('button', { name: 'Open Lines tools', exact: true });
   const lineFlyout = panel.locator('.drawing-sidebar-flyout[data-drawing-group="lines"]');
+  const textTrigger = sidebar.getByRole('button', { name: 'Open Text tools', exact: true });
+  const textFlyout = panel.locator('.drawing-sidebar-flyout[data-drawing-group="text"]');
 
-  expect(await sidebar.locator('.drawing-sidebar-group[data-drawing-group="positions"]').evaluate(group => group.nextElementSibling?.matches('.drawing-sidebar-direct-tool[data-drawing-tool="text"]'))).toBe(true);
+  expect(await sidebar.locator('.drawing-sidebar-group[data-drawing-group="positions"]').evaluate(group => group.nextElementSibling?.matches('.drawing-sidebar-group[data-drawing-group="text"]'))).toBe(true);
+  expect(await panel.locator('.drawing-sidebar-direct-tool')).toHaveCount(0);
   const toolIds = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
-  expect(toolIds).toEqual(['fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
+  expect(toolIds).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
   expect(await panel.evaluate(element => element.querySelectorAll('.chart-toolbar .drawing-sidebar-button').length)).toBe(0);
 
   const countDrawings = () => page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.drawings().length, panelId);
   expect(await countDrawings()).toBe(0);
+
+  await textTrigger.click();
+  await expect(textFlyout).toBeVisible();
+  await expect(textFlyout.locator('.drawing-sidebar-flyout-tool')).toHaveCount(2);
+  await expect(textFlyout.getByRole('button', { name: 'Use Text tool', exact: true })).toBeVisible();
+  await expect(textFlyout.getByRole('button', { name: 'Use Callout tool', exact: true })).toBeVisible();
+  await expect(textFlyout.locator('.drawing-sidebar-flyout-tool').first()).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(textFlyout).toBeHidden();
+  await expect(textTrigger).toBeFocused();
+
   await linesTrigger.click();
   await expect(lineFlyout).toBeVisible();
   await expect(linesTrigger).toHaveAttribute('aria-expanded', 'true');
@@ -55,6 +69,7 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
     const workspace = panel.querySelector<HTMLElement>('.chart-workspace')!;
     const rail = panel.querySelector<HTMLElement>('.drawing-sidebar')!;
     const chart = panel.querySelector<HTMLElement>('.chart-stage')!;
+    const objectTree = panel.querySelector<HTMLElement>('.chart-objects-panel')!;
     const workspaceBox = workspace.getBoundingClientRect();
     const railBox = rail.getBoundingClientRect();
     const chartBox = chart.getBoundingClientRect();
@@ -62,13 +77,15 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
       paneWidth: workspaceBox.width,
       railWidth: railBox.width,
       chartWidth: chartBox.width,
+      objectTreeWidth: objectTree.getBoundingClientRect().width,
       railHorizontalOverflow: rail.scrollWidth > rail.clientWidth,
     };
   }, panelId);
   expect(layout.paneWidth).toBeGreaterThan(500);
   expect(layout.paneWidth).toBeLessThan(700);
   expect(layout.railWidth).toBeGreaterThan(0);
-  expect(layout.chartWidth).toBeGreaterThan(400);
+  expect(layout.objectTreeWidth).toBe(280);
+  expect(layout.chartWidth).toBeGreaterThan(320);
   expect(layout.railHorizontalOverflow).toBe(false);
 
   await linesTrigger.click();

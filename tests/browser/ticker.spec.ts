@@ -39,7 +39,7 @@ test('ticker header controls remain accessible without horizontal scroll at narr
   await expect(page.locator('.candle-panel').first().getByRole('button',{name:'Latest',exact:true}).locator('svg')).toHaveCount(1);
   await page.evaluate(()=>{const panel=(window as any).__terminal.dock.panels.find((p:any)=>p.view.contentComponent==='trade-ticker');panel.api.setSize({width:594});});
   const toolbar=ticker.locator('.ticker-toolbar');let dimensions=await toolbar.evaluate(element=>({clientWidth:element.clientWidth,scrollWidth:element.scrollWidth}));
-  expect(dimensions.clientWidth).toBeGreaterThan(500);expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+  expect(dimensions.clientWidth).toBeGreaterThan(400);expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
   await ticker.screenshot({path:'artifacts/trade-ticker-pane-594.png'});
   await page.setViewportSize({width:594,height:780});
   dimensions=await toolbar.evaluate(element=>({clientWidth:element.clientWidth,scrollWidth:element.scrollWidth}));

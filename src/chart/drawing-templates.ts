@@ -3,7 +3,7 @@ import { intervals } from '../feed/protocol';
 
 export const IQ_DRAWING_TEMPLATE_VERSION = 1 as const;
 export const IQ_DRAWING_TEMPLATE_STORAGE_KEY = 'iqterminal:drawing-templates:v1';
-const tools = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'long-position', 'short-position']);
+const tools = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position']);
 const nativePath = /^(style|text|props)\.[A-Za-z][A-Za-z0-9_]{0,63}$/;
 const unsafeKey = /^(?:__proto__|prototype|constructor)$/i;
 
@@ -154,7 +154,7 @@ export function parseIQDrawingTemplateCatalog(input: unknown): IQDrawingTemplate
   });
   if (new Set(templates.map(item => item.id)).size !== templates.length) throw new IQDrawingTemplateCatalogError('Duplicate drawing template id');
   const defaultsRaw = source.defaults ?? [];
-  if (!Array.isArray(defaultsRaw) || defaultsRaw.length > 8) throw new IQDrawingTemplateCatalogError('Template defaults are invalid');
+  if (!Array.isArray(defaultsRaw) || defaultsRaw.length > tools.size) throw new IQDrawingTemplateCatalogError('Template defaults are invalid');
   const defaults = defaultsRaw.map(item => {
     const entry = record(item, 'drawing template default');
     const tool = text(entry.tool, 'default tool', 100);

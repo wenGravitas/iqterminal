@@ -9,11 +9,14 @@ import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, reso
 import { OrderWallsControls } from './order-walls-controls';
 import { duration } from './feed/protocol';
 import type { Bar, ChartObjectSnapshot, CrosshairMoveEvent } from 'openalgo-charts';
-import { coerceSettingValue, drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
+import { coerceSettingValue, drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingInput, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
 import { FeedClient } from './feed/client';
 import { NetPositioningHistory, type NetPositioningMethod, type NetPositioningVenue } from './feed/net-positioning';
+import type { NormalizedExecution } from './feed/footprint';
+import { executionMatchesSeries } from './ticker/hover';
+import { executionRayLabel } from './ticker/execution-drawing';
 import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status } from './feed/protocol';
 import { OpenAlgoCandleChart } from './chart/openalgo';
 import type { Scheduler } from './chart/scheduler';
@@ -23,12 +26,21 @@ import type { ScriptLibrary, ScriptRecord } from './scripts/library';
 import { makeInputControl, readInputSettings } from './scripts/input-controls';
 import { captureDrawingSettings, drawingDisplayName, drawingSettingsPatch, initialDrawingMetadata, IQ_DRAWING_META_VERSION, iqDrawingSettingsSchema, sameDrawingSetting } from './chart/drawing-settings';
 import { captureIQDrawingTemplateSettings, createLocalStorageDrawingTemplateStorage, createMemoryDrawingTemplateStorage, IQDrawingTemplateRepository, type IQDrawingTemplateCatalog, type IQDrawingTemplateRecord } from './chart/drawing-templates';
+import {
+  applyObjectTreeFolderVisibility, clearObjectTreeDrawingName, createEmptyObjectTree, createLocalStorageObjectTreeStorage, createMemoryObjectTreeStorage, createObjectTreeFolder,
+  createObjectTreeSidebarPreferences, deleteObjectTreeFolder, findObjectTreeEntry, IQObjectTreeRepository,
+  objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderPaths, objectTreeFolderVisibilityState, objectTreeSidebarStorageKey, objectTreeStorageKey,
+  parseIQObjectTreeSidebarPreferences, reconcileObjectTree, renameObjectTreeFolder, reorderObjectTreeEntry,
+  locateObjectTreeEntry, moveObjectTreeEntry, objectTreeFolderDepth, OBJECT_TREE_DEFAULT_WIDTH, OBJECT_TREE_MAX_WIDTH, OBJECT_TREE_MIN_WIDTH, OBJECT_TREE_MAX_DEPTH, renameObjectTreeDrawing,
+  type IQObjectTreeCatalog, type IQObjectTreeSidebarPreferences, type ObjectTreeEntry,
+} from './chart/object-tree';
 
-const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'long-position', 'short-position']);
+const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position']);
 const DRAWING_TOOL_GROUPS = [
   { id: 'lines', label: 'Lines', tools: ['trend-line', 'horizontal-line', 'horizontal-ray'], defaultTool: 'trend-line' },
   { id: 'shapes', label: 'Shapes and Fibonacci', tools: ['rectangle', 'fib-retracement'], defaultTool: 'rectangle' },
   { id: 'positions', label: 'Position tools', tools: ['long-position', 'short-position'], defaultTool: 'long-position' },
+  { id: 'text', label: 'Text Tools', tools: ['text', 'callout'], defaultTool: 'text' },
 ] as const;
 const DRAWING_GROUP_BY_TOOL: Map<string, string> = new Map(DRAWING_TOOL_GROUPS.flatMap(group => group.tools.map(tool => [tool, group.id] as const)));
 const DRAWING_ICON_MARKUP: Record<string, string> = {
@@ -39,6 +51,7 @@ const DRAWING_ICON_MARKUP: Record<string, string> = {
   rectangle: '<rect x="3" y="4" width="12" height="10"/>',
   'fib-retracement': '<path d="M4 3v13m0-12h11M4 7h8M4 11h11M4 15h8"/>',
   text: '<path d="M3 4h14M10 4v12m-3 0h6"/>',
+  callout: '<path d="M3 4h14v9H9l-4 3v-3H3z"/><path d="M6 7h8M6 10h5"/>',
   'long-position': '<rect x="3" y="4" width="12" height="11"/><path d="M9 12V5m-3 3 3-3 3 3"/>',
   'short-position': '<rect x="3" y="4" width="12" height="11"/><path d="M9 7v7m-3-3 3 3 3-3"/>',
   anchor: '<path d="M10 3a2.5 2.5 0 1 0 0 .1M10 6v10m-6-7h12M4 9c.3 4 2.3 6 6 7 3.7-1 5.7-3 6-7"/>',
@@ -49,6 +62,14 @@ const DRAWING_ICON_MARKUP: Record<string, string> = {
   templates: '<path d="M4 2.5h9l3 3v10H4zM13 2.5v3h3M6.5 9h7M6.5 12h7"/>',
   objects: '<path d="M4 3h11v4H4zM4 9h11v4H4zM6 5h.1M6 11h.1"/>',
   chevron: '<path d="m5 7 3 3 3-3"/>',
+  collapse: '<path d="m6 3 5 7-5 7"/>',
+  expand: '<path d="m4 4 6 6-6 6"/>',
+  folder: '<path d="M2.5 5h5l1.5 2h8.5v8.5h-15z"/><path d="M2.5 7h15"/>',
+  eye: '<path d="M2 10s2.7-4.5 8-4.5 8 4.5 8 4.5-2.7 4.5-8 4.5S2 10 2 10Z"/><circle cx="10" cy="10" r="2"/>',
+  hiddenEye: '<path d="M3 3 17 17M7.6 5.8A8.6 8.6 0 0 1 10 5.5c5.3 0 8 4.5 8 4.5a13 13 0 0 1-2.2 2.7M5.6 6.8C3.3 8.1 2 10 2 10s2.7 4.5 8 4.5c.8 0 1.5-.1 2.2-.3"/><path d="M8.6 8.6a2 2 0 0 0 2.8 2.8"/>',
+  lock: '<rect x="4" y="8" width="12" height="9"/><path d="M6.5 8V5.5a3.5 3.5 0 0 1 7 0V8"/>',
+  unlock: '<rect x="4" y="8" width="12" height="9"/><path d="M6.5 8V5.5a3.5 3.5 0 0 1 6.7-1.4"/>',
+  more: '<circle cx="4" cy="10" r=".8"/><circle cx="10" cy="10" r=".8"/><circle cx="16" cy="10" r=".8"/>',
 };
 
 function drawingSidebarIcon(name: string): SVGSVGElement {
@@ -64,33 +85,16 @@ function drawingToolName(id: string): string {
   return registeredDrawingTools().find(tool => tool.id === id)?.name ?? id;
 }
 
-interface SharedObjectsView {
-  panel: HTMLDetailsElement;
-  summary: HTMLElement;
-  rows: HTMLDivElement;
-  rowCache: Map<string, HTMLDivElement>;
-  paneSections: Map<number, { section: HTMLElement; heading: HTMLDivElement; rows: HTMLDivElement }>;
-  ownerId?: string;
-  emptyMessage: HTMLParagraphElement;
+function reconcileElementChildren(parent: Element, desired: readonly Element[]) {
+  for (let index = 0; index < desired.length; index++) {
+    const node = desired[index]!;
+    const current = parent.children.item(index);
+    if (current !== node) parent.insertBefore(node, current);
+  }
+  while (parent.children.length > desired.length) parent.lastElementChild?.remove();
 }
-let sharedObjectsView: SharedObjectsView | undefined;
-let sharedObjectsOwner: CandlePanel | undefined;
-let nextDrawingSidebarId = 0;
 
-function getSharedObjectsView(): SharedObjectsView {
-  if (sharedObjectsView) return sharedObjectsView;
-  const panel = document.createElement('details'); panel.className = 'chart-objects-panel'; panel.setAttribute('aria-label', 'Chart objects');
-  const summary = document.createElement('summary'); summary.textContent = 'Objects';
-  const rows = document.createElement('div'); rows.className = 'chart-objects-rows';
-  const emptyMessage = document.createElement('p'); emptyMessage.className = 'dialog-status'; emptyMessage.textContent = 'No chart objects';
-  panel.append(summary, rows);
-  for (const name of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'wheel', 'dblclick', 'keydown'] as const) panel.addEventListener(name, event => event.stopPropagation());
-  panel.addEventListener('toggle', () => {
-    const owner = sharedObjectsOwner;
-    if (panel.open && owner) owner.attachObjectsPanel();
-  });
-  return sharedObjectsView = { panel, summary, rows, rowCache: new Map(), paneSections: new Map(), emptyMessage };
-}
+let nextDrawingSidebarId = 0;
 
 export interface FootprintViewOptions {
   displayMode: FootprintDisplayMode;
@@ -189,6 +193,33 @@ export class CandlePanel implements IContentRenderer {
   private drawingSidebar = document.createElement('aside');
   private drawingSidebarToolbar = document.createElement('div');
   private drawingSidebarMenuLayer = document.createElement('div');
+  private objectsPanel = document.createElement('aside');
+  private objectsSummary = document.createElement('div');
+  private objectsRows = document.createElement('div');
+  private objectsTree = document.createElement('div');
+  private objectsCollapse = document.createElement('button');
+  private objectsNewFolder = document.createElement('button');
+  private objectsInventory = document.createElement('section');
+  private objectsInventoryRows = document.createElement('div');
+  private objectsTreeStatus = document.createElement('div');
+  private objectsTreeMenu = document.createElement('div');
+  private objectsTreeResize = document.createElement('div');
+  private objectRows = new Map<string, HTMLDivElement>();
+  private objectPaneSections = new Map<number, { section: HTMLElement; heading: HTMLDivElement; rows: HTMLDivElement }>();
+  private treeRows = new Map<string, HTMLDivElement>();
+  private treeNodes = new Map<string, HTMLDivElement>();
+  private collapsedTreeFolders = new Set<string>();
+  private objectTreeCatalog: IQObjectTreeCatalog = createEmptyObjectTree();
+  private objectTreeRepository?: IQObjectTreeRepository;
+  private objectTreeStorageWarning = '';
+  private objectTreeSidebarPreferences: IQObjectTreeSidebarPreferences = createObjectTreeSidebarPreferences();
+  private objectTreeSidebarWarning = '';
+  private objectTreeScope = '';
+  private objectTreeFocusedKey = '';
+  private objectTreeMenuTarget?: { kind: 'folder' | 'drawing'; id: string };
+  private renamingFolderId?: string;
+  private renamingDrawingId?: string;
+  private emptyObjectsMessage = document.createElement('p');
   private chart = document.createElement('div');
   private chartFooter = document.createElement('footer');
   private toolbar = document.createElement('div');
@@ -227,12 +258,6 @@ export class CandlePanel implements IContentRenderer {
   private drawingLastToolByGroup = new Map<string, string>();
   private openDrawingFlyoutGroup?: string;
   private readonly drawingSidebarId = ++nextDrawingSidebarId;
-  private objectsPanel!: HTMLDetailsElement;
-  private objectsSummary!: HTMLElement;
-  private objectsRows!: HTMLDivElement;
-  private objectRows!: Map<string, HTMLDivElement>;
-  private objectPaneSections!: Map<number, { section: HTMLElement; heading: HTMLDivElement; rows: HTMLDivElement }>;
-  private emptyObjectsMessage?: HTMLParagraphElement;
   private drawingDialog = document.createElement('dialog');
   private drawingForm = document.createElement('form');
   private drawingFields = document.createElement('div');
@@ -284,6 +309,31 @@ export class CandlePanel implements IContentRenderer {
   private watchZonesVisible = true;
   private releaseWatchObjects?: () => void;
   private cancelWatchPick?:()=>void;
+  setExecutionHoverRay(execution:NormalizedExecution|null){this.engine?.setExecutionHoverRay(execution&&executionMatchesSeries(execution,this.selection)?execution:null);}
+  addExecutionRay(execution: NormalizedExecution) {
+    const engine = this.engine;
+    if (!engine || this.dead || !executionMatchesSeries(execution, this.selection) ||
+      !Number.isFinite(execution.timeMs) || !Number.isFinite(execution.price) || execution.price <= 0) return false;
+    const theme = engine.chart.theme();
+    const color = execution.side === 'buy' ? theme.buy : execution.side === 'sell' ? theme.sell : theme.lineColor;
+    const input: DrawingInput = {
+      tool: 'horizontal-ray',
+      points: [{ time: execution.timeMs / 1000, price: execution.price }],
+      paneIndex: engine.objects.primaryPaneIndex(),
+      style: { color, lineWidth: 1.5, lineStyle: 'dashed', showLabels: true },
+      text: { value: executionRayLabel(execution), fontSize: 10, fontFamily: 'ui-monospace, Menlo, Consolas, monospace', bold: true },
+      props: {
+        iqterminal: { version: IQ_DRAWING_META_VERSION },
+        iqterminalLabelState: 'unset',
+        iqterminalLabel: '',
+        iqterminalAnalysisInterval: '',
+      },
+    };
+    engine.drawings.add(input);
+    engine.objects.refresh();
+    this.syncDrawingActions();
+    return true;
+  }
   setWatchZones(watches:LevelWatch[]){this.watchList=watches;const supported=instrumentKey(this.selection)==='binance:perpetual';if(this.watchButton){this.watchButton.disabled=!supported;this.watchButton.title=supported?'Select two zone boundaries':'Level Watch requires Binance BTCUSDT USD-M perpetual';}this.engine?.setWatchZones(supported&&this.watchZonesVisible?watches:[]);this.engine?.objects.refresh();}
   focusWatch(w:LevelWatch){if(instrumentKey(this.selection)!=='binance:perpetual')return;this.params.api.setActive();const padding=Math.max(10,(w.definition.upper-w.definition.invalidation)*.5);this.engine?.focusWatch(w.definition.invalidation-padding,w.definition.upper+padding);}
   beginWatchZone(done:(bounds:{lower:number;upper:number})=>void){
@@ -313,6 +363,7 @@ export class CandlePanel implements IContentRenderer {
   private hoveredFootprint: FootprintHover | null = null;
   private candles: import('./feed/protocol').Candle[] = [];
   private footprintBars: FootprintBar[] = [];
+  private footprintSnapshotSignature?: string[];
   private footprintNeedsSync = false;
   private footprintHasInitialView = false;
   private footprintStatus: FootprintStatus = {
@@ -329,10 +380,8 @@ export class CandlePanel implements IContentRenderer {
     private save: () => void,
     private register: (id: string, panel: CandlePanel | null) => void,
     private openEditor: (chartId: string, attachmentId?: string) => void,
+    private refreshExecutionHover: (chartId: string) => void,
   ) {
-    const objectsView = getSharedObjectsView();
-    this.objectsPanel = objectsView.panel; this.objectsSummary = objectsView.summary; this.objectsRows = objectsView.rows;
-    this.objectRows = objectsView.rowCache; this.objectPaneSections = objectsView.paneSections; this.emptyObjectsMessage = objectsView.emptyMessage;
     this.element.className = 'candle-panel';
     this.toolbarWrap.className = 'chart-toolbar-wrap';
     this.toolbar.className = 'chart-toolbar';
@@ -421,10 +470,40 @@ export class CandlePanel implements IContentRenderer {
     this.activeSummary.textContent = 'Indicators'; this.activeRows.className = 'active-indicator-rows';
     this.activeIndicators.append(this.activeSummary, this.activeRows);
     this.objectsPanel.className = 'chart-objects-panel';
-    this.objectsPanel.append(this.objectsSummary, this.objectsRows);
+    this.objectsPanel.setAttribute('aria-label', 'Chart object tree');
+    this.objectsSummary.className = 'chart-objects-summary';
+    this.objectsSummary.textContent = 'Objects';
+    const objectTreeHeader = document.createElement('header');
+    objectTreeHeader.className = 'chart-object-tree-header';
+    const objectTreeTitle = document.createElement('strong'); objectTreeTitle.textContent = 'Object Tree';
+    this.objectsCollapse.type = 'button';
+    this.objectsCollapse.className = 'chart-object-tree-collapse';
+    this.objectsCollapse.setAttribute('aria-label', 'Collapse object tree sidebar');
+    this.objectsCollapse.title = 'Collapse sidebar';
+    this.objectsCollapse.append(drawingSidebarIcon('collapse'));
+    objectTreeHeader.append(objectTreeTitle, this.objectsSummary, this.objectsCollapse);
+    this.objectsRows.className = 'chart-objects-content';
+    const treeToolbar = document.createElement('div'); treeToolbar.className = 'chart-object-tree-toolbar';
+    this.objectsNewFolder.type = 'button'; this.objectsNewFolder.className = 'chart-object-tree-new-folder';
+    this.objectsNewFolder.dataset.treeAction = 'new-folder'; this.objectsNewFolder.textContent = 'New folder';
+    treeToolbar.append(this.objectsNewFolder);
+    this.objectsTree.className = 'chart-object-tree'; this.objectsTree.setAttribute('role', 'tree'); this.objectsTree.setAttribute('aria-label', 'Drawings');
+    this.objectsTreeStatus.className = 'chart-object-tree-status'; this.objectsTreeStatus.setAttribute('role', 'status'); this.objectsTreeStatus.setAttribute('aria-live', 'polite');
+    this.objectsInventory.className = 'chart-object-inventory';
+    const inventoryHeading = document.createElement('h3'); inventoryHeading.textContent = 'Other chart objects';
+    this.objectsInventoryRows.className = 'chart-object-inventory-rows';
+    this.objectsInventory.append(inventoryHeading, this.objectsInventoryRows);
+    this.objectsRows.append(treeToolbar, this.objectsTree, this.objectsTreeStatus, this.objectsInventory);
+    this.emptyObjectsMessage.className = 'chart-object-empty'; this.emptyObjectsMessage.textContent = 'No drawings';
+    this.objectsTree.append(this.emptyObjectsMessage);
+    this.objectsTreeResize.className = 'chart-object-tree-resize'; this.objectsTreeResize.setAttribute('role', 'separator');
+    this.objectsTreeResize.setAttribute('aria-label', 'Resize object tree sidebar');
+    this.objectsTreeResize.setAttribute('aria-orientation', 'vertical'); this.objectsTreeResize.tabIndex = 0;
+    this.objectsTreeMenu.className = 'chart-object-tree-menu'; this.objectsTreeMenu.setAttribute('role', 'menu'); this.objectsTreeMenu.hidden = true;
+    this.objectsPanel.append(objectTreeHeader, this.objectsRows, this.objectsTreeResize, this.objectsTreeMenu);
     this.buildDialogs();
     this.buildDrawingDialogs();
-    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.drawingSidebarMenuLayer);
+    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.drawingSidebarMenuLayer);
     this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
@@ -457,13 +536,6 @@ export class CandlePanel implements IContentRenderer {
     this.drawSelect.setAttribute('aria-pressed', 'true');
     this.drawingSidebarToolbar.append(this.drawSelect, divider());
 
-    const textName = drawingToolName('text');
-    const textTool = this.sidebarButton(`Use ${textName} tool`, `Annotate with ${textName}`, 'text', 'drawing-sidebar-tool-main drawing-sidebar-direct-tool');
-    textTool.dataset.drawingTool = 'text';
-    textTool.dataset.toolName = textName;
-    textTool.setAttribute('aria-pressed', 'false');
-    this.rememberDrawingToolButton('text', textTool);
-
     for (const group of DRAWING_TOOL_GROUPS) {
       const defaultTool = group.defaultTool;
       const toolName = drawingToolName(defaultTool);
@@ -480,7 +552,7 @@ export class CandlePanel implements IContentRenderer {
       this.drawingPrimaryButtons.set(group.id, primary);
 
       const menuId = `drawing-tools-${this.drawingSidebarId}-${group.id}`;
-      const toolsLabel = group.label.replace(/ tools$/, '');
+      const toolsLabel = group.label.replace(/ tools$/i, '');
       const menuToggle = this.sidebarButton(`Open ${toolsLabel} tools`, `Show ${toolsLabel.toLowerCase()} drawings`, 'chevron', 'drawing-sidebar-menu-toggle');
       menuToggle.dataset.drawingGroup = group.id;
       menuToggle.setAttribute('aria-controls', menuId);
@@ -514,7 +586,6 @@ export class CandlePanel implements IContentRenderer {
       }
       row.append(primary, menuToggle);
       this.drawingSidebarToolbar.append(row);
-      if (group.id === 'positions') this.drawingSidebarToolbar.append(textTool);
       this.drawingSidebarMenuLayer.append(flyout);
       this.drawingFlyouts.set(group.id, flyout);
     }
@@ -543,6 +614,7 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params);
+    this.loadObjectTreeSidebarPreferences();
     this.updateDrawingSnapButton();
     this.wheelMode.value = this.selection.wheelMode;
     this.gridCheckbox.checked = this.selection.grid; this.baseVisible.checked = this.selection.basePriceVisible;
@@ -552,6 +624,28 @@ export class CandlePanel implements IContentRenderer {
     this.interval.value = this.selection.interval;
     this.updateFootprintControls();
     const options = { signal: this.abort.signal };
+    this.objectsCollapse.addEventListener('click', () => this.setObjectTreeCollapsed(!this.objectTreeSidebarPreferences.collapsed), options);
+    this.objectsRows.addEventListener('click', event => this.objectTreeClick(event), options);
+    this.objectsRows.addEventListener('dblclick', event => {
+      const node = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
+      if (node?.dataset.treeKind && node.dataset.treeId) this.beginTreeRename(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId);
+    }, options);
+    this.objectsRows.addEventListener('contextmenu', event => this.objectTreeContextMenu(event), options);
+    this.objectsRows.addEventListener('keydown', event => this.objectTreeKeydown(event), options);
+    this.objectsRows.addEventListener('dragstart', event => this.objectTreeDragStart(event), options);
+    this.objectsRows.addEventListener('dragover', event => this.objectTreeDragOver(event), options);
+    this.objectsRows.addEventListener('drop', event => this.objectTreeDrop(event), options);
+    this.objectsRows.addEventListener('dragend', () => {
+      this.objectsPanel.classList.remove('is-dragging');
+      for (const node of this.objectsTree.querySelectorAll<HTMLElement>('[data-drop-position],.is-drag-source')) {
+        delete node.dataset.dropPosition;
+        node.classList.remove('is-drag-source');
+      }
+    }, options);
+    this.objectsTreeMenu.addEventListener('click', event => this.objectTreeMenuClick(event), options);
+    this.objectsTreeMenu.addEventListener('keydown', event => this.objectTreeMenuKeydown(event), options);
+    this.objectsTreeResize.addEventListener('pointerdown', event => this.objectTreeResizeStart(event), options);
+    this.objectsTreeResize.addEventListener('keydown', event => this.objectTreeResizeKeydown(event), options);
     this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
     this.interval.addEventListener('change', () => this.select(), options);
     this.drawingSidebar.addEventListener('click', event => this.drawingSidebarClick(event), options);
@@ -676,6 +770,7 @@ export class CandlePanel implements IContentRenderer {
       focus: () => { const watch = this.watchList.find(item => item.state === 'armed' || item.state === 'draft'); if (watch) this.focusWatch(watch); },
     });
     this.loadDrawingTemplates();
+    this.loadObjectTreeForSelection();
     this.subscriptions.push({ dispose: this.engine.objects.subscribe(() => this.renderDrawingObjects()) });
     this.subscriptions.push(
       { dispose: this.engine.chart.on('draw:tool', () => this.syncDrawingActions()) },
@@ -715,26 +810,16 @@ export class CandlePanel implements IContentRenderer {
     );
     this.overlays.append(this.readout, this.activeIndicators);
     this.chart.append(this.overlays, this.heatmapControls.readout);
-    if (!sharedObjectsOwner) sharedObjectsOwner = this;
-    if (sharedObjectsOwner === this) {
-      this.chart.append(this.objectsPanel);
-      getSharedObjectsView().ownerId = params.api.id;
-    }
     this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
     document.addEventListener('visibilitychange', () => this.syncNetPositioning(), { signal: this.abort.signal });
     this.subscriptions.push(params.api.onDidActiveChange(({ isActive }) => {
       if (!isActive) return;
-      sharedObjectsOwner = this;
-      if (this.objectsPanel.open) this.attachObjectsPanel();
-      else this.updateObjectsSummary();
+      this.updateObjectsSummary();
     }));
     this.subscriptions.push(params.api.onDidFocusChange(({ isFocused }) => {
       this.chart.dataset.focused = String(isFocused);
-      if (isFocused && this.objectsPanel.open) {
-        sharedObjectsOwner = this;
-        this.attachObjectsPanel();
-      } else if (sharedObjectsOwner === this) this.updateObjectsSummary();
+      if (isFocused) this.updateObjectsSummary();
     }));
     this.register(params.api.id, this);
     this.subscribe();
@@ -828,10 +913,10 @@ export class CandlePanel implements IContentRenderer {
       this.footprintField('Cells', this.selectControl('cellStyle', [
         ['ladder', 'Bid / ask ladder'], ['profile', 'Volume profile'],
       ])),
-      this.footprintField('Statistics', this.selectControl('statsPosition', [
-        ['bottom', 'Bottom table'], ['bar', 'Volume / delta beside candle'],
+      this.footprintField('Totals position', this.selectControl('statsPosition', [
+        ['bottom', 'Bottom table'], ['bar', 'POC row'],
       ])),
-      this.footprintField('Cell opacity (%)', this.opacityControl()),
+      this.footprintField('Histogram background opacity (%)', this.opacityControl()),
       this.footprintField('Show execution candle', this.checkboxControl('showCandle')),
       this.footprintField('Show point of control', this.checkboxControl('showPoc')),
       this.footprintField('Show VAH and VAL', this.checkboxControl('showValueArea')),
@@ -1138,39 +1223,154 @@ export class CandlePanel implements IContentRenderer {
       this.drawPlacementState.textContent = '';
       this.drawPlacementState.hidden = true;
     }
-    const ownsOpenObjects = this.objectsPanel.open && sharedObjectsOwner === this;
+    const ownsOpenObjects = !this.objectTreeSidebarPreferences.collapsed;
     this.objectsToggle.setAttribute('aria-pressed', String(ownsOpenObjects));
     const objectCount = this.objectsToggle.dataset.count ?? '0';
     this.objectsToggle.setAttribute('aria-label', `Objects (${objectCount})`);
     this.objectsToggle.setAttribute('aria-expanded', String(ownsOpenObjects));
-    this.objectsToggle.title = `${ownsOpenObjects ? 'Hide' : 'Show'} chart objects (${objectCount})`;
+    this.objectsToggle.title = `${ownsOpenObjects ? 'Collapse' : 'Open'} object tree (${objectCount})`;
   }
 
   private toggleObjectsPanel() {
-    if (sharedObjectsOwner === this && this.objectsPanel.open) {
-      this.objectsPanel.open = false;
-      sharedObjectsOwner = undefined;
-      this.syncDrawingActions();
-      return;
-    }
-    sharedObjectsOwner = this;
-    this.objectsPanel.open = true;
-    this.attachObjectsPanel();
-    this.objectsPanel.scrollIntoView({ block: 'nearest' });
-    this.syncDrawingActions();
+    this.setObjectTreeCollapsed(!this.objectTreeSidebarPreferences.collapsed);
   }
 
   attachObjectsPanel() {
-    const view = getSharedObjectsView();
-    if (view.ownerId !== this.params.api.id) {
-      view.rowCache.clear();
-      view.paneSections.clear();
-      view.rows.replaceChildren();
-      view.ownerId = this.params.api.id;
-    }
-    sharedObjectsOwner = this;
-    this.chart.append(this.objectsPanel);
     this.renderDrawingObjects();
+  }
+
+  private loadObjectTreeSidebarPreferences() {
+    const key = objectTreeSidebarStorageKey(this.params.api.id);
+    this.objectTreeSidebarWarning = '';
+    try {
+      const raw = window.localStorage.getItem(key);
+      this.objectTreeSidebarPreferences = raw === null
+        ? createObjectTreeSidebarPreferences()
+        : parseIQObjectTreeSidebarPreferences(raw);
+    } catch (error) {
+      this.objectTreeSidebarPreferences = createObjectTreeSidebarPreferences();
+      this.objectTreeSidebarWarning = `Sidebar settings are session-only (${errorText(error)}).`;
+    }
+    this.applyObjectTreeSidebarPreferences();
+  }
+
+  private applyObjectTreeSidebarPreferences() {
+    this.objectsPanel.style.setProperty('--object-tree-width', `${this.objectTreeSidebarPreferences.width}px`);
+    this.objectsPanel.dataset.collapsed = String(this.objectTreeSidebarPreferences.collapsed);
+    const open = !this.objectTreeSidebarPreferences.collapsed;
+    this.objectsCollapse.setAttribute('aria-label', `${open ? 'Collapse' : 'Reopen'} object tree sidebar`);
+    this.objectsCollapse.title = `${open ? 'Collapse' : 'Reopen'} sidebar`;
+    this.objectsCollapse.replaceChildren(drawingSidebarIcon(open ? 'collapse' : 'expand'));
+    this.objectsCollapse.setAttribute('aria-expanded', String(open));
+    this.objectsTreeResize.setAttribute('aria-valuemin', String(OBJECT_TREE_MIN_WIDTH));
+    this.objectsTreeResize.setAttribute('aria-valuemax', String(OBJECT_TREE_MAX_WIDTH));
+    this.objectsTreeResize.setAttribute('aria-valuenow', String(this.objectTreeSidebarPreferences.width));
+    this.objectsToggle.setAttribute('aria-pressed', String(open));
+    this.objectsToggle.setAttribute('aria-expanded', String(open));
+    this.objectsToggle.title = `${open ? 'Collapse' : 'Open'} object tree`;
+  }
+
+  private saveObjectTreeSidebarPreferences() {
+    try {
+      window.localStorage.setItem(objectTreeSidebarStorageKey(this.params.api.id), JSON.stringify(this.objectTreeSidebarPreferences));
+      this.objectTreeSidebarWarning = '';
+    } catch (error) {
+      this.objectTreeSidebarWarning = `Sidebar settings are session-only (${errorText(error)}).`;
+    }
+    this.updateObjectTreeStatus();
+  }
+
+  private setObjectTreeCollapsed(collapsed: boolean) {
+    if (this.objectTreeSidebarPreferences.collapsed === collapsed) return;
+    this.objectTreeSidebarPreferences = { ...this.objectTreeSidebarPreferences, collapsed };
+    this.applyObjectTreeSidebarPreferences();
+    this.saveObjectTreeSidebarPreferences();
+    this.syncDrawingActions();
+  }
+
+  private objectTreeResizeStart(event: PointerEvent) {
+    if (event.button !== 0 || this.objectTreeSidebarPreferences.collapsed) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const startX = event.clientX;
+    const startWidth = this.objectTreeSidebarPreferences.width;
+    const maxAvailable = Math.max(OBJECT_TREE_MIN_WIDTH, Math.min(OBJECT_TREE_MAX_WIDTH, Math.floor(this.chartWorkspace.clientWidth * .55)));
+    const onMove = (move: PointerEvent) => {
+      if (move.pointerId !== event.pointerId) return;
+      const width = Math.max(OBJECT_TREE_MIN_WIDTH, Math.min(maxAvailable, Math.round(startWidth + startX - move.clientX)));
+      this.objectTreeSidebarPreferences = { ...this.objectTreeSidebarPreferences, width };
+      this.applyObjectTreeSidebarPreferences();
+    };
+    const onUp = (up: PointerEvent) => {
+      if (up.pointerId !== event.pointerId) return;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      this.saveObjectTreeSidebarPreferences();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  }
+
+  private objectTreeResizeKeydown(event: KeyboardEvent) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const amount = event.shiftKey ? 30 : 10;
+    const width = this.objectTreeSidebarPreferences.width + (event.key === 'ArrowLeft' ? amount : -amount);
+    this.objectTreeSidebarPreferences = createObjectTreeSidebarPreferences(width, this.objectTreeSidebarPreferences.collapsed);
+    this.applyObjectTreeSidebarPreferences();
+    this.saveObjectTreeSidebarPreferences();
+  }
+
+  private loadObjectTreeForSelection() {
+    const key = objectTreeStorageKey(this.params.api.id, instrumentKey(this.selection), instrumentOf(this.selection).native);
+    if (key === this.objectTreeScope && this.objectTreeRepository) return;
+    this.objectTreeScope = key;
+    this.objectTreeStorageWarning = '';
+    this.renamingFolderId = undefined;
+    this.renamingDrawingId = undefined;
+    this.collapsedTreeFolders.clear();
+    try {
+      this.objectTreeRepository = new IQObjectTreeRepository(createLocalStorageObjectTreeStorage(window.localStorage), key);
+      this.objectTreeCatalog = this.objectTreeRepository.load();
+    } catch (error) {
+      this.objectTreeStorageWarning = `Saved object tree is preserved; using session memory (${errorText(error)}).`;
+      this.objectTreeRepository = new IQObjectTreeRepository(createMemoryObjectTreeStorage(), key);
+      this.objectTreeCatalog = this.objectTreeRepository.load();
+    }
+    this.renderDrawingObjects();
+  }
+
+  private persistObjectTree() {
+    if (!this.objectTreeRepository) return;
+    this.objectTreeCatalog = this.objectTreeRepository.save(this.objectTreeCatalog);
+    this.updateObjectTreeStatus();
+  }
+
+  private updateObjectTreeStatus() {
+    const writeError = this.objectTreeRepository?.error();
+    const messages = [this.objectTreeStorageWarning, writeError ? `Object tree changes are session-only (${errorText(writeError)}).` : '', this.objectTreeSidebarWarning].filter(Boolean);
+    this.objectsTreeStatus.textContent = messages.join(' ');
+    this.objectsTreeStatus.hidden = messages.length === 0;
+    this.objectsPanel.dataset.storage = messages.length ? 'degraded' : 'saved';
+  }
+
+  private createFolder(parentId: string | null) {
+    const id = `folder-${crypto.randomUUID()}`;
+    const next = createObjectTreeFolder(this.objectTreeCatalog, parentId, id, 'New folder');
+    if (!next) {
+      this.objectsTreeStatus.textContent = `Folders can be nested up to ${OBJECT_TREE_MAX_DEPTH} levels.`;
+      this.objectsTreeStatus.hidden = false;
+      return;
+    }
+    this.objectTreeCatalog = next;
+    this.collapsedTreeFolders.delete(parentId ?? '');
+    this.renamingFolderId = id;
+    this.persistObjectTree();
+    this.renderDrawingObjects();
+    const input = [...this.objectsTree.querySelectorAll<HTMLInputElement>('.chart-object-folder-name-input')].find(candidate => candidate.dataset.treeId === id);
+    input?.focus(); input?.select();
   }
 
   private duplicateDrawings(ids: readonly string[]) {
@@ -1215,8 +1415,7 @@ export class CandlePanel implements IContentRenderer {
     });
     this.objectsToggle.dataset.count = String(objects.length);
     this.objectsToggle.setAttribute('aria-label', `Objects (${objects.length})`);
-    this.objectsToggle.title = `${this.objectsPanel.open ? 'Hide' : 'Show'} chart objects (${objects.length})`;
-    if (sharedObjectsOwner !== this || !this.objectsPanel.open) return;
+    this.objectsToggle.title = `${this.objectTreeSidebarPreferences.collapsed ? 'Open' : 'Collapse'} object tree (${objects.length})`;
     this.updateObjectsSummary();
     this.objectsPanel.dataset.focused = String(this.params?.api.isFocused ?? false);
     const activeIds = new Set(objects.map(object => object.id));
@@ -1225,13 +1424,26 @@ export class CandlePanel implements IContentRenderer {
       row.remove();
       this.objectRows.delete(id);
     }
+
+    const drawings = objects.filter(object => object.kind === 'drawing');
+    const inventory = objects.filter(object => object.kind !== 'drawing');
+    const reconciled = reconcileObjectTree(this.objectTreeCatalog, drawings.map(object => object.sourceId));
+    if (reconciled.changed) {
+      this.objectTreeCatalog = reconciled.catalog;
+      this.persistObjectTree();
+    }
+    this.renderObjectTree(drawings);
+    this.renderObjectInventory(inventory);
+    this.updateObjectTreeStatus();
+  }
+
+  private renderObjectInventory(objects: readonly ChartObjectSnapshot[]) {
+    this.objectsInventory.hidden = objects.length === 0;
     if (!objects.length) {
       for (const entry of this.objectPaneSections.values()) entry.section.remove();
       this.objectPaneSections.clear();
-      if (this.objectsRows.childElementCount !== 1 || this.objectsRows.firstElementChild !== this.emptyObjectsMessage) this.objectsRows.replaceChildren(this.emptyObjectsMessage!);
       return;
     }
-    this.emptyObjectsMessage?.remove();
     const grouped = new Map<number, ChartObjectSnapshot[]>();
     for (const object of objects) {
       const paneIndex = Number.isInteger(object.paneIndex) && object.paneIndex >= 0 ? object.paneIndex : 0;
@@ -1249,8 +1461,8 @@ export class CandlePanel implements IContentRenderer {
     const primaryPaneIndex = this.engine?.objects.primaryPaneIndex() ?? 0;
     paneIndexes.forEach((paneIndex, paneOrder) => {
       const section = this.objectPaneSection(paneIndex, primaryPaneIndex);
-      const currentSection = this.objectsRows.children.item(paneOrder);
-      if (currentSection !== section.section) this.objectsRows.insertBefore(section.section, currentSection);
+      const currentSection = this.objectsInventoryRows.children.item(paneOrder);
+      if (currentSection !== section.section) this.objectsInventoryRows.insertBefore(section.section, currentSection);
       grouped.get(paneIndex)!.forEach((object, rowOrder) => {
         const row = this.updateObjectRow(object);
         row.dataset.objectPaneIndex = String(paneIndex);
@@ -1258,6 +1470,488 @@ export class CandlePanel implements IContentRenderer {
         if (currentRow !== row) section.rows.insertBefore(row, currentRow);
       });
     });
+  }
+
+  private renderObjectTree(drawings: readonly ChartObjectSnapshot[]) {
+    const byDrawingId = new Map(drawings.map(object => [object.sourceId, object]));
+    const desired = this.objectTreeCatalog.entries.map(entry => this.renderObjectTreeNode(entry, byDrawingId, 1)).filter((node): node is HTMLDivElement => Boolean(node));
+    reconcileElementChildren(this.objectsTree, desired);
+    const activeKeys = new Set<string>();
+    const collectKeys = (entries: readonly ObjectTreeEntry[]) => entries.forEach(entry => {
+      activeKeys.add(entry.type === 'folder' ? `folder:${entry.id}` : `drawing:${entry.drawingId}`);
+      if (entry.type === 'folder') collectKeys(entry.children);
+    });
+    collectKeys(this.objectTreeCatalog.entries);
+    for (const key of this.treeNodes.keys()) if (!activeKeys.has(key)) { this.treeNodes.delete(key); this.treeRows.delete(key); }
+    const activeFolders = new Set(objectTreeFolderPaths(this.objectTreeCatalog.entries).map(folder => folder.id));
+    for (const id of this.collapsedTreeFolders) if (!activeFolders.has(id)) this.collapsedTreeFolders.delete(id);
+    this.emptyObjectsMessage.hidden = desired.length > 0;
+    if (!this.objectTreeFocusedKey || !this.objectTreeNode(this.objectTreeFocusedKey)) {
+      this.objectTreeFocusedKey = this.firstVisibleObjectTreeKey() ?? '';
+    }
+    for (const node of this.objectsTree.querySelectorAll<HTMLElement>('[role="treeitem"]')) {
+      node.tabIndex = node.dataset.treeKey === this.objectTreeFocusedKey ? 0 : -1;
+    }
+  }
+
+  private renderObjectTreeNode(entry: ObjectTreeEntry, drawings: ReadonlyMap<string, ChartObjectSnapshot>, level: number): HTMLDivElement | undefined {
+    const key = entry.type === 'folder' ? `folder:${entry.id}` : `drawing:${entry.drawingId}`;
+    let node = this.treeNodes.get(key);
+    if (!node) {
+      node = document.createElement('div');
+      node.className = 'chart-object-tree-node';
+      node.dataset.treeKey = key;
+      node.tabIndex = -1;
+      node.setAttribute('role', 'treeitem');
+      if (entry.type === 'folder') {
+        const row = document.createElement('div'); row.className = 'chart-object-folder-row';
+        const expand = this.objectTreeControl('Expand folder', 'expand', 'chart-object-folder-expand');
+        expand.dataset.treeAction = 'expand';
+        const visible = this.objectTreeControl('Show all drawings in folder', 'eye', 'chart-object-folder-visibility');
+        visible.dataset.treeAction = 'folder-visibility';
+        const name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name';
+        name.dataset.treeAction = 'toggle-folder';
+        const more = this.objectTreeControl('Folder actions', 'more', 'chart-object-tree-more');
+        more.dataset.treeAction = 'menu';
+        row.append(expand, visible, name, more);
+        const children = document.createElement('div'); children.className = 'chart-object-children'; children.setAttribute('role', 'group');
+        node.append(row, children);
+        this.treeRows.set(key, row);
+      } else {
+        const object = drawings.get(entry.drawingId);
+        if (!object) return undefined;
+        const row = this.updateObjectRow(object);
+        row.dataset.treeRow = 'true';
+        node.append(row);
+        this.treeRows.set(key, row);
+      }
+      this.treeNodes.set(key, node);
+    }
+    node.dataset.treeKind = entry.type;
+    node.dataset.treeId = entry.type === 'folder' ? entry.id : entry.drawingId;
+    node.draggable = true;
+    node.setAttribute('aria-level', String(level));
+    node.dataset.treeKey = key;
+    if (entry.type === 'drawing') {
+      const object = drawings.get(entry.drawingId);
+      if (!object) return undefined;
+      const row = this.updateObjectRow(object);
+      if (node.firstElementChild !== row) node.replaceChildren(row);
+      row.dataset.treeRow = 'true';
+      row.dataset.objectPaneIndex = String(object.paneIndex);
+      const name = row.querySelector<HTMLButtonElement>('.chart-object-name');
+      let renameInput = row.querySelector<HTMLInputElement>('.chart-object-drawing-name-input');
+      if (this.renamingDrawingId === entry.drawingId) {
+        if (!renameInput) {
+          renameInput = this.makeTreeRenameInput('drawing', entry.drawingId);
+          name?.replaceWith(renameInput);
+        }
+        if (document.activeElement !== renameInput) renameInput.value = entry.name ?? name?.textContent ?? '';
+      } else {
+        if (renameInput && name) renameInput.replaceWith(name);
+        if (name && entry.name !== undefined) name.textContent = entry.name;
+        if (name && entry.name === undefined) {
+          const drawing = this.engine?.drawings.get(object.sourceId);
+          name.textContent = drawing ? drawingDisplayName(drawing, object.name) : object.name;
+        }
+      }
+      node.removeAttribute('aria-expanded');
+      return node;
+    }
+
+    const row = this.treeRows.get(key)!;
+    const expand = row.querySelector<HTMLButtonElement>('[data-tree-action="expand"]')!;
+    const visible = row.querySelector<HTMLButtonElement>('[data-tree-action="folder-visibility"]')!;
+    let name = row.querySelector<HTMLButtonElement>('.chart-object-folder-name');
+    const more = row.querySelector<HTMLButtonElement>('[data-tree-action="menu"]')!;
+    const children = node.querySelector<HTMLDivElement>('.chart-object-children')!;
+    const collapsed = this.collapsedTreeFolders.has(entry.id);
+    const state = this.folderVisibilityState(entry.id);
+    expand.replaceChildren(drawingSidebarIcon(collapsed ? 'expand' : 'chevron'));
+    expand.setAttribute('aria-label', `${collapsed ? 'Expand' : 'Collapse'} ${entry.name}`);
+    expand.setAttribute('aria-expanded', String(!collapsed));
+    visible.dataset.visibilityState = state;
+    visible.setAttribute('aria-pressed', String(state === 'all'));
+    visible.replaceChildren(drawingSidebarIcon(state === 'none' ? 'hiddenEye' : 'eye'));
+    visible.setAttribute('aria-label', state === 'all' ? `Hide all drawings in ${entry.name}` : `Show all drawings in ${entry.name}`);
+    visible.title = state === 'all' ? 'Hide all drawings in folder' : state === 'mixed' ? 'Show all drawings in folder' : 'Show all drawings in folder';
+    let renameInput = row.querySelector<HTMLInputElement>('.chart-object-folder-name-input');
+    if (this.renamingFolderId === entry.id) {
+      if (!renameInput) {
+        if (!name) {
+          name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name'; name.dataset.treeAction = 'toggle-folder';
+          more.before(name);
+        }
+        renameInput = this.makeTreeRenameInput('folder', entry.id);
+        name.replaceWith(renameInput);
+      }
+      if (document.activeElement !== renameInput) renameInput.value = entry.name;
+    } else {
+      if (renameInput) {
+        name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name'; name.dataset.treeAction = 'toggle-folder';
+        renameInput.replaceWith(name);
+      }
+      if (!name) {
+        name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name'; name.dataset.treeAction = 'toggle-folder';
+        more.before(name);
+      }
+      name.title = `${entry.name} · ${objectTreeFolderDrawingIds(this.objectTreeCatalog.entries, entry.id).length} drawings`;
+      name.textContent = entry.name;
+    }
+    more.dataset.treeId = entry.id;
+    children.hidden = collapsed;
+    node.setAttribute('aria-expanded', String(!collapsed));
+    const nested = entry.children.map(child => this.renderObjectTreeNode(child, drawings, level + 1)).filter((child): child is HTMLDivElement => Boolean(child));
+    reconcileElementChildren(children, nested);
+    return node;
+  }
+
+  private objectTreeControl(label: string, icon: string, className: string) {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = className; button.title = label; button.setAttribute('aria-label', label);
+    button.append(drawingSidebarIcon(icon));
+    return button;
+  }
+
+  private folderVisibilityState(folderId: string): 'all' | 'none' | 'mixed' {
+    return objectTreeFolderVisibilityState(this.objectTreeCatalog.entries, folderId, id => {
+      const drawing = this.engine?.drawings.get(id);
+      return drawing ? drawing.visible !== false : undefined;
+    });
+  }
+
+  private firstVisibleObjectTreeKey() {
+    const visible = [...this.objectsTree.querySelectorAll<HTMLElement>('[role="treeitem"]')]
+      .find(node => !node.closest('[hidden]'));
+    return visible?.dataset.treeKey;
+  }
+
+  private renderTreeAfterChange() {
+    this.renderDrawingObjects();
+    const focused = this.objectTreeNode(this.objectTreeFocusedKey);
+    if (focused) focused.focus();
+  }
+
+  private objectTreeNode(key: string) {
+    return this.treeNodes.get(key);
+  }
+
+  private makeTreeRenameInput(kind: 'folder' | 'drawing', id: string) {
+    const input = document.createElement('input'); input.type = 'text'; input.maxLength = 48;
+    input.className = kind === 'folder' ? 'chart-object-folder-name-input' : 'chart-object-drawing-name-input';
+    input.dataset.treeEdit = kind; input.dataset.treeId = id;
+    input.setAttribute('aria-label', kind === 'folder' ? 'Folder name' : 'Drawing name');
+    input.addEventListener('keydown', event => {
+      event.stopPropagation();
+      if (event.key === 'Enter') { event.preventDefault(); this.commitTreeRename(kind, id, input.value); }
+      else if (event.key === 'Escape') { event.preventDefault(); this.cancelTreeRename(kind, id); }
+    });
+    input.addEventListener('blur', () => this.commitTreeRename(kind, id, input.value));
+    return input;
+  }
+
+  private beginTreeRename(kind: 'folder' | 'drawing', id: string) {
+    if (kind === 'folder') this.renamingFolderId = id;
+    else this.renamingDrawingId = id;
+    this.renderDrawingObjects();
+    const selector = kind === 'folder' ? '.chart-object-folder-name-input' : '.chart-object-drawing-name-input';
+    const input = [...this.objectsTree.querySelectorAll<HTMLInputElement>(selector)].find(candidate => candidate.dataset.treeId === id);
+    input?.focus(); input?.select();
+  }
+
+  private commitTreeRename(kind: 'folder' | 'drawing', id: string, rawName: string) {
+    const editing = kind === 'folder' ? this.renamingFolderId === id : this.renamingDrawingId === id;
+    if (!editing) return;
+    const name = rawName.trim();
+    if (!name || name.length > 48) {
+      this.cancelTreeRename(kind, id);
+      this.objectsTreeStatus.textContent = 'Names must be 1–48 characters.';
+      this.objectsTreeStatus.hidden = false;
+      return;
+    }
+    const next = kind === 'folder'
+      ? renameObjectTreeFolder(this.objectTreeCatalog, id, name)
+      : renameObjectTreeDrawing(this.objectTreeCatalog, id, name);
+    if (kind === 'folder') this.renamingFolderId = undefined;
+    else this.renamingDrawingId = undefined;
+    if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); }
+    this.renderDrawingObjects();
+  }
+
+  private cancelTreeRename(kind: 'folder' | 'drawing', id: string) {
+    if (kind === 'folder' && this.renamingFolderId === id) this.renamingFolderId = undefined;
+    if (kind === 'drawing' && this.renamingDrawingId === id) this.renamingDrawingId = undefined;
+    this.renderDrawingObjects();
+  }
+
+  private objectTreeClick(event: Event) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tree-action]');
+    if (!button) return;
+    const action = button.dataset.treeAction;
+    const id = button.dataset.treeId ?? button.closest<HTMLElement>('[data-tree-kind]')?.dataset.treeId ?? '';
+    if (action === 'new-folder') this.createFolder(null);
+    else if ((action === 'expand' || action === 'toggle-folder') && id) {
+      this.collapsedTreeFolders.has(id) ? this.collapsedTreeFolders.delete(id) : this.collapsedTreeFolders.add(id);
+      this.objectTreeFocusedKey = `folder:${id}`;
+      this.renderDrawingObjects();
+      this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
+    } else if (action === 'folder-visibility' && id) {
+      this.setFolderVisibility(id, this.folderVisibilityState(id) !== 'all');
+    } else if (action === 'menu' && id) {
+      this.openObjectTreeMenu('folder', id, (event as MouseEvent).clientX, (event as MouseEvent).clientY);
+    }
+  }
+
+  private setFolderVisibility(folderId: string, visible: boolean) {
+    if (!this.engine) return;
+    const changed = applyObjectTreeFolderVisibility(
+      this.objectTreeCatalog.entries,
+      folderId,
+      visible,
+      id => this.engine?.drawings.get(id),
+      patches => this.engine?.drawings.updateMany(patches),
+    );
+    if (!changed) return;
+    this.engine.objects.refresh();
+    this.syncDrawingActions();
+  }
+
+  private objectTreeContextMenu(event: MouseEvent) {
+    const node = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
+    if (!node?.dataset.treeKind || !node.dataset.treeId) return;
+    event.preventDefault(); event.stopPropagation();
+    this.objectTreeFocusedKey = node.dataset.treeKey ?? '';
+    this.openObjectTreeMenu(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId, event.clientX, event.clientY);
+  }
+
+  private openObjectTreeMenu(kind: 'folder' | 'drawing', id: string, clientX = 0, clientY = 0) {
+    this.objectTreeMenuTarget = { kind, id };
+    this.objectsTreeMenu.replaceChildren();
+    const add = (label: string, action: string, options: { parentId?: string | null; disabled?: boolean } = {}) => {
+      const button = document.createElement('button'); button.type = 'button'; button.setAttribute('role', 'menuitem');
+      button.className = 'chart-object-tree-menu-item'; button.textContent = label; button.dataset.menuAction = action;
+      if (options.parentId !== undefined) button.dataset.menuParentId = options.parentId ?? '';
+      button.disabled = Boolean(options.disabled);
+      this.objectsTreeMenu.append(button);
+      return button;
+    };
+    const targetEntry = findObjectTreeEntry(this.objectTreeCatalog.entries, kind, id);
+    if (!targetEntry) return;
+    if (kind === 'drawing') {
+      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+      if (!object) return;
+      add('Select', 'select');
+      if (object.capabilities.visibility) add(object.visible ? 'Hide' : 'Show', 'visible');
+      if (object.capabilities.lock) add(object.locked ? 'Unlock' : 'Lock', 'lock');
+      add('Rename', 'rename');
+      if ((targetEntry as Extract<ObjectTreeEntry, { type: 'drawing' }>).name !== undefined) add('Use drawing tool name', 'reset-name');
+      if (object.kind === 'drawing' || object.capabilities.settings) add('Settings', 'settings');
+      add('Duplicate', 'duplicate');
+      add('Move up', 'move-up'); add('Move down', 'move-down');
+      if (object.capabilities.remove) add('Delete', 'remove');
+      this.addMoveToFolderMenuItems(add, kind, id);
+    } else {
+      const folder = targetEntry as Extract<ObjectTreeEntry, { type: 'folder' }>;
+      add('Rename', 'rename');
+      add('New subfolder', 'new-subfolder', { disabled: (objectTreeFolderDepth(this.objectTreeCatalog.entries, id) ?? OBJECT_TREE_MAX_DEPTH) >= OBJECT_TREE_MAX_DEPTH });
+      add('Show all drawings', 'show-folder'); add('Hide all drawings', 'hide-folder');
+      add('Move up', 'move-up'); add('Move down', 'move-down');
+      add('Delete folder (keep contents)', 'delete-folder');
+      this.addMoveToFolderMenuItems(add, kind, id);
+      if (!folder.children.length) add('Folder is empty', 'noop', { disabled: true });
+    }
+    const rect = this.objectsPanel.getBoundingClientRect();
+    const width = 244, height = Math.min(this.objectsTreeMenu.childElementCount * 27 + 8, window.innerHeight - 12);
+    const x = clientX || rect.left + 10, y = clientY || rect.top + 34;
+    this.objectsTreeMenu.style.left = `${Math.max(4, Math.min(window.innerWidth - width - 4, x))}px`;
+    this.objectsTreeMenu.style.top = `${Math.max(4, Math.min(window.innerHeight - height - 4, y))}px`;
+    if (this.objectsTreeMenu.parentElement !== document.body) document.body.append(this.objectsTreeMenu);
+    this.objectsTreeMenu.hidden = false;
+    requestAnimationFrame(() => this.objectsTreeMenu.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus());
+  }
+
+  private addMoveToFolderMenuItems(
+    add: (label: string, action: string, options?: { parentId?: string | null; disabled?: boolean }) => HTMLButtonElement,
+    kind: 'folder' | 'drawing', id: string,
+  ) {
+    add('Move to Folder · Root', 'move', { parentId: null });
+    const forbidden = kind === 'folder'
+      ? new Set([id, ...objectTreeFolderPaths([findObjectTreeEntry(this.objectTreeCatalog.entries, 'folder', id)!]).map(folder => folder.id)])
+      : new Set<string>();
+    for (const folder of objectTreeFolderPaths(this.objectTreeCatalog.entries)) {
+      if (forbidden.has(folder.id)) continue;
+      add(`Move to Folder · ${folder.path}`, 'move', { parentId: folder.id });
+    }
+  }
+
+  private objectTreeMenuClick(event: MouseEvent) {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-menu-action]');
+    const target = this.objectTreeMenuTarget;
+    if (!button || !target || button.disabled) return;
+    const action = button.dataset.menuAction;
+    const folderTarget = button.dataset.menuParentId || null;
+    if (action === 'rename') this.beginTreeRename(target.kind, target.id);
+    else if (action === 'new-subfolder') this.createFolder(target.id);
+    else if (action === 'show-folder') this.setFolderVisibility(target.id, true);
+    else if (action === 'hide-folder') this.setFolderVisibility(target.id, false);
+    else if (action === 'delete-folder') {
+      const next = deleteObjectTreeFolder(this.objectTreeCatalog, target.id);
+      if (next) { this.objectTreeCatalog = next; this.collapsedTreeFolders.delete(target.id); this.persistObjectTree(); this.renderDrawingObjects(); }
+    } else if (action === 'move' || action === 'move-up' || action === 'move-down') {
+      const next = action === 'move'
+        ? moveObjectTreeEntry(this.objectTreeCatalog, target.kind, target.id, folderTarget, folderTarget ? Number.MAX_SAFE_INTEGER : Number.MAX_SAFE_INTEGER)
+        : reorderObjectTreeEntry(this.objectTreeCatalog, target.kind, target.id, action === 'move-up' ? -1 : 1);
+      if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); }
+    } else if (target.kind === 'drawing') {
+      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === target.id);
+      if (action === 'reset-name') {
+        const next = clearObjectTreeDrawingName(this.objectTreeCatalog, target.id);
+        if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); }
+      } else if (object && action === 'select') {
+        this.engine?.objects.select(object.id); this.engine?.objects.focus(object.id); this.params.api.setActive(); this.syncDrawingActions();
+      } else if (object && action) this.applyNativeObjectAction(object, action);
+      if (action === 'remove') this.objectTreeFocusedKey = '';
+    }
+    this.objectsTreeMenu.hidden = true;
+    if (action !== 'rename' && action !== 'new-subfolder') this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
+  }
+
+  private objectTreeMenuKeydown(event: KeyboardEvent) {
+    const items = [...this.objectsTreeMenu.querySelectorAll<HTMLButtonElement>('button[role="menuitem"]:not(:disabled)')];
+    if (!items.length) return;
+    const current = items.indexOf(document.activeElement as HTMLButtonElement);
+    if (event.key === 'Escape') {
+      event.preventDefault(); this.objectsTreeMenu.hidden = true;
+      this.objectTreeNode(this.objectTreeFocusedKey)?.focus(); return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+      : (current + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+    items[next]?.focus();
+  }
+
+  private objectTreeKeydown(event: KeyboardEvent) {
+    const target = event.target as HTMLElement;
+    if (target.matches('input,textarea,select,[contenteditable="true"]')) return;
+    const node = target.closest<HTMLElement>('[role="treeitem"]');
+    if (!node) return;
+    const key = node.dataset.treeKey ?? '';
+    const kind = node.dataset.treeKind as 'folder' | 'drawing' | undefined;
+    const id = node.dataset.treeId ?? '';
+    const visibleNodes = [...this.objectsTree.querySelectorAll<HTMLElement>('[role="treeitem"]')].filter(item => !item.closest('[hidden]'));
+    const current = visibleNodes.indexOf(node);
+    const focus = (candidate: HTMLElement | undefined) => {
+      if (!candidate) return;
+      this.objectTreeFocusedKey = candidate.dataset.treeKey ?? '';
+      visibleNodes.forEach(item => { item.tabIndex = item === candidate ? 0 : -1; });
+      candidate.focus();
+      event.preventDefault();
+    };
+    if (event.key === 'ArrowDown') focus(visibleNodes[current + 1]);
+    else if (event.key === 'ArrowUp') focus(visibleNodes[current - 1]);
+    else if (event.key === 'Home') focus(visibleNodes[0]);
+    else if (event.key === 'End') focus(visibleNodes.at(-1));
+    else if (event.key === 'ArrowRight' && kind === 'folder') {
+      if (this.collapsedTreeFolders.has(id)) {
+        this.collapsedTreeFolders.delete(id); this.renderDrawingObjects(); focus(this.objectTreeNode(key));
+      } else focus(node.querySelector<HTMLElement>(':scope > .chart-object-children > [role="treeitem"]') ?? undefined);
+    } else if (event.key === 'ArrowLeft') {
+      if (kind === 'folder' && !this.collapsedTreeFolders.has(id)) {
+        this.collapsedTreeFolders.add(id); this.renderDrawingObjects(); focus(this.objectTreeNode(key));
+      } else focus(node.parentElement?.closest<HTMLElement>('[data-tree-kind="folder"]') ?? undefined);
+    } else if ((event.key === 'Enter' || event.key === ' ') && kind === 'folder') {
+      this.collapsedTreeFolders.has(id) ? this.collapsedTreeFolders.delete(id) : this.collapsedTreeFolders.add(id);
+      this.renderDrawingObjects(); focus(this.objectTreeNode(key));
+    } else if (event.key === 'Enter' && kind === 'drawing') {
+      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+      if (object) { this.engine?.objects.select(object.id); this.engine?.objects.focus(object.id); this.params.api.setActive(); this.syncDrawingActions(); }
+      event.preventDefault();
+    } else if (event.key === ' ' && kind === 'drawing') {
+      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+      if (object) this.applyNativeObjectAction(object, 'visible');
+      event.preventDefault();
+    } else if (event.key === 'F2' && kind) {
+      this.beginTreeRename(kind, id); event.preventDefault();
+    } else if ((event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) && kind) {
+      this.objectTreeFocusedKey = key; this.openObjectTreeMenu(kind, id); event.preventDefault();
+    } else if ((event.key === 'Delete' || event.key === 'Backspace') && kind === 'drawing') {
+      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+      if (object?.capabilities.remove) this.applyNativeObjectAction(object, 'remove');
+      event.preventDefault();
+    } else if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown') && kind) {
+      const next = reorderObjectTreeEntry(this.objectTreeCatalog, kind, id, event.key === 'ArrowUp' ? -1 : 1);
+      if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); focus(this.objectTreeNode(key)); }
+      event.preventDefault();
+    } else if (event.altKey && event.key === 'ArrowLeft' && kind === 'drawing') {
+      const next = moveObjectTreeEntry(this.objectTreeCatalog, 'drawing', id, null, Number.MAX_SAFE_INTEGER);
+      if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); focus(this.objectTreeNode(key)); }
+      event.preventDefault();
+    }
+  }
+
+  private objectTreeDragStart(event: DragEvent) {
+    if ((event.target as HTMLElement).closest('.chart-object-action,.chart-object-folder-expand,.chart-object-folder-visibility,.chart-object-tree-more,input,textarea,select,[contenteditable="true"]')) { event.preventDefault(); return; }
+    const node = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
+    if (!node?.dataset.treeKind || !node.dataset.treeId || !event.dataTransfer) return;
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', JSON.stringify({ kind: node.dataset.treeKind, id: node.dataset.treeId }));
+    this.objectTreeFocusedKey = node.dataset.treeKey ?? '';
+    node.classList.add('is-drag-source');
+    this.objectsPanel.classList.add('is-dragging');
+  }
+
+  private objectTreeDragOver(event: DragEvent) {
+    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
+    if (!target && !(event.target as HTMLElement).closest('.chart-object-tree')) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    for (const node of this.objectsTree.querySelectorAll<HTMLElement>('[data-drop-position]')) delete node.dataset.dropPosition;
+    if (target) {
+      const rect = target.dataset.treeKind === 'folder'
+        ? target.querySelector<HTMLElement>(':scope > .chart-object-folder-row')?.getBoundingClientRect() ?? target.getBoundingClientRect()
+        : target.getBoundingClientRect();
+      target.dataset.dropPosition = target.dataset.treeKind === 'folder' && event.clientY > rect.top + rect.height * .25 && event.clientY < rect.bottom - rect.height * .25
+        ? 'inside' : event.clientY >= rect.top + rect.height / 2 ? 'after' : 'before';
+    }
+  }
+
+  private objectTreeDrop(event: DragEvent) {
+    if (!event.dataTransfer) return;
+    let source: { kind: 'folder' | 'drawing'; id: string };
+    try { source = JSON.parse(event.dataTransfer.getData('text/plain')) as { kind: 'folder' | 'drawing'; id: string }; }
+    catch { return; }
+    if ((source.kind !== 'folder' && source.kind !== 'drawing') || typeof source.id !== 'string') return;
+    event.preventDefault();
+    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
+    let parentId: string | null = null, index = Number.MAX_SAFE_INTEGER;
+    if (target?.dataset.treeKind && target.dataset.treeId) {
+      const targetKind = target.dataset.treeKind as 'folder' | 'drawing';
+      const targetLocation = locateObjectTreeEntry(this.objectTreeCatalog.entries, targetKind, target.dataset.treeId);
+      const rect = targetKind === 'folder'
+        ? target.querySelector<HTMLElement>(':scope > .chart-object-folder-row')?.getBoundingClientRect() ?? target.getBoundingClientRect()
+        : target.getBoundingClientRect();
+      const intoFolder = targetKind === 'folder' && event.clientY > rect.top + rect.height * .25 && event.clientY < rect.bottom - rect.height * .25;
+      if (intoFolder) parentId = target.dataset.treeId;
+      else if (targetLocation) {
+        parentId = targetLocation.parentId;
+        index = targetLocation.index + (event.clientY >= rect.top + rect.height / 2 ? 1 : 0);
+      }
+    }
+    const next = moveObjectTreeEntry(this.objectTreeCatalog, source.kind, source.id, parentId, index);
+    if (!next) {
+      this.objectsTreeStatus.textContent = `This move would exceed the ${OBJECT_TREE_MAX_DEPTH}-level folder depth or create a cycle.`;
+      this.objectsTreeStatus.hidden = false;
+      return;
+    }
+    this.objectTreeCatalog = next;
+    this.persistObjectTree();
+    this.renderDrawingObjects();
+    this.objectsPanel.classList.remove('is-dragging');
+    for (const node of this.objectsTree.querySelectorAll<HTMLElement>('[data-drop-position],.is-drag-source')) {
+      delete node.dataset.dropPosition;
+      node.classList.remove('is-drag-source');
+    }
   }
 
   private updateObjectRow(object: ChartObjectSnapshot) {
@@ -1275,12 +1969,10 @@ export class CandlePanel implements IContentRenderer {
       name.className = 'chart-object-name';
       name.addEventListener('click', () => {
         const id = row!.dataset.objectId ?? '';
-        const owner = sharedObjectsOwner;
-        if (!owner) return;
-        owner.params.api.setActive();
-        owner.engine?.objects.select(id);
-        owner.engine?.objects.focus(id);
-        owner.syncDrawingActions();
+        this.params.api.setActive();
+        this.engine?.objects.select(id);
+        this.engine?.objects.focus(id);
+        this.syncDrawingActions();
       });
     }
     const drawing = object.kind === 'drawing'
@@ -1299,11 +1991,13 @@ export class CandlePanel implements IContentRenderer {
     if (object.kind === 'drawing') actions.push({ label: 'Duplicate', action: 'duplicate', title: 'Duplicate drawing' });
     if (object.kind === 'drawing' || object.capabilities.settings) actions.push({ label: 'Style', action: 'settings', title: 'Open object settings' });
     if (object.capabilities.remove) actions.push({ label: '×', action: 'remove', title: 'Remove object' });
+    if (object.kind === 'drawing') actions.push({ label: '', action: 'more', title: 'More drawing actions' });
     const actionButtons = actions.map(({ label, action, title }) => {
       let button = [...row!.querySelectorAll<HTMLButtonElement>('button[data-object-action]')].find(candidate => candidate.dataset.objectAction === action);
       if (!button) button = this.objectActionButton(label, action, object.id, title);
       if (button.textContent !== label) button.textContent = label;
       if (button.title !== title) button.title = title;
+      if (button.getAttribute('aria-label') !== title) button.setAttribute('aria-label', title);
       button.dataset.objectId = object.id;
       return button;
     });
@@ -1325,8 +2019,14 @@ export class CandlePanel implements IContentRenderer {
 
   private objectActionButton(label: string, action: string, id: string, title: string) {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'chart-object-action';
-    button.textContent = label; button.title = title; button.dataset.objectAction = action; button.dataset.objectId = id;
-    button.addEventListener('click', event => { event.stopPropagation(); sharedObjectsOwner?.drawingObjectAction(event); });
+    if (action === 'more') button.append(drawingSidebarIcon('more'));
+    else button.textContent = label;
+    button.title = title; button.setAttribute('aria-label', title); button.dataset.objectAction = action; button.dataset.objectId = id;
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      if (action === 'more') this.openObjectTreeMenu('drawing', this.engine?.objects.get(id)?.sourceId ?? id, (event as MouseEvent).clientX, (event as MouseEvent).clientY);
+      else this.drawingObjectAction(event);
+    });
     return button;
   }
 
@@ -1336,7 +2036,13 @@ export class CandlePanel implements IContentRenderer {
     const id = button.dataset.objectId ?? '';
     const object = this.engine.objects.get(id);
     if (!object) return;
-    switch (button.dataset.objectAction) {
+    this.applyNativeObjectAction(object, button.dataset.objectAction ?? '');
+  }
+
+  private applyNativeObjectAction(object: ChartObjectSnapshot, action: string) {
+    if (!this.engine) return;
+    const id = object.id;
+    switch (action) {
       case 'visible': {
         if (object.kind === 'drawing') {
           const drawing = this.engine.drawings.get(object.sourceId);
@@ -1398,6 +2104,9 @@ export class CandlePanel implements IContentRenderer {
     }
     if (field.kind === 'levels') {
       const textarea = document.createElement('textarea'); textarea.rows = 5; textarea.value = JSON.stringify(value ?? [], null, 2); return textarea;
+    }
+    if (field.kind === 'text' && field.path === 'text.value') {
+      const textarea = document.createElement('textarea'); textarea.rows = 3; textarea.value = value === undefined || value === null ? String(field.defaultValue ?? '') : String(value); return textarea;
     }
     const input = document.createElement('input');
     if (field.kind === 'color' && typeof value === 'string' && /^#[\da-f]{6}$/i.test(value)) input.type = 'color';
@@ -1531,15 +2240,15 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private drawingTemplatePatch(drawing: Drawing, template: IQDrawingTemplateRecord, placementInterval?: string): DrawingPatch {
-    // Text content is the text tool's visible label. It follows the template's
-    // explicit Include label bit rather than being copied as an ordinary style
-    // field; omitted labels leave the target content intact, including older
-    // catalogs that may contain text.value in nativeValues.
-    const nativeValues = drawing.tool === 'text'
+    // Native text content is controlled by the template's Include label bit.
+    // Omitted labels leave the target content intact, including older catalogs
+    // that may contain text.value in nativeValues.
+    const textIsContent = drawingSettingsSchema(drawing.tool).textIsContent === true;
+    const nativeValues = textIsContent
       ? Object.fromEntries(Object.entries(template.nativeValues).filter(([path]) => path !== 'text.value'))
       : template.nativeValues;
     const nativePatch = drawingSettingsPatch(drawing, nativeValues, drawingSettingsSchema(drawing.tool));
-    const textLabelPatch = drawing.tool === 'text' && template.label.present
+    const textLabelPatch = textIsContent && template.label.present
       ? { text: { ...drawing.text, ...(nativePatch.text ?? {}), value: template.label.value } }
       : {};
     return {
@@ -2107,6 +2816,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private select() {
+    this.engine?.setExecutionHoverRay(null);
     const series = seriesForInstrument(this.instrument.value, this.interval.value as Interval);
     const wasFootprint = this.selection.type === 'footprint';
     if (series) this.marketButton.textContent = instrumentLabel(series);
@@ -2121,6 +2831,7 @@ export class CandlePanel implements IContentRenderer {
     if (wasFootprint && this.selection.type === 'candle') this.engine?.setDisplayMode('candle');
     this.engine?.setFootprintBars([], false);
     this.footprintBars = [];
+    this.footprintSnapshotSignature = undefined;
     this.candles = [];
     this.studyHost?.setSeries(this.selection);
     this.updateDepthNotice();
@@ -2128,6 +2839,7 @@ export class CandlePanel implements IContentRenderer {
     this.hoveredFootprint = null;
     this.updateReadout(null);
     this.subscribe();
+    this.refreshExecutionHover(this.params.api.id);
     this.save();
   }
 
@@ -2136,6 +2848,7 @@ export class CandlePanel implements IContentRenderer {
     const epoch = ++this.selectionEpoch;
     const selection = this.selection;
     this.engine?.setDrawingContext(selection);
+    this.loadObjectTreeForSelection();
     this.params.api.setTitle(`${instrumentLabel(selection)} · ${selection.interval}`);
     this.chart.setAttribute('aria-label', `${instrumentLabel(selection)} candlestick chart`);
     this.updateInstrumentMetadata();
@@ -2318,7 +3031,7 @@ export class CandlePanel implements IContentRenderer {
     const key = attached && supportsDepth(this.selection) ? `${this.selectionEpoch}:${instrumentKey(this.selection)}:${this.selection.interval}:${this.selection.rowPrice}` : '';
     if (key === this.footprintSubscriptionKey) return;
     this.releaseFootprint?.(); this.releaseFootprint = undefined; this.footprintSubscriptionKey = key;
-    const generation = ++this.footprintGeneration; this.footprintBars = []; this.footprintNeedsSync = true; this.footprintHasInitialView = false;
+    const generation = ++this.footprintGeneration; this.footprintBars = []; this.footprintSnapshotSignature = undefined; this.footprintNeedsSync = true; this.footprintHasInitialView = false;
     if (this.selection.type === 'footprint') this.engine?.setFootprintBars([], false);
     if (!key) return;
     const epoch = this.selectionEpoch;
@@ -2344,15 +3057,20 @@ export class CandlePanel implements IContentRenderer {
         this.updateStatus();
         this.persistValidatedFootprintPrice(event.status);
       } else if (event.type === 'footprint-snapshot') {
-        this.footprintBars = event.bars.slice().sort((a, b) => a.time - b.time);
+        const nextBars = event.bars.slice().sort((a, b) => a.time - b.time);
+        const nextSignature = footprintSnapshotSignature(nextBars);
+        const unchanged = sameFootprintSnapshot(this.footprintSnapshotSignature, nextSignature);
+        this.footprintBars = nextBars;
+        this.footprintSnapshotSignature = nextSignature;
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
         if (this.visible && this.selection.type === 'footprint') {
-          this.engine?.setFootprintBars(this.footprintBars, true);
+          if (!unchanged || this.footprintNeedsSync) this.engine?.setFootprintBars(this.footprintBars, true);
           this.footprintNeedsSync = false;
           this.focusFootprintOnce();
           if (this.visible && !this.hoveredFootprint) this.refreshReadout();
         } else this.footprintNeedsSync = true;
       } else if (event.type === 'footprint-patch') {
+        this.footprintSnapshotSignature = undefined;
         this.mergeFootprints(event.bars, event.retentionStart);
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
         if (this.visible && this.selection.type === 'footprint') {
@@ -2627,6 +3345,7 @@ export class CandlePanel implements IContentRenderer {
       heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
       netPositioning: { panes: this.engine?.netPositioningDiagnostics() ?? [], request: this.netPositioningRequestKey,
         histories: [...this.netPositioningHistories.values()].map(history => history.diagnostics()), errors: Object.fromEntries(this.netPositioningErrors) },
+      executionHoverRay: this.engine?.executionHoverDiagnostics() ?? { active: false, executionId: null, geometry: null },
       orderWalls: { ...this.engine?.orderWallsDiagnostics(), status: this.orderWallsStatus,
         settings: orderWallsSettings(this.nativeIndicator(ORDER_WALLS_ID)?.settings ?? DEFAULT_ORDER_WALLS_SETTINGS) },
       studies: this.studyHost?.diagnostics(),
@@ -2636,15 +3355,14 @@ export class CandlePanel implements IContentRenderer {
   dispose() {
     this.cancelWatchPick?.();
     this.dead = true;
-    if (sharedObjectsOwner === this) {
-      sharedObjectsOwner = undefined;
-      this.objectsPanel.open = false;
-      this.objectsPanel.remove();
-      this.objectRows.clear();
-      this.objectPaneSections.clear();
-      getSharedObjectsView().ownerId = undefined;
-      this.objectsRows.replaceChildren();
-    }
+    this.objectsTreeMenu.hidden = true;
+    this.objectsTreeMenu.remove();
+    this.objectsPanel.remove();
+    this.objectsRows.replaceChildren();
+    this.objectRows.clear();
+    this.objectPaneSections.clear();
+    this.treeRows.clear();
+    this.treeNodes.clear();
     this.selectionEpoch++;
     clearInterval(this.timer);
     this.toolbarResizeObserver?.disconnect();
@@ -2684,6 +3402,24 @@ function lowerBoundFootprintBar(bars: readonly FootprintBar[], time: number) {
   let lo = 0, hi = bars.length;
   while (lo < hi) { const mid = (lo + hi) >>> 1; if (bars[mid]!.time < time) lo = mid + 1; else hi = mid; }
   return lo;
+}
+
+const footprintSnapshotFields: readonly (keyof FootprintBar)[] = [
+  'time', 'revision', 'delta', 'minDelta', 'maxDelta', 'quoteDelta', 'minQuoteDelta', 'maxQuoteDelta', 'rowSize',
+  'source', 'granularity', 'coverage', 'gapBefore', 'open', 'high', 'low', 'close', 'aggregateRecordCount',
+];
+const footprintCellFields: readonly (keyof FootprintBar['cells'][number])[] = ['price', 'bidVol', 'askVol', 'bidNotional', 'askNotional'];
+
+/** Immutable, bounded data signature for skipping duplicate worker snapshots. */
+function footprintSnapshotSignature(bars: readonly FootprintBar[]) {
+  return bars.map(bar => JSON.stringify([
+    footprintSnapshotFields.map(field => bar[field]),
+    bar.cells.map(cell => footprintCellFields.map(field => cell[field])),
+  ]));
+}
+
+function sameFootprintSnapshot(previous: readonly string[] | undefined, next: readonly string[]) {
+  return previous !== undefined && previous.length === next.length && previous.every((bar, index) => bar === next[index]);
 }
 
 const footprintPriceFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });

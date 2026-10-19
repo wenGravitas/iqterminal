@@ -57,6 +57,21 @@ describe('native drawing settings capture', () => {
     expect(text).toMatchObject({ 'text.value': 'Text', 'text.fontSize': 14, 'text.color': darkPalette.lineColor });
   });
 
+  it('uses the native Callout content and default font size', () => {
+    const callout = drawing('callout');
+    const schema = iqDrawingSettingsSchema('callout');
+    const settings = captureDrawingSettings(callout, schema, darkPalette);
+
+    expect(schema.textIsContent).toBe(true);
+    expect(settings).toMatchObject({
+      'style.color': darkPalette.lineColor,
+      'text.value': 'Note',
+      'text.fontSize': 12,
+      'text.color': darkPalette.lineColor,
+    });
+    expect(callout.text).toBeUndefined();
+  });
+
   it('preserves explicit false, zero, and empty settings over effective defaults', () => {
     const source = drawing('horizontal-line', {
       style: { color: '#abcdef', lineWidth: 0, lineStyle: 'dotted', showLabels: false },

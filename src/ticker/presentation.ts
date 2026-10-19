@@ -9,6 +9,7 @@ export function compactSize(value: number) { return Math.abs(value) >= 1e6 ? `${
 export function tradeText(r: ClassifiedTrade) { const e = r.execution; return `${marketName(`${e.venue}:${e.market}`)} · ${e.side} · ${compactSize(e.quantity)} BTC · ${compactSize(e.quantity*e.price)} USDT`; }
 export function tradeRow(r: ClassifiedTrade, pulse = false) {
   const row = document.createElement('tr'); row.className = 'ticker-row';
+  row.tabIndex = -1;
   for(const id of ['time',...TICKER_COLUMNS.map(col=>col.id)]){const cell=document.createElement('td');cell.dataset.column=id;row.append(cell);}
   updateTradeRow(row,r,pulse); return row;
 }
@@ -19,6 +20,7 @@ export function updateTradeRow(row:HTMLTableRowElement,r:ClassifiedTrade,pulse=f
   row.classList.remove('emphasized','trade-pulse');row.style.removeProperty('--trade-color');
   if (tier) { row.style.setProperty('--trade-color', e.side === 'buy' ? tier.buyColor : e.side === 'sell' ? tier.sellColor : 'var(--muted)'); row.classList.toggle('emphasized',tier.bold); row.classList.toggle('trade-pulse',pulse && tier.pulse); }
   row.title = `${tradeText(r)} · ${e.granularity} (reported print)${tier ? ` · ${tier.name}` : ''}`;
+  row.setAttribute('aria-label', `${e.venue === 'binance' ? 'Binance' : 'Hyperliquid'} ${e.market === 'perpetual' ? 'perpetual' : 'spot'} ${e.side} execution · ${new Date(e.timeMs).toISOString().slice(11,23)} UTC · ${priceFormat.format(e.price)} USDT`);
   const cells = [new Date(e.timeMs).toISOString().slice(11,23), '', e.venue === 'binance' ? 'Binance' : 'Hyperliquid', e.market === 'perpetual' ? 'Perp' : 'Spot', e.side === 'unknown' ? '?' : e.side === 'buy' ? 'B' : 'S', priceFormat.format(e.price), `${compactSize(e.quantity)} BTC`, `${compactSize(e.quantity*e.price)} USDT`];
   cells.forEach((text,i)=>{row.children[i].textContent=text;});
   const logo=document.createElement('img');logo.className='ticker-venue-icon';logo.src=e.venue==='binance'?'/venues/binance.ico':'/venues/hyperliquid.png';logo.alt=e.venue==='binance'?'Binance':'Hyperliquid';row.children[1].replaceChildren(logo);

@@ -6,6 +6,7 @@ import './style.css';
 import { ThemeController, THEME_EVENT, currentTheme } from './theme';
 import { Notifications } from './notifications';
 import { TradeTickerPanel } from './ticker/panel';
+import { TickerExecutionHoverCoordinator } from './ticker/hover';
 import { FeedClient } from './feed/client';
 import { Scheduler } from './chart/scheduler';
 import { CandlePanel, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
@@ -27,6 +28,7 @@ const notifications = new Notifications();
 const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
 const panels = new Map<string, CandlePanelInstance>();
+const executionHover = new TickerExecutionHoverCoordinator();
 const root = document.querySelector<HTMLElement>('#workspace')!;
 const add = document.querySelector<HTMLButtonElement>('#add')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
@@ -101,13 +103,13 @@ dock = createDockview(root, {
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
-    if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);});
+    if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);},(sourceId,execution)=>executionHover.publish(sourceId,execution),execution=>executionHover.addExecutionRay(execution));
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {
-        if (panel) {panels.set(id, panel);panel.setWatchZones(watchSnapshot?.watches??[]);}
-        else panels.delete(id);
+        if (panel) {panels.set(id, panel);executionHover.registerChart(id,{series:()=>panel.series,setExecutionHoverRay:execution=>panel.setExecutionHoverRay(execution),addExecutionRay:execution=>panel.addExecutionRay(execution)});panel.setWatchZones(watchSnapshot?.watches??[]);}
+        else {executionHover.registerChart(id,null);panels.delete(id);}
         editor?.refreshTargets();
-      }, openEditor);
+      }, openEditor, id => executionHover.refreshChart(id));
     }
     if (options.name === 'script-editor') {
       editor = new LazyScriptEditorPanel(library, () => [...panels].map(([id, panel]) => ({ id, panel })), save);

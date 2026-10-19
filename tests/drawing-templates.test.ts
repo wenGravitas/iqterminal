@@ -77,6 +77,32 @@ describe('IQ drawing template catalog', () => {
     expect(repository(storage).load()).toEqual(edited);
   });
 
+  it('accepts Callout content templates and permits a default for every drawing tool', () => {
+    const storage = createMemoryDrawingTemplateStorage();
+    const store = repository(storage);
+    const callout = store.saveTemplate('Callout note', 'callout', {
+      ...snapshot,
+      nativeValues: { 'style.color': '#26a69a', 'text.fontSize': 12 },
+      label: { present: true, value: 'Earnings note' },
+    });
+    const id = callout.templates[0]!.id;
+
+    store.toggleFavorite(id);
+    expect(store.setDefault('callout', id).defaults).toContainEqual({ tool: 'callout', templateId: id, updatedAt: expect.any(Number) });
+    expect(repository(storage).load().templates[0]).toMatchObject({
+      tool: 'callout', favorite: true, label: { present: true, value: 'Earnings note' },
+      nativeValues: { 'style.color': '#26a69a', 'text.fontSize': 12 },
+    });
+
+    const nativeTools = ['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position'];
+    const defaults = repository(createMemoryDrawingTemplateStorage());
+    for (const [index, tool] of nativeTools.entries()) {
+      const saved = defaults.saveTemplate(`Tool ${index}`, tool, snapshot);
+      defaults.setDefault(tool, saved.templates.find(template => template.tool === tool)!.id);
+    }
+    expect(defaults.load().defaults).toHaveLength(nativeTools.length);
+  });
+
   it('renames and deletes templates while keeping defaults coherent', () => {
     const storage = createMemoryDrawingTemplateStorage();
     const store = repository(storage);

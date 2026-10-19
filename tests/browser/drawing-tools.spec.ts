@@ -5,6 +5,10 @@ import { installDepthFixture } from './depth-fixture';
 type TestDrawing = { id: string; tool: string; paneIndex: number; points?: unknown[]; style?: Record<string, any>; text?: { value: string; [key: string]: unknown }; props?: Record<string, any>; intervals?: { from?: string; to?: string }; visible?: boolean; locked?: boolean };
 type DrawingState = { drawings: TestDrawing[]; selected: string | null; canUndo: boolean; canRedo: boolean; interval: string | null; hidden: string[]; objects: Array<{ id: string; sourceId: string; kind: string; name: string; paneIndex: number; capabilities: { remove: boolean; visibility: boolean; lock: boolean; settings: boolean } }> };
 
+function objectAction(row: Locator, action: string) {
+  return row.locator(`button[data-object-action="${action}"]`);
+}
+
 async function drawingState(page: Page, panel: Locator): Promise<DrawingState> {
   const id = await panel.getAttribute('data-panel-id');
   if (!id) throw new Error('Candle panel id is missing');
@@ -139,7 +143,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
-  expect(exposedTools).toEqual(['fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
+  expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
 
   await placeHorizontalLine(page, panel);
   let state = await drawingState(page, panel);
@@ -158,15 +162,15 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
 
   // The Objects tree names the instrument, interval and focused Dockview panel.
   const objectsPanel = panel.locator('.chart-objects-panel');
-  await panel.locator('.chart-objects-panel>summary').click();
-  await expect(objectsPanel.locator('summary')).toContainText('BTCUSDT');
-  await expect(objectsPanel.locator('summary')).toContainText('1m');
-  await expect(objectsPanel.locator('summary')).toContainText(panelId);
+  await expect(objectsPanel.locator('.chart-objects-summary')).toContainText('BTCUSDT');
+  await expect(objectsPanel.locator('.chart-objects-summary')).toContainText('1m');
+  await expect(objectsPanel.locator('.chart-objects-summary')).toContainText(panelId);
   const paneSnapshot = await page.evaluate(panelId => {
     const view = (window as any).__terminal.panels.get(panelId);
     const objects = view.engine.objects.list();
-    const indexes = Array.from(new Set<number>(objects.map((item: any) => Number(item.paneIndex)))).sort((a, b) => a - b);
-    return { primary: view.engine.objects.primaryPaneIndex() as number, indexes, objects: objects.map((item: any) => ({ id: item.id as string, paneIndex: item.paneIndex as number })) };
+    const inventory = objects.filter((item: any) => item.kind !== 'drawing');
+    const indexes = Array.from(new Set<number>(inventory.map((item: any) => Number(item.paneIndex)))).sort((a, b) => a - b);
+    return { primary: view.engine.objects.primaryPaneIndex() as number, indexes, objects: inventory.map((item: any) => ({ id: item.id as string, paneIndex: item.paneIndex as number })) };
   }, panelId);
   await expect(objectsPanel.locator('.chart-object-pane')).toHaveCount(paneSnapshot.indexes.length);
   for (const paneIndex of paneSnapshot.indexes) {
@@ -183,9 +187,12 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect(sourceRow.locator('[data-object-action="remove"]')).toHaveCount(0);
   const drawingRow = panel.locator('.chart-object-row.kind-drawing').last();
   await expect(drawingRow).toBeVisible();
-  await drawingRow.getByRole('button', { name: 'Hide', exact: true }).click();
-  await expect(drawingRow.getByRole('button', { name: 'Show', exact: true })).toBeVisible();
-  const showButton = drawingRow.getByRole('button', { name: 'Show', exact: true });
+  const visibleAction = drawingRow.locator('button[data-object-action="visible"]');
+  const lockAction = drawingRow.locator('button[data-object-action="lock"]');
+  const settingsAction = drawingRow.locator('button[data-object-action="settings"]');
+  await visibleAction.click();
+  await expect(visibleAction).toHaveAttribute('aria-label', 'Show object');
+  const showButton = visibleAction;
   const showBox = await showButton.boundingBox();
   if (!showBox) throw new Error('Show drawing button is not laid out');
   await page.mouse.move(showBox.x + showBox.width / 2, showBox.y + showBox.height / 2);
@@ -211,14 +218,14 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.visible).not.toBe(false);
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(1);
   await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.objects.select(null), panelId);
-  await drawingRow.getByRole('button', { name: 'Lock', exact: true }).click();
-  await expect(drawingRow.getByRole('button', { name: 'Unlock', exact: true })).toBeVisible();
+  await lockAction.click();
+  await expect(lockAction).toHaveAttribute('aria-label', 'Unlock object');
   expect((await drawingState(page, panel)).drawings[0]?.locked).toBe(true);
-  await drawingRow.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await lockAction.click();
   const beforeDefaultEditor = await drawingState(page, panel);
   const beforeDefaultStorage = await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel));
   const defaultTheme = await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.chart.theme(), panelId);
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const defaultSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(defaultSettings.locator('[data-setting-path="style.color"]')).toHaveValue(defaultTheme.lineColor);
   await expect(defaultSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('1.5');
@@ -233,13 +240,13 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await defaultSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
   expect(await drawingState(page, panel)).toMatchObject({ drawings: beforeDefaultEditor.drawings, canUndo: beforeDefaultEditor.canUndo, canRedo: beforeDefaultEditor.canRedo });
 
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const noOpSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await noOpSettings.getByRole('button', { name: 'Apply', exact: true }).click();
   expect(await drawingState(page, panel)).toMatchObject({ drawings: beforeDefaultEditor.drawings, canUndo: beforeDefaultEditor.canUndo, canRedo: beforeDefaultEditor.canRedo });
   expect(await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel))).toBe(beforeDefaultStorage);
 
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const widthSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await widthSettings.locator('[data-setting-path="style.lineWidth"]').fill('2.5');
   await widthSettings.getByRole('button', { name: 'Apply', exact: true }).click();
@@ -250,7 +257,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await panel.getByRole('button', { name: 'Redo', exact: true }).click();
   await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.style?.lineWidth).toBe(2.5);
 
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const settings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(settings.locator('[data-setting-path="props.iqterminalLabelState"]')).toBeVisible();
   await settings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
@@ -266,19 +273,19 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.props?.iqterminalLabel).toBe('4H Support');
   await expect.poll(() => page.evaluate(() => (window as any).__seenCanvasTextValues?.includes('4H Support') ?? false)).toBe(true);
   await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.visible).toBe(true);
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const supportSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(supportSettings.locator('[data-setting-path="props.iqterminalAnalysisInterval"]')).toHaveValue('4h');
   await expect(supportSettings.locator('[data-setting-path="style.lineStyle"]')).toHaveValue('dashed');
   await expect(supportSettings.locator('[data-setting-path="style.color"]')).toHaveValue('#26a69a');
-  await expect(drawingRow.getByRole('button', { name: 'Hide', exact: true })).toBeVisible();
+  await expect(visibleAction).toHaveAttribute('aria-label', 'Hide object');
   await page.screenshot({ path: 'artifacts/drawing-4h-support-properties-1366x768.png' });
   await supportSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.screenshot({ path: 'artifacts/drawing-label-visible-1366x768.png' });
   const labelPixels = await page.evaluate(() => (window as any).__canvasTextPixels?.filter((entry: any) => entry.value === '4H Support') ?? []);
   console.log('Canvas label pixel records:', JSON.stringify(labelPixels.slice(-3)));
   expect(labelPixels.some((entry: any) => entry.color === '#26a69a' && entry.foregroundPixels >= 4)).toBe(true);
-  await drawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await settingsAction.click();
   const labelColorSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await labelColorSettings.locator('[data-setting-path="text.color"]').evaluate((element: HTMLInputElement) => {
     element.value = '#f5f5f5';
@@ -439,7 +446,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
 
   const targetObjectId = await page.evaluate(({ panelId, drawingId }) => (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id, { panelId, drawingId: targetId });
   const targetRow = panel.locator(`[data-object-id="${targetObjectId}"]`);
-  await targetRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(targetRow, 'settings').click();
   const targetSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await targetSettings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('unset');
   await targetSettings.locator('[data-setting-path="props.iqterminalLabel"]').fill('');
@@ -456,7 +463,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   expect(firstBlankRecord).toMatchObject({ revision: 1, label: { present: false, value: '' }, nativeValues: { 'style.color': '#4b5563' } });
   const originalRow = panel.locator(`[data-object-id="${originalObjectId}"]`);
   await templates.getByRole('button', { name: 'Done', exact: true }).click();
-  await originalRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(originalRow, 'settings').click();
   const originalSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await originalSettings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
   await originalSettings.locator('[data-setting-path="props.iqterminalLabel"]').fill('Keep this annotation');
@@ -476,7 +483,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
     const view = (window as any).__terminal.panels.get(panelId);
     view.engine.drawings.select(drawingId); view.syncDrawingActions();
   }, { panelId, drawingId: targetId });
-  await targetRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(targetRow, 'settings').click();
   const updateSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await updateSettings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
   await updateSettings.locator('[data-setting-path="props.iqterminalLabel"]').fill('');
@@ -523,20 +530,17 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(async () => (await drawingState(page, panel)).drawings.find(item => item.id === defaultId)?.props?.iqterminalLabel).toBe('4H Support');
   await page.screenshot({ path: 'artifacts/drawing-objects-1366x768.png' });
 
-  // The one Objects panel follows chart focus and routes its controls to the focused chart.
-  await page.evaluate(() => { (window as any).__sharedObjectsPanel = document.querySelector('.chart-objects-panel'); });
-  // A second chart for the same perp retains its own instrument drawings document.
+  // Each chart owns a sidebar and routes its controls to its own drawing document.
   await page.evaluate(() => (window as any).__terminal.addChart({ venue: 'binance', market: 'perpetual', interval: '1m' }));
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.panels.size)).toBe(3);
   const secondPerpId = await page.evaluate(() => (window as any).__terminal.stats().panels
     .filter((item: any) => item.series.venue === 'binance' && item.series.market === 'perpetual')[1].id as string);
   const secondPerp = page.locator(`[data-panel-id="${secondPerpId}"]`);
   await page.evaluate(id => (window as any).__terminal.panels.get(id).params.api.setActive(), secondPerpId);
-  const sharedObjectsPanel = page.locator('.chart-objects-panel');
-  await expect(sharedObjectsPanel).toHaveCount(1);
-  expect(await page.evaluate(() => (window as any).__sharedObjectsPanel === document.querySelector('.chart-objects-panel'))).toBe(true);
-  await expect(sharedObjectsPanel.locator('summary')).toContainText(secondPerpId);
-  expect(await sharedObjectsPanel.evaluate(panel => panel.closest('.candle-panel')?.getAttribute('data-panel-id'))).toBe(secondPerpId);
+  const secondObjectsPanel = secondPerp.locator('.chart-objects-panel');
+  await expect(page.locator('.candle-panel .chart-objects-panel')).toHaveCount(3);
+  await expect(secondObjectsPanel.locator('.chart-objects-summary')).toContainText(secondPerpId);
+  expect(await secondObjectsPanel.evaluate(panel => panel.closest('.candle-panel')?.getAttribute('data-panel-id'))).toBe(secondPerpId);
   await page.evaluate(() => {
     (window as any).__drawingObjectActionOwners = [];
     for (const [panelId, view] of (window as any).__terminal.panels) {
@@ -552,14 +556,14 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await placeHorizontalLine(page, secondPerp, 21);
   await expect.poll(async () => (await drawingState(page, secondPerp)).drawings.length).toBe(1);
   expect((await drawingState(page, panel)).drawings).toHaveLength(3);
-  const secondDrawingRow = sharedObjectsPanel.locator('.chart-object-row.kind-drawing').last();
+  const secondDrawingRow = secondObjectsPanel.locator('.chart-object-row.kind-drawing').last();
   const secondDrawingObjectId = await secondDrawingRow.getAttribute('data-object-id');
   expect(secondDrawingObjectId).toBeTruthy();
-  await secondDrawingRow.getByRole('button', { name: 'Hide', exact: true }).click();
+  await objectAction(secondDrawingRow, 'visible').click();
   await expect.poll(async () => (await drawingState(page, secondPerp)).drawings[0]?.visible).toBe(false);
-  expect(await sharedObjectsPanel.evaluate(panel => panel.closest('.candle-panel')?.getAttribute('data-panel-id'))).toBe(secondPerpId);
+  expect(await secondObjectsPanel.evaluate(panel => panel.closest('.candle-panel')?.getAttribute('data-panel-id'))).toBe(secondPerpId);
   expect((await drawingState(page, panel)).drawings.every(drawing => drawing.visible !== false)).toBe(true);
-  await secondDrawingRow.getByRole('button', { name: 'Show', exact: true }).click();
+  await objectAction(secondDrawingRow, 'visible').click();
   expect(await page.evaluate(() => (window as any).__drawingObjectActionOwners.slice(-2))).toEqual([
     { panelId: secondPerpId, action: 'visible', objectId: secondDrawingObjectId },
     { panelId: secondPerpId, action: 'visible', objectId: secondDrawingObjectId },
@@ -600,11 +604,11 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const reloadedPanel = page.locator('.candle-panel').first();
   await expect.poll(async () => (await drawingState(page, reloadedPanel)).drawings.length).toBe(3);
-  await reloadedPanel.locator('.chart-objects-panel>summary').click();
+  await expect(reloadedPanel.locator('.chart-objects-panel')).toBeVisible();
   const restoredDrawing = (await drawingState(page, reloadedPanel)).drawings.find(drawing => drawing.id === originalId);
   expect(restoredDrawing).toBeDefined();
   const restoredDrawingRow = reloadedPanel.locator(`.chart-object-row[data-object-id="drawing:${originalId}"]`);
-  await restoredDrawingRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(restoredDrawingRow, 'settings').click();
   const restoredSettings = reloadedPanel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(restoredSettings.locator('[data-setting-path="style.color"]')).toHaveValue('#9aa4af');
   await expect(restoredSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('2.5');
@@ -656,6 +660,7 @@ test('every exposed native drawing tool completes its required anchors', async (
     { id: 'long-position', anchors: 2 },
     { id: 'short-position', anchors: 2 },
     { id: 'text', anchors: 1 },
+    { id: 'callout', anchors: 2 },
   ] as const;
   for (const [index, placement] of placements.entries()) {
     await selectDrawingTool(panel, placement.id);
@@ -678,17 +683,17 @@ test('every exposed native drawing tool completes its required anchors', async (
     await expect(panel.locator('.drawing-placement-state')).toBeHidden();
   }
 
-  await panel.locator('.chart-objects-panel>summary').click();
+  await expect(panel.locator('.chart-objects-panel')).toBeVisible();
   const nativeIds = await page.evaluate(panelId => {
     const view = (window as any).__terminal.panels.get(panelId);
     const drawings = view.engine.drawings.drawings();
     const objects = view.engine.objects.list();
-    return Object.fromEntries(['rectangle', 'fib-retracement', 'text'].map(toolId => {
+    return Object.fromEntries(['rectangle', 'fib-retracement', 'text', 'callout'].map(toolId => {
       const drawing = drawings.find((item: any) => item.tool === toolId);
       return [toolId, objects.find((item: any) => item.sourceId === drawing?.id)?.id];
     }));
   }, panelId);
-  await panel.locator(`[data-object-id="${nativeIds.rectangle}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(panel.locator(`[data-object-id="${nativeIds.rectangle}"]`), 'settings').click();
   const rectangleSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   const theme = await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.chart.theme(), panelId);
   await expect(rectangleSettings.locator('[data-setting-path="style.color"]')).toHaveValue(theme.lineColor);
@@ -700,7 +705,7 @@ test('every exposed native drawing tool completes its required anchors', async (
   await expect(rectangleSettings.locator('[data-setting-path="text.color"]')).toHaveValue(theme.lineColor);
   await expect(rectangleSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('11');
   await rectangleSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await panel.locator(`[data-object-id="${nativeIds['fib-retracement']}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(panel.locator(`[data-object-id="${nativeIds['fib-retracement']}"]`), 'settings').click();
   const fibSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(fibSettings.locator('[data-setting-path="style.levels"]')).toBeVisible();
   await expect(fibSettings.locator('[data-setting-path="style.fill"]')).toBeChecked();
@@ -709,13 +714,18 @@ test('every exposed native drawing tool completes its required anchors', async (
   expect(fibLevels).toHaveLength(7);
   expect(fibLevels).toContainEqual({ ratio: 0.618, color: '#089981' });
   await fibSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await panel.locator(`[data-object-id="${nativeIds.text}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(panel.locator(`[data-object-id="${nativeIds.text}"]`), 'settings').click();
   const textSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(textSettings.locator('[data-setting-path="text.value"]')).toHaveValue('Text');
   await expect(textSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('14');
   await expect(textSettings.locator('[data-setting-path="text.color"]')).toHaveValue(theme.lineColor);
   await textSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await panel.locator('.chart-objects-panel>summary').click();
+  await objectAction(panel.locator(`[data-object-id="${nativeIds.callout}"]`), 'settings').click();
+  const calloutSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(calloutSettings.locator('[data-setting-path="text.value"]')).toHaveValue('Note');
+  await expect(calloutSettings.locator('[data-setting-path="text.fontSize"]')).toHaveValue('12');
+  await calloutSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(panel.locator('.chart-objects-panel')).toBeVisible();
 
   const futureAnchor = await page.evaluate(panelId => {
     const view = (window as any).__terminal.panels.get(panelId);
@@ -727,7 +737,7 @@ test('every exposed native drawing tool completes its required anchors', async (
   expect(futureAnchor.time).toBeGreaterThan(futureAnchor.latest);
   await selectDrawingTool(panel, 'horizontal-line');
   await stage.click({ position: { x: futureAnchor.x, y: futureAnchor.y } });
-  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(9);
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(10);
   const futureDrawing = (await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'horizontal-line' && drawing.points?.some(point => (point as any).time === futureAnchor.time));
   expect(futureDrawing?.points?.[0]).toMatchObject({ time: futureAnchor.time });
   expect((futureDrawing?.points?.[0] as any).time).toBeGreaterThan(futureAnchor.latest);
@@ -788,13 +798,13 @@ test('text templates use an included label as native text content and preserve o
   expect(drawings).toHaveLength(2);
   const sourceId = drawings[0]!.id;
   const targetId = drawings[1]!.id;
-  await panel.locator('.chart-objects-panel>summary').click();
+  await expect(panel.locator('.chart-objects-panel')).toBeVisible();
   const objectIdFor = async (drawingId: string) => page.evaluate(({ panelId, drawingId }) =>
     (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,
   { panelId, drawingId });
 
   const sourceObjectId = await objectIdFor(sourceId);
-  await panel.locator(`[data-object-id="${sourceObjectId}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(panel.locator(`[data-object-id="${sourceObjectId}"]`), 'settings').click();
   const sourceSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await sourceSettings.locator('[data-setting-path="text.value"]').fill('Native source text');
   await sourceSettings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
@@ -824,7 +834,7 @@ test('text templates use an included label as native text content and preserve o
 
   const targetObjectId = await objectIdFor(targetId);
   expect(targetObjectId).toBeTruthy();
-  await panel.locator(`[data-object-id="${targetObjectId}"]`).getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(panel.locator(`[data-object-id="${targetObjectId}"]`), 'settings').click();
   const targetSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await targetSettings.locator('[data-setting-path="text.value"]').fill('Keep target text');
   await targetSettings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
@@ -849,6 +859,164 @@ test('text templates use an included label as native text content and preserve o
   await expect.poll(async () => (await drawingState(page, panel)).drawings.find(item => item.id === targetId)?.text?.value).toBe('Template note');
   drawings = (await drawingState(page, panel)).drawings.filter(item => item.tool === 'text');
   expect(drawings).toHaveLength(2);
+});
+
+test('Callout placement, native text templates, history, and saved coordinates', async ({ page }) => {
+  test.setTimeout(60_000);
+  await watchCanvasText(page);
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  await useDarkTheme(page);
+  const panel = page.locator('.candle-panel').first();
+  const panelId = await panel.getAttribute('data-panel-id');
+  if (!panelId) throw new Error('Candle panel id is missing');
+  const sidebar = panel.locator('.drawing-sidebar');
+  const textTrigger = sidebar.getByRole('button', { name: 'Open Text tools', exact: true });
+  const textFlyout = panel.locator('.drawing-sidebar-flyout[data-drawing-group="text"]');
+  const textPrimary = sidebar.locator('.drawing-sidebar-primary[data-drawing-group="text"]');
+  const stage = panel.locator('.chart-stage');
+  const storageKey = await drawingStorageKey(page, panel);
+  const points = await page.evaluate(id => {
+    const chart = (window as any).__terminal.panels.get(id).engine.chart;
+    const plot = chart.plotRect(0);
+    return [
+      { x: Math.round(plot.left + plot.width * .38), y: Math.round(plot.top + plot.height * .42) },
+      { x: Math.round(plot.left + plot.width * .53), y: Math.round(plot.top + plot.height * .58) },
+      { x: Math.round(plot.left + plot.width * .68), y: Math.round(plot.top + plot.height * .38) },
+      { x: Math.round(plot.left + plot.width * .78), y: Math.round(plot.top + plot.height * .53) },
+    ];
+  }, panelId);
+
+  await textTrigger.click();
+  await expect(textFlyout.getByRole('button', { name: 'Use Callout tool', exact: true })).toBeVisible();
+  await textFlyout.getByRole('button', { name: 'Use Callout tool', exact: true }).click();
+  await expect(textFlyout).toBeHidden();
+  await expect(textPrimary).toHaveAttribute('data-drawing-tool', 'callout');
+  expect(await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.activeTool(), panelId)).toBe('callout');
+
+  await stage.click({ position: points[0]! });
+  await stage.focus();
+  await page.keyboard.press('Escape');
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(0);
+  expect(await drawingState(page, panel)).toMatchObject({ canUndo: false, canRedo: false });
+  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.drawings?.length ?? 0, storageKey)).toBe(0);
+
+  await selectDrawingTool(panel, 'callout');
+  await stage.click({ position: points[0]! });
+  await stage.click({ position: points[1]! });
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(1);
+  let callout = (await drawingState(page, panel)).drawings[0]!;
+  expect(callout).toMatchObject({ tool: 'callout', text: { value: 'Note' } });
+  expect(callout.points).toHaveLength(2);
+  const drawingId = callout.id;
+  const savedPoints = structuredClone(callout.points);
+
+  await textTrigger.click();
+  await expect(textFlyout).toBeVisible();
+  await page.screenshot({ path: '/tmp/iqterminal-callout-tools.png' });
+  await page.keyboard.press('Escape');
+
+  await expect(panel.locator('.chart-objects-panel')).toBeVisible();
+  const objectId = await page.evaluate(({ panelId, drawingId }) =>
+    (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,
+  { panelId, drawingId });
+  expect(objectId).toBeTruthy();
+  const row = panel.locator(`.chart-object-row[data-object-id="${objectId}"]`);
+  await objectAction(row, 'settings').click();
+  let settings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(settings.locator('[data-setting-path="text.value"]')).toHaveValue('Note');
+  await settings.locator('[data-setting-path="text.value"]').fill('Quarterly results');
+  await settings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
+  await settings.locator('[data-setting-path="props.iqterminalLabel"]').fill('Earnings callout');
+  await settings.getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings[0]?.text?.value).toBe('Quarterly results');
+
+  await objectAction(row, 'settings').click();
+  settings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await expect(settings.locator('[data-setting-path="text.value"]')).toHaveValue('Quarterly results');
+  await settings.getByRole('button', { name: 'Cancel', exact: true }).click();
+
+  await page.evaluate(({ panelId, drawingId }) => {
+    const view = (window as any).__terminal.panels.get(panelId);
+    view.engine.drawings.select(drawingId);
+    view.syncDrawingActions();
+  }, { panelId, drawingId });
+  await panel.getByRole('button', { name: 'Templates', exact: true }).click();
+  const templates = panel.getByRole('dialog', { name: 'Drawing settings templates' });
+  await expect(templates.getByLabel('Include label')).toBeChecked();
+  await templates.getByLabel('Drawing template name').fill('Callout with content');
+  await templates.getByRole('button', { name: 'Save', exact: true }).click();
+  const includedTemplate = templates.locator('.drawing-template-row').filter({ hasText: 'Callout with content' });
+  await expect(includedTemplate).toBeVisible();
+  await includedTemplate.locator('[data-template-action="favorite"]').click();
+  await expect(includedTemplate.locator('[data-template-action="favorite"]')).toHaveAttribute('aria-pressed', 'true');
+  await includedTemplate.getByRole('button', { name: 'Set default', exact: true }).click();
+  await expect(includedTemplate.getByRole('button', { name: 'Default ✓', exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('iqterminal:drawing-templates:v1') ?? 'null')?.templates?.find((item: any) => item.name === 'Callout with content'))).toMatchObject({
+    tool: 'callout', label: { present: true, value: 'Earnings callout' },
+  });
+  await templates.getByLabel('Include label').uncheck();
+  await templates.getByLabel('Drawing template name').fill('Callout style only');
+  await templates.getByRole('button', { name: 'Save', exact: true }).click();
+  const styleTemplate = templates.locator('.drawing-template-row').filter({ hasText: 'Callout style only' });
+  await expect(styleTemplate).toBeVisible();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('iqterminal:drawing-templates:v1') ?? 'null')?.templates?.find((item: any) => item.name === 'Callout style only'))).toMatchObject({
+    tool: 'callout', label: { present: false, value: '' },
+  });
+  await templates.getByRole('button', { name: 'Done', exact: true }).click();
+
+  await selectDrawingTool(panel, 'callout');
+  await stage.click({ position: points[2]! });
+  await stage.click({ position: points[3]! });
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(2);
+  let drawings = (await drawingState(page, panel)).drawings;
+  const target = drawings.find(item => item.id !== drawingId)!;
+  expect(target).toMatchObject({ tool: 'callout', text: { value: 'Earnings callout' } });
+  const targetPoints = structuredClone(target.points);
+  const targetObjectId = await page.evaluate(({ panelId, drawingId }) =>
+    (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,
+  { panelId, drawingId: target.id });
+  const targetRow = panel.locator(`.chart-object-row[data-object-id="${targetObjectId}"]`);
+
+  await objectAction(targetRow, 'settings').click();
+  settings = panel.getByRole('dialog', { name: 'Drawing settings' });
+  await settings.locator('[data-setting-path="text.value"]').fill('Keep this text');
+  await settings.locator('[data-setting-path="props.iqterminalLabelState"]').selectOption('custom');
+  await settings.locator('[data-setting-path="props.iqterminalLabel"]').fill('Target label');
+  await settings.getByRole('button', { name: 'Apply', exact: true }).click();
+  await page.evaluate(({ panelId, drawingId }) => {
+    const view = (window as any).__terminal.panels.get(panelId);
+    view.engine.drawings.select(drawingId);
+    view.syncDrawingActions();
+  }, { panelId, drawingId: target.id });
+  await panel.getByRole('button', { name: 'Templates', exact: true }).click();
+  const targetTemplates = panel.getByRole('dialog', { name: 'Drawing settings templates' });
+  const applyTemplate = (name: string) => targetTemplates.locator('.drawing-template-row').filter({ hasText: name }).getByRole('button', { name: 'Apply', exact: true });
+  await applyTemplate('Callout style only').click();
+  expect((await drawingState(page, panel)).drawings.find(item => item.id === target.id)).toMatchObject({ text: { value: 'Keep this text' }, props: { iqterminalLabel: 'Target label' } });
+  await applyTemplate('Callout with content').click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.find(item => item.id === target.id)?.text?.value).toBe('Earnings callout');
+  expect((await drawingState(page, panel)).drawings.find(item => item.id === target.id)?.points).toEqual(targetPoints);
+  await targetTemplates.getByRole('button', { name: 'Done', exact: true }).click();
+
+  await panel.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.find(item => item.id === target.id)?.text?.value).toBe('Keep this text');
+  expect((await drawingState(page, panel)).drawings.find(item => item.id === target.id)?.points).toEqual(targetPoints);
+  await panel.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.find(item => item.id === target.id)?.text?.value).toBe('Earnings callout');
+  callout = (await drawingState(page, panel)).drawings.find(item => item.id === drawingId)!;
+  expect(callout.points).toEqual(savedPoints);
+
+  const storedBeforeReload = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.drawings, storageKey);
+  expect(storedBeforeReload).toEqual((await drawingState(page, panel)).drawings);
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  const reloadedPanel = page.locator('.candle-panel').first();
+  await expect.poll(async () => (await drawingState(page, reloadedPanel)).drawings.length).toBe(2);
+  drawings = (await drawingState(page, reloadedPanel)).drawings;
+  expect(drawings.find(item => item.id === drawingId)).toMatchObject({ tool: 'callout', text: { value: 'Quarterly results' }, points: savedPoints });
+  expect(drawings.find(item => item.id === target.id)).toMatchObject({ tool: 'callout', text: { value: 'Earnings callout' }, points: targetPoints });
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('iqterminal:drawing-templates:v1') ?? 'null')?.templates?.find((item: any) => item.name === 'Callout with content'))).toMatchObject({ favorite: true, tool: 'callout' });
 });
 
 test('template storage corruption stays intact while the session catalog remains usable', async ({ page }) => {
@@ -967,7 +1135,7 @@ test('Footprint and Heatmap appear once in IQ Objects and accept a drawing overl
   if (!panelId) throw new Error('Candle panel id is missing');
 
   const objectsPanel = panel.locator('.chart-objects-panel');
-  await objectsPanel.locator('summary').click();
+  await expect(objectsPanel).toBeVisible();
   const footprintRow = objectsPanel.locator('.chart-object-row.kind-profile').filter({ hasText: 'Footprint' });
   const heatmapRow = objectsPanel.locator('.chart-object-row.kind-indicator').filter({ hasText: 'Order-book Heatmap' });
   await expect(footprintRow).toHaveCount(1);
@@ -977,18 +1145,17 @@ test('Footprint and Heatmap appear once in IQ Objects and accept a drawing overl
     return view.engine.objects.list().filter((item: any) => item.id.startsWith('custom:iqterminal-native.')).map((item: any) => item.name).sort();
   }, panelId)).toEqual(['Footprint', 'Order-book Heatmap']);
   await expect(objectsPanel.locator('.chart-object-row.kind-drawing')).toHaveCount(1);
-  await footprintRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(footprintRow, 'settings').click();
   const footprintSettings = panel.getByRole('dialog', { name: 'Footprint display settings' });
   await expect(footprintSettings).toBeVisible();
   await footprintSettings.getByRole('button', { name: 'Close', exact: true }).click();
   await page.screenshot({ path: 'artifacts/drawing-footprint-heatmap-1366x768.png' });
 
-  await footprintRow.getByRole('button', { name: 'Hide', exact: true }).click();
+  await objectAction(footprintRow, 'visible').click();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].series.type)).toBe('candle');
-  await expect(footprintRow.getByRole('button', { name: 'Show', exact: true })).toBeVisible();
-  await footprintRow.getByRole('button', { name: 'Show', exact: true }).click();
+  await objectAction(footprintRow, 'visible').click();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].series.type)).toBe('footprint');
-  await heatmapRow.getByRole('button', { name: 'Style', exact: true }).click();
+  await objectAction(heatmapRow, 'settings').click();
   await expect(panel.locator('.heatmap-settings')).toBeVisible();
   await panel.locator('.heatmap-settings').getByRole('button', { name: 'Close', exact: true }).click();
   expect(await worker.evaluate(() => (self as any).__executionFixture.accepted)).toBeGreaterThan(0);
@@ -1005,12 +1172,11 @@ test('Level Watch Objects visibility, instrument guard and picking disarm drawin
   const watch = { id: 'fixture-watch', revision: 1, definition: { name: 'Fixture watch', lower: 82900, upper: 83100, invalidation: 82800, thesis: 'fixture', expiresAt: Date.now() + 60_000 }, state: 'draft', quality: 'fixture', reason: 'browser fixture', armedAt: Date.now() };
   await page.evaluate(({ panelId, watch }) => (window as any).__terminal.panels.get(panelId).setWatchZones([watch]), { panelId, watch });
   const objectsPanel = panel.locator('.chart-objects-panel');
-  await objectsPanel.locator('summary').click();
+  await expect(objectsPanel).toBeVisible();
   const watchRow = objectsPanel.locator('.chart-object-row.kind-profile').filter({ hasText: 'Level Watch zones' });
   await expect(watchRow).toHaveCount(1);
-  await watchRow.getByRole('button', { name: 'Hide', exact: true }).click();
-  await expect(watchRow.getByRole('button', { name: 'Show', exact: true })).toBeVisible();
-  await watchRow.getByRole('button', { name: 'Show', exact: true }).click();
+  await objectAction(watchRow, 'visible').click();
+  await objectAction(watchRow, 'visible').click();
 
   await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
   await expect(watchButton).toBeDisabled();

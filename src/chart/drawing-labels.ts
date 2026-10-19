@@ -13,6 +13,15 @@ export function registerIQDrawingLabelRenderers() {
     const tool = getDrawingTool(id);
     if ((tool.draw as WrappedDraw)[wrappedDraw]) continue;
     const nativeDraw = tool.draw;
+    const settings = id === 'horizontal-ray'
+      ? {
+          ...tool.settings,
+          fields: [
+            ...(tool.settings?.fields ?? []).filter(field => field.path !== 'text.value'),
+            { path: 'text.value', label: 'Text on ray', kind: 'text' as const, group: 'text' as const },
+          ],
+        }
+      : tool.settings;
     const draw: WrappedDraw = context => {
       const axisAvailable = hasPriceAxis(context.rc);
       // OpenAlgo's DrawingLayer clips tool renderers to the plot. Preserve its
@@ -23,7 +32,7 @@ export function registerIQDrawingLabelRenderers() {
       drawIQLabel(context, id);
     };
     Object.defineProperty(draw, wrappedDraw, { value: true });
-    registerDrawingTool({ ...tool, draw });
+    registerDrawingTool({ ...tool, settings, draw });
   }
 }
 
@@ -128,8 +137,11 @@ function contrastingText(color: string) {
 function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
   const { drawing, ctx, rc, pts } = context;
   const props = drawing.props;
-  const value = props?.iqterminalLabel;
-  if (props?.iqterminalLabelState !== 'custom' || typeof value !== 'string' || !value.trim()) return;
+  const customLabel = props?.iqterminalLabelState === 'custom';
+  const value = customLabel
+    ? (typeof props?.iqterminalLabel === 'string' ? props.iqterminalLabel : '')
+    : toolId === 'horizontal-ray' && typeof drawing.text?.value === 'string' ? drawing.text.value : '';
+  if (!value.trim()) return;
   const anchor = pts[0];
   if (!anchor || !Number.isFinite(anchor.x) || !Number.isFinite(anchor.y)) return;
 
@@ -144,17 +156,22 @@ function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
   ctx.font = `${drawing.text?.italic ? 'italic ' : ''}${drawing.text?.bold ? '700 ' : ''}${fontPx}px ${drawing.text?.fontFamily || fontStack}`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  const measuredWidth = ctx.measureText(value).width;
+  const nativeRayText = toolId === 'horizontal-ray' && !customLabel;
+  const lines = value.split(/\r?\n/).slice(0, 3);
+  const lineHeight = fontPx * 1.3;
+  const measuredWidth = Math.max(...lines.map(line => ctx.measureText(line).width));
   const x = Math.max(4 * dpr, Math.min(
     (toolId === 'horizontal-ray' ? anchor.x + 4 * dpr : 4 * dpr),
     maxWidth - measuredWidth - 4 * dpr,
   ));
   const availableWidth = Math.max(1, maxWidth - x - 4 * dpr);
   const width = Math.min(measuredWidth, availableWidth);
-  const y = Math.max(fontPx, anchor.y - 22 * dpr);
+  const height = lines.length * lineHeight;
+  const centerY = nativeRayText ? anchor.y : anchor.y - 22 * dpr;
+  const top = Math.max(fontPx * .75, Math.min(rc.plotHeight * dpr - height, centerY - height / 2));
   ctx.globalAlpha = 0.85;
   ctx.fillStyle = rc.theme.background;
-  ctx.fillRect(x - 2 * dpr, y - 0.75 * fontPx, width + 4 * dpr, 1.5 * fontPx);
+  ctx.fillRect(x - 3 * dpr, top - 2 * dpr, width + 6 * dpr, height + 4 * dpr);
   ctx.globalAlpha = 1;
   // OpenAlgo initializes some drawing text with the pane background color. It
   // is still visible for the tool's price tag, whose plate is separately
@@ -163,6 +180,6 @@ function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
   // visible drawing stroke.
   const explicitTextColor = props?.iqterminalLabelTextColorExplicit === true;
   ctx.fillStyle = (explicitTextColor ? drawing.text?.color : undefined) ?? drawing.style.color ?? '#e5e7eb';
-  ctx.fillText(value, x, y, availableWidth);
+  for (let index = 0; index < lines.length; index++) ctx.fillText(lines[index]!, x, top + (index + .5) * lineHeight, availableWidth);
   ctx.restore();
 }

@@ -88,21 +88,69 @@ dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
 .drawing-sidebar-flyout-tool svg{width:14px;height:14px;flex:none}
 .drawing-sidebar-flyout-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .drawing-placement-state{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.chart-stage .chart-objects-panel{position:absolute;top:7px;right:7px;z-index:7;width:max-content;max-width:calc(100% - 14px);max-height:calc(100% - 14px);overflow:auto;border:1px solid var(--divider);background:var(--overlay);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 4px 18px var(--shadow)}
-.chart-stage .chart-objects-panel[data-focused=true]{border-color:var(--primary-border)}
-.chart-objects-panel>summary{max-width:100%;padding:5px 7px;cursor:pointer;list-style-position:inside;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chart-objects-panel[open]{width:min(285px,calc(100% - 14px))}
-.chart-objects-panel[open]>summary{border-bottom:1px solid var(--border-soft);color:var(--text)}
-.chart-objects-rows{display:flex;flex-direction:column;gap:2px;padding:4px}
+.chart-objects-panel{position:relative;z-index:3;display:flex;flex:0 0 min(var(--object-tree-width,280px),calc(100% - 72px));flex-direction:column;width:min(var(--object-tree-width,280px),calc(100% - 72px));min-width:0;min-height:0;max-height:100%;overflow:hidden;margin-top:5px;border-left:1px solid var(--divider);background:var(--chart);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-objects-panel[data-focused=true]{border-left-color:var(--primary-border)}
+.chart-object-tree-header{display:flex;flex:none;align-items:center;gap:7px;min-height:32px;padding:3px 6px 3px 9px;border-bottom:1px solid var(--divider);background:var(--chrome)}
+.chart-object-tree-header strong{flex:none;color:var(--text);font-size:10px;font-weight:600;white-space:nowrap}
+.chart-objects-summary{min-width:0;flex:1;overflow:hidden;color:var(--muted);font-size:9px;white-space:nowrap;text-overflow:ellipsis}
+.chart-object-tree-collapse{display:grid;flex:none;place-items:center;width:24px;min-width:24px;height:23px;padding:0;border:1px solid transparent;background:transparent;color:var(--muted)}
+.chart-object-tree-collapse:hover{background:var(--hover);color:var(--text)}
+.chart-object-tree-collapse svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:square;stroke-linejoin:miter}
+.chart-objects-content{display:flex;flex:1;flex-direction:column;gap:5px;min-height:0;padding:5px 5px 5px 8px;overflow:hidden}
+.chart-object-tree-toolbar{display:flex;flex:none;align-items:center;justify-content:flex-end;min-height:25px}
+.chart-object-tree-new-folder{height:23px;padding:0 6px;border-color:var(--divider);background:var(--control);color:var(--text);font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-object-tree{flex:1 1 40%;min-height:48px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--scrollbar) transparent}
+.chart-object-empty{margin:0;padding:8px 3px;color:var(--muted);font-size:9px}
+.chart-object-tree-node{min-width:0;outline:none}
+.chart-object-tree-node:focus-visible>.chart-object-folder-row,.chart-object-tree-node:focus-visible>.chart-object-row{background:var(--hover);outline:1px solid var(--focus);outline-offset:-1px}
+.chart-object-tree-node.is-drag-source{opacity:.45}
+.chart-object-tree-node[aria-expanded=false]>.chart-object-children{display:none}
+.chart-object-folder-row{display:grid;grid-template-columns:19px 20px minmax(0,1fr) 23px;align-items:center;gap:2px;min-height:27px;padding:2px 1px 2px 0;border-bottom:1px solid var(--border-soft)}
+.chart-object-folder-row button{min-width:0;height:22px;padding:0;border:1px solid transparent;background:transparent;color:var(--muted)}
+.chart-object-folder-row button:hover{background:var(--hover);color:var(--text)}
+.chart-object-folder-row svg{display:block;width:14px;height:14px;margin:auto;fill:none;stroke:currentColor;stroke-width:1.25;stroke-linecap:square;stroke-linejoin:miter}
+.chart-object-folder-expand{display:grid;place-items:center}
+.chart-object-folder-expand[aria-expanded=true]{color:var(--text)}
+.chart-object-folder-visibility[data-visibility-state=mixed]{color:var(--accent)}
+.chart-object-folder-visibility[data-visibility-state=none]{color:var(--muted)}
+.chart-object-folder-name{overflow:hidden;text-align:left;text-overflow:ellipsis;white-space:nowrap;color:var(--text)!important;font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-object-tree-more{display:grid;place-items:center}
+.chart-object-children{margin-left:9px;padding-left:5px;border-left:1px solid var(--border-soft)}
+.chart-object-tree-status{flex:none;max-height:56px;overflow:auto;color:var(--muted);font-size:9px;line-height:1.4}
+.chart-object-tree-status[hidden]{display:none}
+.chart-object-inventory{display:flex;flex:0 1 45%;flex-direction:column;min-height:48px;overflow:hidden;border-top:1px solid var(--divider)}
+.chart-object-inventory[hidden]{display:none}
+.chart-object-inventory h3{flex:none;margin:0;padding:5px 2px 4px;color:var(--muted);font-size:9px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+.chart-object-inventory-rows{min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--scrollbar) transparent}
+.chart-object-tree-resize{position:absolute;z-index:4;top:0;bottom:0;left:-4px;width:8px;cursor:col-resize;touch-action:none}
+.chart-object-tree-resize::after{position:absolute;top:0;bottom:0;left:3px;width:1px;background:transparent;content:""}
+.chart-object-tree-resize:hover::after,.chart-object-tree-resize:focus-visible::after{background:var(--focus)}
+.chart-object-tree-resize:focus-visible{outline:0}
+.chart-object-tree-menu{position:fixed;z-index:1000;display:flex;flex-direction:column;gap:1px;width:min(244px,calc(100vw - 8px));max-height:calc(100vh - 8px);overflow:auto;padding:4px;border:1px solid var(--divider);background:var(--chrome);color:var(--text);box-shadow:0 5px 18px var(--shadow)}
+.chart-object-tree-menu[hidden]{display:none}
+.chart-object-tree-menu-item{flex:none;width:100%;height:auto;min-height:25px;padding:3px 6px;border:0;background:transparent;color:var(--text);text-align:left;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:normal}
+.chart-object-tree-menu-item:hover:not(:disabled),.chart-object-tree-menu-item:focus-visible{background:var(--hover)}
+.chart-object-tree-menu-item:disabled{color:var(--muted)}
+.chart-objects-panel[data-collapsed=true]{flex-basis:28px;width:28px;min-width:28px}
+.chart-objects-panel[data-collapsed=true] .chart-object-tree-header{justify-content:center;padding:3px 1px}
+.chart-objects-panel[data-collapsed=true] .chart-object-tree-header>strong,.chart-objects-panel[data-collapsed=true] .chart-objects-summary,.chart-objects-panel[data-collapsed=true] .chart-objects-content,.chart-objects-panel[data-collapsed=true] .chart-object-tree-resize{display:none}
+.chart-objects-panel[data-collapsed=true] .chart-object-tree-collapse{width:24px}
+.chart-objects-panel.is-dragging .chart-object-tree-node{user-select:none}
+.chart-objects-panel .chart-object-row{display:flex;align-items:center;gap:2px;min-width:0;padding:2px;border-bottom:1px solid var(--border-soft)}
 .chart-object-pane{display:flex;flex-direction:column;gap:2px}
 .chart-object-pane+.chart-object-pane{margin-top:4px}
 .chart-object-pane-heading{padding:3px 2px 2px;border-bottom:1px solid var(--border-soft);color:var(--muted);font-size:9px;letter-spacing:.04em;text-transform:uppercase}
 .chart-object-pane-rows{display:flex;flex-direction:column;gap:2px}
-.chart-object-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:3px;min-width:0;padding:2px;border-bottom:1px solid var(--border-soft)}
-.chart-object-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent;color:var(--text)}
+.chart-object-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;border-color:transparent;color:var(--text)}
 .chart-object-name[data-hidden-on-interval=true]{color:var(--muted);text-decoration:line-through}
 .chart-object-action{height:21px;min-width:22px;padding:1px 4px;font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
 .chart-object-action:hover,.chart-object-name:hover{background:var(--hover)}
+.chart-object-folder-name-input,.chart-object-drawing-name-input{min-width:0;width:100%;height:22px;padding:2px 4px;border:1px solid var(--focus);border-radius:0;background:var(--input);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.chart-object-tree-node[draggable=true]{cursor:default}
+.chart-object-tree-node[data-drop-position=before]>.chart-object-folder-row,.chart-object-tree-node[data-drop-position=before]>.chart-object-row{border-top:1px solid var(--accent)}
+.chart-object-tree-node[data-drop-position=after]>.chart-object-folder-row,.chart-object-tree-node[data-drop-position=after]>.chart-object-row{border-bottom:1px solid var(--accent)}
+.chart-object-tree-node[data-drop-position=inside]>.chart-object-folder-row{background:var(--hover)}
+@media(max-width:520px){.chart-object-tree-header{gap:4px;padding-left:6px}.chart-objects-content{padding-left:6px;padding-right:3px}.chart-object-row .chart-object-action{min-width:19px;padding:1px 2px}}
 .drawing-template-save-row{display:grid;grid-template-columns:minmax(100px,.7fr) minmax(120px,1fr) auto auto;align-items:center;gap:6px;padding:8px 11px;border-bottom:1px solid var(--border-soft);color:var(--muted);font-size:10px}
 .drawing-template-save-row input{min-width:0;height:25px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:4px}
 .drawing-template-include-label{display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -207,3 +255,5 @@ dialog.ticker-settings{width:min(780px,calc(100vw - 24px))}.ticker-scope{height:
 .level-watch-panel>header,.watch-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.level-watch-panel>header strong{margin-right:auto}.level-watch-panel p{margin:5px 0}.watch-source,.watch-status{color:var(--muted)}.watch-status[data-state=stale],.watch-status[data-state=gap],.watch-error{color:var(--down)}.watch-card{padding:9px 0;border-bottom:1px solid var(--divider)}.watch-name{font-weight:600}.watch-state{display:block;margin-top:4px}.watch-editor{margin:8px 0;padding:8px;border:1px solid var(--divider)}.watch-editor label{display:grid;grid-template-columns:minmax(105px,1fr) minmax(70px,1.5fr);gap:8px;margin-bottom:6px;align-items:center}.watch-editor input,.watch-editor textarea,.watch-review textarea{min-width:0;width:100%;box-sizing:border-box;font:inherit;background:var(--input);color:inherit;border:1px solid var(--divider);padding:4px}.watch-editor details{margin:8px 0}.watch-editor summary{cursor:pointer}.watch-history button{display:block;margin:4px 0;text-align:left}.watch-review{border-top:1px solid var(--divider);margin-top:10px;padding-top:6px}.watch-review:empty{display:none}.watch-review>button,.watch-review>select{margin:4px}.watch-evidence{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}.watch-replay{margin:8px 0;border-top:1px solid var(--divider);padding-top:6px}.watch-replay input[type=range]{width:100%}.watch-zone-picking{cursor:crosshair}.watch-pick-hint{position:absolute;top:70px;left:8px;z-index:5;pointer-events:none;padding:4px;background:var(--input);border:1px solid var(--divider)}
 
 .watch-replay-plot{display:block;width:100%;height:auto;max-height:200px;color:var(--text)}.watch-replay-plot text{fill:currentColor;font:9px monospace}
+.ticker-row:focus-visible{outline:1px solid var(--focus);outline-offset:-1px}
+.indicator-setting-field textarea{box-sizing:border-box;width:100%;min-height:54px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:4px;resize:vertical}
