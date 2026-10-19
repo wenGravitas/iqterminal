@@ -1,7 +1,8 @@
 import type {LevelWatch} from './level-watch/types';
 import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
-import { FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings } from './indicators/model';
+import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, DEFAULT_FOOTPRINT_TOTALS_ROWS, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, footprintTotalsSettings, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings, type FootprintTotalsSettings } from './indicators/model';
+import { FootprintTotalsControls } from './indicators/footprint-totals-controls';
 import { HeatmapControls } from './heatmap-controls';
 import { NetPositioningControls } from './indicators/net-positioning-controls';
 import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
@@ -171,6 +172,7 @@ export class CandlePanel implements IContentRenderer {
   readonly element = document.createElement('section');
   private heatmapControls!: HeatmapControls;
   private netPositioningControls!: NetPositioningControls;
+  private footprintTotalsControls!: FootprintTotalsControls;
   private releaseNetPositioning?: () => void;
   private netPositioningRequestKey = '';
   private netPositioningGeneration = 0;
@@ -457,6 +459,7 @@ export class CandlePanel implements IContentRenderer {
     this.retry.setAttribute('aria-label', 'Retry market data');
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
     this.netPositioningControls = new NetPositioningControls((id, settings) => this.changeNetPositioning(id, settings), this.abort.signal);
+    this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.drawPlacementState.className = 'drawing-placement-state';
@@ -504,7 +507,7 @@ export class CandlePanel implements IContentRenderer {
     this.buildDialogs();
     this.buildDrawingDialogs();
     this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.drawingSidebarMenuLayer);
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
   private sidebarButton(label: string, title: string, iconName: string, extraClass = '') {
@@ -1007,6 +1010,7 @@ export class CandlePanel implements IContentRenderer {
     if (!this.engine) return;
     const entries = [
       { id: FOOTPRINT_ID, kind: 'profile' as const, name: 'Footprint' },
+      { id: FOOTPRINT_TOTALS_ID, kind: 'indicator' as const, name: 'Footprint Totals' },
       { id: HEATMAP_ID, kind: 'indicator' as const, name: 'Order-book Heatmap' },
       { id: ORDER_WALLS_ID, kind: 'indicator' as const, name: 'Order Walls' },
     ];
@@ -1016,8 +1020,10 @@ export class CandlePanel implements IContentRenderer {
         const instance = this.nativeIndicator(entry.id);
         if (!instance) return null;
         const settingsEnabled = instance.settings.enabled !== false;
-        return { kind: entry.kind, name: entry.name, paneIndex: this.engine!.objects.primaryPaneIndex(),
-          visible: instance.visible && settingsEnabled && (entry.id !== FOOTPRINT_ID || this.selection.type === 'footprint'),
+        const paneIndex = entry.id === FOOTPRINT_TOTALS_ID ? this.engine!.footprintTotalsPaneIndex(instance.instanceId) : this.engine!.objects.primaryPaneIndex();
+        return { kind: entry.kind, name: entry.name, paneIndex: paneIndex < 0 ? this.engine!.objects.primaryPaneIndex() : paneIndex,
+          visible: instance.visible && settingsEnabled && (entry.id !== FOOTPRINT_ID || this.selection.type === 'footprint')
+            && (entry.id !== FOOTPRINT_TOTALS_ID || supportsDepth(this.selection)),
           selected: false };
       },
       select: () => this.params.api.setActive(),
@@ -1060,7 +1066,7 @@ export class CandlePanel implements IContentRenderer {
 
   private setIndicatorObjectVisible(definitionId: string, visible: boolean) {
     const instance = this.nativeIndicator(definitionId); if (!instance) return;
-    if (definitionId === FOOTPRINT_ID && visible && !supportsDepth(this.selection)) return;
+    if ((definitionId === FOOTPRINT_ID || definitionId === FOOTPRINT_TOTALS_ID) && visible && !supportsDepth(this.selection)) return;
     const change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>> = { visible };
     if (definitionId === HEATMAP_ID || definitionId === ORDER_WALLS_ID) change.settings = { ...instance.settings, enabled: visible };
     if (definitionId === FOOTPRINT_ID) this.selection = config({ ...this.selection, type: visible ? 'footprint' : 'candle', indicators: this.selection.indicators.map(item => item.instanceId === instance.instanceId ? { ...item, visible } : item) });
@@ -1076,7 +1082,7 @@ export class CandlePanel implements IContentRenderer {
 
   private removeIndicatorInstance(instanceId: string) {
     const instance = this.selection.indicators.find(item => item.instanceId === instanceId); if (!instance) return;
-    if (new Set<string>([FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
+    if (new Set<string>([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
     this.selection = config({ ...this.selection, ...(instance.definitionId === FOOTPRINT_ID ? { type: 'candle' as const } : {}), indicators: this.selection.indicators.filter(item => item.instanceId !== instanceId) });
     this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
@@ -1401,7 +1407,7 @@ export class CandlePanel implements IContentRenderer {
 
   private renderDrawingObjects() {
     const listed = this.engine?.objects.list() ?? [];
-    const coreIds = new Set([FOOTPRINT_ID, HEATMAP_ID, ORDER_WALLS_ID]);
+    const coreIds = new Set([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID]);
     const scriptIds = new Set((this.studyHost?.views() ?? []).map(view => view.attachmentId));
     const objects = listed.filter(object => {
       if (object.kind !== 'indicator') return true;
@@ -2448,6 +2454,7 @@ export class CandlePanel implements IContentRenderer {
     const oldMode = this.engine.displayMode;
     this.applyFootprintOptions(); this.engine.setBasePriceVisible(this.selection.basePriceVisible);
     this.engine.setDisplayMode(this.selection.type, true);
+    this.syncFootprintTotals();
     this.subscribeFootprint();
     if (oldMode !== this.selection.type && this.selection.type === 'footprint') {
       this.engine.setFootprintBars(this.footprintBars, true); this.footprintNeedsSync = false;
@@ -2456,6 +2463,29 @@ export class CandlePanel implements IContentRenderer {
     this.syncHeatmap(); this.syncOrderWalls(); this.hoveredBar = null; this.hoveredFootprint = null;
     this.syncNetPositioning();
     this.updateFootprintControls(); this.refreshReadout(); this.updateStatus();
+  }
+
+  private footprintDataWanted() {
+    return supportsDepth(this.selection) && Boolean(
+      this.nativeIndicator(FOOTPRINT_ID)?.visible && this.selection.type === 'footprint'
+      || this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible,
+    );
+  }
+
+  private syncFootprintTotals() {
+    const instance = this.nativeIndicator(FOOTPRINT_TOTALS_ID);
+    if (!instance?.visible || !supportsDepth(this.selection) || !this.engine) {
+      this.engine?.removeFootprintTotalsPane(FOOTPRINT_TOTALS_ID);
+      return;
+    }
+    this.engine.addFootprintTotalsPane(FOOTPRINT_TOTALS_ID, footprintTotalsSettings(instance.settings).rows, this.selection.footprintUnits);
+  }
+
+  private changeFootprintTotals(instanceId: string, settings: FootprintTotalsSettings) {
+    if (!this.selection.indicators.some(item => item.instanceId === instanceId && item.definitionId === FOOTPRINT_TOTALS_ID)) return;
+    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(item => item.instanceId === instanceId
+      ? { ...item, settings: footprintTotalsSettings(settings) } : item) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
 
   private changeNetPositioning(instanceId: string, settings: NetPositioningSettings) {
@@ -2484,7 +2514,7 @@ export class CandlePanel implements IContentRenderer {
     for (const instance of active) {
       const settings = netPositioningSettings(instance.settings);
       const side = instance.definitionId === NET_LONGS_ID ? 'longs' : 'shorts';
-      engine.addNetPositioningPane(instance.instanceId, side, settings.method, settings.venues, intervalMs);
+      engine.addNetPositioningPane(instance.instanceId, side, settings.method, settings.venues, intervalMs, settings.display, settings.labels, settings.colors);
       const history = this.netPositioningHistories.get(settings.method)!;
       const payload = history.metadata();
       engine.setNetPositioningSnapshot(instance.instanceId, history.snapshot(), payload?.feeds ?? {}, payload?.unitVerification ?? {}, payload?.pendingIntervals ?? 0, this.netPositioningErrors.get(settings.method) ?? '');
@@ -2548,7 +2578,8 @@ export class CandlePanel implements IContentRenderer {
     const existing = this.selection.indicators.find(i => i.definitionId === definitionId);
     if (!existing) {
       const settings = NET_POSITIONING_IDS.includes(definitionId as typeof NET_POSITIONING_IDS[number])
-        ? { method: 'price-oi' as const, venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const] }
+        ? { method: 'price-oi' as const, venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const], display: 'stacked' as const, labels: 'auto' as const }
+        : definitionId === FOOTPRINT_TOTALS_ID ? { rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] }
         : definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
         : definitionId === HEATMAP_ID ? { ...this.selection.heatmap, enabled: true }
           : { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true };
@@ -2563,6 +2594,7 @@ export class CandlePanel implements IContentRenderer {
   private openIndicatorSettings(instance: IndicatorInstance) {
     if (instance.settingsVersion !== 1) return;
     if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
+    else if (instance.definitionId === FOOTPRINT_TOTALS_ID) this.footprintTotalsControls.open(instance.instanceId, footprintTotalsSettings(instance.settings));
     else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
     else if (instance.definitionId === ORDER_WALLS_ID) this.orderWallsControls.open(orderWallsSettings(instance.settings));
     else if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) this.netPositioningControls.open(instance.instanceId, netPositioningSettings(instance.settings));
@@ -2601,6 +2633,7 @@ export class CandlePanel implements IContentRenderer {
       const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
       let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && !NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
         : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
+          : instance.definitionId === FOOTPRINT_TOTALS_ID ? `${footprintTotalsSettings(instance.settings).rows.length} rows · ${this.selection.footprintUnits.toUpperCase()} · shared footprint data`
           : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
             : NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) ? `${netPositioningSettings(instance.settings).method === 'price-oi' ? 'Price + OI' : 'Aggressor Flow + OI'} · ${netPositioningSettings(instance.settings).venues.map(venue => venue === 'binance' ? 'Binance USD-M' : 'Hyperliquid').join(' + ') || 'Binance USD-M'} · recorded intervals`
             : instance.definitionId === ORDER_WALLS_ID ? this.selection.venue === 'hyperliquid' ? 'Unavailable · Hyperliquid order-book history is not supported'
@@ -3027,12 +3060,12 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private subscribeFootprint() {
-    const attached = Boolean(this.nativeIndicator(FOOTPRINT_ID));
-    const key = attached && supportsDepth(this.selection) ? `${this.selectionEpoch}:${instrumentKey(this.selection)}:${this.selection.interval}:${this.selection.rowPrice}` : '';
+    const wanted = this.footprintDataWanted();
+    const key = wanted ? `${this.selectionEpoch}:${instrumentKey(this.selection)}:${this.selection.interval}:${this.selection.rowPrice}` : '';
     if (key === this.footprintSubscriptionKey) return;
     this.releaseFootprint?.(); this.releaseFootprint = undefined; this.footprintSubscriptionKey = key;
     const generation = ++this.footprintGeneration; this.footprintBars = []; this.footprintSnapshotSignature = undefined; this.footprintNeedsSync = true; this.footprintHasInitialView = false;
-    if (this.selection.type === 'footprint') this.engine?.setFootprintBars([], false);
+    if (wanted) this.engine?.setFootprintBars([], false);
     if (!key) return;
     const epoch = this.selectionEpoch;
     const selection = this.selection;
@@ -3044,7 +3077,7 @@ export class CandlePanel implements IContentRenderer {
     };
     this.updateFootprintMetadata();
     this.releaseFootprint = this.feed.subscribeFootprint(this.params.api.id, selection, selection.rowPrice, event => {
-      if (this.dead || epoch !== this.selectionEpoch || generation !== this.footprintGeneration || !this.nativeIndicator(FOOTPRINT_ID)) return;
+      if (this.dead || epoch !== this.selectionEpoch || generation !== this.footprintGeneration || !this.footprintDataWanted()) return;
       if ((event.type === 'footprint-snapshot' || event.type === 'footprint-patch') && event.status) {
         this.footprintStatus = event.status;
         this.updateFootprintMetadata();
@@ -3063,7 +3096,7 @@ export class CandlePanel implements IContentRenderer {
         this.footprintBars = nextBars;
         this.footprintSnapshotSignature = nextSignature;
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
-        if (this.visible && this.selection.type === 'footprint') {
+        if (this.visible && this.footprintDataWanted()) {
           if (!unchanged || this.footprintNeedsSync) this.engine?.setFootprintBars(this.footprintBars, true);
           this.footprintNeedsSync = false;
           this.focusFootprintOnce();
@@ -3073,7 +3106,7 @@ export class CandlePanel implements IContentRenderer {
         this.footprintSnapshotSignature = undefined;
         this.mergeFootprints(event.bars, event.retentionStart);
         this.footprintStatus = { ...this.footprintStatus, retentionStart: event.retentionStart };
-        if (this.visible && this.selection.type === 'footprint') {
+        if (this.visible && this.footprintDataWanted()) {
           this.engine?.applyFootprintPatch(event.bars, event.retentionStart);
           this.footprintNeedsSync = false;
           this.focusFootprintOnce();
@@ -3110,6 +3143,14 @@ export class CandlePanel implements IContentRenderer {
       this.hoveredBar = null; this.hoveredFootprint = null; this.refreshReadout();
       return;
     }
+    const footprintTotals = event.paneIndex == null ? undefined : this.selection.indicators.find(instance => instance.visible
+      && instance.settingsVersion === 1 && instance.source.kind === 'chart' && instance.definitionId === FOOTPRINT_TOTALS_ID
+      && this.engine?.footprintTotalsPaneIndex(instance.instanceId) === event.paneIndex);
+    if (footprintTotals && event.time !== null) {
+      this.heatmapControls.showSharedTooltip(this.engine?.footprintTotalsTooltip(footprintTotals.instanceId, event.time) ?? null);
+      this.hoveredBar = null; this.hoveredFootprint = null; this.refreshReadout();
+      return;
+    }
     const plot = this.engine?.chart.plotRect(0);
     const point = event.point;
     const wallHit: OrderWallHit | null = point && plot ? this.engine?.orderWallAt(point.x - plot.left, point.y - plot.top) ?? null : null;
@@ -3140,11 +3181,11 @@ export class CandlePanel implements IContentRenderer {
     this.syncNetPositioning();
     if (this.visible) {
       this.heatmapControls.setStatus(this.heatmapStatus);
+      if (this.footprintDataWanted() && this.footprintNeedsSync) {
+        this.engine?.setFootprintBars(this.footprintBars, true);
+        this.footprintNeedsSync = false;
+      }
       if (this.selection.type === 'footprint') {
-        if (this.footprintNeedsSync) {
-          this.engine?.setFootprintBars(this.footprintBars, true);
-          this.footprintNeedsSync = false;
-        }
         this.focusFootprintOnce();
       }
       this.refreshReadout();
@@ -3342,6 +3383,7 @@ export class CandlePanel implements IContentRenderer {
         surfaceMounted: this.engine?.footprintSurfaceMounted ?? false,
         hover: this.hoveredFootprint,
       },
+      footprintTotals: this.engine?.footprintTotalsDiagnostics() ?? [],
       heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
       netPositioning: { panes: this.engine?.netPositioningDiagnostics() ?? [], request: this.netPositioningRequestKey,
         histories: [...this.netPositioningHistories.values()].map(history => history.diagnostics()), errors: Object.fromEntries(this.netPositioningErrors) },
@@ -3380,6 +3422,7 @@ export class CandlePanel implements IContentRenderer {
     this.release?.();
     this.releaseHeatmap?.(); this.heatmapGeneration++; this.heatmapControls.dispose();
     this.releaseNetPositioning?.(); this.releaseNetPositioning = undefined; this.netPositioningGeneration++; this.netPositioningControls.dispose();
+    this.footprintTotalsControls.dispose();
     this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();
     this.releaseFootprint?.(); this.footprintGeneration++;
     this.indicatorLifecycle?.dispose();

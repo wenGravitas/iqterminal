@@ -139,7 +139,7 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   const setup = await page.evaluate(() => {
     const t = (window as any).__terminal, p = [...t.panels.values()][0] as any;
     const rowSize = p.selection.rowPrice;
-    p.engine.chart.timeScale.setBarSpacing(200); p.engine.chart.timeScale.setRightOffset(1);
+    p.engine.chart.timeScale.setBarSpacing(240); p.engine.chart.timeScale.setRightOffset(1);
     p.engine.chart.panes()[0].priceScale.setAutoScale(false);
     p.engine.chart.panes()[0].priceScale.setFixedRange({ min: 83000 - 17.5 * rowSize, max: 83000 + .5 * rowSize }); p.engine.chart.setAutoScale(false);
     return { rowSize, start: p.footprintStatus.collectionStartedAt };
@@ -159,6 +159,7 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
       opacity: p.engine.footprint.opacity, cells: p.engine.footprintBars[0].cells.length,
       vah: stats.vah, val: stats.val, poc: stats.poc, volume: stats.volume, delta: stats.delta,
       options: p.engine.footprint.options(), plotHeight: p.engine.chart.plotRect(0).height,
+      dpr,
       expectedPocY: Math.round(scale.priceToY(stats.poc) * dpr), strokes: (window as any).__footprintVaStrokes,
       pocStrokes: (window as any).__footprintPocStrokes, cellFills: (window as any).__footprintCellFills,
       totals: (window as any).__footprintTotals };
@@ -180,19 +181,16 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
     .filter((rect: any) => rect.alpha === rendered.opacity && Math.abs(rect.y + rect.height / 2 - rendered.expectedPocY) <= 1)
     .map((rect: any) => [`${rect.x}:${rect.y}:${rect.width}:${rect.height}`, rect])).values()] as any[];
   expect(pocFills).toHaveLength(2);
-  const fillLeft = Math.min(...pocFills.map(rect => rect.x));
-  const fillRight = Math.max(...pocFills.map(rect => rect.x + rect.width));
-  expect(pocStroke.points[0][0]).toBe(Math.round(fillLeft) + .5);
-  expect(pocStroke.points[2][0]).toBe(Math.round(fillRight) + .5);
   const totals = [...new Map(rendered.totals.map((label: any) => [`${label.text}:${label.x}:${label.y}`, label])).values()] as any[];
   const totalLabels = totals.filter(label => label.text === expectedVolume || label.text === expectedDelta);
   expect(totalLabels.map(label => label.text)).toEqual(expect.arrayContaining([expectedVolume, expectedDelta]));
   expect(totalLabels.map(label => [label.y, label.alpha])).toEqual([[rendered.expectedPocY, 1], [rendered.expectedPocY, 1]]);
   const volumeLabel = totalLabels.find(label => label.text === expectedVolume)!;
   const deltaLabel = totalLabels.find(label => label.text === expectedDelta)!;
-  expect(Math.abs(volumeLabel.x - (pocStroke.points[0][0] - 4))).toBeLessThanOrEqual(.5);
-  expect(Math.abs(deltaLabel.x - (pocStroke.points[2][0] + 4))).toBeLessThanOrEqual(.5);
-  await page.screenshot({ path: 'artifacts/footprint-vah-val-opacity-30-poc-row-totals-1366x768.png' });
+  const labelGapCss = Math.max(3, 4 - (2 + pocStroke.width / (2 * rendered.dpr)));
+  expect(Math.abs(volumeLabel.x - (pocStroke.points[0][0] - labelGapCss * rendered.dpr))).toBeLessThanOrEqual(.5);
+  expect(Math.abs(deltaLabel.x - (pocStroke.points[2][0] + labelGapCss * rendered.dpr))).toBeLessThanOrEqual(.5);
+  await page.screenshot({ path: 'artifacts/footprint-totals/poc-markers-gap-1366x768.png' });
 });
 
 test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {

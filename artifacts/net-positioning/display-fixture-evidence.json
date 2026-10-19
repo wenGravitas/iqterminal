@@ -1,0 +1,93 @@
+{
+  "evidenceType": "explicit deterministic browser fixture",
+  "capturedOn": "2026-10-19",
+  "screenshot": "display-fixture-1366x768.png",
+  "source": "Playwright route interception for /market-data/v1/net-positioning; no production fixture mode or network fallback",
+  "observations": {
+    "methods": [
+      "price-oi",
+      "aggressor-flow-oi"
+    ],
+    "venues": [
+      "binance",
+      "hyperliquid"
+    ],
+    "responses": 5,
+    "returnedIntervalRowsIncludingOverlap": 1260,
+    "visibleCandles": 35,
+    "netLongsVisibleExtremaBtc": {
+      "minimum": -98,
+      "maximum": 155
+    },
+    "netShortsVisibleExtremaBtc": {
+      "minimum": -105,
+      "maximum": 55
+    },
+    "trueZeroAndPartialCoverage": "verified in tooltip; partial candle reports 1/2 intervals available",
+    "offscreenOutlierBtc": 2000,
+    "outlierScale": "excluded until panned into view, then included",
+    "visualSettings": "Grouped/Off and Stacked/Auto changes preserved history and worker request; pane, chart, and primitive identities stayed stable",
+    "legendAndHover": "keyboard focus and signed Binance segment hit-test verified",
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "frameRateClaim": false
+  },
+  "palette": {
+    "dark": {
+      "binance": "#c39b58",
+      "hyperliquid": "#719aca"
+    },
+    "light": {
+      "binance": "#946820",
+      "hyperliquid": "#3e71a6"
+    },
+    "mapping": "source-based and unchanged for positive/negative values and either indicator pane",
+    "savedHexOverrides": "preserved across theme changes",
+    "segmentLabelForeground": "selects the higher-contrast near-black or near-white text against each effective source fill"
+  },
+  "screenshots": {
+    "fixture": {
+      "path": "display-fixture-1366x768.png",
+      "theme": "dark"
+    },
+    "live": {
+      "path": "display-live-1366x768.png",
+      "theme": "light",
+      "positioningSourceStatusAtCapture": {
+        "binance": "live",
+        "hyperliquid": "live"
+      },
+      "units": {
+        "binance": "verified BTC",
+        "hyperliquid": "verified BTC"
+      },
+      "sourceTimes": {
+        "binance": "exchange-event",
+        "hyperliquid": "collector-sampled"
+      }
+    }
+  },
+  "liveProxyCheck": {
+    "capturedAt": "2026-10-19T16:31:34.896Z",
+    "healthHttpStatus": 200,
+    "collectorState": "live",
+    "bothFeedsState": "live",
+    "latestOiObservationAgeMs": {
+      "binance": 1262,
+      "hyperliquid": 959
+    },
+    "methodResponses": {
+      "price-oi": {
+        "httpStatus": 200,
+        "intervalRows": 918
+      },
+      "aggressor-flow-oi": {
+        "httpStatus": 200,
+        "intervalRows": 917
+      }
+    },
+    "unitVerification": "verified BTC for both venues"
+  }
+}

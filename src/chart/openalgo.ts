@@ -4,7 +4,8 @@ import { AxisGrid } from './axis-grid';
 import { OrderBookHeatmap } from './orderbook-heatmap';
 import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
 import { OrderWallsPrimitive } from './order-walls';
-import { NetPositioningPane } from './net-positioning';
+import { NetPositioningPane, netPositioningSourceColors } from './net-positioning';
+import type { NetPositioningLabels } from './net-positioning';
 import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
 import { ExecutionHoverRay } from './execution-hover-ray';
 import { ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
@@ -28,6 +29,8 @@ import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
 import { DrawingAxisPriceLabels, registerIQDrawingLabelRenderers } from './drawing-labels';
 import { TerminalFootprint } from './terminal-footprint';
+import { FootprintTotalsPane } from './footprint-totals';
+import type { FootprintBarStats, FootprintStatRow } from 'openalgo-charts/profile';
 import { FootprintActivity } from './footprint-activity';
 import { footprintForUnits, type FootprintUnits } from './footprint-units';
 import type { Scheduler } from './scheduler';
@@ -77,6 +80,9 @@ export class OpenAlgoCandleChart {
   private heatmap: OrderBookHeatmap | null = null;
   private orderWalls: OrderWallsPrimitive | null = null;
   private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
+  private netPositioningLegends = new Map<string, { element: HTMLElement; abort: AbortController; venuesKey: string }>();
+  private footprintTotalsPanes = new Map<string, { series: SeriesApi; primitive: FootprintTotalsPane; paneIndex: number }>();
+  private readonly netPositioningViewportSubscriptions: (() => void)[] = [];
   private orderWallSegments = new Map<string, OrderWallSegment>();
   private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
   private orderWallValueQueueStart = 0;
@@ -193,7 +199,8 @@ export class OpenAlgoCandleChart {
     // may not run until the next frame, so consume this chart's queued resize
     // work after refreshing the viewport-dependent footprint slice.
     this.resizeSubscription = this.chart.on('resize', () => {
-      if (this.mode === 'footprint') this.enqueueFootprintRefresh();
+      if (this.mode === 'footprint' || this.footprintTotalsPanes.size) this.enqueueFootprintRefresh();
+      this.syncNetPositioningViewport();
       this.scheduler.flush(this);
     });
     // The drawing tier is deliberately attached only to native candle charts.
@@ -214,9 +221,9 @@ export class OpenAlgoCandleChart {
         if (!ids) { this.drawingPreviews.clear(); return; }
         for (const id of ids) this.drawingPreviews.delete(id);
       }),
-      this.chart.on('paneAdded', payload => { this.shiftNetPositioningPanes('add', payload.paneIndex); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
-      this.chart.on('paneRemoved', payload => { this.shiftNetPositioningPanes('remove', payload.paneIndex); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
-      this.chart.on('paneMoved', payload => { this.shiftNetPositioningPanes('move', payload.from, payload.to); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneAdded', payload => { this.shiftNetPositioningPanes('add', payload.paneIndex); this.syncNetPositioningViewport(); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneRemoved', payload => { this.shiftNetPositioningPanes('remove', payload.paneIndex); this.syncNetPositioningViewport(); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
+      this.chart.on('paneMoved', payload => { this.shiftNetPositioningPanes('move', payload.from, payload.to); this.syncNetPositioningViewport(); this.drawingPreviews.clear(); this.syncDrawingAxisLabels(); }),
     );
     this.scopedDrawings = new InstrumentDrawings(this.chart, this.drawings, {
       store: safeDrawingStore(),
@@ -274,6 +281,11 @@ export class OpenAlgoCandleChart {
     this.footprintOptions = { ...this.footprintOptions, buyColor: palette.upColor, buyTextColor: palette.upColor,
       sellColor: palette.downColor, sellTextColor: palette.downColor, pocColor: palette.axisText };
     this.footprint?.setOptions(this.footprintOptions);
+    const sourceColors = netPositioningSourceColors(name);
+    for (const [id, view] of this.netPositioningPanes) {
+      view.primitive.setThemeColors(sourceColors);
+      this.syncNetPositioningLegend(id, view.primitive.diagnostics().venues);
+    }
   }
 
   setHeatmap(options: HeatmapSettings, intervalMs: number) {
@@ -290,9 +302,13 @@ export class OpenAlgoCandleChart {
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
   heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
 
-  addNetPositioningPane(id: string, side: NetPositioningSide, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number) {
+  addNetPositioningPane(id: string, side: NetPositioningSide, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number, display: import('./net-positioning-layout').NetPositioningDisplay = 'stacked', labels: NetPositioningLabels = 'auto', colors?: Partial<Record<NetPositioningVenue, string>>) {
     let view = this.netPositioningPanes.get(id);
     if (!view) {
+      if (!this.netPositioningViewportSubscriptions.length) {
+        const sync = () => this.syncNetPositioningViewport();
+        this.netPositioningViewportSubscriptions.push(this.chart.on('pan', sync), this.chart.on('zoom', sync), this.chart.on('resize', sync), this.chart.on('paneResized', sync), this.chart.on('data:update', sync));
+      }
       const paneIndex = this.chart.panes().length;
       const primitive = new NetPositioningPane(id, side);
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
@@ -304,8 +320,61 @@ export class OpenAlgoCandleChart {
       this.netPositioningPanes.set(id, view);
       primitive.setHostSnapshot(this.candlesFromSeries());
     }
-    view.primitive.setSettings(side, method, venues, intervalMs);
+    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme()));
+    view.primitive.setSettings(side, method, venues, intervalMs, display, labels);
+    view.primitive.setColorOverrides(colors);
+    this.syncNetPositioningLegend(id, venues);
+    this.syncNetPositioningViewport();
     return view.paneIndex;
+  }
+
+  private syncNetPositioningViewport() {
+    if (!this.netPositioningPanes.size) return;
+    const range = this.chart.getVisibleLogicalRange();
+    if (range) for (const view of this.netPositioningPanes.values()) view.primitive.setVisibleRange(range.from, range.to);
+    this.positionNetPositioningLegends();
+  }
+
+  private syncNetPositioningLegend(id: string, venues: readonly NetPositioningVenue[]) {
+    const view = this.netPositioningPanes.get(id); if (!view) return;
+    let legend = this.netPositioningLegends.get(id);
+    const venuesKey = venues.join(',');
+    if (!legend || legend.venuesKey !== venuesKey) {
+      legend?.abort.abort(); legend?.element.remove();
+      const abort = new AbortController(), element = document.createElement('div');
+      element.className = 'net-positioning-legend'; element.setAttribute('role', 'group');
+      element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
+      for (const venue of venues) {
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'net-positioning-source';
+        button.dataset.source = venue; button.textContent = `${venue === 'binance' ? 'BN' : 'HL'}[P]`;
+        button.title = venue === 'binance' ? 'Binance BTCUSDT USD-M Perpetual' : 'Hyperliquid BTC Perpetual';
+        button.setAttribute('aria-label', `Highlight ${button.title}`);
+        const set = () => view.primitive.highlightSource(venue);
+        const clear = () => { if (document.activeElement !== button) view.primitive.highlightSource(null); };
+        button.addEventListener('pointerenter', set, { signal: abort.signal }); button.addEventListener('pointerleave', clear, { signal: abort.signal });
+        button.addEventListener('focus', set, { signal: abort.signal }); button.addEventListener('blur', () => view.primitive.highlightSource(null), { signal: abort.signal });
+        element.append(button);
+      }
+      this.container.append(element);
+      legend = { element, abort, venuesKey }; this.netPositioningLegends.set(id, legend);
+    }
+    legend.element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
+    for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
+      const venue = button.dataset.source as NetPositioningVenue;
+      button.style.setProperty('--source-color', view.primitive.sourceColor(venue));
+    }
+    this.positionNetPositioningLegends();
+  }
+
+  private positionNetPositioningLegends() {
+    for (const [id, legend] of this.netPositioningLegends) {
+      const view = this.netPositioningPanes.get(id); if (!view) continue;
+      const plot = this.chart.plotRect(view.paneIndex); if (!plot) { legend.element.hidden = true; continue; }
+      legend.element.hidden = false;
+      const width = legend.element.getBoundingClientRect().width;
+      legend.element.style.left = `${Math.max(plot.left + 4, plot.left + plot.width - width - 6)}px`;
+      legend.element.style.top = `${plot.top + 4}px`;
+    }
   }
 
   private candlesFromSeries() {
@@ -313,7 +382,7 @@ export class OpenAlgoCandleChart {
   }
 
   private shiftNetPositioningPanes(kind: 'add' | 'remove' | 'move', from: number, to?: number) {
-    for (const view of this.netPositioningPanes.values()) {
+    for (const view of [...this.netPositioningPanes.values(), ...this.footprintTotalsPanes.values()]) {
       if (kind === 'add' && from <= view.paneIndex) view.paneIndex++;
       else if (kind === 'remove' && from < view.paneIndex) view.paneIndex--;
       else if (kind === 'move' && to !== undefined) {
@@ -327,9 +396,49 @@ export class OpenAlgoCandleChart {
   removeNetPositioningPane(id: string) {
     const view = this.netPositioningPanes.get(id); if (!view) return;
     this.netPositioningPanes.delete(id);
+    const legend = this.netPositioningLegends.get(id); legend?.abort.abort(); legend?.element.remove(); this.netPositioningLegends.delete(id);
     this.chart.removePrimitive(view.primitive);
     view.series.remove();
+    if (!this.netPositioningPanes.size) { for (const unsubscribe of this.netPositioningViewportSubscriptions) unsubscribe(); this.netPositioningViewportSubscriptions.length = 0; }
+    else this.syncNetPositioningViewport();
   }
+
+  addFootprintTotalsPane(id: string, rows: readonly FootprintStatRow[], units: FootprintUnits) {
+    let view = this.footprintTotalsPanes.get(id);
+    if (!view) {
+      this.ensureFootprintStatsModel();
+      this.ensureFootprintRefreshSubscriptions();
+      const paneIndex = this.chart.panes().length;
+      const primitive = new FootprintTotalsPane(id);
+      const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
+      series.priceScale().setPriceFormatter(() => '');
+      series.setData([]);
+      this.chart.addPrimitive(primitive, paneIndex);
+      view = { series, primitive, paneIndex };
+      this.footprintTotalsPanes.set(id, view);
+    }
+    view.primitive.setSettings(rows, units);
+    this.enqueueFootprintRefresh();
+    return view.paneIndex;
+  }
+
+  removeFootprintTotalsPane(id: string) {
+    const view = this.footprintTotalsPanes.get(id); if (!view) return;
+    this.footprintTotalsPanes.delete(id);
+    this.chart.removePrimitive(view.primitive); view.series.remove();
+    if (this.mode !== 'footprint' && !this.footprintTotalsPanes.size) {
+      this.visibleCallbacks.delete(this.footprintRefresh);
+      for (const unsubscribe of this.viewSubscriptions) unsubscribe();
+      this.viewSubscriptions.length = 0;
+      this.footprint = null;
+      this.footprintBars = [];
+      this.footprintSliceKey = '';
+    }
+  }
+
+  footprintTotalsPaneIndex(id: string) { return this.footprintTotalsPanes.get(id)?.paneIndex ?? -1; }
+  footprintTotalsTooltip(id: string, time: number) { return this.footprintTotalsPanes.get(id)?.primitive.tooltip(time) ?? null; }
+  footprintTotalsDiagnostics() { return [...this.footprintTotalsPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, ...view.primitive.diagnostics() })); }
 
   setNetPositioningSnapshot(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
     const view = this.netPositioningPanes.get(id); if (!view) return;
@@ -496,13 +605,15 @@ export class OpenAlgoCandleChart {
     });
     if (mode === 'footprint') {
       this.ensureFootprintSurface();
+      this.footprintTimes = this.footprintBars.map(bar => bar.time);
+      this.footprintIndexSeries?.setData(this.footprintBars.map(toExecutionBar), { confirmation: 'forming' });
       this.times = this.footprintTimes;
       const latest = this.footprintBars.at(-1);
       this.latestBar = latest ? toExecutionBar(latest) : null;
       this.latestTime = this.latestBar?.time ?? -Infinity;
     } else {
       this.removeFootprintSurface();
-      this.footprintBars = [];
+      if (!this.footprintTotalsPanes.size) this.footprintBars = [];
       this.footprintSliceKey = '';
       this.footprintTimes = [];
       this.times = this.candleTimes;
@@ -515,8 +626,14 @@ export class OpenAlgoCandleChart {
 
   setFootprintBars(bars: FootprintBar[], preserveView = true) {
     const indexSeries = this.footprintIndexSeries;
-    if (this.disposed || this.mode !== 'footprint' || !indexSeries || !this.footprint) return;
-    if (!bars.length && this.pendingView) return;
+    if (this.disposed || !this.footprint || (this.mode !== 'footprint' && !this.footprintTotalsPanes.size)) return;
+    if (!bars.length && this.pendingView && this.mode === 'footprint' && !this.footprintTotalsPanes.size) return;
+    if (this.mode !== 'footprint' || !indexSeries) {
+      this.footprintBars = bars.slice(-MAX_BARS).sort((a, b) => a.time - b.time);
+      this.footprintSliceKey = '';
+      this.enqueueFootprintRefresh();
+      return;
+    }
     const view = this.pendingView ?? (preserveView ? this.captureView() : null);
     this.pendingView = null;
     this.footprintActivity.clear();
@@ -534,40 +651,47 @@ export class OpenAlgoCandleChart {
 
   applyFootprintPatch(patches: FootprintBar[], retentionStart?: number | null) {
     const indexSeries = this.footprintIndexSeries;
-    if (this.disposed || this.mode !== 'footprint' || !indexSeries || !patches.length) return;
+    if (this.disposed || !patches.length || (this.mode !== 'footprint' && !this.footprintTotalsPanes.size)) return;
+    const useSeries = this.mode === 'footprint' && indexSeries !== null;
     let trimmed = false;
     if (retentionStart !== undefined) {
       const cutoff = retentionStart ?? Infinity;
       while (this.footprintBars.length && this.footprintBars[0]!.time < cutoff) {
         this.footprintBars.shift();
-        this.footprintTimes.shift();
+        if (useSeries) this.footprintTimes.shift();
         trimmed = true;
       }
       if (trimmed) {
-        this.times = this.footprintTimes;
-        indexSeries.setData(this.footprintBars.map(toExecutionBar), { confirmation: 'forming' });
+        if (useSeries) {
+          this.times = this.footprintTimes;
+          indexSeries!.setData(this.footprintBars.map(toExecutionBar), { confirmation: 'forming' });
+        }
       }
     }
     for (const footprint of patches) {
-      const index = lowerBound(this.footprintTimes, footprint.time);
-      const known = this.footprintTimes[index] === footprint.time;
-      const bar = toExecutionBar(footprint);
-      const source = footprint.time < this.latestTime ? 'history' : 'live';
-      indexSeries.update(bar, { source, confirmation: footprint.time < this.latestTime ? 'confirmed' : 'forming' });
-      if (!known) this.footprintTimes.splice(index, 0, footprint.time);
+      if (useSeries && indexSeries) {
+        const index = lowerBound(this.footprintTimes, footprint.time);
+        const known = this.footprintTimes[index] === footprint.time;
+        const bar = toExecutionBar(footprint);
+        const source = footprint.time < this.latestTime ? 'history' : 'live';
+        indexSeries.update(bar, { source, confirmation: footprint.time < this.latestTime ? 'confirmed' : 'forming' });
+        if (!known) this.footprintTimes.splice(index, 0, footprint.time);
+        if (footprint.time >= this.latestTime) { this.latestTime = footprint.time; this.latestBar = bar; }
+      }
       const barIndex = lowerBoundFootprint(this.footprintBars, footprint.time);
       if (this.visible && !document.hidden) this.footprintActivity.observe(this.footprintBars[barIndex]?.time === footprint.time ? this.footprintBars[barIndex] : undefined, footprint);
       if (this.footprintBars[barIndex]?.time === footprint.time) this.footprintBars[barIndex] = footprint;
       else this.footprintBars.splice(barIndex, 0, footprint);
-      if (footprint.time >= this.latestTime) { this.latestTime = footprint.time; this.latestBar = bar; }
     }
-    if (this.times.length > MAX_BARS) {
-      this.footprintTimes = this.footprintTimes.slice(-MAX_BARS);
-      this.times = this.footprintTimes;
+    if (this.footprintBars.length > MAX_BARS) {
       this.footprintBars = this.footprintBars.slice(-MAX_BARS);
-      indexSeries.setData(this.footprintBars.map(toExecutionBar), { confirmation: 'forming' });
-      this.latestBar = this.footprintBars.length ? toExecutionBar(this.footprintBars.at(-1)!) : null;
-      this.latestTime = this.latestBar?.time ?? -Infinity;
+      if (useSeries && indexSeries) {
+        this.footprintTimes = this.footprintBars.map(bar => bar.time);
+        this.times = this.footprintTimes;
+        indexSeries.setData(this.footprintBars.map(toExecutionBar), { confirmation: 'forming' });
+        this.latestBar = this.footprintBars.length ? toExecutionBar(this.footprintBars.at(-1)!) : null;
+        this.latestTime = this.latestBar?.time ?? -Infinity;
+      }
     }
     this.enqueueFootprintRefresh();
   }
@@ -651,7 +775,7 @@ export class OpenAlgoCandleChart {
   private enqueueFootprintRefresh() { this.enqueueVisible(this.footprintRefresh); }
 
   private refreshVisibleFootprint() {
-    if (this.mode !== 'footprint' || this.disposed || !this.footprint) return;
+    if (this.disposed || !this.footprint || (this.mode !== 'footprint' && !this.footprintTotalsPanes.size)) return;
     const range = this.chart.getVisibleLogicalRange();
     if (!range || !this.footprintBars.length) { this.clearFootprintSlice(); return; }
     const fromTime = this.chart.dataLayer.indexToTimeFloat(Math.floor(range.from) - 1);
@@ -670,6 +794,8 @@ export class OpenAlgoCandleChart {
     this.footprint.setOptions({ imbalanceThreshold: this.footprintUnits === 'usdt' && threshold < Number.MAX_VALUE
       ? Math.min(Number.MAX_VALUE, threshold * (this.latestBar?.close ?? 1)) : threshold });
     this.footprint.setBars(selected.map(bar => footprintForUnits(bar, this.footprintUnits)).filter(bar => bar !== null).map(toFootprintBar));
+    const stats = this.footprint.stats();
+    for (const view of this.footprintTotalsPanes.values()) view.primitive.setStats(stats);
     this.stats.footprintSets++;
   }
 
@@ -718,6 +844,7 @@ export class OpenAlgoCandleChart {
     if (this.footprintSliceKey === 'empty') return;
     this.footprintSliceKey = 'empty';
     footprint.setBars([]);
+    for (const view of this.footprintTotalsPanes.values()) view.primitive.setStats([]);
     this.stats.footprintSets++;
   }
 
@@ -749,27 +876,37 @@ export class OpenAlgoCandleChart {
         priceLineVisible: true, lastValueVisible: true,
       },
     });
-    this.footprint = new TerminalFootprint(this.footprintOptions);
-    this.footprint.setCellOpacity(this.footprintOpacity);
-    this.chart.addPrimitive(this.footprint);
+    this.ensureFootprintStatsModel();
+    this.chart.addPrimitive(this.footprint!);
     this.chart.addPrimitive(this.footprintScaleFloor);
     this.chart.addPrimitive(this.footprintActivity);
+    this.ensureFootprintRefreshSubscriptions();
+  }
+
+  private ensureFootprintStatsModel() {
+    if (this.footprint) return;
+    this.footprint = new TerminalFootprint(this.footprintOptions);
+    this.footprint.setCellOpacity(this.footprintOpacity);
+  }
+
+  private ensureFootprintRefreshSubscriptions() {
+    if (this.viewSubscriptions.length) return;
     this.viewSubscriptions.push(
       this.chart.on('pan', () => this.enqueueFootprintRefresh()),
       this.chart.on('zoom', () => this.enqueueFootprintRefresh()),
       this.chart.on('paneResized', () => this.enqueueFootprintRefresh()),
+      this.chart.on('data:update', () => this.enqueueFootprintRefresh()),
     );
   }
 
   private removeFootprintSurface() {
     this.visibleCallbacks.delete(this.footprintRefresh);
-    for (const unsubscribe of this.viewSubscriptions) unsubscribe();
-    this.viewSubscriptions.length = 0;
+    if (!this.footprintTotalsPanes.size) { for (const unsubscribe of this.viewSubscriptions) unsubscribe(); this.viewSubscriptions.length = 0; }
     if (this.footprint) this.chart.removePrimitive(this.footprint);
     this.chart.removePrimitive(this.footprintScaleFloor);
     this.chart.removePrimitive(this.footprintActivity);
     this.footprintActivity.clear();
-    this.footprint = null;
+    if (!this.footprintTotalsPanes.size) this.footprint = null;
     this.footprintIndexSeries?.remove();
     this.footprintIndexSeries = null;
   }
@@ -781,7 +918,7 @@ export class OpenAlgoCandleChart {
     const visibleCallbacks = [...this.visibleCallbacks.values()];
     this.visibleCallbacks.clear();
     for (const callback of visibleCallbacks) callback();
-    if(this.mode==='footprint'&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
+    if((this.mode==='footprint'||this.footprintTotalsPanes.size)&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
     if((this.heatmap||this.orderWalls)&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[0].priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     const pending = [...this.callbacks.values()];
     this.callbacks.clear();

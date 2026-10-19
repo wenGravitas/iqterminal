@@ -321,7 +321,7 @@ for (const dpr of [1, 2]) {
     expect(outlines).toHaveLength(1);
     expect(outlines[0]).toMatchObject({ color: '#6d3fa0', width: 2 * dpr, dash: [3 * dpr, 2 * dpr] });
     expectPocMarkers(outlines[0]!.path);
-    expect(outlines[0]!.path.commands.every(({ x, y }) => Number.isInteger(x - offset) && Number.isInteger(y - offset))).toBe(true);
+    expect(outlines[0]!.path.commands.every(({ x, y }) => Number.isInteger(x) && Number.isInteger(y - offset))).toBe(true);
   });
 }
 
@@ -404,8 +404,10 @@ test('paired volume profiles place unlabeled per-bar totals outside the native P
   expect(totals.every(({ font, alpha }) => font === '9px ui-monospace, SFMono-Regular, Menlo, monospace' && alpha === 1)).toBe(true);
   const pocY = Math.round(600 - p.stats()[0]!.poc * 3);
   expect(totals.map(({ y }) => y)).toEqual([pocY, pocY]);
-  expect(Math.abs(totals[0]!.x - (leftMark - 4))).toBeLessThanOrEqual(.5);
-  expect(Math.abs(totals[1]!.x - (rightMark + 4))).toBeLessThanOrEqual(.5);
+  expect(Math.abs(totals[0]!.x - (leftMark - 3))).toBeLessThanOrEqual(.5);
+  expect(Math.abs(totals[1]!.x - (rightMark + 3))).toBeLessThanOrEqual(.5);
+  expect((leftMark - 1) - totals[0]!.x).toBe(2);
+  expect(totals[1]!.x - (rightMark + 1)).toBe(2);
   expect(totals[0]!.color).toBe('rgb(204, 204, 204)'); expect(totals[1]!.color).toBe('rgb(88, 166, 92)');
 });
 
@@ -453,9 +455,11 @@ test('POC-row totals use the full gap, track POC updates and remain outside the 
   ];
   p.setBars(updated); labels.length = 0; paths.length = 0; p.draw(ctx, rc);
   expect(p.stats().map(stat => stat.poc)).toEqual([125, 125]);
-  expect(labels).toHaveLength(4);
-  expect(labels.map(label => label.y)).toEqual([75, 75, 75, 75]);
-  expect(labels.map(label => label.text)).toEqual(['12.3M', '+12.3M', '12.3M', '-12.3M']);
+  expect(labels).toHaveLength(3); // The shifted markers leave less inter-bar room, so an overlapping flank is suppressed.
+  expect(labels.map(label => label.y)).toEqual([75, 75, 75]);
+  const labelBounds = labels.map(({ text, x, align }) => align === 'right'
+    ? [x - text.length * 5.4, x] as const : [x, x + text.length * 5.4] as const).sort((a, b) => a[0] - b[0]);
+  for (let index = 1; index < labelBounds.length; index++) expect(labelBounds[index - 1]![1]).toBeLessThanOrEqual(labelBounds[index]![0]);
   expect(paths).toHaveLength(2);
 
   p.setOptions({ showPoc: false }); labels.length = 0; paths.length = 0; p.draw(ctx, rc);
@@ -464,7 +468,7 @@ test('POC-row totals use the full gap, track POC updates and remain outside the 
   expect(labels.every(label => label.y === Math.round(rc.priceScale.priceToY(125)))).toBe(true);
 });
 
-test('POC bounds ignore a preceding row when the POC has only one painted side', () => {
+test('POC markers keep two CSS pixels of ink clearance from painted POC cells across DPRs', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'profile', displayMode: 'bidask',
     showCandle: false, showPoc: true, pocStyle: 'outline', showValueArea: false, statsRows: [], tableRows: [] });
   p.setBars([{ time: 0, rowSize: 25, delta: -10, cells: [
@@ -482,38 +486,46 @@ test('POC bounds ignore a preceding row when the POC has only one painted side',
     timeScale: { barSpacing: 200, visibleRange: () => ({ from: 0, to: 1 }), indexToX: () => 150 },
     priceScale: { priceRange: () => ({ min: 50, max: 175 }), priceToY: (value: number) => 600 - value * 3 },
     dataLayer: { timeToIndex: () => 0 } };
-  p.draw(ctx, rc);
-
   expect(p.stats()[0]!.poc).toBe(125);
-  expect(fills).toHaveLength(3);
-  const pocY = rc.priceScale.priceToY(p.stats()[0]!.poc);
-  const pocFill = fills.find(([, y, , height]) => Math.abs(y + height / 2 - pocY) <= 1)!;
-  expect(pocFill).toBeDefined();
-  expect(paths).toHaveLength(1);
-  expect(paths[0]!.commands[0]!.x).toBe(Math.round(pocFill[0]!) + .5);
-  expect(paths[0]!.commands[2]!.x).toBe(Math.round(pocFill[0]! + pocFill[2]!) + .5);
+  for (const dpr of [1, 2]) {
+    fills.length = 0; paths.length = 0; rc.dpr = dpr; p.draw(ctx, rc);
+    expect(fills).toHaveLength(3);
+    const pocY = rc.priceScale.priceToY(p.stats()[0]!.poc) * dpr;
+    const pocFill = fills.find(([, y, , height]) => Math.abs(y + height / 2 - pocY) <= dpr)!;
+    expect(pocFill).toBeDefined();
+    expect(paths).toHaveLength(1);
+    const markerWidth = Math.max(1, Math.round(dpr)) * 2;
+    const leftInkEdge = paths[0]!.commands[0]!.x + markerWidth / 2;
+    const rightInkEdge = paths[0]!.commands[2]!.x - markerWidth / 2;
+    expect((pocFill[0]! - leftInkEdge) / dpr).toBeCloseTo(2, 5);
+    expect((rightInkEdge - (pocFill[0]! + pocFill[2]!)) / dpr).toBeCloseTo(2, 5);
+  }
 });
 
-test('POC marks align to profile column edges while VA guides keep their extensions',()=>{
+test('POC marks have cell clearance while VA guides keep their extensions and edge clipping',()=>{
   const p=new TerminalFootprint({...DEFAULT_FOOTPRINT_OPTIONS,cellStyle:'profile',displayMode:'volume',widthFactor:.5,showCandle:false,showPoc:true,pocStyle:'outline',showValueArea:true,valueAreaColor:'#ffffff',statsRows:[],tableRows:[]});
   p.setBars([{time:0,rowSize:25,delta:3,cells:[{price:112.5,bidVol:0,askVol:2},{price:87.5,bidVol:0,askVol:1}]}]);
-  const lines:number[][]=[],outlines:RecordedPath2D[]=[];
-  const canvas:any={globalAlpha:1,font:'',measureText:()=>({width:1}),roundRect(){},beginPath(){},moveTo:(...args:number[])=>lines.push(args),lineTo:(...args:number[])=>lines.push(args),stroke:(path?:RecordedPath2D)=>{if(path)outlines.push(path);}};
+  const lines:number[][]=[],outlines:RecordedPath2D[]=[],fills:number[][]=[];let pending:number[]|null=null;
+  const canvas:any={globalAlpha:1,font:'',measureText:()=>({width:1}),roundRect(...args:number[]){pending=args.slice(0,4);},fill(){if(pending)fills.push(pending);pending=null;},beginPath(){},moveTo:(...args:number[])=>lines.push(args),lineTo:(...args:number[])=>lines.push(args),stroke:(path?:RecordedPath2D)=>{if(path)outlines.push(path);}};
   const ctx=new Proxy(canvas,{get:(target,key)=>key in target?target[key]:()=>{}});
   const rc:any={dpr:1,plotWidth:600,plotHeight:400,theme:{background:'#090909',axisText:'#cccccc',upColor:'#58a65c',downColor:'#ad5858'},timeScale:{barSpacing:200,visibleRange:()=>({from:0,to:1}),indexToX:()=>150},priceScale:{priceRange:()=>({min:50,max:150}),priceToY:(price:number)=>600-price*4},dataLayer:{timeToIndex:()=>0}};
   p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);expectPocMarkers(outlines[0]!);
   expect(lines[1][0]-lines[0][0]).toBe(116);expect(lines[3][0]-lines[2][0]).toBe(116);
   expect((lines[1][0]+lines[0][0])/2).toBe(150.5);expect((lines[3][0]+lines[2][0])/2).toBe(150.5);
-  expect(outlines[0]!.commands[0]!.x).toBe(100.5);expect(outlines[0]!.commands[2]!.x).toBe(200.5);
-  lines.length=0;outlines.length=0;rc.plotWidth=205;p.draw(ctx,rc);
+  const pocFill=fills.find(([,y,,height])=>Math.abs(y+height/2-rc.priceScale.priceToY(p.stats()[0]!.poc))<=1)!;
+  const gapLeft=pocFill[0]!-(outlines[0]!.commands[0]!.x+1),gapRight=outlines[0]!.commands[2]!.x-1-(pocFill[0]!+pocFill[2]!);
+  expect(gapLeft).toBe(2);expect(gapRight).toBe(2);
+  lines.length=0;outlines.length=0;fills.length=0;rc.plotWidth=205;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
   expect(lines[0][0]).toBe(92.5);expect(lines[1][0]).toBe(205.5);expect(lines[2][0]).toBe(92.5);expect(lines[3][0]).toBe(205.5);
-  expect(outlines[0]!.commands[0]!.x).toBe(100.5);expect(outlines[0]!.commands[2]!.x).toBe(200.5);
-  lines.length=0;outlines.length=0;rc.plotWidth=600;rc.timeScale.indexToX=()=>50;p.draw(ctx,rc);
+  expect(outlines[0]!.commands[2]!.x).toBeLessThanOrEqual(205);
+  const clippedRightFill=fills.find(([,y,,height])=>Math.abs(y+height/2-rc.priceScale.priceToY(p.stats()[0]!.poc))<=1)!;
+  expect(outlines[0]!.commands[2]!.x-1-(clippedRightFill[0]!+clippedRightFill[2]!)).toBe(2);
+  lines.length=0;outlines.length=0;fills.length=0;rc.plotWidth=600;rc.timeScale.indexToX=()=>50;p.draw(ctx,rc);
   expect(lines).toHaveLength(4);expect(outlines).toHaveLength(1);
   expect(lines[0][0]).toBe(.5);expect(lines[1][0]).toBe(108.5);expect(lines[2][0]).toBe(.5);expect(lines[3][0]).toBe(108.5);
-  expect(outlines[0]!.commands[0]!.x).toBe(.5);expect(outlines[0]!.commands[2]!.x).toBe(100.5);
+  expect(outlines[0]!.commands[0]!.x).toBe(0);
 });
 
 test('large profile labels do not erase a smaller proportional bid bar', () => {

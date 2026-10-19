@@ -161,7 +161,7 @@ dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
 .drawing-template-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .drawing-template-row button{height:22px;padding:1px 5px;font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
 .heatmap-notice { position: absolute; z-index: 2; left: 5px; bottom: 25px; max-width: calc(100% - 90px); font-size: 9px; color: var(--muted); background: var(--overlay); pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.heatmap-readout { position: absolute; z-index: 2; top: 63px; left: 6px; max-width: calc(100% - 92px); white-space: pre-line; font-size: 9px; color: var(--text); background: var(--overlay); pointer-events: none; }
+.heatmap-readout { position: absolute; z-index: 2; top: 63px; left: 6px; max-width: min(520px, calc(100% - 12px)); max-height: 36%; overflow: auto; box-sizing: border-box; overflow-wrap: anywhere; padding: 3px 5px; white-space: pre-line; font-size: 9px; color: var(--text); background: var(--overlay); pointer-events: none; }
 .heatmap-readout:empty { display: none; }
 .heatmap-notice[hidden], .heatmap-readout[hidden] { display: none; }
 
@@ -249,6 +249,16 @@ dialog.ticker-settings{width:min(780px,calc(100vw - 24px))}.ticker-scope{height:
 .order-walls-notice[hidden]{display:none}
 .order-walls-notice[data-state=live]{color:var(--up)}
 .order-walls-notice[data-state=stale],.order-walls-notice[data-state=gap],.order-walls-notice[data-state=unavailable]{color:var(--down)}
+
+/* Accessible source legend follows each native positioning pane's plot bounds. */
+.net-positioning-legend{position:absolute;z-index:4;display:flex;align-items:center;gap:3px;max-width:calc(100% - 12px);pointer-events:auto}
+.net-positioning-legend[hidden]{display:none}
+.net-positioning-source{height:17px;min-width:31px;padding:1px 4px;border:1px solid var(--border-soft);background:var(--chrome);color:var(--text);font:9px/13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.net-positioning-source::before{content:"";display:inline-block;width:5px;height:5px;margin:0 4px 1px 0;background:var(--source-color);vertical-align:middle}
+.net-positioning-source[data-source=binance]{--source-color:#c39b58}
+.net-positioning-source[data-source=hyperliquid]{--source-color:#719aca}
+.net-positioning-source:hover,.net-positioning-source:focus-visible{border-color:var(--text);outline:1px solid var(--source-color);outline-offset:1px}
+@media(max-width:520px){.net-positioning-source{min-width:27px;padding:1px 3px;font-size:8px}.net-positioning-legend{gap:2px}}
 
 /* Native Level Watch: server monitoring outlives this bounded view. */
 .level-watch-panel{height:100%;overflow:auto;padding:8px;box-sizing:border-box;font:11px/1.5 var(--font,monospace);background:var(--chart);color:var(--text)}

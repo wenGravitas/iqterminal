@@ -2,6 +2,7 @@ import type { PrimitiveRenderContext, PrimitiveHost } from 'openalgo-charts';
 import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type FootprintHover } from 'openalgo-charts/profile';
 
 const PROFILE_LEVEL_EXTENSION = 8;
+const POC_MARKER_CELL_GAP = 2;
 const FOOTPRINT_FONT_FAMILY = 'ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace';
 const FOOTPRINT_LEVEL_COLOR = '#6d3fa0';
 type RgbColor = { r: number; g: number; b: number; a: number };
@@ -72,7 +73,11 @@ export class TerminalFootprint extends Footprint {
     const edge = this.rc ? this.rc.plotWidth * this.dpr : Infinity;
     left = Math.max(0, Math.min(edge, left));
     right = Math.max(0, Math.min(edge, right));
-    return [this.alignStroke(left), this.alignStroke(right)];
+    // POC marks use a two-pixel stroke (per DPR); align their centerline for
+    // that stroke width so the requested fill-to-ink gap stays even.
+    const markerWidth = this.pixelStrokeWidth() * 2;
+    const alignMarker = (value: number) => Math.round(value) + (markerWidth % 2 ? .5 : 0);
+    return [alignMarker(left), alignMarker(right)];
   }
   private pocHorizontalBounds(left: number, right: number, centreY: number): [number, number] {
     const tolerance = Math.max(1, this.dpr);
@@ -81,7 +86,10 @@ export class TerminalFootprint extends Footprint {
       && cell.x >= left - tolerance && cell.x + cell.width <= right + tolerance);
     const actualLeft = rowCells.length ? Math.min(...rowCells.map(cell => cell.x)) : left;
     const actualRight = rowCells.length ? Math.max(...rowCells.map(cell => cell.x + cell.width)) : right;
-    return this.alignedPocBounds(actualLeft, actualRight);
+    // Keep a two-CSS-pixel clear gap from the painted POC bars. Marker stroke
+    // width is twice pixelStrokeWidth(), so include its half-width before alignment.
+    const offset = POC_MARKER_CELL_GAP * this.dpr + this.pixelStrokeWidth();
+    return this.alignedPocBounds(actualLeft - offset, actualRight + offset);
   }
   private shiftedX(x: number) {
     const centre = this.centres.find(c => Math.abs(x / this.dpr - c) <= this.renderWidth / 2 + 1);
@@ -331,7 +339,10 @@ export class TerminalFootprint extends Footprint {
     const o = this.style, spacing = rc.timeScale.barSpacing;
     const { column, annotation } = footprintColumn(o, spacing);
     if (!annotation) return;
-    const dpr = rc.dpr, physicalFont = Math.max(1, Math.round(9 * dpr)), gap = 4;
+    const dpr = rc.dpr, physicalFont = Math.max(1, Math.round(9 * dpr));
+    const markerOffset = o.showPoc && o.pocStyle === 'outline' ? POC_MARKER_CELL_GAP + this.pixelStrokeWidth() / dpr : 0;
+    // Keep the flank text outside the marker ink by at least two CSS pixels.
+    const gap = Math.max(3, 4 - markerOffset);
     const footerRows = o.tableRows.length ? o.tableRows.length : 0;
     const contentHeight = Math.max(0, rc.plotHeight - footerRows * this.statsHeight);
     const background = parseRgbColor(rc.theme.background);

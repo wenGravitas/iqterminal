@@ -1,11 +1,21 @@
 import { describe, it, expect, vi } from 'vitest';
 import { config } from '../src/panel';
-import { FOOTPRINT_ID, HEATMAP_ID, IndicatorLifecycle, nativeInstance, studyPins, withStudyPins, validateInstances } from '../src/indicators/model';
+import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, NET_LONGS_ID, NET_SHORTS_ID, IndicatorLifecycle, footprintTotalsSettings, nativeInstance, netPositioningSettings, studyPins, withStudyPins, validateInstances } from '../src/indicators/model';
 import { ORDER_WALLS_ID, DEFAULT_ORDER_WALLS_SETTINGS } from '../src/feed/order-walls';
 import { ScriptStudyHost, type StudyPin } from '../src/scripts/host';
 const pin: StudyPin = { attachmentId: 'ema20', scriptId: 'builtin.ema', revisionId: 'a'.repeat(64), title: 'EMA', description: 'Average', settings: { length: 20 }, visible: true };
 const legacy = { venue: 'binance', interval: '1m', type: 'footprint', rowPrice: 25, footprintUnits: 'usdt', footprint: { opacity: .35, displayMode: 'delta' }, heatmap: { enabled: true, opacity: .65, mode: 'peak' }, studies: [pin], unrelated: { preserved: true } };
 describe('unified indicator configuration', () => {
+  it('registers Footprint Totals as an independent pane and preserves selected rows through reload', () => {
+    expect(footprintTotalsSettings({})).toEqual({ rows: ['volume', 'bidVolume', 'askVolume', 'delta'] });
+    const totals = nativeInstance(FOOTPRINT_TOTALS_ID, { rows: ['volume', 'deltaPct', 'trades', 'bad'] });
+    const saved = config({ ...legacy, indicators: [totals] });
+    expect(saved.indicators[0]).toMatchObject({ definitionId: FOOTPRINT_TOTALS_ID, placement: 'pane', visible: true,
+      settings: { rows: ['volume', 'deltaPct', 'trades'] } });
+    expect(config(JSON.parse(JSON.stringify(saved))).indicators).toEqual(saved.indicators);
+    expect(config({ ...saved, venue: 'hyperliquid', market: 'perpetual' }).indicators).toEqual(saved.indicators);
+    expect(validateInstances([totals, { ...totals, instanceId: 'another-totals' }])).toHaveLength(1);
+  });
   it('migrates native modes and pinned scripts once with stable IDs, settings and unrelated fields', () => {
     const migrated = config(legacy);
     expect(migrated.indicatorVersion).toBe(1); expect(migrated.indicators.map(i => i.definitionId)).toEqual([FOOTPRINT_ID, 'script:builtin.ema', HEATMAP_ID]);
@@ -56,6 +66,20 @@ describe('unified indicator configuration', () => {
     expect(config({ ...moved, venue: 'binance', market: 'spot' }).indicators[0]!.settings).toEqual(settings);
     const duplicate = { ...walls, instanceId: 'another-wall-instance' };
     expect(validateInstances([walls, duplicate])).toHaveLength(1);
+  });
+  it('migrates Net Positioning to stacked Auto labels and preserves saved grouped display choices', () => {
+    expect(netPositioningSettings({ method: 'price-oi', venues: ['hyperliquid'] })).toEqual({
+      method: 'price-oi', venues: ['hyperliquid'], display: 'stacked', labels: 'auto',
+    });
+    const saved = config({ ...legacy, indicators: [
+      nativeInstance(NET_LONGS_ID, { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover', colors: { binance: '#123456', hyperliquid: '#abcdef' } }),
+      nativeInstance(NET_SHORTS_ID, { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'off' }),
+    ] });
+    expect(saved.indicators.map(instance => netPositioningSettings(instance.settings))).toEqual([
+      { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover', colors: { binance: '#123456', hyperliquid: '#abcdef' } },
+      { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'off' },
+    ]);
+    expect(config(JSON.parse(JSON.stringify(saved))).indicators).toEqual(saved.indicators);
   });
 });
 describe('indicator lifecycle', () => {
