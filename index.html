@@ -1,1 +1,144 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#080808"><title>Basis · BTC terminal</title><script src="/theme-init.js"></script><style>html,body{margin:0;background:#080808;color:#c7c7c7}html[data-theme=light],html[data-theme=light] body{background:#f6f4ee;color:#202934}</style></head><body><main id="workspace" aria-label="Chart workspace"></main><footer id="commands"><span class="brand">BASIS</span><button id="add">Add chart</button><button id="add-ticker">Trade Ticker</button><button id="level-watch">Level Watch</button><button id="notifications">Notifications</button><button id="reset">Reset layout</button><select id="theme" aria-label="Theme"><option value="system">System</option><option value="light">Ivory (light)</option><option value="dark">Dark</option></select><span id="venue-states" role="status"></span><a id="licenses" href="/licenses/" aria-label="Third-party licences">Licences</a><span class="command-end">UTC <span id="clock"></span></span></footer><script type="module" src="/src/main.ts"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080808">
+    <title>Basis · BTC terminal</title>
+    <style>
+      :root{--startup-bg:#080808;--startup-text:#c7c7c7;--startup-muted:#858585;--startup-line:#292929;--startup-accent:#92c5cc;color-scheme:dark}
+      :root[data-theme=light]{--startup-bg:#f6f4ee;--startup-text:#202934;--startup-muted:#485667;--startup-line:#b7bcb5;--startup-accent:#006a73;color-scheme:light}
+      html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--startup-bg);color:var(--startup-text)}
+      body{display:flex;flex-direction:column}
+      #app-shell{display:flex;flex:1;flex-direction:column;width:100%;min-width:0;min-height:0;visibility:hidden}
+      html[data-app-state=ready] #app-shell{visibility:visible}
+      #startup-splash{position:fixed;z-index:2147483000;inset:0;display:grid;place-items:center;overflow:hidden;background:var(--startup-bg);color:var(--startup-text);font:11px ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;opacity:1;visibility:visible;transition:opacity 140ms ease-out,visibility 0s linear 140ms}
+      html[data-app-state=ready] #startup-splash{opacity:0;visibility:hidden;pointer-events:none}
+      .startup-frame{width:min(286px,calc(100vw - 32px));padding:12px 13px 10px;border:1px solid var(--startup-line);background:var(--startup-bg)}
+      .startup-heading{display:flex;align-items:center;gap:10px;min-height:26px}
+      .startup-spinner{display:grid;place-items:center;flex:none;width:22px;height:22px;color:var(--startup-accent)}
+      .startup-spinner svg{display:block;width:22px;height:22px;animation:startup-spin 1.1s cubic-bezier(.6,.1,.35,.9) infinite}
+      .startup-spinner .track{fill:none;stroke:var(--startup-line);stroke-width:1.4}
+      .startup-spinner .arc{fill:none;stroke:currentColor;stroke-width:1.7;stroke-dasharray:22 40;stroke-linecap:square}
+      .startup-copy{display:grid;gap:3px;min-width:0}
+      .startup-brand{font-weight:600;letter-spacing:1.3px}
+      .startup-status{color:var(--startup-text);line-height:1.2}
+      .startup-detail{margin-top:9px;padding-top:7px;border-top:1px solid var(--startup-line);color:var(--startup-muted);font-size:10px;line-height:1.3}
+      .startup-pulse{display:flex;align-items:flex-end;gap:2px;height:10px;margin-left:auto;padding:1px 1px 0}
+      .startup-pulse i{display:block;width:2px;height:4px;background:var(--startup-accent);transform-origin:bottom;animation:startup-tick 750ms ease-in-out infinite alternate}
+      .startup-pulse i:nth-child(2){height:7px;animation-delay:120ms}.startup-pulse i:nth-child(3){height:5px;animation-delay:240ms}.startup-pulse i:nth-child(4){height:8px;animation-delay:360ms}
+      .startup-reload{height:24px;margin-top:10px;padding:0 7px;border:1px solid var(--startup-line);border-radius:0;background:transparent;color:var(--startup-text);font:inherit;cursor:pointer}
+      .startup-reload[hidden]{display:none}
+      .startup-reload:focus-visible{outline:1px solid var(--startup-accent);outline-offset:2px}
+      #startup-splash[data-state=failed] .startup-spinner svg,#startup-splash[data-state=failed] .startup-pulse{display:none}
+      @keyframes startup-spin{to{transform:rotate(360deg)}}
+      @keyframes startup-tick{to{opacity:.3;transform:scaleY(.45)}}
+      @media(prefers-reduced-motion:reduce){#startup-splash{transition:none}.startup-spinner svg,.startup-pulse i{animation:none}}
+    </style>
+    <script src="/theme-init.js"></script>
+  </head>
+  <body>
+    <div id="startup-splash" role="status" aria-live="polite" aria-label="Basis is opening">
+      <div class="startup-frame">
+        <div class="startup-heading">
+          <span class="startup-spinner" aria-hidden="true"><svg viewBox="0 0 22 22"><circle class="track" cx="11" cy="11" r="8.5"></circle><circle class="arc" cx="11" cy="11" r="8.5" transform="rotate(-90 11 11)"></circle></svg></span>
+          <div class="startup-copy"><span class="startup-brand">BASIS</span><span class="startup-status" data-startup-status>Opening workspace</span></div>
+          <span class="startup-pulse" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="startup-detail" data-startup-detail>Restoring your layout and controls</div>
+        <button class="startup-reload" data-startup-reload type="button" hidden>Reload workspace</button>
+      </div>
+    </div>
+    <div id="app-shell" inert aria-hidden="true">
+      <main id="workspace" aria-label="Chart workspace"></main>
+      <footer id="commands">
+        <span class="brand">BASIS</span>
+        <button id="add">Add chart</button>
+        <button id="add-ticker">Trade Ticker</button>
+        <button id="level-watch">Level Watch</button>
+        <button id="notifications">Notifications</button>
+        <button id="reset">Reset layout</button>
+        <select id="theme" aria-label="Theme">
+          <option value="system">System</option>
+          <option value="light">Ivory (light)</option>
+          <option value="dark">Dark</option>
+        </select>
+        <span id="venue-states" role="status"></span>
+        <a id="licenses" href="/licenses/" aria-label="Third-party licences">Licences</a>
+        <button id="market-pulse-trigger" class="market-pulse-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="market-pulse-popover">
+          <svg data-clock-icon aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4v4l2.7 1.7"></path></svg>
+          <span data-clock>--:--:--</span><span class="market-pulse-zone-chip" data-zone-short>LOCAL</span>
+          <span class="market-pulse-trigger-state"><i data-session-indicator aria-hidden="true"></i><span data-active>No sessions</span></span>
+          <svg class="market-pulse-chevron" aria-hidden="true" viewBox="0 0 12 12"><path d="m2.5 4.5 3.5 3 3.5-3"></path></svg>
+        </button>
+      </footer>
+      <section id="market-pulse-popover" class="market-pulse-popover" role="dialog" aria-label="Market Pulse" aria-modal="false" tabindex="-1" hidden>
+        <header class="market-pulse-heading">
+          <div><span class="market-pulse-kicker">SESSION MONITOR</span><h2>Market Pulse</h2></div>
+          <button type="button" data-close aria-label="Close Market Pulse" title="Close">×</button>
+        </header>
+        <div class="market-pulse-clock-panel">
+          <div class="market-pulse-clock-main"><time data-clock-large>--:--:--</time><span data-clock-offset>UTC+00:00</span></div>
+          <div class="market-pulse-clock-meta"><time data-clock-date></time><span data-clock-zone></span></div>
+        </div>
+        <div class="market-pulse-zone-row">
+          <div class="market-pulse-segmented" role="group" aria-label="Display timezone">
+            <button type="button" data-timezone="local" aria-pressed="true">Local</button>
+            <button type="button" data-timezone="UTC" aria-pressed="false">UTC</button>
+          </div>
+          <span class="market-pulse-zone-help">Session times also show in each market’s local zone.</span>
+        </div>
+        <section class="market-pulse-next" data-next-event data-state="scheduled" aria-label="Next market transition">
+          <div class="market-pulse-next-heading"><span class="market-pulse-kicker">NEXT TRANSITION</span><strong data-next-event-label></strong></div>
+          <div class="market-pulse-next-detail"><time data-next-event-time></time><span data-next-event-countdown></span></div>
+        </section>
+        <div class="market-pulse-status-list" data-market-statuses role="group" aria-label="Current session status"></div>
+        <div class="market-pulse-timeline-wrap">
+          <div class="market-pulse-timeline-grid">
+            <div class="market-pulse-timeline-labels" data-timeline-labels aria-hidden="true"></div>
+            <div class="market-pulse-timeline-plot">
+              <span class="market-pulse-now-label" data-now-label aria-hidden="true">NOW</span>
+              <svg data-market-timeline role="img" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-label="Market session timeline">
+                <line data-now-line class="market-pulse-now-line" x1="0" x2="0" y1="8" y2="114"><title>Now</title></line>
+              </svg>
+              <div class="market-pulse-timeline-ticks" data-timeline-ticks aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="market-pulse-timeline-caption">Rolling 24 elapsed hours · hover a session for market-zone and display-zone times</div>
+        </div>
+        <div class="market-pulse-legend" aria-label="Timeline legend">
+          <span><i class="open is-active" aria-hidden="true"></i> active</span>
+          <span><i class="open is-future" aria-hidden="true"></i> upcoming</span>
+          <span><i class="open is-past" aria-hidden="true"></i> elapsed</span>
+          <span><i class="maintenance" aria-hidden="true"></i> maintenance</span>
+          <span><i class="unknown" aria-hidden="true"></i> schedule unknown</span>
+        </div>
+      </section>
+    </div>
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const splash = document.querySelector('#startup-splash');
+        const status = splash.querySelector('[data-startup-status]');
+        const detail = splash.querySelector('[data-startup-detail]');
+        const reload = splash.querySelector('[data-startup-reload]');
+        reload.addEventListener('click', () => location.reload());
+        const fail = () => {
+          if (root.dataset.appState === 'ready' || root.dataset.appState === 'failed') return;
+          root.dataset.appState = 'failed';
+          splash.dataset.state = 'failed';
+          splash.setAttribute('role', 'alert');
+          splash.setAttribute('aria-live', 'assertive');
+          status.textContent = 'Workspace failed to start';
+          detail.textContent = 'Reload the page to try again.';
+          reload.hidden = false;
+        };
+        window.addEventListener('error', event => {
+          if (root.dataset.appState === 'ready') return;
+          if (event.target === window || event.target instanceof HTMLScriptElement) fail();
+        }, true);
+      })();
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

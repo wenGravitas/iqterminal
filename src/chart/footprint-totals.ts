@@ -1,10 +1,17 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import { compactVol, type FootprintBarStats, type FootprintStatRow } from 'openalgo-charts/profile';
+import { blendFootprintTotalsColor, FOOTPRINT_TOTALS_ROW_LABELS, footprintTotalsCellColor, footprintTotalsRowMax } from './footprint-totals-style';
 
-const ROW_LABELS: Record<FootprintStatRow, string> = {
-  volume: 'Volume', bidVolume: 'Bid', askVolume: 'Ask', delta: 'Delta',
-  minDelta: 'Min Δ', maxDelta: 'Max Δ', deltaPct: 'Delta %', cvd: 'CVD', trades: 'Trades',
-};
+type FootprintTotalsPresentation = { font: number; rowHeight: number; labelWidth: number; buyTextColor?: string; sellTextColor?: string };
+const PANE_HEADER_HEIGHT = 30;
+const TABLE_BOTTOM_RULE_HEIGHT = 2;
+
+/** Header, selected table rows and the bottom rule, in CSS pixels. */
+export function footprintTotalsPreferredHeight(rowCount: number, rowHeight = 15) {
+  const safeRowCount = Math.max(0, Math.min(9, Math.floor(Number.isFinite(rowCount) ? rowCount : 0)));
+  const safeRowHeight = Number.isFinite(rowHeight) ? Math.max(8, rowHeight) : 15;
+  return Math.ceil(PANE_HEADER_HEIGHT + safeRowCount * safeRowHeight + TABLE_BOTTOM_RULE_HEIGHT);
+}
 
 export function footprintStatText(stats: FootprintBarStats, row: FootprintStatRow) {
   const value = stats[row];
@@ -21,6 +28,7 @@ export class FootprintTotalsPane implements IPrimitive {
   private rows: FootprintStatRow[] = ['volume', 'bidVolume', 'askVolume', 'delta'];
   private units: 'btc' | 'usdt' = 'btc';
   private stats: readonly FootprintBarStats[] = [];
+  private presentation: FootprintTotalsPresentation = { font: 9, rowHeight: 15, labelWidth: 150 };
 
   constructor(readonly id: string) {}
   zOrder() { return 'normal' as const; }
@@ -28,9 +36,15 @@ export class FootprintTotalsPane implements IPrimitive {
   detached() { this.host = undefined; }
 
   setSettings(rows: readonly FootprintStatRow[], units: 'btc' | 'usdt') {
-    const next = rows.filter(row => Object.hasOwn(ROW_LABELS, row)).slice(0, 9);
+    const next = rows.filter(row => Object.hasOwn(FOOTPRINT_TOTALS_ROW_LABELS, row)).slice(0, 9);
     if (JSON.stringify(next) === JSON.stringify(this.rows) && units === this.units) return;
     this.rows = [...next]; this.units = units; this.host?.requestUpdate();
+  }
+
+  setPresentation(presentation: Partial<FootprintTotalsPresentation>) {
+    const next = { ...this.presentation, ...presentation };
+    if (JSON.stringify(next) === JSON.stringify(this.presentation)) return;
+    this.presentation = next; this.host?.requestUpdate();
   }
 
   setStats(stats: readonly FootprintBarStats[]) {
@@ -38,56 +52,82 @@ export class FootprintTotalsPane implements IPrimitive {
     this.host?.requestUpdate();
   }
 
+  preferredHeight() { return footprintTotalsPreferredHeight(this.rows.length, this.presentation.rowHeight); }
+
   tooltip(time: number) {
     const row = this.stats.find(item => item.time === time);
     if (!row) return null;
-    return [`Footprint Totals · ${this.units.toUpperCase()}`, ...this.rows.map(key => `${ROW_LABELS[key]}  ${footprintStatText(row, key)}`)].join('\n');
+    return [`Footprint Totals · ${this.units.toUpperCase()}`, ...this.rows.map(key => `${FOOTPRINT_TOTALS_ROW_LABELS[key]}  ${footprintStatText(row, key)}`)].join('\n');
   }
 
-  diagnostics() { return { mounted: Boolean(this.host), rows: [...this.rows], units: this.units, statsBars: this.stats.length, firstTime: this.stats[0]?.time ?? null, lastTime: this.stats.at(-1)?.time ?? null }; }
+  diagnostics() { return { mounted: Boolean(this.host), rows: [...this.rows], units: this.units, statsBars: this.stats.length, firstTime: this.stats[0]?.time ?? null, lastTime: this.stats.at(-1)?.time ?? null, presentation: { ...this.presentation } }; }
 
   draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const dpr = rc.dpr, theme = rc.theme;
-    const foreground = theme.axisText, separator = theme.grid;
     const width = rc.plotWidth * dpr, height = rc.plotHeight * dpr;
+    const labelWidth = Math.min(this.presentation.labelWidth, rc.plotWidth) * dpr;
+    const headerHeight = Math.min(PANE_HEADER_HEIGHT, rc.plotHeight) * dpr;
+    const availableHeight = Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT);
+    const rowHeight = this.rows.length
+      ? Math.max(8, Math.min(this.presentation.rowHeight, availableHeight / this.rows.length))
+      : 0;
+    const tableTop = headerHeight;
+    const tableBottom = Math.min(rc.plotHeight, PANE_HEADER_HEIGHT + rowHeight * this.rows.length + TABLE_BOTTOM_RULE_HEIGHT) * dpr;
+    const buy = this.presentation.buyTextColor ?? theme.upColor;
+    const sell = this.presentation.sellTextColor ?? theme.downColor;
+    const grid = blendFootprintTotalsColor(theme.background, theme.axisText, .25);
+    const labelBackground = blendFootprintTotalsColor(theme.background, theme.axisText, .09);
+    const slot = Math.max(1, rc.timeScale.barSpacing * dpr);
+    const visible = this.stats.flatMap(stats => {
+      const index = rc.dataLayer.timeToIndex(stats.time);
+      if (index === undefined) return [];
+      const x = rc.timeScale.indexToX(index) * dpr;
+      return x + slot / 2 < 0 || x - slot / 2 > width ? [] : [{ stats, x }];
+    });
+    const maxima = new Map(this.rows.map(row => [row, footprintTotalsRowMax(visible.map(item => item.stats), row)]));
+
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, width, height); ctx.clip();
-    ctx.fillStyle = theme.background; ctx.globalAlpha = .92; ctx.fillRect(0, 0, width, height); ctx.globalAlpha = 1;
-    ctx.font = `${Math.max(9, Math.round(10 * dpr))}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+    ctx.fillStyle = theme.background; ctx.fillRect(0, 0, width, height);
+    ctx.font = `${Math.max(8, this.presentation.font - .5) * dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`;
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = foreground; ctx.globalAlpha = .86;
-    ctx.fillText(`Footprint totals · ${this.units.toUpperCase()}`, 6 * dpr, 11 * dpr);
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = separator; ctx.lineWidth = Math.max(1, dpr); ctx.beginPath();
-    ctx.moveTo(0, 22 * dpr); ctx.lineTo(width, 22 * dpr);
-    const rowHeight = this.rows.length ? Math.max(8, Math.min(20, (rc.plotHeight - 23) / this.rows.length)) : 0;
+    ctx.fillStyle = theme.background; ctx.fillRect(0, tableTop, width, height - tableTop);
+    // Leave any manually expanded pane area as plain chart background.
+    ctx.fillStyle = labelBackground; ctx.fillRect(0, tableTop, labelWidth, Math.max(0, tableBottom - tableTop));
+    ctx.strokeStyle = grid; ctx.lineWidth = dpr;
+    ctx.beginPath(); ctx.moveTo(0, tableTop); ctx.lineTo(width, tableTop); ctx.stroke();
+
     this.rows.forEach((row, index) => {
-      const y = (22 + rowHeight * (index + .5)) * dpr;
-      ctx.fillStyle = foreground; ctx.globalAlpha = .72;
-      ctx.textAlign = 'left'; ctx.fillText(ROW_LABELS[row], 6 * dpr, y);
-      ctx.beginPath(); ctx.moveTo(0, (22 + (index + 1) * rowHeight) * dpr); ctx.lineTo(width, (22 + (index + 1) * rowHeight) * dpr); ctx.stroke();
+      const top = (PANE_HEADER_HEIGHT + rowHeight * index) * dpr;
+      const y = top + rowHeight * dpr / 2;
+      ctx.fillStyle = theme.axisText;
+      ctx.textAlign = 'left';
+      ctx.fillText(FOOTPRINT_TOTALS_ROW_LABELS[row], 5 * dpr, y);
+      ctx.beginPath(); ctx.moveTo(0, top + rowHeight * dpr); ctx.lineTo(width, top + rowHeight * dpr); ctx.stroke();
     });
 
-    const labelGutter = Math.min(72, Math.max(42, rc.plotWidth * .12));
-    const slot = Math.max(1, rc.timeScale.barSpacing * dpr * .94);
-    for (const stats of this.stats) {
-      const index = rc.dataLayer.timeToIndex(stats.time);
-      if (index === undefined) continue;
-      const x = rc.timeScale.indexToX(index) * dpr;
-      if (x < labelGutter * dpr || x < -slot || x > width + slot) continue;
-      const left = Math.round(x - slot / 2), right = Math.round(x + slot / 2);
-      ctx.save(); ctx.beginPath(); ctx.rect(left, 22 * dpr, Math.max(1, right - left), height - 22 * dpr); ctx.clip();
+    ctx.beginPath(); ctx.moveTo(labelWidth, tableTop); ctx.lineTo(labelWidth, tableBottom); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(labelWidth, tableTop, Math.max(0, width - labelWidth), Math.max(0, tableBottom - tableTop)); ctx.clip();
+    for (const { stats, x } of visible) {
+      const left = x - slot / 2, right = x + slot / 2;
       this.rows.forEach((row, rowIndex) => {
+        const top = (PANE_HEADER_HEIGHT + rowHeight * rowIndex) * dpr;
         const value = footprintStatText(stats, row);
-        const y = (22 + rowHeight * (rowIndex + .5)) * dpr;
-        ctx.font = `${Math.max(9, Math.round(10 * dpr))}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
-        ctx.textAlign = 'center'; ctx.globalAlpha = value === '—' ? .45 : 1;
-        ctx.fillStyle = row === 'delta' || row === 'minDelta' || row === 'maxDelta' || row === 'deltaPct' || row === 'cvd'
-          ? stats[row] === null || stats[row] === undefined || stats[row] === 0 ? foreground : stats[row]! > 0 ? theme.upColor : theme.downColor
-          : foreground;
-        ctx.fillText(value, x, y, Math.max(1, right - left - 3 * dpr));
+        const numeric = stats[row];
+        ctx.fillStyle = footprintTotalsCellColor(row, numeric, maxima.get(row) ?? 1, {
+          background: theme.background, axisText: theme.axisText, buy, sell,
+        });
+        ctx.fillRect(left, top + dpr, Math.max(0, slot - dpr), Math.max(0, rowHeight * dpr - dpr));
+        // Match the native footer: show values only in full visible candle columns.
+        const fontSize = Math.max(8, this.presentation.font - .5) * dpr;
+        ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        if (left >= labelWidth && right <= width && rowHeight >= 9 && ctx.measureText(value).width <= slot - dpr * 3) {
+          ctx.fillStyle = theme.axisText;
+          ctx.textAlign = 'center';
+          ctx.fillText(value, x, top + rowHeight * dpr / 2);
+        }
       });
-      ctx.restore();
     }
+    ctx.restore();
     ctx.restore();
   }
 }

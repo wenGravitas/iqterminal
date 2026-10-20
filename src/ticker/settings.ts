@@ -3,6 +3,7 @@ import { marketName } from '../markets';
 import { TICKER_COLUMNS, SOUNDS, defaultTiers, validateTiers, type TickerConfig, type Tier, type TickerUnit } from './model';
 import type { Notifications } from '../notifications';
 import { tradeRow, tradeText } from './presentation';
+import { getDisplayTimezone } from '../timezone';
 function button(text: string, click: () => void) { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.onclick = click; return b; }
 function field(parent: HTMLElement, text: string, input: HTMLElement) { const l = document.createElement('label'); l.className = 'indicator-setting-field'; const span = document.createElement('span'); span.textContent = text; input.setAttribute('aria-label',text); l.append(span,input); parent.append(l); return input; }
 export class TickerSettings {
@@ -33,7 +34,7 @@ export class TickerSettings {
     this.input(filters,'Mute this ticker','muted',c.muted,'checkbox',v=>c.muted=v);
     const hint=document.createElement('p'); hint.className='footprint-settings-hint'; hint.textContent='Display filters affect rows only. Unknown side shows ?. Reported prints may aggregate executions.'; this.fields.append(hint);
     const columns=document.createElement('fieldset');columns.className='ticker-column-options';const legend=document.createElement('legend');legend.textContent='Display columns';columns.append(legend);
-    const time=this.input(columns,'Time UTC (required)','time',true,'checkbox');time.disabled=true;
+    const time=this.input(columns,'Time (display zone, required)','time',true,'checkbox');time.disabled=true;
     for(const col of TICKER_COLUMNS)this.input(columns,col.label+' column',col.id,c.columns.includes(col.id),'checkbox',enabled=>{c.columns=TICKER_COLUMNS.filter(item=>item.id===col.id?enabled:c.columns.includes(item.id)).map(item=>item.id);});
     this.fields.append(columns);
     const bars=document.createElement('fieldset');bars.className='ticker-histogram-options';const barsTitle=document.createElement('legend');barsTitle.textContent='Background volume bars';bars.append(barsTitle);
@@ -81,6 +82,6 @@ export class TickerSettings {
   }
   private valid() { if(!Number.isInteger(this.draft.histogramSeconds)||this.draft.histogramSeconds<5||this.draft.histogramSeconds>300)throw new Error('Bar scale window must be 5–300 whole seconds.');if(!Number.isFinite(this.draft.histogramOpacity)||this.draft.histogramOpacity<0||this.draft.histogramOpacity>.6)throw new Error('Bar opacity must be 0–60%.'); const tiers=validateTiers(this.draft.tiers); if(!Number.isFinite(this.draft.displayMinimum)||this.draft.displayMinimum<0||this.draft.displayMinimum>1e12)throw new Error('Display minimum must be between zero and 1 trillion.'); return tiers; }
   private commit(){try{this.draft.tiers=this.valid();this.apply(this.draft);this.element.close();}catch(e){this.error.textContent=e instanceof Error?e.message:String(e);}}
-  private test(tier: Tier){try{this.valid();this.error.textContent='Test preview only · not a live trade';const quantity=tier.unit==='BTC'?Math.max(tier.minimum,.01):Math.max(tier.minimum,1000)/83000;const record={execution:{venue:'binance' as const,market:'perpetual' as const,nativeSymbol:'BTCUSDT',granularity:'aggregate-trade' as const,executionId:'test',timeMs:Date.now(),eventTimeMs:Date.now(),price:83000,quantity,side:'buy' as const},receivedAt:Date.now(),tier,notify:false};const table=document.createElement('table');table.append(tradeRow(record,true));this.preview.replaceChildren(table);this.notifications.deliver({eventId:crypto.randomUUID(),ruleId:`${this.owner()}:preview`,owner:this.owner(),timeMs:Date.now(),fresh:true,title:`Test: ${tier.name}`,text:tradeText(record),sound:tier.sound,volume:tier.volume,toast:tier.toast},true);}catch(e){this.error.textContent=e instanceof Error?e.message:String(e);}}
+  private test(tier: Tier){try{this.valid();this.error.textContent='Test preview only · not a live trade';const quantity=tier.unit==='BTC'?Math.max(tier.minimum,.01):Math.max(tier.minimum,1000)/83000;const record={execution:{venue:'binance' as const,market:'perpetual' as const,nativeSymbol:'BTCUSDT',granularity:'aggregate-trade' as const,executionId:'test',timeMs:Date.now(),eventTimeMs:Date.now(),price:83000,quantity,side:'buy' as const},receivedAt:Date.now(),tier,notify:false};const table=document.createElement('table');table.append(tradeRow(record,true,getDisplayTimezone()));this.preview.replaceChildren(table);this.notifications.deliver({eventId:crypto.randomUUID(),ruleId:`${this.owner()}:preview`,owner:this.owner(),timeMs:Date.now(),fresh:true,title:`Test: ${tier.name}`,text:tradeText(record),sound:tier.sound,volume:tier.volume,toast:tier.toast},true);}catch(e){this.error.textContent=e instanceof Error?e.message:String(e);}}
   dispose(){this.picker.dispose();if(this.element.open)this.element.close();this.element.remove();}
 }

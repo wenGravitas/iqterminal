@@ -59,7 +59,7 @@ The next performance task is to reduce many-widget DOM update cost and repeat th
 
 The ticker toolbar’s ≥ size combo accepts presets or an edited numeric value (including K/M suffixes), in BTC base quantity or USDT quote notional. It shares the display minimum with Settings; changing it filters retained rows immediately without changing the tier ladder, replaying notifications or restarting subscriptions.
 
-Settings → Display columns controls the venue icon (compact `E` header), venue name, market type, aggressor side, price, BTC size and USDT notional independently. Time UTC is always displayed. Column choices are saved per widget; older saved tickers retain all their existing columns and gain the venue icon. An explicit empty optional-column selection displays time alone.
+Settings → Display columns controls the venue icon (compact `E` header), venue name, market type, aggressor side, price, BTC size and USDT notional independently. Time is always displayed in the Market Pulse display zone (detected Local by default, or UTC); rows retain the original UTC event instant and expose a full date and zone in their accessible name. Column choices are saved per widget; older saved tickers retain all their existing columns and gain the venue icon. An explicit empty optional-column selection displays time alone.
 
 ### Background volume bars
 

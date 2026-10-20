@@ -4,6 +4,7 @@ import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMeth
 import { groupedSourceSlot, layoutNetPositioningSources, roundDprBoundary, type NetPositioningDisplay, type NetPositioningQuality } from './net-positioning-layout';
 
 const VENUE_ORDER: readonly NetPositioningVenue[] = ['binance', 'hyperliquid'];
+const PANE_HEADER_HEIGHT = 30;
 const MAX_HOST_BARS = 5_000;
 
 export function netPositioningVenueSlot(venue: NetPositioningVenue) { return VENUE_ORDER.indexOf(venue); }
@@ -208,19 +209,21 @@ export class NetPositioningPane implements IPrimitive {
     const to = Math.min(this.hostTimes.length, Math.ceil(range.to) + 1);
     const spacing = rc.timeScale.barSpacing;
     const groupWidth = Math.max(1, Math.min(spacing * .84, 64));
-    const baseline = rc.priceScale.priceToY(0);
+    const contentHeight = Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT);
+    const yForPrice = (price: number) => PANE_HEADER_HEIGHT + rc.priceScale.priceToY(price) * contentHeight / rc.plotHeight;
+    const baseline = yForPrice(0);
     const dpr = rc.dpr;
     ctx.save();
-    ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth * dpr, rc.plotHeight * dpr); ctx.clip();
-    const title = `${this.side === 'longs' ? 'Net Longs' : 'Net Shorts'} Est. · ${this.method === 'price-oi' ? 'Price+OI' : 'Flow+OI'} · ${this.display === 'stacked' ? 'Stacked' : 'Grouped'}`;
+    ctx.beginPath(); ctx.rect(0, PANE_HEADER_HEIGHT * dpr, rc.plotWidth * dpr, contentHeight * dpr); ctx.clip();
     ctx.font = `${9 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
     ctx.textBaseline = 'top'; ctx.fillStyle = rc.theme?.axisText ?? '#aaa'; ctx.globalAlpha = .8;
-    ctx.fillText(title, 6 * dpr, 5 * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr));
     const health = this.error || this.venues.map(venue => `${venueShort(venue)} ${this.feeds[venue]?.state ?? 'starting'}${this.feeds[venue]?.stale ? ' · stale' : ''}`).join(' · ');
-    if (health && rc.plotHeight > 24) { ctx.globalAlpha = this.error ? .9 : .55; ctx.fillText(health, 6 * dpr, 18 * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr)); }
+    if (health && rc.plotHeight > PANE_HEADER_HEIGHT + 10) { ctx.globalAlpha = this.error ? .9 : .55; ctx.fillText(health, 6 * dpr, (PANE_HEADER_HEIGHT + 3) * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr)); }
     if (!this.hostTimes.length || !this.candles.size) {
-      ctx.globalAlpha = .68; ctx.fillText(this.error || (this.pendingIntervals ? `${this.pendingIntervals} source interval(s) pending finalization` : 'Waiting for recorded source intervals · no values are filled or interpolated'),
-        6 * dpr, 33 * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr));
+      if (rc.plotHeight > PANE_HEADER_HEIGHT + 22) {
+        ctx.globalAlpha = .68; ctx.fillText(this.pendingIntervals ? `${this.pendingIntervals} source interval(s) pending finalization` : 'Waiting for recorded source intervals · no values are filled or interpolated',
+          6 * dpr, (PANE_HEADER_HEIGHT + 16) * dpr, Math.max(0, rc.plotWidth * dpr - 12 * dpr));
+      }
       ctx.restore(); return;
     }
     ctx.strokeStyle = rc.theme?.axisText ?? '#888'; ctx.globalAlpha = .35; ctx.lineWidth = dpr;
@@ -239,7 +242,7 @@ export class NetPositioningPane implements IPrimitive {
         const left = this.display === 'stacked' ? x - groupWidth / 2 : groupSlot?.left ?? x - groupWidth / 2;
         const width = this.display === 'stacked' ? groupWidth : groupSlot?.width ?? groupWidth;
         const right = left + width;
-        const yStart = rc.priceScale.priceToY(segment.start), yEnd = rc.priceScale.priceToY(segment.end);
+        const yStart = yForPrice(segment.start), yEnd = yForPrice(segment.end);
         const topPx = Math.min(roundDprBoundary(yStart, dpr), roundDprBoundary(yEnd, dpr));
         const bottomPx = Math.max(roundDprBoundary(yStart, dpr), roundDprBoundary(yEnd, dpr));
         const leftPx = roundDprBoundary(left, dpr), rightPx = Math.max(leftPx + 1, roundDprBoundary(right, dpr));

@@ -114,6 +114,7 @@ export class ScriptStudyHost {
     }));
     return [...active, ...this.restoreErrors.values()].map(view => ({ ...view, settings: { ...view.settings }, diagnostics: [...view.diagnostics], inputs: [...view.inputs], outputs: { ...view.outputs } }));
   }
+  paneIndex(attachmentId: string) { return this.studies.get(attachmentId)?.api.paneIndex ?? -1; }
   pins(): StudyPin[] { return validStudyPins([...this.pendingPins, ...[...this.studies.values()].map(study => pinOf(study)), ...[...this.restoreErrors.values()].map(pinOf)]).filter((p,i,a) => a.findIndex(v => v.attachmentId === p.attachmentId) === i); }
 
   depthNotices(): DepthNotice[] {

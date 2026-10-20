@@ -1,14 +1,14 @@
-import { formatZonedDate, formatZonedTime, formatZonedTimeSeconds, resolveScaleStyle,
+import { formatZonedDate, formatZonedTime, formatZonedTimeSeconds, isNewZonedDay, resolveScaleStyle,
   type IPrimitive, type PrimitiveHost, type PrimitiveRenderContext } from 'openalgo-charts';
 
 export interface GridLine { value: number; coordinate: number }
 export interface GridGeometry { time: GridLine[]; price: GridLine[] }
 
 /** OpenAlgo 2.6.0 axis tick selection, adapted to a public background primitive.
- * See /licenses/axis-grid-NOTICE.txt. UTC is the terminal's chart timezone.
+ * See /licenses/axis-grid-NOTICE.txt. The display zone follows the chart axis.
  * No synthetic bars, independent scales, viewport writes or autoscale contribution.
  */
-export function axisGridGeometry(rc: PrimitiveRenderContext, measure: (text: string) => number): GridGeometry {
+export function axisGridGeometry(rc: PrimitiveRenderContext, measure: (text: string) => number, timezone = 'UTC'): GridGeometry {
   const { timeScale: time, dataLayer: data, plotWidth: width, plotHeight: height, dpr } = rc;
   const scale = rc.readoutPriceScale ?? rc.priceScale;
   const price = scale.scaled ? scale.ticks(Math.max(2, Math.min(30, Math.round(height / 32))))
@@ -27,7 +27,7 @@ export function axisGridGeometry(rc: PrimitiveRenderContext, measure: (text: str
         if (Math.floor(value / 60) !== Math.floor(previous / 60)) interval = Math.min(interval, difference);
         else subMinute = Math.min(subMinute, difference);
       }
-      if (Math.floor(value / 86400) !== Math.floor(previous / 86400)) boundaries.add(i);
+      if (isNewZonedDay(previous, value, timezone)) boundaries.add(i);
     }
     if (value !== undefined) previous = value;
   }
@@ -41,8 +41,8 @@ export function axisGridGeometry(rc: PrimitiveRenderContext, measure: (text: str
     if (value === undefined) continue;
     const x = Math.round(time.indexToX(index) * dpr) / dpr;
     if (x < 0 || x > width) { previous = value; continue; }
-    const newDay = previous === undefined || Math.floor(value / 86400) !== Math.floor(previous / 86400);
-    const label = newDay ? formatZonedDate(value, 'UTC') : seconds ? formatZonedTimeSeconds(value, 'UTC') : formatZonedTime(value, 'UTC');
+    const newDay = previous === undefined || isNewZonedDay(previous, value, timezone);
+    const label = newDay ? formatZonedDate(value, timezone) : seconds ? formatZonedTimeSeconds(value, timezone) : formatZonedTime(value, timezone);
     candidates.push({ value: index, coordinate: x, half: measure(label) / (2 * dpr), boundary: boundaries.has(index) });
     previous = value;
   }
@@ -57,18 +57,20 @@ export function axisGridGeometry(rc: PrimitiveRenderContext, measure: (text: str
 export class AxisGrid implements IPrimitive {
   private host?: PrimitiveHost;
   private enabled = true;
+  constructor(private timezone = 'UTC') {}
   geometry: GridGeometry = { time: [], price: [] };
   zOrder() { return 'bottom' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
   detached() { this.host = undefined; this.geometry = { time: [], price: [] }; }
   setEnabled(enabled: boolean) { this.enabled = enabled; if (!enabled) this.geometry = { time: [], price: [] }; this.host?.requestUpdate(); }
+  setTimezone(timezone: string) { if (timezone === this.timezone) return; this.timezone = timezone; this.host?.requestUpdate(); }
   draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     if (!this.enabled) return;
     const dpr = rc.dpr;
     ctx.save();
     // Axis labels use the public resolved scale font, in device pixels.
     ctx.font = resolveScaleStyle(rc.theme, undefined).font.replace(/(\d+(?:\.\d+)?)px/, (_, size: string) => `${Number(size) * dpr}px`);
-    this.geometry = axisGridGeometry(rc, label => ctx.measureText(label).width);
+    this.geometry = axisGridGeometry(rc, label => ctx.measureText(label).width, this.timezone);
     ctx.beginPath(); ctx.rect(0, 0, rc.plotWidth * dpr, rc.plotHeight * dpr); ctx.clip();
     ctx.strokeStyle = rc.theme.grid; ctx.lineWidth = Math.max(1, Math.round(dpr)); ctx.setLineDash([]);
     const align = (coordinate: number) => Math.round(coordinate * dpr) + (ctx.lineWidth % 2 ? .5 : 0);

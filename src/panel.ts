@@ -1,10 +1,13 @@
 import type {LevelWatch} from './level-watch/types';
 import { MarketPicker } from './market-picker';
 import { indicatorIcon } from './indicators/icons';
-import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, DEFAULT_FOOTPRINT_TOTALS_ROWS, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, footprintTotalsSettings, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings, type FootprintTotalsSettings } from './indicators/model';
+import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, DEFAULT_FOOTPRINT_TOTALS_ROWS, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, footprintTotalsSettings, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings, type FootprintTotalsSettings } from './indicators/model';
 import { FootprintTotalsControls } from './indicators/footprint-totals-controls';
 import { HeatmapControls } from './heatmap-controls';
 import { NetPositioningControls } from './indicators/net-positioning-controls';
+import { TpoControls } from './indicators/tpo-controls';
+import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoCalculationKey, tpoIndicatorSettings, type TpoIndicatorSettings } from './indicators/tpo-settings';
+import type { TpoNakedLevel, TpoSession } from './indicators/tpo-engine';
 import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
 import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, resolveAutoOrderWallPriceWidth, type OrderWallHit, type OrderWallStatus, type OrderWallsSettings } from './feed/order-walls';
 import { OrderWallsControls } from './order-walls-controls';
@@ -18,7 +21,7 @@ import { NetPositioningHistory, type NetPositioningMethod, type NetPositioningVe
 import type { NormalizedExecution } from './feed/footprint';
 import { executionMatchesSeries } from './ticker/hover';
 import { executionRayLabel } from './ticker/execution-drawing';
-import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status } from './feed/protocol';
+import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, tpoSourceKey, type CanonicalSeries, type FootprintBar, type FootprintStatus, type Interval, type Status, type TpoStatus } from './feed/protocol';
 import { OpenAlgoCandleChart } from './chart/openalgo';
 import type { Scheduler } from './chart/scheduler';
 import { footprintForUnits, type FootprintUnits } from './chart/footprint-units';
@@ -173,6 +176,14 @@ export class CandlePanel implements IContentRenderer {
   private heatmapControls!: HeatmapControls;
   private netPositioningControls!: NetPositioningControls;
   private footprintTotalsControls!: FootprintTotalsControls;
+  private tpoControls!: TpoControls;
+  private releaseTpo?: () => void;
+  private tpoGeneration = 0;
+  private tpoSubscriptionKey = '';
+  private tpoSettingsKey = '';
+  private tpoStatus?: TpoStatus;
+  private tpoSessions = new Map<number, TpoSession>();
+  private tpoNaked: TpoNakedLevel[] = [];
   private releaseNetPositioning?: () => void;
   private netPositioningRequestKey = '';
   private netPositioningGeneration = 0;
@@ -244,6 +255,16 @@ export class CandlePanel implements IContentRenderer {
   private activeIndicators = document.createElement('details');
   private activeSummary = document.createElement('summary');
   private activeRows = document.createElement('div');
+  private paneIndicatorLayer = document.createElement('div');
+  private primaryPaneCollapsedHeader = document.createElement('div');
+  private indicatorRowViews = new Map<string, { element: HTMLDivElement; name: HTMLSpanElement; description: HTMLElement; controls: HTMLDivElement; buttons: Map<string, HTMLButtonElement>; actionsKey: string }>();
+  private paneIndicatorHosts = new Map<number, HTMLDivElement>();
+  private paneControlHosts = new Map<number, { element: HTMLDivElement; buttons: Map<string, HTMLButtonElement> }>();
+  private primaryPaneCollapsed = false;
+  private primaryPaneOriginalWeight?: number;
+  private primaryPaneOtherOriginalWeights = new Map<HTMLElement, number>();
+  private paneIndicatorLayoutFrame?: number;
+  private indicatorErrorRow?: HTMLParagraphElement;
   private drawSelect = document.createElement('button');
   private drawSnap = document.createElement('button');
   private drawPlacementState = document.createElement('span');
@@ -460,6 +481,7 @@ export class CandlePanel implements IContentRenderer {
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
     this.netPositioningControls = new NetPositioningControls((id, settings) => this.changeNetPositioning(id, settings), this.abort.signal);
     this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
+    this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
     this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
     this.drawPlacementState.className = 'drawing-placement-state';
@@ -507,7 +529,7 @@ export class CandlePanel implements IContentRenderer {
     this.buildDialogs();
     this.buildDrawingDialogs();
     this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.drawingSidebarMenuLayer);
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.tpoControls.dialog, this.orderWallsControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
   private sidebarButton(label: string, title: string, iconName: string, extraClass = '') {
@@ -741,6 +763,11 @@ export class CandlePanel implements IContentRenderer {
     this.chart.addEventListener('keydown', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.keydown(event); }, options);
     for (const name of ['pointerdown', 'mousedown', 'wheel', 'dblclick', 'keydown'] as const) this.activeIndicators.addEventListener(name, event => event.stopPropagation(), options);
     this.activeRows.addEventListener('click', event => this.indicatorAction(event), options);
+    for (const name of ['pointerdown', 'mousedown', 'wheel', 'dblclick', 'keydown'] as const) this.paneIndicatorLayer.addEventListener(name, event => event.stopPropagation(), options);
+    this.paneIndicatorLayer.addEventListener('click', event => {
+      if (this.paneHeaderAction(event)) return;
+      void this.indicatorAction(event);
+    }, options);
     this.toolbar.addEventListener('scroll', () => this.updateToolbarOverflowCue(), { ...options, passive: true });
     this.toolbarCue.addEventListener('click', () => this.scrollToolbar(), options);
     window.addEventListener('resize', () => this.updateToolbarOverflowCue(), options);
@@ -810,9 +837,20 @@ export class CandlePanel implements IContentRenderer {
       { dispose: this.engine.chart.on('indicatorSettings', event => void this.openStudySettings(event.instanceId)) },
       { dispose: this.engine.chart.on('indicatorRemoved', event => this.studyHost?.removeNativeInstance(event.instanceId)) },
       { dispose: this.engine.chart.on('objects:change', () => this.studyHost?.syncNativeVisibility()) },
+      { dispose: this.engine.chart.on('paneAdded', () => this.schedulePaneIndicatorLayout()) },
+      { dispose: this.engine.chart.on('paneRemoved', () => this.schedulePaneIndicatorLayout()) },
+      { dispose: this.engine.chart.on('paneMoved', () => { this.syncPaneLayoutControls(); this.schedulePaneIndicatorLayout(); }) },
+      { dispose: this.engine.chart.on('paneMaximized', () => this.schedulePaneIndicatorLayout()) },
+      { dispose: this.engine.chart.on('paneCollapsed', () => this.schedulePaneIndicatorLayout()) },
+      { dispose: this.engine.chart.on('paneResized', () => this.schedulePaneIndicatorLayout()) },
+      { dispose: this.engine.chart.on('resize', () => this.schedulePaneIndicatorLayout()) },
     );
     this.overlays.append(this.readout, this.activeIndicators);
-    this.chart.append(this.overlays, this.heatmapControls.readout);
+    this.paneIndicatorLayer.className = 'pane-indicator-layer';
+    this.primaryPaneCollapsedHeader.className = 'primary-pane-collapsed-header';
+    this.primaryPaneCollapsedHeader.hidden = true;
+    this.paneIndicatorLayer.append(this.primaryPaneCollapsedHeader);
+    this.chart.append(this.overlays, this.heatmapControls.readout, this.paneIndicatorLayer);
     this.chartFooter.append(this.heatmapControls.notice, this.orderWallsControls.notice, this.statusNode);
     this.subscriptions.push(params.api.onDidVisibilityChange(() => this.visibility()));
     document.addEventListener('visibilitychange', () => this.syncNetPositioning(), { signal: this.abort.signal });
@@ -1018,12 +1056,12 @@ export class CandlePanel implements IContentRenderer {
       id: `iqterminal-${entry.id}`,
       get: () => {
         const instance = this.nativeIndicator(entry.id);
-        if (!instance) return null;
+        if (!instance || entry.id === FOOTPRINT_TOTALS_ID && this.selection.type !== 'footprint') return null;
         const settingsEnabled = instance.settings.enabled !== false;
         const paneIndex = entry.id === FOOTPRINT_TOTALS_ID ? this.engine!.footprintTotalsPaneIndex(instance.instanceId) : this.engine!.objects.primaryPaneIndex();
         return { kind: entry.kind, name: entry.name, paneIndex: paneIndex < 0 ? this.engine!.objects.primaryPaneIndex() : paneIndex,
           visible: instance.visible && settingsEnabled && (entry.id !== FOOTPRINT_ID || this.selection.type === 'footprint')
-            && (entry.id !== FOOTPRINT_TOTALS_ID || supportsDepth(this.selection)),
+            && (entry.id !== FOOTPRINT_TOTALS_ID || supportsDepth(this.selection) && this.selection.type === 'footprint'),
           selected: false };
       },
       select: () => this.params.api.setActive(),
@@ -1067,6 +1105,7 @@ export class CandlePanel implements IContentRenderer {
   private setIndicatorObjectVisible(definitionId: string, visible: boolean) {
     const instance = this.nativeIndicator(definitionId); if (!instance) return;
     if ((definitionId === FOOTPRINT_ID || definitionId === FOOTPRINT_TOTALS_ID) && visible && !supportsDepth(this.selection)) return;
+    if (definitionId === FOOTPRINT_TOTALS_ID && visible && this.selection.type !== 'footprint') return;
     const change: Partial<Pick<IndicatorInstance, 'visible' | 'settings'>> = { visible };
     if (definitionId === HEATMAP_ID || definitionId === ORDER_WALLS_ID) change.settings = { ...instance.settings, enabled: visible };
     if (definitionId === FOOTPRINT_ID) this.selection = config({ ...this.selection, type: visible ? 'footprint' : 'candle', indicators: this.selection.indicators.map(item => item.instanceId === instance.instanceId ? { ...item, visible } : item) });
@@ -1082,7 +1121,7 @@ export class CandlePanel implements IContentRenderer {
 
   private removeIndicatorInstance(instanceId: string) {
     const instance = this.selection.indicators.find(item => item.instanceId === instanceId); if (!instance) return;
-    if (new Set<string>([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
+    if (new Set<string>([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID]).has(instance.definitionId)) { this.removeIndicatorObject(instance.definitionId); return; }
     this.selection = config({ ...this.selection, ...(instance.definitionId === FOOTPRINT_ID ? { type: 'candle' as const } : {}), indicators: this.selection.indicators.filter(item => item.instanceId !== instanceId) });
     this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
@@ -1407,7 +1446,7 @@ export class CandlePanel implements IContentRenderer {
 
   private renderDrawingObjects() {
     const listed = this.engine?.objects.list() ?? [];
-    const coreIds = new Set([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID]);
+    const coreIds = new Set([FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID]);
     const scriptIds = new Set((this.studyHost?.views() ?? []).map(view => view.attachmentId));
     const objects = listed.filter(object => {
       if (object.kind !== 'indicator') return true;
@@ -2462,23 +2501,80 @@ export class CandlePanel implements IContentRenderer {
     }
     this.syncHeatmap(); this.syncOrderWalls(); this.hoveredBar = null; this.hoveredFootprint = null;
     this.syncNetPositioning();
+    this.syncTpo();
     this.updateFootprintControls(); this.refreshReadout(); this.updateStatus();
   }
 
   private footprintDataWanted() {
     return supportsDepth(this.selection) && Boolean(
       this.nativeIndicator(FOOTPRINT_ID)?.visible && this.selection.type === 'footprint'
-      || this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible,
+      || this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible && this.selection.type === 'footprint',
     );
   }
 
   private syncFootprintTotals() {
     const instance = this.nativeIndicator(FOOTPRINT_TOTALS_ID);
-    if (!instance?.visible || !supportsDepth(this.selection) || !this.engine) {
+    if (!instance?.visible || !supportsDepth(this.selection) || this.selection.type !== 'footprint' || !this.engine) {
       this.engine?.removeFootprintTotalsPane(FOOTPRINT_TOTALS_ID);
       return;
     }
     this.engine.addFootprintTotalsPane(FOOTPRINT_TOTALS_ID, footprintTotalsSettings(instance.settings).rows, this.selection.footprintUnits);
+  }
+
+  private tpoSettings(instance = this.nativeIndicator(TPO_ID)): TpoIndicatorSettings {
+    const tickSize = this.selection.venue === 'binance' && marketOf(this.selection) === 'spot' ? .01 : .1;
+    return tpoIndicatorSettings(instance?.settings ?? DEFAULT_TPO_INDICATOR_SETTINGS, tickSize);
+  }
+
+  private syncTpo() {
+    const instance = this.nativeIndicator(TPO_ID), wanted = Boolean(instance?.visible && this.visible && this.engine);
+    const settings = this.tpoSettings(instance);
+    this.engine?.setTpo(wanted ? settings : null);
+    if (!wanted) {
+      this.releaseTpo?.(); this.releaseTpo = undefined; this.tpoGeneration++;
+      this.tpoSubscriptionKey = ''; this.tpoSettingsKey = '';
+      this.tpoControls?.setStatus(this.tpoStatus);
+      return;
+    }
+    const sourceKey = tpoSourceKey(this.selection), settingsKey = tpoCalculationKey(settings);
+    const sourceChanged = this.tpoSubscriptionKey !== sourceKey;
+    if (sourceChanged) {
+      this.tpoSessions.clear(); this.tpoNaked = [];
+      this.engine?.setTpoSnapshot([], [], 0);
+    } else this.engine?.setTpoSnapshot([...this.tpoSessions.values()], this.tpoNaked, this.tpoStatus?.coverageTo ?? 0);
+    if (!sourceChanged && this.releaseTpo) {
+      if (this.tpoSettingsKey === settingsKey) return;
+      this.tpoSettingsKey = settingsKey;
+      this.feed.updateTpo(this.params.api.id, settings);
+      return;
+    }
+    this.releaseTpo?.(); this.releaseTpo = undefined;
+    this.tpoSubscriptionKey = sourceKey; this.tpoSettingsKey = settingsKey;
+    this.tpoStatus = { state: 'loading', message: 'Loading UTC 1-minute history…', coverageFrom: 0, coverageTo: 0, expectedMinutes: 0, observedMinutes: 0, missingMinutes: 0, cacheHits: 0, pagesFetched: 0, retentionLimited: false };
+    this.tpoControls.setStatus(this.tpoStatus);
+    this.renderActiveIndicators();
+    const generation = ++this.tpoGeneration;
+    this.releaseTpo = this.feed.subscribeTpo(this.params.api.id, this.selection, settings, event => {
+      if (this.dead || generation !== this.tpoGeneration || !this.nativeIndicator(TPO_ID)?.visible) return;
+      this.tpoStatus = event.status; this.tpoControls.setStatus(event.status);
+      if (event.type === 'tpo-status') { this.renderActiveIndicators(); return; }
+      if (event.type === 'tpo-snapshot') {
+        this.tpoSessions = new Map(event.sessions.map(session => [session.day, session]));
+        this.tpoNaked = event.nakedLevels;
+        this.engine?.setTpoSnapshot(event.sessions, event.nakedLevels, event.status.coverageTo);
+      } else {
+        for (const session of event.sessions) this.tpoSessions.set(session.day, session);
+        this.tpoNaked = event.nakedLevels;
+        this.engine?.patchTpo(event.sessions, event.nakedLevels, event.status.coverageTo);
+      }
+      this.renderActiveIndicators();
+    });
+  }
+
+  private changeTpo(instanceId: string, settings: TpoIndicatorSettings) {
+    if (!this.selection.indicators.some(item => item.instanceId === instanceId && item.definitionId === TPO_ID)) return;
+    this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(item => item.instanceId === instanceId ? { ...item, settings: tpoIndicatorSettings(settings) } : item) });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
   }
 
   private changeFootprintTotals(instanceId: string, settings: FootprintTotalsSettings) {
@@ -2534,12 +2630,15 @@ export class CandlePanel implements IContentRenderer {
     this.releaseNetPositioning = this.feed.subscribeNetPositioning(this.params.api.id, request, event => {
       if (this.dead || generation !== this.netPositioningGeneration) return;
       if (event.type === 'net-positioning-error') {
+        const wasLoading = !this.netPositioningHistories.get(event.method)?.metadata() && !this.netPositioningErrors.has(event.method);
         this.netPositioningErrors.set(event.method, event.message);
         this.renderNetPositioningMethod(event.method, [], false);
+        if (wasLoading) this.renderActiveIndicators();
         return;
       }
       const history = this.netPositioningHistories.get(event.payload.method);
       if (!history) return;
+      const wasLoading = !history.metadata() && !this.netPositioningErrors.has(event.payload.method);
       this.netPositioningErrors.delete(event.payload.method);
       if (event.type === 'net-positioning-snapshot') {
         history.replace(event.payload, venues);
@@ -2548,6 +2647,7 @@ export class CandlePanel implements IContentRenderer {
         const changed = history.apply(event.payload, event.intervals, venues);
         this.renderNetPositioningMethod(event.payload.method, changed, false);
       }
+      if (wasLoading) this.renderActiveIndicators();
     });
   }
 
@@ -2581,6 +2681,7 @@ export class CandlePanel implements IContentRenderer {
         ? { method: 'price-oi' as const, venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const], display: 'stacked' as const, labels: 'auto' as const }
         : definitionId === FOOTPRINT_TOTALS_ID ? { rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] }
         : definitionId === FOOTPRINT_ID ? { rowPrice: this.selection.rowPrice, units: this.selection.footprintUnits, view: this.selection.footprint }
+        : definitionId === TPO_ID ? { ...DEFAULT_TPO_INDICATOR_SETTINGS, tickSize: this.selection.venue === 'binance' && marketOf(this.selection) === 'spot' ? .01 : .1 }
         : definitionId === HEATMAP_ID ? { ...this.selection.heatmap, enabled: true }
           : { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true };
       this.selection = config({ ...this.selection, indicators: [...this.selection.indicators, nativeInstance(definitionId, settings)] });
@@ -2595,6 +2696,7 @@ export class CandlePanel implements IContentRenderer {
     if (instance.settingsVersion !== 1) return;
     if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
     else if (instance.definitionId === FOOTPRINT_TOTALS_ID) this.footprintTotalsControls.open(instance.instanceId, footprintTotalsSettings(instance.settings));
+    else if (instance.definitionId === TPO_ID) this.tpoControls.open(instance.instanceId, this.tpoSettings(instance), this.tpoSettings(instance).tickSize);
     else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
     else if (instance.definitionId === ORDER_WALLS_ID) this.orderWallsControls.open(orderWallsSettings(instance.settings));
     else if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) this.netPositioningControls.open(instance.instanceId, netPositioningSettings(instance.settings));
@@ -2623,17 +2725,327 @@ export class CandlePanel implements IContentRenderer {
     }
   }
 
-  private activeListKey = '';
+  private paneHeaderAction(event: MouseEvent) {
+    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-pane-action]');
+    if (!button) return false;
+    event.stopPropagation();
+    if (button.disabled || this.dead) return true;
+    const chart = this.engine?.chart;
+    const paneIndex = Number(button.dataset.paneIndex);
+    if (!chart || !Number.isInteger(paneIndex) || paneIndex < 0 || paneIndex >= chart.panes().length) return true;
+    const action = button.dataset.paneAction;
+    const isPrimary = paneIndex === chart.primaryPaneIndex();
+    const changed = action === 'move-up' ? chart.movePane(paneIndex, -1)
+      : action === 'move-down' ? chart.movePane(paneIndex, 1)
+        : action === 'collapse' ? isPrimary ? this.setPrimaryPaneCollapsed(true) : chart.setPaneCollapsed(paneIndex, true)
+          : action === 'expand' ? isPrimary ? this.setPrimaryPaneCollapsed(false) : chart.setPaneCollapsed(paneIndex, false)
+            : action === 'maximize' || action === 'restore' ? chart.maximizePane(paneIndex) : false;
+    if (changed) this.schedulePaneIndicatorLayout();
+    return true;
+  }
+
+  private schedulePaneIndicatorLayout() {
+    if (this.dead || this.paneIndicatorLayoutFrame !== undefined) return;
+    this.paneIndicatorLayoutFrame = requestAnimationFrame(() => {
+      this.paneIndicatorLayoutFrame = undefined;
+      if (!this.dead) this.renderActiveIndicators();
+    });
+  }
+
+  private indicatorPaneIndex(instance: IndicatorInstance) {
+    if (!this.engine || !instance.visible || instance.placement !== 'pane') return -1;
+    if (instance.definitionId === FOOTPRINT_TOTALS_ID) return this.engine.footprintTotalsPaneIndex(instance.instanceId);
+    if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) return this.engine.netPositioningPaneIndex(instance.instanceId);
+    return instance.script ? this.studyHost?.paneIndex(instance.instanceId) ?? -1 : -1;
+  }
+
+  private setPrimaryPaneCollapsed(collapsed: boolean) {
+    const chart = this.engine?.chart;
+    if (!chart || this.primaryPaneCollapsed === collapsed) return false;
+    const panes = chart.panes();
+    const primaryIndex = chart.primaryPaneIndex();
+    if (collapsed && !panes.some((_, index) => index !== primaryIndex && !chart.paneCollapsed(index))) return false;
+    if (collapsed) {
+      this.primaryPaneOriginalWeight = chart.paneWeight(primaryIndex);
+      this.primaryPaneOtherOriginalWeights = new Map(panes
+        .filter((_, index) => index !== primaryIndex)
+        .map(pane => [pane.element, pane.weight]));
+      if (chart.maximizedPane() === primaryIndex) chart.maximizePane(primaryIndex);
+      this.primaryPaneCollapsed = true;
+      this.fitPrimaryPaneCollapseWeight();
+    } else {
+      this.primaryPaneCollapsed = false;
+      const originalWeight = this.primaryPaneOriginalWeight;
+      this.primaryPaneOriginalWeight = undefined;
+      if (originalWeight !== undefined && Number.isFinite(originalWeight)) chart.setPaneWeight(chart.primaryPaneIndex(), originalWeight);
+      for (const [element, weight] of this.primaryPaneOtherOriginalWeights) {
+        const index = chart.panes().findIndex(pane => pane.element === element);
+        if (index >= 0) chart.setPaneWeight(index, weight);
+      }
+      this.primaryPaneOtherOriginalWeights.clear();
+    }
+    this.schedulePaneIndicatorLayout();
+    return true;
+  }
+
+  private fitPrimaryPaneCollapseWeight() {
+    const chart = this.engine?.chart;
+    if (!chart || !this.primaryPaneCollapsed) return;
+    const panes = chart.panes();
+    const primaryIndex = chart.primaryPaneIndex();
+    const openOtherPanes = panes.reduce((count, _, index) => count + (index !== primaryIndex && !chart.paneCollapsed(index) ? 1 : 0), 0);
+    if (panes.length < 2 || openOtherPanes === 0) {
+      this.setPrimaryPaneCollapsed(false);
+      return;
+    }
+    if (chart.maximizedPane() !== null) return;
+
+    const chartHeight = this.chart.clientHeight;
+    if (chartHeight <= 0) return;
+    const collapsedOtherHeight = panes.reduce((height, pane, index) => index !== primaryIndex && chart.paneCollapsed(index)
+      ? height + pane.element.getBoundingClientRect().height : height, 0);
+    const availableHeight = Math.max(0, chartHeight - collapsedOtherHeight);
+    const headerHeight = Math.min(28, Math.max(18, availableHeight * 0.2));
+    if (availableHeight <= headerHeight + 28) return;
+    const otherWeight = panes.reduce((weight, _, index) => index !== primaryIndex && !chart.paneCollapsed(index)
+      ? weight + chart.paneWeight(index) : weight, 0);
+    if (otherWeight <= 0) return;
+    const weightBeforeMinimum = otherWeight * headerHeight / (availableHeight - headerHeight);
+    const weight = Math.max(0.05, weightBeforeMinimum);
+    if (weightBeforeMinimum < 0.05) {
+      const desiredOtherWeight = weight * (availableHeight - headerHeight) / headerHeight;
+      const scale = desiredOtherWeight / otherWeight;
+      for (let index = 0; index < panes.length; index++) {
+        if (index === primaryIndex || chart.paneCollapsed(index)) continue;
+        const pane = panes[index]!;
+        if (!this.primaryPaneOtherOriginalWeights.has(pane.element)) this.primaryPaneOtherOriginalWeights.set(pane.element, pane.weight);
+        chart.setPaneWeight(index, chart.paneWeight(index) * scale);
+      }
+    }
+    if (Math.abs(chart.paneWeight(primaryIndex) - weight) > 0.001) chart.setPaneWeight(primaryIndex, weight);
+  }
+
+  private paneIndicatorGeometry(paneIndex: number, rows: readonly HTMLDivElement[]) {
+    if (rows.length !== 1) return null;
+    const plot = this.engine?.chart.plotRect(paneIndex);
+    if (!plot || plot.width < 150 || plot.height < 36) return null;
+    const width = Math.min(430, plot.width - 90);
+    if (width < 92) return null;
+    return { left: plot.left + 4, top: plot.top, width };
+  }
+
+  private indicatorRowView(row: { instance: IndicatorInstance; name: string; summary: string; unavailable: boolean }) {
+    const actions = ['visibility', 'settings', ...(row.instance.script ? ['source', 'duplicate'] : []), 'remove'];
+    const actionsKey = actions.join('|');
+    let view = this.indicatorRowViews.get(row.instance.instanceId);
+    if (view?.actionsKey !== actionsKey) {
+      view?.element.remove();
+      const element = document.createElement('div'); element.className = 'active-indicator';
+      const copy = document.createElement('div'); copy.className = 'active-indicator-copy';
+      const name = document.createElement('span');
+      const description = document.createElement('small'); copy.append(name, description);
+      const controls = document.createElement('div'); controls.className = 'active-indicator-actions';
+      const buttons = new Map<string, HTMLButtonElement>();
+      for (const action of actions) {
+        const button = document.createElement('button'); button.type = 'button'; button.dataset.indicatorAction = action;
+        buttons.set(action, button); button.dataset.icon = action; button.append(indicatorIcon(action)); controls.append(button);
+      }
+      element.append(copy, controls);
+      view = { element, name, description, controls, buttons, actionsKey };
+      this.indicatorRowViews.set(row.instance.instanceId, view);
+    }
+    const { instance } = row;
+    view.element.dataset.instanceId = instance.instanceId;
+    view.element.dataset.definitionId = instance.definitionId;
+    view.element.dataset.visible = String(instance.visible);
+    view.name.textContent = row.name;
+    if (view.description.textContent !== row.summary) view.description.textContent = row.summary;
+    view.description.title = row.summary;
+    for (const [action, button] of view.buttons) {
+      const label = action === 'visibility' ? `${instance.visible ? 'Hide' : 'Show'} ${row.name}` : action === 'settings' ? `${row.name} settings` : action === 'source' ? `Edit Script for ${row.name}` : `${action === 'remove' ? 'Remove' : 'Duplicate'} ${row.name}`;
+      button.dataset.instanceId = instance.instanceId;
+      button.setAttribute('aria-label', label);
+      button.title = label;
+      if (action === 'visibility') {
+        const loading = this.indicatorIsLoading(row.instance, row.unavailable);
+        const icon = loading ? 'loading' : 'visibility';
+        if (button.dataset.icon !== icon) {
+          button.replaceChildren(indicatorIcon(icon));
+          button.dataset.icon = icon;
+        }
+        button.toggleAttribute('data-loading', loading);
+        if (loading) button.setAttribute('aria-busy', 'true');
+        else button.removeAttribute('aria-busy');
+        button.title = loading ? `${label} · Loading` : label;
+        button.setAttribute('aria-pressed', String(instance.visible));
+      }
+      else button.removeAttribute('aria-pressed');
+      const wallMarketUnsupported = instance.definitionId === ORDER_WALLS_ID && this.selection.venue === 'hyperliquid';
+      button.disabled = row.unavailable && action !== 'remove' || wallMarketUnsupported && action === 'visibility';
+    }
+    return view.element;
+  }
+
+  private indicatorIsLoading(instance: IndicatorInstance, unavailable: boolean) {
+    if (!instance.visible || unavailable) return false;
+    if (instance.definitionId === TPO_ID) return this.tpoStatus?.state === 'loading';
+    if (instance.definitionId === ORDER_WALLS_ID) return this.orderWallsStatus?.state === 'loading';
+    if (instance.definitionId === HEATMAP_ID) return this.heatmapStatus?.state === 'syncing';
+    if (instance.definitionId === FOOTPRINT_ID || instance.definitionId === FOOTPRINT_TOTALS_ID) {
+      return this.footprintDataWanted() && this.footprintStatus.state === 'loading';
+    }
+    if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) {
+      const method = netPositioningSettings(instance.settings).method;
+      return Boolean(this.releaseNetPositioning && !document.hidden && !this.netPositioningHistories.get(method)?.metadata() && !this.netPositioningErrors.has(method));
+    }
+    if (!instance.script) return false;
+    const study = this.studyHost?.views().find(view => view.attachmentId === instance.instanceId);
+    if (!study) return !unavailable;
+    if (study.diagnostics.length) return false;
+    const status = study.status.toLowerCase();
+    return status.includes('reloading') || status.includes('syncing') || status.includes('loading');
+  }
+
+  private reconcileIndicatorChildren(parent: HTMLElement, desired: readonly HTMLElement[]) {
+    let cursor = parent.firstElementChild as HTMLElement | null;
+    for (const child of desired) {
+      if (child === cursor) cursor = cursor.nextElementSibling as HTMLElement | null;
+      else parent.insertBefore(child, cursor);
+    }
+    while (cursor) { const next = cursor.nextElementSibling as HTMLElement | null; cursor.remove(); cursor = next; }
+  }
+
+  private syncPaneIndicatorRows(rowsByPane: Map<number, HTMLDivElement[]>) {
+    for (const [paneIndex, host] of this.paneIndicatorHosts) {
+      if (rowsByPane.has(paneIndex)) continue;
+      host.remove(); this.paneIndicatorHosts.delete(paneIndex);
+    }
+    for (const [paneIndex, rows] of rowsByPane) {
+      let host = this.paneIndicatorHosts.get(paneIndex);
+      if (!host) {
+        host = document.createElement('div'); host.className = 'pane-indicator-host'; host.dataset.paneIndex = String(paneIndex);
+        this.paneIndicatorHosts.set(paneIndex, host); this.paneIndicatorLayer.append(host);
+      }
+      this.reconcileIndicatorChildren(host, rows);
+      const geometry = this.paneIndicatorGeometry(paneIndex, rows);
+      host.hidden = !geometry;
+      if (!geometry) continue;
+      host.style.left = `${geometry.left}px`; host.style.top = `${geometry.top}px`; host.style.width = `${geometry.width}px`;
+    }
+  }
+
+  private syncPaneLayoutControls() {
+    const chart = this.engine?.chart;
+    const panes = chart?.panes() ?? [];
+    if (!chart || panes.length < 2) {
+      if (chart && this.primaryPaneCollapsed) this.setPrimaryPaneCollapsed(false);
+      this.primaryPaneCollapsedHeader.hidden = true;
+      this.chart.classList.remove('primary-pane-collapsed');
+      if (chart) {
+        const primaryPane = chart.panes()[chart.primaryPaneIndex()];
+        if (primaryPane) primaryPane.element.style.visibility = '';
+      }
+      for (const host of this.paneControlHosts.values()) host.element.remove();
+      this.paneControlHosts.clear();
+      return;
+    }
+    const primaryPaneIndex = chart.primaryPaneIndex();
+    const maximizedPane = chart.maximizedPane();
+    const primaryPane = panes[primaryPaneIndex];
+    const showPrimaryHeader = this.primaryPaneCollapsed && maximizedPane === null;
+    if (primaryPane) primaryPane.element.style.visibility = this.primaryPaneCollapsed && maximizedPane !== primaryPaneIndex ? 'hidden' : '';
+    this.chart.classList.toggle('primary-pane-collapsed', showPrimaryHeader);
+    this.primaryPaneCollapsedHeader.hidden = !showPrimaryHeader;
+    if (showPrimaryHeader && primaryPane) {
+      const chartRect = this.chart.getBoundingClientRect();
+      const paneRect = primaryPane.element.getBoundingClientRect();
+      const plot = chart.plotRect(primaryPaneIndex);
+      const left = plot ? plot.left + 4 : paneRect.left - chartRect.left + 4;
+      const top = plot ? plot.top : paneRect.top - chartRect.top;
+      const right = plot ? plot.left + plot.width : paneRect.right - chartRect.left - 80;
+      const width = Math.max(0, right - left - 82 - 12);
+      const title = `Main chart · ${instrumentLabel(this.selection)} · ${this.selection.interval}`;
+      this.primaryPaneCollapsedHeader.textContent = title;
+      this.primaryPaneCollapsedHeader.title = title;
+      this.primaryPaneCollapsedHeader.style.left = `${left}px`;
+      this.primaryPaneCollapsedHeader.style.top = `${top + 2}px`;
+      this.primaryPaneCollapsedHeader.style.width = `${width}px`;
+    }
+    const chartRect = this.chart.getBoundingClientRect();
+    const controlWidth = 82;
+    const rightAxisWidth = 80;
+    for (const [paneIndex, view] of this.paneControlHosts) {
+      if (paneIndex < panes.length) continue;
+      view.element.remove(); this.paneControlHosts.delete(paneIndex);
+    }
+    panes.forEach((pane, paneIndex) => {
+      let view = this.paneControlHosts.get(paneIndex);
+      if (!view) {
+        const element = document.createElement('div'); element.className = 'pane-layout-controls';
+        element.dataset.paneIndex = String(paneIndex);
+        const buttons = new Map<string, HTMLButtonElement>();
+        for (const action of ['move-up', 'move-down', 'collapse', 'maximize']) {
+          const button = document.createElement('button'); button.type = 'button'; button.dataset.paneAction = action;
+          buttons.set(action, button); element.append(button);
+        }
+        view = { element, buttons }; this.paneControlHosts.set(paneIndex, view); this.paneIndicatorLayer.append(element);
+      }
+      view.element.dataset.paneIndex = String(paneIndex);
+      const isPrimary = paneIndex === primaryPaneIndex;
+      const prefix = isPrimary ? 'main pane' : `pane ${paneIndex + 1}`;
+      const collapsed = chart.paneCollapsed(paneIndex) || isPrimary && this.primaryPaneCollapsed;
+      const maximized = maximizedPane === paneIndex;
+      const otherOpenPanes = panes.reduce((count, _, index) => count + (index !== primaryPaneIndex && !chart.paneCollapsed(index) ? 1 : 0), 0);
+      const labels: Record<string, { label: string; icon: string; disabled: boolean; title?: string }> = {
+        'move-up': { label: `Move ${prefix} up`, icon: 'pane-up', disabled: paneIndex === 0 },
+        'move-down': { label: `Move ${prefix} down`, icon: 'pane-down', disabled: paneIndex === panes.length - 1 },
+        collapse: { label: collapsed ? `Expand ${prefix}` : `Collapse ${prefix} to header only`, icon: collapsed ? 'pane-expand' : 'pane-collapse',
+          disabled: !collapsed && (isPrimary ? otherOpenPanes === 0 : this.primaryPaneCollapsed && otherOpenPanes <= 1) },
+        maximize: { label: maximized ? 'Restore all panes' : `Maximize ${prefix}`, icon: maximized ? 'pane-restore' : 'pane-maximize', disabled: false },
+      };
+      for (const [action, button] of view.buttons) {
+        const state = labels[action]!;
+        button.dataset.paneIndex = String(paneIndex);
+        button.setAttribute('aria-label', state.label); button.title = state.title ?? state.label;
+        button.disabled = state.disabled;
+        if (button.dataset.icon !== state.icon) { button.replaceChildren(indicatorIcon(state.icon)); button.dataset.icon = state.icon; }
+        if (action === 'collapse') {
+          if (collapsed) button.dataset.paneAction = 'expand'; else button.dataset.paneAction = 'collapse';
+        } else if (action === 'maximize') {
+          button.dataset.paneAction = maximized ? 'restore' : 'maximize';
+        }
+      }
+      const plot = chart.plotRect(paneIndex);
+      const paneRect = pane.element.getBoundingClientRect();
+      const paneVisible = maximizedPane === null || maximizedPane === paneIndex;
+      const paneCollapsed = chart.paneCollapsed(paneIndex) || isPrimary && this.primaryPaneCollapsed;
+      const hasPlotBounds = Boolean(plot && plot.width >= controlWidth + 4);
+      const hasPaneBounds = paneRect.width >= controlWidth + rightAxisWidth + 8;
+      view.element.hidden = !paneVisible || !(hasPlotBounds || paneCollapsed && hasPaneBounds);
+      if (view.element.hidden) return;
+      const right = plot ? plot.left + plot.width : paneRect.right - chartRect.left - rightAxisWidth;
+      const top = plot ? plot.top : paneRect.top - chartRect.top;
+      view.element.style.left = `${Math.max(plot?.left ?? 0, right - controlWidth - 4)}px`;
+      view.element.style.top = `${top + 2}px`;
+    });
+  }
+
   private renderActiveIndicators() {
     if (!this.selection || this.dead) return;
-    const views = this.studyHost?.views() ?? [];
-    const rows = this.selection.indicators.map(instance => {
-      const definition = nativeDefinition(instance.definitionId), study = views.find(v => v.attachmentId === instance.instanceId);
+    this.fitPrimaryPaneCollapseWeight();
+    const studies = this.studyHost?.views() ?? [];
+    const mainRows: HTMLDivElement[] = [];
+    const candidatePaneRows = new Map<number, HTMLDivElement[]>();
+    const activeIds = new Set<string>();
+    this.selection.indicators.forEach(instance => {
+      if (instance.definitionId === FOOTPRINT_TOTALS_ID && this.selection.type !== 'footprint') return;
+      const definition = nativeDefinition(instance.definitionId), study = studies.find(v => v.attachmentId === instance.instanceId);
       const name = definition?.name ?? instance.script?.title ?? instance.definitionId;
       const unavailable = !definition && !studyPins([instance]).length || instance.settingsVersion !== 1 || instance.source.kind !== 'chart';
-      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && !NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
+      let summary = unavailable ? 'Unavailable definition · settings retained' : definition && instance.definitionId !== ORDER_WALLS_ID && instance.definitionId !== TPO_ID && !NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) && !supportsDepth(this.selection) ? 'Unavailable · Binance BTCUSDT Spot or USD-M Perp only'
         : instance.definitionId === FOOTPRINT_ID ? `$${this.selection.rowPrice} · ${this.selection.footprintUnits.toUpperCase()} · ${this.selection.footprint.displayMode}`
           : instance.definitionId === FOOTPRINT_TOTALS_ID ? `${footprintTotalsSettings(instance.settings).rows.length} rows · ${this.selection.footprintUnits.toUpperCase()} · shared footprint data`
+          : instance.definitionId === TPO_ID ? `${this.tpoSettings(instance).bracketMinutes}m brackets · UTC · ${this.tpoStatus?.state ?? 'loading'} · ${this.tpoStatus?.observedMinutes.toLocaleString() ?? '0'} / ${this.tpoStatus?.expectedMinutes.toLocaleString() ?? '0'} elapsed 1m${this.tpoStatus?.missingMinutes ? ` · ${this.tpoStatus.missingMinutes.toLocaleString()} missing` : ''}${this.tpoStatus?.retentionLimited ? ' · source retention limited' : ''}`
           : instance.definitionId === HEATMAP_ID ? `${this.selection.heatmap.mode} · $${this.nativeIndicator(FOOTPRINT_ID) ? this.selection.rowPrice : this.selection.heatmap.rowPrice} · ${this.selection.footprintUnits.toUpperCase()}`
             : NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number]) ? `${netPositioningSettings(instance.settings).method === 'price-oi' ? 'Price + OI' : 'Aggressor Flow + OI'} · ${netPositioningSettings(instance.settings).venues.map(venue => venue === 'binance' ? 'Binance USD-M' : 'Hyperliquid').join(' + ') || 'Binance USD-M'} · recorded intervals`
             : instance.definitionId === ORDER_WALLS_ID ? this.selection.venue === 'hyperliquid' ? 'Unavailable · Hyperliquid order-book history is not supported'
@@ -2642,33 +3054,34 @@ export class CandlePanel implements IContentRenderer {
       const error = study && study.diagnostics.length ? study.status : study && !study.inputs.length && study.status !== 'Study ready' ? study.status : '';
       if (error) summary = error;
       if (this.indicatorErrors.has(instance.instanceId)) summary = this.indicatorErrors.get(instance.instanceId)!;
-      return { instance, name, summary: `${summary || 'Default inputs'} · ${instrumentLabel(this.selection)} · ${this.selection.interval}`, unavailable };
+      const view = { instance, name, summary: `${summary || 'Default inputs'} · ${instrumentLabel(this.selection)} · ${this.selection.interval}`, unavailable };
+      activeIds.add(instance.instanceId);
+      const element = this.indicatorRowView(view);
+      const paneIndex = this.indicatorPaneIndex(instance);
+      if (paneIndex >= 0 && paneIndex !== this.engine?.chart.primaryPaneIndex()) {
+        const group = candidatePaneRows.get(paneIndex) ?? [];
+        group.push(element); candidatePaneRows.set(paneIndex, group);
+      } else mainRows.push(element);
     });
-    const key = JSON.stringify([rows, this.activeIndicators.dataset.error]); if (key === this.activeListKey) return;
-    this.activeListKey = key; this.activeIndicators.hidden = rows.length === 0;
-    this.activeSummary.textContent = `Indicators (${rows.length})`;
-    const focused = this.activeRows.contains(document.activeElement) ? (document.activeElement as HTMLButtonElement) : null;
-    const focusId = focused?.dataset.instanceId, focusAction = focused?.dataset.indicatorAction;
-    this.activeRows.replaceChildren();
-    for (const row of rows) {
-      const element = document.createElement('div'); element.className = 'active-indicator'; element.dataset.instanceId = row.instance.instanceId; element.dataset.definitionId = row.instance.definitionId; element.dataset.visible = String(row.instance.visible);
-      const copy = document.createElement('div'); copy.className = 'active-indicator-copy';
-      const name = document.createElement('span'); name.textContent = row.name;
-      const description = document.createElement('small'); description.textContent = row.summary; description.title = row.summary; copy.append(name, description);
-      const controls = document.createElement('div'); controls.className = 'active-indicator-actions';
-      const actions = ['visibility', 'settings', ...(row.instance.script ? ['source','duplicate'] : []), 'remove'];
-      for (const action of actions) {
-        const button = document.createElement('button'); button.type = 'button'; button.dataset.indicatorAction = action; button.dataset.instanceId = row.instance.instanceId;
-        const label = action === 'visibility' ? `${row.instance.visible ? 'Hide' : 'Show'} ${row.name}` : action === 'settings' ? `${row.name} settings` : action === 'source' ? `Edit Script for ${row.name}` : `${action === 'remove' ? 'Remove' : 'Duplicate'} ${row.name}`;
-        button.setAttribute('aria-label', label); button.title = label;
-        if (action === 'visibility') button.setAttribute('aria-pressed', String(row.instance.visible));
-        const wallMarketUnsupported = row.instance.definitionId === ORDER_WALLS_ID && this.selection.venue === 'hyperliquid';
-        button.disabled = row.unavailable && action !== 'remove' || wallMarketUnsupported && action === 'visibility'; button.append(indicatorIcon(action)); controls.append(button);
-      }
-      element.append(copy, controls); this.activeRows.append(element);
+    const paneRows = new Map<number, HTMLDivElement[]>();
+    for (const [paneIndex, paneRowsForIndex] of candidatePaneRows) {
+      if (this.paneIndicatorGeometry(paneIndex, paneRowsForIndex)) paneRows.set(paneIndex, paneRowsForIndex);
+      else mainRows.push(...paneRowsForIndex);
     }
-    if (this.activeIndicators.dataset.error) { const error = document.createElement('p'); error.className = 'dialog-status'; error.setAttribute('role','status'); error.textContent = this.activeIndicators.dataset.error; this.activeRows.append(error); }
-    if (focusId && focusAction) [...this.activeRows.querySelectorAll<HTMLButtonElement>('button')].find(b => b.dataset.instanceId === focusId && b.dataset.indicatorAction === focusAction)?.focus();
+    this.syncPaneIndicatorRows(paneRows);
+    this.syncPaneLayoutControls();
+    this.paneIndicatorLayer.hidden = ![...this.paneIndicatorHosts.values()].some(host => !host.hidden)
+      && ![...this.paneControlHosts.values()].some(view => !view.element.hidden)
+      && this.primaryPaneCollapsedHeader.hidden;
+    this.activeSummary.textContent = `Indicators (${mainRows.length})`;
+    const errorText = this.activeIndicators.dataset.error;
+    this.activeIndicators.hidden = mainRows.length === 0 && !errorText;
+    if (errorText) {
+      this.indicatorErrorRow ??= document.createElement('p');
+      this.indicatorErrorRow.className = 'dialog-status'; this.indicatorErrorRow.setAttribute('role', 'status'); this.indicatorErrorRow.textContent = errorText;
+    } else { this.indicatorErrorRow?.remove(); }
+    this.reconcileIndicatorChildren(this.activeRows, this.indicatorErrorRow ? [...mainRows, this.indicatorErrorRow] : mainRows);
+    for (const [id, view] of this.indicatorRowViews) if (!activeIds.has(id)) { view.element.remove(); this.indicatorRowViews.delete(id); }
   }
 
   private async openPicker() {
@@ -2693,7 +3106,9 @@ export class CandlePanel implements IContentRenderer {
     const activeCount = this.selection.studies.length;
     let shown = 0;
     for (const category of ['Order Flow','Trend','Volume','My Scripts']) {
-      const matches = entries.filter(d => d.category === category && (!query || `${d.name} ${d.description}`.toLocaleLowerCase().includes(query)));
+      const matches = entries.filter(d => d.category === category
+        && (d.id !== FOOTPRINT_TOTALS_ID || this.selection.type === 'footprint')
+        && (!query || `${d.name} ${d.description}`.toLocaleLowerCase().includes(query)));
       if (!matches.length) continue;
       const section = document.createElement('section'); section.className = 'indicator-category';
       const heading = document.createElement('h3'); heading.textContent = category; section.append(heading);
@@ -2872,6 +3287,7 @@ export class CandlePanel implements IContentRenderer {
     this.hoveredFootprint = null;
     this.updateReadout(null);
     this.subscribe();
+    this.syncTpo();
     this.refreshExecutionHover(this.params.api.id);
     this.save();
   }
@@ -2944,11 +3360,16 @@ export class CandlePanel implements IContentRenderer {
     const generation = ++this.heatmapGeneration; this.heatmapStatus = undefined; this.heatmapControls.setStatus(undefined); this.heatmapControls.hover(null);
     this.engine?.updateHeatmap([], true, null);
     if (!key) return;
+    this.heatmapStatus = { state: 'syncing', message: 'Connecting to the selected Binance book source.', tickSize: null, collectionStart: null, retentionStart: null, capacityLimited: false };
+    this.heatmapControls.setStatus(this.heatmapStatus);
+    this.renderActiveIndicators();
     this.releaseHeatmap = this.feed.subscribeHeatmap(this.params.api.id, settings, event => {
       if (this.dead || generation !== this.heatmapGeneration || event.type !== 'heatmap-batch') return;
+      const previousState = this.heatmapStatus?.state;
       this.heatmapStatus = event.status;
       this.engine?.updateHeatmap(event.buckets, event.snapshot, event.status.retentionStart);
       if (this.visible && !document.hidden) this.heatmapControls.setStatus(event.status);
+      if (previousState !== event.status.state) this.renderActiveIndicators();
     }, marketOf(this.selection));
   }
 
@@ -3076,8 +3497,10 @@ export class CandlePanel implements IContentRenderer {
       coverage: 'waiting', retentionStart: null,
     };
     this.updateFootprintMetadata();
+    this.renderActiveIndicators();
     this.releaseFootprint = this.feed.subscribeFootprint(this.params.api.id, selection, selection.rowPrice, event => {
       if (this.dead || epoch !== this.selectionEpoch || generation !== this.footprintGeneration || !this.footprintDataWanted()) return;
+      const previousState = this.footprintStatus.state;
       if ((event.type === 'footprint-snapshot' || event.type === 'footprint-patch') && event.status) {
         this.footprintStatus = event.status;
         this.updateFootprintMetadata();
@@ -3118,6 +3541,7 @@ export class CandlePanel implements IContentRenderer {
         } else this.footprintNeedsSync = true;
       }
       if (event.type === 'footprint-snapshot' || event.type === 'footprint-patch') this.updateStatus();
+      if (previousState !== this.footprintStatus.state) this.renderActiveIndicators();
     });
     this.updateStatus();
   }
@@ -3151,7 +3575,7 @@ export class CandlePanel implements IContentRenderer {
       this.hoveredBar = null; this.hoveredFootprint = null; this.refreshReadout();
       return;
     }
-    const plot = this.engine?.chart.plotRect(0);
+    const plot = this.engine?.chart.plotRect(this.engine.chart.primaryPaneIndex());
     const point = event.point;
     const wallHit: OrderWallHit | null = point && plot ? this.engine?.orderWallAt(point.x - plot.left, point.y - plot.top) ?? null : null;
     if (wallHit && this.nativeIndicator(ORDER_WALLS_ID)?.visible) this.heatmapControls.showSharedTooltip(this.orderWallsControls.tooltip(wallHit, this.selection, this.orderWallsStatus));
@@ -3179,6 +3603,7 @@ export class CandlePanel implements IContentRenderer {
       if (this.visible) this.scheduler.invalidate(this.engine);
     }
     this.syncNetPositioning();
+    this.syncTpo();
     if (this.visible) {
       this.heatmapControls.setStatus(this.heatmapStatus);
       if (this.footprintDataWanted() && this.footprintNeedsSync) {
@@ -3348,7 +3773,7 @@ export class CandlePanel implements IContentRenderer {
     const range = this.engine?.visibleRange();
     const bar = this.engine?.latestCandle();
     const latestFootprint = this.footprintBars.at(-1);
-    const priceScale = this.engine?.chart.panes()[0]?.priceScale;
+    const priceScale = this.engine?.chart.panes()[this.engine?.chart.primaryPaneIndex() ?? -1]?.priceScale;
     const priceRange = priceScale?.priceRange();
     return {
       id: this.params.api.id,
@@ -3384,6 +3809,7 @@ export class CandlePanel implements IContentRenderer {
         hover: this.hoveredFootprint,
       },
       footprintTotals: this.engine?.footprintTotalsDiagnostics() ?? [],
+      tpo: { ...this.engine?.tpoDiagnostics(), status: this.tpoStatus, settings: this.tpoSettings() },
       heatmap: { ...this.engine?.heatmapDiagnostics(), status: this.heatmapStatus, settings: this.selection.heatmap },
       netPositioning: { panes: this.engine?.netPositioningDiagnostics() ?? [], request: this.netPositioningRequestKey,
         histories: [...this.netPositioningHistories.values()].map(history => history.diagnostics()), errors: Object.fromEntries(this.netPositioningErrors) },
@@ -3400,6 +3826,9 @@ export class CandlePanel implements IContentRenderer {
     this.objectsTreeMenu.hidden = true;
     this.objectsTreeMenu.remove();
     this.objectsPanel.remove();
+    for (const host of this.paneIndicatorHosts.values()) host.remove(); this.paneIndicatorHosts.clear();
+    for (const host of this.paneControlHosts.values()) host.element.remove(); this.paneControlHosts.clear();
+    this.paneIndicatorLayer.remove(); this.indicatorRowViews.clear();
     this.objectsRows.replaceChildren();
     this.objectRows.clear();
     this.objectPaneSections.clear();
@@ -3409,6 +3838,7 @@ export class CandlePanel implements IContentRenderer {
     clearInterval(this.timer);
     this.toolbarResizeObserver?.disconnect();
     this.abort.abort(); this.marketPicker.dispose();
+    if (this.paneIndicatorLayoutFrame !== undefined) cancelAnimationFrame(this.paneIndicatorLayoutFrame);
     if (this.picker.open) this.picker.close();
     if (this.settingsDialog.open) this.settingsDialog.close();
     if (this.footprintDialog.open) this.footprintDialog.close();
@@ -3424,6 +3854,7 @@ export class CandlePanel implements IContentRenderer {
     this.releaseNetPositioning?.(); this.releaseNetPositioning = undefined; this.netPositioningGeneration++; this.netPositioningControls.dispose();
     this.footprintTotalsControls.dispose();
     this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();
+    this.releaseTpo?.(); this.tpoGeneration++; this.tpoControls.dispose();
     this.releaseFootprint?.(); this.footprintGeneration++;
     this.indicatorLifecycle?.dispose();
     this.subscriptions.forEach(subscription => subscription.dispose());

@@ -3,11 +3,13 @@ import type { ScriptRecord } from '../scripts/library';
 import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from '../feed/order-walls';
 import type { NetPositioningMethod, NetPositioningVenue } from '../feed/net-positioning';
 import type { NetPositioningDisplay } from '../chart/net-positioning-layout';
+import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoIndicatorSettings } from './tpo-settings';
 export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
 export const FOOTPRINT_ID = 'native.footprint';
 export const FOOTPRINT_TOTALS_ID = 'native.footprint-totals';
+export const TPO_ID = 'native.tpo';
 export const DEFAULT_FOOTPRINT_TOTALS_ROWS = ['volume', 'bidVolume', 'askVolume', 'delta'] as const;
 export type FootprintTotalsSettings = { rows: import('openalgo-charts/profile').FootprintStatRow[] };
 const FOOTPRINT_TOTAL_ROWS: readonly import('openalgo-charts/profile').FootprintStatRow[] = [
@@ -89,6 +91,15 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'exitRatio', label: 'Exit threshold ratio', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.exitRatio },
       { key: 'minDurationMs', label: 'Minimum confirmation (ms)', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.minDurationMs }],
     placements: ['overlay'], dataRequirements: ['order-book-history'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: TPO_ID, name: 'UTC TPO Profile', description: 'Daily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candles', category: 'Volume', implementation: 'builtin',
+    settingsVersion: 1, defaults: { ...DEFAULT_TPO_INDICATOR_SETTINGS }, settingsSchema: [
+      { key: 'bracketMinutes', label: 'Bracket duration', kind: 'select', defaultValue: 30 },
+      { key: 'rowTicks', label: 'Row size in exchange ticks', kind: 'native', defaultValue: 'auto' },
+      { key: 'valueAreaPercent', label: 'Value area (%)', kind: 'number', defaultValue: 70 },
+      { key: 'openingRangeMinutes', label: 'Opening range (minutes)', kind: 'number', defaultValue: 30 },
+      { key: 'initialBalanceMinutes', label: 'Initial balance (minutes)', kind: 'number', defaultValue: 60 },
+      { key: 'nakedDays', label: 'Naked level history (days)', kind: 'number', defaultValue: 90 }],
+    placements: ['overlay'], dataRequirements: ['1-minute-candle-history'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: NET_LONGS_ID, name: 'Net Longs — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [
       { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
@@ -142,6 +153,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
     if (copy.definitionId === ORDER_WALLS_ID && copy.settingsVersion === 1) copy.settings = { ...orderWallsSettings(copy.settings) };
     if (copy.definitionId === FOOTPRINT_TOTALS_ID && copy.settingsVersion === 1) copy.settings = { ...footprintTotalsSettings(copy.settings) };
+    if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };
     if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];

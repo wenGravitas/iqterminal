@@ -16,6 +16,7 @@ import { TabCycleHeaderAction } from './tab-cycler';
 import { CompactChartTab, activateNumberedTab } from './chart-tab';
 import { instrumentKey, type Series } from './feed/protocol';
 import { STORAGE_KEY, PANEL_BUDGET, restoreValue } from './layout';
+import { MarketPulseController } from './market-pulse';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 const query = new URL(location.href).searchParams;
@@ -33,6 +34,7 @@ const root = document.querySelector<HTMLElement>('#workspace')!;
 const add = document.querySelector<HTMLButtonElement>('#add')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
 const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
+const marketPulse = new MarketPulseController();
 let dock: DockviewApi;
 let editor: LazyScriptEditorPanel | undefined;
 let watchPanel:LevelWatchPanel|undefined;let watchSnapshot:WatchSnapshot|undefined;
@@ -144,7 +146,7 @@ const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
   add.title = add.disabled ? `Maximum ${PANEL_BUDGET} charts` : 'Add a chart to the right of the active group';
 })];
 const abort = new AbortController();
-window.addEventListener('keydown', event => activateNumberedTab(dock, event), { signal: abort.signal, capture: true });
+window.addEventListener('keydown', event => { if (!marketPulse.isOpen()) activateNumberedTab(dock, event); }, { signal: abort.signal, capture: true });
 document.querySelector('#level-watch')!.addEventListener('click',()=>openWatches(),{signal:abort.signal});
 window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
@@ -158,7 +160,6 @@ window.addEventListener('offline', () => feed.send({ type: 'online', online: fal
 
 const timer = setInterval(() => {
   if (document.hidden) return;
-  document.querySelector('#clock')!.textContent = new Date().toISOString().slice(11, 19);
   const markets = [
     { key: 'binance:spot', label: 'Binance Spot' },
     { key: 'binance:perpetual', label: 'Binance USD-M Perp' },
@@ -178,7 +179,8 @@ if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
     dock, addChart, addTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
-    stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length }),
+    marketPulse,
+    stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; },
   };
   Object.assign(window, { __terminal: debug });
@@ -191,6 +193,7 @@ function dispose() {
   clearInterval(timer);
   abort.abort();
   appearance.dispose();
+  marketPulse.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
   scheduler.dispose(); notifications.dispose();
@@ -205,3 +208,12 @@ window.addEventListener('pagehide', event => {
   }
   if (!event.persisted) dispose();
 }, { signal: abort.signal });
+
+const appShell = document.querySelector<HTMLElement>('#app-shell')!;
+const startupSplash = document.querySelector<HTMLElement>('#startup-splash')!;
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  appShell.inert = false;
+  appShell.removeAttribute('aria-hidden');
+  startupSplash.setAttribute('aria-hidden', 'true');
+  document.documentElement.dataset.appState = 'ready';
+}));
