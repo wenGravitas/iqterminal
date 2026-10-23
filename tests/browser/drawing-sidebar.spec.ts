@@ -16,7 +16,7 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
   expect(await sidebar.locator('.drawing-sidebar-group[data-drawing-group="positions"]').evaluate(group => group.nextElementSibling?.matches('.drawing-sidebar-group[data-drawing-group="text"]'))).toBe(true);
   expect(await panel.locator('.drawing-sidebar-direct-tool')).toHaveCount(0);
   const toolIds = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
-  expect(toolIds).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
+  expect(toolIds).toEqual(['callout', 'date-range', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'price-range', 'rectangle', 'short-position', 'text', 'trend-line']);
   expect(await panel.evaluate(element => element.querySelectorAll('.chart-toolbar .drawing-sidebar-button').length)).toBe(0);
 
   const countDrawings = () => page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.drawings().length, panelId);

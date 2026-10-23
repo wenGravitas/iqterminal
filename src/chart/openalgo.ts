@@ -1,3 +1,6 @@
+import { otherFootprintTotals } from '../footprint-totals-tooltip';
+import { anchorTimeAxisToPrimary } from './primary-time-axis';
+import { effectiveCurrency } from '../currency-display';
 import { WatchZones } from './watch-zones';
 import type {LevelWatch} from '../level-watch/types';
 import { AxisGrid } from './axis-grid';
@@ -85,6 +88,7 @@ export class OpenAlgoCandleChart {
   private orderWalls: OrderWallsPrimitive | null = null;
   private tpoProfile: TpoProfilePrimitive | null = null;
   private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
+  onNetPositioningVenueToggle?: (id: string, venue: NetPositioningVenue) => void;
   private netPositioningLegends = new Map<string, { element: HTMLElement; abort: AbortController; venuesKey: string }>();
   private footprintTotalsPanes = new Map<string, { series: SeriesApi; primitive: FootprintTotalsPane; paneIndex: number; autoHeight: number; autoWeight: number | null; manuallyResized: boolean }>();
   private readonly netPositioningViewportSubscriptions: (() => void)[] = [];
@@ -127,7 +131,7 @@ export class OpenAlgoCandleChart {
     // Keep readable quantities with a wider gutter between footprint columns.
     font: 9, widthFactor: 0.76,
     displayMode: 'bidask', cellStyle: 'ladder',
-    statsRows: ['volume', 'bidVolume', 'askVolume', 'delta'], tableRows: [],
+    statsRows: [], tableRows: [],
     showCandle: true, showPoc: true, showValueArea: true, valueAreaColor: '#ffffff',
     pocStyle: 'outline', radius: 0,
     stackedImbalances: 0, cvdOffset: 0,
@@ -202,6 +206,7 @@ export class OpenAlgoCandleChart {
       animAutoscale: false,
       ariaLabel: 'BTC perpetual candlestick chart. Drag to pan time and price, wheel to zoom.',
     });
+    anchorTimeAxisToPrimary(this.chart);
     // The chart library clears its CanvasLayers while processing a container
     // resize, then defers repaint through the injected RAF. The host scheduler
     // may not run until the next frame, so consume this chart's queued resize
@@ -298,9 +303,8 @@ export class OpenAlgoCandleChart {
       sellColor: palette.downColor, sellTextColor: palette.downColor, pocColor: palette.axisText };
     this.footprint?.setOptions(this.footprintOptions);
     this.syncFootprintTotalsPresentation();
-    const sourceColors = netPositioningSourceColors(name);
     for (const [id, view] of this.netPositioningPanes) {
-      view.primitive.setThemeColors(sourceColors);
+      view.primitive.setThemeColors(netPositioningSourceColors(name, view.primitive.diagnostics().side));
       this.syncNetPositioningLegend(id, view.primitive.diagnostics().venues);
     }
   }
@@ -330,16 +334,27 @@ export class OpenAlgoCandleChart {
       const primitive = new NetPositioningPane(id, side);
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
-      series.priceScale().setPriceFormatter(value => `${Math.abs(value) >= 1 ? value.toLocaleString('en-US', { maximumFractionDigits: 4 }) : value.toLocaleString('en-US', { maximumFractionDigits: 8 })} BTC`);
+      series.priceScale().setPriceFormatter(value => {
+        const amount = primitive.displayCurrency === 'usdt'
+          ? value.toLocaleString('en-US', { notation: 'compact', maximumFractionDigits: 2 })
+          : value.toLocaleString('en-US', { maximumFractionDigits: Math.abs(value) >= 1 ? 4 : 8 });
+        return `${amount} ${primitive.displayCurrencyLabel}`;
+      });
       series.setData([]);
       this.chart.addPrimitive(primitive, paneIndex);
       view = { series, primitive, paneIndex };
       this.netPositioningPanes.set(id, view);
       primitive.setHostSnapshot(this.candlesFromSeries());
     }
-    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme()));
+    const currency = effectiveCurrency('btc'), currencyChanged = view.primitive.displayCurrency !== currency;
+    view.primitive.setCurrency(currency);
+    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), side));
     view.primitive.setSettings(side, method, venues, intervalMs, display, labels);
     view.primitive.setColorOverrides(colors);
+    if (currencyChanged) {
+      view.series.priceScale().setAutoScale(true);
+      this.chart.invalidate(mask => mask.invalidatePane(view!.paneIndex, { level: InvalidationLevel.Full, autoScale: true }));
+    }
     this.syncNetPositioningLegend(id, venues);
     this.syncNetPositioningViewport();
     return view.paneIndex;
@@ -355,21 +370,27 @@ export class OpenAlgoCandleChart {
   private syncNetPositioningLegend(id: string, venues: readonly NetPositioningVenue[]) {
     const view = this.netPositioningPanes.get(id); if (!view) return;
     let legend = this.netPositioningLegends.get(id);
-    const venuesKey = venues.join(',');
+    const venuesKey = 'binance,hyperliquid';
     if (!legend || legend.venuesKey !== venuesKey) {
       legend?.abort.abort(); legend?.element.remove();
       const abort = new AbortController(), element = document.createElement('div');
       element.className = 'net-positioning-legend'; element.setAttribute('role', 'group');
+      // Venue controls must not start the chart's pointer-captured pan gesture.
+      for (const type of ['pointerdown', 'mousedown'] as const) element.addEventListener(type, event => event.stopPropagation(), { signal: abort.signal });
       element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
-      for (const venue of venues) {
+      for (const venue of ['binance', 'hyperliquid'] as const) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'net-positioning-source';
-        button.dataset.source = venue; button.textContent = venue === 'binance' ? 'B' : 'H';
+        button.dataset.source = venue;
+        const icon = document.createElement('img'); icon.src = venue === 'binance' ? '/venues/binance.ico' : '/venues/hyperliquid.png'; icon.alt = ''; icon.width = 12; icon.height = 12;
+        const label = document.createElement('span'); label.textContent = venue === 'binance' ? 'BN[P]' : 'HL[P]';
+        button.append(icon, label);
         button.title = venue === 'binance' ? 'Binance BTCUSDT USD-M Perpetual' : 'Hyperliquid BTC Perpetual';
-        button.setAttribute('aria-label', `Highlight ${button.title}`);
-        const set = () => view.primitive.highlightSource(venue);
+        button.setAttribute('aria-label', `Show ${button.title}`);
+        const set = () => view.primitive.highlightSource(button.getAttribute('aria-pressed') === 'true' ? venue : null);
         const clear = () => { if (document.activeElement !== button) view.primitive.highlightSource(null); };
         button.addEventListener('pointerenter', set, { signal: abort.signal }); button.addEventListener('pointerleave', clear, { signal: abort.signal });
         button.addEventListener('focus', set, { signal: abort.signal }); button.addEventListener('blur', () => view.primitive.highlightSource(null), { signal: abort.signal });
+        button.addEventListener('click', () => { view.primitive.highlightSource(null); this.onNetPositioningVenueToggle?.(id, venue); }, { signal: abort.signal });
         element.append(button);
       }
       this.container.append(element);
@@ -378,6 +399,7 @@ export class OpenAlgoCandleChart {
     legend.element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
     for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
       const venue = button.dataset.source as NetPositioningVenue;
+      button.setAttribute('aria-pressed', String(venues.includes(venue)));
       button.style.setProperty('--source-color', view.primitive.sourceColor(venue));
     }
     this.positionNetPositioningLegends();
@@ -391,7 +413,6 @@ export class OpenAlgoCandleChart {
       const compact = plot.width < 320;
       for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
         button.dataset.compact = String(compact);
-        button.textContent = compact ? button.dataset.source === 'binance' ? 'B' : 'H' : button.dataset.source === 'binance' ? 'BN[P]' : 'HL[P]';
       }
       const width = legend.element.getBoundingClientRect().width;
       legend.element.style.left = `${Math.max(plot.left + 4, plot.left + plot.width - width - 6)}px`;
@@ -432,7 +453,7 @@ export class OpenAlgoCandleChart {
     else this.syncNetPositioningViewport();
   }
 
-  addFootprintTotalsPane(id: string, rows: readonly FootprintStatRow[], units: FootprintUnits) {
+  addFootprintTotalsPane(id: string, rows: readonly FootprintStatRow[], units: FootprintUnits, highlightHighest = false) {
     let view = this.footprintTotalsPanes.get(id);
     if (!view) {
       this.ensureFootprintStatsModel();
@@ -445,8 +466,11 @@ export class OpenAlgoCandleChart {
       this.chart.addPrimitive(primitive, paneIndex);
       view = { series, primitive, paneIndex, autoHeight: 0, autoWeight: null, manuallyResized: false };
       this.footprintTotalsPanes.set(id, view);
+      // A new pane still needs the current shared stats when the visible
+      // footprint slice is unchanged and the refresh can skip recalculation.
+      primitive.setStats(this.footprint?.stats() ?? []);
     }
-    view.primitive.setSettings(rows, units);
+    view.primitive.setSettings(rows, units, highlightHighest);
     this.syncFootprintTotalsPresentation();
     this.enqueueFootprintRefresh();
     return view.paneIndex;
@@ -456,8 +480,8 @@ export class OpenAlgoCandleChart {
     const options = this.footprint?.options() ?? this.footprintOptions;
     for (const view of this.footprintTotalsPanes.values()) {
       view.primitive.setPresentation({
-        font: options.font,
-        rowHeight: options.statsRowHeight,
+        font: Math.max(11, options.font),
+        rowHeight: Math.max(18, options.statsRowHeight),
         labelWidth: options.tableLabelWidth,
         buyTextColor: options.buyTextColor ?? options.buyColor,
         sellTextColor: options.sellTextColor ?? options.sellColor,
@@ -535,6 +559,13 @@ export class OpenAlgoCandleChart {
 
   footprintTotalsPaneIndex(id: string) { return this.footprintTotalsPanes.get(id)?.paneIndex ?? -1; }
   footprintTotalsTooltip(id: string, time: number) { return this.footprintTotalsPanes.get(id)?.primitive.tooltip(time) ?? null; }
+  footprintTotalsHover(id: string, time: number, x: number, y: number) {
+    const hit = this.footprintTotalsPanes.get(id)?.primitive.hoverSummary(time, x, y);
+    const bar = this.footprintBars.find(bar => bar.time === time);
+    if (!hit || !bar) return null;
+    const other = otherFootprintTotals(this.footprintBars, this.footprint?.stats().map(row => row.time) ?? [], time, hit.units === 'btc' ? 'usdt' : 'btc');
+    return { ...hit, other, coverage: bar.coverage, gapBefore: bar.gapBefore };
+  }
   footprintTotalsDiagnostics() { return [...this.footprintTotalsPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, autoHeight: view.autoHeight, autoWeight: view.autoWeight, manuallyResized: view.manuallyResized, paneHeight: this.chart.panes()[view.paneIndex]?.base.mediaHeight ?? 0, ...view.primitive.diagnostics() })); }
 
   setNetPositioningSnapshot(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
@@ -547,6 +578,7 @@ export class OpenAlgoCandleChart {
   }
   netPositioningPaneIndex(id: string) { return this.netPositioningPanes.get(id)?.paneIndex ?? -1; }
   netPositioningTooltip(id: string, timeMs: number) { return this.netPositioningPanes.get(id)?.primitive.tooltip(timeMs) ?? null; }
+  netPositioningHover(id: string, x: number, y: number) { return this.netPositioningPanes.get(id)?.primitive.hoverSummary(x, y) ?? null; }
   netPositioningDiagnostics() { return [...this.netPositioningPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, ...view.primitive.diagnostics() })); }
 
   setOrderWalls(settings: OrderWallsSettings, intervalMs: number) {

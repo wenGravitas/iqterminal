@@ -6,7 +6,7 @@ import {
   type AggTradeObservation, type AggTradeReject, type FootprintLimits,
 } from './footprint';
 
-type ExecutionConsumer = (trades: readonly AggTradeObservation[], status: import('./protocol').Status, liveSince: number) => void;
+type ExecutionConsumer = (trades: readonly AggTradeObservation[], status: import('./protocol').Status, liveSince: number, integrity?: {tickSize:number|null;qualityRevision:number;correctionTime?:number}) => void;
 const AGG_TRADE_SOCKET: Record<Market,string> = {
   perpetual: 'wss://fstream.binance.com/market/ws/btcusdt@aggTrade',
   spot: 'wss://stream.binance.com:9443/ws/btcusdt@aggTrade',
@@ -76,10 +76,13 @@ type FootprintTransportEvent = Extract<Event, { type: 'footprint-status' | 'foot
 export class BinanceFootprintService {
   private executionConsumers = new Map<string, ExecutionConsumer>();
   private liveSince = 0;
+  private executionQualityRevision = 0;
+  private executionCorrectionTime?:number;
+  private executionIntegrity() { return {tickSize:this.tickSize,qualityRevision:this.executionQualityRevision,correctionTime:this.executionCorrectionTime}; }
   private hasConsumers() { return this.groups.size > 0 || this.executionConsumers.size > 0; }
   subscribeExecutions(id: string, consumer: ExecutionConsumer) {
     this.executionConsumers.set(id, consumer);
-    consumer([], { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince);
+    consumer([], { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince, this.executionIntegrity());
     if (!this.opened) void this.start();
     return () => { this.executionConsumers.delete(id); if (!this.hasConsumers()) this.stop(true); };
   }
@@ -373,6 +376,7 @@ export class BinanceFootprintService {
   private queue(trade: AggTradeObservation) {
     if (this.recentIds.has(trade.id) || this.pendingIds.has(trade.id)) { this.counters.duplicates++; return; }
     if (trade.id <= this.expiredIdFloor || trade.timeMs < this.lastTradeTime) { this.markLate(trade); return; }
+    trade.receivedAtMs ??= this.transport.now();
     this.pending.set(trade.id, trade);
     this.pendingIds.add(trade.id);
     if (this.pending.size >= FOOTPRINT_MAX_PENDING) {
@@ -442,7 +446,7 @@ export class BinanceFootprintService {
       if (appliedAny || this.executionConsumers.size) this.counters.accepted++;
       this.setStatus('live', this.liveMessage());
     }
-      if (executions.length) for (const consumer of this.executionConsumers.values()) consumer(executions, { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince);
+      if (executions.length) for (const consumer of this.executionConsumers.values()) consumer(executions, { state: this.state, message: this.message, lastUpdate: this.lastUpdate }, this.liveSince, this.executionIntegrity());
     } finally {
       if (this.measureAggregation) {
         const elapsed = Math.max(0, performance.now() - startedAt);
@@ -471,6 +475,9 @@ export class BinanceFootprintService {
   }
 
   private markLate(trade: AggTradeObservation) {
+    this.executionCorrectionTime=trade.timeMs;
+    this.executionQualityRevision++;
+    for (const consumer of this.executionConsumers.values()) consumer([], {state:this.state,message:this.message,lastUpdate:this.lastUpdate},this.liveSince,this.executionIntegrity());
     this.counters.late++;
     for (const group of this.groups.values()) {
       if (group.accumulator?.markCoverageGap(trade.timeMs)) {
@@ -503,7 +510,7 @@ export class BinanceFootprintService {
     if (this.state === state && this.message === message) return;
     this.state = state;
     this.message = message;
-    for (const consumer of this.executionConsumers.values()) consumer([], { state, message, lastUpdate: this.lastUpdate }, this.liveSince);
+    for (const consumer of this.executionConsumers.values()) consumer([], { state, message, lastUpdate: this.lastUpdate }, this.liveSince, this.executionIntegrity());
     for (const group of this.groups.values()) this.emitStatus(group);
   }
 
@@ -579,6 +586,8 @@ export class BinanceFootprintService {
   private markOutage() {
     if (this.outageOpen) return;
     this.outageOpen = true;
+    this.executionCorrectionTime=undefined;
+    this.executionQualityRevision++;
     for (const group of this.groups.values()) {
       group.accumulator?.markGap(this.transport.now());
       group.outages = group.accumulator?.outages ?? 0;

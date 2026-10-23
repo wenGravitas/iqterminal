@@ -1,0 +1,52 @@
+{
+  "verifiedAt": "2026-10-22T16:02:56.957Z",
+  "authority": "server",
+  "ready": true,
+  "status": "Ready · no directional stall",
+  "references": 737,
+  "ranges": 240,
+  "server": {
+    "mode": "live",
+    "cursor": 3493630581,
+    "sourceTime": 1792684975060,
+    "lastPoll": 1792684975998,
+    "configurationCount": 1
+  },
+  "diagnostics": {
+    "processed": 771,
+    "seconds": 61,
+    "pending": 2,
+    "ids": 554,
+    "references": 738,
+    "events": 0,
+    "points": 50,
+    "zoneScans": 0,
+    "duplicates": 0,
+    "corrections": 0,
+    "capacity": 0
+  },
+  "health": {
+    "schema": 1,
+    "authority": "server",
+    "state": "live",
+    "reason": "Server · durable Binance BTCUSDT USD-M executions",
+    "lastPoll": 1792684976504,
+    "configurations": 1,
+    "metrics": {
+      "pages": 101,
+      "rows": 775,
+      "errors": 0,
+      "rss": 73347072
+    }
+  },
+  "liveBrowserVerification": {
+    "test": "tests/browser/effort-result-server.spec.ts",
+    "result": "passed",
+    "scenarios": [
+      "last chart removed: source cursor continued",
+      "re-added: ready without warm-up",
+      "browser reload: ready without warm-up"
+    ]
+  },
+  "observerRestartVerified": true
+}

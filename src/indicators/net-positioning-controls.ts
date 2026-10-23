@@ -1,11 +1,5 @@
 import type { NetPositioningSettings } from './model';
 import type { NetPositioningVenue } from '../feed/net-positioning';
-import { instruments } from '../feed/protocol';
-
-const VENUES: readonly { id: NetPositioningVenue; label: string }[] = [
-  { id: 'binance', label: instruments['binance:perpetual'].label },
-  { id: 'hyperliquid', label: instruments['hyperliquid:perpetual'].label },
-];
 
 export class NetPositioningControls {
   readonly dialog = document.createElement('dialog');
@@ -13,7 +7,7 @@ export class NetPositioningControls {
   private readonly method = document.createElement('select');
   private readonly display = document.createElement('select');
   private readonly labels = document.createElement('select');
-  private readonly venueInputs = new Map<NetPositioningVenue, HTMLInputElement>();
+  private venues: NetPositioningVenue[] = ['binance'];
   private readonly status = document.createElement('p');
   private target = '';
   private colors: NetPositioningSettings['colors'];
@@ -45,22 +39,14 @@ export class NetPositioningControls {
     const labelMode = document.createElement('label'); labelMode.className = 'indicator-setting-field';
     const labelName = document.createElement('span'); labelName.textContent = 'Value labels';
     labelMode.append(labelName, this.labels);
-    const venueGroup = document.createElement('fieldset'); venueGroup.className = 'net-positioning-venues';
-    const legend = document.createElement('legend'); legend.textContent = 'Perpetual sources'; venueGroup.append(legend);
-    for (const venue of VENUES) {
-      const input = document.createElement('input'); input.type = 'checkbox'; input.value = venue.id; input.setAttribute('aria-label', venue.label);
-      const label = document.createElement('label'); label.className = 'indicator-setting-field';
-      const text = document.createElement('span'); text.textContent = venue.label; label.append(text, input); venueGroup.append(label);
-      this.venueInputs.set(venue.id, input);
-    }
     const hint = document.createElement('p'); hint.className = 'dialog-status';
-    hint.textContent = 'Only the listed BTC perpetual sources are supported; spot symbols cannot be selected. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.';
+    hint.textContent = 'Use the venue buttons on the indicator to show Binance or Hyperliquid BTC perpetual estimates. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.';
     this.status.className = 'dialog-status'; this.status.setAttribute('role', 'status');
     const footer = document.createElement('footer');
     const cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Cancel';
     const save = document.createElement('button'); save.type = 'submit'; save.textContent = 'Apply'; save.className = 'primary';
     footer.append(cancel, save);
-    this.form.append(header, methodLabel, displayLabel, labelMode, venueGroup, hint, this.status, footer);
+    this.form.append(header, methodLabel, displayLabel, labelMode, hint, this.status, footer);
     this.dialog.append(this.form);
     const options = { signal };
     close.addEventListener('click', () => this.dialog.close(), options);
@@ -68,10 +54,8 @@ export class NetPositioningControls {
     this.dialog.addEventListener('click', event => { if (event.target === this.dialog) this.dialog.close(); }, options);
     this.form.addEventListener('submit', event => {
       event.preventDefault();
-      const venues = VENUES.filter(venue => this.venueInputs.get(venue.id)?.checked).map(venue => venue.id);
-      if (!venues.length) { this.status.textContent = 'Select at least one perpetual source.'; return; }
       this.apply(this.target, {
-        method: this.method.value === 'aggressor-flow-oi' ? 'aggressor-flow-oi' : 'price-oi', venues,
+        method: this.method.value === 'aggressor-flow-oi' ? 'aggressor-flow-oi' : 'price-oi', venues: [...this.venues],
         display: this.display.value === 'grouped' ? 'grouped' : 'stacked',
         labels: this.labels.value === 'hover' || this.labels.value === 'off' ? this.labels.value : 'auto',
         ...(this.colors ? { colors: { ...this.colors } } : {}),
@@ -86,7 +70,7 @@ export class NetPositioningControls {
     this.display.value = settings.display;
     this.labels.value = settings.labels;
     this.colors = settings.colors ? { ...settings.colors } : undefined;
-    for (const [venue, input] of this.venueInputs) input.checked = settings.venues.includes(venue);
+    this.venues = [...settings.venues];
     this.status.textContent = '';
     if (!this.dialog.open) this.dialog.showModal();
   }

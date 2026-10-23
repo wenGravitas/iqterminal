@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CALENDAR_COVERAGE, MARKET_ORDER, buildSessionSchedule, formatCountdown, statusAt, timelineTicks, timelineWindow,
+  CALENDAR_COVERAGE, MARKET_META, MARKET_ORDER, buildSessionSchedule, formatCountdown, statusAt, timelineTicks, timelineWindow,
 } from '../src/market-sessions';
 import { formatClockTime } from '../src/timezone';
 
@@ -62,6 +62,8 @@ describe('Market Pulse session calendars', () => {
 
   it('shows CME Bitcoin maintenance and crypto 24/7 as separate schedules', () => {
     const plan = schedule('2026-10-23T00:00:00Z', '2026-10-25T12:00:00Z');
+    expect(MARKET_META.crypto.short).toBe('Crypto');
+    expect(plan.crypto[0]).toMatchObject({ label: '24/7', reason: 'Scheduled 24/7; venue outages are not monitored' });
     expect(plan['cme-btc'].some(v => v.kind === 'maintenance' && v.startMs === at('2026-10-24T07:00:00Z') && v.endMs === at('2026-10-24T09:00:00Z'))).toBe(true);
     expect(statusAt(plan, 'cme-btc', at('2026-10-24T07:30:00Z'))).toMatchObject({ state: 'closed', transition: 'resumes', transitionAt: at('2026-10-24T09:00:00Z') });
     expect(statusAt(plan, 'cme-btc', at('2026-10-24T09:00:00Z')).state).toBe('active');

@@ -1,3 +1,4 @@
+import { syncCurrencyControl } from './currency-display';
 import { heatmapSettings, type HeatmapSettings, type HeatmapStatus } from './feed/heatmap-model';
 import { footprintTicksForPrice } from './feed/protocol';
 import type { OrderBookHeatmap } from './chart/orderbook-heatmap';
@@ -8,7 +9,7 @@ export class HeatmapControls {
   private form = document.createElement('form'); private inputs = new Map<string, HTMLInputElement | HTMLSelectElement>();
   private rowHint = document.createElement('p');
   private units: 'btc' | 'usdt' = 'btc';
-  setUnits(units: 'btc' | 'usdt') { this.units = units; this.readout.textContent = ''; this.renderStatus(); }
+  setUnits(units: 'btc' | 'usdt') { this.units = units; syncCurrencyControl(this.inputs.get('units') as HTMLSelectElement, units); this.readout.textContent = ''; this.renderStatus(); }
   private current = heatmapSettings(null); private supported = true; private status?: HeatmapStatus;
   private externalTooltip = '';
   constructor(private changed: (settings: HeatmapSettings, units: 'btc' | 'usdt') => void, private retry: () => void, signal: AbortSignal) {
@@ -75,7 +76,9 @@ export class HeatmapControls {
     if (!hit || !this.current.enabled) { this.readout.textContent = ''; this.readout.hidden = !this.current.enabled; return; }
     this.readout.hidden = false;
     const b = hit.bin;
-    this.readout.textContent = `Resting ${hit.side} · ${hit.quantity.toLocaleString('en-US', { maximumFractionDigits: hit.units === 'btc' ? 4 : 2 })} ${hit.units.toUpperCase()} · ${hit.mode === 'peak' ? 'observed peak' : 'time-weighted average'}\n${utc(b.start)}–${utc(b.end)} UTC · $${b.low.toFixed(2)}–$${b.high.toFixed(2)} · ${b.incomplete ? 'incomplete / unknown subtotal' : 'covered observations'}${b.partial ? ' · partial interval' : ''}`;
+    const other = hit.units === 'btc' ? b[hit.side === 'bid' ? 'bidQuote' : 'askQuote'] : b[hit.side];
+    const otherText = ` · ${other.toLocaleString('en-US', { maximumFractionDigits: hit.units === 'btc' ? 2 : 4 })} ${hit.units === 'btc' ? 'USDT' : 'BTC'}`;
+    this.readout.textContent = `Resting ${hit.side} · ${hit.quantity.toLocaleString('en-US', { maximumFractionDigits: hit.units === 'btc' ? 4 : 2 })} ${hit.units.toUpperCase()}${otherText} · ${hit.mode === 'peak' ? 'observed peak' : 'time-weighted average'}\n${utc(b.start)}–${utc(b.end)} UTC · $${b.low.toFixed(2)}–$${b.high.toFixed(2)} · ${b.incomplete ? 'incomplete / unknown subtotal' : 'covered observations'}${b.partial ? ' · partial interval' : ''}`;
   }
   showSharedTooltip(text: string | null) {
     this.externalTooltip = text ?? '';
@@ -87,6 +90,7 @@ export class HeatmapControls {
       const value = name === 'units' ? this.units : this.current[name as keyof HeatmapSettings];
       if (input instanceof HTMLInputElement && input.type === 'checkbox') input.checked = Boolean(value); else input.value = String(value);
     }
+    syncCurrencyControl(this.inputs.get('units') as HTMLSelectElement, this.units);
     if (!this.dialog.open) this.dialog.showModal();
   }
   dispose() { if (this.dialog.open) this.dialog.close(); }

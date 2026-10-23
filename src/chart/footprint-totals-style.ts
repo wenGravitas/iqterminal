@@ -52,3 +52,18 @@ function parseHex(value: string): [number, number, number] | null {
   const hex = match[1]!.length === 3 ? [...match[1]!].map(channel => channel + channel).join('') : match[1]!;
   return [Number.parseInt(hex.slice(0, 2), 16), Number.parseInt(hex.slice(2, 4), 16), Number.parseInt(hex.slice(4, 6), 16)];
 }
+
+/** Highest signed value among the visible candles; missing observations never win. */
+export function footprintTotalsHighest(stats: readonly FootprintBarStats[], row: FootprintStatRow): number | null {
+  let highest: number | null = null;
+  for (const bar of stats) {
+    const value = bar[row];
+    if (value != null && Number.isFinite(value) && (highest === null || value > highest)) highest = value;
+  }
+  return highest;
+}
+
+export function footprintTotalsTextColor(background: string) {
+  const rgb = parseHex(background);
+  return rgb && rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722 > 128 ? '#202934' : '#dedede';
+}

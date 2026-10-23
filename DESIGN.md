@@ -110,4 +110,14 @@ The tab-strip cycle icon opens a small anchored popover just below the control, 
 
 ### Footprint text and opacity
 
-Bid/ask quantities grow with the price-row height and available column width, from 9px up to a restrained 24px semibold monospace. Compact rows keep compact text; the statistics footer keeps its original size. Executed cell backgrounds default to 85% opacity (15% transparency), independently adjustable in Footprint display settings. Heatmap backgrounds retain their own opacity control and use muted, theme-aware liquidity colours with smaller labels so executed footprint cells remain in the foreground. Text remains opaque; saved explicit heatmap opacity is respected.
+Bid/ask quantities grow with the price-row height and available column width, from 9px up to a restrained 24px semibold monospace. Compact rows keep compact text. Statistics appear only in the standalone Footprint Totals pane; the main chart has no embedded totals table or POC-row totals. The time axis belongs to the main price pane. Standalone totals use brighter 11px text and 18px default rows; optional row-maximum highlights use a thin neutral outline and bold text, with ties included across visible candles. Executed cell backgrounds default to 85% opacity (15% transparency), independently adjustable in Footprint display settings. Heatmap backgrounds retain their own opacity control and use muted, theme-aware liquidity colours with smaller labels so executed footprint cells remain in the foreground. Text remains opaque; saved explicit heatmap opacity is respected.
+
+### Pane data readiness
+
+Empty chart and indicator panes show a compact five-bar signal animation with the loading task and source detail. The signal uses the theme accent and becomes static under reduced motion; narrow plots show the signal alone with a full accessible label. Loading feedback yields to usable data without covering retained values. Empty results, unavailable sources and errors use static text rather than an endless animation. Pane headers, input and pane layout controls remain interactive. Market Conditions and Depth Matrix share the same feedback component.
+
+### Effort–Result observations
+
+Small directional zone segments begin at actual candidate availability, with a diamond marker and restrained R/B/U/? outcome notation. Buy-flow stalls use resistance red and sell-flow stalls support green. Segments stop at resolution; candles retain their original appearance. A compact status/evidence button has its own reserved chart-footer row below the plot and footprint totals. Hover evidence uses a flat theme surface and expandable provenance; the optional signed pane labels intensity as descriptive and shows warm-up/quality feedback rather than plotting missing observations as zero.
+
+When VAH/VAL guides are visible, POC dotted vertical markers share their horizontal endpoints, including the central candle gutter, guide extensions and chart-edge clipping. With value-area guides hidden, the markers retain their compact clearance from the painted POC cells.

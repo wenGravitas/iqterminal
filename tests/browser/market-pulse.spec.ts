@@ -34,12 +34,20 @@ test('Market Pulse opens accessibly, changes zones in place, persists separately
   await trigger.click();
   const dialog = page.getByRole('dialog', { name: 'Market Pulse' });
   await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('heading', { name: 'Market Pulse' })).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: 'Close Market Pulse' })).toHaveCount(1);
+  expect(await dialog.locator('.market-pulse-heading').evaluate(header => {
+    const button = header.querySelector('button')!;
+    return Math.abs(header.getBoundingClientRect().right - button.getBoundingClientRect().right) < 1;
+  })).toBe(true);
   await expect(dialog.locator('[data-clock-large]')).toHaveText(/\d{2}:\d{2}:\d{2}/);
   await expect(dialog.locator('[data-clock-date]')).toContainText(/202\d/);
   await expect(dialog.locator('[data-clock-offset]')).toHaveText(/^UTC[+−]\d{2}:\d{2}$/);
   await expect(dialog.locator('[data-clock-zone]')).toHaveText('America/New_York');
   await expect(dialog.getByRole('button', { name: 'Local', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(dialog.locator('[data-market-statuses] .market-pulse-status-row')).toHaveCount(6);
+  await expect(dialog.locator('.market-pulse-status-row[data-market="crypto"] .market-pulse-market-name')).toHaveText('Crypto');
+  await expect(dialog.locator('[data-timeline-labels] .market-pulse-timeline-label').last()).toHaveText('Crypto');
   await expect(dialog.locator('[data-market-statuses] .market-pulse-state-dot[data-state]')).toHaveCount(6);
   await expect(dialog.locator('[data-next-event-label]')).toHaveText(/opens|closes|resumes|maintenance|unverified/i);
   await expect(dialog.locator('[data-next-event-time]')).toHaveAttribute('datetime', /^202\d-/);

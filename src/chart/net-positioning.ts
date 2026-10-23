@@ -1,3 +1,5 @@
+import { netPositioningQuote } from '../feed/net-positioning';
+import type { QuantityCurrency } from '../currency-display';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import type { Candle } from '../feed/protocol';
 import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
@@ -12,12 +14,12 @@ export function netPositioningVenueSlot(venue: NetPositioningVenue) { return VEN
 export type NetPositioningLabels = 'auto' | 'hover' | 'off';
 export type NetPositioningTheme = 'dark' | 'light';
 export type NetPositioningSourceColors = Record<NetPositioningVenue, string>;
-export const NET_POSITIONING_SOURCE_PALETTES: Record<NetPositioningTheme, NetPositioningSourceColors> = {
-  dark: { binance: '#c39b58', hyperliquid: '#719aca' },
-  light: { binance: '#946820', hyperliquid: '#3e71a6' },
+export const NET_POSITIONING_SOURCE_PALETTES: Record<NetPositioningTheme, Record<NetPositioningSide, NetPositioningSourceColors>> = {
+  dark: { longs: { binance: '#58a65c', hyperliquid: '#85c98b' }, shorts: { binance: '#ad5858', hyperliquid: '#d98a8a' } },
+  light: { longs: { binance: '#167260', hyperliquid: '#44853e' }, shorts: { binance: '#b54436', hyperliquid: '#963b4e' } },
 };
-export function netPositioningSourceColors(theme: NetPositioningTheme): NetPositioningSourceColors {
-  return { ...NET_POSITIONING_SOURCE_PALETTES[theme] };
+export function netPositioningSourceColors(theme: NetPositioningTheme, side: NetPositioningSide = 'longs'): NetPositioningSourceColors {
+  return { ...NET_POSITIONING_SOURCE_PALETTES[theme][side] };
 }
 export function netPositioningTextColor(color: string, background: string): '#111111' | '#f5f5f5' {
   const channels = (hex: string) => {
@@ -33,6 +35,14 @@ export function netPositioningTextColor(color: string, background: string): '#11
   const blackContrast = (luminance + .05) / .05, whiteContrast = 1.05 / (luminance + .05);
   return blackContrast >= whiteContrast ? '#111111' : '#f5f5f5';
 }
+/** Lift source-coloured labels toward the contrasting foreground. */
+export function netPositioningLabelColor(color: string, background: string) {
+  const foreground = netPositioningTextColor(background, background);
+  const raw = color.slice(1), expanded = raw.length === 3 ? [...raw].map(channel => channel + channel).join('') : raw;
+  if (!/^[a-f\d]{6}$/i.test(expanded)) return foreground;
+  const target = foreground === '#111111' ? 17 : 245;
+  return '#' + [0, 2, 4].map(offset => Math.round(Number.parseInt(expanded.slice(offset, offset + 2), 16) * .55 + target * .45).toString(16).padStart(2, '0')).join('');
+}
 interface SegmentGeometry { sourceId: NetPositioningVenue; timeMs: number; left: number; top: number; right: number; bottom: number; value: number; quality: NetPositioningQuality; zero: boolean }
 
 /** Side-by-side signed quantities on the same candle axis; absent venues keep their slot. */
@@ -43,6 +53,10 @@ export class NetPositioningPane implements IPrimitive {
   private venues: NetPositioningVenue[] = ['binance'];
   private display: NetPositioningDisplay = 'stacked';
   private labels: NetPositioningLabels = 'auto';
+  private currency: QuantityCurrency = 'btc';
+  get displayCurrency() { return this.currency; }
+  get displayCurrencyLabel() { return this.currency === 'btc' ? 'BTC' : 'USD'; }
+  setCurrency(currency: QuantityCurrency) { if (currency === this.currency) return; this.currency = currency; this.hovered = null; this.geometry = []; this.recomputeVisibleScale(); this.host?.requestUpdate(); }
   private intervalMs = 60_000;
   private readonly candles = new Map<number, NetPositioningCandle>();
   private hostTimes: number[] = [];
@@ -67,7 +81,7 @@ export class NetPositioningPane implements IPrimitive {
   private patches = 0;
   private snapshots = 0;
 
-  constructor(readonly id: string, side: NetPositioningSide) { this.side = side; }
+  constructor(readonly id: string, side: NetPositioningSide) { this.side = side; this.defaultColors = netPositioningSourceColors('dark', side); this.colors = { ...this.defaultColors }; }
   zOrder() { return 'normal' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
   detached() { this.host = undefined; }
@@ -167,7 +181,9 @@ export class NetPositioningPane implements IPrimitive {
 
   autoscaleInfo() {
     if (this.visibleMin === 0 && this.visibleMax === 0) return this.hasVisibleZero ? { min: -1, max: 1 } : null;
-    const pad = (this.visibleMax - this.visibleMin) * .08;
+    // Outside labels need headroom; stacked sources occupy separate text rows.
+    const labelRows = this.display === 'stacked' ? this.venues.length : 1;
+    const pad = (this.visibleMax - this.visibleMin) * (this.labels === 'off' ? .08 : .08 + labelRows * .06);
     return { min: this.visibleMin < 0 ? this.visibleMin - pad : 0, max: this.visibleMax > 0 ? this.visibleMax + pad : 0 };
   }
 
@@ -191,11 +207,12 @@ export class NetPositioningPane implements IPrimitive {
   private sourceValues(candle: NetPositioningCandle) {
     return this.venues.map(sourceId => {
       const data = candle.venues[sourceId];
-      if (!data) return { sourceId, value: null, quality: 'missing' as const };
-      if (data.availableIntervals <= 0) return { sourceId, value: null, quality: 'unavailable' as const };
-      const value = this.side === 'longs' ? data.netLongsBtc : data.netShortsBtc;
-      const partial = data.unavailableIntervals > 0 || (this.method === 'aggressor-flow-oi' && data.flowUnavailableIntervals > 0);
-      return { sourceId, value, quality: partial ? 'partial' as const : 'complete' as const };
+      const baseValue = data && data.availableIntervals > 0 ? this.side === 'longs' ? data.netLongsBtc : data.netShortsBtc : null;
+      const quoteValue = data && baseValue !== null ? netPositioningQuote(data, this.side) : null;
+      const value = this.currency === 'btc' ? baseValue : quoteValue;
+      const quality = !data ? 'missing' as const : data.availableIntervals <= 0 || value === null ? 'unavailable' as const
+        : data.unavailableIntervals > 0 || (this.method === 'aggressor-flow-oi' && data.flowUnavailableIntervals > 0) ? 'partial' as const : 'complete' as const;
+      return { sourceId, value, baseValue, quoteValue, quality };
     });
   }
 
@@ -229,6 +246,7 @@ export class NetPositioningPane implements IPrimitive {
     ctx.strokeStyle = rc.theme?.axisText ?? '#888'; ctx.globalAlpha = .35; ctx.lineWidth = dpr;
     const baselinePx = roundDprBoundary(baseline, dpr);
     ctx.beginPath(); ctx.moveTo(0, baselinePx + .5); ctx.lineTo(rc.plotWidth * dpr, baselinePx + .5); ctx.stroke();
+    const amountLabels: { text: string; x: number; y: number; color: string; alpha: number }[] = [];
     for (let index = from; index < to; index++) {
       const timeMs = this.hostTimes[index]; if (timeMs === undefined) continue;
       const bar = this.candles.get(timeMs); if (!bar) continue;
@@ -268,23 +286,34 @@ export class NetPositioningPane implements IPrimitive {
           ctx.strokeStyle = rc.theme?.axisText ?? '#eee'; ctx.lineWidth = Math.max(1, dpr); ctx.globalAlpha = .9;
           const inset = Math.max(.5, dpr / 2); ctx.strokeRect(leftPx + inset, topPx + inset, Math.max(0, rightPx - leftPx - inset * 2), Math.max(0, bottomPx - topPx - inset * 2));
         }
-        const labelText = formatBtc(String(segment.value));
-        const labelVisible = this.labels === 'auto' ? right - left >= 46 : this.labels === 'hover' && isHovered;
+        const labelText = Math.round(Math.abs(segment.value)).toLocaleString('en-US');
+        const labelVisible = this.labels === 'auto' ? true : this.labels === 'hover' && isHovered;
         if (labelVisible && segment.sign !== 'zero') {
-          ctx.font = `${9 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+          ctx.font = `600 ${12 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
           const metrics = ctx.measureText(labelText);
-          const textHeight = Math.max(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent, 9 * dpr);
-          const widthPx = rightPx - leftPx, heightPx = bottomPx - topPx;
-          if (metrics.width + 4 * dpr <= widthPx && textHeight + 4 * dpr <= heightPx) {
-            ctx.save(); ctx.beginPath(); ctx.rect(leftPx, topPx, widthPx, heightPx); ctx.clip();
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = netPositioningTextColor(color, rc.theme?.background ?? '#090909'); ctx.globalAlpha = dimmed ? .25 : .9;
-            ctx.fillText(labelText, (leftPx + rightPx) / 2, (topPx + bottomPx) / 2);
-            ctx.restore();
+          const textHeight = Math.max(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent, 12 * dpr);
+          const ascent = Math.max(metrics.actualBoundingBoxAscent, 9 * dpr), descent = Math.max(metrics.actualBoundingBoxDescent, 3 * dpr);
+          const sameSide = layout.segments.filter(item => item.sign === segment.sign);
+          const row = this.display === 'stacked' ? sameSide.indexOf(segment) : 0;
+          const edge = this.display === 'stacked'
+            ? roundDprBoundary(yForPrice(segment.sign === 'positive' ? layout.positiveTotal : layout.negativeTotal), dpr)
+            : segment.sign === 'positive' ? topPx : bottomPx;
+          const offset = 3 * dpr + row * (textHeight + 2 * dpr);
+          const y = segment.sign === 'positive' ? edge - offset - descent : edge + offset + ascent;
+          const textLeft = (leftPx + rightPx - metrics.width) / 2, textRight = textLeft + metrics.width;
+          const healthRight = health ? ctx.measureText(health).width + 12 * dpr : 0;
+          const topLimit = (PANE_HEADER_HEIGHT + (textLeft < healthRight ? 14 : 0)) * dpr;
+          if (metrics.width + 4 * dpr <= rightPx - leftPx && textLeft >= 0 && textRight <= rc.plotWidth * dpr && y - ascent >= topLimit && y + descent <= rc.plotHeight * dpr) {
+            amountLabels.push({ text: labelText, x: (leftPx + rightPx) / 2, y, color: netPositioningLabelColor(color, rc.theme?.background ?? '#090909'), alpha: dimmed ? .4 : 1 });
           }
         }
         this.barsDrawn++;
       }
     }
+    // Paint after all bars so a later source cannot cover an earlier amount.
+    ctx.font = `600 ${12 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    for (const label of amountLabels) { ctx.fillStyle = label.color; ctx.globalAlpha = label.alpha; ctx.fillText(label.text, label.x, label.y); }
     ctx.textAlign = 'start';
     ctx.restore();
   }
@@ -301,6 +330,18 @@ export class NetPositioningPane implements IPrimitive {
     this.hovered = { sourceId: nearest.sourceId, timeMs: nearest.timeMs };
     return { externalId: this.id, hoverKey: `${nearest.sourceId}:${nearest.timeMs}`, zOrder: 'normal' as const, distance };
   }
+  hoverSummary(x: number, y: number) {
+    const hit = this.geometry.find(item => x >= item.left - 2 && x <= item.right + 2 && y >= item.top - 2 && y <= item.bottom + 2);
+    if (!hit) return null;
+    const candle = this.candles.get(hit.timeMs);
+    if (!candle) return null;
+    const sources = this.sourceValues(candle).map(source => ({ ...source, color: this.colors[source.sourceId],
+      label: source.sourceId === 'binance' ? 'Binance Perp' : 'Hyperliquid Perp' }));
+    return { timeMs: hit.timeMs, intervalMs: this.intervalMs, side: this.side, currency: this.currency, sources,
+      total: sources.reduce((sum, source) => sum + (source.value ?? 0), 0),
+      provisional: this.hostClosed.get(hit.timeMs) !== true, method: this.method,
+      left: (hit.left + hit.right) / 2, top: hit.top, bottom: hit.bottom };
+  }
   tooltip(timeMs: number) {
     const candle = this.candles.get(timeMs);
     if (!candle) return null;
@@ -311,9 +352,9 @@ export class NetPositioningPane implements IPrimitive {
     const lines = [`${title} · ${method} · ${this.display} · ${intervalLabel}`, new Date(timeMs).toISOString().replace('T', ' ').replace('.000Z', ' UTC').replace('Z', ' UTC'), closed ? 'Confirmed host candle' : 'Provisional · host candle still forming'];
     const layout = candle ? layoutNetPositioningSources(this.sourceValues(candle), this.display) : null;
     if (layout) {
-      lines.push(`${this.display === 'stacked' ? 'Diverging stack' : 'Grouped'} · positive ${signed(String(layout.positiveTotal))} BTC · negative ${signed(String(layout.negativeTotal))} BTC`);
+      lines.push(`${this.display === 'stacked' ? 'Diverging stack' : 'Grouped'} · positive ${signed(String(layout.positiveTotal))} ${this.displayCurrencyLabel} · negative ${signed(String(layout.negativeTotal))} ${this.displayCurrencyLabel}`);
       const hovered = this.hovered?.timeMs === timeMs ? layout.segments.find(segment => segment.sourceId === this.hovered?.sourceId) : undefined;
-      if (hovered) lines.push(`${venueLabel(hovered.sourceId as NetPositioningVenue)} segment · ${hovered.value === null ? hovered.quality : `${signed(String(hovered.value))} BTC · ${hovered.quality}`}`);
+      if (hovered) lines.push(`${venueLabel(hovered.sourceId as NetPositioningVenue)} segment · ${hovered.value === null ? hovered.quality : `${signed(String(hovered.value))} ${this.displayCurrencyLabel} · ${hovered.quality}`}`);
     }
     for (const venue of this.venues) {
       const label = venueLabel(venue);
@@ -350,7 +391,7 @@ export class NetPositioningPane implements IPrimitive {
 
   setError(message: string) { this.error = message; this.host?.requestUpdate(); }
   diagnostics() {
-    return { mounted: Boolean(this.host), side: this.side, method: this.method, venues: [...this.venues], candleCount: this.candles.size,
+    return { currency: this.currency, mounted: Boolean(this.host), side: this.side, method: this.method, venues: [...this.venues], candleCount: this.candles.size,
       visibleDraws: this.drawCount, visibleBarsDrawn: this.barsDrawn, sourcePatches: this.patches, snapshots: this.snapshots,
       display: this.display, labels: this.labels, visibleScaleBars: this.hostTimes.slice(Math.max(0, Math.floor(this.visibleFrom)), Math.min(this.hostTimes.length, Math.ceil(this.visibleTo))).filter(time => this.candles.has(time)).length,
       visibleScaleMinBtc: this.visibleMin, visibleScaleMaxBtc: this.visibleMax, maxAbsBtc: Math.max(Math.abs(this.visibleMin), Math.abs(this.visibleMax)),

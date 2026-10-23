@@ -1,7 +1,7 @@
+import { compactVol } from 'openalgo-charts/profile';
 import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
-import { compactVol } from 'openalgo-charts/profile';
 import { footprintColumn } from '../../src/chart/terminal-footprint';
 
 test('footprint text scales with zoom and independent opacity settings persist without resetting collection', async ({ page }) => {
@@ -58,6 +58,7 @@ test('footprint text scales with zoom and independent opacity settings persist w
   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));
   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);
   await page.screenshot({ path: 'artifacts/footprint-prominent-light-720x860.png' });
+  await page.setViewportSize({ width: 1366, height: 768 });
   await page.waitForTimeout(400); await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   const persisted = await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).selection);
@@ -65,6 +66,8 @@ test('footprint text scales with zoom and independent opacity settings persist w
 });
 
 test('18-level footprint shows distinct VAH and VAL with transparent histogram backgrounds', async ({ page }) => {
+  // Keep the entire extended profile away from plot-edge clipping.
+  await page.setViewportSize({width:1920,height:1080});
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.addInitScript(() => {
     const prototype = CanvasRenderingContext2D.prototype;
@@ -148,7 +151,7 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   await expect(panel.getByLabel('Show VAH and VAL')).toBeChecked();
   await expect(panel.getByLabel('Histogram background opacity (%)')).toHaveValue('85');
   await page.getByRole('combobox', { name: 'Cell display', exact: true }).selectOption('volume-delta-candle');
-  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveValue('bar');
+  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveCount(0);
   await panel.getByLabel('Histogram background opacity (%)').fill('30');
   await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Apply', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__footprintVaStrokes.length)).toBeGreaterThan(0);
@@ -172,25 +175,20 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   const levelStroke = rendered.strokes.at(-1)!;
   expect(levelStroke.color).toBe('#6d3fa0'); expect(levelStroke.width).toBeGreaterThanOrEqual(2);
   expect(levelStroke.points).toHaveLength(4);
+  expect(pocStroke.points[0][0]).toBe(levelStroke.points[0][0]);
+  expect(pocStroke.points[2][0]).toBe(levelStroke.points[1][0]);
+  expect(pocStroke.points[0][0]).toBe(levelStroke.points[2][0]);
+  expect(pocStroke.points[2][0]).toBe(levelStroke.points[3][0]);
   expect(levelStroke.points[0][1]).toBe(levelStroke.points[1][1]);
   expect(levelStroke.points[2][1]).toBe(levelStroke.points[3][1]);
   expect(levelStroke.points[0][1]).not.toBe(levelStroke.points[2][1]);
-  const expectedVolume = compactVol(rendered.volume / 1);
-  const expectedDelta = `${rendered.delta >= 0 ? '+' : ''}${compactVol(rendered.delta / 1)}`;
   const pocFills = [...new Map(rendered.cellFills
     .filter((rect: any) => rect.alpha === rendered.opacity && Math.abs(rect.y + rect.height / 2 - rendered.expectedPocY) <= 1)
     .map((rect: any) => [`${rect.x}:${rect.y}:${rect.width}:${rect.height}`, rect])).values()] as any[];
   expect(pocFills).toHaveLength(2);
-  const totals = [...new Map(rendered.totals.map((label: any) => [`${label.text}:${label.x}:${label.y}`, label])).values()] as any[];
-  const totalLabels = totals.filter(label => label.text === expectedVolume || label.text === expectedDelta);
-  expect(totalLabels.map(label => label.text)).toEqual(expect.arrayContaining([expectedVolume, expectedDelta]));
-  expect(totalLabels.map(label => [label.y, label.alpha])).toEqual([[rendered.expectedPocY, 1], [rendered.expectedPocY, 1]]);
-  const volumeLabel = totalLabels.find(label => label.text === expectedVolume)!;
-  const deltaLabel = totalLabels.find(label => label.text === expectedDelta)!;
-  const labelGapCss = Math.max(3, 4 - (2 + pocStroke.width / (2 * rendered.dpr)));
-  expect(Math.abs(volumeLabel.x - (pocStroke.points[0][0] - labelGapCss * rendered.dpr))).toBeLessThanOrEqual(.5);
-  expect(Math.abs(deltaLabel.x - (pocStroke.points[2][0] + labelGapCss * rendered.dpr))).toBeLessThanOrEqual(.5);
-  await page.screenshot({ path: 'artifacts/footprint-totals/poc-markers-gap-1366x768.png' });
+  expect(rendered.totals).toEqual([]);
+  expect(rendered.options.statsRows).toEqual([]);
+  await page.screenshot({ path: '/tmp/footprint-poc-aligned.png' });
 });
 
 test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {
@@ -225,13 +223,14 @@ test('delta profile applies native presentation without restarting collection an
   });
   expect(after).toMatchObject({ ...before, subscriptions: 1, samePrimitive: true, options: { displayMode: 'delta', cellStyle: 'profile' }, delta: 7 });
   await page.screenshot({ path: 'artifacts/footprint-delta-profile-1366x768.png' });
+  await page.setViewportSize({ width: 1366, height: 768 });
   await page.waitForTimeout(400); await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('delta-profile');
   await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
 });
 
-test('volume delta candle shows paired profiles and per-bar totals without restarting collection', async ({ page }) => {
+test('volume delta candle shows paired profiles without embedded totals or restarting collection', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.emulateMedia({ colorScheme: 'dark' }); const worker = await installDepthFixture(page);
   const panel = page.locator('.candle-panel').first();
@@ -270,7 +269,7 @@ test('volume delta candle shows paired profiles and per-bar totals without resta
     return { start: p.footprintStatus.collectionStartedAt, range: p.engine.visibleRange(), subscriptions: t.profileSubscriptions,
       samePrimitive: p.engine.footprint === t.profilePrimitive, options: p.engine.footprint.options(), delta: p.engine.footprint.stats()[0].delta };
   });
-  expect(after).toMatchObject({ ...before, subscriptions: 1, samePrimitive: true, options: { displayMode: 'bidask', cellStyle: 'profile', statsPosition: 'bar', statsRows: ['volume', 'delta'], showCandle: true, showValueArea: true, textColorMode: 'dominant' }, delta: 7 });
+  expect(after).toMatchObject({ ...before, subscriptions: 1, samePrimitive: true, options: { displayMode: 'bidask', cellStyle: 'profile', statsPosition: 'bottom', statsRows: [], showCandle: true, showValueArea: true, textColorMode: 'dominant' }, delta: 7 });
   await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     p.engine.chart.timeScale.setBarSpacing(200); p.engine.chart.timeScale.setRightOffset(1);
@@ -283,11 +282,12 @@ test('volume delta candle shows paired profiles and per-bar totals without resta
   await page.setViewportSize({ width: 720, height: 860 });
   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);
   await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-720x860.png' });
+  await page.setViewportSize({ width: 1366, height: 768 });
   await page.waitForTimeout(400); await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('volume-delta-candle');
   await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');
-  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveValue('bar');
+  await expect(page.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
@@ -373,6 +373,7 @@ test('footprint quantity labels remain readable over low-contrast red and green 
 test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, browser }) => {
   test.setTimeout(60_000);
   const captureDense = async (target: typeof page, path: string, scale: 'css' | 'device') => {
+    await target.setViewportSize({ width: 1440, height: 768 });
     await target.emulateMedia({ colorScheme: 'dark' });
     await installDepthFixture(target);
     await target.locator('#theme').selectOption('dark');
@@ -382,6 +383,8 @@ test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, brow
     await target.evaluate(() => {
       const dock = (window as any).__terminal.dock;
       if (dock.panels.length > 1) dock.removePanel(dock.panels[1]);
+      const panel = [...(window as any).__terminal.panels.values()][0];
+      if (!panel.objectTreeSidebarPreferences.collapsed) panel.toggleObjectsPanel();
     });
     await target.evaluate(() => {
     const terminal = (window as any).__terminal;
@@ -475,10 +478,10 @@ test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, brow
     expect(zeroWidth + narrowPadding).toBeLessThanOrEqual(narrowWidth);
   };
 
-  await captureDense(page, 'artifacts/footprint-dense-12x18-1366x768.png', 'css');
+  await captureDense(page, 'artifacts/footprint-dense-12x18-1440x768.png', 'css');
   const highDensityPage = await browser.newPage({ viewport: { width: 1366, height: 768 }, deviceScaleFactor: 2 });
   try {
-    await captureDense(highDensityPage, 'artifacts/footprint-dense-12x18-1366x768-dpr2.png', 'device');
+    await captureDense(highDensityPage, 'artifacts/footprint-dense-12x18-1440x768-dpr2.png', 'device');
   } finally {
     await highDensityPage.close();
   }

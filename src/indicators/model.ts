@@ -1,3 +1,5 @@
+import { EFFORT_RESULT_ID, DEFAULT_EFFORT, effortSettings, effortRecord } from '../effort-result/settings';
+import { MARKET_CONDITIONS_ID, DEFAULT_CONDITIONS, conditionsSettings } from '../market-conditions/settings';
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
 import type { ScriptRecord } from '../scripts/library';
 import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from '../feed/order-walls';
@@ -11,7 +13,7 @@ export const FOOTPRINT_ID = 'native.footprint';
 export const FOOTPRINT_TOTALS_ID = 'native.footprint-totals';
 export const TPO_ID = 'native.tpo';
 export const DEFAULT_FOOTPRINT_TOTALS_ROWS = ['volume', 'bidVolume', 'askVolume', 'delta'] as const;
-export type FootprintTotalsSettings = { rows: import('openalgo-charts/profile').FootprintStatRow[] };
+export type FootprintTotalsSettings = { rows: import('openalgo-charts/profile').FootprintStatRow[]; highlightHighest: boolean };
 const FOOTPRINT_TOTAL_ROWS: readonly import('openalgo-charts/profile').FootprintStatRow[] = [
   'volume', 'bidVolume', 'askVolume', 'delta', 'minDelta', 'maxDelta', 'deltaPct', 'cvd', 'trades',
 ];
@@ -19,7 +21,7 @@ export function footprintTotalsSettings(value: unknown): FootprintTotalsSettings
   const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const source = Array.isArray(raw.rows) ? raw.rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS];
   const rows = FOOTPRINT_TOTAL_ROWS.filter(row => source.includes(row));
-  return { rows: rows.length ? rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS] };
+  return { rows: rows.length ? rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: raw.highlightHighest === true };
 }
 export const HEATMAP_ID = 'native.orderbook-heatmap';
 export const NET_LONGS_ID = 'native.net-longs-estimated';
@@ -39,7 +41,7 @@ export function netPositioningSettings(value: unknown): NetPositioningSettings {
     const value = rawColors[venue];
     return typeof value === 'string' && /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i.test(value) ? [[venue, value]] : [];
   })) as Partial<Record<NetPositioningVenue, string>>;
-  return { method, venues: venues.length ? [...venues] : ['binance'], display: raw.display === 'grouped' ? 'grouped' : 'stacked', labels: raw.labels === 'hover' || raw.labels === 'off' ? raw.labels : 'auto', ...(Object.keys(colors).length ? { colors } : {}) };
+  return { method, venues: [...venues], display: raw.display === 'grouped' ? 'grouped' : 'stacked', labels: raw.labels === 'hover' || raw.labels === 'off' ? raw.labels : 'auto', ...(Object.keys(colors).length ? { colors } : {}) };
 }
 export type Placement = 'price-presentation' | 'overlay' | 'pane' | 'attachment';
 export interface SettingField { key: string; label: string; kind: string; defaultValue: unknown }
@@ -57,15 +59,19 @@ export interface IndicatorInstance {
 }
 export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, statsPosition: 'bottom' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
 export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
+  {id:EFFORT_RESULT_ID,name:'Effort–Result',description:'Persistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxy',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:effortRecord(DEFAULT_EFFORT),settingsSchema:Object.entries(DEFAULT_EFFORT).map(([key,value])=>({key:key==='retentionDays'?key:`${key==='pane'?'presentation':typeof value==='boolean'?'notifications':'calculation'}.${key}`,label:key,kind:typeof value,defaultValue:value})),placements:['overlay','pane'],dataRequirements:['normalized-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
+  { id: MARKET_CONDITIONS_ID, name: 'Market Conditions', description: 'Completed-candle volatility regimes and heuristic tradeability · OHLC only', category: 'Trend', implementation: 'builtin',
+    settingsVersion: 1, defaults: { ...DEFAULT_CONDITIONS }, settingsSchema: Object.entries(DEFAULT_CONDITIONS).map(([key,value]) => ({ key, label: key, kind: Array.isArray(value) ? 'multi' : typeof value, defaultValue: value })), placements: ['pane'], dataRequirements: ['candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: FOOTPRINT_ID, name: 'Footprint', description: 'Observed executed bid/ask volume · Binance BTCUSDT Spot and USD-M Perp', category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { rowPrice: 25, units: 'btc', view: DEFAULT_FOOTPRINT_VIEW }, settingsSchema: [
       { key: 'rowPrice', label: 'Price level (USDT)', kind: 'number', defaultValue: 25 },
       { key: 'units', label: 'Volume units', kind: 'select', defaultValue: 'btc' },
-      ...['displayMode','cellStyle','statsPosition','opacity','showCandle','showPoc','showValueArea','showDiagonalImbalances','stackedImbalances','imbalanceRatio','imbalanceThreshold'].map(key => ({ key: `view.${key}`, label: key, kind: 'native', defaultValue: DEFAULT_FOOTPRINT_VIEW[key as keyof typeof DEFAULT_FOOTPRINT_VIEW] }))],
+      ...['displayMode','cellStyle','opacity','showCandle','showPoc','showValueArea','showDiagonalImbalances','stackedImbalances','imbalanceRatio','imbalanceThreshold'].map(key => ({ key: `view.${key}`, label: key, kind: 'native', defaultValue: DEFAULT_FOOTPRINT_VIEW[key as keyof typeof DEFAULT_FOOTPRINT_VIEW] }))],
     placements: ['price-presentation'], dataRequirements: ['executions'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: FOOTPRINT_TOTALS_ID, name: 'Footprint Totals', description: 'Per-candle footprint statistics on their own time-aligned pane', category: 'Order Flow', implementation: 'builtin',
-    settingsVersion: 1, defaults: { rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] }, settingsSchema: [
-      { key: 'rows', label: 'Statistics rows', kind: 'multi', defaultValue: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] }],
+    settingsVersion: 1, defaults: { rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: false }, settingsSchema: [
+      { key: 'rows', label: 'Statistics rows', kind: 'multi', defaultValue: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] },
+      { key: 'highlightHighest', label: 'Highlight highest value in each row', kind: 'boolean', defaultValue: false }],
     placements: ['pane'], dataRequirements: ['executions'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: HEATMAP_ID, name: 'Order-book Heatmap', description: 'Observed resting liquidity · Binance BTCUSDT Spot and USD-M Perp', category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { rowPrice: 10, bucketMs: 500, mode: 'average', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true },
@@ -103,14 +109,12 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
   { id: NET_LONGS_ID, name: 'Net Longs — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [
       { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
-      { key: 'venues', label: 'Perpetual venues', kind: 'multi', defaultValue: ['binance'] },
       { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
       { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' }],
     placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: NET_SHORTS_ID, name: 'Net Shorts — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [
       { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
-      { key: 'venues', label: 'Perpetual venues', kind: 'multi', defaultValue: ['binance'] },
       { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
       { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' }],
     placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
@@ -133,7 +137,7 @@ export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
   return validStudyPins(instances.filter(i => i.settingsVersion === 1 && i.source.kind === 'chart' && i.script && i.definitionId === `script:${i.script.scriptId}`).map(i => ({ ...i.script, attachmentId: i.instanceId, settings: i.settings, visible: i.visible })));
 }
 export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true): IndicatorInstance {
-  const placement = id === FOOTPRINT_ID ? 'price-presentation' : id === FOOTPRINT_TOTALS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
+  const placement = id === FOOTPRINT_ID ? 'price-presentation' : id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
   return { instanceId: id, definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings };
 }
 /** Bounded plain configuration. Unknown definitions and future settings versions remain recoverable. */
@@ -151,6 +155,8 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     try { const json = JSON.stringify(raw); if (json.length > 12000) continue; copy = JSON.parse(json); } catch { continue; }
     copy.visible = raw.visible !== false; copy.source = raw.source && typeof raw.source === 'object' && typeof raw.source.kind === 'string' ? copy.source : { kind: 'chart' };
     copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
+    if (copy.definitionId === EFFORT_RESULT_ID && copy.settingsVersion === 1) copy.settings = effortRecord(effortSettings(copy.settings));
+    if (copy.definitionId === MARKET_CONDITIONS_ID && copy.settingsVersion === 1) copy.settings = { ...conditionsSettings(copy.settings) };
     if (copy.definitionId === ORDER_WALLS_ID && copy.settingsVersion === 1) copy.settings = { ...orderWallsSettings(copy.settings) };
     if (copy.definitionId === FOOTPRINT_TOTALS_ID && copy.settingsVersion === 1) copy.settings = { ...footprintTotalsSettings(copy.settings) };
     if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };

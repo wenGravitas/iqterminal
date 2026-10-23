@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
-import { addIndicator } from './indicator-actions';
+import { addIndicator, setFootprint } from './indicator-actions';
 
 test('pane indicators use one local header while overlays stay in the main list', async ({ page }) => {
   test.setTimeout(120_000);
@@ -28,6 +28,7 @@ test('pane indicators use one local header while overlays stay in the main list'
   const panel = page.locator('.candle-panel').first();
   await addIndicator(panel, 'Net Longs — Estimated');
   await addIndicator(panel, 'Net Shorts — Estimated');
+  await setFootprint(panel, true);
   await addIndicator(panel, 'Footprint Totals');
   await addIndicator(panel, 'Order-book Heatmap');
 
@@ -113,10 +114,14 @@ test('pane indicators use one local header while overlays stay in the main list'
     const p = [...(window as any).__terminal.panels.values()][0];
     return p.engine.chart.primaryPaneIndex();
   });
-  await panel.getByRole('button', { name: 'Move main pane down', exact: true }).click();
+  const moveMainDown = panel.getByRole('button', { name: 'Move main pane down', exact: true });
+  await expect(moveMainDown).toHaveAttribute('title', 'Move pane down');
+  await moveMainDown.click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex())).toBe(initialPrimaryIndex + 1);
-  await expect(panel.getByRole('button', { name: 'Move main pane up', exact: true })).toBeEnabled();
-  await panel.getByRole('button', { name: 'Move main pane up', exact: true }).click();
+  const moveMainUp = panel.getByRole('button', { name: 'Move main pane up', exact: true });
+  await expect(moveMainUp).toBeEnabled();
+  await expect(moveMainUp).toHaveAttribute('title', 'Move pane up');
+  await moveMainUp.click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex())).toBe(initialPrimaryIndex);
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0], index = p.engine.chart.primaryPaneIndex();
@@ -183,4 +188,32 @@ test('pane indicators use one local header while overlays stay in the main list'
   })).toBe(true);
   await panel.getByRole('button', { name: 'Restore all panes', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+});
+
+test('Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.route('**/market-data/v1/net-positioning*', async route => {
+    const url = new URL(route.request().url()), venues = (url.searchParams.get('venues') ?? 'binance').split(',');
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, method: url.searchParams.get('method') ?? 'price-oi', market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC', venues,
+      from: Number(url.searchParams.get('from')), to: Number(url.searchParams.get('to')), unitVerification: {}, feeds: {}, intervals: [], truncated: false, pendingIntervals: 0, history: 'layout fixture', semantics: 'layout fixture' }) });
+  });
+  await installDepthFixture(page);
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  const panel = page.locator('.candle-panel').first();
+  await setFootprint(panel, true);
+  await addIndicator(panel, 'Footprint Totals');
+  await addIndicator(panel, 'Net Shorts — Estimated');
+  await addIndicator(panel, 'Net Longs — Estimated');
+  const indexes = () => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0];
+    return { longs: p.engine.netPositioningPaneIndex('native.net-longs-estimated'), shorts: p.engine.netPositioningPaneIndex('native.net-shorts-estimated'), saved: p.selection.paneOrder };
+  });
+  const before = await indexes();
+  expect(before.longs).toBeGreaterThan(before.shorts);
+  await panel.getByRole('button', { name: `Move pane ${before.longs + 1} up`, exact: true }).click();
+  // No storage wait: a real refresh must flush the pending workspace save.
+  await page.reload();
+  await expect.poll(async () => { const order = await indexes(); return order.longs >= 0 && order.shorts >= 0 && order.longs < order.shorts; }).toBe(true);
+  await page.reload();
+  await expect.poll(async () => { const order = await indexes(); return order.longs >= 0 && order.shorts >= 0 && order.longs < order.shorts; }).toBe(true);
 });

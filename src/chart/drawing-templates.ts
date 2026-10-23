@@ -3,7 +3,7 @@ import { intervals } from '../feed/protocol';
 
 export const IQ_DRAWING_TEMPLATE_VERSION = 1 as const;
 export const IQ_DRAWING_TEMPLATE_STORAGE_KEY = 'iqterminal:drawing-templates:v1';
-const tools = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position']);
+const tools = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range']);
 const nativePath = /^(style|text|props)\.[A-Za-z][A-Za-z0-9_]{0,63}$/;
 const unsafeKey = /^(?:__proto__|prototype|constructor)$/i;
 

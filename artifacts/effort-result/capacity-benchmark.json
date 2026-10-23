@@ -1,0 +1,34 @@
+{
+  "diagnosticOnly": true,
+  "hardware": {
+    "cpu": "Cortex-A76",
+    "logicalCpus": 4,
+    "memoryGiB": 7.765449523925781,
+    "platform": "linux",
+    "arch": "arm64"
+  },
+  "workload": {
+    "executions": 1000000,
+    "ratePerSecond": 10000,
+    "seconds": 100,
+    "priceLevels": 11,
+    "batch": 1000
+  },
+  "elapsedMs": 2843.917591,
+  "executionsPerSecond": 351627.62914250704,
+  "maxBatchMs": 46.7414839999999,
+  "heapDeltaMiB": 43.30475616455078,
+  "diagnostics": {
+    "processed": 1000000,
+    "seconds": 61,
+    "pending": 1,
+    "ids": 82496,
+    "references": 600,
+    "events": 0,
+    "points": 99,
+    "zoneScans": 0,
+    "duplicates": 0,
+    "corrections": 0,
+    "capacity": 7
+  }
+}

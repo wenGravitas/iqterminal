@@ -94,7 +94,7 @@ describe('IQ drawing template catalog', () => {
       nativeValues: { 'style.color': '#26a69a', 'text.fontSize': 12 },
     });
 
-    const nativeTools = ['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position'];
+    const nativeTools = ['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range'];
     const defaults = repository(createMemoryDrawingTemplateStorage());
     for (const [index, tool] of nativeTools.entries()) {
       const saved = defaults.saveTemplate(`Tool ${index}`, tool, snapshot);

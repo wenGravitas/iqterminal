@@ -7,11 +7,11 @@ const pin: StudyPin = { attachmentId: 'ema20', scriptId: 'builtin.ema', revision
 const legacy = { venue: 'binance', interval: '1m', type: 'footprint', rowPrice: 25, footprintUnits: 'usdt', footprint: { opacity: .35, displayMode: 'delta' }, heatmap: { enabled: true, opacity: .65, mode: 'peak' }, studies: [pin], unrelated: { preserved: true } };
 describe('unified indicator configuration', () => {
   it('registers Footprint Totals as an independent pane and preserves selected rows through reload', () => {
-    expect(footprintTotalsSettings({})).toEqual({ rows: ['volume', 'bidVolume', 'askVolume', 'delta'] });
-    const totals = nativeInstance(FOOTPRINT_TOTALS_ID, { rows: ['volume', 'deltaPct', 'trades', 'bad'] });
+    expect(footprintTotalsSettings({})).toEqual({ rows: ['volume', 'bidVolume', 'askVolume', 'delta'], highlightHighest: false });
+    const totals = nativeInstance(FOOTPRINT_TOTALS_ID, { rows: ['volume', 'deltaPct', 'trades', 'bad'], highlightHighest: true });
     const saved = config({ ...legacy, indicators: [totals] });
     expect(saved.indicators[0]).toMatchObject({ definitionId: FOOTPRINT_TOTALS_ID, placement: 'pane', visible: true,
-      settings: { rows: ['volume', 'deltaPct', 'trades'] } });
+      settings: { rows: ['volume', 'deltaPct', 'trades'], highlightHighest: true } });
     expect(config(JSON.parse(JSON.stringify(saved))).indicators).toEqual(saved.indicators);
     expect(config({ ...saved, venue: 'hyperliquid', market: 'perpetual' }).indicators).toEqual(saved.indicators);
     expect(validateInstances([totals, { ...totals, instanceId: 'another-totals' }])).toHaveLength(1);
@@ -68,6 +68,8 @@ describe('unified indicator configuration', () => {
     expect(validateInstances([walls, duplicate])).toHaveLength(1);
   });
   it('migrates Net Positioning to stacked Auto labels and preserves saved grouped display choices', () => {
+    expect(netPositioningSettings({ venues: [] }).venues).toEqual([]);
+    expect(netPositioningSettings({}).venues).toEqual(['binance']);
     expect(netPositioningSettings({ method: 'price-oi', venues: ['hyperliquid'] })).toEqual({
       method: 'price-oi', venues: ['hyperliquid'], display: 'stacked', labels: 'auto',
     });

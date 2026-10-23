@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { NetPositioningHistory, type NetPositioningObservation, type NetPositioningPayload, type NetPositioningVenue } from '../src/feed/net-positioning';
+import { NetPositioningHistory, netPositioningQuote, type NetPositioningObservation, type NetPositioningPayload, type NetPositioningVenue } from '../src/feed/net-positioning';
 import { StagingNetPositioningService } from '../src/feed/staging-net-positioning';
 
 const minute = 60_000;
@@ -21,6 +21,21 @@ function payload(intervals: NetPositioningObservation[], to: number, venues: Net
 }
 
 describe('NetPositioningHistory', () => {
+  it('projects each interval at its own recorded price, preserves signed BTC, and rejects missing prices', () => {
+    const history = new NetPositioningHistory('price-oi', minute);
+    const rows = [observation(base + 30_000, { netLongsBtcDecimal: '2', netShortsBtcDecimal: '-1', provenance: { priceEnd: { priceDecimal: '80000' } } }),
+      observation(base + 45_000, { netLongsBtcDecimal: '-1', netShortsBtcDecimal: '2', provenance: { priceEnd: { price: 90000 } } })];
+    history.replace(payload(rows, base + minute), ['binance']);
+    const data = history.get(base)!.venues.binance!;
+    expect(netPositioningQuote(data, 'longs')).toBe(70000);
+    expect(netPositioningQuote(data, 'shorts')).toBe(100000);
+    expect(data.netLongsBtc).toBe(1);
+    const missing = { ...rows[1]!, version: 2, provenance: {} };
+    history.apply(payload([], base + minute), [missing], ['binance']);
+    expect(netPositioningQuote(history.get(base)!.venues.binance!, 'longs')).toBeNull();
+    expect(netPositioningQuote(data, 'longs')).toBe(70000);
+  });
+
   it('uses exact decimal aggregation and rebuilds only the candle touched by a versioned interval update', () => {
     const history = new NetPositioningHistory('price-oi', minute);
     const first = observation(base + 30_000, { netLongsBtcDecimal: '0.1', netShortsBtcDecimal: '0.2' });

@@ -313,3 +313,28 @@ export type NetPositioningEvent =
   | { type: 'net-positioning-snapshot'; ids: string[]; payload: NetPositioningPayload }
   | { type: 'net-positioning-patch'; ids: string[]; payload: NetPositioningPayload; intervals: NetPositioningObservation[] }
   | { type: 'net-positioning-error'; ids: string[]; method: NetPositioningMethod; message: string; at: number };
+
+/** Estimated notional: sum each classified interval quantity × its recorded ending price.
+ * A missing price makes quote conversion unavailable, never zero or a current-price substitute.
+ */
+const quoteProjectionCache = new WeakMap<NetVenueCandle, Partial<Record<NetPositioningSide, number | null>>>();
+export function netPositioningQuote(data: NetVenueCandle, side: NetPositioningSide): number | null {
+  let cached = quoteProjectionCache.get(data);
+  if (cached && side in cached) return cached[side]!;
+  const result = projectNetPositioningQuote(data, side);
+  if (!cached) { cached = {}; quoteProjectionCache.set(data, cached); }
+  cached[side] = result; return result;
+}
+function projectNetPositioningQuote(data: NetVenueCandle, side: NetPositioningSide): number | null {
+  let total = 0, available = 0;
+  for (const row of data.observations) {
+    if (row.status !== 'available') continue;
+    const quantity = side === 'longs' ? row.netLongsBtcDecimal : row.netShortsBtcDecimal;
+    if (quantity === null || !Number.isFinite(Number(quantity))) continue;
+    const source = row.provenance.priceEnd;
+    const price = source?.priceDecimal != null ? Number(source.priceDecimal) : source?.price;
+    if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) return null;
+    total += Number(quantity) * price; available++;
+  }
+  return available === data.availableIntervals && available > 0 && Number.isFinite(total) ? total : null;
+}

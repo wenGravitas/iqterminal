@@ -11,19 +11,20 @@ function venueValue(venue: 'binance' | 'hyperliquid', longs: number): NetVenueCa
 }
 
 describe('net positioning display layout', () => {
-  it('uses a source-stable amber and blue palette across both signs and themes while retaining saved overrides', () => {
+  it('uses green longs and red shorts across themes while retaining saved overrides', () => {
     const dark = netPositioningSourceColors('dark'), light = netPositioningSourceColors('light');
-    expect(dark).toEqual({ binance: '#c39b58', hyperliquid: '#719aca' });
-    expect(light).toEqual({ binance: '#946820', hyperliquid: '#3e71a6' });
+    expect(dark).toEqual({ binance: '#58a65c', hyperliquid: '#85c98b' });
+    expect(light).toEqual({ binance: '#167260', hyperliquid: '#44853e' });
     expect(netPositioningTextColor(dark.binance, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(dark.hyperliquid, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(light.binance, '#f6f4ee')).toBe('#f5f5f5');
-    expect(netPositioningTextColor(light.hyperliquid, '#f6f4ee')).toBe('#f5f5f5');
+    expect(netPositioningTextColor(light.hyperliquid, '#f6f4ee')).toBe('#111111');
     expect(dark.binance).not.toBe(dark.hyperliquid);
     const longs = new NetPositioningPane('net-longs', 'longs'), shorts = new NetPositioningPane('net-shorts', 'shorts');
-    for (const pane of [longs, shorts]) pane.setThemeColors(dark);
-    expect(longs.sourceColor('binance')).toBe(shorts.sourceColor('binance'));
-    expect(longs.sourceColor('hyperliquid')).toBe(shorts.sourceColor('hyperliquid'));
+    longs.setThemeColors(dark);
+    shorts.setThemeColors(netPositioningSourceColors('dark', 'shorts'));
+    expect(shorts.sourceColor('binance')).toBe('#ad5858');
+    expect(shorts.sourceColor('hyperliquid')).toBe('#d98a8a');
     longs.setColorOverrides({ binance: '#abc' });
     longs.setThemeColors(light);
     expect(longs.sourceColor('binance')).toBe('#abc');
@@ -112,13 +113,13 @@ describe('net positioning display layout', () => {
     ];
     pane.setSnapshot(candles);
     pane.setVisibleRange(0, 1);
-    expect(pane.autoscaleInfo()).toMatchObject({ min: 0, max: 3.24 });
+    expect(pane.autoscaleInfo()).toMatchObject({ min: 0, max: 3.6 });
     pane.setVisibleRange(1, 2);
-    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-5.12, 10);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(11.12, 10);
+    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-6.8, 10);
+    expect(pane.autoscaleInfo()?.max).toBeCloseTo(12.8, 10);
     pane.setSettings('longs', 'price-oi', ['binance', 'hyperliquid'], 60_000, 'grouped');
-    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-5.12, 10);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(11.12, 10);
+    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-5.96, 10);
+    expect(pane.autoscaleInfo()?.max).toBeCloseTo(11.96, 10);
   });
 
   it('moves its autoscale window to the new live right edge after the host appends a candle', () => {
@@ -131,11 +132,38 @@ describe('net positioning display layout', () => {
       { timeMs: 120_000, venues: { binance: venueValue('binance', 2) } },
     ]);
     pane.setVisibleRange(0, 3);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(108, 10);
+    expect(pane.autoscaleInfo()?.max).toBeCloseTo(114, 10);
 
     pane.patchHostCandles([{ t: 180_000, o: 1, h: 1, l: 1, c: 1, v: 0, closed: false, revision: 1 }]);
     pane.patch([{ timeMs: 180_000, venues: { binance: venueValue('binance', 4) } }]);
     pane.setVisibleRange(1, 4);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(4.32, 10);
+    expect(pane.autoscaleInfo()?.max).toBeCloseTo(4.56, 10);
   });
+});
+
+it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s', dpr => {
+  for (const side of ['longs', 'shorts'] as const) {
+    const pane = new NetPositioningPane(`outside-${side}`, side);
+    pane.setSettings(side, 'price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked', 'auto');
+    pane.setHostSnapshot([{ t: 0, closed: true }, { t: 60_000, closed: true }]);
+    pane.setSnapshot([
+      { timeMs: 0, venues: { binance: venueValue('binance', 100), hyperliquid: venueValue('hyperliquid', 200) } },
+      { timeMs: 60_000, venues: { binance: venueValue('binance', -100), hyperliquid: venueValue('hyperliquid', -200) } },
+    ]);
+    const amounts: { x: number; y: number }[] = [];
+    const ctx = {
+      save() {}, restore() {}, beginPath() {}, rect() {}, clip() {}, moveTo() {}, lineTo() {}, stroke() {}, fillRect() {}, strokeRect() {},
+      measureText: () => ({ width: 18 * dpr, actualBoundingBoxAscent: 7 * dpr, actualBoundingBoxDescent: 2 * dpr }),
+      fillText: (text: string, x: number, y: number) => { if (/^\d/.test(text)) amounts.push({ x, y }); },
+    } as unknown as CanvasRenderingContext2D;
+    pane.draw(ctx, { dpr, plotWidth: 300, plotHeight: 300, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 80, indexToX: (i: number) => 80 + i * 130 },
+      priceScale: { priceToY: (value: number) => (500 - value) * .3 }, theme: { axisText: '#aaa', background: '#090909' } } as any);
+    const positive = amounts.filter(p => p.x === 80 * dpr), negative = amounts.filter(p => p.x === 210 * dpr);
+    expect(positive).toHaveLength(2); expect(negative).toHaveLength(2);
+    // The positive stack ends at y=84; the negative stack ends at y=246.
+    for (const p of positive) expect(p.y + 2 * dpr).toBeLessThan(84 * dpr);
+    for (const p of negative) expect(p.y - 7 * dpr).toBeGreaterThan(246 * dpr);
+    expect(Math.abs(positive[0].y - positive[1].y)).toBeGreaterThanOrEqual(11 * dpr);
+    expect(Math.abs(negative[0].y - negative[1].y)).toBeGreaterThanOrEqual(11 * dpr);
+  }
 });

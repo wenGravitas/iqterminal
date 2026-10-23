@@ -637,6 +637,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
 });
 
 test('every exposed native drawing tool completes its required anchors', async ({ page }) => {
+  test.setTimeout(90_000);
   await page.goto('/?fixture=1&fixtureTime=now');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const panel = page.locator('.candle-panel').first();
@@ -659,6 +660,8 @@ test('every exposed native drawing tool completes its required anchors', async (
     { id: 'fib-retracement', anchors: 2 },
     { id: 'long-position', anchors: 2 },
     { id: 'short-position', anchors: 2 },
+    { id: 'date-range', anchors: 2 },
+    { id: 'price-range', anchors: 2 },
     { id: 'text', anchors: 1 },
     { id: 'callout', anchors: 2 },
   ] as const;
@@ -737,7 +740,7 @@ test('every exposed native drawing tool completes its required anchors', async (
   expect(futureAnchor.time).toBeGreaterThan(futureAnchor.latest);
   await selectDrawingTool(panel, 'horizontal-line');
   await stage.click({ position: { x: futureAnchor.x, y: futureAnchor.y } });
-  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(10);
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(placements.length + 1);
   const futureDrawing = (await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'horizontal-line' && drawing.points?.some(point => (point as any).time === futureAnchor.time));
   expect(futureDrawing?.points?.[0]).toMatchObject({ time: futureAnchor.time });
   expect((futureDrawing?.points?.[0] as any).time).toBeGreaterThan(futureAnchor.latest);
@@ -1192,4 +1195,43 @@ test('Level Watch Objects visibility, instrument guard and picking disarm drawin
   await page.keyboard.press('Escape');
   await expect(panel.locator('.chart-stage')).not.toHaveClass(/watch-zone-picking/);
   expect(await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.drawings.drawings().length, panelId)).toBe(0);
+});
+
+test('horizontal and vertical measures in Positions support placement, history and reload', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  const panel = page.locator('.candle-panel').first();
+  const panelId = (await panel.getAttribute('data-panel-id'))!;
+  for (const [index, tool] of ['date-range', 'price-range'].entries()) {
+    await selectDrawingTool(panel, tool);
+    const points = await page.evaluate(({ id, index }) => {
+      const p = (window as any).__terminal.panels.get(id), plot = p.engine.chart.plotRect(p.engine.chart.primaryPaneIndex());
+      return [{ x: plot.left + plot.width * (.25 + index * .25), y: plot.top + plot.height * .3 },
+        { x: plot.left + plot.width * (.45 + index * .25), y: plot.top + plot.height * .6 }];
+    }, { id: panelId, index });
+    for (const point of points) await panel.locator('.chart-stage').click({ position: point });
+    await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(index + 1);
+  }
+  const geometry = (await drawingState(page, panel)).drawings.map(({ tool, points }) => ({ tool, points }));
+  expect(geometry.map(drawing => drawing.tool)).toEqual(['date-range', 'price-range']);
+  await panel.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(1);
+  await panel.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.map(({ tool, points }) => ({ tool, points }))).toEqual(geometry);
+  await selectDrawingTool(panel, '');
+  await useDarkTheme(page);
+  const positions = panel.getByRole('button', { name: 'Open Position tools', exact: true });
+  await positions.click();
+  await expect(panel.locator('.drawing-sidebar-flyout[data-drawing-group=positions]').getByRole('button', { name: 'Use Horizontal Measure tool', exact: true })).toBeVisible();
+  await expect(panel.locator('.drawing-sidebar-flyout[data-drawing-group=positions]').getByRole('button', { name: 'Use Vertical Measure tool', exact: true })).toBeVisible();
+  await page.screenshot({ path: '/tmp/measurement-tools-dark.png' });
+  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await positions.click();
+  await page.screenshot({ path: '/tmp/measurement-tools-light.png' });
+  await page.reload();
+  await expect.poll(async () => (await drawingState(page, panel)).drawings.map(({ tool, points }) => ({ tool, points }))).toEqual(geometry);
+  expect(errors).toEqual([]);
 });

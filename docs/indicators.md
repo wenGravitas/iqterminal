@@ -12,7 +12,7 @@ removal. Script rows also offer Edit Script and Duplicate. Controls remain
 available on keyboard focus and touch. Native singleton selection opens the
 existing settings. Chart settings owns gridlines and the saved base-candle
 visibility preference. Footprint settings owns price-row size, BTC/USDT units,
-slim execution candles, cell colouring, opacity, statistics and imbalance options.
+slim execution candles, cell colouring, opacity and imbalance options. Statistics belong exclusively to the standalone Footprint Totals indicator. The shared time axis stays on the main price pane.
 Heatmap settings owns resting-liquidity resolution and presentation.
 
 ## Contract and ownership
@@ -87,3 +87,14 @@ Heatmap Quantity units remains available without Footprint; it changes the share
 saved BTC/USDT display preference, including attached Footprint. It changes
 presentation only, preserving exact notionals, BTC density normalisation and
 collection identity.
+
+## Effort–Result
+
+`native.effort-result` is an Order Flow singleton with compact causal zones and an
+optional signed pane. It reads shared server-owned calculations through the feed worker and
+persists versioned calibration/events on the server outside workspace JSON.
+Collection continues without client consumers; client removal releases polling only. Release 1 enables
+Binance BTCUSDT USD-M in labelled trade-price-proxy mode, with a 30-second
+analysis horizon and honest warm-up/coverage states. See
+[Effort–Result usage and implementation decisions](effort-result.md) for the
+mathematics, outcome rules, retention, replay route and measured limitations.

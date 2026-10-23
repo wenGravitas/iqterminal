@@ -1,3 +1,4 @@
+import { CurrencyDisplaySettings } from './currency-display';
 import { LevelWatchPanel } from './level-watch/panel';
 import type {WatchSnapshot,LevelWatch} from './level-watch/types';
 import './vendor/dockview-8.4.1.css';
@@ -17,6 +18,8 @@ import { CompactChartTab, activateNumberedTab } from './chart-tab';
 import { instrumentKey, type Series } from './feed/protocol';
 import { STORAGE_KEY, PANEL_BUDGET, restoreValue } from './layout';
 import { MarketPulseController } from './market-pulse';
+import { DepthMatrixPanel } from './depth-matrix-panel';
+import { DEFAULT_DEPTH_MATRIX_SETTINGS } from './feed/depth-matrix';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 const query = new URL(location.href).searchParams;
@@ -32,7 +35,9 @@ const panels = new Map<string, CandlePanelInstance>();
 const executionHover = new TickerExecutionHoverCoordinator();
 const root = document.querySelector<HTMLElement>('#workspace')!;
 const add = document.querySelector<HTMLButtonElement>('#add')!;
+const addDepth = document.querySelector<HTMLButtonElement>('#add-depth-matrix')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
+const currencySettings = new CurrencyDisplaySettings(document.querySelector<HTMLButtonElement>('#global-settings')!);
 const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
 const marketPulse = new MarketPulseController();
 let dock: DockviewApi;
@@ -43,12 +48,13 @@ let restoring = true;
 let disposed = false;
 
 function chartCount() { return dock.panels.filter(panel => panel.view.contentComponent === 'candle').length; }
+function depthMatrixCount() { return dock.panels.filter(panel => panel.view.contentComponent === 'depth-matrix').length; }
 const save = () => {
   if (restoring || disposed) return;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     saveTimer = undefined;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, layout: dock.toJSON() })); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 5, layout: dock.toJSON() })); }
     catch { document.querySelector('#venue-states')!.textContent = 'Layout storage unavailable'; }
   }, 250);
 };
@@ -69,7 +75,15 @@ function addChart(series: Series = { venue: 'binance', market: 'perpetual', inte
 
 function addTicker() {
   if (dock.panels.filter(p => p.view.contentComponent === 'trade-ticker').length >= 8) return;
-  dock.addPanel({ id: `ticker-${crypto.randomUUID()}`, component: 'trade-ticker', title: 'Trade Ticker · BTC', params: {}, position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, minimumWidth: 240, minimumHeight: 160 });
+  dock.addPanel({ id: `ticker-${crypto.randomUUID()}`, component: 'trade-ticker', title: 'Trade Ticker · BTC', params: {}, position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, initialWidth: Math.round(root.clientWidth / 4), minimumWidth: 240, minimumHeight: 160 });
+  save();
+}
+
+function addDepthMatrix() {
+  if (depthMatrixCount() >= 8) return;
+  dock.addPanel({ id: `depth-matrix-${crypto.randomUUID()}`, component: 'depth-matrix', title: 'Depth Matrix',
+    params: { ...DEFAULT_DEPTH_MATRIX_SETTINGS }, position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
+    initialWidth: Math.round(root.clientWidth / 4), minimumWidth: 300, minimumHeight: 180 });
   save();
 }
 
@@ -105,13 +119,14 @@ dock = createDockview(root, {
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
+    if(options.name==='depth-matrix') return new DepthMatrixPanel(feed,save);
     if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);},(sourceId,execution)=>executionHover.publish(sourceId,execution),execution=>executionHover.addExecutionRay(execution));
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {
         if (panel) {panels.set(id, panel);executionHover.registerChart(id,{series:()=>panel.series,setExecutionHoverRay:execution=>panel.setExecutionHoverRay(execution),addExecutionRay:execution=>panel.addExecutionRay(execution)});panel.setWatchZones(watchSnapshot?.watches??[]);}
         else {executionHover.registerChart(id,null);panels.delete(id);}
         editor?.refreshTargets();
-      }, openEditor, id => executionHover.refreshChart(id));
+      }, openEditor, id => executionHover.refreshChart(id), notifications);
     }
     if (options.name === 'script-editor') {
       editor = new LazyScriptEditorPanel(library, () => [...panels].map(([id, panel]) => ({ id, panel })), save);
@@ -142,6 +157,7 @@ restoring = false;
 const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
   save();
   add.disabled = chartCount() >= PANEL_BUDGET;
+  addDepth.disabled = depthMatrixCount() >= 8; addDepth.title = addDepth.disabled ? 'Maximum 8 Depth Matrix panels' : 'Add synchronized BTC depth columns';
   const tickerAdd = document.querySelector<HTMLButtonElement>('#add-ticker')!; tickerAdd.disabled = tickers.size >= 8; tickerAdd.title = tickerAdd.disabled ? 'Maximum 8 tickers' : 'Add a dockable Trade Ticker';
   add.title = add.disabled ? `Maximum ${PANEL_BUDGET} charts` : 'Add a chart to the right of the active group';
 })];
@@ -151,6 +167,7 @@ document.querySelector('#level-watch')!.addEventListener('click',()=>openWatches
 window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
 document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
+addDepth.addEventListener('click', () => addDepthMatrix(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
@@ -192,7 +209,7 @@ function dispose() {
   clearTimeout(saveTimer);
   clearInterval(timer);
   abort.abort();
-  appearance.dispose();
+  appearance.dispose(); currencySettings.dispose();
   marketPulse.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
@@ -204,7 +221,7 @@ function dispose() {
 if (import.meta.hot) import.meta.hot.dispose(dispose);
 window.addEventListener('pagehide', event => {
   if (saveTimer) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 4, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 5, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
   }
   if (!event.persisted) dispose();
 }, { signal: abort.signal });

@@ -107,7 +107,7 @@ const ASX: CashMarket = {
 
 const CASH_MARKETS: readonly CashMarket[] = [NYSE, LSE, TSE, ASX];
 export const MARKET_META: Readonly<Record<MarketId, { name: string; short: string; zone: string }>> = {
-  crypto: { name: 'Crypto spot & perpetuals', short: '24/7', zone: 'UTC' },
+  crypto: { name: 'Crypto spot & perpetuals', short: 'Crypto', zone: 'UTC' },
   'cme-btc': { name: 'CME Bitcoin Globex', short: 'CME BTC', zone: 'America/Chicago' },
   nyse: { name: NYSE.name, short: NYSE.short, zone: NYSE.zone },
   lse: { name: LSE.name, short: LSE.short, zone: LSE.zone },

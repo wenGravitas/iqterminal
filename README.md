@@ -13,7 +13,7 @@ pnpm preview --port 4173
 
 Node 22.19+ and pnpm 10.18+ (Node 22.19 used here). On this machine: `source /home/daz/.nvm/nvm.sh` first if needed. Open the URL printed by Vite. Direct public exchange access requires reachable REST and WebSocket endpoints; failures remain visible and Retry is explicit.
 
-For durable staging Binance USD-M Footprints, historical/live heatmaps and proxied native candles, run `pnpm tunnel:staging` and `pnpm dev:staging` in separate terminals, then open `http://127.0.0.1:5173/`. See [staging setup, coverage and verification](docs/staging-market-data.md). Ordinary development remains direct to venues.
+For durable staging Binance USD-M Footprints, historical/live heatmaps and proxied native candles, run `pnpm tunnel:staging` and `pnpm dev:staging` in separate terminals, then open `http://127.0.0.1:5173/`. See [staging setup, coverage and verification](docs/staging-market-data.md). The launcher opens separate compressed loopback connections on ports 18780 (history) and 18781 (current data and live streams), so large history downloads do not block live updates. Ordinary development remains direct to venues.
 
 Drag tabs onto another group's tab bar to combine/reorder them; drag onto its content edges to dock above/below/beside. Drag the narrow splitters to resize. Close with each tab's close button. Add chart places another chart beside the active group. Reset layout restores the initial pair. Eight charts maximum.
 
@@ -27,6 +27,8 @@ Hold the left mouse button and drag a plot to pan horizontally and vertically; w
 
 The instrument selector distinguishes **Binance BTCUSDT Spot** (USDT quote, BTC base-asset volume; metadata omits derivative collateral) from **Binance BTCUSDT USD-M Perp** (USDT quote/collateral) and **Hyperliquid BTC Perp** (USD price, USDC settlement/collateral); hover the selector for metadata. Persisted layouts without a market field continue to open Binance as USD-M Perp. Spot candles use Binance's public Spot klines and market-data-only candle stream; Spot and USD-M keep separate worker connections and cache identities. EMA and volume studies use the selected instrument's native OHLCV. Binance depth remains USD-M Perp only.
 
+The footer’s **Global settings** offers an opt-in currency override, preset to **Quote** (USDT for Binance, USD quote prices for Hyperliquid). It projects Footprint, Footprint Totals, Heatmap, Net Longs/Shorts, Depth Matrix labels and ticker volume bars in base or quote units. Affected local currency selectors are disabled with an explanation; their saved choices return when the override is off. Prices, thresholds, ticker filters, fixed analytic units and canonical source data keep their existing units. Net positioning quote notionals are estimates at each recorded source interval’s ending price, not execution notionals or an FX conversion. Net positioning, Footprint cell and Heatmap hovers retain both base and quote values; missing conversion inputs remain unavailable.
+
 ## Unified indicators
 
 Use **Indicators** to search and add scripts, Footprint, **Footprint Totals**, Order-book Heatmap, **Net Longs — Estimated** or **Net Shorts — Estimated**. Each chart’s collapsible active list provides visibility, settings and removal; scripted entries also provide Edit Script and Duplicate. Hiding native layers retains bounded collection; removing them releases their consumer. Chart settings owns the saved base-candle preference. See [the indicator contract and migration](docs/indicators.md), [Footprint behavior and limits](docs/footprints.md), and [Net Positioning coverage and limits](docs/net-positioning.md).
@@ -38,6 +40,10 @@ Footprint is available on Binance BTCUSDT USD-M Perp. It groups classified publi
 ## Order-book heatmap
 
 Add **Order-book Heatmap** through **Indicators** on ordinary candles or a Footprint presentation to collect resting Binance BTCUSDT USD-M liquidity. Its active-indicator row settings controls tick-aligned price rows, average/observed peak, opacity, intensity and labels. In Footprint mode, Footprint settings’ Price level sets the size and fixed lower-bound grid for both footprint and heatmap cells. Candle heatmaps retain an independent row setting. In ordinary direct mode, changing the effective resolution starts fresh collection unless another chart retains it; reload retains settings only, and it shares the synchronized depth connection with OpenScript depth studies. In staging mode, the server records independently and the worker reloads historical liquidity at the selected resolution; partial outer regions and gaps stay visible. Spot and Hyperliquid explicitly report unavailable heatmap data. See [quantity, coverage and resource limits](docs/orderbook-heatmap.md).
+
+## Depth Matrix
+
+Add **Depth Matrix** from the bottom toolbar to compare synchronized Binance BTCUSDT Spot and USD-M perpetual liquidity in shared USDT price buckets. Its native canvas keeps bid and ask separate, labels price rows by their lower edge and shows independent coverage, quantities and notionals per venue. Columns, buckets, labels, widths, scales and wall highlighting persist in the dock layout. The [Depth Matrix contract and staging verification](docs/depth-matrix.md) document coverage, the compact current-book endpoint deployed to staging, and its live freshness and raw-book comparison results.
 
 ## Trade Ticker
 
@@ -71,3 +77,13 @@ See [architecture](docs/architecture.md), [OpenScript evidence map](docs/openscr
 OpenAlgo Charts is pinned to 2.6.0 and OpenScript to 0.8.1 (both Apache-2.0). The app footer's Licences link opens the bundled runtime notices and full license texts.
 
 Chart tabs show the venue icon, native ticker and a small S (spot) / P (perpetual) marker. Hover for the full market and interval. **Alt+1…9** activates that numbered tab in the active tabset; numbers track left-to-right reordering. Shortcuts are disabled in editable controls and open dialogs.
+
+Add **Market Conditions** from a chart’s Indicators picker for completed-candle volatility regimes, heuristic tradeability scoring and a multi-timeframe dashboard. See [formulas, settings, source routes, alerts and calibration export](docs/market-conditions.md).
+
+Add **Effort–Result** from Order Flow for persistent directional execution stalls,
+compact contested zones and independently observed outcomes. Release 1 supports
+Binance BTCUSDT USD-M with a labelled trade-price proxy and a 30-second horizon;
+500 valid historical reference windows are required. Collection now runs continuously on the server, including while clients are closed, and restores calibration from verified retained executions. See
+[usage, data quality, persistence, replay and measured bounds](docs/effort-result.md).
+
+The drawing sidebar’s **Positions** menu includes **Horizontal Measure** (time and bar span) and **Vertical Measure** (price change), using native Date Range and Price Range drawings. Both use two anchors and support the existing drawing settings, templates, history and persistence.

@@ -80,6 +80,12 @@ export class TerminalFootprint extends Footprint {
     return [alignMarker(left), alignMarker(right)];
   }
   private pocHorizontalBounds(left: number, right: number, centreY: number): [number, number] {
+    // Share the VAH/VAL endpoint geometry, including gutter, extension,
+    // clipping and backing-pixel alignment, rather than the proportional fills.
+    if (this.style.showValueArea) return [
+      this.alignStroke(this.extendProfileLevel(left, 'left')),
+      this.alignStroke(this.extendProfileLevel(right, 'right')),
+    ];
     const tolerance = Math.max(1, this.dpr);
     const rowCells = [this.previousCellPaint, this.lastCellPaint].filter((cell): cell is PaintedCell => !!cell
       && Math.abs(cell.y + cell.height / 2 - centreY) <= tolerance

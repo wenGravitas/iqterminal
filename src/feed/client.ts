@@ -3,8 +3,15 @@ import { heatmapKey, type HeatmapResolution } from './heatmap-model';
 import { type Command, type Event, type Market, type Series, connectionKey, instrumentOf, footprintKeyOf, keyOf, marketOf, validDepthBand, validFootprintRowPrice } from './protocol';
 import type { OrderWallRequest, OrderWallsSettings } from './order-walls';
 import type { NetPositioningEvent, NetPositioningRequest } from './net-positioning';
+import type { DepthMatrixSettings, DepthMatrixViewport } from './depth-matrix';
 import type { TpoIndicatorSettings } from '../indicators/tpo-settings';
 export class FeedClient {
+  private effortClaims=new Map<string,{resolve:(value:boolean)=>void;timer:ReturnType<typeof setTimeout>}>();
+  claimEffort(key:string,eventId:string,state:import('../effort-result/engine').EventState){if(this.effortClaims.size>=8)return Promise.resolve(false);const id=`effort-claim:${++this.sequence}`;return new Promise<boolean>(resolve=>{const timer=setTimeout(()=>{this.effortClaims.delete(id);resolve(false);},8000);this.effortClaims.set(id,{resolve,timer});this.send({type:'effort-claim',id,key,eventId,state});});}
+  private effortExports=new Map<string,{resolve:(value:import('../effort-result/engine').SavedEffort)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
+  exportEffort(key:string){if(this.effortExports.size>=4)return Promise.reject(new Error('Export capacity reached'));const id=`effort-export:${++this.sequence}`;return new Promise<import('../effort-result/engine').SavedEffort>((resolve,reject)=>{const timer=setTimeout(()=>{this.effortExports.delete(id);reject(new Error('Evidence export timed out'));},5000);this.effortExports.set(id,{resolve,reject,timer});this.send({type:'effort-export',id,key});});}
+  private effortListeners=new Map<string,(event:import('../effort-result/service').EffortUpdate)=>void>();
+  subscribeEffort(id:string,series:Series,settings:import('../effort-result/settings').EffortSettings,callback:(event:import('../effort-result/service').EffortUpdate)=>void){const token=`effort:${id}:${++this.sequence}`;this.effortListeners.set(token,callback);this.send({type:'effort-subscribe',id:token,series,settings});return ()=>{this.effortListeners.delete(token);this.send({type:'effort-unsubscribe',id:token});};}
   private sequence=0;private current=new Map<string,string>();private currentDepth=new Map<string,string>();private currentFootprint=new Map<string,string>();private worker:Worker;private listeners=new Map<string,{key:string;callback:(e:Event)=>void}>();private depthListeners=new Map<string,(e:Event)=>void>();private footprintListeners=new Map<string,{key:string;callback:(e:Event)=>void}>();
   private tickerListeners = new Map<string,{revision:number;callback:(e: import('../ticker/model').TickerBatch) => void}>();
   private currentTicker = new Map<string,string>();
@@ -14,6 +21,8 @@ export class FeedClient {
   private currentOrderWalls = new Map<string,string>();
   private netPositioningListeners = new Map<string,(event:NetPositioningEvent)=>void>();
   private currentNetPositioning = new Map<string,string>();
+  private depthMatrixListeners = new Map<string,(event:Extract<Event,{type:'depth-matrix-batch'}>)=>void>();
+  private currentDepthMatrix = new Map<string,string>();
   private tpoListeners = new Map<string,{key:string;callback:(event:Extract<Event,{type:'tpo-snapshot'|'tpo-patch'|'tpo-status'}>)=>void}>();
   private currentTpo = new Map<string,string>();
   private watchListeners=new Set<(snapshot:WatchSnapshot|undefined,error?:string)=>void>();
@@ -33,15 +42,19 @@ export class FeedClient {
       if(wm.type==='watch-result'){const request=this.watchRequests.get(wm.id);if(request){clearTimeout(request.timer);this.watchRequests.delete(wm.id);if(wm.error)request.reject(new Error(wm.error));else request.resolve(wm.value);}return;}
       if(wm.type==='watch-state'){if(wm.snapshot)this.watchSnapshot=wm.snapshot;this.watchError=wm.error;try{for(const listener of this.watchListeners){try{listener(this.watchSnapshot,this.watchError);}catch(error){console.error('Watch subscriber failed',error);}}}finally{if(wm.snapshot?.events)this.worker.postMessage({type:'watch-ack',cursor:wm.snapshot.cursor});}return;}
       const e=message.data;
+      if(e.type==='effort-claim'){const pending=this.effortClaims.get(e.ids[0]);if(pending){clearTimeout(pending.timer);this.effortClaims.delete(e.ids[0]);pending.resolve(e.accepted);}return;}
+      if(e.type==='effort-export'){const pending=this.effortExports.get(e.ids[0]);if(pending){clearTimeout(pending.timer);this.effortExports.delete(e.ids[0]);if(e.snapshot)pending.resolve(e.snapshot);else pending.reject(new Error(e.error));}return;}
       if(e.type==='diagnostics'){this.diagnostics={...e.data,historyApply:{...this.historyApply}};return;}
       try {
         for(const id of e.ids){
           try {
+            if(e.type==='effort-result')this.effortListeners.get(id)?.(e);
             if(e.type==='ticker-batch'){const ticker=this.tickerListeners.get(id);if(ticker?.revision===e.configRevision)ticker.callback(e);}
             const l=this.listeners.get(id);if(l&&'key'in e&&l.key===e.key)l.callback(e);
             const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key){const start=performance.now();heatmap.callback(e);this.historyApply.heatmapMs+=performance.now()-start;this.historyApply.heatmapBatches++;}
             const orderWalls=this.orderWallListeners.get(id);if(orderWalls&&e.type==='order-wall-batch'){const start=performance.now();orderWalls(e);this.historyApply.orderWallsMs+=performance.now()-start;this.historyApply.orderWallsBatches++;}
             const netPositioning=this.netPositioningListeners.get(id);if(netPositioning&&e.type.startsWith('net-positioning-'))netPositioning(e as NetPositioningEvent);
+            const depthMatrix=this.depthMatrixListeners.get(id);if(depthMatrix&&e.type==='depth-matrix-batch')depthMatrix(e);
             const tpo=this.tpoListeners.get(id);if(tpo&&'key'in e&&tpo.key===e.key&&e.type.startsWith('tpo-'))tpo.callback(e as Extract<Event,{type:'tpo-snapshot'|'tpo-patch'|'tpo-status'}>);
             const depth=this.depthListeners.get(id);depth?.(e);
             const footprint=this.footprintListeners.get(id);if(footprint&&'key'in e&&footprint.key===e.key&&e.type.startsWith('footprint-')){const start=performance.now();footprint.callback(e);this.historyApply.footprintMs+=performance.now()-start;this.historyApply.footprintBatches++;}
@@ -83,6 +96,15 @@ export class FeedClient {
     this.send({type:'net-positioning-subscribe',id:token,request});
     return ()=>{this.netPositioningListeners.delete(token);if(this.currentNetPositioning.get(id)===token)this.currentNetPositioning.delete(id);this.send({type:'net-positioning-unsubscribe',id:token});};
   }
+  subscribeDepthMatrix(id:string,settings:DepthMatrixSettings,callback:(event:Extract<Event,{type:'depth-matrix-batch'}>)=>void){
+    const previous=this.currentDepthMatrix.get(id);if(previous){this.depthMatrixListeners.delete(previous);this.send({type:'depth-matrix-unsubscribe',id:previous});}
+    const token=`depth-matrix:${id}:${++this.sequence}`;this.currentDepthMatrix.set(id,token);this.depthMatrixListeners.set(token,callback);
+    this.send({type:'depth-matrix-subscribe',id:token,settings});
+    return ()=>{this.depthMatrixListeners.delete(token);if(this.currentDepthMatrix.get(id)===token)this.currentDepthMatrix.delete(id);this.send({type:'depth-matrix-unsubscribe',id:token});};
+  }
+  updateDepthMatrixSettings(id:string,settings:DepthMatrixSettings){const token=this.currentDepthMatrix.get(id);if(token)this.send({type:'depth-matrix-settings',id:token,settings});}
+  updateDepthMatrixViewport(id:string,viewport:DepthMatrixViewport){const token=this.currentDepthMatrix.get(id);if(token)this.send({type:'depth-matrix-viewport',id:token,viewport});}
+  retryDepthMatrix(){this.send({type:'depth-matrix-retry',id:'depth-matrix-retry'});}
   subscribeTpo(id:string,series:Series,settings:TpoIndicatorSettings,callback:(event:Extract<Event,{type:'tpo-snapshot'|'tpo-patch'|'tpo-status'}>)=>void){
     const previous=this.currentTpo.get(id);if(previous){this.tpoListeners.delete(previous);this.send({type:'tpo-unsubscribe',id:previous});}
     const token=`tpo:${id}:${++this.sequence}`;const key=`${connectionKey(series)}:${instrumentOf(series).native}:tpo:1m`;this.currentTpo.set(id,token);this.tpoListeners.set(token,{key,callback});
@@ -107,7 +129,7 @@ export class FeedClient {
   }
   updateTicker(id:string,config:import('../ticker/model').TickerConfig) {const token=this.currentTicker.get(id);const listener=token&&this.tickerListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'ticker-update',id:token,configRevision:listener.revision,config});}}
   retryFootprint(){this.send({type:'footprint-retry'});}
-  dispose(){for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
+  dispose(){for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

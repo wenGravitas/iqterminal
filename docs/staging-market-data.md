@@ -24,13 +24,7 @@ Hyperliquid and Binance Spot candle feeds remain direct; the staging backend sup
 
 ## Private connection
 
-`scripts/staging-tunnel.sh` runs:
-
-```sh
-ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 \
-  -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
-  -L 127.0.0.1:18780:127.0.0.1:18780 staging
-```
+`scripts/staging-tunnel.sh` supervises two separate compressed SSH connections. Local port 18780 carries history; local port 18781 carries current snapshots and live streams. Both forward to staging's loopback API port 18780. Separate TCP connections prevent a large historical response from blocking live frames on a slow link. If either connection exits, the launcher closes both and exits; restart the launcher to restore them.
 
 The Pi tunnel and Vite bind only loopback. Staging Vite mode rejects `--host 0.0.0.0` and other non-loopback overrides. `/market-data/*` is a same-origin HTTP/WebSocket proxy to that tunnel. The staging API listens at `127.0.0.1:18780`; ClickHouse host ports are `127.0.0.1:18123` and `127.0.0.1:19000` on an isolated Docker project. No firewall, shared SSH policy, CORS or public ports were widened. This arrangement prevents public/LAN API exposure; other accounts already authorized to SSH to staging may also forward its loopback ports. It does not enforce device-exclusive access.
 

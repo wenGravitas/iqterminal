@@ -25,6 +25,8 @@ export interface NormalizedExecution {
   /** Venue-scoped stable identity, e.g. binance:perpetual:BTCUSDT:agg:123. */
   executionId: string;
   timeMs: number;
+  /** Host receipt time, distinct from exchange execution/event clocks. */
+  receivedAtMs?: number;
   eventTimeMs: number;
   price: number;
   quantity: number;

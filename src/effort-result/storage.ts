@@ -1,0 +1,8 @@
+import type { SavedEffort } from './engine';
+/** Separate IndexedDB records, never layout JSON. Atomic per-detector writes and bounded LRU configurations. */
+export class EffortStore {
+ private db?:Promise<IDBDatabase>;
+ private open(){return this.db??=new Promise((resolve,reject)=>{if(typeof indexedDB==='undefined'){reject(new Error('IndexedDB unavailable'));return;}const r=indexedDB.open('iqterminal-effort-result-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('detectors',{keyPath:'key'});r.onsuccess=()=>resolve(r.result);r.onerror=r.onblocked=()=>reject(new Error('Effort–Result storage unavailable'));});}
+ async load(key:string):Promise<SavedEffort|undefined>{const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction('detectors','readonly'),r=tx.objectStore('detectors').get(key);r.onsuccess=()=>resolve(r.result?.value);r.onerror=()=>reject(r.error);});}
+ async save(value:SavedEffort){const db=await this.open(),bytes=new TextEncoder().encode(JSON.stringify(value)).length;if(bytes>12*1024*1024)throw new Error('Effort–Result record capacity exceeded');return new Promise<void>((resolve,reject)=>{const tx=db.transaction('detectors','readwrite'),store=tx.objectStore('detectors');store.put({key:value.key,value,bytes,usedAt:value.savedAt});const scan=store.getAll();scan.onsuccess=()=>{const rows=scan.result.sort((a,b)=>a.usedAt-b.usedAt);let total=rows.reduce((n,r)=>n+r.bytes,0),count=rows.length;for(const r of rows){if(total<=32*1024*1024&&count<=16)break;if(r.key===value.key)continue;store.delete(r.key);total-=r.bytes;count--;}};tx.oncomplete=()=>resolve();tx.onerror=tx.onabort=()=>reject(tx.error??new Error('Effort–Result write failed'));});}
+}

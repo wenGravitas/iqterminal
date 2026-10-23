@@ -1,0 +1,7 @@
+import { readFile,writeFile,stat } from 'node:fs/promises';
+import { effortRuntime } from './effort-result-runtime.mjs';
+const [inputPath,outputPath]=process.argv.slice(2);if(!inputPath||!outputPath)throw new Error('Usage: node scripts/effort-result-replay.mjs INPUT.json OUTPUT.json');
+if((await stat(inputPath)).size>256*1024*1024)throw new Error('Replay input exceeds 256 MiB; split into chronological segments with explicit discontinuities');
+const input=JSON.parse(await readFile(inputPath,'utf8'));if(input.schema!==1||!Array.isArray(input.inputs)||input.inputs.length>2000000)throw new Error('Expected schema 1 and at most 2,000,000 actual normalized execution inputs');
+const runtime=await effortRuntime();try{const settings=runtime.effortSettings(input.settings),source=input.source??runtime.BINANCE_EFFORT;if(source.priceMode!=='trade-price-proxy'||source.clockMode!=='exchange-execution'||!(source.tickSize>0))throw new Error('Unsupported replay price/clock contract');
+const engine=runtime.replay(source,settings,input.inputs,input.calibration);await writeFile(outputPath,JSON.stringify({schema:1,mode:'explicit-execution-replay',inputCount:input.inputs.length,limitations:'Only supplied executions replayed. No quotes, hidden liquidity or candle reconstruction.',snapshot:engine.save(input.inputs.at(-1)?.receivedAt??0),points:engine.points,diagnostics:engine.diagnostics()},null,2));}finally{await runtime.dispose();}

@@ -3,7 +3,7 @@ import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint } from './indicator-actions';
 
 test('Footprint Totals owns a lower pane while sharing one footprint collection', async ({ page }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(90_000);
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await installDepthFixture(page);
@@ -29,8 +29,8 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
       terminal.profileSubscriptions++;
       setTimeout(() => {
         const candlePanel = [...terminal.panels.values()][0] as any;
-        const time = candlePanel.engine.latestBar.time;
-        const times = candlePanel.engine.candleTimes.slice(-3);
+        const time = candlePanel.candles.at(-1).t / 1000;
+        const times = candlePanel.candles.slice(-3).map((candle: any) => candle.t / 1000);
         const samples = [{ bidVol: 9, askVol: 3 }, { bidVol: 3, askVol: 7 }, { bidVol: 5, askVol: 6 }];
         const bars = (times.length ? times : [time]).map((barTime: number, index: number) => {
           const sample = samples[index % samples.length];
@@ -61,6 +61,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
   });
 
   await setFootprint(panel, true);
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats() !== null)).toBe(true);
   await addIndicator(panel, 'Footprint Totals');
   const totals = panel.locator('.active-indicator[data-definition-id="native.footprint-totals"]');
   await expect(totals).toBeVisible();
@@ -70,9 +71,9 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const id = candlePanel.selection.indicators.find((item: any) => item.definitionId === 'native.footprint-totals').instanceId;
     return { view: candlePanel.engine.footprintTotalsDiagnostics().find((item: any) => item.id === id),
       paneIndex: candlePanel.engine.footprintTotalsPaneIndex(id), paneCount: candlePanel.engine.chart.panes().length,
-      time: candlePanel.engine.latestBar.time, tooltip: candlePanel.engine.footprintTotalsTooltip(id, candlePanel.engine.latestBar.time),
+      time: candlePanel.engine.latestBar?.time, tooltip: candlePanel.engine.footprintTotalsTooltip(id, candlePanel.engine.latestBar?.time ?? 0),
       subscriptions: terminal.profileSubscriptions };
-  })).toMatchObject({ paneIndex: 1, paneCount: 2, subscriptions: 1 });
+  })).toMatchObject({ paneIndex: 1, paneCount: 2, subscriptions: 1, time: expect.any(Number), view: { statsBars: 3 } });
   const paneHeadersAligned = () => page.evaluate(() => {
     const t = (window as any).__terminal;
     const p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
@@ -93,7 +94,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
       subscriptions: terminal.profileSubscriptions };
   });
   expect(observed.view).toMatchObject({ paneIndex: 1, statsBars: 3 });
-  expect(observed.view.autoHeight).toBe(92);
+  expect(observed.view.autoHeight).toBe(104);
   expect(observed.view.manuallyResized).toBe(false);
   expect(Math.abs(observed.view.paneHeight - observed.view.autoHeight)).toBeLessThanOrEqual(4);
   expect(observed.view.lastTime).toBe(observed.time);
@@ -116,15 +117,98 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const plotWidth = chart.timeScale.width * dpr;
     const labelWidth = Math.min(view.presentation.labelWidth, chart.timeScale.width) * dpr;
     const slot = chart.timeScale.barSpacing * dpr;
-    const visible = (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('8.5px') && item.y < 100);
+    const visible = (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('11px') && item.y < 100);
     return ['-6', '+4', '+1'].every(text => visible.some((item: any) => item.text === text
       && item.x - slot / 2 >= labelWidth && item.x + slot / 2 <= plotWidth
       && item.y > 15 * dpr && item.y < candlePanel.engine.chart.panes()[1].base.mediaHeight));
   })).toBe(true);
-  const totalsTextDraws = await page.evaluate(() => (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('8.5px') && item.y < 100));
+  const totalsTextDraws = await page.evaluate(() => (window as any).__footprintTableTexts.filter((item: any) => item.font.startsWith('11px') && item.y < 100));
   expect(totalsTextDraws.map((item: any) => item.text)).toEqual(expect.arrayContaining(['11', '5', '6', '-6', '+4', '+1']));
   expect(totalsTextDraws.every((item: any) => item.align === 'center')).toBe(true);
-  await page.screenshot({ path: 'artifacts/footprint-totals/comparison-fixture-2560x1080.png' });
+  await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
+  await expect(panel.getByRole('combobox', { name: 'Totals position', exact: true })).toHaveCount(0);
+  await panel.locator('.footprint-settings-dialog').getByRole('button', { name: 'Close', exact: true }).click();
+  expect(await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.footprint.options().statsRows)).toEqual([]);
+  const axisGeometry = () => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+    const primary = chart.primaryPaneIndex(), totals = p.engine.footprintTotalsPaneIndex('native.footprint-totals');
+    const gap = (i: number) => chart.panes()[i].base.mediaHeight - chart.plotRect(i).height;
+    return { primary: gap(primary), totals: gap(totals) };
+  });
+  await expect.poll(axisGeometry).toEqual({ primary: 20, totals: 0 });
+  const axis = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart, plot = chart.plotRect(chart.primaryPaneIndex());
+    return { x: plot.left + plot.width / 2, y: plot.top + plot.height + 10, spacing: chart.timeScale.barSpacing };
+  });
+  const stage = await panel.locator('.chart-stage').boundingBox();
+  await page.mouse.move(stage!.x + axis.x, stage!.y + axis.y); await page.mouse.down();
+  await page.mouse.move(stage!.x + axis.x + 60, stage!.y + axis.y, { steps: 5 }); await page.mouse.up();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.timeScale.barSpacing)).not.toBe(axis.spacing);
+  await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0]; p.engine.chart.movePane(p.engine.footprintTotalsPaneIndex('native.footprint-totals'), -1); });
+  await expect.poll(axisGeometry).toEqual({ primary: 20, totals: 0 });
+  await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0]; p.engine.chart.movePane(p.engine.chart.primaryPaneIndex(), -1); });
+  await expect.poll(axisGeometry).toEqual({ primary: 20, totals: 0 });
+  await page.evaluate(() => {
+    (window as any).__totalsHighlights = [];
+    const original = CanvasRenderingContext2D.prototype.strokeRect;
+    CanvasRenderingContext2D.prototype.strokeRect = function(...args) {
+      if (this.strokeStyle === '#dedede' || this.strokeStyle === '#202934') (window as any).__totalsHighlights.push(args);
+      return original.apply(this, args);
+    };
+  });
+  await panel.getByRole('button', { name: 'Footprint Totals settings', exact: true }).click();
+  await panel.locator('.footprint-totals-settings').getByLabel('Highlight highest value in each row', { exact: true }).check();
+  await panel.locator('.footprint-totals-settings').getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__totalsHighlights.length)).toBeGreaterThan(0);
+  const card = panel.locator('.footprint-totals-tooltip');
+  const hoverTotals = async () => {
+    const point = await page.evaluate(() => {
+      const p = [...(window as any).__terminal.panels.values()][0], engine = p.engine, time = engine.latestBar.time;
+      const pane = engine.footprintTotalsPaneIndex('native.footprint-totals'), plot = engine.chart.plotRect(pane);
+      const x = engine.chart.timeScale.indexToX(engine.chart.dataLayer.timeToIndex(time)), y = 39;
+      return { x: plot.left + x, y: plot.top + y, gutterX: plot.left + 5, time, pane, localX: x, localY: y };
+    });
+    await expect.poll(() => page.evaluate(p => {
+      const engine = [...(window as any).__terminal.panels.values()][0].engine;
+      return !!engine.footprintTotalsHover('native.footprint-totals', p.time, p.localX, p.localY);
+    }, point)).toBe(true);
+    const box = await panel.locator('.chart-stage').boundingBox();
+    await page.mouse.move(box!.x + point.x, box!.y + point.y);
+    await expect(card).toBeVisible();
+    await expect(panel.locator('.heatmap-readout')).toHaveText('');
+    const bounds = await card.boundingBox();
+    expect(bounds!.x).toBeGreaterThanOrEqual(box!.x);
+    expect(bounds!.y).toBeGreaterThanOrEqual(box!.y);
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(box!.x + box!.width);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(box!.y + box!.height);
+    return { point, box: box! };
+  };
+  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  const hovered = await hoverTotals();
+  await expect(card).toContainText('Footprint Totals'); await expect(card).toContainText('UTC');
+  await expect(card.locator('.footprint-totals-tooltip-row')).toHaveCount(4);
+  await expect(card).toContainText('913,000 USDT');
+  await expect(card.locator('[data-hovered=true]')).toContainText('Total Volume');
+  await page.screenshot({ path: '/tmp/footprint-totals-tooltip-dark.png' });
+  await page.mouse.move(hovered.box.x + hovered.point.gutterX, hovered.box.y + hovered.point.y);
+  await expect(card).toBeHidden();
+
+  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await hoverTotals(); await page.screenshot({ path: '/tmp/footprint-totals-tooltip-light.png' });
+  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  const global = page.getByRole('dialog', { name: 'Global settings', exact: true });
+  await global.getByLabel('Override indicator currencies').check();
+  await global.getByLabel('Default display currency').selectOption('quote');
+  await global.getByRole('button', { name: 'Apply', exact: true }).click();
+  await hoverTotals();
+  await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('913,000 USDT');
+  await expect(card.locator('.positioning-tooltip-secondary').first()).toContainText('11 BTC');
+  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await global.getByLabel('Override indicator currencies').uncheck();
+  await global.getByRole('button', { name: 'Apply', exact: true }).click();
+  await page.mouse.move(0, 0); await expect(card).toBeHidden();
+
+
 
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.profileSubscriptions)).toBe(1);
   expect(await page.evaluate(() => (window as any).__terminal.stats().panels[0].footprintTotals[0].statsBars)).toBe(3);
@@ -155,6 +239,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
   await addIndicator(panel, 'Footprint Totals');
   await panel.getByRole('button', { name: 'Footprint Totals settings', exact: true }).click();
   const totalsSettings = panel.getByRole('dialog', { name: 'Footprint Totals settings', exact: true });
+  await totalsSettings.getByLabel('Highlight highest value in each row', { exact: true }).check();
   await page.evaluate(() => {
     const t = (window as any).__terminal;
     const p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
@@ -168,12 +253,12 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const t = (window as any).__terminal, p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
     const view = p.engine.footprintTotalsDiagnostics()[0];
     return { rows: view.rows.length, autoHeight: view.autoHeight, paneHeight: view.paneHeight, manuallyResized: view.manuallyResized };
-  })).toMatchObject({ rows: 3, autoHeight: 77, manuallyResized: false });
+  })).toMatchObject({ rows: 3, autoHeight: 86, manuallyResized: false });
   const compactPaneHeight = await page.evaluate(() => {
     const t = (window as any).__terminal, p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
     return p.engine.footprintTotalsDiagnostics()[0].paneHeight;
   });
-  expect(Math.abs(compactPaneHeight - 77)).toBeLessThanOrEqual(4);
+  expect(Math.abs(compactPaneHeight - 86)).toBeLessThanOrEqual(4);
   await expect.poll(paneHeadersAligned).toBe(true);
 
   const divider = await page.evaluate(() => {
@@ -204,7 +289,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const t = (window as any).__terminal, p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
     const view = p.engine.footprintTotalsDiagnostics()[0];
     return { rows: view.rows.length, autoHeight: view.autoHeight, manuallyResized: view.manuallyResized, paneHeight: view.paneHeight };
-  })).toMatchObject({ rows: 4, autoHeight: 92, manuallyResized: true });
+  })).toMatchObject({ rows: 4, autoHeight: 104, manuallyResized: true });
   const preservedPaneHeight = await page.evaluate(() => {
     const t = (window as any).__terminal, p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
     return p.engine.footprintTotalsDiagnostics()[0].paneHeight;
@@ -227,9 +312,9 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const terminal = (window as any).__terminal;
     const candlePanel = [...terminal.panels.values()].find((item: any) => item.selection.indicators.some((indicator: any) => indicator.definitionId === 'native.footprint-totals')) as any;
     const indicator = candlePanel.selection.indicators.find((item: any) => item.definitionId === 'native.footprint-totals');
-    return { rows: indicator.settings.rows, interval: candlePanel.selection.interval, market: candlePanel.selection.market,
+    return { rows: indicator.settings.rows, highlightHighest: indicator.settings.highlightHighest, interval: candlePanel.selection.interval, market: candlePanel.selection.market,
       paneIndex: candlePanel.engine.footprintTotalsPaneIndex(indicator.instanceId) };
   });
-  expect(persisted).toEqual({ rows: ['volume', 'delta', 'trades'], interval: '5m', market: 'spot', paneIndex: 1 });
+  expect(persisted).toEqual({ rows: ['volume', 'delta', 'trades'], highlightHighest: true, interval: '5m', market: 'spot', paneIndex: 1 });
   expect(errors).toEqual([]);
 });
