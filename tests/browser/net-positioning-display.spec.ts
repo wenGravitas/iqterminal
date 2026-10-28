@@ -91,6 +91,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
       });
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ source: 'binance-native-kline', candles }) });
     }
+    if(url.pathname.endsWith('/footprints'))return route.fulfill({status:503,json:{error:'Explicit fixture: no price-volume profile'}});
     if (!url.pathname.endsWith('/net-positioning')) return route.continue();
     const selected = (url.searchParams.get('venues') ?? 'binance,hyperliquid').split(',').filter((venue): venue is Venue => venue === 'binance' || venue === 'hyperliquid');
     const intervals = Array.from({ length: 90 }, (_, age) => Array.from({ length: 2 }, (_, half) => selected.map(venue => fixtureRow(method, venue, hostOpen - age * 60_000, half, age))).flat()).flat();
@@ -123,6 +124,11 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await setSettings(panel, longsId, 'Longs', 'stacked', 'auto', 'price-oi');
   await setSettings(panel, shortsId, 'Shorts', 'stacked', 'hover', 'aggressor-flow-oi');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.map((pane: any) => pane.candleCount))).toEqual([90, 90]);
+  for(const side of ['Longs','Shorts']){
+    const sources=panel.getByRole('group',{name:`Net ${side} sources`,exact:true}),box=(await sources.boundingBox())!;
+    const controls=await panel.locator('.pane-layout-controls').evaluateAll(nodes=>nodes.map(n=>{const b=n.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}));
+    const actions=controls.find(c=>Math.abs(c.y+c.height/2-box.y-box.height/2)<3);expect(actions).toBeTruthy();expect(box.x+box.width).toBeLessThanOrEqual(actions!.x-4);
+  }
   const alignment = await page.evaluate(time => {
     const p = [...(window as any).__terminal.panels.values()][0], index = p.engine.times.indexOf(time / 1000);
     p.engine.setRange({ from: Math.max(0, index - 34), to: index + 1 }); return { time, index, range: p.engine.visibleRange() };
@@ -188,8 +194,8 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   const card = panel.locator('.net-positioning-tooltip');
   await expect(card).toBeVisible();
   await expect(card).toContainText('Net Longs (Est.)');
-  await expect(card).toContainText('Binance Perp');
-  await expect(card).toContainText('Hyperliquid Perp');
+  await expect(card).toContainText('BN[P]');
+  await expect(card).toContainText('HL[P]');
   await expect(card).toContainText('Total (2 venues)');
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('BTC');
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('USDT');
@@ -305,7 +311,8 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await page.screenshot({ path: '/tmp/net-positioning-display-regression.png' });
   await page.evaluate(() => { for (const p of (window as any).__terminal.panels.values()) if (!p.objectTreeSidebarPreferences.collapsed) p.toggleObjectsPanel(); });
   await page.setViewportSize({ width: 720, height: 900 });
-  await expect(panel.getByRole('group', { name: 'Net Longs sources', exact: true }).locator('button')).toHaveCount(2);
+  await expect(panel.getByRole('group', { name: 'Net Longs sources', exact: true }).locator('button')).toHaveCount(3);
+  expect((await panel.getByRole('group', { name: 'Net Longs sources', exact: true }).boundingBox())!.width).toBeGreaterThanOrEqual(46);
   await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-dark.png' });
   await page.getByLabel('Theme', { exact: true }).selectOption('light');
   await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-light.png' });

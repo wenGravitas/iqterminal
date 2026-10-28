@@ -37,12 +37,12 @@ describe('absolute decimal matrix buckets', () => {
     expect(formatDepthMatrixCellValue(0, 'btc')).toBe('0');
     expect(formatDepthMatrixCellValue(0.0000042, 'btc')).toBe('<0.001');
     expect(formatDepthMatrixCellValue(0.001001, 'btc')).toBe('0.001');
-    expect(formatDepthMatrixCellValue(67.431, 'btc')).toBe('67.431');
-    expect(formatDepthMatrixCellValue(501.469, 'btc')).toBe('501.469');
-    expect(formatDepthMatrixCellValue(1_000.12, 'btc')).toBe('1000.12');
-    expect(formatDepthMatrixCellValue(10_000.12, 'btc')).toBe('10000.1');
-    expect(formatDepthMatrixCellValue(100_000.12, 'btc')).toBe('100000');
-    expect(formatDepthMatrixCellValue(1_000_000.12, 'btc')).toBe('1.0m');
+    expect(formatDepthMatrixCellValue(67.431, 'btc')).toBe('67.4');
+    expect(formatDepthMatrixCellValue(501.469, 'btc')).toBe('501');
+    expect(formatDepthMatrixCellValue(1_000.12, 'btc')).toBe('1k');
+    expect(formatDepthMatrixCellValue(10_000.12, 'btc')).toBe('10k');
+    expect(formatDepthMatrixCellValue(100_000.12, 'btc')).toBe('100k');
+    expect(formatDepthMatrixCellValue(1_000_000.12, 'btc')).toBe('1m');
     expect(formatDepthMatrixCellValue(0.25, 'usdt')).toBe('<1');
     expect(formatDepthMatrixTooltipValue(0.000000001, 0.001)).toBe('<0.00000001 BTC / <0.01 USDT');
     expect(formatDepthMatrixTooltipValue(1.23456789, 1234.567)).toBe('1.23456789 BTC / 1234.57 USDT');

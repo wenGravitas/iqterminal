@@ -1,3 +1,9 @@
+import {setVenueLabelIcon,venueLabelIcon,venueIconPath,setLabelCurrencySource,type LabelVenue} from './venue-label';
+import {candleGeometry} from 'openalgo-charts';
+import {PositioningRangePreview,type PositioningRange} from './positioning-range';
+import {paneHeaderSlots,PANE_HEADER_ACTION_SPACE,netPositioningOptionsWidth}from './pane-header';
+import { DailyVwapPrimitive } from './daily-vwap';
+import type { DailyVwapSettings } from '../indicators/daily-vwap';
 import { otherFootprintTotals } from '../footprint-totals-tooltip';
 import { anchorTimeAxisToPrimary } from './primary-time-axis';
 import { effectiveCurrency } from '../currency-display';
@@ -31,7 +37,7 @@ import type { Candle, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
 import { DrawingAxisPriceLabels, registerIQDrawingLabelRenderers } from './drawing-labels';
-import { TerminalFootprint } from './terminal-footprint';
+import { TerminalFootprint,footprintColumn } from './terminal-footprint';
 import { FootprintTotalsPane } from './footprint-totals';
 import type { FootprintBarStats, FootprintStatRow } from 'openalgo-charts/profile';
 import { FootprintActivity } from './footprint-activity';
@@ -87,6 +93,8 @@ export class OpenAlgoCandleChart {
   private heatmap: OrderBookHeatmap | null = null;
   private orderWalls: OrderWallsPrimitive | null = null;
   private tpoProfile: TpoProfilePrimitive | null = null;
+  private dailyVwap: DailyVwapPrimitive | null = null;
+  private dailyVwapInterval = 60;
   private netPositioningPanes = new Map<string, { series: SeriesApi; primitive: NetPositioningPane; paneIndex: number }>();
   onNetPositioningVenueToggle?: (id: string, venue: NetPositioningVenue) => void;
   private netPositioningLegends = new Map<string, { element: HTMLElement; abort: AbortController; venuesKey: string }>();
@@ -96,6 +104,7 @@ export class OpenAlgoCandleChart {
   private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
   private orderWallValueQueueStart = 0;
   private orderWallValueCount = 0;
+  private orderWallValuesLimited = false;
   private orderWallStatus: OrderWallStatus = { state: 'loading' };
   readonly chart: OpenAlgoChart;
   readonly drawings: DrawingController;
@@ -103,6 +112,9 @@ export class OpenAlgoCandleChart {
   readonly scopedDrawings: InstrumentDrawings;
   private readonly axisGrid = new AxisGrid(getDisplayTimezone());
   private readonly executionHoverRay = new ExecutionHoverRay();
+  private readonly positioningRangePreview = new PositioningRangePreview();
+  setPositioningRange(range:PositioningRange|null){this.positioningRangePreview.set(range);}
+  positioningRangeDiagnostics(){return this.positioningRangePreview.diagnostics();}
   readonly series: SeriesApi;
   private footprintIndexSeries: SeriesApi | null = null;
   readonly stats = { draws: 0, footprintSets: 0 };
@@ -110,6 +122,7 @@ export class OpenAlgoCandleChart {
   private times: number[] = [];
   private nextFrame = 0;
   private disposed = false;
+  private venueIconLoads:HTMLImageElement[]=[];
   private readonly inputAbort = new AbortController();
   private readonly drawingAxisLabels: DrawingAxisPriceLabels[] = [];
   private readonly drawingPreviews = new Map<string, Drawing>();
@@ -206,6 +219,8 @@ export class OpenAlgoCandleChart {
       animAutoscale: false,
       ariaLabel: 'BTC perpetual candlestick chart. Drag to pan time and price, wheel to zoom.',
     });
+    for(const venue of ['binance','hyperliquid','bybit'] as LabelVenue[]){if(venueLabelIcon(venue))continue;const icon=new Image();this.venueIconLoads.push(icon);icon.onload=()=>{setVenueLabelIcon(venue,icon);if(!this.disposed)this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));};icon.src=venueIconPath(venue);}
+    setLabelCurrencySource(this.chart.dataLayer,local=>effectiveCurrency(local??this.footprintUnits));
     anchorTimeAxisToPrimary(this.chart);
     // The chart library clears its CanvasLayers while processing a container
     // resize, then defers repaint through the injected RAF. The host scheduler
@@ -263,6 +278,7 @@ export class OpenAlgoCandleChart {
     this.chart.addPrimitive(this.watchZones, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.executionHoverRay, { anchor: 'primary-pane' });
+    this.chart.addPrimitive(this.positioningRangePreview, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
     window.addEventListener(TIMEZONE_EVENT, event => {
@@ -331,7 +347,10 @@ export class OpenAlgoCandleChart {
         this.netPositioningViewportSubscriptions.push(this.chart.on('pan', sync), this.chart.on('zoom', sync), this.chart.on('resize', sync), this.chart.on('paneResized', sync), this.chart.on('data:update', sync));
       }
       const paneIndex = this.chart.panes().length;
-      const primitive = new NetPositioningPane(id, side);
+      const primitive = new NetPositioningPane(id, side,(x,spacing,dpr)=>{
+        if(this.mode==='footprint'){const width=footprintColumn(this.footprintOptions,spacing).column;return {left:x-width/2,width};}
+        const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};
+      });
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
       series.priceScale().setPriceFormatter(value => {
@@ -370,7 +389,7 @@ export class OpenAlgoCandleChart {
   private syncNetPositioningLegend(id: string, venues: readonly NetPositioningVenue[]) {
     const view = this.netPositioningPanes.get(id); if (!view) return;
     let legend = this.netPositioningLegends.get(id);
-    const venuesKey = 'binance,hyperliquid';
+    const venuesKey = 'binance,hyperliquid,bybit';
     if (!legend || legend.venuesKey !== venuesKey) {
       legend?.abort.abort(); legend?.element.remove();
       const abort = new AbortController(), element = document.createElement('div');
@@ -378,13 +397,13 @@ export class OpenAlgoCandleChart {
       // Venue controls must not start the chart's pointer-captured pan gesture.
       for (const type of ['pointerdown', 'mousedown'] as const) element.addEventListener(type, event => event.stopPropagation(), { signal: abort.signal });
       element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
-      for (const venue of ['binance', 'hyperliquid'] as const) {
+      for (const venue of ['binance', 'hyperliquid', 'bybit'] as const) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'net-positioning-source';
         button.dataset.source = venue;
-        const icon = document.createElement('img'); icon.src = venue === 'binance' ? '/venues/binance.ico' : '/venues/hyperliquid.png'; icon.alt = ''; icon.width = 12; icon.height = 12;
-        const label = document.createElement('span'); label.textContent = venue === 'binance' ? 'BN[P]' : 'HL[P]';
+        const icon = document.createElement('img'); icon.src = venue === 'binance' ? '/venues/binance.ico' : venue === 'bybit' ? '/venues/bybit.svg' : '/venues/hyperliquid.png'; icon.alt = ''; icon.width = 12; icon.height = 12;
+        const label = document.createElement('span'); label.textContent = venue === 'binance' ? 'BN[P]' : venue === 'bybit' ? 'BY[P]' : 'HL[P]';
         button.append(icon, label);
-        button.title = venue === 'binance' ? 'Binance BTCUSDT USD-M Perpetual' : 'Hyperliquid BTC Perpetual';
+        button.title = venue === 'binance' ? 'Binance BTCUSDT USD-M Perpetual' : venue === 'bybit' ? 'Bybit BTCUSDT Perpetual' : 'Hyperliquid BTC Perpetual';
         button.setAttribute('aria-label', `Show ${button.title}`);
         const set = () => view.primitive.highlightSource(button.getAttribute('aria-pressed') === 'true' ? venue : null);
         const clear = () => { if (document.activeElement !== button) view.primitive.highlightSource(null); };
@@ -410,13 +429,15 @@ export class OpenAlgoCandleChart {
       const view = this.netPositioningPanes.get(id); if (!view) continue;
       const plot = this.chart.plotRect(view.paneIndex); if (!plot) { legend.element.hidden = true; continue; }
       legend.element.hidden = false;
-      const compact = plot.width < 320;
+      const compact = plot.width < 400;
       for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
         button.dataset.compact = String(compact);
       }
+      legend.element.style.maxWidth = `${paneHeaderSlots(plot.width,netPositioningOptionsWidth(plot.width)).optionsWidth}px`;
+      legend.element.style.overflowX = 'auto'; legend.element.style.overflowY = 'hidden'; legend.element.style.scrollbarWidth = 'none';
       const width = legend.element.getBoundingClientRect().width;
-      legend.element.style.left = `${Math.max(plot.left + 4, plot.left + plot.width - width - 6)}px`;
-      legend.element.style.top = `${plot.top + 26}px`;
+      legend.element.style.left = `${Math.max(plot.left + 4, plot.left + plot.width - width - PANE_HEADER_ACTION_SPACE)}px`;
+      legend.element.style.top = `${plot.top + 4}px`;
     }
   }
 
@@ -601,15 +622,28 @@ export class OpenAlgoCandleChart {
     if (!this.tpoProfile) { this.tpoProfile = new TpoProfilePrimitive(settings); this.chart.addPrimitive(this.tpoProfile, { anchor: 'primary-pane' }); }
     else this.tpoProfile.setSettings(settings);
   }
+  setDailyVwap(settings: DailyVwapSettings | null, intervalSeconds: number) {
+    if (!settings) { if (this.dailyVwap) this.chart.removePrimitive(this.dailyVwap); this.dailyVwap = null; return; }
+    this.dailyVwapInterval = intervalSeconds;
+    if (!this.dailyVwap) { this.dailyVwap = new DailyVwapPrimitive(settings, () => {
+      const range = this.chart.timeScale.visibleRange();
+      return { from: this.chart.dataLayer.indexToTimeFloat(range.from - 1), to: this.chart.dataLayer.indexToTimeFloat(range.to + 1) };
+    }); this.chart.addPrimitive(this.dailyVwap, { anchor: 'primary-pane' }); }
+    else this.dailyVwap.configure(settings);
+    this.dailyVwap.setData(intervalSeconds < 86400 ? this.series.getData() : [], intervalSeconds);
+  }
+  dailyVwapDiagnostics() { return { ...(this.dailyVwap?.diagnostics() ?? { mounted: false }), intervalSeconds: this.dailyVwapInterval }; }
   setTpoSnapshot(sessions: TpoSession[], naked: TpoNakedLevel[], asOf = 0) { this.tpoProfile?.setSnapshot(sessions, naked, asOf); }
   patchTpo(sessions: TpoSession[], naked: TpoNakedLevel[], asOf = 0) { this.tpoProfile?.patch(sessions, naked, asOf); }
   tpoDiagnostics() { return this.tpoProfile?.diagnostics() ?? { mounted: false }; }
   setOrderWallSnapshot(segments: OrderWallSegment[], status?: OrderWallStatus) {
+    this.orderWallValuesLimited = segments.some(s=>s.valueRunsTruncated);
     this.orderWallSegments.clear();
     for (const segment of segments.slice(-ORDER_WALL_MAX_SEGMENTS)) this.orderWallSegments.set(segment.id, segment);
     this.rebuildOrderWallValueQueue();
-    this.orderWallStatus = status ?? { state: 'loading' };
+    this.orderWallStatus = this.effectiveOrderWallStatus(status ?? { state: 'loading' });
     this.orderWalls?.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
+    return this.orderWallStatus;
   }
   patchOrderWalls(patches: OrderWallPatch[], status: OrderWallStatus) {
     this.orderWallStatus = status;
@@ -620,10 +654,11 @@ export class OpenAlgoCandleChart {
         const previous = this.orderWallSegments.get(patch.id);
         const incoming = patch.segment.valueRuns ?? [];
         const fullRuns = patch.replaceValueRuns === true || incoming.length > 0 && (!previous || incoming.length > previous.valueRuns.length);
+        if(patch.segment.valueRunsTruncated)this.orderWallValuesLimited=true;
         const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) : [...(previous?.valueRuns ?? [])] };
         if (previous && fullRuns) this.orderWallValueCount = Math.max(0, this.orderWallValueCount - previous.valueRuns.length);
         if (fullRuns) {
-          if (segment.valueRuns.length < incoming.length) segment.valueRunsTruncated = true;
+          if (segment.valueRuns.length < incoming.length) { segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; }
           for (const point of segment.valueRuns) { this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++; }
         } else for (const point of patch.valuePoints ?? []) this.appendOrderWallValue(segment, point);
         this.orderWallSegments.delete(patch.id);
@@ -633,12 +668,17 @@ export class OpenAlgoCandleChart {
     }
     while (this.orderWallSegments.size > ORDER_WALL_MAX_SEGMENTS) this.dropOrderWallSegment(this.orderWallSegments.keys().next().value!);
     this.trimOrderWallValues();
-    this.orderWalls?.patch(applied, status);
+    this.orderWallStatus = this.effectiveOrderWallStatus(status);
+    this.orderWalls?.patch(applied, this.orderWallStatus);
+    return this.orderWallStatus;
   }
-  setOrderWallStatus(status?: OrderWallStatus) { this.orderWallStatus = status ?? { state: 'loading' }; this.orderWalls?.setStatus(this.orderWallStatus); }
+  private effectiveOrderWallStatus(status:OrderWallStatus):OrderWallStatus {
+    return this.orderWallValuesLimited ? {...status,valueHistoryLimited:true,...(status.coverage?{coverage:{...status.coverage,complete:false,partial:true}}:{})} : status;
+  }
+  setOrderWallStatus(status?: OrderWallStatus) { this.orderWallStatus = this.effectiveOrderWallStatus(status ?? { state: 'loading' }); this.orderWalls?.setStatus(this.orderWallStatus); }
   orderWallAt(x: number, y: number): OrderWallHit | null { return this.orderWalls?.orderWallAt(x, y) ?? null; }
   orderWallsDiagnostics() { return { ...(this.orderWalls?.diagnostics() ?? {}), mounted: Boolean(this.orderWalls),
-    retainedSegments: this.orderWallSegments.size, valueRuns: this.orderWallValueCount }; }
+    retainedSegments: this.orderWallSegments.size, valueRuns: this.orderWallValueCount, valueHistoryLimited: this.orderWallStatus.valueHistoryLimited === true }; }
 
   private dropOrderWallSegment(id: string) {
     const segment=this.orderWallSegments.get(id);
@@ -655,20 +695,20 @@ export class OpenAlgoCandleChart {
   private appendOrderWallValue(segment: OrderWallSegment, point: OrderWallSegment['valueRuns'][number]) {
     const runs = segment.valueRuns, last = runs.at(-1);
     if (last?.at === point.at) {
-      if (last.usd === point.usd && last.percentile === point.percentile) return;
+      if (last.usd === point.usd && last.percentile === point.percentile && last.rank === point.rank && last.quantity === point.quantity) return;
       runs[runs.length - 1] = point;
       this.orderWallValueQueue.push({ id: segment.id, point });
     } else if (!last || last.at < point.at) {
       runs.push(point); this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++;
     }
-    while (runs.length > ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) { runs.shift(); segment.valueRunsTruncated = true; this.orderWallValueCount--; }
+    while (runs.length > ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) { runs.shift(); segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; this.orderWallValueCount--; }
   }
   private trimOrderWallValues() {
     while (this.orderWallValueCount > ORDER_WALL_MAX_VALUE_RUNS) {
       const oldest = this.orderWallValueQueue[this.orderWallValueQueueStart++];
       if (!oldest) break;
       const segment = this.orderWallSegments.get(oldest.id);
-      if (segment?.valueRuns[0] === oldest.point) { segment.valueRuns.shift(); segment.valueRunsTruncated = true; this.orderWallValueCount--; }
+      if (segment?.valueRuns[0] === oldest.point) { segment.valueRuns.shift(); segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; this.orderWallValueCount--; }
     }
     if (this.orderWallValueQueueStart > 4_096 && this.orderWallValueQueueStart * 2 > this.orderWallValueQueue.length) {
       this.orderWallValueQueue = this.orderWallValueQueue.slice(this.orderWallValueQueueStart); this.orderWallValueQueueStart = 0;
@@ -676,7 +716,7 @@ export class OpenAlgoCandleChart {
     if(this.orderWallValueQueue.length>ORDER_WALL_MAX_VALUE_RUNS*2){
       const entries=[...this.orderWallSegments.values()].flatMap(segment=>segment.valueRuns.map(point=>({id:segment.id,point}))).sort((a,b)=>a.point.at-b.point.at);
       this.orderWallValueQueue=entries;this.orderWallValueQueueStart=0;this.orderWallValueCount=entries.length;
-      while(this.orderWallValueCount>ORDER_WALL_MAX_VALUE_RUNS){const oldest=this.orderWallValueQueue[this.orderWallValueQueueStart++]!;const segment=this.orderWallSegments.get(oldest.id);if(segment?.valueRuns[0]===oldest.point){segment.valueRuns.shift();segment.valueRunsTruncated=true;this.orderWallValueCount--;}}
+      while(this.orderWallValueCount>ORDER_WALL_MAX_VALUE_RUNS){const oldest=this.orderWallValueQueue[this.orderWallValueQueueStart++]!;const segment=this.orderWallSegments.get(oldest.id);if(segment?.valueRuns[0]===oldest.point){segment.valueRuns.shift();segment.valueRunsTruncated=true;this.orderWallValuesLimited=true;this.orderWallValueCount--;}}
     }
   }
 
@@ -719,6 +759,7 @@ export class OpenAlgoCandleChart {
       });
     } else this.series.setData([]);
     this.candleTimes = bars.map(bar => bar.time);
+    this.dailyVwap?.setData(this.dailyVwapInterval < 86400 ? bars : [], this.dailyVwapInterval);
     for (const view of this.netPositioningPanes.values()) view.primitive.setHostSnapshot(candles.slice(-MAX_BARS));
     if (this.mode === 'candle') {
       this.times = this.candleTimes;
@@ -735,6 +776,7 @@ export class OpenAlgoCandleChart {
     if (this.disposed || this.mode === mode) return;
     this.pendingView = preserveView ? this.captureView() : null;
     this.mode = mode;
+    for(const view of this.netPositioningPanes.values())view.primitive.refreshColumnGeometry();
     this.series.applyOptions({
       visible: mode === 'candle' && this.basePriceVisible,
       priceLineVisible: mode === 'candle' && this.basePriceVisible,
@@ -862,6 +904,7 @@ export class OpenAlgoCandleChart {
         this.latestTime = this.latestBar?.time ?? -Infinity;
       }
     }
+    this.dailyVwap?.setData(this.dailyVwapInterval < 86400 ? this.series.getData() : [], this.dailyVwapInterval);
   }
 
   resetView() {
@@ -962,11 +1005,13 @@ export class OpenAlgoCandleChart {
 
   setFootprintOptions(options: Partial<FootprintOptions>) {
     this.footprintOptions = { ...this.footprintOptions, ...options };
+    for(const view of this.netPositioningPanes.values())view.primitive.refreshColumnGeometry();
     const threshold = this.footprintOptions.imbalanceThreshold;
     this.footprint?.setOptions({ ...options, imbalanceThreshold: this.footprintUnits === 'usdt' && threshold < Number.MAX_VALUE
       ? Math.min(Number.MAX_VALUE, threshold * (this.latestBar?.close ?? 1)) : threshold });
   }
 
+  refreshCaptionCurrency(){this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));}
   setFootprintUnits(units: FootprintUnits) {
     if (units === this.footprintUnits) return;
     this.footprintUnits = units; this.heatmap?.setUnits(units);
@@ -1068,6 +1113,8 @@ export class OpenAlgoCandleChart {
   }
 
   dispose() {
+    setLabelCurrencySource(this.chart.dataLayer,null);
+    for(const icon of this.venueIconLoads){icon.onload=null;icon.onerror=null;}this.venueIconLoads=[];
     if (this.disposed) return;
     this.disposed = true;
     this.inputAbort.abort();
@@ -1089,9 +1136,12 @@ export class OpenAlgoCandleChart {
     this.heatmap = null;
     if (this.orderWalls) this.chart.removePrimitive(this.orderWalls);
     this.orderWalls = null;
+    if (this.dailyVwap) this.chart.removePrimitive(this.dailyVwap);
+    this.dailyVwap = null;
     this.chart.removePrimitive(this.watchZones);
     this.chart.removePrimitive(this.axisGrid);
     this.chart.removePrimitive(this.executionHoverRay);
+    this.chart.removePrimitive(this.positioningRangePreview);
     this.chart.destroy();
     this.callbacks.clear();
     this.visibleCallbacks.clear();

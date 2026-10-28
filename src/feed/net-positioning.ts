@@ -1,5 +1,5 @@
 export type NetPositioningMethod = 'price-oi' | 'aggressor-flow-oi';
-export type NetPositioningVenue = 'binance' | 'hyperliquid';
+export type NetPositioningVenue = 'binance' | 'hyperliquid' | 'bybit';
 export type NetPositioningSide = 'longs' | 'shorts';
 
 export interface NetPositioningObservation {
@@ -131,7 +131,7 @@ function decimalString(value: ExactDecimal) {
 }
 
 function zero() { return { units: 0n, scale: 0 }; }
-function isVenue(value: unknown): value is NetPositioningVenue { return value === 'binance' || value === 'hyperliquid'; }
+function isVenue(value: unknown): value is NetPositioningVenue { return value === 'binance' || value === 'hyperliquid' || value === 'bybit'; }
 function candleOpenForEnd(endTimeMs: number, intervalMs: number) {
   // Attribute by the interval's effective end timestamp to the host candle [open, close).
   return Math.floor(endTimeMs / intervalMs) * intervalMs;
@@ -150,7 +150,7 @@ export class NetPositioningHistory {
     if (!Number.isSafeInteger(candleIntervalMs) || candleIntervalMs <= 0) throw new RangeError('Invalid host candle interval');
   }
 
-  setCandleInterval(intervalMs: number, requestedVenues: readonly NetPositioningVenue[] = ['binance', 'hyperliquid']) {
+  setCandleInterval(intervalMs: number, requestedVenues: readonly NetPositioningVenue[] = ['binance', 'hyperliquid', 'bybit']) {
     if (!Number.isSafeInteger(intervalMs) || intervalMs <= 0) throw new RangeError('Invalid host candle interval');
     if (intervalMs === this.candleIntervalMs) return [];
     const rows = [...this.intervals.values()];

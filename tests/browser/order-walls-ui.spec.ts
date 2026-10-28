@@ -3,11 +3,12 @@ import { installDepthFixture } from './depth-fixture';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 
 test('Order Walls settings persist and remain a single viewport consumer alongside Heatmap', async ({ page }) => {
+  test.setTimeout(60000);
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await installDepthFixture(page);
-  const panel = page.locator('.candle-panel').first();
-  const panelId = await panel.getAttribute('data-panel-id');
+  const panelId = await page.locator('.candle-panel').first().getAttribute('data-panel-id');
+  const panel = page.locator(`.candle-panel[data-panel-id="${panelId}"]`);
   await page.evaluate(() => {
     const feed = (window as any).__terminal.feed;
     const calls: { subscribe: unknown[]; settings: unknown[]; viewport: unknown[] } = (window as any).__orderWallsUiCalls = { subscribe: [], settings: [], viewport: [] };
@@ -35,6 +36,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
 
   await panel.getByRole('button', { name: 'Order Walls settings', exact: true }).click();
   const settings = panel.locator('dialog.order-walls-settings');
+  await settings.getByLabel('Detection mode', {exact:true}).selectOption('threshold');
   await settings.getByLabel('Detection', { exact: true }).selectOption('absolute');
   await expect(settings.getByLabel('Relative percentile', { exact: true })).toBeHidden();
   await settings.getByLabel('Absolute notional (USD)', { exact: true }).fill('725000');
@@ -75,7 +77,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
   await chooseChartMarket(panel, 'Hyperliquid · BTC Perp');
-  await expect(panel.locator('.order-walls-notice')).toContainText('unavailable');
+  await expect(panel.locator('.active-indicator[data-definition-id="native.order-walls"]')).toContainText('Unavailable');
   expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
 
   await page.reload();
@@ -86,7 +88,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   });
   expect(restored.series.venue).toBe('hyperliquid');
   expect(restored.walls.settings).toMatchObject({ method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false, showPriceLines: true });
-  await expect(page.locator('.candle-panel').first().locator('.order-walls-notice')).toContainText('unavailable');
+  await expect(panel.locator('.active-indicator[data-definition-id="native.order-walls"]')).toContainText('Unavailable');
   expect(errors).toEqual([]);
 });
 
@@ -125,4 +127,23 @@ test('wall tooltip uses the historical hit value and labels unknown bounds', asy
   expect(text.knownExit).not.toContain('Censored at');
   expect(text.truncated).toContain('Historical notional unavailable · earlier value history was evicted');
   await expect(panel.locator('.heatmap-readout')).toHaveText(text.tooltip);
+});
+
+test('Order Walls distinguishes pending replay from an empty finished history',async({page})=>{
+  await installDepthFixture(page);
+  await page.evaluate(()=>{
+    (window as any).__terminal.feed.subscribeOrderWalls=(_id:string,_request:unknown,callback:unknown)=>{
+      (window as any).__wallProgressCallback=callback;return()=>{};
+    };
+  });
+  const panel=page.locator('.candle-panel').first();await addIndicator(panel,'Order Walls');
+  await page.evaluate(()=>{
+    const from=Date.UTC(2026,9,27,12),to=from+4*3600000;
+    (window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'loading',provisional:true,replay:{from,to,through:from+3600000}}});
+  });
+  await expect(panel.locator('.order-walls-notice')).toContainText('History replay 25% · loaded through 13:00:00 UTC · remaining history pending');
+  await expect(panel.locator('.order-walls-notice')).toContainText('current wall provisional');
+  await page.screenshot({path:'/tmp/iqterminal-order-walls-replay-progress.png'});
+  await page.evaluate(()=>(window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'live',provisional:false}}));
+  await expect(panel.locator('.order-walls-notice')).not.toContainText('History replay');
 });

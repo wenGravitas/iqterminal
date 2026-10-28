@@ -24,7 +24,9 @@ async function expectCandleColumns(page: Page) {
 
 test('worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
+  const tree = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true }); if (await tree.isVisible()) await tree.click();
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   // Pin the fixture's view to its supplied depth range, independent of autoscale/clock boundaries.
@@ -35,7 +37,7 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   expect(first.mounted).toBe(true);
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
   await panel.getByRole('button', { name: 'Add Binance depth band', exact: true }).click();
-  await expect(panel.locator('.indicator-picker .dialog-status')).toContainText('added with its default settings', { timeout: 10000 });
+  await expect(panel.getByRole('dialog', { name: 'Add an indicator', exact: true }).locator('.dialog-status')).toContainText('added with its default settings', { timeout: 10000 });
   await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
   await page.waitForTimeout(1100);
   const diagnostics = await worker.evaluate(() => (self as any).__heatmapFixture);
@@ -105,7 +107,7 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   const candleStart = (await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart;
   await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
-  await panel.getByLabel('Opacity', { exact: true }).fill('0.3');
+  await panel.locator('dialog.heatmap-settings').getByLabel('Opacity', { exact: true }).fill('0.3');
   await panel.locator('dialog.heatmap-settings').getByRole('button', { name: 'Apply', exact: true }).click();
   expect((await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart).toBe(candleStart);
   // Hidden charts collect without painting; a second consumer keeps the book alive when the first closes.
@@ -123,7 +125,9 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
 });
 
 test('heatmap labels, settings, resize, unsupported instruments and saved layouts', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
   await installDepthFixture(page); const panel = page.locator('.candle-panel').first();
+  const tree = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true }); if (await tree.isVisible()) await tree.click();
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.heatmap-notice')).toContainText('live');
   // Explicit long session tiles exercise actual primitive LOD and labels, independent of wall-clock wait.

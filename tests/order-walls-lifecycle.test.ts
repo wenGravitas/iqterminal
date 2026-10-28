@@ -13,7 +13,7 @@ const price = 50_000;
 type RawBookScope = { bids: { complete: boolean }; asks: { complete: boolean } };
 const scope: RawBookScope = { bids: { complete: true }, asks: { complete: true } };
 const settings: OrderWallsSettings = {
-  ...DEFAULT_ORDER_WALLS_SETTINGS,
+  ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const,
   enabled: true,
   method: 'absolute',
   thresholdUsd: 100,
@@ -627,4 +627,56 @@ describe('staging Order Walls replay and live lifecycle', () => {
     expect(activeWall(chart)).toBeUndefined();
     service.dispose();
   });
+});
+
+for(const market of ['spot','perpetual'] as const)it(`Top Levels ${market} live bootstrap reconciles to the same ordered episodes and ranks`,async()=>{
+ const topSettings:OrderWallsSettings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',topLevels:2};
+ const records:RawRecord[]=[{kind:'snapshot',at:viewportFrom-1,cursor:0,epoch:1,bids:[[50000,10],[49999,9],[49998,8]],asks:[[50001,12],[50002,11],[50003,10]],bookScope:scope},
+  {kind:'delta',at:viewportFrom+100,cursor:1,epoch:1,bids:[[50000,11]],asks:[]},
+  {kind:'delta',at:base-1000,cursor:2,epoch:1,bids:[[49998,20]],asks:[]},
+  {kind:'delta',at:base,cursor:3,epoch:1,bids:[[50000,12]],asks:[[50001,13]]}];
+ const api=new FakeDepthApi(records,base),heads=makeHeads(),chart=makeChartHarness(),events:WallBatch[]=[];
+ const held=api.hold(q=>q.watermark===undefined);
+ const request:typeof fetch=async(input,init)=>{const response=await api.request(input);const data=await response.json();
+  if(market==='spot'){data.market='spot';data.instrument='binance:spot:BTCUSDT';data.feed='binance:spot:BTCUSDT:spot-diff-depth';}
+  return pageResponse(data);
+ };
+ const service=new StagingOrderWallsService(heads.source,e=>{if(e.type==='order-wall-batch'){events.push(e);applyBatch(chart,e);}},request,()=>base);
+ service.command({type:'order-wall-subscribe',id:'top-reconcile',request:{market:market==='spot'?'binance-spot':'binance-perp',from:viewportFrom,to:base,followLive:true,settings:topSettings}});
+ await held.entered.promise;heads.send({type:'head',cursor:3,at:base,epoch:1});
+ await vi.waitFor(()=>expect(events.at(-1)?.status.provisional).toBe(true));
+ const generation=service.diagnostics().subscriptions[0]!.generation;
+ service.command({type:'order-wall-viewport',id:'top-reconcile',from:viewportFrom,to:base,autoPriceWidth:1000});
+ expect(service.diagnostics().subscriptions[0]!.generation).toBe(generation);
+ held.release();await vi.waitFor(()=>expect(service.diagnostics().subscriptions[0]?.replayPromoted).toBe(true));
+ const seed=api.makeSeed(viewportFrom,3)!;
+ const reference=new OrderWallDetector(topSettings,market==='spot'?.01:.1);
+ reference.processBatch([{kind:'snapshot',at:seed.at,cursor:seed.cursor,epoch:seed.epoch,bids:seed.bids.map(([p,q])=>[Number(p),Number(q)] as const),asks:seed.asks.map(([p,q])=>[Number(p),Number(q)] as const),bookScope:{bidComplete:true,askComplete:true}},...records.filter(r=>r.cursor>seed.cursor).map(r=>({...r,bookScope:{bidComplete:true,askComplete:true}}))]);
+ reference.confirmHead(base,3);
+ expect(normalizedSegments([...chart.orderWallSegments.values()])).toEqual(normalizedSegments(reference.snapshot()));
+ expect([...chart.orderWallSegments.values()].filter((s:any)=>s.end===null)).toHaveLength(4);
+ expect(events.at(-1)?.status.provisional).toBe(false);
+ expect(api.calls.every(q=>market==='spot'?q.market==='spot':q.market===undefined)).toBe(true);
+ service.dispose();
+});
+
+it('keeps overlapping Top Levels episode IDs across an earlier pan without merging same-price re-entries',async()=>{
+ const topSettings:OrderWallsSettings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',topLevels:1};
+ const api=new FakeDepthApi([
+  {kind:'snapshot',at:viewportFrom-200000,cursor:0,epoch:1,bids:[[50000,10],[49999,9]],asks:[[50001,10]],bookScope:scope},
+  {kind:'delta',at:base-50000,cursor:1,epoch:1,bids:[[49999,20]],asks:[]},
+  {kind:'delta',at:base-30000,cursor:2,epoch:1,bids:[[49999,1]],asks:[]},
+  {kind:'delta',at:base-10000,cursor:3,epoch:1,bids:[[49999,30]],asks:[]},
+  {kind:'delta',at:base,cursor:4,epoch:1,bids:[],asks:[]},
+ ],base);api.earliestRetainedAt=viewportFrom-200000;
+ const heads=makeHeads(),chart=makeChartHarness();const service=new StagingOrderWallsService(heads.source,e=>{if(e.type==='order-wall-batch')applyBatch(chart,e);},api.request,()=>base);
+ service.command({type:'order-wall-subscribe',id:'pan-identity',request:{market:'binance-perp',from:viewportFrom,to:base,followLive:false,settings:topSettings}});
+ await vi.waitFor(()=>expect(service.diagnostics().subscriptions[0]?.replayPromoted).toBe(true));
+ const episodes=()=>[...chart.orderWallSegments.values()].filter((s:any)=>s.price===50000&&s.end!==null).sort((a:any,b:any)=>a.end-b.end) as OrderWallSegment[];
+ const before=episodes();expect(before).toHaveLength(2);expect(before[0]!.id).not.toBe(before[1]!.id);
+ const generation=service.diagnostics().subscriptions[0]!.generation;
+ service.command({type:'order-wall-viewport',id:'pan-identity',from:viewportFrom-100000,to:base,autoPriceWidth:1000});
+ await vi.waitFor(()=>{expect(service.diagnostics().subscriptions[0]?.generation).toBeGreaterThan(generation);expect(service.diagnostics().subscriptions[0]?.replayPromoted).toBe(true);});
+ expect(episodes().map(s=>s.id)).toEqual(before.map(s=>s.id));expect(episodes()[0]!.start).toBe(viewportFrom-100000);
+ expect(episodes().map(s=>s.endReason)).toEqual(['rank-exit','rank-exit']);service.dispose();
 });

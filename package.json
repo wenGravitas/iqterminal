@@ -14,7 +14,8 @@
     "test:browser": "playwright test",
     "bench": "node scripts/bench.mjs",
     "smoke:live": "node scripts/live.mjs",
-    "smoke:live-spot": "node scripts/live-spot.mjs"
+    "smoke:live-spot": "node scripts/live-spot.mjs",
+    "bench:order-wall-top-levels": "node scripts/order-wall-top-levels-bench.mjs"
   },
   "dependencies": {
     "dockview-core": "8.4.1",

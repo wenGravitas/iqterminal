@@ -13,7 +13,8 @@ import {
 
 const base = 1_800_000_000_000;
 const settings = (patch: Partial<OrderWallsSettings> = {}) => orderWallsSettings({
-  ...DEFAULT_ORDER_WALLS_SETTINGS,
+  ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const,
+  aggregation: 'auto',
   ...patch,
   enabled: true,
 });
@@ -25,7 +26,7 @@ const level = (price: number, usd: number): readonly [number, number] => [price,
 
 describe('Order Walls settings and market identity', () => {
   it('normalizes bounded defaults and preserves distinct Binance Spot and USD-M identities', () => {
-    expect(orderWallsSettings({ relativePercentile: 101, opacity: -1, aggregation: 25 })).toMatchObject({
+    expect(orderWallsSettings({ relativePercentile: 101, opacity: -1, aggregation: 37 })).toMatchObject({
       relativePercentile: 95, opacity: 0.85, aggregation: 'auto', showHistory: true, thicknessPx: 2,
     });
     expect(orderWallMarket({ venue: 'binance', market: 'spot' })).toBe('binance-spot');

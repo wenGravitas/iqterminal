@@ -40,7 +40,7 @@ test('UTC TPO settings preserve its worker group, apply colors and retry the cha
   await expect(tpo).toBeVisible(); await expect(ema).toBeVisible();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].tpo.sessions)).toBeGreaterThan(0);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].tpo.profiles)).toBeGreaterThan(0);
-  const collapse = panel.getByRole('button', { name: 'Collapse object tree sidebar', exact: true });
+  const collapse = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
   if (await collapse.count()) await collapse.click();
 
   const beforeSettings = await workerTpoDiagnostics(page);
@@ -209,7 +209,7 @@ test('UTC TPO uses plot CSS coordinates on a DPR 2 canvas across UTC day boundar
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].series.venue)).toBe('hyperliquid');
   await addIndicator(panel, 'UTC TPO Profile');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].tpo.profiles)).toBeGreaterThan(0);
-  const collapse = panel.getByRole('button', { name: 'Collapse object tree sidebar', exact: true });
+  const collapse = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
   if (await collapse.count()) await collapse.click();
   await panel.getByLabel('Timeframe', { exact: true }).selectOption('15m');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].series.interval)).toBe('15m');

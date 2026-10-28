@@ -902,9 +902,12 @@ test('unavailable direct endpoint displays recoverable error',async({page})=>{
   await expect(page.getByRole('button',{name:'Retry market data'}).first()).toBeVisible();
 });
 
-test('native tab drag groups charts and splitter drag resizes',async({page})=>{
+test('pointer tab drag groups charts and splitter drag resizes',async({page})=>{
   const tab=page.locator('.dv-tab').first(),target=page.locator('.dv-tab').last();
-  await tab.dragTo(target);await expect(page.locator('.dv-groupview')).toHaveCount(1);
+  const from=(await tab.boundingBox())!,to=(await target.boundingBox())!;
+  await page.mouse.move(from.x+30,from.y+12);await page.mouse.down();
+  await page.mouse.move(from.x+40,from.y+24);await page.mouse.move(to.x+30,to.y+12,{steps:3});await page.mouse.up();
+  await expect(page.locator('.dv-groupview')).toHaveCount(1);
   await page.getByRole('button',{name:'Add chart',exact:true}).first().click();await expect(page.locator('.dv-groupview')).toHaveCount(2);
   const sash=page.locator('.dv-sash.dv-enabled').first();const box=await sash.boundingBox();if(!box)throw new Error('Splitter absent');const before=await page.locator('.dv-groupview').first().boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+100,box.y+box.height/2,{steps:10});await page.mouse.up();const after=await page.locator('.dv-groupview').first().boundingBox();expect(Math.abs(after!.width-before!.width)).toBeGreaterThan(20);
 });

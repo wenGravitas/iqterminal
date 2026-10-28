@@ -1,0 +1,30 @@
+import {test,expect} from '@playwright/test';
+import {addIndicator,chooseChartMarket} from './indicator-actions';
+
+test('explicit live Spot 5m Top 8 capture follows real depth and retains active episodes',async({page})=>{
+ test.skip(process.env.IQ_TOP_LEVELS_LIVE_TEST!=='1','Explicit real staging depth capture only');test.setTimeout(240000);
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>localStorage.setItem('basis.theme.v1','dark'));
+ await page.setViewportSize({width:1600,height:1000});await page.goto(process.env.PLAYWRIGHT_LIVE_URL??'http://127.0.0.1:5173/');
+ await page.waitForFunction(()=>(window as any).__terminal?.stats().panels[0]?.bars>0,{},{timeout:90000});
+ const id=await page.locator('.candle-panel').first().getAttribute('data-panel-id');
+ await page.evaluate(id=>{const t=(window as any).__terminal;for(const panel of [...t.dock.panels])if(panel.id!==id)t.dock.removePanel(panel);},id);
+ const panel=page.locator(`.candle-panel[data-panel-id="${id}"]`);await chooseChartMarket(panel,'Binance · BTCUSDT Spot');await panel.getByLabel('Timeframe',{exact:true}).selectOption('5m');
+ await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().series.market,id)).toBe('spot');
+ await page.waitForFunction(id=>(window as any).__terminal.panels.get(id)?.engine.barCount>0,id,{timeout:90000});
+ await page.evaluate(id=>{const e=(window as any).__terminal.panels.get(id).engine,base=e.chart.dataLayer.baseIndex;e.setRange({from:base-3,to:base+1.5});},id);
+ await addIndicator(panel,'Order Walls');
+ const state=()=>page.evaluate(id=>{const p=(window as any).__terminal.panels.get(id),d=p.diagnostics();return {series:d.series,source:d.orderWalls.status,render:p.engine.orderWallsDiagnostics(),segments:[...p.engine.orderWallSegments.values()] as any[]};},id);
+ await expect.poll(async()=>(await state()).source?.rankingScope?.bidCount??0,{timeout:90000}).toBeGreaterThan(0);
+ await expect.poll(async()=>{const d=await state();return d.segments.filter(s=>s.end===null&&s.side==='bid').length>0&&d.segments.filter(s=>s.end===null&&s.side==='ask').length>0&&(d.source?.lastConfirmedAt??0)>Date.now()-15000;},{timeout:90000}).toBe(true);
+ const before=await state();await expect.poll(async()=>(await state()).source?.lastConfirmedAt??0,{timeout:60000}).toBeGreaterThan(before.source.lastConfirmedAt+20000);
+ await expect.poll(async()=>{const d=await state();return d.segments.filter(s=>s.end===null&&s.side==='bid').length>0&&d.segments.filter(s=>s.end===null&&s.side==='ask').length>0&&!!d.source?.rankingScope;},{timeout:60000}).toBe(true);
+ const after=await state(),active=after.segments.filter(s=>s.end===null);
+ expect(active.filter(s=>s.side==='bid').length).toBeGreaterThan(0);expect(active.filter(s=>s.side==='bid').length).toBeLessThanOrEqual(8);expect(active.filter(s=>s.side==='ask').length).toBeLessThanOrEqual(8);
+ expect(after.series.venue).toBe('binance');expect(after.series.market).toBe('spot');expect(after.series.interval).toBe('5m');
+ await page.evaluate(({id,prices,status})=>{const e=(window as any).__terminal.panels.get(id).engine;const data=e.chart.dataLayer;e.setRange({from:data.timeToIndexFloat((status.lastConfirmedAt-900000)/1000),to:data.timeToIndexFloat((status.lastConfirmedAt+300000)/1000)});e.chart.setAutoScale(false);e.chart.panes()[0].priceScale.setPriceRange({min:Math.min(...prices)-100,max:Math.max(...prices)+100});e.setOrderWallStatus(status);},{id,prices:active.map(s=>s.price),status:after.source});
+ await expect.poll(async()=>(await state()).render.visible).toBeGreaterThan(0);
+ await page.screenshot({path:'artifacts/order-walls/top-levels-live-spot-5m.png'});
+ const result={kind:'genuine-live-staging-depth-not-fixtures',observedAt:Date.now(),market:'binance-spot',timeframe:'5m',status:after.source,render:(await state()).render,active:active.map(s=>({id:s.id,side:s.side,price:s.price,rank:s.rank,start:s.start,durationMs:s.durationMs,last:s.valueRuns.at(-1)})),beforeAt:before.source.lastConfirmedAt,errors};
+ const fs=await import('node:fs/promises');await fs.writeFile('artifacts/order-walls/top-levels-live-spot-5m.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));expect(errors).toEqual([]);
+});

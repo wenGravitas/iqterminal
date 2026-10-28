@@ -1,16 +1,28 @@
 # Depth Matrix
 
-Depth Matrix is a dockable comparison view for synchronized Binance BTCUSDT Spot and USD-M perpetual books. Add it from the bottom toolbar. Its settings let you order or remove columns, choose a fixed USDT bucket width, adjust venue width, display BTC quantity or USDT notional labels, compare independent or shared scales, and highlight large rows. Layout version 5 stores these choices with the Dockview panel.
+Depth Matrix is a dockable comparison view for synchronized Binance BTCUSDT Spot and USD-M perpetual books. Add it from the bottom toolbar. Its settings let you order or remove columns, choose a fixed USDT bucket width, adjust venue width, display BTC quantity or USDT notional labels, compare independent or shared scales, select a reference midpoint, and highlight large sides. Layout version 5 stores these choices with the Dockview panel.
 
 The active sources are Binance BTCUSDT Spot and Binance BTCUSDT USD-M Perp. The source picker also lists Bybit Spot, Bybit perpetual and Hyperliquid BTC perpetual as unavailable; selecting one never creates sample or borrowed quotes. Up to eight source IDs can be stored, while only the two configured Binance books produce live values.
 
+## Reference midpoint
+
+SET → Reference mid selects the persisted `referenceSourceId`. New matrices explicitly default to Binance Spot. Legacy matrices without this field migrate once to the first supported source in their saved order. Reordering columns retains that choice. Removing it leaves **Choose reference**, which persists until the user selects another source; adding a source does not silently select it.
+
+The existing toolbar shows **SPOT MID** or **PERP MID** and a compact rounded midpoint. Its accessible label and hover retain the full midpoint, source, rounding explanation and feed state. Retained prices are explicitly stale/syncing/disconnected/unavailable; they never borrow another venue's quote. CENTER uses exactly the selected reference and is disabled without usable live midpoint data. Changing the reference is local presentation work and creates no market-data connection or cache invalidation.
+
 ## Rows and coverage
 
-Price buckets use exact decimal arithmetic and fixed `[low, high)` USDT bounds. The PRICE axis labels each row with its low edge. Bid and ask quantities are retained separately in the same row: a mixed bucket has independent upper/lower strips, and a one-sided bucket uses the full cell height. Each side uses the same full-column width denominator. Bar widths compare normalized BTC quantity in both label modes; switching labels to USDT does not change relative sizes. A shared scale compares all selected venues; a per-venue scale fills each venue's range independently.
+Price buckets use exact decimal arithmetic and fixed `[low, high)` USDT bounds. The PRICE axis labels each row with its low edge. The lower-bound label remains visible even in the current bucket; a midpoint never replaces it. Each supported venue has a small edge marker in its own live current bucket. The marker identifies the bucket, not an exact within-bucket price, and disappears for stale or unavailable data. Spot and perpetual markers can occupy different rows.
+
+Ordinary rows are 28px. Any selected supported venue with both positive bid and ask quantities expands that absolute bucket to 36px across the shared axis and every venue canvas. Asks use the upper strip; bids use the lower strip. One-sided cells remain a single bar and value. Expansion is immediate; contraction waits 1,000ms after the mixed condition clears, using the centralized presentation constant. A returning side cancels contraction. Expired and departed buckets are removed from the bounded expansion state.
+
+One shared row layout owns row positions, extents, pointer hit tests, hover highlights, visible/dirty rendering, CENTER and scroll/page anchors. Height changes and adjacent-page replacements preserve the top visible bucket and its pixel offset rather than recentering on market updates. Each side uses the same full-column width denominator. Bar widths compare normalized BTC quantity in both label modes; switching labels to USDT does not change relative sizes. A shared scale compares all selected venues; a per-venue scale fills each venue's range independently.
 
 The worker preserves the depth collector's side-specific snapshot scope. `observed` means the side has one or more levels in the bucket; `known empty` means the synchronized book covers the bucket and has no levels there; `partial` marks a bucket crossing an outer snapshot/truncation boundary; `unknown` lies outside proved coverage. A sequence gap invalidates the working book and displays syncing until a new checkpoint/snapshot arrives. A stale or disconnected transport retains the last observed quantities but marks the header and side coverage with that state. There is no combined Total column.
 
-Displayed notional is `price × normalized BTC quantity`, in USDT. Cell labels use compact precision and mark positive values below display precision. Hovering any venue cell reports that venue's own bucket quantities, notionals, side coverage and book age; unsupported sources report that synchronized row data is unavailable.
+Displayed notional is `price × normalized BTC quantity`, in USDT. Cell labels use about three significant figures with clean k/m/b/t suffix transitions (116.986 → 117, 98.826 → 98.8, 15.582 → 15.6, 536.874 → 537). Positive BTC values below 0.001 and notionals below 1 show a less-than label, distinct from zero. Full quantity/notional details remain on hover. The local BTC/USDT setting and global currency override affect labels only. Hovering any venue cell reports that venue's own bucket quantities, notionals, side coverage and book age; unsupported sources report that synchronized row data is unavailable.
+
+Wall thresholds continue to compare each side's BTC quantity, in absolute mode or against the visible positive-side median in relative mode. Qualification is independent: a bid wall cannot intensify the ask strip. A qualifying side gets a thin outer edge and a modest bar-intensity increase; the old full-cell accent outline is removed. Ordinary bars are quieter and quantities use normal-weight 11px text. Shared/per-venue scale smoothing and the 95px default / 65px minimum venue widths are unchanged. No totals column, replenishment/iceberg/TWAP detection or signal markers are added.
 
 ## Data flow and limits
 
@@ -29,9 +41,11 @@ A local synthetic Pi 5 Model B Rev 1.0 benchmark measured `CommittedDepthMatrix.
 Deterministic and gated live checks:
 
 ```sh
-pnpm vitest run tests/depth-matrix.test.ts tests/staging-depth-matrix.test.ts
-PLAYWRIGHT_BASE_URL=http://127.0.0.1:5173 pnpm exec playwright test tests/browser/depth-matrix.spec.ts
+pnpm vitest run tests/depth-matrix.test.ts tests/depth-matrix-presentation.test.ts tests/staging-depth-matrix.test.ts
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:5173 pnpm exec playwright test tests/browser/depth-matrix.spec.ts tests/browser/depth-matrix-presentation.spec.ts
 IQTERM_RUN_LIVE_DEPTH_MATRIX=1 pnpm vitest run tests/staging-depth-matrix-live.test.ts
 ```
 
 The compact live test requires the existing staging proxy plus a backend release containing `/v1/depth-matrix`, and is skipped unless explicitly enabled. It follows durable heads for both collectors and checks that the returned compact views stay live, but it does not start or restart collectors. See [staging setup and coverage](staging-market-data.md) for the proxy connection.
+
+Hovering a price bucket or venue cell shows a Net Longs styled card with bid and ask amounts in both BTC and USDT, coverage and book age. Unknown depth stays distinct from known empty depth.

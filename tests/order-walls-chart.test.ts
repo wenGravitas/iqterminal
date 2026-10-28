@@ -3,6 +3,7 @@ import type { PrimitiveRenderContext } from 'openalgo-charts';
 import { DEFAULT_ORDER_WALLS_SETTINGS, resolveAutoOrderWallPriceWidth, type OrderWallSegment } from '../src/feed/order-walls';
 import { OrderWallsPrimitive } from '../src/chart/order-walls';
 
+const LEGACY_ORDER_WALLS_SETTINGS={...DEFAULT_ORDER_WALLS_SETTINGS,mode:'threshold' as const,aggregation:'auto' as const,thicknessPx:2};
 const base = 1_704_067_200_000;
 
 function context({ from = 0, to = 2, xPerIndex = 100, dpr = 2 }: { from?: number; to?: number; xPerIndex?: number; dpr?: number } = {}): PrimitiveRenderContext {
@@ -35,7 +36,7 @@ function canvas(styles: string[] = [], paths: CapturedPath[] = []): CanvasRender
 
 describe('Order Walls chart hit testing', () => {
   it('maps CSS pointer x to the same event time at DPR 2 used by projected geometry', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {
       id: 'wall', epoch: 1, side: 'bid', price: 100, start: base, end: base + 120_000,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 120_000, percentile: 99,
@@ -53,7 +54,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('keeps each historical wall span in the colour of its contemporaneous percentile', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {
       id: 'wall', epoch: 1, side: 'bid', price: 100, start: base, end: base + 120_000,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 120_000, percentile: 100,
@@ -73,7 +74,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('coalesces contiguous same-colour runs while retaining per-run time hover and subpixel union', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {
       id: 'wall-runs', epoch: 1, side: 'bid', price: 100, start: base, end: base + 300,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 300, percentile: 99,
@@ -101,7 +102,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('keeps mixed percentile color boundaries as separate strokes', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {
       id: 'wall-color-groups', epoch: 1, side: 'bid', price: 100, start: base, end: base + 120_000,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 120_000, percentile: 100,
@@ -128,7 +129,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('keeps separate wall episodes apart across time gaps even with the same color', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment = (id: string, start: number): OrderWallSegment => ({
       id, epoch: 1, side: 'bid', price: 100, start, end: start + 60_000,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 60_000, percentile: 98.5,
@@ -150,7 +151,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('coalesces bid/ask runs per episode without changing side colors or zoomed hover time', () => {
-    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, colorMode: 'bid-ask' }, 60_000);
+    const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true, colorMode: 'bid-ask' }, 60_000);
     const segment = (id: string, side: 'bid' | 'ask'): OrderWallSegment => ({
       id, epoch: 1, side, price: 100, start: base, end: base + 60_000,
       peakUsd: 10_000, meanUsd: 10_000, durationMs: 60_000, percentile: 98,
@@ -175,7 +176,7 @@ describe('Order Walls chart hit testing', () => {
   });
 
   it('keeps Auto selected while zoom changes the shared detector and chart band width', () => {
-    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, aggregation: 'auto' as const };
+    const settings = { ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true, aggregation: 'auto' as const };
     const primitive = new OrderWallsPrimitive(settings, 60_000);
     const segment: OrderWallSegment = {
       id: 'auto-wall', epoch: 1, side: 'bid', price: 100, start: base, end: base + 120_000,
@@ -219,20 +220,53 @@ describe('optional Order Walls price guides', () => {
     primitive.draw(ctx,rc);return {texts,paths};
   }
   it('is opt-in, uses latest confirmed notional and bucket centre, and excludes ended walls',()=>{
-    const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50},60_000);
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50},60_000);
     primitive.setSnapshot([wall(),wall('historical',base+120_000)],{state:'live',lastConfirmedAt:base+120_000});
     expect(render(primitive).texts).toEqual([]);
-    primitive.setSettings({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50,showPriceLines:true});
+    primitive.setSettings({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,aggregation:50,showPriceLines:true});
     expect(render(primitive).texts).toEqual(['B 125 · $1.2M']);
     primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
     expect(render(primitive).texts).toEqual(['~B 125 · $750K']);
   });
   it('suppresses overlapping tags without hiding guides or inventing history',()=>{
-    const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,showPriceLines:true},60_000);
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,showPriceLines:true},60_000);
     primitive.setSnapshot([wall(),wall('second')],{state:'live',lastConfirmedAt:base+120_000});
     const result=render(primitive);
     expect(result.texts).toHaveLength(1);
     expect(result.paths.filter(path=>path.points[0]?.[0]===0)).toHaveLength(2);
     expect(primitive.diagnostics().retainedSegments).toBe(2);
   });
+});
+
+describe('Top Levels native rendering',()=>{
+ const top=(id:string,usd:number,start=base):OrderWallSegment=>({id,epoch:1,detectionMode:'top-levels',rank:1,side:'bid',price:100,start,end:start+120000,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,valueRuns:[{at:start,usd,percentile:null,rank:1,quantity:usd/100}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true});
+ it('coalesces adjacent same-strength spans without discarding exact historical ranks or quantity',()=>{
+  const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const};
+  const p=new OrderWallsPrimitive(settings,60000),a=top('a',10),b=top('b',100);
+  a.valueRuns.push({at:base+60000,usd:12,percentile:null,rank:2,quantity:.12});
+  p.setSnapshot([a,b],{state:'live',tickSize:.1});const paths:CapturedPath[]=[];p.draw(canvas([],paths),context());
+  expect(paths).toHaveLength(2);expect(paths[0]?.points).toEqual([[100,200],[500,200]]);
+  expect(p.orderWallAt(150,100)?.segment.valueRuns[1]).toMatchObject({rank:2,quantity:.12});
+  expect(p.orderWallAt(150,100)?.segment.endReason).toBe('rank-exit');
+ });
+ it('Visible Range Only changes styling references without changing episodes or retained data',()=>{
+  const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true},60000),segments=[top('a',100),top('b',200),top('offscreen',10000,base+600000)];
+  p.setSnapshot(segments,{state:'live',tickSize:.1});const visible:string[]=[];p.draw(canvas(visible),context());
+  expect(visible).toEqual(['#33778c','#ff884d']);
+  p.setSettings({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,visibleRangeOnly:false});const retained:string[]=[];p.draw(canvas(retained),context());
+  expect(retained).toEqual(['#33778c']); // Same-style paths share a stroke without joining episodes.
+  expect(p.diagnostics().retainedSegments).toBe(3);
+  expect(segments[0]!.valueRuns).toEqual([{at:base,usd:100,percentile:null,rank:1,quantity:1}]);
+ });
+ it('confirmation never draws before its availability, and historical episodes have a bounded render cache',()=>{
+  const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,minDurationMs:60000,historyEpisodes:16},60000);
+  const segments=Array.from({length:20},(_,i)=>top('episode-'+i,100+i));p.setSnapshot(segments,{state:'live',tickSize:.1});const paths:CapturedPath[]=[];p.draw(canvas([],paths),context());
+  expect(p.diagnostics().retainedSegments).toBe(16);expect(paths.every(path=>path.points[0]![0]>=300)).toBe(true);
+ });
+ it('hover uses the latest closed episode metadata even for an earlier un-reprojected run',()=>{
+  const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true},60000),segment=top('mutable',100);segment.end=null;
+  p.setSnapshot([segment],{state:'live',tickSize:.1,lastConfirmedAt:base+120000});p.draw(canvas(),context());
+  const closed={...segment,end:base+120000,endReason:'rank-exit' as const};p.patch([{id:segment.id,segment:closed}],{state:'live',tickSize:.1,lastConfirmedAt:base+120000});p.draw(canvas(),context());
+  expect(p.orderWallAt(150,100)?.segment).toMatchObject({end:base+120000,endReason:'rank-exit'});
+ });
 });

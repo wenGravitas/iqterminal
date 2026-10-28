@@ -1,15 +1,17 @@
+import {compactVenueText,venueLabelIcon,amountCaption,labelCurrency,type LabelVenue,type LabelAmount} from './venue-label';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import { getDrawingTool, registerDrawingTool, type DrawContext, type Drawing, type DrawingController, type DrawingTool } from 'openalgo-charts/draw';
 
 const wrappedDraw = Symbol.for('iqterminal.drawing-label-renderer.v1');
 type WrappedDraw = DrawingTool['draw'] & { [wrappedDraw]?: true };
 const labelTools = ['horizontal-line', 'horizontal-ray'] as const;
+const rendererTools=[...labelTools,'rectangle'] as const;
 const fontStack = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
 interface AxisPriceLabel { price: number; y: number; color: string; alpha: number }
 
 /** Add IQTerminal object labels through the public native drawing-tool registry. */
 export function registerIQDrawingLabelRenderers() {
-  for (const id of labelTools) {
+  for (const id of rendererTools) {
     const tool = getDrawingTool(id);
     if ((tool.draw as WrappedDraw)[wrappedDraw]) continue;
     const nativeDraw = tool.draw;
@@ -23,6 +25,10 @@ export function registerIQDrawingLabelRenderers() {
         }
       : tool.settings;
     const draw: WrappedDraw = context => {
+      if(id==='rectangle'){
+        if(context.drawing.props?.positioningRange){nativeDraw({...context,drawing:{...context.drawing,text:{...context.drawing.text,value:''}}});const xs=context.pts.map(p=>p.x);if(Math.max(...xs)>=0&&Math.min(...xs)<=context.rc.plotWidth*context.rc.dpr)drawIQLabel(context,id);}
+        else nativeDraw(context);return;
+      }
       const axisAvailable = hasPriceAxis(context.rc);
       // OpenAlgo's DrawingLayer clips tool renderers to the plot. Preserve its
       // setting on the drawing, but move only its numeric label to the scale.
@@ -71,7 +77,13 @@ export class DrawingAxisPriceLabels implements IPrimitive {
 
     const scale = rc.readoutPriceScale ?? rc.priceScale;
     for (const { drawing, preview } of byId.values()) {
+      if(drawing.tool==='rectangle'&&drawing.props?.positioningRange&&drawing.points.length>=2&&drawing.style.showLabels!==false){
+        const xs=drawing.points.map(p=>rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(p.time)));
+        if(Math.max(...xs)>=0&&Math.min(...xs)<=rc.plotWidth)drawAxisPriceRange(ctx,rc,Math.min(...drawing.points.map(p=>p.price)),Math.max(...drawing.points.map(p=>p.price)),drawing.style.color??rc.theme.lineColor,preview?.7:1);
+        continue;
+      }
       if (!labelTools.includes(drawing.tool as typeof labelTools[number]) || drawing.visible === false || drawing.style.showLabels === false) continue;
+      if(drawing.tool==='horizontal-ray'){const x=rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(drawing.points[0]!.time));if(x>rc.plotWidth)continue;}
       const price = drawing.points[0]?.price;
       if (!Number.isFinite(price)) continue;
       const y = scale.priceToY(price!) * rc.dpr;
@@ -85,7 +97,7 @@ function hasPriceAxis(rc: PrimitiveRenderContext) {
   return rc.priceAxisSide !== 'hidden' && Number.isFinite(rc.priceAxisWidth) && rc.priceAxisWidth > 0;
 }
 
-function drawAxisPriceLabel(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext, label: AxisPriceLabel) {
+export function drawAxisPriceLabel(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext, label: AxisPriceLabel) {
   const { dpr, priceAxisSide, priceAxisWidth, priceAxisOffset, plotHeight } = rc;
   if (!(Number.isFinite(dpr) && dpr > 0 && Number.isFinite(priceAxisWidth) && priceAxisWidth > 0 && plotHeight > 0)) return;
   if (priceAxisSide === 'hidden' || label.y < 0 || label.y > plotHeight * dpr) return;
@@ -134,17 +146,26 @@ function contrastingText(color: string) {
   return luminance > .42 ? '#10131a' : '#ffffff';
 }
 
-function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
+function drawIQLabel(context: DrawContext, toolId: typeof rendererTools[number]) {
   const { drawing, ctx, rc, pts } = context;
   const props = drawing.props;
   const customLabel = props?.iqterminalLabelState === 'custom';
-  const value = customLabel
+  const rawValue = customLabel
     ? (typeof props?.iqterminalLabel === 'string' ? props.iqterminalLabel : '')
     : toolId === 'horizontal-ray' && typeof drawing.text?.value === 'string' ? drawing.text.value : '';
+  const executionLabel=toolId==='horizontal-ray'&&!customLabel&&/^(BINANCE|BYBIT|HYPERLIQUID) (PERP|SPOT) · (BUY|SELL|UNKNOWN) · (AGG PRINT|TRADE)/.test(rawValue);
+  const rangeAmount=drawing.props?.positioningRange as LabelAmount|undefined;
+  let executionAmount=drawing.props?.executionAmount as LabelAmount|undefined;
+  if(!executionAmount&&executionLabel){const match=/\n([\d,.]+) BTC @ .*? · ([\d,.]+) (USDT|USD) ·/.exec(rawValue);if(match)executionAmount={venue:/^BINANCE /.test(rawValue)?'binance':/^BYBIT /.test(rawValue)?'bybit':'hyperliquid',market:/ SPOT /.test(rawValue)?'spot':'perpetual',baseAmount:Number(match[1]!.replaceAll(',','')),quoteAmount:Number(match[2]!.replaceAll(',',''))};}
+  const automaticRange=rangeAmount&&(/^(BN|HL|BY)\[P\] · Net (Longs|Shorts) · (partial )?candle VA 70% \(proxy\)$/.test(rawValue)||/^Net (Longs|Shorts) · (binance|bybit|hyperliquid) · /.test(rawValue));
+  const value=automaticRange?amountCaption(rangeAmount,labelCurrency(rc.dataLayer,'btc')):executionLabel&&executionAmount?amountCaption(executionAmount,labelCurrency(rc.dataLayer)):executionLabel?compactVenueText(rawValue):rawValue;
+  const venue=(drawing.props?.positioningRange as {venue?:LabelVenue}|undefined)?.venue??(executionLabel?(/^BINANCE /.test(rawValue)?'binance':/^BYBIT /.test(rawValue)?'bybit':'hyperliquid'):null);
+  const icon=venue?venueLabelIcon(venue):undefined;
   if (!value.trim()) return;
   const anchor = pts[0];
   if (!anchor || !Number.isFinite(anchor.x) || !Number.isFinite(anchor.y)) return;
 
+  if(venue&&toolId==='horizontal-ray'&&anchor.x>rc.plotWidth*rc.dpr)return;
   const dpr = Number.isFinite(rc.dpr) && rc.dpr > 0 ? rc.dpr : 1;
   const fontSize = Number.isFinite(drawing.text?.fontSize) ? Math.max(6, Math.min(96, drawing.text!.fontSize!)) : 11;
   const fontPx = fontSize * dpr;
@@ -159,9 +180,10 @@ function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
   const nativeRayText = toolId === 'horizontal-ray' && !customLabel;
   const lines = value.split(/\r?\n/).slice(0, 3);
   const lineHeight = fontPx * 1.3;
-  const measuredWidth = Math.max(...lines.map(line => ctx.measureText(line).width));
+  const iconSpace=icon?16*dpr:0;
+  const measuredWidth = Math.max(...lines.map(line => ctx.measureText(line).width))+iconSpace;
   const x = Math.max(4 * dpr, Math.min(
-    (toolId === 'horizontal-ray' ? anchor.x + 4 * dpr : 4 * dpr),
+    (venue ? maxWidth-measuredWidth-4*dpr : toolId === 'horizontal-ray' ? anchor.x + 4 * dpr : 4 * dpr),
     maxWidth - measuredWidth - 4 * dpr,
   ));
   const availableWidth = Math.max(1, maxWidth - x - 4 * dpr);
@@ -180,6 +202,17 @@ function drawIQLabel(context: DrawContext, toolId: typeof labelTools[number]) {
   // visible drawing stroke.
   const explicitTextColor = props?.iqterminalLabelTextColorExplicit === true;
   ctx.fillStyle = (explicitTextColor ? drawing.text?.color : undefined) ?? drawing.style.color ?? '#e5e7eb';
-  for (let index = 0; index < lines.length; index++) ctx.fillText(lines[index]!, x, top + (index + .5) * lineHeight, availableWidth);
+  if(icon)ctx.drawImage(icon,x,top+(lineHeight-12*dpr)/2,12*dpr,12*dpr);
+  for (let index = 0; index < lines.length; index++) ctx.fillText(lines[index]!, x+iconSpace, top + (index + .5) * lineHeight, Math.max(1,availableWidth-iconSpace));
   ctx.restore();
+}
+
+/** Shared zone boundary tags, separated when the range is narrower than a tag. */
+export function drawAxisPriceRange(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext,low:number,high:number,color:string,alpha=1){
+ if(!hasPriceAxis(rc))return;
+ const scale=rc.readoutPriceScale??rc.priceScale,d=rc.dpr,top=scale.priceToY(high)*d,bottom=scale.priceToY(low)*d;
+ if(!Number.isFinite(top+bottom))return;
+ let highY=top,lowY=bottom;
+ if(top>=0&&bottom<=rc.plotHeight*d&&Math.abs(bottom-top)<19*d){const mid=Math.max(19*d,Math.min(rc.plotHeight*d-19*d,(top+bottom)/2));highY=mid-9.5*d;lowY=mid+9.5*d;}
+ drawAxisPriceLabel(ctx,rc,{price:high,y:highY,color,alpha});drawAxisPriceLabel(ctx,rc,{price:low,y:lowY,color,alpha});
 }

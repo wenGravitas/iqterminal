@@ -1,3 +1,4 @@
+import {venueBadge,venueIconPath} from './chart/venue-label';
 import type { NetPositioningPane } from './chart/net-positioning';
 
 type Summary = NonNullable<ReturnType<NetPositioningPane['hoverSummary']>>;
@@ -24,13 +25,14 @@ export function renderPositioningTooltip(element: HTMLElement, data: Summary) {
   for (const source of data.sources) {
     const row = node('div', 'positioning-tooltip-row');
     const swatch = node('span', 'positioning-tooltip-swatch'); swatch.style.backgroundColor = source.color;
-    const label = node('span', 'positioning-tooltip-label', source.label);
+    const label = node('span', 'positioning-tooltip-label positioning-tooltip-venue');label.setAttribute('aria-label',source.label);
+    const icon=document.createElement('img');icon.src=venueIconPath(source.sourceId);icon.alt='';icon.width=12;icon.height=12;label.append(icon,document.createTextNode(venueBadge(source.sourceId)));
     const track = node('span', 'positioning-tooltip-track'), fill = node('span', 'positioning-tooltip-fill');
     fill.style.width = `${Math.abs(source.value ?? 0) / max * 100}%`; fill.style.backgroundColor = source.color; track.append(fill);
-    const sourceUnit = data.currency === 'btc' ? 'BTC' : source.sourceId === 'binance' ? 'USDT' : 'USD';
+    const sourceUnit = data.currency === 'btc' ? 'BTC' : source.sourceId !== 'hyperliquid' ? 'USDT' : 'USD';
     const amount = node('span', 'positioning-tooltip-amount', source.value === null ? `N/A ${sourceUnit}` : `${quantity(source.value)} ${sourceUnit}`);
     const other = data.currency === 'btc' ? source.quoteValue : source.baseValue;
-    amount.append(node('small', 'positioning-tooltip-secondary', other === null ? `N/A ${data.currency === 'btc' ? source.sourceId === 'binance' ? 'USDT' : 'USD' : 'BTC'}` : `${quantity(other)} ${data.currency === 'btc' ? source.sourceId === 'binance' ? 'USDT' : 'USD' : 'BTC'}`));
+    amount.append(node('small', 'positioning-tooltip-secondary', other === null ? `N/A ${data.currency === 'btc' ? source.sourceId !== 'hyperliquid' ? 'USDT' : 'USD' : 'BTC'}` : `${quantity(other)} ${data.currency === 'btc' ? source.sourceId !== 'hyperliquid' ? 'USDT' : 'USD' : 'BTC'}`));
     row.append(swatch, label, track, amount);
     rows.append(row);
     if (source.quality !== 'complete') rows.append(node('div', 'positioning-tooltip-quality', `${source.label}: ${source.quality}`));

@@ -215,15 +215,15 @@ export class StagingNetPositioningService {
 
 function normalizeRequest(request: NetPositioningRequest): NetPositioningRequest {
   const methods = [...new Set((Array.isArray(request.methods) ? request.methods : []).filter(isMethod))].slice(0, 2);
-  const venues = [...new Set((Array.isArray(request.venues) ? request.venues : []).filter(isVenue))].slice(0, 2);
+  const venues = [...new Set((Array.isArray(request.venues) ? request.venues : []).filter(isVenue))].slice(0, 3);
   return { methods, venues };
 }
 
 function isMethod(value: unknown): value is PositioningMethod { return value === 'price-oi' || value === 'aggressor-flow-oi'; }
-function isVenue(value: unknown): value is Venue { return value === 'binance' || value === 'hyperliquid'; }
+function isVenue(value: unknown): value is Venue { return value === 'binance' || value === 'hyperliquid' || value === 'bybit'; }
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === 'object' && !Array.isArray(value)); }
 function errorText(error: unknown) { return error instanceof Error ? error.message : String(error); }
-function venueOrder(venue: Venue) { return venue === 'binance' ? 0 : 1; }
+function venueOrder(venue: Venue) { return venue === 'binance' ? 0 : venue === 'hyperliquid' ? 1 : 2; }
 function rowSignature(row: NetPositioningObservation) {
   return [row.version, row.status, row.reason ?? '', row.oiDeltaBtcDecimal ?? '', row.netLongsBtcDecimal ?? '', row.netShortsBtcDecimal ?? '', row.unclassifiedBtcDecimal ?? '', row.direction ?? '', row.resolutionMs ?? '', row.qualityFlags.join(','), JSON.stringify(row.provenance)].join('|');
 }

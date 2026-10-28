@@ -6,6 +6,7 @@ export type DepthMatrixUnit = 'btc' | 'usdt';
 export type DepthMatrixScale = 'per-source' | 'shared';
 export interface DepthMatrixSettings {
   sources: DepthMatrixSource[]; bucketWidth: string;
+  referenceSourceId: DepthMatrixSource | null;
   columnWidth: number; unit: DepthMatrixUnit; scale: DepthMatrixScale;
   wallMode: 'off' | 'absolute' | 'relative'; wallThreshold: number;
 }
@@ -51,7 +52,7 @@ export function depthMatrixSourceLabel(source: DepthMatrixSource) {
   return depthMatrixSourceDefinition(source)?.label ?? `Unconfigured · ${source}`;
 }
 export const DEFAULT_DEPTH_MATRIX_SETTINGS: Readonly<DepthMatrixSettings> = Object.freeze({
-  sources: ['binance-spot', 'binance-perpetual'] as DepthMatrixSource[], bucketWidth: '100', columnWidth: 95, unit: 'btc', scale: 'per-source', wallMode: 'relative', wallThreshold: 2.5,
+  sources: ['binance-spot', 'binance-perpetual'] as DepthMatrixSource[], referenceSourceId: 'binance-spot', bucketWidth: '100', columnWidth: 95, unit: 'btc', scale: 'per-source', wallMode: 'relative', wallThreshold: 2.5,
 });
 
 export function depthMatrixSettings(value: unknown): DepthMatrixSettings {
@@ -61,7 +62,11 @@ export function depthMatrixSettings(value: unknown): DepthMatrixSettings {
   const parsedWidth = typeof raw.bucketWidth === 'string' || typeof raw.bucketWidth === 'number' ? normalizedPrice(raw.bucketWidth) : null;
   const validWidth = parsedWidth !== null && decimal(parsedWidth)!.coefficient > 0n;
   const columnWidth = typeof raw.columnWidth === 'number' && Number.isFinite(raw.columnWidth) ? Math.max(65, Math.min(150, Math.round(raw.columnWidth))) : 95;
-  return { sources, bucketWidth: validWidth ? parsedWidth! : DEFAULT_DEPTH_MATRIX_SETTINGS.bucketWidth,
+  // Missing legacy fields migrate once from saved order; explicit null never falls back.
+  const referenceSourceId = Object.prototype.hasOwnProperty.call(raw, 'referenceSourceId')
+    ? typeof raw.referenceSourceId === 'string' && sources.includes(raw.referenceSourceId) && DEPTH_MATRIX_SOURCE_REGISTRY[raw.referenceSourceId]?.supported ? raw.referenceSourceId : null
+    : sources.find(source => DEPTH_MATRIX_SOURCE_REGISTRY[source]?.supported) ?? null;
+  return { sources, referenceSourceId, bucketWidth: validWidth ? parsedWidth! : DEFAULT_DEPTH_MATRIX_SETTINGS.bucketWidth,
     columnWidth, unit: raw.unit === 'usdt' ? 'usdt' : 'btc', scale: raw.scale === 'shared' ? 'shared' : 'per-source',
     wallMode: raw.wallMode === 'off' ? 'off' : raw.wallMode === 'absolute' ? 'absolute' : 'relative',
     wallThreshold: typeof raw.wallThreshold === 'number' && Number.isFinite(raw.wallThreshold) ? Math.max(.1, Math.min(1000, raw.wallThreshold)) : 2.5 };
@@ -145,23 +150,20 @@ export function normalizedBtcQuantity(value: number | string, quantityToBtc = 1)
 }
 export function formatDepthMatrixCellValue(value: number, unit: DepthMatrixUnit) {
   if (!Number.isFinite(value) || value <= 0) return '0';
-  if (unit === 'btc') {
-    if (value < .001) return '<0.001';
-    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}m`;
-    const decimals = value >= 100_000 ? 0 : value >= 10_000 ? 1 : value >= 1_000 ? 2 : 3;
-    return trimNumberZeros(value.toFixed(decimals));
-  }
-  if (value < 1) return '<1';
-  return value >= 1_000_000 ? `${(value / 1_000_000).toFixed(1)}m`
-    : value >= 10_000 ? `${(value / 1_000).toFixed(0)}k`
-      : value < 100 ? trimNumberZeros(value.toFixed(2)) : value.toFixed(0);
+  const minimum = unit === 'btc' ? .001 : 1;
+  if (value < minimum) return unit === 'btc' ? '<0.001' : '<1';
+  const suffixes = ['', 'k', 'm', 'b', 't'];
+  let group = Math.min(4, Math.max(0, Math.floor(Math.log10(value) / 3)));
+  // Round before selecting the suffix so 999.9k becomes 1m, never 1000k.
+  let rounded = Number((value / 1000 ** group).toPrecision(3));
+  if (rounded >= 1000 && group < 4) { group++; rounded = Number((value / 1000 ** group).toPrecision(3)); }
+  return `${rounded}${suffixes[group]}`;
 }
 export function formatDepthMatrixTooltipValue(quantityBtc: number, notionalUsdt: number) {
   const quantity = quantityBtc > 0 && quantityBtc < .000000005 ? '<0.00000001' : quantityBtc.toFixed(8);
   const notional = notionalUsdt > 0 && notionalUsdt < .005 ? '<0.01' : notionalUsdt.toFixed(2);
   return `${quantity} BTC / ${notional} USDT`;
 }
-function trimNumberZeros(value: string) { return value.replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'); }
 /** Shared histogram scales use one full cell-width denominator for each side. */
 export function depthMatrixScaleTarget(values: Iterable<number>) {
   let target = 0;

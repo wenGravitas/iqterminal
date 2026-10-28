@@ -1,3 +1,4 @@
+import { LiquidationTickerPanel } from './liquidations/panel';
 import { CurrencyDisplaySettings } from './currency-display';
 import { LevelWatchPanel } from './level-watch/panel';
 import type {WatchSnapshot,LevelWatch} from './level-watch/types';
@@ -79,6 +80,9 @@ function addTicker() {
   save();
 }
 
+function addLiquidationTicker(){if(dock.panels.filter(p=>p.view.contentComponent==='liquidation-ticker').length>=8)return;dock.addPanel({id:`liquidation-${crypto.randomUUID()}`,component:'liquidation-ticker',title:'Liquidation Ticker',params:{},position:dock.activePanel?{referencePanel:dock.activePanel,direction:'right'}:undefined,initialWidth:Math.max(300,Math.round(root.clientWidth/4)),minimumWidth:240,minimumHeight:180});save();}
+function focusLiquidation(event:import('./liquidations/model').LiquidationEvent){for(const p of panels.values())if(p.focusLiquidation(event))return true;return false;}
+
 function addDepthMatrix() {
   if (depthMatrixCount() >= 8) return;
   dock.addPanel({ id: `depth-matrix-${crypto.randomUUID()}`, component: 'depth-matrix', title: 'Depth Matrix',
@@ -113,11 +117,15 @@ function defaults() {
 dock = createDockview(root, {
   theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
   disableFloatingGroups: true,
+  // Avoid native drag-image capture stalls on Linux Chromium. Dockview keeps
+  // tab/group docking and hit testing on its supported pointer backend.
+  dndStrategy: 'pointer',
   defaultRenderer: 'always',
   defaultTabComponent: 'compact-chart',
   createTabComponent: () => new CompactChartTab(),
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
+    if(options.name==='liquidation-ticker')return new LiquidationTickerPanel(feed,scheduler,notifications,save,focusLiquidation);
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
     if(options.name==='depth-matrix') return new DepthMatrixPanel(feed,save);
     if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);},(sourceId,execution)=>executionHover.publish(sourceId,execution),execution=>executionHover.addExecutionRay(execution));
@@ -126,7 +134,8 @@ dock = createDockview(root, {
         if (panel) {panels.set(id, panel);executionHover.registerChart(id,{series:()=>panel.series,setExecutionHoverRay:execution=>panel.setExecutionHoverRay(execution),addExecutionRay:execution=>panel.addExecutionRay(execution)});panel.setWatchZones(watchSnapshot?.watches??[]);}
         else {executionHover.registerChart(id,null);panels.delete(id);}
         editor?.refreshTargets();
-      }, openEditor, id => executionHover.refreshChart(id), notifications);
+      }, openEditor, id => executionHover.refreshChart(id), notifications,
+      () => [...tickers.values()].map(panel => panel.tierSnapshot()));
     }
     if (options.name === 'script-editor') {
       editor = new LazyScriptEditorPanel(library, () => [...panels].map(([id, panel]) => ({ id, panel })), save);
@@ -166,6 +175,7 @@ window.addEventListener('keydown', event => { if (!marketPulse.isOpen()) activat
 document.querySelector('#level-watch')!.addEventListener('click',()=>openWatches(),{signal:abort.signal});
 window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
+document.querySelector('#add-liquidations')!.addEventListener('click',()=>addLiquidationTicker(),{signal:abort.signal});
 document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
 addDepth.addEventListener('click', () => addDepthMatrix(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
@@ -195,7 +205,7 @@ let perf: PerformanceObserver | undefined;
 if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
-    dock, addChart, addTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
+    dock, addChart, addTicker, addLiquidationTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
     marketPulse,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; },

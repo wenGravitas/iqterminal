@@ -1,0 +1,30 @@
+{
+  "unit": {
+    "passed": 636,
+    "skipped": 1,
+    "files": 82
+  },
+  "typecheck": "passed",
+  "diagnosticsBuild": "passed",
+  "productionBuild": "passed-large-chunk-warning",
+  "selectedBrowserTests": {
+    "passed": 6
+  },
+  "live": {
+    "successfulCaptureAt": 1793115208048,
+    "latestAttempt": "failed-stream-reconnecting-stale",
+    "earlierFinalAttempt": "failed-local-SSH-tunnel",
+    "capture": "top-levels-live-spot-5m.json"
+  },
+  "benchmarks": {
+    "detector": "top-levels-detector-bench.json",
+    "browser": "top-levels-render-bench.json",
+    "tags": "top-levels-render-tags-bench.json"
+  },
+  "deployment": "none",
+  "limitations": [
+    "partial observed depth",
+    "four-hour bounded raw replay",
+    "remote cold history completion and hardware GPU FPS unverified"
+  ]
+}

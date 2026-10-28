@@ -1,13 +1,15 @@
+import { MatrixRowLayout, MatrixRowExpansion, MATRIX_ROW_HEIGHT, matrixExactPrice, matrixCurrentBucket, matrixSideWall, usableMatrixMid, type MatrixAnchor } from './depth-matrix-presentation';
+import { positionMarketCard, renderDepthMatrixCard } from './market-hover-card';
 import { CURRENCY_EVENT, effectiveCurrency, syncCurrencyControl } from './currency-display';
 import { PaneLoading } from './pane-loading';
 import type { IContentRenderer, IDockviewPanelProps } from 'dockview-core';
 import type { FeedClient } from './feed/client';
 import { DEPTH_MATRIX_SOURCE_REGISTRY, depthMatrixBarWidth, depthMatrixScaleTarget, depthMatrixSettings, depthMatrixSourceLabel,
-  formatDepthMatrixCellValue, formatDepthMatrixTooltipValue,
+  formatDepthMatrixCellValue,
   matrixBucketBounds, matrixBucketIndex, smoothDepthMatrixScale,
   type DepthMatrixColumn, type DepthMatrixSettings, type MatrixCoverage, type MatrixRow } from './feed/depth-matrix';
 
-const ROW_HEIGHT = 28;
+const ROW_HEIGHT = MATRIX_ROW_HEIGHT;
 const HEADER_HEIGHT = 24;
 const AXIS_WIDTH = 60;
 const RANGE_ROWS = 160;
@@ -30,7 +32,6 @@ export class DepthMatrixPanel implements IContentRenderer {
   private pageVisible = !document.hidden;
   private dead = false;
   private settingsOpen = false;
-  private statusText = 'Waiting for synchronized Binance depth';
   private viewport?: { low: string; high: string };
   private gridSignature = '';
   private grid = document.createElement('div');
@@ -43,8 +44,14 @@ export class DepthMatrixPanel implements IContentRenderer {
   private rows: MatrixRow[] = [];
   private hoveredIndex = -1;
   private hoverColumn = '';
-  private lastReferenceMid: string | null = null;
-  private referenceDirection: 'up' | 'down' | 'neutral' = 'neutral';
+  private rowLayout = new MatrixRowLayout([]);
+  private expansion = new MatrixRowExpansion();
+  private collapseTimer?: ReturnType<typeof setTimeout>;
+  private restoreAnchor?: MatrixAnchor;
+  private pendingPageAccepted = false;
+  private referencePrices = new Map<string, string>();
+  private referenceSelect = document.createElement('select');
+  private hoverAnchor?: { left: number; top: number; right: number; bottom: number };
   private hoverTip = document.createElement('div');
   private settingsPane = document.createElement('div');
   private sourceList = document.createElement('div');
@@ -60,10 +67,9 @@ export class DepthMatrixPanel implements IContentRenderer {
   private loading = new PaneLoading();
   private recenterButton = document.createElement('button');
   private setSettingsButton = document.createElement('button');
-  private pendingViewport?: { low: string; high: string; scrollTop: number };
+  private pendingViewport?: { low: string; high: string; anchor?: MatrixAnchor };
   private lastScrollTop = 0;
-  private suppressScrollShift = false;
-  private userScrolled = false;
+  private lastScrollLeft = 0;
   private centerPending = true;
   private centeringViewport?: { low: string; high: string };
   private renderFrame = 0;
@@ -101,7 +107,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     const toolbar = document.createElement('header'); toolbar.className = 'depth-matrix-toolbar';
     this.setSettingsButton.type = 'button'; this.setSettingsButton.textContent = 'SET'; this.setSettingsButton.title = 'Matrix settings';
     this.setSettingsButton.setAttribute('aria-label', 'Depth Matrix settings'); this.setSettingsButton.setAttribute('aria-expanded', 'false');
-    this.recenterButton.type = 'button'; this.recenterButton.textContent = 'CENTER'; this.recenterButton.title = 'Center on the current Binance mid price';
+    this.recenterButton.type = 'button'; this.recenterButton.textContent = 'CENTER'; this.recenterButton.title = 'Center on the selected reference midpoint'; this.recenterButton.setAttribute('aria-label', 'CENTER');
     const retry = document.createElement('button'); retry.type = 'button'; retry.textContent = 'RETRY'; retry.title = 'Reconnect and rebuild the synchronized book';
     this.status.className = 'depth-matrix-status'; this.status.setAttribute('role', 'status');
     toolbar.append(this.setSettingsButton, this.recenterButton, retry, this.status);
@@ -124,6 +130,9 @@ export class DepthMatrixPanel implements IContentRenderer {
     }, { signal: this.abort.signal });
     sourceField.append(sourceLabel, this.sourceSelect, addSource);
     this.settingsPane.append(sourceField, this.sourceList);
+    this.referenceSelect.setAttribute('aria-label', 'Reference midpoint source');
+    this.referenceSelect.addEventListener('change', () => this.applySettings({ ...this.settings, referenceSourceId: this.referenceSelect.value || null }), { signal: this.abort.signal });
+    const referenceField = this.settingField('Reference mid'); referenceField.append(this.referenceSelect); this.settingsPane.append(referenceField);
 
     this.bucketInput.type = 'text'; this.bucketInput.inputMode = 'decimal'; this.bucketInput.maxLength = 24;
     this.bucketInput.setAttribute('aria-label', 'Bucket width in USDT'); this.bucketInput.title = 'Exact decimal bucket width in USDT';
@@ -170,7 +179,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.grid.className = 'depth-matrix-grid'; this.scroll.append(this.grid);
     this.hoverLine.className = 'depth-matrix-hover-line'; this.hoverLine.hidden = true;
     this.grid.append(this.hoverLine);
-    this.hoverTip.className = 'depth-matrix-tooltip'; this.hoverTip.hidden = true; this.hoverTip.setAttribute('role', 'tooltip');
+    this.hoverTip.className = 'depth-matrix-tooltip market-hover-card'; this.hoverTip.hidden = true; this.hoverTip.setAttribute('role', 'tooltip');
     const legend = document.createElement('div'); legend.className = 'depth-matrix-legend';
     legend.innerHTML = '<span><i class="matrix-bid-key"></i>BID</span><span><i class="matrix-ask-key"></i>ASK</span><span>— UNKNOWN DEPTH · UNOBSERVED</span>';
     this.element.append(toolbar, this.settingsPane, this.scroll, this.hoverTip, legend);
@@ -191,6 +200,10 @@ export class DepthMatrixPanel implements IContentRenderer {
   }
 
   private syncSettingsControls() {
+    this.referenceSelect.replaceChildren(new Option('Choose reference', ''));
+    for (const source of this.settings.sources) if (DEPTH_MATRIX_SOURCE_REGISTRY[source]?.supported)
+      this.referenceSelect.add(new Option(depthMatrixSourceLabel(source), source));
+    this.referenceSelect.value = this.settings.referenceSourceId ?? '';
     this.bucketInput.value = this.settings.bucketWidth; this.columnSlider.value = String(this.settings.columnWidth);
     syncCurrencyControl(this.unitSelect, this.settings.unit); this.scaleSelect.value = this.settings.scale;
     this.wallSelect.value = this.settings.wallMode; this.wallThreshold.value = String(this.settings.wallThreshold);
@@ -224,12 +237,15 @@ export class DepthMatrixPanel implements IContentRenderer {
   }
 
   private applySettings(value: DepthMatrixSettings) {
-    const previousWidth = this.settings.bucketWidth;
+    const previous = this.settings, previousWidth = previous.bucketWidth;
     this.settings = depthMatrixSettings(value);
-    if (this.settings.bucketWidth !== previousWidth) { this.viewport = undefined; this.pendingViewport = undefined; this.centeringViewport = undefined; this.centerPending = true; }
+    for (const source of this.referencePrices.keys()) if (!this.settings.sources.includes(source)) this.referencePrices.delete(source);
+    if (this.settings.bucketWidth !== previousWidth) { this.viewport = undefined; this.pendingViewport = undefined; this.pendingPageAccepted = false; this.centeringViewport = undefined; this.centerPending = true; }
     this.markAllRows();
     this.params.api.updateParameters(this.settings); this.save(); this.renderSources();
-    this.feed.updateDepthMatrixSettings(this.params.api.id, this.settings);
+    // Local presentation controls must not restart connections or invalidate worker grids.
+    if (previousWidth !== this.settings.bucketWidth || previous.sources.join(',') !== this.settings.sources.join(','))
+      this.feed.updateDepthMatrixSettings(this.params.api.id, this.settings);
     this.draw();
   }
 
@@ -246,13 +262,18 @@ export class DepthMatrixPanel implements IContentRenderer {
       if (!event.viewport && this.rows.length) {
         this.columns = this.columns.map(previous => {
           const current = event.columns.find(column => column.source === previous.source);
-          return current ? { ...previous, state: current.state, message: current.message } : previous;
+          if (current && current.state !== previous.state) this.markAllRows(previous.source);
+          return current ? { ...previous, state: current.state, message: current.message,
+            rows: current.state === 'live' ? previous.rows : previous.rows.map(row => ({ ...row,
+              bidCoverage: current.state === 'stale' || current.state === 'disconnected' ? current.state : 'syncing',
+              askCoverage: current.state === 'stale' || current.state === 'disconnected' ? current.state : 'syncing' })) } : previous;
         });
-        this.statusText = event.columns.map(column => `${shortName[column.source] ?? column.source}: ${column.message}`).join(' · ');
         this.draw(); return;
       }
       this.trackRowChanges(this.columns, event.columns);
       this.columns = event.columns;
+      for (const column of this.columns) if (column.mid !== null && Number.isFinite(Number(column.mid)) && Number(column.mid) > 0)
+        this.referencePrices.set(column.source, column.mid);
       this.updateScales(event.columns, event.emittedAt);
       if (event.viewport) {
         this.viewport = { low: event.viewport.low, high: event.viewport.high };
@@ -261,13 +282,9 @@ export class DepthMatrixPanel implements IContentRenderer {
           this.centerPending = true;
         }
         if (this.pendingViewport && sameViewport(event.viewport, this.pendingViewport)) {
-          this.suppressScrollShift = true; this.scroll.scrollTop = this.pendingViewport.scrollTop;
-          this.lastScrollTop = this.scroll.scrollTop; this.pendingViewport = undefined;
+          this.restoreAnchor = this.pendingViewport.anchor; this.pendingPageAccepted = true;
         }
       }
-      this.statusText = this.settings.sources.length
-        ? this.columns.map(column => `${shortName[column.source] ?? column.source} ${columnStateLabel(column)}${column.ageMs === null ? '' : ` ${ageLabel(column.ageMs)}`}`).join('  ·  ')
-        : 'No sources selected · use SET to add a source';
       this.draw();
     });
     const requested = this.centeringViewport ?? this.pendingViewport ?? this.viewport;
@@ -284,20 +301,21 @@ export class DepthMatrixPanel implements IContentRenderer {
     if (this.visible) { this.subscribe(); this.markVisibleRows(); this.draw(); }
     else {
       if (this.viewport && !this.pendingViewport && !this.centeringViewport)
-        this.pendingViewport = { ...this.viewport, scrollTop: this.lastScrollTop };
-      this.unsubscribe();
+        this.pendingViewport = { ...this.viewport, anchor: this.rowLayout.anchor(this.lastScrollTop) };
+      this.unsubscribe(); clearTimeout(this.collapseTimer);
       if (this.renderFrame) { cancelAnimationFrame(this.renderFrame); this.renderFrame = 0; }
     }
   }
 
   private recenter() {
-    const reference = this.columns.find(column => column.mid !== null)?.mid;
-    if (reference === undefined || reference === null) return;
+    const column = this.referenceColumn();
+    if (!usableMatrixMid(column)) return;
+    const reference = column!.mid!;
     const center = BigInt(matrixBucketIndex(reference, this.settings.bucketWidth) ?? '0');
     const first = center > BigInt(RANGE_ROWS / 2) ? center - BigInt(RANGE_ROWS / 2) : 0n;
     const last = first + BigInt(RANGE_ROWS);
     this.centeringViewport = { low: matrixBucketBounds(first, this.settings.bucketWidth)!.low, high: matrixBucketBounds(last, this.settings.bucketWidth)!.low };
-    this.pendingViewport = undefined;
+    this.pendingViewport = undefined; this.pendingPageAccepted = false; this.restoreAnchor = undefined;
     this.centerPending = true;
     this.feed.updateDepthMatrixViewport(this.params.api.id, this.centeringViewport);
     this.draw();
@@ -305,22 +323,26 @@ export class DepthMatrixPanel implements IContentRenderer {
 
   private onScroll() {
     const current = this.scroll.scrollTop;
-    if (this.suppressScrollShift) { this.suppressScrollShift = false; this.lastScrollTop = current; return; }
-    const previous = this.lastScrollTop;
+    if (current !== this.lastScrollTop || this.scroll.scrollLeft !== this.lastScrollLeft) {
+      this.hoveredIndex = -1; this.hoverColumn = ''; this.hoverAnchor = undefined; this.hoverTip.hidden = true;
+    }
+    this.lastScrollLeft = this.scroll.scrollLeft;
+    // Programmatic moves record their actual position immediately. Scroll events
+    // can be coalesced with a later user move, so never discard the next event:
+    // compare its position with that baseline instead.
     const direction = current < this.lastScrollTop ? 'up' : current > this.lastScrollTop ? 'down' : null;
     this.lastScrollTop = current;
+    if (direction && !this.centeringViewport) this.centerPending = false;
     if (!this.visible) return;
     this.markVisibleRows();
     if (this.centeringViewport) { this.draw(); return; }
     const maxScroll = Math.max(0, this.scroll.scrollHeight - this.scroll.clientHeight);
     if (this.pendingViewport) {
-      const scrollTop = Math.max(0, Math.min(maxScroll, this.pendingViewport.scrollTop + current - previous));
-      this.pendingViewport = { ...this.pendingViewport, scrollTop };
+      this.pendingViewport = { ...this.pendingViewport, anchor: this.rowLayout.anchor(current) };
       this.draw(); return;
     }
     if (!direction || !this.viewport) { this.draw(); return; }
-    const guardRows = Math.min(40, Math.max(1, Math.ceil(this.scroll.clientHeight / ROW_HEIGHT)));
-    const guard = guardRows * ROW_HEIGHT;
+    const guard = Math.min(this.rowLayout.height / 4, this.scroll.clientHeight);
     if (direction === 'up' && current <= guard) this.shiftViewport(1);
     else if (direction === 'down' && current >= maxScroll - guard) this.shiftViewport(-1);
     this.draw();
@@ -333,8 +355,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     const shift = BigInt(RANGE_SHIFT * direction), low = first + shift < 0n ? 0n : first + shift;
     const high = low + (last - first);
     const viewport = { low: matrixBucketBounds(low, this.settings.bucketWidth)!.low, high: matrixBucketBounds(high, this.settings.bucketWidth)!.low };
-    const scrollTop = Math.max(0, Math.min(this.scroll.scrollHeight - this.scroll.clientHeight, this.scroll.scrollTop + direction * RANGE_SHIFT * ROW_HEIGHT));
-    this.pendingViewport = { ...viewport, scrollTop };
+    this.pendingViewport = { ...viewport, anchor: this.rowLayout.anchor(this.scroll.scrollTop) };
     this.feed.updateDepthMatrixViewport(this.params.api.id, viewport);
   }
 
@@ -344,8 +365,7 @@ export class DepthMatrixPanel implements IContentRenderer {
 
   private markVisibleRows() {
     if (!this.rows.length) { this.markAllRows(); return; }
-    const first = Math.max(0, Math.floor((this.scroll.scrollTop - HEADER_HEIGHT) / ROW_HEIGHT));
-    const last = Math.min(this.rows.length, Math.ceil((this.scroll.scrollTop + this.scroll.clientHeight - HEADER_HEIGHT) / ROW_HEIGHT));
+    const [first, last] = this.rowLayout.visible(this.scroll.scrollTop - HEADER_HEIGHT, this.scroll.scrollTop + this.scroll.clientHeight - HEADER_HEIGHT);
     for (const source of this.settings.sources) {
       let dirty = this.dirtyRows.get(source);
       if (dirty === null) continue;
@@ -364,6 +384,14 @@ export class DepthMatrixPanel implements IContentRenderer {
       }
       const oldRows = new Map(old.rows.map(row => [row.index, row]));
       let dirty = this.dirtyRows.get(column.source);
+      if (old.mid !== column.mid && dirty !== null) {
+        dirty ??= new Set<string>();
+        for (const changed of [old, column]) {
+          const bucket = matrixCurrentBucket(changed, this.settings.bucketWidth);
+          if (bucket !== null) dirty.add(bucket);
+        }
+        this.dirtyRows.set(column.source, dirty);
+      }
       for (const row of column.rows) {
         const before = oldRows.get(row.index);
         if (!before || !sameMatrixRow(before, row)) {
@@ -410,15 +438,41 @@ export class DepthMatrixPanel implements IContentRenderer {
     if (this.dead || !this.visible) return;
     const first = this.columns.find(column => column.rows.length > 0)?.rows ?? [];
     const displayRows = [...first].reverse();
+    const nextLayout = this.expansion.layout(displayRows, this.columns.filter(column => this.settings.sources.includes(column.source)), Date.now());
+    const geometryChanged = nextLayout.signature !== this.rowLayout.signature;
+    const anchor = (this.pendingPageAccepted ? this.pendingViewport?.anchor : undefined) ?? this.restoreAnchor ?? this.rowLayout.anchor(this.scroll.scrollTop);
+    this.restoreAnchor = undefined;
+    this.rowLayout = nextLayout;
+    clearTimeout(this.collapseTimer);
+    if (this.expansion.nextExpiry !== undefined) this.collapseTimer = setTimeout(() => this.draw(), Math.max(1, this.expansion.nextExpiry - Date.now()));
     const signature = `${this.settings.columnWidth}|${this.settings.bucketWidth}|${this.settings.sources.join(',')}|${displayRows.map(row => row.index).join(',')}`;
     if (signature !== this.gridSignature) { this.buildGrid(displayRows, signature); this.markAllRows(); }
     this.rows = displayRows;
+    if (geometryChanged) {
+      this.axis?.querySelectorAll<HTMLElement>('.depth-matrix-price-row').forEach((element, index) => {
+        element.style.setProperty('--depth-matrix-row-height', `${this.rowLayout.positions[index]!.height}px`);
+      });
+      for (const canvas of this.canvases.values()) canvas.style.height = `${Math.max(1, this.rowLayout.height)}px`;
+      this.markAllRows();
+    }
+    if (anchor && !this.centerPending) {
+      const top = this.rowLayout.offset(anchor);
+      if (top !== undefined) { this.scroll.scrollTop = top; this.lastScrollTop = this.scroll.scrollTop; }
+    }
+    // Publish page completion only after DOM geometry and the bucket anchor agree.
+    if (this.pendingPageAccepted) { this.pendingViewport = undefined; this.pendingPageAccepted = false; }
+    if (geometryChanged && this.hoverAnchor && this.hoveredIndex >= 0) {
+      const canvas = this.canvases.get(this.hoverColumn);
+      if (canvas) {
+        this.hoveredIndex = this.rowLayout.at((this.hoverAnchor.top + this.hoverAnchor.bottom) / 2 - canvas.getBoundingClientRect().top);
+        if (this.hoveredIndex < 0) this.hoverTip.hidden = true;
+      }
+    }
     this.emptyState.hidden = this.rows.length > 0;
     const failed = this.columns.some(column => column.state === 'stale' || column.state === 'disconnected');
     this.loading.update(this.rows.length ? null : { kind: failed ? 'error' : 'loading', title: failed ? 'Depth data unavailable' : 'Loading Depth Matrix…',
       detail: this.columns.length ? this.columns.map(column => `${shortName[column.source] ?? column.source}: ${column.message}`).join(' · ') + ' · Use RETRY to reconnect.' : 'Waiting for synchronized depth data' });
-    this.status.textContent = this.statusText || 'Waiting for a synchronized Binance depth head';
-    this.status.title = this.columns.map(column => `${column.label}: ${column.state}; ${column.message}; ${column.ageMs === null ? 'no book timestamp' : `book age ${ageLabel(column.ageMs)}`}; cursor ${column.cursor}`).join('\n');
+    this.updateReference();
     this.updateHeaders();
     this.updatePriceAxis();
     this.refreshHoverTooltip();
@@ -430,9 +484,10 @@ export class DepthMatrixPanel implements IContentRenderer {
   private buildGrid(rows: MatrixRow[], signature: string) {
     const oldTop = this.scroll.scrollTop, oldLeft = this.scroll.scrollLeft;
     this.gridSignature = signature; this.canvases.clear();
+    this.grid.dataset.compact = String(this.settings.columnWidth < 85);
     this.grid.style.gridTemplateColumns = `${AXIS_WIDTH}px repeat(${this.settings.sources.length}, ${this.settings.columnWidth}px)`;
     this.grid.replaceChildren();
-    this.headers.clear(); this.canvases.clear(); this.hoveredIndex = -1;
+    this.headers.clear(); this.canvases.clear(); this.hoveredIndex = -1; this.hoverTip.hidden = true;
     this.axisHead = document.createElement('div'); this.axisHead.className = 'depth-matrix-price-head'; this.axisHead.textContent = 'PRICE'; this.axisHead.title = 'Each row is labeled by its low edge; bucket range is [low, high) USDT';
     this.grid.append(this.axisHead);
     const columnsBySource = new Map(this.columns.map(column => [column.source, column]));
@@ -447,17 +502,19 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.axis = document.createElement('div'); this.axis.className = 'depth-matrix-price-axis'; this.axis.style.gridRow = '2';
     for (const [index, row] of rows.entries()) {
       const label = document.createElement('div'); label.className = 'depth-matrix-price-row'; label.dataset.rowIndex = String(index);
-      label.textContent = priceLabel(row.low); label.title = `$${row.low} ≤ price < $${row.high}`;
-      label.addEventListener('pointerenter', () => this.setHover(index, this.settings.sources[0] ?? '', label.getBoundingClientRect()));
+      label.style.setProperty('--depth-matrix-row-height', `${this.rowLayout.positions[index]!.height}px`);
+      label.textContent = priceLabel(row.low); label.dataset.priceRange = `$${row.low} ≤ price < $${row.high}`; label.setAttribute('aria-label', label.dataset.priceRange);
+      label.addEventListener('pointerenter', () => this.setHover(index, this.settings.referenceSourceId ?? this.settings.sources[0] ?? '', label.getBoundingClientRect()));
+      label.addEventListener('pointerleave', () => this.clearHover());
       this.axis.append(label);
     }
     this.grid.append(this.axis);
     for (const source of this.settings.sources) {
       const canvas = document.createElement('canvas'); canvas.className = 'depth-matrix-book'; canvas.dataset.source = source;
-      canvas.style.gridRow = '2'; canvas.style.width = `${this.settings.columnWidth}px`; canvas.style.height = `${Math.max(1, rows.length) * ROW_HEIGHT}px`;
+      canvas.style.gridRow = '2'; canvas.style.width = `${this.settings.columnWidth}px`; canvas.style.height = `${Math.max(1, this.rowLayout.height)}px`;
       canvas.setAttribute('aria-label', `${depthMatrixSourceLabel(source)} depth histogram`);
       canvas.addEventListener('pointermove', event => {
-        const rect = canvas.getBoundingClientRect(), index = Math.floor((event.clientY - rect.top) / ROW_HEIGHT);
+        const rect = canvas.getBoundingClientRect(), index = this.rowLayout.at(event.clientY - rect.top);
         this.setHover(index, source, { left: event.clientX, top: event.clientY, right: event.clientX, bottom: event.clientY });
       });
       canvas.addEventListener('pointerleave', () => this.clearHover());
@@ -465,7 +522,7 @@ export class DepthMatrixPanel implements IContentRenderer {
     }
     this.grid.append(this.hoverLine);
     this.scroll.scrollTop = oldTop; this.scroll.scrollLeft = oldLeft;
-    this.lastScrollTop = oldTop;
+    this.lastScrollTop = this.scroll.scrollTop; this.lastScrollLeft = this.scroll.scrollLeft;
     this.updateHoverLine();
   }
 
@@ -479,53 +536,46 @@ export class DepthMatrixPanel implements IContentRenderer {
     }
   }
 
+  private referenceColumn() { return this.columns.find(column => column.source === this.settings.referenceSourceId); }
+
+  private updateReference() {
+    const source = this.settings.referenceSourceId, reference = this.referenceColumn();
+    const currentMid = reference?.mid;
+    const mid = currentMid != null && Number.isFinite(Number(currentMid)) && Number(currentMid) > 0 ? currentMid : source ? this.referencePrices.get(source) : undefined;
+    const usable = usableMatrixMid(reference);
+    this.recenterButton.disabled = !usable;
+    const state = reference ? reference.state === 'live' ? usable ? columnStateLabel(reference) : 'UNAVAILABLE' : reference.state.toUpperCase() : 'UNAVAILABLE';
+    const short = source === 'binance-spot' ? 'SPOT' : source === 'binance-perpetual' ? 'PERP' : source;
+    const degraded = this.columns.filter(column => column.state !== 'live' && column.source !== source).map(column => `${shortName[column.source] ?? column.source} ${column.state.toUpperCase()}`).join(' · ');
+    this.status.textContent = !source ? 'Choose reference'
+      : `${short} MID ${mid === null || mid === undefined ? '—' : referencePriceLabel(mid)}${usable ? reference?.message.startsWith('Fixture:') ? ' · FIXTURE' : '' : ` · ${state}`}`;
+    if (degraded) this.status.textContent += ` · ${degraded}`;
+    this.status.dataset.state = usable ? 'live' : reference?.state === 'live' ? 'unavailable' : reference?.state ?? 'unavailable';
+    const detail = !source ? 'Choose a reference midpoint source in SET.'
+      : `${depthMatrixSourceLabel(source)} reference midpoint${mid == null ? ': unavailable' : ` $${exactReferencePriceLabel(mid)}; compact display rounded to $${referencePriceLabel(mid)}`}. ${state}. ${reference?.message ?? 'Source unavailable'}`;
+    this.status.setAttribute('aria-label', detail);
+    this.status.title = detail + '\n' + this.columns.map(column => `${column.label}: ${column.state}; ${column.message}; ${column.ageMs === null ? 'no book timestamp' : `book age ${ageLabel(column.ageMs)}`}; cursor ${column.cursor}`).join('\n');
+    this.recenterButton.title = usable ? `Center on ${depthMatrixSourceLabel(source!)} midpoint $${exactReferencePriceLabel(mid!)}` : 'Reference midpoint requires usable live data';
+  }
+
   private updatePriceAxis() {
-    if (!this.axis) return;
-    const reference = this.columns.find(column => column.mid !== null);
-    const mid = reference?.mid ?? null;
-    if (mid !== null && mid !== this.lastReferenceMid) {
-      const current = Number(mid), previous = this.lastReferenceMid === null ? Number.NaN : Number(this.lastReferenceMid);
-      this.referenceDirection = Number.isFinite(previous) && Number.isFinite(current)
-        ? current > previous ? 'up' : current < previous ? 'down' : 'neutral'
-        : 'neutral';
-      this.lastReferenceMid = mid;
-    }
-    const bucket = mid === null ? null : matrixBucketIndex(mid, this.settings.bucketWidth);
-    const index = bucket === null ? -1 : this.rows.findIndex(row => row.index === bucket);
-    this.axis.querySelectorAll<HTMLElement>('.depth-matrix-price-row').forEach((element, rowIndex) => {
-      const row = this.rows[rowIndex];
-      if (!row) return;
-      const bucketLabel = `$${row.low} ≤ price < $${row.high}`;
-      const isCurrent = rowIndex === index && reference !== undefined;
-      const currentState = String(isCurrent);
-      if (element.dataset.current !== currentState) element.dataset.current = currentState;
-      if (isCurrent && mid !== null && reference) {
-        const price = referencePriceLabel(mid), exactPrice = exactReferencePriceLabel(mid);
-        if (element.dataset.direction !== this.referenceDirection) element.dataset.direction = this.referenceDirection;
-        const title = `${bucketLabel}; ${reference.label} mid price $${exactPrice}; shown rounded to $${price}`;
-        const ariaLabel = `Current ${reference.label} mid price $${exactPrice}, shown rounded to $${price}; ${bucketLabel}`;
-        if (element.textContent !== price) element.textContent = price;
-        if (element.title !== title) element.title = title;
-        if (element.getAttribute('aria-label') !== ariaLabel) element.setAttribute('aria-label', ariaLabel);
-      } else {
-        if (element.dataset.direction !== undefined) delete element.dataset.direction;
-        const label = priceLabel(row.low);
-        if (element.textContent !== label) element.textContent = label;
-        if (element.title !== bucketLabel) element.title = bucketLabel;
-        if (element.hasAttribute('aria-label')) element.removeAttribute('aria-label');
-      }
+    const reference = this.referenceColumn(), bucket = matrixCurrentBucket(reference, this.settings.bucketWidth);
+    this.axis?.querySelectorAll<HTMLElement>('.depth-matrix-price-row').forEach((element, index) => {
+      const row = this.rows[index]; if (!row) return;
+      element.textContent = priceLabel(row.low);
+      element.dataset.current = String(row.index === bucket);
+      element.setAttribute('aria-label', `$${row.low} ≤ price < $${row.high}${row.index === bucket ? `; selected reference ${reference!.label} midpoint $${exactReferencePriceLabel(reference!.mid!)}` : ''}`);
     });
   }
 
   private centerOnMid() {
-    const column = this.columns.find(value => value.mid !== null), mid = column?.mid;
-    if (mid === null || mid === undefined) return;
+    const column = this.referenceColumn(), mid = column?.mid;
+    if (!usableMatrixMid(column) || mid == null) return;
     const index = matrixBucketIndex(mid, this.settings.bucketWidth);
     const row = index === null ? -1 : this.rows.findIndex(value => value.index === index);
     if (row < 0) return;
-    this.suppressScrollShift = true;
     this.scroll.scrollTop = Math.max(0, Math.min(this.scroll.scrollHeight - this.scroll.clientHeight,
-      HEADER_HEIGHT + row * ROW_HEIGHT + ROW_HEIGHT / 2 - this.scroll.clientHeight / 2));
+      HEADER_HEIGHT + this.rowLayout.positions[row]!.top + this.rowLayout.positions[row]!.height / 2 - this.scroll.clientHeight / 2));
     this.lastScrollTop = this.scroll.scrollTop; this.centerPending = false;
   }
 
@@ -533,7 +583,8 @@ export class DepthMatrixPanel implements IContentRenderer {
     this.updateHoverAxis();
     if (this.hoveredIndex < 0 || this.hoveredIndex >= this.rows.length) { this.hoverLine.hidden = true; return; }
     this.hoverLine.hidden = false;
-    this.hoverLine.style.top = `${HEADER_HEIGHT + this.hoveredIndex * ROW_HEIGHT}px`;
+    this.hoverLine.style.top = `${HEADER_HEIGHT + this.rowLayout.positions[this.hoveredIndex]!.top}px`;
+    this.hoverLine.style.height = `${this.rowLayout.positions[this.hoveredIndex]!.height}px`;
     this.hoverLine.dataset.source = this.hoverColumn;
   }
 
@@ -544,19 +595,18 @@ export class DepthMatrixPanel implements IContentRenderer {
   private drawCanvases() {
     if (!this.visible || !this.rows.length) return;
     const rootStyle = getComputedStyle(this.element), bidColor = rootStyle.getPropertyValue('--up').trim() || '#58a65c', askColor = rootStyle.getPropertyValue('--down').trim() || '#ad5858';
-    const textColor = rootStyle.getPropertyValue('--text').trim() || '#c7c7c7', muted = rootStyle.getPropertyValue('--muted').trim() || '#858585', divider = rootStyle.getPropertyValue('--border-soft').trim() || '#1b1b1b', textHalo = rootStyle.getPropertyValue('--chart').trim() || '#090909';
+    const textColor = rootStyle.getPropertyValue('--text').trim() || '#c7c7c7', muted = rootStyle.getPropertyValue('--muted').trim() || '#858585', divider = rootStyle.getPropertyValue('--border-soft').trim() || '#1b1b1b';
     const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
     const displayValues = (row: MatrixRow) => effectiveCurrency(this.settings.unit) === 'btc' ? [row.bidQuantity, row.askQuantity] : [row.bidNotional, row.askNotional];
     const btcValues = (row: MatrixRow) => [row.bidQuantity, row.askQuantity];
-    const firstVisible = Math.max(0, Math.floor((this.scroll.scrollTop - HEADER_HEIGHT) / ROW_HEIGHT));
-    const lastVisible = Math.min(this.rows.length, Math.ceil((this.scroll.scrollTop + this.scroll.clientHeight - HEADER_HEIGHT) / ROW_HEIGHT));
+    const [firstVisible, lastVisible] = this.rowLayout.visible(this.scroll.scrollTop - HEADER_HEIGHT, this.scroll.scrollTop + this.scroll.clientHeight - HEADER_HEIGHT);
 
     for (const source of this.settings.sources) {
       const canvas = this.canvases.get(source), column = this.columns.find(value => value.source === source);
       const pending = this.dirtyRows.get(source);
       if (!canvas || pending === undefined) continue;
       canvas.setAttribute('aria-label', `${column?.label ?? depthMatrixSourceLabel(source)} depth histogram; bar widths use BTC; cell labels use ${effectiveCurrency(this.settings.unit).toUpperCase()}`);
-      const width = this.settings.columnWidth, height = Math.max(1, this.rows.length) * ROW_HEIGHT;
+      const width = this.settings.columnWidth, height = Math.max(1, this.rowLayout.height);
       if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) { canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr); }
       const context = canvas.getContext('2d'); if (!context) continue;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -574,57 +624,55 @@ export class DepthMatrixPanel implements IContentRenderer {
       const inset = 4, availableWidth = Math.max(1, width - inset * 2);
       const drawLabel = (label: string, x: number, y: number, maxWidth: number, color: string) => {
         context.save();
-        context.lineJoin = 'round'; context.lineWidth = 1; context.strokeStyle = textHalo;
-        context.strokeText(label, x, y, maxWidth);
+
         context.fillStyle = color; context.fillText(label, x, y, maxWidth);
         context.restore();
       };
       for (let index = firstVisible; index < Math.min(lastVisible, displayRows.length); index++) {
         const row = displayRows[index]!;
         if (pending !== null && !pending.has(row.index)) continue;
-        const y = index * ROW_HEIGHT, [bidValue, askValue] = displayValues(row), [bidBtc, askBtc] = btcValues(row);
+        const { top: y, height: rowHeight } = this.rowLayout.positions[index]!, [bidValue, askValue] = displayValues(row), [bidBtc, askBtc] = btcValues(row);
         const bidWidth = depthMatrixBarWidth(bidBtc, scale, availableWidth);
         const askWidth = depthMatrixBarWidth(askBtc, scale, availableWidth);
-        context.clearRect(0, y, width, ROW_HEIGHT);
-        context.strokeStyle = divider; context.lineWidth = 1; context.beginPath(); context.moveTo(0, y + ROW_HEIGHT - .5); context.lineTo(width, y + ROW_HEIGHT - .5); context.stroke();
+        context.clearRect(0, y, width, rowHeight);
+        context.strokeStyle = divider; context.lineWidth = 1; context.beginPath(); context.moveTo(0, y + rowHeight - .5); context.lineTo(width, y + rowHeight - .5); context.stroke();
         const bidCoverage = row.bidCoverage, askCoverage = row.askCoverage;
         const hasBid = bidValue > 0, hasAsk = askValue > 0, mixed = hasBid && hasAsk;
-        const absoluteWall = row.bidQuantity >= this.settings.wallThreshold || row.askQuantity >= this.settings.wallThreshold;
-        const relativeWall = typical > 0 && Math.max(bidBtc, askBtc) >= typical * this.settings.wallThreshold;
-        const wall = this.settings.wallMode === 'off' ? false : this.settings.wallMode === 'absolute' ? absoluteWall : relativeWall;
         const paintSide = (side: 'bid' | 'ask', value: number, coverage: MatrixCoverage, bar: number, y0: number, bandHeight: number, showLabel = true, maxLabelWidth = availableWidth - 5) => {
           const color = side === 'bid' ? bidColor : askColor;
+          const wall = matrixSideWall(side === 'bid' ? bidBtc : askBtc, typical, this.settings);
           if (bar > 0) {
-            context.fillStyle = color; context.globalAlpha = wall ? .78 : .62;
+            context.fillStyle = color; context.globalAlpha = wall ? .5 : .36;
             context.fillRect(side === 'bid' ? width - inset - bar : inset, y0 + 1, bar, Math.max(1, bandHeight - 2));
             context.globalAlpha = 1;
+            if (wall) context.fillRect(side === 'bid' ? width - 2 : 0, y0 + 3, 1, Math.max(1, bandHeight - 6));
           }
           if (!showLabel) return;
           const label = value > 0 ? formatDepthMatrixCellValue(value, effectiveCurrency(this.settings.unit)) : coverage === 'known-empty' ? '0' : '?';
-          context.font = '600 11px ui-monospace,SFMono-Regular,Menlo,monospace';
+          context.font = '11px ui-monospace,SFMono-Regular,Menlo,monospace';
           context.textAlign = side === 'bid' ? 'right' : 'left';
           drawLabel(label, side === 'bid' ? width - inset - 2 : inset + 2, y0 + bandHeight / 2, maxLabelWidth,
             value > 0 || coverageKnown(coverage) ? textColor : muted);
         };
         if (mixed) {
-          const bandHeight = ROW_HEIGHT / 2 - 1;
-          paintSide('bid', bidValue, bidCoverage, bidWidth, y + 1, bandHeight);
-          paintSide('ask', askValue, askCoverage, askWidth, y + ROW_HEIGHT / 2, bandHeight);
+          const bandHeight = rowHeight / 2 - 1;
+          paintSide('ask', askValue, askCoverage, askWidth, y + 1, bandHeight);
+          paintSide('bid', bidValue, bidCoverage, bidWidth, y + rowHeight / 2, bandHeight);
         } else if (hasBid || hasAsk) {
           const side = hasBid ? 'bid' : 'ask', value = hasBid ? bidValue : askValue;
-          paintSide(side, value, hasBid ? bidCoverage : askCoverage, hasBid ? bidWidth : askWidth, y + 1, ROW_HEIGHT - 2);
+          paintSide(side, value, hasBid ? bidCoverage : askCoverage, hasBid ? bidWidth : askWidth, y + 1, rowHeight - 2);
         } else {
           const fullyKnownEmpty = coverageKnown(bidCoverage) && coverageKnown(askCoverage);
-          const bandHeight = ROW_HEIGHT / 2 - 1;
+          const bandHeight = rowHeight / 2 - 1;
           paintSide('bid', 0, bidCoverage, 0, y + 1, bandHeight, false);
-          paintSide('ask', 0, askCoverage, 0, y + ROW_HEIGHT / 2, bandHeight, false);
+          paintSide('ask', 0, askCoverage, 0, y + rowHeight / 2, bandHeight, false);
           context.fillStyle = muted; context.textAlign = 'center';
           context.font = '11px ui-monospace,SFMono-Regular,Menlo,monospace';
-          context.fillText(fullyKnownEmpty ? '0' : '—', width / 2, y + ROW_HEIGHT / 2, availableWidth - 5);
+          context.fillText(fullyKnownEmpty ? '0' : '—', width / 2, y + rowHeight / 2, availableWidth - 5);
         }
-        if (wall) {
-          context.lineWidth = 1; context.strokeStyle = rootStyle.getPropertyValue('--accent').trim() || '#92c5cc'; context.globalAlpha = .58;
-          context.strokeRect(1, y + 1.5, width - 2, ROW_HEIGHT - 3); context.globalAlpha = 1;
+        if (row.index === matrixCurrentBucket(column, this.settings.bucketWidth)) {
+          context.fillStyle = rootStyle.getPropertyValue('--accent').trim();
+          context.fillRect(width - 3, y + rowHeight / 2 - 3, 3, 6);
         }
         if (pending !== null) pending.delete(row.index);
       }
@@ -636,46 +684,37 @@ export class DepthMatrixPanel implements IContentRenderer {
     if (index < 0 || index >= this.rows.length) { this.clearHover(); return; }
     this.hoveredIndex = index; this.hoverColumn = source;
     this.updateHoverTooltip();
-    const bounds = this.element.getBoundingClientRect(); this.hoverTip.style.left = `${Math.max(5, Math.min(bounds.width - 330, point.left - bounds.left + 10))}px`;
-    this.hoverTip.style.top = `${Math.max(32, Math.min(bounds.height - 42, point.top - bounds.top + 9))}px`; this.hoverTip.hidden = false; this.draw();
+    this.hoverAnchor = point; positionMarketCard(this.hoverTip, this.element, point); this.draw();
   }
 
-  private refreshHoverTooltip() { if (this.hoveredIndex >= 0) this.updateHoverTooltip(); }
+  private refreshHoverTooltip() { if (this.hoveredIndex >= 0) { this.updateHoverTooltip(); if (this.hoverAnchor) positionMarketCard(this.hoverTip, this.element, this.hoverAnchor); } }
 
   private updateHoverTooltip() {
     const axisRow = this.rows[this.hoveredIndex];
     if (!axisRow) return;
     const column = this.columns.find(value => value.source === this.hoverColumn);
-    if (!column) { this.hoverTip.textContent = `$${axisRow.low}–$${axisRow.high}`; return; }
-    const row = column.rows.find(value => value.index === axisRow.index);
-    if (!row) {
-      this.hoverTip.textContent = `${column.label} · $${axisRow.low}–$${axisRow.high} · no synchronized row data · ${column.state.toUpperCase()} · ${column.ageMs === null ? 'no current book' : `age ${ageLabel(column.ageMs)}`}`;
-      return;
-    }
-    const sideText = (name: 'BID' | 'ASK', quantity: number, notional: number, coverage: MatrixCoverage) => {
-      const value = quantity > 0 || coverageKnown(coverage) ? formatDepthMatrixTooltipValue(quantity, notional) : 'not observed';
-      return `${name} ${value} · ${coverageText(coverage)}`;
-    };
-    this.hoverTip.textContent = `${column.label} · $${row.low}–$${row.high} · ${sideText('BID', row.bidQuantity, row.bidNotional, row.bidCoverage)} · ${sideText('ASK', row.askQuantity, row.askNotional, row.askCoverage)} · ${column.ageMs === null ? 'no current book' : `age ${ageLabel(column.ageMs)}`}`;
+    const row = column?.rows.find(value => value.index === axisRow.index);
+    renderDepthMatrixCard(this.hoverTip, { low: axisRow.low, high: axisRow.high, units: effectiveCurrency(this.settings.unit), column, row,
+      age: column?.ageMs == null ? 'no current book' : `age ${ageLabel(column.ageMs)}`,
+      midpoint: column?.mid ?? (column ? this.referencePrices.get(column.source) : undefined),
+      reference: column?.source === this.settings.referenceSourceId });
   }
 
-  private clearHover() { this.hoveredIndex = -1; this.hoverColumn = ''; this.hoverTip.hidden = true; this.draw(); }
+  private clearHover() { this.hoveredIndex = -1; this.hoverColumn = ''; this.hoverAnchor = undefined; this.hoverTip.hidden = true; this.draw(); }
 
-  diagnostics() { return { visible: this.visible, settings: this.settings, rows: this.rows.length, columns: this.columns.map(column => ({ source: column.source, state: column.state, ageMs: column.ageMs, cursor: column.cursor })), viewport: this.viewport, pendingViewport: this.pendingViewport, centeringViewport: this.centeringViewport, scrollTop: this.scroll.scrollTop }; }
+  diagnostics() { return { visible: this.visible, settings: this.settings, rows: this.rows.length, columns: this.columns.map(column => ({ source: column.source, state: column.state, ageMs: column.ageMs, cursor: column.cursor })), rowLayout: this.rowLayout.positions, referenceSourceId: this.settings.referenceSourceId, viewport: this.viewport, pendingViewport: this.pendingViewport, centeringViewport: this.centeringViewport, scrollTop: this.scroll.scrollTop }; }
 
-  dispose() { if (this.dead) return; this.dead = true; if (this.renderFrame) cancelAnimationFrame(this.renderFrame); this.unsubscribe(); this.abort.abort(); this.listeners.forEach(listener => listener.dispose()); this.canvases.clear(); this.columns = []; }
+  dispose() {
+    clearTimeout(this.collapseTimer); if (this.dead) return; this.dead = true; if (this.renderFrame) cancelAnimationFrame(this.renderFrame); this.unsubscribe(); this.abort.abort(); this.listeners.forEach(listener => listener.dispose()); this.canvases.clear(); this.columns = []; }
 }
 
 function sameViewport(a: { low: string; high: string }, b: { low: string; high: string }) { return a.low === b.low && a.high === b.high; }
-function columnStateLabel(column: DepthMatrixColumn) { return column.message.startsWith('Fixture:') ? 'FIXTURE' : column.state === 'unavailable' ? 'UNAVAILABLE' : column.state.toUpperCase(); }
+function columnStateLabel(column: DepthMatrixColumn) { return column.state === 'live' && column.message.startsWith('Fixture:') ? 'FIXTURE' : column.state === 'unavailable' ? 'UNAVAILABLE' : column.state.toUpperCase(); }
 function coverageKnown(value: MatrixCoverage) { return value === 'observed' || value === 'known-empty'; }
-function coverageText(value: MatrixCoverage) {
-  return ({ observed: 'observed', 'known-empty': 'known empty', partial: 'partial', unknown: 'unknown', stale: 'stale', disconnected: 'disconnected', syncing: 'syncing' } satisfies Record<MatrixCoverage, string>)[value];
-}
 function ageLabel(value: number) { return `${(Math.max(0, value) / 1000).toFixed(1)}s`; }
-function priceLabel(low: string) { const value = Number(low); return Number.isFinite(value) ? value.toLocaleString('en-US', { maximumFractionDigits: 2 }) : low; }
+function priceLabel(low: string) { return matrixExactPrice(low); }
 function referencePriceLabel(value: string) { const price = Number(value); return Number.isFinite(price) ? price.toLocaleString('en-US', { maximumFractionDigits: 0 }) : value; }
-function exactReferencePriceLabel(value: string) { const price = Number(value); return Number.isFinite(price) ? price.toLocaleString('en-US', { maximumFractionDigits: 8 }) : value; }
+function exactReferencePriceLabel(value: string) { return priceLabel(value); }
 function median(values: number[]) { if (!values.length) return 0; values.sort((a, b) => a - b); const mid = Math.floor(values.length / 2); return values.length % 2 ? values[mid]! : (values[mid - 1]! + values[mid]!) / 2; }
 function sameMatrixRow(a: MatrixRow, b: MatrixRow) {
   return a.index === b.index && a.low === b.low && a.high === b.high

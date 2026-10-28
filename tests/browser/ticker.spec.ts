@@ -32,6 +32,8 @@ test('ticker reported prints, tiers, notifications, pause, shared footprint sock
 
 test('ticker header controls remain accessible without horizontal scroll at narrow width',async({page})=>{
   await installTradeFixture(page);
+  // Keep the requested 594px ticker width inside one root split.
+  await page.getByRole('button',{name:'Close Hyperliquid · BTC Perp · 1m',exact:true}).click();
   await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
   await expect(ticker.getByRole('button',{name:'Pause',exact:true}).locator('svg')).toHaveCount(1);
   await expect(ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).locator('svg')).toHaveCount(1);

@@ -11,7 +11,7 @@ const historyFrom = base - 440_000;
 const price = 50_000;
 const scope = { bids: { complete: true }, asks: { complete: true } };
 const settings = (aggregation: 10 | 50 | 100, thresholdUsd = 200): OrderWallsSettings => ({
-  ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, method: 'absolute', thresholdUsd, aggregation, minDurationMs: 0,
+  ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true, method: 'absolute', thresholdUsd, aggregation, minDurationMs: 0,
 });
 
 type RawBookScope = typeof scope;

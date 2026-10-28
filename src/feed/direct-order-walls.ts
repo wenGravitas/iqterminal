@@ -1,3 +1,4 @@
+import { DirectWallBookProjection } from './order-wall-book-projection';
 import { OrderWallDetector, orderWallsSettings,
   type OrderWallDepthRecord, type OrderWallMarket, type OrderWallRequest,
   type OrderWallStatus, type OrderWallsSettings } from './order-walls';
@@ -18,11 +19,13 @@ interface Subscription {
 export class DirectOrderWallsService {
   private subscriptions = new Map<string, Subscription>();
   private fixture = false;
+  private bookProjection = new DirectWallBookProjection();
   private disposed = false;
   constructor(private depth: BinanceDepthService, private emit: (event: Event) => void, private now = Date.now) {}
 
   setFixture(value: boolean) {
     this.fixture = value;
+    if(value)this.bookProjection.clear();
     if (value) for (const sub of this.subscriptions.values()) {
       sub.release?.(); sub.release = undefined;
       this.unavailable(sub, 'Order Walls require a live Binance depth feed; fixture candles are not a depth fallback.');
@@ -57,6 +60,7 @@ export class DirectOrderWallsService {
   private unsubscribe(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
     this.subscriptions.delete(id); sub.release?.();
+    if(!this.subscriptions.size)this.bookProjection.clear();
   }
 
   private updateSettings(id: string, raw: OrderWallsSettings) {
@@ -97,6 +101,7 @@ export class DirectOrderWallsService {
   private onBook(sub: Subscription, book: BinanceDepthBook | null, at: number, epoch: number) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub) return;
     if (!book) {
+      this.bookProjection.clear();
       if (sub.priorBids && sub.priorAsks) {
         const gap: OrderWallDepthRecord = { kind: 'gap', at, cursor: ++sub.cursor, epoch: sub.epoch ?? epoch,
           reason: this.depth.getStatus().message };
@@ -109,7 +114,7 @@ export class DirectOrderWallsService {
       }
       return;
     }
-    const levels = collectBook(book), nextEpoch = sub.epoch !== epoch || !sub.priorBids || !sub.priorAsks;
+    const levels = this.bookProjection.project(book, epoch), nextEpoch = sub.epoch !== epoch || !sub.priorBids || !sub.priorAsks;
     const record: OrderWallDepthRecord = nextEpoch
       ? { kind: 'snapshot', at, cursor: ++sub.cursor, epoch, bids: levels.bids, asks: levels.asks, bookScope: levels.scope }
       : { kind: 'delta', at, cursor: ++sub.cursor, epoch,
@@ -143,25 +148,15 @@ export class DirectOrderWallsService {
       coverage: { from: sub.from, to: sub.to, complete: false, partial: true, reason: message } });
   }
 
-  diagnostics() { return { subscriptions: this.subscriptions.size, socketsOwned: 0, liveMode: !this.fixture }; }
-  dispose() { this.disposed = true; for (const id of [...this.subscriptions.keys()]) this.unsubscribe(id); }
+  diagnostics() { return { subscriptions: this.subscriptions.size, socketsOwned: 0, projection: this.bookProjection.diagnostics(), liveMode: !this.fixture }; }
+  dispose() { this.bookProjection.clear(); this.disposed = true; for (const id of [...this.subscriptions.keys()]) this.unsubscribe(id); }
 }
 
-function collectBook(book: BinanceDepthBook) {
-  const bids = new Map<number, number>(), asks = new Map<number, number>();
-  book.visitLevels((side, price, size) => (side === 'bid' ? bids : asks).set(price, size));
-  const topBids = new Map([...bids].sort(([a], [b]) => b - a).slice(0, 5_000));
-  const topAsks = new Map([...asks].sort(([a], [b]) => a - b).slice(0, 5_000));
-  return { bidMap: topBids, askMap: topAsks, bids: [...topBids] as Array<[number, number]>, asks: [...topAsks] as Array<[number, number]>,
-    scope: { maxLevelsPerSide: 5_000, bidComplete: false, askComplete: false,
-      ...(book.snapshotBidBoundary !== null ? { bidFloor: book.snapshotBidBoundary } : {}),
-      ...(book.snapshotAskBoundary !== null ? { askCeiling: book.snapshotAskBoundary } : {}) } };
-}
 function diffLevels(previous: Map<number, number>, current: Map<number, number>): Array<[number, number]> {
   const result: Array<[number, number]> = [];
   for (const [price, size] of current) if (previous.get(price) !== size) result.push([price, size]);
   for (const price of previous.keys()) if (!current.has(price)) result.push([price, 0]);
   return result;
 }
-function detectKey(settings: OrderWallsSettings) { return JSON.stringify([settings.method, settings.thresholdUsd,
+function detectKey(settings: OrderWallsSettings) { return JSON.stringify([settings.mode, settings.topLevels, settings.searchRangePercent, settings.minimumNotionalEnabled, settings.minimumNotionalUsd, settings.method, settings.thresholdUsd,
   settings.relativeFloorUsd, settings.relativePercentile, settings.exitRatio, settings.minDurationMs, settings.aggregation]); }

@@ -1,3 +1,6 @@
+import { LIQUIDATIONS_ID, liquidationSettings } from '../liquidations/settings';
+import { CVD_ID,cvdSettings } from '../feed/cvd';
+import { DAILY_VWAP_ID, DEFAULT_DAILY_VWAP, dailyVwapSettings } from './daily-vwap';
 import { EFFORT_RESULT_ID, DEFAULT_EFFORT, effortSettings, effortRecord } from '../effort-result/settings';
 import { MARKET_CONDITIONS_ID, DEFAULT_CONDITIONS, conditionsSettings } from '../market-conditions/settings';
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
@@ -6,6 +9,7 @@ import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from
 import type { NetPositioningMethod, NetPositioningVenue } from '../feed/net-positioning';
 import type { NetPositioningDisplay } from '../chart/net-positioning-layout';
 import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoIndicatorSettings } from './tpo-settings';
+import { TRADE_BUBBLES_ID, TRADE_BUBBLE_DEFAULT_SETTINGS, tradeBubbleSettings } from '../trade-bubbles/model';
 export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
@@ -34,10 +38,10 @@ export function netPositioningSettings(value: unknown): NetPositioningSettings {
   const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const method = raw.method === 'aggressor-flow-oi' ? 'aggressor-flow-oi' : 'price-oi';
   const input = Array.isArray(raw.venues) ? raw.venues : ['binance'];
-  const selected = new Set(input.filter((venue): venue is NetPositioningVenue => venue === 'binance' || venue === 'hyperliquid'));
-  const venues = (['binance', 'hyperliquid'] as const).filter(venue => selected.has(venue));
+  const selected = new Set(input.filter((venue): venue is NetPositioningVenue => venue === 'binance' || venue === 'hyperliquid' || venue === 'bybit'));
+  const venues = (['binance', 'hyperliquid', 'bybit'] as const).filter(venue => selected.has(venue));
   const rawColors = raw.colors && typeof raw.colors === 'object' && !Array.isArray(raw.colors) ? raw.colors as Record<string, unknown> : {};
-  const colors = Object.fromEntries((['binance', 'hyperliquid'] as const).flatMap(venue => {
+  const colors = Object.fromEntries((['binance', 'hyperliquid', 'bybit'] as const).flatMap(venue => {
     const value = rawColors[venue];
     return typeof value === 'string' && /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i.test(value) ? [[venue, value]] : [];
   })) as Partial<Record<NetPositioningVenue, string>>;
@@ -59,6 +63,19 @@ export interface IndicatorInstance {
 }
 export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, statsPosition: 'bottom' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
 export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
+  {id:LIQUIDATIONS_ID,name:'Liquidations',description:'Actual reported long/short liquidations · Bybit bankruptcy prices / sampled Binance',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...liquidationSettings(undefined)},settingsSchema:[],placements:['pane'],dataRequirements:['actual-liquidation-reports'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
+  {id:CVD_ID,name:'Multi-Venue CVD',description:'Executed aggressor-side cumulative volume delta · historical/live · Spot and Perpetual',category:'Order Flow',implementation:'builtin',
+   settingsVersion:1,defaults:{...cvdSettings(undefined)},settingsSchema:[{key:'anchor',label:'Reset mode',kind:'select',defaultValue:'daily'},{key:'units',label:'Quantity unit',kind:'select',defaultValue:'btc'}],
+   placements:['pane'],dataRequirements:['signed-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
+  {id:TRADE_BUBBLES_ID,name:'Trade Bubbles',description:'Size-scaled BTCUSDT executions · independent shared-feed overlay',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...TRADE_BUBBLE_DEFAULT_SETTINGS,tiers:TRADE_BUBBLE_DEFAULT_SETTINGS.tiers.map(tier=>({...tier}))},settingsSchema:[
+    {key:'sourceMode',label:'Execution sources',kind:'select',defaultValue:'follow-chart'},
+    {key:'minimumNotionalUsdt',label:'Minimum notional (USDT)',kind:'number',defaultValue:100000},
+    {key:'side',label:'Aggressor side',kind:'select',defaultValue:'both'},
+    {key:'maximumVisible',label:'Maximum visible bubbles',kind:'number',defaultValue:120}],
+   placements:['overlay'],dataRequirements:['normalized-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
+  { id: DAILY_VWAP_ID, name: 'Daily VWAP', description: 'UTC daily candle-volume weighted price with deviation bands', category: 'Volume', implementation: 'builtin',
+    settingsVersion: 1, defaults: { ...DEFAULT_DAILY_VWAP }, settingsSchema: Object.entries(DEFAULT_DAILY_VWAP).map(([key,value]) => ({key,label:key,kind:typeof value,defaultValue:value})),
+    placements: ['overlay'], dataRequirements: ['candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: {editScript:false,duplicate:false} },
   {id:EFFORT_RESULT_ID,name:'Effort–Result',description:'Persistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxy',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:effortRecord(DEFAULT_EFFORT),settingsSchema:Object.entries(DEFAULT_EFFORT).map(([key,value])=>({key:key==='retentionDays'?key:`${key==='pane'?'presentation':typeof value==='boolean'?'notifications':'calculation'}.${key}`,label:key,kind:typeof value,defaultValue:value})),placements:['overlay','pane'],dataRequirements:['normalized-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   { id: MARKET_CONDITIONS_ID, name: 'Market Conditions', description: 'Completed-candle volatility regimes and heuristic tradeability · OHLC only', category: 'Trend', implementation: 'builtin',
     settingsVersion: 1, defaults: { ...DEFAULT_CONDITIONS }, settingsSchema: Object.entries(DEFAULT_CONDITIONS).map(([key,value]) => ({ key, label: key, kind: Array.isArray(value) ? 'multi' : typeof value, defaultValue: value })), placements: ['pane'], dataRequirements: ['candles'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
@@ -84,7 +101,11 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       ...['bids', 'asks'].map(key => ({ key, label: `Show ${key}`, kind: 'boolean', defaultValue: true }))],
     placements: ['overlay'], dataRequirements: ['synchronized-book'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: ORDER_WALLS_ID, name: 'Order Walls', description: 'Observed resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M Perp', category: 'Order Flow', implementation: 'builtin',
-    settingsVersion: 1, defaults: { ...DEFAULT_ORDER_WALLS_SETTINGS }, settingsSchema: [
+    settingsVersion: 2, defaults: { ...DEFAULT_ORDER_WALLS_SETTINGS }, settingsSchema: [
+      { key: 'mode', label: 'Detection mode', kind: 'select', defaultValue: 'top-levels' },
+      { key: 'topLevels', label: 'Top levels per side', kind: 'number', defaultValue: 8 },
+      { key: 'searchRangePercent', label: 'Search range per side (%)', kind: 'number', defaultValue: 10 },
+      ...['minimumNotionalEnabled','highContrast','visibleRangeOnly','strengthThickness'].map(key=>({ key, label:key, kind:'boolean', defaultValue:DEFAULT_ORDER_WALLS_SETTINGS[key as keyof typeof DEFAULT_ORDER_WALLS_SETTINGS] })),
       { key: 'method', label: 'Detection', kind: 'select', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.method },
       { key: 'relativePercentile', label: 'Relative percentile', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.relativePercentile },
       { key: 'relativeFloorUsd', label: 'Relative USD floor', kind: 'number', defaultValue: DEFAULT_ORDER_WALLS_SETTINGS.relativeFloorUsd },
@@ -137,7 +158,7 @@ export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
   return validStudyPins(instances.filter(i => i.settingsVersion === 1 && i.source.kind === 'chart' && i.script && i.definitionId === `script:${i.script.scriptId}`).map(i => ({ ...i.script, attachmentId: i.instanceId, settings: i.settings, visible: i.visible })));
 }
 export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true): IndicatorInstance {
-  const placement = id === FOOTPRINT_ID ? 'price-presentation' : id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
+  const placement = id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
   return { instanceId: id, definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings };
 }
 /** Bounded plain configuration. Unknown definitions and future settings versions remain recoverable. */
@@ -157,8 +178,12 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
     if (copy.definitionId === EFFORT_RESULT_ID && copy.settingsVersion === 1) copy.settings = effortRecord(effortSettings(copy.settings));
     if (copy.definitionId === MARKET_CONDITIONS_ID && copy.settingsVersion === 1) copy.settings = { ...conditionsSettings(copy.settings) };
-    if (copy.definitionId === ORDER_WALLS_ID && copy.settingsVersion === 1) copy.settings = { ...orderWallsSettings(copy.settings) };
+    if (copy.definitionId === ORDER_WALLS_ID && [1,2].includes(copy.settingsVersion)) { copy.settings = { ...orderWallsSettings(copy.settingsVersion === 1 && !('mode' in copy.settings) ? { ...copy.settings, mode: 'threshold' } : copy.settings) }; copy.settingsVersion = 2; }
     if (copy.definitionId === FOOTPRINT_TOTALS_ID && copy.settingsVersion === 1) copy.settings = { ...footprintTotalsSettings(copy.settings) };
+    if (copy.definitionId === LIQUIDATIONS_ID && copy.settingsVersion === 1) copy.settings = {...liquidationSettings(copy.settings)};
+    if (copy.definitionId === CVD_ID && copy.settingsVersion === 1) copy.settings = { ...cvdSettings(copy.settings) };
+    if (copy.definitionId === TRADE_BUBBLES_ID && copy.settingsVersion === 1) copy.settings = { ...tradeBubbleSettings(copy.settings) };
+    if (copy.definitionId === DAILY_VWAP_ID && copy.settingsVersion === 1) copy.settings = { ...dailyVwapSettings(copy.settings) };
     if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };
     if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {

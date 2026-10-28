@@ -39,6 +39,8 @@ describe('ticker execution drawing', () => {
     };
 
     getDrawingTool('horizontal-ray').draw(context);
-    expect(texts).toEqual(label.split('\n'));
+    expect(texts).toEqual(['BN[P] 0.25 BTC']);
+    texts.length=0;getDrawingTool('horizontal-ray').draw({...context,pts:[{x:900,y:100}]});expect(texts).toEqual([]);
+    getDrawingTool('horizontal-ray').draw({...context,drawing:{...context.drawing,props:{iqterminalLabelState:'custom',iqterminalLabel:'BINANCE PERP personal note'}}});expect(texts).toEqual(['BINANCE PERP personal note']);
   });
 });

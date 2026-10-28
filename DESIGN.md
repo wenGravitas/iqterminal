@@ -121,3 +121,15 @@ Empty chart and indicator panes show a compact five-bar signal animation with th
 Small directional zone segments begin at actual candidate availability, with a diamond marker and restrained R/B/U/? outcome notation. Buy-flow stalls use resistance red and sell-flow stalls support green. Segments stop at resolution; candles retain their original appearance. A compact status/evidence button has its own reserved chart-footer row below the plot and footprint totals. Hover evidence uses a flat theme surface and expandable provenance; the optional signed pane labels intensity as descriptive and shows warm-up/quality feedback rather than plotting missing observations as zero.
 
 When VAH/VAL guides are visible, POC dotted vertical markers share their horizontal endpoints, including the central candle gutter, guide extensions and chart-edge clipping. With value-area guides hidden, the markers retain their compact clearance from the painted POC cells.
+
+### Floating drawing toolbar
+
+A sidebar icon toggles a flat, square floating bar inside each chart. Pointer and Erase are fixed; an empty bar prompts “Drag drawing tools here”. Pinned tools reuse the sidebar icons and native tool state. Tool drags use a compact theme-matched icon-and-name preview. A small grip moves the bar, which wraps and stays inside its chart as available space changes. Pins are copied from sidebar tools and can be reordered without creating drawings. Per-chart visibility, normalized position and tool order persist with the layout; native tool defaults and templates remain authoritative.
+
+### Multi-Venue CVD
+
+The native lower pane reuses Net Positioning source-button sizing, selected state and keyboard focus for Venues/Aggregations, the shared market picker for inclusion, and a separately labelled legend for visibility. Thin stable source colours sit behind a thicker foreground-coloured total, with a subtle dashed zero and breaks at UTC resets. Compact quantity readouts name the unit; unknown samples remain gaps and qualified partial totals use dashed segments. Controls and legend occupy reserved space at the top; narrow panes scroll their legend rather than stacking overlapping end labels. Coverage stays in one subdued footer and the compact crosshair tooltip; details remain in diagnostics.
+
+### Order Walls Top Levels
+
+Top Levels uses a compact set of continuous native horizontal selection episodes, with four shared strength tiers and distinct bid/ask hues. The strongest levels have brighter warm colours and greater width; small quantity/rank changes remain within a line. Visible Range Only scales appearance independently of detection. Optional right-edge price/notional labels suppress overlaps. Native settings are grouped into Detection, Appearance and History, with confirmation advanced controls collapsed. Pending replay, partial observed ranking scope, unknown removals and evicted detail remain explicit. Existing Threshold Walls settings retain their mode.

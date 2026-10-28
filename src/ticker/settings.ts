@@ -1,11 +1,10 @@
+import { button, field } from './ui';
 import { MarketPicker } from '../market-picker';
 import { marketName } from '../markets';
 import { TICKER_COLUMNS, SOUNDS, defaultTiers, validateTiers, type TickerConfig, type Tier, type TickerUnit } from './model';
 import type { Notifications } from '../notifications';
 import { tradeRow, tradeText } from './presentation';
 import { getDisplayTimezone } from '../timezone';
-function button(text: string, click: () => void) { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.onclick = click; return b; }
-function field(parent: HTMLElement, text: string, input: HTMLElement) { const l = document.createElement('label'); l.className = 'indicator-setting-field'; const span = document.createElement('span'); span.textContent = text; input.setAttribute('aria-label',text); l.append(span,input); parent.append(l); return input; }
 export class TickerSettings {
   readonly element = document.createElement('dialog'); private picker: MarketPicker; private draft!: TickerConfig;
   private fields = document.createElement('div'); private tiers = document.createElement('div'); private error = document.createElement('p');

@@ -71,7 +71,7 @@ describe('Trade Ticker chart hover', () => {
     const geometry: Array<[number, number, number, number]> = [];
     let path: Array<[number, number]> = [];
     const ctx = {
-      save() {}, restore() {}, rect() {}, clip() {}, setLineDash() {}, fill() {}, arc() {},
+      save() {}, restore() {}, rect() {}, clip() {}, setLineDash() {}, fill() {}, arc() {}, fillText(){}, measureText(){return {width:80};},
       beginPath() { path = []; },
       moveTo(x: number, y: number) { path.push([x, y]); },
       lineTo(x: number, y: number) { path.push([x, y]); },

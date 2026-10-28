@@ -33,6 +33,12 @@ The footer’s **Global settings** offers an opt-in currency override, preset to
 
 Use **Indicators** to search and add scripts, Footprint, **Footprint Totals**, Order-book Heatmap, **Net Longs — Estimated** or **Net Shorts — Estimated**. Each chart’s collapsible active list provides visibility, settings and removal; scripted entries also provide Edit Script and Duplicate. Hiding native layers retains bounded collection; removing them releases their consumer. Chart settings owns the saved base-candle preference. See [the indicator contract and migration](docs/indicators.md), [Footprint behavior and limits](docs/footprints.md), and [Net Positioning coverage and limits](docs/net-positioning.md).
 
+**Daily VWAP** is available under Indicators → Volume. It resets at 00:00 UTC and uses chart-candle HLC3 weighted by native candle volume, with a blue line, green deviation bands and configurable faint fill. Settings persist per chart, and incomplete loaded days are identified. See [Daily VWAP calculation and coverage](docs/daily-vwap.md).
+
+**Multi-Venue CVD** is available under Indicators → Order flow. It plots separate Binance BTCUSDT Spot/perpetual executed-flow lines, saved named aggregations and a deduplicated combined total. Daily/weekly/continuous/custom UTC anchors and BTC/executed-USDT units persist per indicator. Recorded history uses the companion server’s bounded signed-flow projection; direct mode is observed-live only. See [CVD formulas, controls and coverage](docs/cvd.md).
+
+**Actual Liquidations** adds a dockable Liquidation Ticker and an Order Flow pane with optional price markers, shared history/replay and burst alerts. Bybit bankruptcy-price valuations and Binance sampled cumulative reports retain explicit coverage caveats. Requires the companion liquidation collector. See [Release 1 implementation, operation and verification](docs/liquidations-release1.md).
+
 ## Session Footprints
 
 Footprint is available on Binance BTCUSDT USD-M Perp. It groups classified public `aggTrade` observations into execution-based bid/ask, delta and volume rows. Collection starts when Footprint is added through Indicators; it has no trade-history backfill, so the first interval is partial and saved layouts retain settings rather than collected executions. Candles and OpenScript studies continue to use native exchange candle history. Price buckets start at fixed width multiples: $25 covers [$82,800, $82,825), with the upper edge belonging to the next row. Footprint and heatmap share these bounds, and hover shows the range. The USDT price-level width, BTC/USDT volume-unit toggle and display options are saved per chart; hidden charts keep bounded collection while their renderer sleeps. See [Footprint behavior, coverage and limits](docs/footprints.md).
@@ -47,7 +53,11 @@ Add **Depth Matrix** from the bottom toolbar to compare synchronized Binance BTC
 
 ## Trade Ticker
 
-Add **Trade Ticker** from the bottom toolbar for live Binance BTCUSDT USD-M reported prints. **Settings** edits the display filter, aggressor filter, market scope and size tiers; **Pause** freezes the visible tape while collection continues. Enable browser audio explicitly, and use the application **Notifications** button for master mute/volume and sound previews. Settings persist with the dock layout; trade history is session-only. Spot/Hyperliquid execution feeds are not available yet. See [Trade Ticker usage and limits](docs/trade-ticker.md).
+Add **Trade Ticker** from the bottom toolbar for live Binance BTCUSDT USD-M reported prints. **Settings** edits the display filter, aggressor filter, market scope and size tiers; **Pause** freezes the visible tape while collection continues. Enable browser audio explicitly, and use the application **Notifications** button for master mute/volume and sound previews. Settings persist with the dock layout; trade history is session-only. Spot/Hyperliquid execution feeds are not available in Trade Ticker. See [Trade Ticker usage and limits](docs/trade-ticker.md).
+
+## Trade Bubbles
+
+Add **Trade Bubbles** from a candle chart's **Indicators → Order Flow** catalogue for a bounded overlay of Binance BTCUSDT Spot or USD-M aggregate executions. Follow-chart and explicit-source modes keep source selection visible; Hyperliquid BTC/USD is reported incompatible rather than silently converted. Each chart retains its own 2,048-print session and filters. See [Trade Bubbles sources, display settings and limits](docs/trade-bubbles.md).
 
 ## Local OpenScript studies
 
@@ -87,3 +97,9 @@ Binance BTCUSDT USD-M with a labelled trade-price proxy and a 30-second horizon;
 [usage, data quality, persistence, replay and measured bounds](docs/effort-result.md).
 
 The drawing sidebar’s **Positions** menu includes **Horizontal Measure** (time and bar span) and **Vertical Measure** (price change), using native Date Range and Price Range drawings. Both use two anchors and support the existing drawing settings, templates, history and persistence.
+
+Use the sidebar’s **floating toolbar** icon to show a movable drawing bar. It starts with Pointer and Erase. Drag tools from sidebar menus onto the bar; drag pinned tools to reorder them. Shift+Enter pins a focused sidebar tool, Alt+Left/Right reorders a focused pin, and Delete or Alt-click removes a pin without deleting drawings. Drag the grip (or use its arrow keys) to move the bar. Visibility, position and tool order are saved per chart; buttons use the same native drawing settings and default templates as the sidebar.
+
+### Order Walls — Top Levels Release 1
+
+New instances default to observed Top 8 bids and asks with stable native price resolution. Existing saved instances retain Threshold Walls; choose **Detection mode → Top Levels** to switch them. See the [calculation, settings, coverage limits, measured Pi results and Release 2 boundary](docs/order-walls-top-levels-release1.md), including separate fixture and genuine live Spot 5m captures. This release reuses the existing depth pipeline and adds no collector or database schema.

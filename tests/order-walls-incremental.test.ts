@@ -10,7 +10,7 @@ import {
 
 const at0 = 1_800_100_000_000;
 const configured = (patch: Partial<OrderWallsSettings> = {}) => orderWallsSettings({
-  ...DEFAULT_ORDER_WALLS_SETTINGS,
+  ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const,
   enabled: true,
   method: 'relative',
   relativeFloorUsd: 1_000_000,

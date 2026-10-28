@@ -1,0 +1,66 @@
+import {test,expect} from '@playwright/test';
+import {addIndicator} from './indicator-actions';
+test('positioning hover previews candle VA only, double-click commits a native undoable persisted zone',async({page})=>{
+ test.setTimeout(120000);
+ await page.addInitScript(()=>{const original=CanvasRenderingContext2D.prototype.fillText;(window as any).__rangeLabels=[];CanvasRenderingContext2D.prototype.fillText=function(text:string,x:number,y:number,...args:any[]){if(/79,990|80,000|BN\[P\]/.test(String(text))){const a=(window as any).__rangeLabels;a.push({text,x,y});if(a.length>2000)a.splice(0,a.length-2000);}return (original as any).call(this,text,x,y,...args);};});const now=Math.floor(Date.now()/60000)*60000;let profiles=0;
+ await page.route('**/market-data/**',async route=>{
+  const u=new URL(route.request().url());
+  if(u.pathname.endsWith('/native-candles'))return route.fulfill({json:{source:'binance-native-kline',candles:Array.from({length:500},(_,i)=>({t:now-(499-i)*60000,o:80000,h:80100,l:79900,c:80001,v:10,revision:1,closed:i<499}))}});
+  if(u.pathname.endsWith('/footprints')){profiles++;return route.fulfill({status:503,json:{error:'Explicit test: profile is injected below'}});}
+  if(!u.pathname.endsWith('/net-positioning'))return route.fulfill({status:503,json:{error:'Explicit browser fixture: no live transport'}});
+  const venues=u.searchParams.get('venues')!.split(','),method=u.searchParams.get('method');
+  const intervals=Array.from({length:30},(_,i)=>{const end=now-i*60000;return {version:1,method,status:'available',venue:'binance',market:'perpetual',nativeSymbol:'BTCUSDT',units:'BTC',startTimeMs:end-30000,endTimeMs:end,attributionTimeMs:end,resolutionMs:30000,direction:1,oiDeltaBtcDecimal:'2',netLongsBtcDecimal:'1',netShortsBtcDecimal:'1',unclassifiedBtcDecimal:'0',qualityFlags:[],provenance:{priceStart:{price:80000},priceEnd:{price:80001}}};});
+  const unit={status:'verified',units:'BTC',evidence:'Explicit fixture'};
+  return route.fulfill({json:{version:1,method,venues,market:'perpetual',nativeSymbol:'BTC',units:'BTC',from:Number(u.searchParams.get('from')),to:Number(u.searchParams.get('to')),intervals,unitVerification:{binance:unit},feeds:{binance:{state:'live',stale:false,lastObservedAt:Date.now()}},pendingIntervals:0,truncated:false}});
+ });
+ await page.goto('/');const panel=page.locator('.candle-panel').first();await expect.poll(()=>page.evaluate(()=>(window as any).__terminal?.stats().panels[0]?.bars)).toBeGreaterThan(0);
+ await page.getByRole('button',{name:'Close Hyperliquid · BTC Perp · 1m',exact:true}).click();
+ const close=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});if(await close.isVisible())await close.click();
+ await addIndicator(panel,'Net Shorts — Estimated');await expect.poll(()=>profiles).toBeGreaterThan(0);
+ await expect(panel.locator('[data-mode=footprint]')).toHaveCount(0);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.visibleBarsDrawn)).toBeGreaterThan(0);
+ const hit=await page.evaluate(()=>{
+  const p=[...(window as any).__terminal.panels.values()][0],view=p.engine.netPositioningPanes.values().next().value,plot=p.engine.chart.plotRect(view.paneIndex),g=view.primitive.geometry.find((g:any)=>g.left>0&&g.right<plot.width&&g.bottom>g.top);
+  if(!g)throw Error('Fixture must have a visible positioning bar');
+  const i=p.engine.times.indexOf(g.timeMs/1000);p.engine.setRange({from:i-10,to:i+10});
+  return {time:g.timeMs,drawings:p.engine.drawings.drawings().length};
+ });
+ const point=()=>page.evaluate(time=>{const p=[...(window as any).__terminal.panels.values()][0],v=p.engine.netPositioningPanes.values().next().value,plot=p.engine.chart.plotRect(v.paneIndex),g=v.primitive.geometry.find((g:any)=>g.timeMs===time),stage=p.element.querySelector('.chart-stage').getBoundingClientRect();return {x:stage.x+plot.left+(g.left+g.right)/2,y:stage.y+plot.top+(g.top+g.bottom)/2};},hit.time);
+ let xy=await point();await page.mouse.move(xy.x,xy.y);await expect(panel.locator('.net-positioning-tooltip')).toContainText('VAH/VAL unavailable');
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.active)).toBe(false);
+ await page.evaluate(time=>{const p=[...(window as any).__terminal.panels.values()][0];p.footprintBars=[{time:time/1000,rowSize:10,coverage:'observed',gapBefore:false,cells:[{price:79980,bidVol:1,askVol:1},{price:79990,bidVol:40,askVol:40},{price:80000,bidVol:9,askVol:9}]}];},hit.time);
+ await page.mouse.move(xy.x+1,xy.y);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.range)).toMatchObject({low:79990,high:80000,side:'shorts',venue:'binance'});
+ await expect(panel.locator('.net-positioning-tooltip')).toContainText('candle VA 70% (proxy)');
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],plot=p.engine.chart.plotRect(p.engine.chart.primaryPaneIndex());return (window as any).__rangeLabels.filter((r:any)=>r.x>plot.width).length;})).toBeGreaterThan(1);
+ expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings);
+ await page.mouse.dblclick(xy.x,xy.y);await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings+1);
+ const zone=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().at(-1));
+ expect(zone.tool).toBe('rectangle');expect(zone.points.map((p:any)=>p.price)).toEqual([80000,79990]);expect(zone.text.value).toContain('proxy');expect(zone.points[1].time).toBeGreaterThan(hit.time/1000+60);
+ await page.mouse.move(0,0);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.active)).toBe(false);
+ await page.getByRole('button',{name:'Global settings',exact:true}).click();
+ const global=page.getByRole('dialog',{name:'Global settings'});await global.getByLabel('Override indicator currencies').check();await global.getByLabel('Default display currency').selectOption('quote');
+ await page.evaluate(()=>(window as any).__rangeLabels=[]);await global.getByRole('button',{name:'Apply',exact:true}).click();
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 80K USDT'))).toBe(true);
+ await page.getByRole('button',{name:'Global settings',exact:true}).click();await global.getByLabel('Default display currency').selectOption('base');await page.evaluate(()=>(window as any).__rangeLabels=[]);await global.getByRole('button',{name:'Apply',exact:true}).click();
+ await expect.poll(()=>page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(true);
+ await page.screenshot({path:'/tmp/positioning-range-zone.png'});
+ await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.undo());await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.drawings().length)).toBe(hit.drawings);
+ await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.drawings.redo());
+ await expect.poll(()=>page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('iqterminal:drawings:')).some(k=>(localStorage.getItem(k)??'').includes('positioningRange')))).toBe(true);
+ await page.reload();await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0]?.engine?.drawings.drawings().some((d:any)=>d.props.positioningRange?.low===79990))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.visibleBarsDrawn)).toBeGreaterThan(0);
+ await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],e=p.engine;
+  const bars=e.series.getData().map((b:any)=>({time:b.time,revision:1,rowSize:10,cells:[{price:79990,bidVol:10,askVol:10}],delta:0,minDelta:0,maxDelta:0,open:b.open,close:b.close,high:b.high,low:b.low,coverage:'observed',gapBefore:false,aggregateRecordCount:1,source:'binance-usdm-aggtrade',granularity:'aggregate-trade'}));
+  e.setDisplayMode('footprint',true);e.setFootprintBars(bars,true);
+ });
+ for(const spacing of [80,160,240]){
+  await page.evaluate(spacing=>{const e=[...(window as any).__terminal.panels.values()][0].engine;e.chart.timeScale.setBarSpacing(spacing);},spacing);
+  await expect.poll(()=>page.evaluate(()=>{const e=[...(window as any).__terminal.panels.values()][0].engine,v=e.netPositioningPanes.values().next().value,g=v.primitive.geometry.find((g:any)=>g.left>0&&g.right<e.chart.plotRect(v.paneIndex).width);if(!g)return 999;const column=e.footprint.renderWidth+e.footprint.gap;return Math.abs(g.right-g.left-column);})).toBeLessThanOrEqual(1);
+ }
+ await page.evaluate(()=>{(window as any).__rangeLabels=[];const e=[...(window as any).__terminal.panels.values()][0].engine,r=e.visibleRange();e.setRange({from:r.from+.1,to:r.to+.1});});
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ expect(await page.evaluate(()=>(window as any).__rangeLabels.some((r:any)=>r.text==='BN[P] 1 BTC'))).toBe(false);
+ await page.screenshot({path:'/tmp/positioning-footprint-aligned.png'});
+
+});

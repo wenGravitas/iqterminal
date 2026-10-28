@@ -13,8 +13,8 @@ function venueValue(venue: 'binance' | 'hyperliquid', longs: number): NetVenueCa
 describe('net positioning display layout', () => {
   it('uses green longs and red shorts across themes while retaining saved overrides', () => {
     const dark = netPositioningSourceColors('dark'), light = netPositioningSourceColors('light');
-    expect(dark).toEqual({ binance: '#58a65c', hyperliquid: '#85c98b' });
-    expect(light).toEqual({ binance: '#167260', hyperliquid: '#44853e' });
+    expect(dark).toEqual({ binance: '#58a65c', hyperliquid: '#85c98b', bybit: '#b1d677' });
+    expect(light).toEqual({ binance: '#167260', hyperliquid: '#44853e', bybit: '#626e20' });
     expect(netPositioningTextColor(dark.binance, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(dark.hyperliquid, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(light.binance, '#f6f4ee')).toBe('#f5f5f5');
@@ -158,7 +158,7 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
     } as unknown as CanvasRenderingContext2D;
     pane.draw(ctx, { dpr, plotWidth: 300, plotHeight: 300, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 80, indexToX: (i: number) => 80 + i * 130 },
       priceScale: { priceToY: (value: number) => (500 - value) * .3 }, theme: { axisText: '#aaa', background: '#090909' } } as any);
-    const positive = amounts.filter(p => p.x === 80 * dpr), negative = amounts.filter(p => p.x === 210 * dpr);
+    const positive = amounts.filter(p => p.x < 150 * dpr), negative = amounts.filter(p => p.x > 150 * dpr);
     expect(positive).toHaveLength(2); expect(negative).toHaveLength(2);
     // The positive stack ends at y=84; the negative stack ends at y=246.
     for (const p of positive) expect(p.y + 2 * dpr).toBeLessThan(84 * dpr);
@@ -166,4 +166,14 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
     expect(Math.abs(positive[0].y - positive[1].y)).toBeGreaterThanOrEqual(11 * dpr);
     expect(Math.abs(negative[0].y - negative[1].y)).toBeGreaterThanOrEqual(11 * dpr);
   }
+});
+
+it.each([1,2])('uses the host column geometry without a 64px cap at DPR %s',dpr=>{
+ const pane=new NetPositioningPane('width','shorts',(x,spacing)=>({left:x-spacing*.76/2,width:spacing*.76}));
+ pane.setSettings('shorts','price-oi',['binance'],60000,'stacked','off');pane.setHostSnapshot([{t:0,closed:true}]);pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',10)}}]);
+ const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},fillText(){},measureText(){return {width:0};}};
+ for(const spacing of [80,160,300]){
+  pane.draw(ctx,{dpr,plotWidth:500,plotHeight:300,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>250},priceScale:{priceToY:(v:number)=>200-v},theme:{}} as any);
+  const g=(pane as any).geometry[0];expect(g.left).toBeCloseTo(Math.round((250-spacing*.76/2)*dpr)/dpr);expect(g.right-g.left).toBeCloseTo((Math.round((250+spacing*.76/2)*dpr)-Math.round((250-spacing*.76/2)*dpr))/dpr);
+ }
 });

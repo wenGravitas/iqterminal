@@ -103,3 +103,32 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
   await expect(lineFlyout).toBeHidden();
   expect(await countDrawings()).toBe(0);
 });
+
+test('drawing placement shows a crosshair from sidebar and floating tools and restores normal pointer modes', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  const panel = page.locator('.candle-panel').first(), sidebar = panel.locator('.drawing-sidebar'), stage = panel.locator('.chart-stage');
+  const point = await panel.evaluate(element => { const p = [...(window as any).__terminal.panels.values()].find((p:any) => p.element === element), plot = p.engine.chart.plotRect(p.engine.chart.primaryPaneIndex()); return { x: plot.left + plot.width * .5, y: plot.top + plot.height * .5 }; });
+  const cursor = () => stage.locator('canvas').first().evaluate(canvas => getComputedStyle(canvas).cursor);
+  await sidebar.locator('[data-drawing-tool=trend-line].drawing-sidebar-primary').click();
+  await stage.hover({ position: point });
+  expect(await cursor()).toBe('crosshair');
+  await stage.click({ position: point });
+  await stage.hover({ position: { x: point.x + 25, y: point.y + 30 } });
+  expect(await cursor()).toBe('crosshair');
+  await stage.press('Escape');
+  await expect(stage).not.toHaveAttribute('data-drawing-placement');
+  await sidebar.getByRole('button', { name: 'Open Lines tools', exact: true }).click();
+  const horizontal = panel.locator('.drawing-sidebar-flyout [data-drawing-tool=horizontal-line]');
+  await horizontal.focus(); await page.keyboard.press('Shift+Enter');
+  const floating = panel.getByRole('toolbar', { name: 'Floating drawing toolbar' });
+  await floating.getByRole('button', { name: 'Use Horizontal Line tool', exact: true }).click();
+  await stage.hover({ position: point }); expect(await cursor()).toBe('crosshair');
+  await floating.getByRole('button', { name: 'Pointer', exact: true }).click();
+  await expect(stage).not.toHaveAttribute('data-drawing-placement');
+  expect(await sidebar.getByRole('button', { name: 'Select drawings', exact: true }).evaluate(button => getComputedStyle(button).cursor)).toBe('pointer');
+  await floating.getByRole('button', { name: 'Erase', exact: true }).click();
+  await expect(stage).not.toHaveAttribute('data-drawing-placement');
+  await floating.getByRole('button', { name: 'Pointer', exact: true }).click();
+});

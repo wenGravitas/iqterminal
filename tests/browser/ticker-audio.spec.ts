@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 
 test('sound tests unlock real audio output and ticker buttons track enabled, muted and suspended states', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.addInitScript(() => {

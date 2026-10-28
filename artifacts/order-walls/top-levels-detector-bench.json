@@ -1,0 +1,111 @@
+{
+  "kind": "explicit-synthetic-depth-not-real-venue-performance",
+  "directProjection": {
+    "kind": "synthetic-shared-USD-M-full-book-adapter",
+    "events": 300,
+    "consumers": 8,
+    "p95Ms": 20.888668999999936,
+    "medianMs": 11.25754599999891,
+    "maxMs": 84.59242300000005,
+    "metrics": {
+      "projections": 300,
+      "cacheHits": 2100,
+      "changedPrices": 15970,
+      "trackedLevels": 10000
+    }
+  },
+  "hardware": {
+    "model": "Raspberry Pi 5 Model B Rev 1.0",
+    "arch": "arm64",
+    "node": "v22.19.0",
+    "load": [
+      3.41,
+      2.79,
+      3.7
+    ],
+    "rss": 157044736
+  },
+  "results": [
+    {
+      "mode": "top-levels",
+      "aggregation": "native",
+      "events": 3001,
+      "levelsPerSide": 5000,
+      "changesPerObservation": 20,
+      "replayMs": 4541.892113999999,
+      "eventMedianMs": 1.0484850000000279,
+      "eventP95Ms": 2.697073000000273,
+      "eventMaxMs": 245.279896,
+      "cpu": {
+        "user": 4237900,
+        "system": 94915
+      },
+      "heapDeltaBytes": 10780048,
+      "patchBytesEstimate": 9273616,
+      "diagnostics": {
+        "rank": {
+          "bid": {
+            "updates": 34963,
+            "queries": 3001,
+            "visited": 774172
+          },
+          "ask": {
+            "updates": 34971,
+            "queries": 3001,
+            "visited": 579398
+          }
+        },
+        "bookLevels": 10000,
+        "active": 16,
+        "historical": 132,
+        "valueRuns": 730
+      }
+    },
+    {
+      "mode": "threshold",
+      "aggregation": 50,
+      "events": 301,
+      "levelsPerSide": 5000,
+      "changesPerObservation": 20,
+      "replayMs": 385.8201659999995,
+      "eventMedianMs": 0.9249309999995603,
+      "eventP95Ms": 2.741183000000092,
+      "eventMaxMs": 26.03407800000059,
+      "cpu": {
+        "user": 451504,
+        "system": 4044
+      },
+      "heapDeltaBytes": 6590160,
+      "patchBytesEstimate": 227880,
+      "diagnostics": {
+        "rank": {
+          "bid": {
+            "updates": 0,
+            "queries": 0,
+            "visited": 0
+          },
+          "ask": {
+            "updates": 0,
+            "queries": 0,
+            "visited": 0
+          }
+        },
+        "bookLevels": 10000,
+        "active": 6,
+        "historical": 6,
+        "valueRuns": 753
+      }
+    }
+  ],
+  "ranking": {
+    "mismatches": 0,
+    "queries": 1000,
+    "indexedP95Ms": 0.36436500000036176,
+    "fullSortP95Ms": 5.374386999999842,
+    "metrics": {
+      "updates": 15000,
+      "queries": 1000,
+      "visited": 192956
+    }
+  }
+}

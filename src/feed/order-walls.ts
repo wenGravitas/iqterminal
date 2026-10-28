@@ -1,3 +1,4 @@
+import { OrderWallRankIndex } from './order-wall-rank';
 import type { Series } from './protocol';
 
 export const ORDER_WALLS_ID = 'native.order-walls';
@@ -6,10 +7,19 @@ export const ORDER_WALL_MAX_SEGMENTS = 20_000;
 export const ORDER_WALL_MAX_VALUE_RUNS = 50_000;
 export const ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT = 2_048;
 
-export type OrderWallAggregation = 'auto' | 10 | 50 | 100 | 250;
+export type OrderWallAggregation = 'auto' | 'native' | 10 | 25 | 50 | 100 | 250;
 export type OrderWallColorMode = 'heat' | 'bid-ask';
 export interface OrderWallsSettings {
   enabled: boolean;
+  mode: 'top-levels' | 'threshold';
+  topLevels: number;
+  searchRangePercent: number;
+  minimumNotionalEnabled: boolean;
+  minimumNotionalUsd: number;
+  highContrast: boolean;
+  visibleRangeOnly: boolean;
+  strengthThickness: boolean;
+  historyEpisodes: number;
   showHistory: boolean;
   showPriceLines: boolean;
   method: 'relative' | 'absolute';
@@ -27,6 +37,9 @@ export interface OrderWallsSettings {
 
 export const DEFAULT_ORDER_WALLS_SETTINGS: Readonly<OrderWallsSettings> = Object.freeze({
   enabled: false,
+  mode: 'top-levels', topLevels: 8, searchRangePercent: 10,
+  minimumNotionalEnabled: false, minimumNotionalUsd: 100_000,
+  highContrast: true, visibleRangeOnly: true, strengthThickness: true, historyEpisodes: 2000,
   showHistory: true,
   showPriceLines: false,
   method: 'relative',
@@ -35,21 +48,31 @@ export const DEFAULT_ORDER_WALLS_SETTINGS: Readonly<OrderWallsSettings> = Object
   relativePercentile: 95,
   exitRatio: 0.85,
   minDurationMs: 0,
-  aggregation: 'auto',
+  aggregation: 'native',
   colorMode: 'heat',
   opacity: 0.85,
-  thicknessPx: 2,
+  thicknessPx: 3,
 });
 
-const aggregations: readonly OrderWallAggregation[] = ['auto', 10, 50, 100, 250];
+const aggregations: readonly OrderWallAggregation[] = ['auto', 'native', 10, 25, 50, 100, 250];
 const bounded = (v: unknown, min: number, max: number, fallback: number) =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : fallback;
 
 export function orderWallsSettings(value: unknown): OrderWallsSettings {
   const v = value && typeof value === 'object' ? value as Record<string, unknown> : {};
-  const aggregation = aggregations.find(item => item === v.aggregation) ?? DEFAULT_ORDER_WALLS_SETTINGS.aggregation;
+  // Explicit old settings keep Threshold Walls; new instances carry the new mode.
+  const mode = v.mode === 'threshold' || v.mode !== 'top-levels' && ('method' in v || 'relativePercentile' in v) ? 'threshold' : 'top-levels';
+  let aggregation = aggregations.find(item => item === v.aggregation) ?? (mode === 'threshold' ? 'auto' : DEFAULT_ORDER_WALLS_SETTINGS.aggregation);
+  if(mode === 'threshold' && v.aggregation === undefined) aggregation = 'auto';
+  if(mode === 'top-levels' && aggregation === 'auto') aggregation = 'native';
   return {
-    enabled: v.enabled === true,
+    enabled: v.enabled === true, mode,
+    topLevels: Math.floor(bounded(v.topLevels, 1, 10, 8)),
+    searchRangePercent: bounded(v.searchRangePercent, .01, 10, 10),
+    minimumNotionalEnabled: v.minimumNotionalEnabled === true,
+    minimumNotionalUsd: bounded(v.minimumNotionalUsd, 0, 1_000_000_000_000, 100_000),
+    highContrast: v.highContrast !== false, visibleRangeOnly: v.visibleRangeOnly !== false, strengthThickness: v.strengthThickness !== false,
+    historyEpisodes: Math.floor(bounded(v.historyEpisodes, 16, ORDER_WALL_MAX_SEGMENTS, mode === 'threshold' ? ORDER_WALL_MAX_SEGMENTS : 2000)),
     showHistory: v.showHistory !== false,
     showPriceLines: v.showPriceLines === true,
     method: v.method === 'absolute' ? 'absolute' : 'relative',
@@ -61,7 +84,7 @@ export function orderWallsSettings(value: unknown): OrderWallsSettings {
     aggregation,
     colorMode: v.colorMode === 'bid-ask' ? 'bid-ask' : 'heat',
     opacity: bounded(v.opacity, 0, 1, DEFAULT_ORDER_WALLS_SETTINGS.opacity),
-    thicknessPx: bounded(v.thicknessPx, 1, 4, DEFAULT_ORDER_WALLS_SETTINGS.thicknessPx),
+    thicknessPx: bounded(v.thicknessPx, 1, 4, mode === 'threshold' ? 2 : DEFAULT_ORDER_WALLS_SETTINGS.thicknessPx),
   };
 }
 
@@ -111,6 +134,11 @@ export interface OrderWallStatus {
   clockRegressed?: boolean;
   /** Latest-book bootstrap is visible while ordered viewport replay is still catching up. */
   provisional?: boolean;
+  /** Ordered history processed so far; a blank unreplayed interval is not a no-wall result. */
+  rankingScope?: { mid: number; lower: number; upper: number; partial: boolean; bidCount: number; askCount: number };
+  valueHistoryLimited?: boolean;
+  episodeHistoryLimited?: boolean;
+  replay?: { from: number; to: number; through: number };
 }
 export interface OrderWallSegment {
   id: string;
@@ -127,14 +155,16 @@ export interface OrderWallSegment {
   scopePartial: boolean;
   /** False when a seed already contains the qualifying level at the timeline's left edge. */
   startKnown: boolean;
+  detectionMode?: OrderWallsSettings['mode'];
+  rank?: number;
   valueRuns: OrderWallValuePoint[];
   valueRunsTruncated: boolean;
   /** Closed by a confirmed below-threshold observation, an explicit removal, or a gap/epoch censor. */
-  endReason: 'below-threshold' | 'removed' | 'censored' | null;
+  endReason: 'below-threshold' | 'removed' | 'censored' | 'rank-exit' | 'out-of-range' | 'below-minimum' | null;
   endKnown: boolean;
   censoredReason?: string;
 }
-export interface OrderWallValuePoint { at: number; usd: number; percentile: number | null }
+export interface OrderWallValuePoint { at: number; usd: number; percentile: number | null; rank?: number | null; quantity?: number }
 export interface OrderWallHit {
   segment: OrderWallSegment;
   at: number;
@@ -177,6 +207,8 @@ interface WallState {
   percentile: number | null;
   scopePartial: boolean;
   startKnown: boolean;
+  rank?: number;
+  quantity?: number;
   valueHistory: { runs: OrderWallValuePoint[]; truncated: boolean; segment?: OrderWallSegment };
 }
 interface PriceBucket { price: number; usd: number }
@@ -190,6 +222,13 @@ export class OrderWallDetector {
   private valueRunQueue: Array<{ history: WallState['valueHistory']; point: OrderWallValuePoint }> = [];
   private valueRunQueueStart = 0;
   private valueRunCount = 0;
+  private valueHistoryLimited = false;
+  private episodeHistoryLimited = false;
+  private bidRank = new OrderWallRankIndex();
+  private askRank = new OrderWallRankIndex();
+  private bidPrices = new OrderWallRankIndex();
+  private askPrices = new OrderWallRankIndex();
+  private rankingScope?: OrderWallStatus['rankingScope'];
   private bids = new Map<number, number>();
   private asks = new Map<number, number>();
   private bidBucketNotionals = new Map<number, number>();
@@ -214,16 +253,17 @@ export class OrderWallDetector {
   };
 
   constructor(private settings: OrderWallsSettings, private tickSize: number, private autoPriceWidth = tickSize) {
+    this.settings = orderWallsSettings(settings);
     if (!Number.isFinite(tickSize) || tickSize <= 0) throw new RangeError('Order walls require a valid exchange tick size');
     if (!Number.isFinite(autoPriceWidth) || autoPriceWidth < tickSize) this.autoPriceWidth = tickSize;
   }
 
   updateSettings(settings: OrderWallsSettings) {
-    const priorWidth = this.priceWidth();
+    const priorWidth = this.priceWidth(), priorMode = this.settings.mode;
     this.settings = orderWallsSettings(settings);
-    if (this.priceWidth() !== priorWidth) this.rebuildBucketNotionals();
+    if (this.priceWidth() !== priorWidth || this.settings.mode !== priorMode) this.rebuildBucketNotionals();
   }
-  priceWidth() { return this.settings.aggregation === 'auto' ? this.autoPriceWidth : this.settings.aggregation; }
+  priceWidth() { return this.settings.aggregation === 'native' ? this.tickSize : this.settings.aggregation === 'auto' ? this.autoPriceWidth : this.settings.aggregation; }
   setAutoPriceWidth(width: number) {
     if (!Number.isFinite(width) || width < this.tickSize) return;
     const priorWidth = this.priceWidth();
@@ -297,6 +337,7 @@ export class OrderWallDetector {
       const patches = continuesEpoch ? [] : this.censorActive(this.lastAt ?? record.at,
         this.epoch === null ? 'Depth book started from a replacement snapshot.' : 'Depth epoch changed; prior wall end is unknown.');
       this.bids.clear(); this.asks.clear();
+    this.bidRank.clear(); this.askRank.clear(); this.bidPrices.clear(); this.askPrices.clear(); this.rankingScope = undefined;
       this.bidBucketNotionals.clear(); this.askBucketNotionals.clear();
       this.bidBucketCounts.clear(); this.askBucketCounts.clear();
       this.bidBucketPrices.clear(); this.askBucketPrices.clear();
@@ -326,6 +367,7 @@ export class OrderWallDetector {
     const end = this.lastAt;
     const patches = this.censorActive(end ?? 0, reason ?? 'Depth continuity gap; prior wall end is unknown.');
     this.bids.clear(); this.asks.clear();
+    this.bidRank.clear(); this.askRank.clear(); this.bidPrices.clear(); this.askPrices.clear(); this.rankingScope = undefined;
     this.bidBucketNotionals.clear(); this.askBucketNotionals.clear();
     this.bidBucketCounts.clear(); this.askBucketCounts.clear();
     this.bidBucketPrices.clear(); this.askBucketPrices.clear();
@@ -343,6 +385,7 @@ export class OrderWallDetector {
     for (const [price, quantity] of levels) {
       if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(quantity) || quantity < 0) continue;
       const previous = map.get(price) ?? 0;
+      if(this.settings.mode==='top-levels'&&this.settings.aggregation!=='native')(map === this.bids ? this.bidPrices : this.askPrices).set(price, price * quantity, quantity);
       const bucket = this.bucketPrice(price);
       if (quantity === 0) {
         if (previous === 0) continue;
@@ -363,14 +406,17 @@ export class OrderWallDetector {
       const prices = bucketPrices.get(bucket);
       if (!prices?.size) {
         bucketPrices.delete(bucket); counts.delete(bucket); notionals.delete(bucket);
+        if(this.settings.mode==='top-levels')(map === this.bids ? this.bidRank : this.askRank).set(bucket, 0);
         continue;
       }
-      // Match the former full book scan's addition order within this bucket. This avoids
-      // tiny incremental floating-point drift becoming extra value-history runs.
+      // Threshold Walls preserves its original summation order. Top Levels uses
+      // deterministic tree sums so identical checkpoints cannot reorder ranks.
       let usd = 0;
-      for (const price of prices) usd += price * map.get(price)!;
+      if(this.settings.mode==='top-levels'&&this.settings.aggregation!=='native')usd=(map===this.bids?this.bidPrices:this.askPrices).sum(bucket,bucket+this.priceWidth());
+      else for (const price of prices) usd += price * map.get(price)!;
       counts.set(bucket, prices.size);
       notionals.set(bucket, usd);
+      if(this.settings.mode==='top-levels')(map === this.bids ? this.bidRank : this.askRank).set(bucket, usd, this.settings.aggregation==='native'?map.get(bucket)??0:0);
     }
   }
 
@@ -394,20 +440,27 @@ export class OrderWallDetector {
       this.applyLevels(this.bids, this.bidBucketNotionals, this.bidBucketCounts,
         this.bidBucketPrices, prices.slice(ORDER_WALL_MAX_LEVELS_PER_SIDE).map(price => [price, 0] as const));
       this.bookScope.bidComplete = false;
+      this.bookScope.bidFloor = Math.max(this.bookScope.bidFloor ?? -Infinity, prices[ORDER_WALL_MAX_LEVELS_PER_SIDE - 1]!);
     }
     if (this.asks.size > ORDER_WALL_MAX_LEVELS_PER_SIDE) {
       const prices = [...this.asks.keys()].sort((a, b) => a - b);
       this.applyLevels(this.asks, this.askBucketNotionals, this.askBucketCounts,
         this.askBucketPrices, prices.slice(ORDER_WALL_MAX_LEVELS_PER_SIDE).map(price => [price, 0] as const));
       this.bookScope.askComplete = false;
+      this.bookScope.askCeiling = Math.min(this.bookScope.askCeiling ?? Infinity, prices[ORDER_WALL_MAX_LEVELS_PER_SIDE - 1]!);
     }
   }
 
   protected bucketPrice(price: number) {
+    // Native exchange prices are already discrete. Flooring price/tick can
+    // merge adjacent cents at BTC magnitudes because division loses an ULP.
+    if(this.settings.aggregation==='native')return price;
     const width = this.priceWidth();
     return Number((Math.floor(price / width + 1e-10) * width).toPrecision(15));
   }
   private rebuildBucketNotionals() {
+    this.bidRank.clear(); this.askRank.clear(); this.bidPrices.clear(); this.askPrices.clear();
+    if(this.settings.mode==='top-levels'&&this.settings.aggregation!=='native'){for(const[p,q]of this.bids)this.bidPrices.set(p,p*q,q);for(const[p,q]of this.asks)this.askPrices.set(p,p*q,q);}
     this.bidBucketNotionals.clear(); this.askBucketNotionals.clear();
     this.bidBucketCounts.clear(); this.askBucketCounts.clear();
     this.bidBucketPrices.clear(); this.askBucketPrices.clear();
@@ -423,6 +476,8 @@ export class OrderWallDetector {
       const prices = bucketPrices.get(bucket) ?? new Set<number>();
       prices.add(price); bucketPrices.set(bucket, prices);
     }
+    const index = levels === this.bids ? this.bidRank : this.askRank;
+    if(this.settings.mode==='top-levels')for (const [price, usd] of notionals) {const value=this.settings.aggregation==='native'?usd:(levels===this.bids?this.bidPrices:this.askPrices).sum(price,price+this.priceWidth());notionals.set(price,value);index.set(price,value,this.settings.aggregation==='native'?levels.get(price)??0:0);}
   }
   protected collectBuckets(_levels: Map<number, number>, notionals: Map<number, number>): PriceBucket[] {
     return [...notionals].map(([price, usd]) => ({ price, usd })).sort((a, b) => a.price - b.price);
@@ -437,6 +492,7 @@ export class OrderWallDetector {
   }
 
   private evaluate(at: number, startKnown: boolean, removed: ReadonlySet<string>, checkpoint: boolean): OrderWallPatch[] {
+    if (this.settings.mode === 'top-levels') return this.evaluateTop(at, startKnown, removed, checkpoint);
     const bidBuckets = this.collectBuckets(this.bids, this.bidBucketNotionals);
     const askBuckets = this.collectBuckets(this.asks, this.askBucketNotionals);
     const threshold = this.threshold([...bidBuckets, ...askBuckets]);
@@ -492,6 +548,79 @@ export class OrderWallDetector {
     return changes;
   }
 
+  private evaluateTop(at: number, startKnown: boolean, removed: ReadonlySet<string>, checkpoint: boolean): OrderWallPatch[] {
+    const nativePrices=this.settings.aggregation==='native', bids=nativePrices?this.bidRank:this.bidPrices, asks=nativePrices?this.askRank:this.askPrices;
+    const bid = bids.max, ask = asks.min;
+    if (bid === undefined || ask === undefined || bid >= ask) {
+      this.rankingScope = undefined;
+      return this.censorActive(Math.min(at,...[...this.active.values()].map(s=>s.lastAt)), 'A valid two-sided contemporaneous book is required for the ranking range.');
+    }
+    // Projection membership evictions outside the retained nearest book are
+    // unknown removals. Tighten reported scope to the prices actually retained.
+    if(!this.bookScope.bidComplete&&bids.min!==undefined)this.bookScope.bidFloor=Math.max(this.bookScope.bidFloor??-Infinity,bids.min);
+    if(!this.bookScope.askComplete&&asks.max!==undefined)this.bookScope.askCeiling=Math.min(this.bookScope.askCeiling??Infinity,asks.max);
+    const mid = (bid + ask) / 2, width = this.priceWidth(), native = this.settings.aggregation === 'native';
+    const lower = mid * (1 - this.settings.searchRangePercent / 100), upper = mid * (1 + this.settings.searchRangePercent / 100);
+    const partial = (this.bookScope.bidFloor !== undefined ? lower < this.bookScope.bidFloor : !this.bookScope.bidComplete)
+      || (this.bookScope.askCeiling !== undefined ? upper > this.bookScope.askCeiling : !this.bookScope.askComplete);
+    const bidLow = lower;
+    const askHigh = upper;
+    const minimum = this.settings.minimumNotionalEnabled ? this.settings.minimumNotionalUsd : 0;
+    const bidLevels = this.bidRank.top(this.settings.topLevels, native ? bidLow : Math.ceil(bidLow / width - 1e-10) * width, mid, minimum);
+    const askLevels = this.askRank.top(this.settings.topLevels, native ? mid : Math.floor(mid / width) * width,
+      native ? askHigh : Math.floor(askHigh / width + 1e-10) * width - width, minimum);
+    this.rankingScope = { mid, lower, upper, partial, bidCount: bidLevels.length, askCount: askLevels.length };
+    const selected = new Map<string, { side: 'bid' | 'ask'; price: number; usd: number; rank: number; quantity: number }>();
+    for (const [side, levels, prices, book] of [['bid', bidLevels, this.bidBucketPrices, this.bids], ['ask', askLevels, this.askBucketPrices, this.asks]] as const) {
+      levels.forEach((level, i) => {
+        const quantity = native ? book.get(level.price)??0 : (side==='bid'?this.bidPrices:this.askPrices).sum(level.price,level.price+width,true);
+        selected.set(segmentKey(side, level.price), { ...level, side, rank: i + 1, quantity });
+      });
+    }
+    const changes: OrderWallPatch[] = [];
+    for (const [key, state] of this.active) {
+      const next = selected.get(key);
+      const scopeKnown = state.side === 'bid'
+        ? this.bookScope.bidComplete || this.bookScope.bidFloor !== undefined && state.price >= this.bookScope.bidFloor
+        : this.bookScope.askComplete || this.bookScope.askCeiling !== undefined && state.price + (native ? 0 : width) <= this.bookScope.askCeiling;
+      if (!next) {
+        const usd = (state.side === 'bid' ? this.bidBucketNotionals : this.askBucketNotionals).get(state.price) ?? 0;
+        const outside = state.side === 'bid' ? state.price < lower || state.price > mid : state.price > upper || state.price + width < mid;
+        const reason: OrderWallSegment['endReason'] = usd > 0
+          ? outside ? 'out-of-range' : usd < minimum ? 'below-minimum' : 'rank-exit'
+          : !scopeKnown ? 'censored' : removed.has(key) || checkpoint ? 'removed' : 'censored';
+        const end = reason === 'censored' ? state.lastAt : at;
+        this.accumulate(state, end); state.lastAt = end;
+        let point: OrderWallValuePoint | undefined;
+        if (reason !== 'censored') {
+          state.rank = undefined;
+          let quantity = 0;
+          const prices = state.side === 'bid' ? this.bidBucketPrices : this.askBucketPrices, book = state.side === 'bid' ? this.bids : this.asks;
+          quantity = native ? book.get(state.price)??0 : (state.side==='bid'?this.bidPrices:this.askPrices).sum(state.price,state.price+width,true);
+          state.quantity = quantity; point = this.addValueRun(state, at, usd, null);
+        }
+        this.active.delete(key);
+        const closed = this.toSegment(state, end, end, reason, reason === 'censored' ? 'Price level is no longer confirmed within observed book coverage.' : undefined);
+        if (closed.durationMs >= this.settings.minDurationMs) { this.remember(closed); changes.push({ id: state.id, segment: closed, ...(point ? { valuePoints: [point] } : {}) }); }
+        else changes.push({ id: state.id, segment: null });
+      } else {
+        this.accumulate(state, at); state.lastAt = at; state.currentUsd = next.usd; state.quantity = next.quantity; state.rank = next.rank;
+        state.peakUsd = Math.max(state.peakUsd, next.usd); state.scopePartial ||= partial;
+        const point = this.addValueRun(state, at, next.usd, null);
+        changes.push({ id: state.id, segment: this.toSegment(state, null), ...(point ? { valuePoints: [point] } : {}) });
+      }
+      selected.delete(key);
+    }
+    for (const [key, level] of selected) {
+      const state: WallState = { ...level, id: `${this.epoch ?? 'unknown'}:${level.side}:${level.price}:${at}:${this.lastCursor}`,
+        epoch: this.epoch ?? 'unknown', start: at, lastAt: at, currentUsd: level.usd, peakUsd: level.usd, usdMs: 0,
+        percentile: null, scopePartial: partial, startKnown, valueHistory: { runs: [], truncated: false } };
+      this.active.set(key, state); const point = this.addValueRun(state, at, level.usd, null);
+      changes.push({ id: state.id, segment: this.toSegment(state, null), ...(point ? { valuePoints: [point] } : {}) });
+    }
+    return changes;
+  }
+
   private percentileFor(value: number, all: PriceBucket[]) {
     const positives = all.map(item => item.usd).filter(item => item > 0);
     if (!positives.length) return null;
@@ -504,8 +633,8 @@ export class OrderWallDetector {
 
   private addValueRun(state: WallState, at: number, usd: number, percentile: number | null): OrderWallValuePoint | undefined {
     const history = state.valueHistory, last = history.runs.at(-1);
-    if (last && last.usd === usd && last.percentile === percentile) return undefined;
-    const point = { at, usd, percentile }; history.runs.push(point); this.valueRunQueue.push({ history, point }); this.valueRunCount++;
+    if (last && last.usd === usd && last.percentile === percentile && last.rank === state.rank && last.quantity === state.quantity) return undefined;
+    const point: OrderWallValuePoint = { at, usd, percentile, ...(this.settings.mode === 'top-levels' ? { rank: state.rank ?? null, quantity: state.quantity } : {}) }; history.runs.push(point); this.valueRunQueue.push({ history, point }); this.valueRunCount++;
     while (history.runs.length > ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) this.trimOldestValueRun({ history, point: history.runs[0]! });
     while (this.valueRunCount > ORDER_WALL_MAX_VALUE_RUNS) {
       const oldest = this.valueRunQueue[this.valueRunQueueStart++];
@@ -519,7 +648,7 @@ export class OrderWallDetector {
 
   private trimOldestValueRun(entry: { history: WallState['valueHistory']; point: OrderWallValuePoint }) {
     if (entry.history.runs[0] !== entry.point) return;
-    entry.history.runs.shift(); entry.history.truncated = true; entry.history.segment && (entry.history.segment.valueRunsTruncated = true);
+    entry.history.runs.shift(); entry.history.truncated = true; this.valueHistoryLimited = true; entry.history.segment && (entry.history.segment.valueRunsTruncated = true);
     this.valueRunCount = Math.max(0, this.valueRunCount - 1);
   }
 
@@ -531,7 +660,8 @@ export class OrderWallDetector {
       peakUsd: state.peakUsd, meanUsd: durationMs ? totalUsdMs / durationMs : state.currentUsd,
       durationMs, percentile: state.percentile, scopePartial: state.scopePartial, startKnown: state.startKnown,
       valueRuns: state.valueHistory.runs, valueRunsTruncated: state.valueHistory.truncated,
-      endReason, endKnown: endReason === 'removed' || endReason === 'below-threshold',
+      ...(this.settings.mode === 'top-levels' ? { detectionMode: 'top-levels', rank: state.rank } : {}),
+      endReason, endKnown: endReason === 'removed' || endReason === 'below-threshold' || endReason === 'rank-exit' || endReason === 'out-of-range' || endReason === 'below-minimum',
       ...(endReason === 'censored' && censoredReason ? { censoredReason } : {}) };
     state.valueHistory.segment = segment;
     return segment;
@@ -550,8 +680,10 @@ export class OrderWallDetector {
 
   private remember(segment: OrderWallSegment) {
     this.segments.set(segment.id, segment);
-    while (this.segments.size > ORDER_WALL_MAX_SEGMENTS) this.segments.delete(this.segments.keys().next().value!);
+    while (this.segments.size > ORDER_WALL_MAX_SEGMENTS) { this.segments.delete(this.segments.keys().next().value!); this.episodeHistoryLimited = true; }
   }
+
+  diagnostics() { return { rank: { bid: { ...this.bidRank.metrics }, ask: { ...this.askRank.metrics } }, bookLevels: this.bids.size + this.asks.size, active: this.active.size, historical: this.segments.size, valueRuns: this.valueRunCount }; }
 
   snapshot(now = this.lastAt ?? 0): OrderWallSegment[] {
     const result = [...this.segments.values()];
@@ -560,14 +692,19 @@ export class OrderWallDetector {
   }
 
   status(from: number, to: number): OrderWallStatus {
-    return { state: this.awaitingSnapshot ? this.sawGap ? 'gap' : 'loading' : this.lastAt === null ? 'loading' : 'live',
+    const rankingUnavailable=this.settings.mode==='top-levels'&&!this.awaitingSnapshot&&!this.rankingScope;
+    return { state: this.awaitingSnapshot ? this.sawGap ? 'gap' : 'loading' : this.lastAt === null ? 'loading' : rankingUnavailable ? 'stale' : 'live',
       tickSize: this.tickSize, resolvedPriceWidth: this.priceWidth(),
       ...(this.lastAt !== null ? { lastConfirmedAt: this.lastAt } : {}),
       ...(this.clockRegressed ? { clockRegressed: true } : {}),
       ...(this.awaitingSnapshot ? { message: 'Waiting for a confirmed depth snapshot after a gap' } : {}),
-      coverage: { from, to, complete: !this.awaitingSnapshot && !this.clockRegressed,
-        partial: !this.bookScope.bidComplete || !this.bookScope.askComplete || this.clockRegressed,
+      ...(this.episodeHistoryLimited ? {episodeHistoryLimited:true} : {}),
+      ...(this.valueHistoryLimited ? {valueHistoryLimited:true} : {}),
+      ...(rankingUnavailable ? {message:'A valid two-sided observed book is required; Top Levels ranking is unknown.'} : {}),
+      coverage: { from, to, complete: !this.awaitingSnapshot && !this.clockRegressed && !rankingUnavailable && !this.valueHistoryLimited && !this.episodeHistoryLimited,
+        partial: !this.bookScope.bidComplete || !this.bookScope.askComplete || this.clockRegressed || rankingUnavailable || this.valueHistoryLimited || this.episodeHistoryLimited,
         ...(this.clockRegressed ? { reason: 'Host receive-time regression was clamped in cursor order; event duration may be understated.' } : {}) },
+      ...(this.rankingScope ? { rankingScope: { ...this.rankingScope } } : {}),
       bookScope: { ...this.bookScope } };
   }
 }

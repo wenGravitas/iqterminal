@@ -98,3 +98,22 @@ Binance BTCUSDT USD-M in labelled trade-price-proxy mode, with a 30-second
 analysis horizon and honest warm-up/coverage states. See
 [Effort–Result usage and implementation decisions](effort-result.md) for the
 mathematics, outcome rules, retention, replay route and measured limitations.
+
+## Multi-Venue CVD
+
+`native.multi-venue-cvd` is an Order Flow singleton in a native lower pane. The worker's shared signed-execution service owns source history and calculation; its minute samples do not expand the host candle timeline. Venue/aggregation presentation and legend visibility are independent of source membership and never reconnect or remount the pane. Layouts retain settings and independent named group copies, not execution arrays. The BTC/USDT selector follows the existing global currency override. See [CVD controls, formulas, anchors and coverage](cvd.md).
+
+## Trade Bubbles
+
+`native.trade-bubbles` is an Order Flow chart overlay. Its worker service fans out existing Binance Spot and USD-M aggregate-trade consumers to chart-local filters and bounded snapshots. A chart ID scopes each consumer independently even when native indicator IDs match. Only Binance BTC/USDT price alignment is supported; unsupported quotes are reported and never converted implicitly. Hiding continues bounded collection, while removal releases that chart's consumer. See [Trade Bubbles source, lifecycle and performance limits](trade-bubbles.md).
+
+
+## Actual Liquidations
+
+`native.liquidations` is an Order Flow singleton in a native lower pane. It stacks short liquidations above zero and long liquidations below, separating Bybit and Binance contributions. Optional primary-chart markers preserve reported price basis; Bybit prices are bankruptcy prices. The shared worker reconciles bounded viewport history and live records, and preserves other ticker/indicator consumers when one is hidden or removed. Settings and workspace layouts persist. Binance totals are sampled cumulative snapshot valuations and may overlap. The separate Liquidation Ticker supports tiers, replay and burst inspection through the same service. See [Release 1 settings, data flow and operational limits](liquidations-release1.md).
+
+## Order Walls: Top Levels and Threshold Walls
+
+New Order Walls instances default to observed Top 8 bids and asks, native price resolution, High Contrast and Visible Range Only. Selection uses the contemporaneous depth book, independently per side; pan/zoom only changes presentation. Rank exits end selection episodes without claiming an order removal. Saved legacy instances remain Threshold Walls until their Detection mode is changed. Spot and USD-M remain distinct sources, and incomplete depth, pending replay and the four-hour history boundary stay explicit.
+
+See [Release 1 calculation, settings, limits, performance and evidence](order-walls-top-levels-release1.md).

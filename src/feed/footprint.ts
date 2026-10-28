@@ -1,3 +1,4 @@
+import { multiplyDecimalText } from './decimal';
 import { duration, type FootprintBar, type FootprintCell, type FootprintRowTicks, type Interval } from './protocol';
 import type { Market, Venue } from './protocol';
 
@@ -18,7 +19,7 @@ export type AggressorSide = 'buy' | 'sell' | 'unknown';
 export type ExecutionGranularity = 'individual-trade' | 'aggregate-trade';
 /** Canonical observation shape reusable by venue adapters without weakening BTCUSDT parsing. */
 export interface NormalizedExecution {
-  venue: Venue;
+  venue: Venue | 'bybit';
   market: Market;
   nativeSymbol: string;
   granularity: ExecutionGranularity;
@@ -410,17 +411,4 @@ function positiveNumber(value: unknown): number | null {
 function decimalText(value: unknown): string | null {
   return typeof value === 'string' && /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value) && Number.isFinite(Number(value)) && Number(value) > 0
     ? value.replace(/^\./, '0.') : null;
-}
-
-/** Multiply plain exchange decimal strings without first rounding either operand. */
-function multiplyDecimalText(left: string, right: string): string {
-  const parts = (value: string) => {
-    const [whole = '0', fraction = ''] = value.split('.');
-    return { coefficient: BigInt(`${whole || '0'}${fraction}`), scale: fraction.length };
-  };
-  const a = parts(left), b = parts(right), coefficient = a.coefficient * b.coefficient, scale = a.scale + b.scale;
-  if (!scale) return coefficient.toString();
-  const digits = coefficient.toString().padStart(scale + 1, '0');
-  const whole = digits.slice(0, -scale), fraction = digits.slice(-scale).replace(/0+$/, '');
-  return fraction ? `${whole}.${fraction}` : whole;
 }

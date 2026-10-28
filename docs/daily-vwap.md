@@ -1,0 +1,15 @@
+# Daily VWAP
+
+Add **Daily VWAP** from a chart's Indicators → Volume catalogue. It is an optional native overlay on the selected market: a thin blue VWAP line, green upper/lower bands and a faint green fill. The usual visibility, settings and removal controls apply; settings persist with that chart. Existing layouts do not gain an indicator automatically.
+
+The anchor is **00:00 UTC**, independent of the Local/UTC display preference. By default, each intraday candle contributes its HLC3 price `(high + low + close) / 3` weighted by the candle's native volume. Settings also offer HL2 and Close. Each new UTC day resets cumulative volume and price moments. This is a candle-based approximation, not a trade-by-trade VWAP; changing the chart timeframe can change it. An intraday timeframe is required; no misleading one-point daily estimate is drawn for a daily interval.
+
+Bands default to ±1 volume-weighted population standard deviation of the selected candle price, with a configurable 0.1–5 multiplier. Colours, VWAP line width, band visibility and fill opacity are configurable. Visible lines and bands contribute to the chart’s automatic price range; manual price ranges remain under user control. Global quantity-currency preferences do not change the price calculation or native volume weights.
+
+Only loaded chart candles contribute. The active-indicator summary flags a partial UTC day when the first retained bar starts after midnight or an intraday gap exists. It shows “From UTC open” when available elapsed bars are continuous from midnight; this does not imply the day has finished. Missing observations are not synthesized, and lines/fill do not connect across UTC boundaries or gaps. A zero-volume day has no value until volume arrives; later zero-volume bars carry the last value.
+
+**Show naked previous VWAP gaps** defaults to on, including saved VWAP settings created before this option existed. Each complete UTC day’s closing VWAP extends from its last candle to the price axis as a dashed VWAP-coloured price line with a price label. A later candle touching the level (including its high/low wick and the first candle after midnight) removes it. Multiple untouched days remain visible. Partial or zero-volume days do not create levels; missing subsequent candles invalidate earlier levels because an unseen touch cannot be ruled out. Only loaded history contributes, and corrections or backfill recalculate the levels. Disabling the option hides the lines and removes their contribution to autoscale.
+
+Forming candles replace their previous cumulative contribution. Historical corrections, source/timeframe changes, backfill and retention trimming recalculate affected suffixes and preserve the chart viewport. The overlay uses the existing chart candles, native primitive lifecycle and shared dirty-visible scheduler; it opens no additional exchange connection.
+
+Focused verification: `pnpm exec vitest run tests/daily-vwap.test.ts`, a diagnostics-enabled build, and `pnpm exec playwright test tests/browser/daily-vwap.spec.ts`. Browser fixtures are explicit synthetic inputs, not live-feed verification.

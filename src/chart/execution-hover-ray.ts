@@ -1,3 +1,5 @@
+import {drawAxisPriceLabel} from './drawing-labels';
+import {drawVenueCaption,amountCaption,labelCurrency} from './venue-label';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import type { NormalizedExecution } from '../feed/footprint';
 
@@ -72,5 +74,8 @@ export class ExecutionHoverRay implements IPrimitive {
     ctx.arc(Math.min(endX * dpr, Math.max(2 * dpr, anchorX * dpr)), y * dpr, 2.25 * dpr, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+    drawAxisPriceLabel(ctx,rc,{price:execution.price,y:y*dpr,color,alpha:1});
+    ctx.save();ctx.font=`${10*dpr}px ui-monospace,monospace`;ctx.fillStyle=color;
+    drawVenueCaption(ctx,execution.venue,amountCaption({venue:execution.venue,market:execution.market,baseAmount:execution.quantity,quoteAmount:Number(execution.quoteNotionalText??execution.price*execution.quantity)},labelCurrency(rc.dataLayer)),endX*dpr-4*dpr,Math.max(12*dpr,y*dpr-5*dpr),dpr,Math.max(0,(endX-startX)*dpr-8*dpr));ctx.restore();
   }
 }

@@ -1,0 +1,103 @@
+{
+  "kind": "local browser observation; fixture only; not frame-rate acceptance",
+  "host": {
+    "platform": "linux",
+    "architecture": "arm64",
+    "cpu": "Cortex-A76",
+    "deviceModel": "Raspberry Pi 5 Model B Rev 1.0",
+    "osType": "Linux",
+    "osRelease": "6.12.109+rpt-rpi-v8"
+  },
+  "metadata": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "viewport": {
+      "width": 1600,
+      "height": 1000
+    },
+    "fixture": true,
+    "worker": {
+      "subscribers": 1,
+      "feeds": [],
+      "fixture": true,
+      "caches": {
+        "binance:spot": 0,
+        "binance:perpetual": 2048
+      },
+      "subscribersState": [
+        {
+          "id": "trade-bubbles:chart-59c28543-4afe-4c11-8a4a-1cd153428740:native.trade-bubbles:3",
+          "sources": [
+            "binance:perpetual"
+          ],
+          "retained": 2048,
+          "pending": 0,
+          "dropped": 0,
+          "inFlight": false,
+          "status": {
+            "state": "live",
+            "availability": "compatible",
+            "message": "Explicit binance:perpetual fixture",
+            "lastUpdate": 1793007794834,
+            "gaps": 0,
+            "dropped": 0
+          }
+        }
+      ],
+      "publishedRecords": 2048,
+      "duplicateRecords": 0
+    }
+  },
+  "fixture": {
+    "bars": 5000,
+    "records": 2048,
+    "visibleMaximum": 120,
+    "delivery": "8 acknowledged batches of 256"
+  },
+  "baseline": {
+    "label": "5000-bar fixture chart without Trade Bubbles",
+    "rafIntervalsMs": {
+      "samples": 161,
+      "p50": 16.699999999999818,
+      "p95": 150,
+      "max": 450
+    },
+    "bars": 5000,
+    "longTasks": [
+      1661,
+      161,
+      78,
+      133,
+      102,
+      62
+    ],
+    "tradeBubbles": null
+  },
+  "enabled": {
+    "label": "Same chart with 2,048 retained executions and 120 visible bubbles",
+    "rafIntervalsMs": {
+      "samples": 146,
+      "p50": 16.700000000000728,
+      "p95": 183.29999999999927,
+      "max": 299.90000000000146
+    },
+    "bars": 5000,
+    "longTasks": [
+      1661,
+      161,
+      78,
+      133,
+      102,
+      62,
+      66
+    ],
+    "tradeBubbles": {
+      "retained": 2048,
+      "painted": 120,
+      "culled": 1928,
+      "hittable": 120,
+      "draws": 39
+    }
+  },
+  "errors": []
+}

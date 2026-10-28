@@ -26,6 +26,9 @@ test('pane indicators use one local header while overlays stay in the main list'
   await installDepthFixture(page);
   await page.setViewportSize({ width: 2560, height: 1080 });
   const panel = page.locator('.candle-panel').first();
+  // Keep sidebar width independent of the pane-header geometry under test.
+  const closeObjects=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});
+  if(await closeObjects.isVisible())await closeObjects.click();
   await addIndicator(panel, 'Net Longs — Estimated');
   await addIndicator(panel, 'Net Shorts — Estimated');
   await setFootprint(panel, true);

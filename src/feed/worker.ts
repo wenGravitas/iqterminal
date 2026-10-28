@@ -1,3 +1,6 @@
+import { LiquidationService } from './liquidation-service';
+import { BybitExecutionService } from './bybit-service';
+import { CvdService } from './cvd-service';
 import { RemoteEffortService } from '../effort-result/remote';
 /// <reference lib="webworker" />
 import { LevelWatchTransport } from './level-watch';
@@ -14,6 +17,7 @@ import { DirectOrderWallsService } from './direct-order-walls';
 import { StagingOrderWallsService } from './staging-order-walls';
 import { StagingNetPositioningService } from './staging-net-positioning';
 import { TickerService } from './ticker-service';
+import { TradeBubbleService } from './trade-bubbles-service';
 import { BinanceFootprintService } from './footprint-service';
 import { TpoService } from './tpo-service';
 import { StagingFeedService, stagingMarket } from './staging-service';
@@ -67,7 +71,11 @@ const heatmap=new BinanceHeatmapService(depth, e=>scope.postMessage(e));
 const footprint=new BinanceFootprintService((e:Event)=>scope.postMessage(e), undefined, {}, import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS==='1');
 const spotFootprint=new BinanceFootprintService((e:Event)=>scope.postMessage(e), undefined, {}, import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS==='1', 'spot');
 const efforts = new RemoteEffortService(e=>scope.postMessage(e),stagingMode);
-const tickers = new TickerService({perpetual:footprint,spot:spotFootprint}, e => scope.postMessage(e));
+const bybitExecutions = new BybitExecutionService();
+const tickers = new TickerService({perpetual:footprint,spot:spotFootprint,'bybit:perpetual':bybitExecutions}, e => scope.postMessage(e));
+const tradeBubbles = new TradeBubbleService({perpetual:footprint,spot:spotFootprint}, e => scope.postMessage(e));
+const liquidations = new LiquidationService(e=>scope.postMessage(e),stagingMode);
+const cvd = new CvdService({perpetual:footprint,spot:spotFootprint,'bybit:perpetual':bybitExecutions}, e=>scope.postMessage(e), stagingMode);
 const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) : undefined;
 const stagingHeatmap = stagingMode ? new StagingHeatmapService(e=>scope.postMessage(e)) : undefined;
 const directOrderWalls = new DirectOrderWallsService(depth, emitDirect);
@@ -80,7 +88,8 @@ const watchTransport=new LevelWatchTransport(message=>scope.postMessage(message)
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
 scope.onmessage=(event:MessageEvent<Command>)=>{
   if((import.meta.env.DEV||import.meta.env.VITE_DIAGNOSTICS==='1')&&(event.data as unknown as {type:string}).type==='initFixture'){
-    fixture=true;
+    fixture=true; cvd.setFixture(true); liquidations.setFixture(true);
+    tradeBubbles.setFixture(true);
     stagingNetPositioning.setEnabled(false);
     directOrderWalls.setFixture(true);
     alignFixtureToNow=Boolean((event.data as unknown as {alignToNow?:boolean}).alignToNow);
@@ -92,6 +101,23 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   }
   if(event.data.type.startsWith('watch-')){watchTransport.command(event.data as unknown as WatchCommand);return;}
   const c=event.data;
+  if(c.type==='liquidation-subscribe'){liquidations.subscribe(c.id,c.request);return;}
+  if(c.type==='liquidation-update'){liquidations.update(c.id,c.request);return;}
+  if(c.type==='liquidation-unsubscribe'){liquidations.unsubscribe(c.id);return;}
+  if(c.type==='liquidation-ack'){liquidations.ack(c.id,c.generation,c.batchId);return;}
+  if(c.type==='liquidation-fixture'){if(fixture)liquidations.ingest(c.events,c.live===true);return;}
+  if(c.type==='online')liquidations.setOnline(c.online);
+  if(c.type==='cvd-subscribe'){cvd.subscribe(c.id,c.request);return;}
+  if(c.type==='cvd-unsubscribe'){cvd.unsubscribe(c.id);return;}
+  if(c.type==='cvd-ack'){cvd.ack(c.id,c.generation,c.batchId);return;}
+  if(c.type==='cvd-fixture'){if(fixture)cvd.ingest(c.source,c.payload);return;}
+  if(c.type==='trade-bubbles-subscribe'){tradeBubbles.subscribe(c.id,c.request,c.configRevision);return;}
+  if(c.type==='trade-bubbles-update'){tradeBubbles.update(c.id,c.request,c.configRevision);return;}
+  if(c.type==='trade-bubbles-unsubscribe'){tradeBubbles.unsubscribe(c.id);return;}
+  if(c.type==='trade-bubbles-ack'){tradeBubbles.ack(c.id,c.generation,c.batchId);return;}
+  if(c.type==='trade-bubbles-retry'){tradeBubbles.retry();return;}
+  if(c.type==='trade-bubbles-fixture'){if(fixture)tradeBubbles.ingestFixture(c.source,c.records);return;}
+  if(c.type==='online'){cvd.setOnline(c.online);bybitExecutions.setOnline(c.online);}
   if(c.type==='effort-claim'){void efforts.claim(c.id,c.key,c.eventId,c.state);return;}
   if(c.type==='effort-alerted'){efforts.alerted(c.key,c.eventId,c.state,c.at);return;}
   if(c.type==='effort-export'){efforts.export(c.id,c.key);return;}
@@ -155,6 +181,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='footprint-retry'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='footprint-ack'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);spotFootprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

@@ -1,3 +1,4 @@
+import {candleGeometry} from 'openalgo-charts';
 import { netPositioningQuote } from '../feed/net-positioning';
 import type { QuantityCurrency } from '../currency-display';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
@@ -5,7 +6,7 @@ import type { Candle } from '../feed/protocol';
 import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
 import { groupedSourceSlot, layoutNetPositioningSources, roundDprBoundary, type NetPositioningDisplay, type NetPositioningQuality } from './net-positioning-layout';
 
-const VENUE_ORDER: readonly NetPositioningVenue[] = ['binance', 'hyperliquid'];
+const VENUE_ORDER: readonly NetPositioningVenue[] = ['binance', 'hyperliquid', 'bybit'];
 const PANE_HEADER_HEIGHT = 30;
 const MAX_HOST_BARS = 5_000;
 
@@ -15,8 +16,8 @@ export type NetPositioningLabels = 'auto' | 'hover' | 'off';
 export type NetPositioningTheme = 'dark' | 'light';
 export type NetPositioningSourceColors = Record<NetPositioningVenue, string>;
 export const NET_POSITIONING_SOURCE_PALETTES: Record<NetPositioningTheme, Record<NetPositioningSide, NetPositioningSourceColors>> = {
-  dark: { longs: { binance: '#58a65c', hyperliquid: '#85c98b' }, shorts: { binance: '#ad5858', hyperliquid: '#d98a8a' } },
-  light: { longs: { binance: '#167260', hyperliquid: '#44853e' }, shorts: { binance: '#b54436', hyperliquid: '#963b4e' } },
+  dark: { longs: { binance: '#58a65c', hyperliquid: '#85c98b', bybit: '#b1d677' }, shorts: { binance: '#ad5858', hyperliquid: '#d98a8a', bybit: '#d9a376' } },
+  light: { longs: { binance: '#167260', hyperliquid: '#44853e', bybit: '#626e20' }, shorts: { binance: '#b54436', hyperliquid: '#963b4e', bybit: '#93551f' } },
 };
 export function netPositioningSourceColors(theme: NetPositioningTheme, side: NetPositioningSide = 'longs'): NetPositioningSourceColors {
   return { ...NET_POSITIONING_SOURCE_PALETTES[theme][side] };
@@ -81,22 +82,22 @@ export class NetPositioningPane implements IPrimitive {
   private patches = 0;
   private snapshots = 0;
 
-  constructor(readonly id: string, side: NetPositioningSide) { this.side = side; this.defaultColors = netPositioningSourceColors('dark', side); this.colors = { ...this.defaultColors }; }
+  constructor(readonly id: string, side: NetPositioningSide, private columnGeometry=(x:number,spacing:number,dpr:number)=>{const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};}) { this.side = side; this.defaultColors = netPositioningSourceColors('dark', side); this.colors = { ...this.defaultColors }; }
   zOrder() { return 'normal' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
   detached() { this.host = undefined; }
   setColors(binance: string, hyperliquid: string) {
-    this.defaultColors = { binance, hyperliquid };
+    this.defaultColors = { ...this.defaultColors, binance, hyperliquid };
     this.applyColors();
   }
   setThemeColors(colors: NetPositioningSourceColors) {
-    if (colors.binance === this.defaultColors.binance && colors.hyperliquid === this.defaultColors.hyperliquid) return;
+    if (colors.binance === this.defaultColors.binance && colors.hyperliquid === this.defaultColors.hyperliquid && colors.bybit === this.defaultColors.bybit) return;
     this.defaultColors = { ...colors };
     this.applyColors();
   }
   setColorOverrides(colors: Partial<Record<NetPositioningVenue, string>> | undefined) {
     const next = { ...(colors ?? {}) };
-    if (next.binance === this.colorOverrides.binance && next.hyperliquid === this.colorOverrides.hyperliquid) return;
+    if (next.binance === this.colorOverrides.binance && next.hyperliquid === this.colorOverrides.hyperliquid && next.bybit === this.colorOverrides.bybit) return;
     this.colorOverrides = next;
     this.applyColors();
   }
@@ -104,6 +105,7 @@ export class NetPositioningPane implements IPrimitive {
     this.colors = { ...this.defaultColors, ...this.colorOverrides };
     this.host?.requestUpdate();
   }
+  refreshColumnGeometry(){this.host?.requestUpdate();}
   sourceColor(venue: NetPositioningVenue) { return this.colors[venue]; }
 
   setSettings(side: NetPositioningSide, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number, display: NetPositioningDisplay = 'stacked', labels: NetPositioningLabels = 'auto') {
@@ -225,7 +227,6 @@ export class NetPositioningPane implements IPrimitive {
     const from = Math.max(0, Math.floor(range.from) - 1);
     const to = Math.min(this.hostTimes.length, Math.ceil(range.to) + 1);
     const spacing = rc.timeScale.barSpacing;
-    const groupWidth = Math.max(1, Math.min(spacing * .84, 64));
     const contentHeight = Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT);
     const yForPrice = (price: number) => PANE_HEADER_HEIGHT + rc.priceScale.priceToY(price) * contentHeight / rc.plotHeight;
     const baseline = yForPrice(0);
@@ -251,13 +252,14 @@ export class NetPositioningPane implements IPrimitive {
       const timeMs = this.hostTimes[index]; if (timeMs === undefined) continue;
       const bar = this.candles.get(timeMs); if (!bar) continue;
       const x = rc.timeScale.indexToX(index);
-      if (x + groupWidth / 2 < 0 || x - groupWidth / 2 > rc.plotWidth) continue;
+      const column=this.columnGeometry(x,spacing,rc.dpr),groupWidth=Math.max(1/rc.dpr,column.width),centre=column.left+groupWidth/2;
+      if (centre + groupWidth / 2 < 0 || centre - groupWidth / 2 > rc.plotWidth) continue;
       const layout = layoutNetPositioningSources(this.sourceValues(bar), this.display);
       for (const segment of layout.segments) {
         if (segment.value === null || segment.start === null || segment.end === null) continue;
         const venue = segment.sourceId as NetPositioningVenue;
-        const groupSlot = groupedSourceSlot(venue, this.venues, VENUE_ORDER, x, groupWidth);
-        const left = this.display === 'stacked' ? x - groupWidth / 2 : groupSlot?.left ?? x - groupWidth / 2;
+        const groupSlot = groupedSourceSlot(venue, this.venues, VENUE_ORDER, centre, groupWidth);
+        const left = this.display === 'stacked' ? column.left : groupSlot?.left ?? column.left;
         const width = this.display === 'stacked' ? groupWidth : groupSlot?.width ?? groupWidth;
         const right = left + width;
         const yStart = yForPrice(segment.start), yEnd = yForPrice(segment.end);
@@ -279,7 +281,7 @@ export class NetPositioningPane implements IPrimitive {
           ctx.fillRect(leftPx, topPx, rightPx - leftPx, bottomPx - topPx);
         }
         const top = topPx / dpr, bottom = bottomPx / dpr;
-        const geometry: SegmentGeometry = { sourceId: venue, timeMs, left, top, right, bottom, value: segment.value, quality: segment.quality, zero: segment.sign === 'zero' };
+        const geometry: SegmentGeometry = { sourceId: venue, timeMs, left:leftPx/dpr, top, right:rightPx/dpr, bottom, value: segment.value, quality: segment.quality, zero: segment.sign === 'zero' };
         this.geometry.push(geometry);
         const isHovered = hovered || rc.hoverKey === hoverKey;
         if (isHovered) {
@@ -336,8 +338,8 @@ export class NetPositioningPane implements IPrimitive {
     const candle = this.candles.get(hit.timeMs);
     if (!candle) return null;
     const sources = this.sourceValues(candle).map(source => ({ ...source, color: this.colors[source.sourceId],
-      label: source.sourceId === 'binance' ? 'Binance Perp' : 'Hyperliquid Perp' }));
-    return { timeMs: hit.timeMs, intervalMs: this.intervalMs, side: this.side, currency: this.currency, sources,
+      label: source.sourceId === 'binance' ? 'Binance Perp' : source.sourceId === 'bybit' ? 'Bybit Perp' : 'Hyperliquid Perp' }));
+    return { hoveredVenue: hit.sourceId, timeMs: hit.timeMs, intervalMs: this.intervalMs, side: this.side, currency: this.currency, sources,
       total: sources.reduce((sum, source) => sum + (source.value ?? 0), 0),
       provisional: this.hostClosed.get(hit.timeMs) !== true, method: this.method,
       left: (hit.left + hit.right) / 2, top: hit.top, bottom: hit.bottom };
@@ -406,8 +408,8 @@ function lowerBound(values: readonly number[], target: number) {
   while (lo < hi) { const mid = (lo + hi) >>> 1; if (values[mid]! < target) lo = mid + 1; else hi = mid; }
   return lo;
 }
-function venueShort(venue: NetPositioningVenue) { return venue === 'binance' ? 'BN' : 'HL'; }
-function venueLabel(venue: NetPositioningVenue) { return venue === 'binance' ? 'Binance · BTCUSDT USD-M Perp' : 'Hyperliquid · BTC Perp'; }
+function venueShort(venue: NetPositioningVenue) { return venue === 'binance' ? 'BN' : venue === 'bybit' ? 'BY' : 'HL'; }
+function venueLabel(venue: NetPositioningVenue) { return venue === 'binance' ? 'Binance · BTCUSDT USD-M Perp' : venue === 'bybit' ? 'Bybit · BTCUSDT Perp' : 'Hyperliquid · BTC Perp'; }
 function formatBtc(value: string) {
   const number = Number(value);
   return Number.isFinite(number) ? Math.abs(number).toLocaleString('en-US', { minimumFractionDigits: number === 0 ? 0 : undefined, maximumFractionDigits: 8 }) : 'unavailable';

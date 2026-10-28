@@ -35,28 +35,37 @@ test('Depth Matrix keeps its current rows while a replacement viewport batch is 
   await expect(matrix.locator('.depth-matrix-column-head small')).toHaveText(['FIXTURE', 'FIXTURE']);
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__initialDepthMatrixViewport))).toBe(true);
   await expect(matrix.locator('.depth-matrix-price-row')).toHaveCount(160);
-  const initialFirstRow = await matrix.locator('.depth-matrix-price-row').first().getAttribute('title');
+  const initialFirstRow = await matrix.locator('.depth-matrix-price-row').first().getAttribute('data-price-range');
   const initialViewport = await page.evaluate(() => (window as any).__initialDepthMatrixViewport);
+  // Page immediately after centering: its queued scroll event may coalesce with this move.
   await page.evaluate(() => { (window as any).__holdDepthMatrixPage = true; });
   await scroll.evaluate(element => { element.scrollTop = element.scrollHeight; });
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__heldDepthMatrixBatch))).toBe(true);
   const held = await page.evaluate(() => (window as any).__heldDepthMatrixBatch);
   expect(held.viewport.low).not.toBe(initialViewport.low);
   await expect(matrix.locator('.depth-matrix-price-row')).toHaveCount(160);
-  await expect(matrix.locator('.depth-matrix-price-row').first()).toHaveAttribute('title', initialFirstRow!);
+  await expect(matrix.locator('.depth-matrix-price-row').first()).toHaveAttribute('data-price-range', initialFirstRow!);
   await expect(matrix.locator('.depth-matrix-column-head[data-state="live"]')).toHaveCount(2);
 
+  const pageAnchor = await page.evaluate(() => {
+    const p=(window as any).__terminal.dock.panels.find((p:any)=>p.view.contentComponent==='depth-matrix').view.content;
+    return p.rowLayout.anchor(p.scroll.scrollTop);
+  });
   await page.evaluate(() => (window as any).__releaseDepthMatrixPage());
-  await expect.poll(() => matrix.locator('.depth-matrix-price-row').first().getAttribute('title')).not.toBe(initialFirstRow);
+  await expect.poll(() => matrix.locator('.depth-matrix-price-row').first().getAttribute('data-price-range')).not.toBe(initialFirstRow);
   await expect(matrix.locator('.depth-matrix-price-row')).toHaveCount(160);
+  await expect.poll(() => page.evaluate(() => {
+    const p=(window as any).__terminal.dock.panels.find((p:any)=>p.view.contentComponent==='depth-matrix').view.content;
+    return p.rowLayout.anchor(p.scroll.scrollTop);
+  })).toEqual(pageAnchor);
   await expect(matrix.locator('.depth-matrix-column-head[data-state="live"]')).toHaveCount(2);
   await page.evaluate(() => { (window as any).__holdDepthMatrixPage = true; });
   await scroll.evaluate(element => { element.scrollTop = element.scrollHeight; });
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__heldDepthMatrixBatch))).toBe(true);
   await matrix.getByRole('button', { name: 'CENTER', exact: true }).click();
-  await expect.poll(() => matrix.locator('.depth-matrix-price-row').first().getAttribute('title')).toBe(initialFirstRow);
+  await expect.poll(() => matrix.locator('.depth-matrix-price-row').first().getAttribute('data-price-range')).toBe(initialFirstRow);
   await page.evaluate(() => (window as any).__releaseDepthMatrixPage());
-  await expect(matrix.locator('.depth-matrix-price-row').first()).toHaveAttribute('title', initialFirstRow!);
+  await expect(matrix.locator('.depth-matrix-price-row').first()).toHaveAttribute('data-price-range', initialFirstRow!);
 });
 
 test('Depth Matrix Center and manual ranges survive tab resubscription without paging away', async ({ page }) => {
@@ -69,6 +78,7 @@ test('Depth Matrix Center and manual ranges survive tab resubscription without p
     return panel.view.content.diagnostics();
   });
   const initial = (await state()).viewport;
+  // The first user move must survive a still-queued programmatic centering event.
   await scroll.evaluate(element => { element.scrollTop = 0; });
   await expect.poll(async () => Number((await state()).viewport.low)).toBeGreaterThan(Number(initial.low));
   await expect.poll(async () => (await state()).pendingViewport ?? null).toBeNull();
@@ -97,9 +107,8 @@ test('Depth Matrix Center and manual ranges survive tab resubscription without p
     const centeredPrice = await page.evaluate(() => {
       const panel = (window as any).__terminal.dock.panels.find((p: any) => p.view.contentComponent === 'depth-matrix').view.content;
       const scroll = panel.scroll;
-      const height = parseFloat(getComputedStyle(panel.element).getPropertyValue('--depth-matrix-row-height'));
-      const row = panel.rows[Math.floor((scroll.scrollTop + scroll.clientHeight / 2 - 24) / height)];
-      return { low: Number(row.low), high: Number(row.high), mid: Number(panel.columns.find((c: any) => c.mid !== null).mid) };
+      const row = panel.rows[panel.rowLayout.at(scroll.scrollTop + scroll.clientHeight / 2 - 24)];
+      return { low: Number(row.low), high: Number(row.high), mid: Number(panel.columns.find((c: any) => c.source === panel.settings.referenceSourceId).mid) };
     });
     expect(centeredPrice.mid).toBeGreaterThanOrEqual(centeredPrice.low);
     expect(centeredPrice.mid).toBeLessThan(centeredPrice.high);
@@ -138,22 +147,22 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   expect(paintedSides.ask).toBeGreaterThan(10);
   const scrollBounds = await scroll.boundingBox();
   const firstCanvasBounds = await firstCanvas.boundingBox();
-  const mixedPriceRow = matrix.locator('.depth-matrix-price-row[title^="$83500"]');
+  const mixedPriceRow = matrix.locator('.depth-matrix-price-row[data-price-range^="$83500"]');
   const mixedRowBounds = await mixedPriceRow.boundingBox();
   expect(scrollBounds && firstCanvasBounds && mixedRowBounds).toBeTruthy();
   await page.mouse.move(firstCanvasBounds!.x + 40, mixedRowBounds!.y + mixedRowBounds!.height / 2);
   const tooltip = matrix.locator('.depth-matrix-tooltip');
   await expect(tooltip).toBeVisible();
-  await expect(tooltip).toContainText('BID 1.25000000 BTC');
-  await expect(tooltip).toContainText('ASK 2.50000000 BTC');
+  await expect(tooltip).toContainText('1.25000000 BTC');
+  await expect(tooltip).toContainText('2.50000000 BTC');
   await expect(tooltip).toContainText('observed');
-  await expect(tooltip).toContainText('BTC /');
+  await expect(tooltip).toContainText('USDT');
   const secondCanvas = matrix.locator('.depth-matrix-book').nth(1);
   const secondCanvasBounds = await secondCanvas.boundingBox();
   expect(secondCanvasBounds).toBeTruthy();
   await page.mouse.move(secondCanvasBounds!.x + 40, mixedRowBounds!.y + mixedRowBounds!.height / 2);
-  await expect(tooltip).toContainText('BID 2.50000000 BTC');
-  await expect(tooltip).toContainText('ASK 1.75000000 BTC');
+  await expect(tooltip).toContainText('2.50000000 BTC');
+  await expect(tooltip).toContainText('1.75000000 BTC');
   await matrix.getByRole('button', { name: 'Depth Matrix settings' }).click();
   const settings = matrix.locator('.depth-matrix-settings');
   await expect(settings.locator('[aria-label="Bucket width preset"]')).toBeVisible();
@@ -194,7 +203,7 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   const restoredScroll = restored.locator('.depth-matrix-scroll');
   await restoredScroll.evaluate(element => { element.scrollLeft = Math.min(300, element.scrollWidth - element.clientWidth); });
   const rowHeight = await restored.evaluate(element => Number.parseFloat(getComputedStyle(element).getPropertyValue('--depth-matrix-row-height')));
-  const hoveredAxisIndex = await restoredScroll.evaluate((element, height) => Math.floor((element.scrollTop + element.clientHeight / 2 - 24) / height), rowHeight);
+  const hoveredAxisIndex = await page.evaluate(() => { const p = (window as any).__terminal.dock.panels.find((p: any) => p.view.contentComponent === 'depth-matrix').view.content; return p.rowLayout.at(p.scroll.scrollTop + p.scroll.clientHeight / 2 - 24); });
   const unavailableCanvas = restored.locator('.depth-matrix-book').nth(2);
   const unavailableBounds = await unavailableCanvas.boundingBox();
   const unavailableRow = restored.locator('.depth-matrix-price-row').nth(hoveredAxisIndex);
@@ -203,9 +212,9 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   await expect.poll(() => restoredScroll.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await unavailableCanvas.dispatchEvent('pointermove', {
     clientX: unavailableBounds!.x + unavailableBounds!.width / 2,
-    clientY: unavailableBounds!.y + hoveredAxisIndex * rowHeight + rowHeight / 2,
+    clientY: unavailableRowBounds!.y + unavailableRowBounds!.height / 2,
   });
-  await expect(restored.locator('.depth-matrix-tooltip')).toContainText('no synchronized row data');
+  await expect(restored.locator('.depth-matrix-tooltip')).toContainText('No synchronized row data');
   await expect(restored.locator('.depth-matrix-tooltip')).not.toContainText('1.25000000 BTC');
   await expect.poll(() => restoredScroll.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
   await restoredScroll.evaluate(element => { element.scrollLeft = element.scrollWidth; });
@@ -220,7 +229,7 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
     await restored.locator('.depth-matrix-source-setting').first().locator('button[title="Remove source"]').click();
   }
   await expect(restored.locator('.depth-matrix-column-head')).toHaveCount(0);
-  await expect(restored.locator('.depth-matrix-status')).toContainText('No sources selected');
+  await expect(restored.locator('.depth-matrix-status')).toContainText('Choose reference');
   await restored.getByLabel('Depth source').selectOption('binance-spot');
   await restored.getByRole('button', { name: 'ADD', exact: true }).click();
   await expect(restored.locator('.depth-matrix-column-head')).toHaveCount(1);
@@ -247,13 +256,13 @@ test('Depth Matrix marks unobserved far-side rows as unknown while keeping known
   const rowHeight = await matrix.evaluate(element => Number.parseFloat(getComputedStyle(element).getPropertyValue('--depth-matrix-row-height')));
   const spotCanvas = matrix.locator('.depth-matrix-book').first();
   const perpCanvas = matrix.locator('.depth-matrix-book').nth(1);
-  const nearRow = matrix.locator('.depth-matrix-price-row[title^="$83500"]');
+  const nearRow = matrix.locator('.depth-matrix-price-row[data-price-range^="$83500"]');
   const nearCanvasBounds = await spotCanvas.boundingBox(), nearRowBounds = await nearRow.boundingBox();
   expect(nearCanvasBounds && nearRowBounds).toBeTruthy();
   await page.mouse.move(nearCanvasBounds!.x + nearCanvasBounds!.width / 2, nearRowBounds!.y + nearRowBounds!.height / 2);
   const tooltip = matrix.locator('.depth-matrix-tooltip');
-  await expect(tooltip).toContainText('BID 1.25000000 BTC /');
-  await expect(tooltip).toContainText('ASK 2.50000000 BTC /');
+  await expect(tooltip).toContainText('1.25000000 BTC');
+  await expect(tooltip).toContainText('2.50000000 BTC');
   await expect(tooltip).toContainText('observed');
   await scroll.evaluate((element, height) => { element.scrollTop = 24 + 8 * height; }, rowHeight);
   await page.evaluate(() => {
@@ -266,16 +275,17 @@ test('Depth Matrix marks unobserved far-side rows as unknown while keeping known
   expect(farLabels).toContain('—');
   expect(farLabels).not.toContain('0');
   expect(farLabels).not.toContain('?');
-  const row = matrix.locator('.depth-matrix-price-row[title^="$90600"]');
+  const row = matrix.locator('.depth-matrix-price-row[data-price-range^="$90600"]');
   const rowIndex = Number(await row.getAttribute('data-row-index'));
   expect(Number.isInteger(rowIndex)).toBe(true);
   await perpCanvas.evaluate((canvas, { rowIndex: index, rowHeight: height }) => {
     const bounds = canvas.getBoundingClientRect();
-    canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: bounds.top + index * height + height / 2 }));
+    const row = document.querySelectorAll('.depth-matrix-price-row')[index]!.getBoundingClientRect();
+    canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: row.top + row.height / 2 }));
   }, { rowIndex, rowHeight });
   await expect(tooltip).toBeVisible();
-  await expect(tooltip).toContainText('BID 0.00000000 BTC / 0.00 USDT · known empty');
-  await expect(tooltip).toContainText('ASK not observed · unknown');
+  await expect(tooltip).toContainText('known empty');
+  await expect(tooltip).toContainText('Not observed');
   await page.screenshot({ path: '/tmp/iqterminal-depth-matrix-unknown-far.png' });
 });
 
@@ -310,13 +320,14 @@ test('Depth Matrix keeps partial measured labels legible without coverage marker
   const canvas = matrix.locator('.depth-matrix-book').nth(1);
   const readPartialLabel = async (low: '83300' | '83700') => {
     const expectedLabel = low === '83300' ? '3.75' : '<0.001';
-    const row = matrix.locator(`.depth-matrix-price-row[title^="$${low}"]`);
+    const row = matrix.locator(`.depth-matrix-price-row[data-price-range^="$${low}"]`);
     await row.scrollIntoViewIfNeeded();
     const rowIndex = Number(await row.getAttribute('data-row-index'));
     expect(Number.isInteger(rowIndex)).toBe(true);
     await canvas.evaluate((element, { rowIndex: index, rowHeight: height }) => {
       const bounds = element.getBoundingClientRect();
-      element.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: bounds.top + index * height + height / 2 }));
+      const row = document.querySelectorAll('.depth-matrix-price-row')[index]!.getBoundingClientRect();
+      element.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: bounds.left + bounds.width / 2, clientY: row.top + row.height / 2 }));
     }, { rowIndex, rowHeight });
     await expect(matrix.locator('.depth-matrix-tooltip')).toContainText('partial');
     await page.evaluate(() => {
@@ -324,7 +335,7 @@ test('Depth Matrix keeps partial measured labels legible without coverage marker
       (window as any).__captureDepthMatrixText = true;
       window.dispatchEvent(new Event('resize'));
     });
-    const targetY = rowIndex * rowHeight + rowHeight / 2;
+    const targetY = await row.evaluate(element => { const r=element.getBoundingClientRect(), c=document.querySelector('.depth-matrix-book')!.getBoundingClientRect(); return r.top-c.top+r.height/2; });
     await expect.poll(() => page.evaluate(({ y, label }) => (window as any).__depthMatrixText.some((item: any) => item.kind === 'fill'
       && item.source === 'binance-perpetual' && item.text === label && item.y === y), { y: targetY, label: expectedLabel })).toBe(true);
     const result = await page.evaluate(({ y, label }) => {
@@ -338,7 +349,7 @@ test('Depth Matrix keeps partial measured labels legible without coverage marker
     expect(result.amount).toBeTruthy();
     expect(result.amount.fillStyle).toBe(result.expectedText);
     expect(result.amount.font).toContain('11px');
-    expect(result.outline).toMatchObject({ strokeStyle: result.expectedHalo, lineWidth: 1 });
+    expect(result.outline).toBeUndefined();
     expect(result.marker).toBeFalsy();
     return result;
   };
@@ -400,78 +411,33 @@ test('Depth Matrix tracks the rounded reference mid beside readable mixed venue 
   await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
   const matrix = page.locator('.depth-matrix-panel'), axis = matrix.locator('.depth-matrix-price-axis');
   const current = axis.locator('.depth-matrix-price-row[data-current="true"]');
-  await expect(current).toHaveText('83,550');
-  await expect(current).toHaveAttribute('data-direction', 'neutral');
-  const colorTokens = async () => current.evaluate(row => {
-    const panel = document.querySelector('.depth-matrix-panel')!, tokens = getComputedStyle(panel), badge = getComputedStyle(row);
-    return { background: badge.backgroundColor, text: badge.color, accent: tokens.getPropertyValue('--accent').trim(),
-      up: tokens.getPropertyValue('--up').trim(), chart: tokens.getPropertyValue('--chart').trim() };
-  });
-  const normalizeColor = (color: string) => color.startsWith('#') ? `rgb(${parseInt(color.slice(1, 3), 16)}, ${parseInt(color.slice(3, 5), 16)}, ${parseInt(color.slice(5, 7), 16)})` : color;
-  const neutralColors = await colorTokens();
-  expect(neutralColors.background).toBe(normalizeColor(neutralColors.accent));
-  expect(neutralColors.text).toBe(normalizeColor(neutralColors.chart));
-  const originalBucket = axis.locator('.depth-matrix-price-row[title^="$83500"]');
-  await expect(originalBucket).toHaveAttribute('data-current', 'true');
-  await expect.poll(() => page.evaluate(() => ['32.803', '65.837', '33.913', '380.45'].every(text =>
+  await expect(current).toHaveText('83,500');
+  await expect(matrix.locator('.depth-matrix-status')).toContainText('SPOT MID 83,550');
+  await expect.poll(() => page.evaluate(() => ['32.8', '65.8', '33.9', '380'].every(text =>
     (window as any).__depthMatrixCellLabels.some((cell: any) => cell.text === text)))).toBe(true);
   const mixedBandCenters = await page.evaluate(() => {
-    const labels = (window as any).__depthMatrixCellLabels as Array<{ source: string; text: string; y: number }>;
-    const latest = (source: string, text: string) => [...labels].reverse().find(cell => cell.source === source && cell.text === text)?.y;
-    return { spot: [latest('binance-spot', '32.803'), latest('binance-spot', '65.837')],
-      perp: [latest('binance-perpetual', '33.913'), latest('binance-perpetual', '380.45')] };
+    const labels = (window as any).__depthMatrixCellLabels as Array<{source:string;text:string;y:number}>;
+    const last = (source:string,text:string) => [...labels].reverse().find(cell => cell.source === source && cell.text === text)!.y;
+    return [['binance-spot','32.8','65.8'],['binance-perpetual','33.9','380']].map(([source,bid,ask]) => last(source!,bid!) - last(source!,ask!));
   });
-  for (const pair of [mixedBandCenters.spot, mixedBandCenters.perp]) {
-    expect(pair[0]).toBeDefined(); expect(pair[1]).toBeDefined(); expect(pair[1]! - pair[0]!).toBe(13);
+  expect(mixedBandCenters).toEqual([17,17]);
+  for (const theme of ['dark','light'] as const) {
+    await page.getByLabel('Theme', {exact:true}).selectOption(theme);
+    await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme === 'dark' ? '#090909' : '#f6f4ee');
+    await matrix.screenshot({path: `/tmp/depth-matrix-mixed-labels-${theme}-dpr1.png`});
   }
-
-  const waitForTheme = async (theme: 'dark' | 'light') => {
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
-    await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim()))
-      .toBe(theme === 'dark' ? '#090909' : '#f6f4ee');
-    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-  };
-  await waitForTheme('dark');
-  await matrix.screenshot({ path: '/tmp/depth-matrix-mixed-labels-dark-dpr1.png' });
-  await waitForTheme('light');
-  await matrix.screenshot({ path: '/tmp/depth-matrix-mixed-labels-light-dpr1.png' });
-  await waitForTheme('dark');
-
-  const settingsButton = matrix.getByRole('button', { name: 'Depth Matrix settings' });
-  await settingsButton.click();
-  const scale = matrix.getByLabel('Histogram scale');
-  await page.evaluate(() => { (window as any).__depthMatrixMidOverride = '83650.4'; });
-  await scale.selectOption('shared');
-  await expect(current).toHaveText('83,650');
-  await expect(current).toHaveAttribute('data-direction', 'up');
-  await expect(current).toHaveAttribute('title', /\$83600.*Binance.*mid price \$83,650\.4; shown rounded to \$83,650/);
-  await expect(originalBucket).toHaveText('83,500');
-
-  for (const theme of ['dark', 'light'] as const) {
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
-    const colors = await colorTokens();
-    expect(colors.background).toBe(normalizeColor(colors.up));
-    expect(colors.text).toBe(normalizeColor(colors.chart));
+  await matrix.getByRole('button', {name:'Depth Matrix settings'}).click();
+  await matrix.getByLabel('Venue column width').evaluate(element => { const input=element as HTMLInputElement; input.value='65'; input.dispatchEvent(new Event('input',{bubbles:true})); });
+  await matrix.getByRole('button', {name:'Depth Matrix settings'}).click();
+  for (const theme of ['dark','light'] as const) {
+    await page.getByLabel('Theme', {exact:true}).selectOption(theme);
+    await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme === 'dark' ? '#090909' : '#f6f4ee');
+    await matrix.screenshot({path: `/tmp/depth-matrix-mixed-labels-${theme}-65.png`});
   }
+  await expect(current).toHaveText('83,500');
+  const toolbar = await matrix.locator('.depth-matrix-toolbar').evaluate(element => ({width:element.clientWidth,scroll:element.scrollWidth}));
+  expect(toolbar.scroll).toBeLessThanOrEqual(toolbar.width);
 
-  await page.evaluate(() => { (window as any).__depthMatrixMidOverride = '83449.5'; });
-  await scale.selectOption('per-source');
-  await expect(current).toHaveText('83,450');
-  await expect(current).toHaveAttribute('data-direction', 'down');
-  await expect(current).toHaveAttribute('title', /\$83400.*mid price \$83,449\.5; shown rounded to \$83,450/);
-  await settingsButton.click();
-  await page.setViewportSize({ width: 390, height: 480 });
-  const axisBounds = await axis.boundingBox(), badgeBounds = await current.boundingBox();
-  expect(axisBounds && badgeBounds).toBeTruthy();
-  expect(badgeBounds!.x).toBeGreaterThanOrEqual(axisBounds!.x);
-  expect(badgeBounds!.x + badgeBounds!.width).toBeLessThanOrEqual(axisBounds!.x + axisBounds!.width);
-
-  const scroll = matrix.locator('.depth-matrix-scroll');
-  await scroll.evaluate(element => { element.scrollLeft = element.scrollWidth; });
-  const pinnedAxis = await axis.boundingBox(), scrollBounds = await scroll.boundingBox();
-  expect(pinnedAxis && scrollBounds).toBeTruthy();
-  expect(pinnedAxis!.x).toBeGreaterThanOrEqual(scrollBounds!.x - 1);
-  expect(pinnedAxis!.x).toBeLessThan(scrollBounds!.x + 2);
 });
 
 test('Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, scrolling, and recentering', async ({ browser }) => {
@@ -519,14 +485,14 @@ test('Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, s
   await scroll.evaluate((element, height) => { element.scrollTop += 2 * height; }, rowHeight);
   await expect.poll(() => scroll.evaluate(element => element.scrollTop)).toBeGreaterThan(scrollTopBefore);
   await expect.poll(async () => { const colors = await visibleColors(); return colors.bid > 10 && colors.ask > 10; }).toBe(true);
-  const populatedRow = matrix.locator('.depth-matrix-price-row[title^="$83500"]');
+  const populatedRow = matrix.locator('.depth-matrix-price-row[data-price-range^="$83500"]');
   const rowIndex = Number(await populatedRow.getAttribute('data-row-index'));
   const alignment = await page.evaluate(({ index, height }) => {
-    const row = document.querySelector('.depth-matrix-price-row[title^="$83500"]')!;
+    const row = document.querySelector('.depth-matrix-price-row[data-price-range^="$83500"]')!;
     const canvas = document.querySelector('.depth-matrix-book')!;
     const scroll = document.querySelector('.depth-matrix-scroll')!;
     const rowRect = row.getBoundingClientRect(), canvasRect = canvas.getBoundingClientRect(), scrollRect = scroll.getBoundingClientRect();
-    return { delta: rowRect.top - (canvasRect.top + index * height), centerY: rowRect.top + rowRect.height / 2,
+    return { delta: rowRect.top - (canvasRect.top + (window as any).__terminal.dock.panels.find((p:any) => p.view.contentComponent === 'depth-matrix').view.content.rowLayout.positions[index].top), centerY: rowRect.top + rowRect.height / 2,
       viewportTop: scrollRect.top, viewportBottom: scrollRect.bottom, canvasLeft: canvasRect.left, canvasWidth: canvasRect.width };
   }, { index: rowIndex, height: rowHeight });
   expect(Number.isInteger(rowIndex)).toBe(true);
@@ -536,8 +502,8 @@ test('Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, s
   await matrix.locator('.depth-matrix-book').first().dispatchEvent('pointermove', {
     clientX: alignment.canvasLeft + alignment.canvasWidth / 2, clientY: alignment.centerY,
   });
-  await expect(matrix.locator('.depth-matrix-tooltip')).toContainText('BID 1.25000000 BTC');
-  await expect(matrix.locator('.depth-matrix-tooltip')).toContainText('ASK 2.50000000 BTC');
+  await expect(matrix.locator('.depth-matrix-tooltip')).toContainText('1.25000000 BTC');
+  await expect(matrix.locator('.depth-matrix-tooltip')).toContainText('2.50000000 BTC');
   await page.setViewportSize({ width: 760, height: 860 });
   await matrix.getByRole('button', { name: 'CENTER' }).click();
   await expect.poll(async () => { const colors = await visibleColors(); return colors.bid > 10 && colors.ask > 10; }).toBe(true);

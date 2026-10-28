@@ -15,6 +15,8 @@ export class FeedClient {
   private sequence=0;private current=new Map<string,string>();private currentDepth=new Map<string,string>();private currentFootprint=new Map<string,string>();private worker:Worker;private listeners=new Map<string,{key:string;callback:(e:Event)=>void}>();private depthListeners=new Map<string,(e:Event)=>void>();private footprintListeners=new Map<string,{key:string;callback:(e:Event)=>void}>();
   private tickerListeners = new Map<string,{revision:number;callback:(e: import('../ticker/model').TickerBatch) => void}>();
   private currentTicker = new Map<string,string>();
+  private tradeBubbleListeners = new Map<string,{revision:number;callback:(e:import('../trade-bubbles/model').TradeBubbleBatch)=>void}>();
+  private currentTradeBubbles = new Map<string,string>();
   private heatmapListeners = new Map<string,{key:string;callback:(e:Event)=>void}>();
   private currentHeatmap = new Map<string,string>();
   private orderWallListeners = new Map<string,(e:Extract<Event,{type:'order-wall-batch'}>)=>void>();
@@ -24,6 +26,10 @@ export class FeedClient {
   private depthMatrixListeners = new Map<string,(event:Extract<Event,{type:'depth-matrix-batch'}>)=>void>();
   private currentDepthMatrix = new Map<string,string>();
   private tpoListeners = new Map<string,{key:string;callback:(event:Extract<Event,{type:'tpo-snapshot'|'tpo-patch'|'tpo-status'}>)=>void}>();
+  private cvdListeners=new Map<string,(event:import('./cvd').CvdEvent)=>void>();
+  private currentCvd=new Map<string,string>();
+  private liquidationListeners=new Map<string,(e:import('../liquidations/protocol').LiquidationBatch)=>void>();
+  private liquidationTokens=new Map<string,string>();
   private currentTpo = new Map<string,string>();
   private watchListeners=new Set<(snapshot:WatchSnapshot|undefined,error?:string)=>void>();
   private watchSnapshot?:WatchSnapshot;private watchError?:string;private watchStarted=false;
@@ -48,8 +54,11 @@ export class FeedClient {
       try {
         for(const id of e.ids){
           try {
+            if(e.type==='liquidation-batch')this.liquidationListeners.get(id)?.(e);
+            if(e.type==='cvd-batch')this.cvdListeners.get(id)?.(e);
             if(e.type==='effort-result')this.effortListeners.get(id)?.(e);
             if(e.type==='ticker-batch'){const ticker=this.tickerListeners.get(id);if(ticker?.revision===e.configRevision)ticker.callback(e);}
+            if(e.type==='trade-bubbles-batch'){const bubbles=this.tradeBubbleListeners.get(id);if(bubbles?.revision===e.configRevision)bubbles.callback(e);}
             const l=this.listeners.get(id);if(l&&'key'in e&&l.key===e.key)l.callback(e);
             const heatmap=this.heatmapListeners.get(id);if(heatmap&&e.type==='heatmap-batch'&&heatmap.key===e.key){const start=performance.now();heatmap.callback(e);this.historyApply.heatmapMs+=performance.now()-start;this.historyApply.heatmapBatches++;}
             const orderWalls=this.orderWallListeners.get(id);if(orderWalls&&e.type==='order-wall-batch'){const start=performance.now();orderWalls(e);this.historyApply.orderWallsMs+=performance.now()-start;this.historyApply.orderWallsBatches++;}
@@ -61,7 +70,10 @@ export class FeedClient {
           } catch(error) { console.error('Market data subscriber callback failed',error); }
         }
       } finally {
+        if(e.type==='liquidation-batch')this.send({type:'liquidation-ack',id:e.ids[0],generation:e.generation,batchId:e.batchId});
+        if(e.type==='cvd-batch')this.send({type:'cvd-ack',id:e.ids[0],generation:e.generation,batchId:e.batchId});
         if(e.type==='ticker-batch')this.send({type:'ticker-ack',id:e.ids[0],generation:e.generation,batchId:e.batchId});
+        if(e.type==='trade-bubbles-batch')this.send({type:'trade-bubbles-ack',id:e.ids[0],generation:e.generation,batchId:e.batchId});
         if(e.type==='heatmap-batch')this.send({type:'heatmap-ack',key:e.key,generation:e.generation,batchId:e.batchId});
         if(isFootprintBatch(e)) this.send({type:'footprint-ack',key:e.key,generation:e.generation,batchId:e.batchId});
       }
@@ -122,14 +134,33 @@ export class FeedClient {
     const token=`footprint:${id}:${++this.sequence}`;const key=footprintKeyOf(series,rowPrice);this.currentFootprint.set(id,token);this.footprintListeners.set(token,{key,callback});this.send({type:'footprint-subscribe',id:token,series,rowPrice});
     return ()=>{this.footprintListeners.delete(token);if(this.currentFootprint.get(id)===token)this.currentFootprint.delete(id);this.send({type:'footprint-unsubscribe',id:token});};
   }
+  subscribeLiquidations(id:string,request:import('../liquidations/protocol').LiquidationRequest,callback:(e:import('../liquidations/protocol').LiquidationBatch)=>void){
+    const old=this.liquidationTokens.get(id);if(old){this.liquidationListeners.delete(old);this.send({type:'liquidation-unsubscribe',id:old});}
+    const token=`liquidation:${id}:${++this.sequence}`;this.liquidationTokens.set(id,token);this.liquidationListeners.set(token,callback);this.send({type:'liquidation-subscribe',id:token,request});
+    return ()=>{this.liquidationListeners.delete(token);if(this.liquidationTokens.get(id)===token)this.liquidationTokens.delete(id);this.send({type:'liquidation-unsubscribe',id:token});};
+  }
+  updateLiquidations(id:string,request:import('../liquidations/protocol').LiquidationRequest){const token=this.liquidationTokens.get(id);if(token)this.send({type:'liquidation-update',id:token,request});}
+  subscribeCvd(id:string,request:import('./cvd').CvdRequest,callback:(event:import('./cvd').CvdEvent)=>void){
+    const old=this.currentCvd.get(id);if(old){this.cvdListeners.delete(old);this.send({type:'cvd-unsubscribe',id:old});}
+    const token=`cvd:${id}:${++this.sequence}`;this.currentCvd.set(id,token);this.cvdListeners.set(token,callback);this.send({type:'cvd-subscribe',id:token,request});
+    return ()=>{this.cvdListeners.delete(token);if(this.currentCvd.get(id)===token)this.currentCvd.delete(id);this.send({type:'cvd-unsubscribe',id:token});};
+  }
   subscribeTicker(id:string,config:import('../ticker/model').TickerConfig,callback:(e:import('../ticker/model').TickerBatch)=>void) {
     const previous=this.currentTicker.get(id);if(previous){this.tickerListeners.delete(previous);this.send({type:'ticker-unsubscribe',id:previous});}
     const token=`ticker:${id}:${++this.sequence}`;this.currentTicker.set(id,token);this.tickerListeners.set(token,{revision:0,callback});this.send({type:'ticker-subscribe',id:token,configRevision:0,config});
     return ()=>{this.tickerListeners.delete(token);if(this.currentTicker.get(id)===token)this.currentTicker.delete(id);this.send({type:'ticker-unsubscribe',id:token});};
   }
   updateTicker(id:string,config:import('../ticker/model').TickerConfig) {const token=this.currentTicker.get(id);const listener=token&&this.tickerListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'ticker-update',id:token,configRevision:listener.revision,config});}}
+  subscribeTradeBubbles(id:string,request:import('./trade-bubbles-service').TradeBubbleRequest,callback:(event:import('../trade-bubbles/model').TradeBubbleBatch)=>void){
+    const previous=this.currentTradeBubbles.get(id);if(previous){this.tradeBubbleListeners.delete(previous);this.send({type:'trade-bubbles-unsubscribe',id:previous});}
+    const token=`trade-bubbles:${id}:${++this.sequence}`;this.currentTradeBubbles.set(id,token);this.tradeBubbleListeners.set(token,{revision:0,callback});
+    this.send({type:'trade-bubbles-subscribe',id:token,configRevision:0,request});
+    return ()=>{this.tradeBubbleListeners.delete(token);if(this.currentTradeBubbles.get(id)===token)this.currentTradeBubbles.delete(id);this.send({type:'trade-bubbles-unsubscribe',id:token});};
+  }
+  updateTradeBubbles(id:string,request:import('./trade-bubbles-service').TradeBubbleRequest){const token=this.currentTradeBubbles.get(id),listener=token&&this.tradeBubbleListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'trade-bubbles-update',id:token,configRevision:listener.revision,request});}}
+  retryTradeBubbles(){this.send({type:'trade-bubbles-retry',id:'trade-bubbles-retry'});}
   retryFootprint(){this.send({type:'footprint-retry'});}
-  dispose(){for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.tickerListeners.clear();this.currentTicker.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
+  dispose(){for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.listeners.clear();this.current.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
 }
 
 function isFootprintBatch(event:Event):event is Extract<Event,{type:'footprint-status'|'footprint-snapshot'|'footprint-patch'}> {

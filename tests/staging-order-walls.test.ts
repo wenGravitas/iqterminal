@@ -21,6 +21,33 @@ function response(market: string, from: number, to: number, watermark: number, a
 }
 
 describe('staging Order Walls live head catch-up', () => {
+  it('reports the ordered replay frontier while later pages are still pending', async () => {
+    const heads = { observeDepthHeads() { return () => {}; } } as unknown as StagingHeatmapService;
+    const events: any[] = [];
+    let release!: (page: Response) => void;
+    const pending = new Promise<Response>(resolve => { release = resolve; });
+    const request = vi.fn(async (input: RequestInfo|URL) => {
+      const url = new URL(String(input), 'http://localhost');
+      if (url.searchParams.get('after') !== '0') return pending;
+      const page = response('perpetual', base - 1000, base, 2, 0, 1,
+        [{ kind: 'snapshot', at: base - 750, cursor: 1, epoch: 1, bids: [['50000','1']], asks: [] }]);
+      const json = await page.json(); json.page.hasMore = true;
+      return { ...page, json: async () => json } as Response;
+    });
+    const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
+    service.command({ type: 'order-wall-subscribe', id: 'progress', request: {
+      market: 'binance-perp', from: base - 1000, to: base, followLive: false,
+      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true },
+    } });
+    await vi.waitFor(() => expect(request).toHaveBeenCalledTimes(2));
+    expect(events.at(-1).status.replay).toEqual({ from: base - 1000, to: base, through: base - 750 });
+    release(response('perpetual', base - 1000, base, 2, 1, 2,
+      [{ kind: 'delta', at: base - 1, cursor: 2, epoch: 1, bids: [], asks: [] }]));
+    await vi.waitFor(() => expect(service.diagnostics().subscriptions[0]?.replayPromoted).toBe(true));
+    expect(events.at(-1).status.replay).toBeUndefined();
+    service.dispose();
+  });
+
   it('accepts the raw USD-M feed identity used by v1 depth observations', async () => {
     const heads = { observeDepthHeads() { return () => {}; } } as unknown as StagingHeatmapService;
     const request = vi.fn((input: RequestInfo|URL) => {
@@ -31,7 +58,7 @@ describe('staging Order Walls live head catch-up', () => {
     const service = new StagingOrderWallsService(heads, () => {}, request, () => base);
     service.command({ type: 'order-wall-subscribe', id: 'test', request: {
       market: 'binance-perp', from: base - 1_000, to: base,
-      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true },
+      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true },
     } });
 
     await vi.waitFor(() => expect(service.diagnostics()).toMatchObject({ pages: 1, records: 1, failures: 0 }));
@@ -74,7 +101,7 @@ describe('staging Order Walls live head catch-up', () => {
         coverage: { confirmedTo: base, partial: false, seedAt: base - 10_000, earliestRetainedAt: base - 100_000, gaps: [] },
       }) } as unknown as Response);
     });
-    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, method: 'absolute' as const,
+    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true, method: 'absolute' as const,
       thresholdUsd: 100, aggregation: 50 as const, minDurationMs: 0 };
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
     service.command({ type: 'order-wall-subscribe', id: 'head-warmup', request: {
@@ -116,7 +143,7 @@ describe('staging Order Walls live head catch-up', () => {
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
     service.command({ type: 'order-wall-subscribe', id: 'tail-confirmed', request: {
       market: 'binance-perp', from: base - 1_000, to: base,
-      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true },
+      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true },
     } });
     notify({ type: 'head', cursor: 1, at: base, epoch: 1 });
 
@@ -145,7 +172,7 @@ describe('staging Order Walls live head catch-up', () => {
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base + 2);
     service.command({ type: 'order-wall-subscribe', id: `inclusive-end-${endOffset}`, request: {
       market: 'binance-perp', from: base - 1_000, to: base + endOffset,
-      followLive: false, settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true },
+      followLive: false, settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true },
     } });
 
     await vi.waitFor(() => expect(events.at(-1)?.status?.coverage).toMatchObject({
@@ -174,7 +201,7 @@ describe('staging Order Walls live head catch-up', () => {
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
     service.command({ type: 'order-wall-subscribe', id: 'tail-with-gap', request: {
       market: 'binance-perp', from: base - 1_000, to: base,
-      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true },
+      settings: { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true },
     } });
     notify({ type: 'head', cursor: 1, at: base, epoch: 1 });
 
@@ -201,7 +228,7 @@ describe('staging Order Walls live head catch-up', () => {
     });
     const events: any[] = [];
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
-    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, method: 'absolute' as const, thresholdUsd: 100 };
+    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true, method: 'absolute' as const, thresholdUsd: 100 };
     const wallRequest: OrderWallRequest = { market: 'binance-perp', from: base - 1_000, to: base, settings };
     service.command({ type: 'order-wall-subscribe', id: 'test', request: wallRequest });
     notify({ type: 'head', cursor: 2, at: base, epoch: 1 });
@@ -237,7 +264,7 @@ describe('staging Order Walls live head catch-up', () => {
     });
     const events: any[] = [];
     const service = new StagingOrderWallsService(heads, event => events.push(event), request, () => base);
-    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, method: 'absolute' as const, thresholdUsd: 100 };
+    const settings = { ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'threshold' as const, enabled: true, method: 'absolute' as const, thresholdUsd: 100 };
     service.command({ type: 'order-wall-subscribe', id: 'test', request: { market: 'binance-perp', from: base - 1_000, to: base, settings } });
     await vi.waitFor(() => expect(events.at(-1)?.status?.state).toBe('stale'));
 
@@ -248,4 +275,20 @@ describe('staging Order Walls live head catch-up', () => {
     expect(service.diagnostics()).toMatchObject({ cacheEntries: 1, cacheHits: 1 });
     service.dispose();
   });
+});
+
+it('bounds the published replay mirror, preserves live levels, and explicitly evicts cache entries without declaring removals',()=>{
+ const heads={observeDepthHeads(){return()=>{};}} as unknown as StagingHeatmapService;
+ const events:any[]=[];const service=new StagingOrderWallsService(heads,e=>events.push(e),()=>new Promise<Response>(()=>{}),()=>base);
+ service.command({type:'order-wall-subscribe',id:'bounded-publication',request:{market:'binance-perp',from:base-1000,to:base,settings:{...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true}}});
+ const sub=(service as any).subscriptions.get('bounded-publication');
+ const segment=(id:string,end:number|null)=>({id,epoch:1,side:'bid',price:50000,start:base-1000,end,peakUsd:100,meanUsd:100,durationMs:1000,percentile:null,scopePartial:true,startKnown:false,valueRuns:[],valueRunsTruncated:false,endReason:end===null?null:'rank-exit',endKnown:end!==null,detectionMode:'top-levels'});
+ const patches=[{id:'live-protected',segment:segment('live-protected',null)},...Array.from({length:20030},(_,i)=>({id:'closed-'+i,segment:segment('closed-'+i,base)}))];
+ (service as any).publish(sub,'patch',patches,{state:'loading',coverage:{from:base-1000,to:base,complete:false,partial:true}});
+ expect(service.diagnostics().subscriptions[0]!.publishedSegments).toBe(20020);
+ expect(events.at(-1).status.episodeHistoryLimited).toBe(true);
+ expect(events.at(-1).patches.filter((p:any)=>p.segment===null)).toHaveLength(11);
+ expect(events.at(-1).patches.some((p:any)=>p.id==='live-protected'&&p.segment===null)).toBe(false);
+ expect(events.at(-1).patches.filter((p:any)=>p.segment).every((p:any)=>p.segment.endReason===null||p.segment.endReason==='rank-exit')).toBe(true);
+ service.dispose();
 });

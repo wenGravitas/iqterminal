@@ -1,0 +1,305 @@
+{
+  "kind": "genuine-live-staging-depth-not-fixtures",
+  "observedAt": 1793115208048,
+  "market": "binance-spot",
+  "timeframe": "5m",
+  "status": {
+    "state": "gap",
+    "tickSize": 0.01,
+    "resolvedPriceWidth": 0.01,
+    "lastConfirmedAt": 1793115193655,
+    "coverage": {
+      "from": 1793113800000,
+      "to": 1793115151895,
+      "complete": false,
+      "partial": true,
+      "reason": "Depth continuity gaps are present in the requested range"
+    },
+    "rankingScope": {
+      "mid": 80400.845,
+      "lower": 72360.7605,
+      "upper": 88440.92950000001,
+      "partial": true,
+      "bidCount": 8,
+      "askCount": 8
+    },
+    "bookScope": {
+      "maxLevelsPerSide": 5000,
+      "bidComplete": true,
+      "askComplete": false,
+      "bidFloor": 79578.94,
+      "askCeiling": 81306.1
+    },
+    "provisional": true,
+    "replay": {
+      "from": 1793113800000,
+      "to": 1793115151895,
+      "through": 1793113902050
+    },
+    "retentionStart": 1793026117547
+  },
+  "render": {
+    "draws": 26,
+    "rebuilds": 2,
+    "patchProjects": 328,
+    "segments": 146,
+    "visible": 290,
+    "bytes": 67112,
+    "renderMs": 22.49999999627471,
+    "maxRenderMs": 4,
+    "strokes": 5,
+    "lastProjectMs": 0.19999999925494194,
+    "lastReferenceMs": 0,
+    "lastPaintMs": 0.6000000014901161,
+    "retainedSegments": 146,
+    "retainedDrawables": 290,
+    "p95RenderMs": 2.7000000029802322,
+    "mounted": true,
+    "valueRuns": 977,
+    "valueHistoryLimited": false
+  },
+  "active": [
+    {
+      "id": "1793115004929:bid:79000:1793115129555:8788853",
+      "side": "bid",
+      "price": 79000,
+      "rank": 2,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115188855,
+        "usd": 9848508.14,
+        "percentile": null,
+        "rank": 2,
+        "quantity": 124.66466
+      }
+    },
+    {
+      "id": "1793115004929:bid:75500:1793115129555:8788853",
+      "side": "bid",
+      "price": 75500,
+      "rank": 3,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 5564643.695,
+        "percentile": null,
+        "rank": 3,
+        "quantity": 73.70389
+      }
+    },
+    {
+      "id": "1793115004929:bid:77000:1793115129555:8788853",
+      "side": "bid",
+      "price": 77000,
+      "rank": 4,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 5383475.0200000005,
+        "percentile": null,
+        "rank": 4,
+        "quantity": 69.91526
+      }
+    },
+    {
+      "id": "1793115004929:bid:78500:1793115129555:8788853",
+      "side": "bid",
+      "price": 78500,
+      "rank": 5,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 4627687.255,
+        "percentile": null,
+        "rank": 5,
+        "quantity": 58.95143
+      }
+    },
+    {
+      "id": "1793115004929:bid:79500:1793115129555:8788853",
+      "side": "bid",
+      "price": 79500,
+      "rank": 6,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 4330507.305,
+        "percentile": null,
+        "rank": 6,
+        "quantity": 54.47179
+      }
+    },
+    {
+      "id": "1793115004929:bid:77500:1793115129555:8788853",
+      "side": "bid",
+      "price": 77500,
+      "rank": 7,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 3019209.35,
+        "percentile": null,
+        "rank": 7,
+        "quantity": 38.95754
+      }
+    },
+    {
+      "id": "1793115004929:bid:79700:1793115129555:8788853",
+      "side": "bid",
+      "price": 79700,
+      "rank": 8,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115150455,
+        "usd": 1081655.723,
+        "percentile": null,
+        "rank": 8,
+        "quantity": 13.57159
+      }
+    },
+    {
+      "id": "1793115004929:ask:81080.26:1793115129555:8788853",
+      "side": "ask",
+      "price": 81080.26,
+      "rank": 1,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115129555,
+        "usd": 1001514.7227564,
+        "percentile": null,
+        "rank": 1,
+        "quantity": 12.35214
+      }
+    },
+    {
+      "id": "1793115004929:ask:81000:1793115129555:8788853",
+      "side": "ask",
+      "price": 81000,
+      "rank": 2,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115183155,
+        "usd": 839615.22,
+        "percentile": null,
+        "rank": 2,
+        "quantity": 10.36562
+      }
+    },
+    {
+      "id": "1793115004929:ask:81262.73:1793115129555:8788853",
+      "side": "ask",
+      "price": 81262.73,
+      "rank": 4,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115183955,
+        "usd": 751308.8818239,
+        "percentile": null,
+        "rank": 4,
+        "quantity": 9.24543
+      }
+    },
+    {
+      "id": "1793115004929:ask:80800:1793115129555:8788853",
+      "side": "ask",
+      "price": 80800,
+      "rank": 5,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115183955,
+        "usd": 715189.8879999999,
+        "percentile": null,
+        "rank": 5,
+        "quantity": 8.85136
+      }
+    },
+    {
+      "id": "1793115004929:ask:81300:1793115129555:8788853",
+      "side": "ask",
+      "price": 81300,
+      "rank": 6,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115183955,
+        "usd": 468418.07999999996,
+        "percentile": null,
+        "rank": 6,
+        "quantity": 5.7616
+      }
+    },
+    {
+      "id": "1793115004929:ask:81160:1793115129555:8788853",
+      "side": "ask",
+      "price": 81160,
+      "rank": 7,
+      "start": 1793115129555,
+      "durationMs": 64100,
+      "last": {
+        "at": 1793115190255,
+        "usd": 411427.63440000004,
+        "percentile": null,
+        "rank": 7,
+        "quantity": 5.06934
+      }
+    },
+    {
+      "id": "1793115004929:bid:78000:1793115150455:8789062",
+      "side": "bid",
+      "price": 78000,
+      "rank": 1,
+      "start": 1793115150455,
+      "durationMs": 43200,
+      "last": {
+        "at": 1793115150455,
+        "usd": 13417212.12,
+        "percentile": null,
+        "rank": 1,
+        "quantity": 172.01554
+      }
+    },
+    {
+      "id": "1793115004929:ask:80718.36:1793115176755:8789326",
+      "side": "ask",
+      "price": 80718.36,
+      "rank": 3,
+      "start": 1793115176755,
+      "durationMs": 16900,
+      "last": {
+        "at": 1793115183955,
+        "usd": 801237.0784188,
+        "percentile": null,
+        "rank": 3,
+        "quantity": 9.92633
+      }
+    },
+    {
+      "id": "1793115004929:ask:80488.33:1793115191655:8789476",
+      "side": "ask",
+      "price": 80488.33,
+      "rank": 8,
+      "start": 1793115191655,
+      "durationMs": 2000,
+      "last": {
+        "at": 1793115191655,
+        "usd": 360809.8661908,
+        "percentile": null,
+        "rank": 8,
+        "quantity": 4.48276
+      }
+    }
+  ],
+  "beforeAt": 1793115172855,
+  "errors": []
+}

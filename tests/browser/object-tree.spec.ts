@@ -71,10 +71,21 @@ test('per-chart Object Tree resizes, nests by drag, and groups native visibility
   expect(afterResize.stageWidth).toBeLessThan(beforeResize.stageWidth - 40);
   expect(afterResize.subscriptions).toBe(beforeResize.subscriptions);
   expect(afterResize.bars).toBe(5000);
-  await sidebar.getByRole('button', { name: 'Collapse object tree sidebar' }).click();
+  const toggle=panel.locator('.chart-objects-toggle');
+  await expect(toggle).toHaveAttribute('title','Close Object Tree');
+  await expect(toggle).toHaveAccessibleName('Close Object Tree');
+  const closeIcon=await toggle.locator('svg').innerHTML();
+  await expect(sidebar.getByRole('button',{name:'Close Object Tree'})).toHaveAttribute('title','Close Object Tree');
+  await sidebar.getByRole('button', { name: 'Close Object Tree' }).click();
+  await expect(toggle).toHaveAttribute('title','Open Object Tree');
+  await expect(toggle).toHaveAccessibleName('Open Object Tree');
+  expect(await toggle.locator('svg').innerHTML()).not.toBe(closeIcon);
+  await expect(sidebar.getByRole('button',{name:'Open Object Tree'})).toHaveAttribute('title','Open Object Tree');
   await expect(sidebar).toHaveAttribute('data-collapsed', 'true');
   await expect.poll(() => sidebar.evaluate(element => element.getBoundingClientRect().width)).toBe(28);
-  await panel.getByRole('button', { name: /^Objects/ }).click();
+  await panel.locator('.chart-objects-toggle').click();
+  await expect(toggle).toHaveAttribute('title','Close Object Tree');
+  expect(await toggle.locator('svg').innerHTML()).toBe(closeIcon);
   await expect(sidebar).toHaveAttribute('data-collapsed', 'false');
   await expect(sidebar.locator('.chart-object-tree-resize')).toHaveAttribute('aria-valuenow', '330');
 

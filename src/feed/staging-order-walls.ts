@@ -1,5 +1,5 @@
 import type { Command, Event, Market } from './protocol';
-import { OrderWallDetector, orderWallsSettings,
+import { OrderWallDetector, orderWallsSettings, ORDER_WALL_MAX_SEGMENTS,
   type OrderWallBookScope, type OrderWallDepthRecord, type OrderWallMarket,
   type OrderWallRequest, type OrderWallSegment, type OrderWallPatch, type OrderWallStatus, type OrderWallsSettings } from './order-walls';
 import { depthSource } from './prepared-history';
@@ -37,6 +37,7 @@ interface Subscription {
   replaySerial: number; liveSerial: number; promoting: boolean; replayCatchupAbort?: AbortController; releaseHead?: () => void; abort?: AbortController; liveAbort?: AbortController; busy: boolean; liveBusy: boolean; initialized: boolean; serial: number;
   watermark?: number; replayWatermarkHead?: Page['head']; cursor: number; pendingCursor: number; pendingAt: number; pendingEpoch: number; latestCoverage?: Page['coverage'];
   initialPublished: boolean; replayPromoted: boolean; awaitingFreshHead: boolean; rendered: Map<string, OrderWallSegment>; livePublished: Map<string, OrderWallSegment>; liveAliases: Map<string, string>; liveReplayBuffer?: LiveReplayBuffer; batch: number; staleMessage?: string; retryCount: number; retryTimer?: ReturnType<typeof setTimeout>;
+  episodeHistoryLimited?: boolean; canonicalIdentityKey?: string; historicalAnchors?: Map<string, OrderWallSegment>;
   latestStatus?: OrderWallStatus;
 }
 
@@ -131,6 +132,9 @@ export class StagingOrderWallsService {
 
   private restart(sub: Subscription, message: string, refreshLive = false, initialState: OrderWallStatus['state'] = 'loading') {
     const previous = sub.latestStatus;
+    sub.historicalAnchors = sub.settings.mode === 'top-levels' && sub.canonicalIdentityKey === detectionKey(sub.settings)
+      ? new Map([...sub.rendered.values()].filter(segment=>segment.end!==null&&segment.detectionMode==='top-levels').map(segment=>[historicalEpisodeKey(segment),segment])) : undefined;
+    sub.episodeHistoryLimited = false;
     sub.replaySerial++; sub.abort?.abort(); sub.replayCatchupAbort?.abort(); sub.replayCatchupAbort = undefined; sub.promoting = false;
     clearTimeout(sub.retryTimer); sub.retryTimer = undefined; sub.retryCount = 0; sub.busy = false; sub.initialized = false; sub.watermark = undefined;
     sub.cursor = 0; sub.replayWatermarkHead = undefined; sub.latestCoverage = undefined; sub.replayPromoted = false;
@@ -142,9 +146,10 @@ export class StagingOrderWallsService {
     }
     const restartState = sub.awaitingFreshHead ? 'gap' : sub.staleMessage ? 'stale' : initialState;
     this.publish(sub, 'patch', [], { ...(previous ?? {}), state: restartState,
+      replay: { ...sub.range, through: sub.range.from },
       message: sub.staleMessage ?? message,
       ...(previous?.coverage ? { coverage: { ...previous.coverage, complete: false, partial: true, reason: message } } : {}),
-      resolvedPriceWidth: sub.settings.aggregation === 'auto' ? sub.autoPriceWidth : sub.settings.aggregation });
+      resolvedPriceWidth: sub.settings.aggregation === 'native' ? tickSize(sub.market) : sub.settings.aggregation === 'auto' ? sub.autoPriceWidth : sub.settings.aggregation });
     void this.load(sub, undefined, 0, true);
   }
 
@@ -463,10 +468,10 @@ export class StagingOrderWallsService {
   }
 
   private publishHistorical(sub: Subscription, patches: OrderWallPatch[], status: OrderWallStatus) {
-    if (!sub.initialPublished) return;
-    const finalized = patches.filter((patch): patch is OrderWallPatch & { segment: OrderWallSegment } => Boolean(patch.segment && patch.segment.end !== null))
-      .map(patch => ({ ...patch, replaceValueRuns: true }));
-    if (finalized.length) this.publish(sub, 'patch', finalized, status);
+    const finalized = (sub.initialPublished ? patches : []).filter((patch): patch is OrderWallPatch & { segment: OrderWallSegment } => Boolean(patch.segment && patch.segment.end !== null))
+      .map(patch => {const id=historicalAnchor(sub,patch.segment)?.id??patch.id;return { ...patch,id,segment:id===patch.segment.id?patch.segment:{...patch.segment,id},replaceValueRuns: true };});
+    // Even a page without qualifying walls advances the replay frontier.
+    this.publish(sub, 'patch', finalized, status);
   }
 
   private publishLiveSnapshot(sub: Subscription, segments: OrderWallSegment[], status: OrderWallStatus) {
@@ -634,7 +639,7 @@ export class StagingOrderWallsService {
     const commonConfirmedAt = Math.min(liveStatus?.lastConfirmedAt ?? -Infinity, historyStatus.lastConfirmedAt ?? -Infinity);
     const aliases = new Map<string, string>(), desired = new Map<string, OrderWallSegment>();
     for (const segment of canonical) {
-      let id = segment.id;
+      let id = segment.end !== null ? historicalAnchor(sub,segment)?.id ?? segment.id : segment.id;
       if (segment.end === null) {
         const anchor = commonCursorConfirmed && commonConfirmedAt >= Math.max(0, segment.start)
           ? current.find(value => value.end === null && value.epoch === segment.epoch
@@ -657,10 +662,10 @@ export class StagingOrderWallsService {
     }
     // Switch status ownership with geometry so the promotion batch cannot report the
     // stale/empty bootstrap lane after canonical history has caught up.
-    const status = takeLiveOwnership ? { ...this.status(sub), provisional: false }
+    const { replay: _replay, ...readyStatus } = takeLiveOwnership ? { ...this.status(sub), provisional: false }
       : this.status(sub, 'stale', 'Recorded viewport is visible; live depth head is not following this view.');
-    this.publish(sub, 'patch', patches, status);
-    sub.replayPromoted = true;
+    this.publish(sub, 'patch', patches, readyStatus);
+    sub.replayPromoted = true; sub.canonicalIdentityKey = detectionKey(sub.settings);
   }
 
   private async readPage(sub: Subscription, after: number, watermark: number | undefined, signal: AbortSignal,
@@ -695,6 +700,10 @@ export class StagingOrderWallsService {
     // describe the current chart window, which may have slid while replay runs.
     const { from, to } = sub.viewportRange;
     const detector = (sub.liveDetector ?? sub.detector).status(from, to), coverage = sub.latestCoverage;
+    const historyStatus = sub.detector.status(sub.range.from, sub.range.to);
+    const replayThrough = historyStatus.lastConfirmedAt ?? sub.range.from;
+    const valueHistoryLimited = detector.valueHistoryLimited || historyStatus.valueHistoryLimited;
+    const episodeHistoryLimited = sub.episodeHistoryLimited || detector.episodeHistoryLimited || historyStatus.episodeHistoryLimited;
     const gap = Boolean(coverage?.gaps.length);
     const retentionStart = Number.isFinite(coverage?.earliestRetainedAt) ? coverage!.earliestRetainedAt! : undefined;
     const retentionGap = retentionStart !== undefined && from < retentionStart;
@@ -703,20 +712,21 @@ export class StagingOrderWallsService {
     // timestamp of the latest confirmed observation. A head at H therefore
     // confirms a viewport ending at H + 1 ms.
     const tailPending = Boolean(coverage && to > coverage.confirmedTo + 1);
-    const incomplete = sub.viewportClipped || retentionGap || Boolean(coverage?.partial) || !coverage || tailPending || clockRegressed;
+    const incomplete = sub.viewportClipped || retentionGap || Boolean(coverage?.partial) || !coverage || tailPending || clockRegressed || Boolean(valueHistoryLimited) || Boolean(episodeHistoryLimited);
     const state = sub.awaitingFreshHead ? 'gap' : forced === 'gap' ? 'gap' : sub.staleMessage ? 'stale'
       : forced ?? (gap ? 'gap' : incomplete ? 'stale' : detector.state);
     const statusMessage = sub.awaitingFreshHead || (state === 'stale' && sub.staleMessage) ? sub.staleMessage : message ?? sub.staleMessage;
-    return { ...detector, state, ...(!sub.replayPromoted && sub.liveReady ? { provisional: true } : {}), ...(statusMessage ? { message: statusMessage } : {}),
+    return { ...detector, state, ...(episodeHistoryLimited ? {episodeHistoryLimited:true} : {}), ...(valueHistoryLimited ? {valueHistoryLimited:true} : {}), ...(!sub.replayPromoted && sub.liveReady ? { provisional: true } : {}),
+      ...(!sub.replayPromoted ? { replay: { ...sub.range, through: Math.max(sub.range.from, Math.min(sub.range.to, replayThrough)) } } : {}),
+      ...(statusMessage ? { message: statusMessage } : {}),
       ...(retentionStart !== undefined ? { retentionStart } : {}),
       coverage: { from, to, complete: !incomplete && !gap, partial: incomplete || gap,
         ...(clockRegressed ? { reason: detector.coverage?.reason } : retentionGap ? { reason: 'Requested range begins before retained depth history.' }
-          : coverage?.reason || sub.viewportClipped || tailPending ? { reason: sub.viewportClipped ? 'Requested viewport exceeds retained replay bounds.'
+          : coverage?.reason || sub.viewportClipped || tailPending ? { reason: sub.viewportClipped ? 'Requested viewport exceeds the four-hour replay limit; older history is not loaded.'
             : tailPending ? UNCONFIRMED_DURABLE_TAIL : coverage?.reason } : {}) } };
   }
 
   private publish(sub: Subscription, kind: 'snapshot' | 'patch', data: OrderWallSegment[] | OrderWallPatch[], status: OrderWallStatus) {
-    sub.latestStatus = status;
     let segments: OrderWallSegment[] | undefined, patches: OrderWallPatch[] | undefined;
     if (kind === 'snapshot') {
       segments = data as OrderWallSegment[];
@@ -729,6 +739,16 @@ export class StagingOrderWallsService {
       patches = source.map(patch => patch.segment
         ? { ...patch, segment: { ...patch.segment, valueRuns: patch.replaceValueRuns ? patch.segment.valueRuns : [] } } : patch);
     }
+    // During a long replay, detector eviction must also reach the published
+    // mirror. Otherwise closed episodes accumulate there until promotion.
+    const evicted:string[]=[];
+    if(sub.rendered.size>ORDER_WALL_MAX_SEGMENTS+20)for(const[id,segment]of sub.rendered){
+      if(segment.end===null)continue;sub.rendered.delete(id);evicted.push(id);
+      if(sub.rendered.size<=ORDER_WALL_MAX_SEGMENTS+20)break;
+    }
+    if(evicted.length){sub.episodeHistoryLimited=true;if(segments)segments=segments.filter(s=>sub.rendered.has(s.id));else patches!.push(...evicted.map(id=>({id,segment:null})));}
+    if(sub.episodeHistoryLimited)status={...status,episodeHistoryLimited:true,...(status.coverage?{coverage:{...status.coverage,complete:false,partial:true}}:{})};
+    sub.latestStatus = status;
     this.emit({ type: 'order-wall-batch', ids: [sub.id], key: sub.key, generation: sub.generation,
       batchId: ++sub.batch, kind, ...(segments ? { segments } : {}), ...(patches ? { patches } : {}), status });
   }
@@ -778,7 +798,7 @@ export class StagingOrderWallsService {
   diagnostics() { return { ...this.stats, cacheEntries: this.replayCache.size, cacheBytes: this.replayCacheBytes, subscriptions: [...this.subscriptions.values()].map(sub => {
     const buffer = sub.liveReplayBuffer, firstPage = buffer?.pages[0], lastPage = buffer?.pages.at(-1);
     return { id: sub.id, market: sub.market, range: sub.range, generation: sub.generation, watermark: sub.watermark,
-      cursor: sub.cursor, liveCursor: sub.liveCursor, pendingCursor: sub.pendingCursor, replayPromoted: sub.replayPromoted,
+      cursor: sub.cursor, publishedSegments: sub.rendered.size, liveCursor: sub.liveCursor, pendingCursor: sub.pendingCursor, replayPromoted: sub.replayPromoted,
       liveTailBuffer: buffer ? { after: buffer.after, through: buffer.through,
         firstCursor: firstPage?.records[0]?.cursor ?? buffer.after,
         lastCursor: lastPage?.records.at(-1)?.cursor ?? lastPage?.nextAfter ?? buffer.through,
@@ -813,7 +833,7 @@ function validAutoPriceWidth(value: number | undefined, tick: number) {
     ? Number(value!.toPrecision(12)) : Math.max(50, tick);
 }
 function keyFor(market: OrderWallMarket, settings: OrderWallsSettings) { return `${market}:${detectionKey(settings)}`; }
-function detectionKey(settings: OrderWallsSettings) { return JSON.stringify([settings.method, settings.thresholdUsd, settings.relativeFloorUsd, settings.relativePercentile, settings.exitRatio, settings.minDurationMs, settings.aggregation]); }
+function detectionKey(settings: OrderWallsSettings) { return JSON.stringify([settings.mode, settings.topLevels, settings.searchRangePercent, settings.minimumNotionalEnabled, settings.minimumNotionalUsd, settings.method, settings.thresholdUsd, settings.relativeFloorUsd, settings.relativePercentile, settings.exitRatio, settings.minDurationMs, settings.aggregation]); }
 function numericLevels(levels?: ReadonlyArray<readonly [string, string]>) {
   return (levels ?? []).map(([price, quantity]) => [Number(price), Number(quantity)] as const).filter(([price, quantity]) => Number.isFinite(price) && price > 0 && Number.isFinite(quantity) && quantity >= 0);
 }
@@ -827,7 +847,10 @@ function normalizePage(page: Page, includeSeed: boolean): NormalizedPage {
   const records: OrderWallDepthRecord[] = [];
   if (includeSeed && page.seed) records.push({ kind: 'snapshot', at: page.seed.at, cursor: page.seed.cursor, epoch: page.seed.epoch,
     bids: numericLevels(page.seed.bids), asks: numericLevels(page.seed.asks), bookScope: normalizeScope(page.seed.bookScope) });
-  for (const item of page.observations) records.push({ ...item, bids: numericLevels(item.bids), asks: numericLevels(item.asks), bookScope: normalizeScope(item.bookScope) });
+  for (const item of page.observations) {
+    const { bookScope, ...observation } = item;
+    records.push({ ...observation, bids: numericLevels(item.bids), asks: numericLevels(item.asks), ...(bookScope !== undefined ? { bookScope: normalizeScope(bookScope) } : {}) });
+  }
   return { watermark: page.watermark, head: { ...page.head }, page: { ...page.page }, records, coverage: { ...page.coverage, gaps: [...page.coverage.gaps] } };
 }
 function validDepthHead(notice: Extract<DepthHeadNotice, { type: 'head' }>): boolean {
@@ -885,3 +908,7 @@ function retryDelay(signal: AbortSignal, ms: number) { return new Promise<void>(
   function cancel() { clearTimeout(timer); signal.removeEventListener('abort', cancel); reject(new DOMException('Aborted', 'AbortError')); }
   if (signal.aborted) cancel(); else signal.addEventListener('abort', cancel, { once: true });
 }); }
+
+/** A confirmed episode end plus source identity distinguishes re-entry at the same price. */
+function historicalEpisodeKey(segment:OrderWallSegment){return JSON.stringify([segment.epoch,segment.side,segment.price,segment.end,segment.endReason]);}
+function historicalAnchor(sub:Subscription,segment:OrderWallSegment){const anchor=sub.historicalAnchors?.get(historicalEpisodeKey(segment));return anchor&&anchor.end!==null&&segment.end!==null&&Math.min(anchor.end,segment.end)>Math.max(anchor.start,segment.start)?anchor:undefined;}

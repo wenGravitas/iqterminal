@@ -28,6 +28,13 @@ test('a ticker execution hovers at its exact price and time on matching charts o
   const row = ticker.locator(`.ticker-row[data-execution-id="${executionId}"]`);
   await expect(row).toHaveCount(1);
   await row.hover();
+  const card = ticker.locator('.ticker-tooltip');
+  await expect(card).toBeVisible();
+  await expect(card).toContainText('Trade Ticker');
+  await expect(card).toContainText('Buy');
+  await expect(card).toContainText('10 BTC');
+  await expect(card).toContainText('USDT');
+  await expect(row).not.toHaveAttribute('title');
 
   const inspection = () => page.evaluate(({ id, otherId, timeMs, price }) => {
     const terminal = (window as any).__terminal;
@@ -59,6 +66,7 @@ test('a ticker execution hovers at its exact price and time on matching charts o
   await page.screenshot({ path: testInfo.outputPath('ticker-execution-hover-ray.png') });
 
   await ticker.locator('.ticker-status').hover();
+  await expect(card).toBeHidden();
   await expect.poll(async () => (await inspection()).ray.active).toBe(false);
 
   await row.hover();
@@ -108,7 +116,7 @@ test('double-click or Enter adds one editable native execution ray per matching 
   if (!first) throw new Error('Fixture execution was not emitted');
   const firstRow = ticker.locator('.ticker-row[data-execution-id="binance:perpetual:BTCUSDT:agg:71"]');
   await expect(firstRow).toHaveCount(1);
-  await expect.poll(async () => firstRow.getAttribute('title')).toContain('double-click or press Enter');
+  await expect(firstRow).not.toHaveAttribute('title');
   await firstRow.dblclick();
 
   const committed = () => page.evaluate(({ id, otherId }) => {

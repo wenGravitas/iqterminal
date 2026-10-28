@@ -56,7 +56,7 @@ export function tradeSize(e: NormalizedExecution, unit: TickerUnit) { return uni
 export function classify(e: NormalizedExecution, config: TickerConfig): Tier | null {
   const market = `${e.venue}:${e.market}`;
   if (!config.scope.includes(market as ConnectionKey)) return null;
-  if (e.nativeSymbol !== 'BTCUSDT' || e.venue !== 'binance') return null;
+  if (e.nativeSymbol !== 'BTCUSDT' || !['binance','bybit'].includes(e.venue)) return null;
   let winner: Tier | null = null;
   for (const tier of config.tiers) if (tradeSize(e,tier.unit) >= tier.minimum && (!winner || tier.minimum > winner.minimum)) winner = tier;
   return winner;
