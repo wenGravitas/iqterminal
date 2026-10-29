@@ -352,7 +352,7 @@ test('tab cycling is per group, editable, pausable, and removed with its Dockvie
 
   await page.getByRole('button',{name:'Reset layout'}).click();
   await expect(page.locator('.tab-cycle-actions:not([hidden])')).toHaveCount(0);
-  await expect(page.locator('.candle-panel')).toHaveCount(2);
+  await expect(page.locator('.candle-panel')).toHaveCount(1);
 });
 
 async function openLibraryEditor(page:any) {

@@ -75,7 +75,7 @@ One system monospace stack serves the shell, controls, tabs, and chart labels. T
 
 ## Layout
 
-Dockview opens with two side-by-side candle panels. A command strip stays at the bottom while each chart takes the remaining height. At widths of 900px or less, the brand and instrument metadata hide, venue status tightens, and instrument selection can shrink.
+A new or reset Dockview workspace opens with one Binance BTCUSDT USD-M candle panel and the Object Tree hidden. Saved workspaces retain their panels and explicit Object Tree visibility. A command strip stays at the bottom while each chart takes the remaining height. At widths of 900px or less, the brand and instrument metadata hide, venue status tightens, and instrument selection can shrink.
 
 ## Elevation & Depth
 

@@ -1,0 +1,65 @@
+{
+  "source": "explicit development fixture",
+  "runs": [
+    {
+      "name": "embedded-1366x768",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "bandHeightPercent": 30,
+      "paneTop": 63,
+      "paneHeight": 645,
+      "scaleHeight": 625,
+      "zeroY": 625,
+      "maximumY": 458.3333333333333,
+      "bandTopY": 437.5,
+      "renderedBarHeight": 166.66666666666669
+    },
+    {
+      "name": "embedded-720x860",
+      "viewport": {
+        "width": 720,
+        "height": 860
+      },
+      "bandHeightPercent": 30,
+      "paneTop": 63,
+      "paneHeight": 737,
+      "scaleHeight": 717,
+      "zeroY": 717,
+      "maximumY": 525.8,
+      "bandTopY": 501.9,
+      "renderedBarHeight": 191.20000000000005
+    },
+    {
+      "name": "embedded-minimum-10-percent",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "bandHeightPercent": 10,
+      "paneTop": 63,
+      "paneHeight": 645,
+      "scaleHeight": 625,
+      "zeroY": 625,
+      "maximumY": 577.3809523809524,
+      "bandTopY": 562.5,
+      "renderedBarHeight": 47.61904761904759
+    },
+    {
+      "name": "embedded-maximum-40-percent",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "bandHeightPercent": 40,
+      "paneTop": 63,
+      "paneHeight": 645,
+      "scaleHeight": 625,
+      "zeroY": 625,
+      "maximumY": 398.8095238095238,
+      "bandTopY": 375,
+      "renderedBarHeight": 226.1904761904762
+    }
+  ]
+}

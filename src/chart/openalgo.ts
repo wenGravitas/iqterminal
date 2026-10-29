@@ -1,5 +1,6 @@
 import {setVenueLabelIcon,venueLabelIcon,venueIconPath,setLabelCurrencySource,type LabelVenue} from './venue-label';
 import {candleGeometry} from 'openalgo-charts';
+import { CandleElapsedTimer } from './candle-elapsed-timer';
 import {PositioningRangePreview,type PositioningRange} from './positioning-range';
 import {paneHeaderSlots,PANE_HEADER_ACTION_SPACE,netPositioningOptionsWidth}from './pane-header';
 import { DailyVwapPrimitive } from './daily-vwap';
@@ -31,7 +32,7 @@ import {
 } from 'openalgo-charts';
 import { ChartObjects } from 'openalgo-charts';
 import { DrawingController, InstrumentDrawings, memoryDrawingStore, registerBuiltinDrawingTools, registeredDrawingTools, type Drawing, type DrawingDocumentStore } from 'openalgo-charts/draw';
-import type { CanonicalSeries } from '../feed/protocol';
+import { duration, type CanonicalSeries } from '../feed/protocol';
 import { DEFAULT_FOOTPRINT_OPTIONS, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
 import type { Candle, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
@@ -130,6 +131,15 @@ export class OpenAlgoCandleChart {
   private visibleCallbacks = new Map<() => void, () => void>();
   private latestTime = -Infinity;
   private latestBar: Bar | null = null;
+  private candleTimerEnabled = true;
+  private candleTimerInterval = 60;
+  private readonly candleTimer = new CandleElapsedTimer(
+    () => this.mode === 'footprint' || this.basePriceVisible ? this.latestBar : null,
+    spacing => this.mode === 'footprint' ? footprintColumn(this.footprintOptions, spacing).column / 2 + 8 : spacing * .4,
+  );
+  setCandleTimerEnabled(enabled: boolean) { this.candleTimerEnabled = enabled; this.candleTimer.configure(enabled, this.candleTimerInterval); }
+  tickCandleTimer() { if (!this.disposed) this.candleTimer.tick(); }
+  candleTimerDiagnostics() { return this.candleTimer.diagnostics(); }
   private candleTimes: number[] = [];
   private footprintTimes: number[] = [];
   private footprintBars: FootprintBar[] = [];
@@ -279,6 +289,7 @@ export class OpenAlgoCandleChart {
     this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.executionHoverRay, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.positioningRangePreview, { anchor: 'primary-pane' });
+    this.chart.addPrimitive(this.candleTimer, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
     window.addEventListener(TIMEZONE_EVENT, event => {
@@ -295,6 +306,8 @@ export class OpenAlgoCandleChart {
   }
 
   setDrawingContext(series: CanonicalSeries) {
+    this.candleTimerInterval = duration[series.interval] / 1000;
+    this.candleTimer.configure(this.candleTimerEnabled, this.candleTimerInterval);
     this.chart.setDataContext({
       exchange: `${series.venue}:${series.market}`,
       symbol: series.venue === 'hyperliquid' ? 'BTC' : 'BTCUSDT',
@@ -1142,6 +1155,7 @@ export class OpenAlgoCandleChart {
     this.chart.removePrimitive(this.axisGrid);
     this.chart.removePrimitive(this.executionHoverRay);
     this.chart.removePrimitive(this.positioningRangePreview);
+    this.chart.removePrimitive(this.candleTimer);
     this.chart.destroy();
     this.callbacks.clear();
     this.visibleCallbacks.clear();

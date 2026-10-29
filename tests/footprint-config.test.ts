@@ -58,3 +58,10 @@ it('preserves per-candle volume/delta statistics and defaults legacy or invalid 
   expect(config({ footprint: { statsPosition: 'invented' } }).footprint.statsPosition).toBe('bottom');
   expect(config({ type: 'footprint' }).footprint.statsPosition).toBe('bottom');
 });
+
+it('defaults the candle elapsed timer on for existing layouts and persists an explicit opt-out', () => {
+  expect(config({}).candleElapsedTimer).toBe(true);
+  expect(config({ candleElapsedTimer: 'false' }).candleElapsedTimer).toBe(true);
+  const saved = config({ candleElapsedTimer: false, type: 'footprint' });
+  expect(config(JSON.parse(JSON.stringify(saved))).candleElapsedTimer).toBe(false);
+});

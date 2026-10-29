@@ -7,7 +7,7 @@ User specified strict vanilla TypeScript, Vite/pnpm, free dockview-core, owned W
 ## Product Purpose
 A compact BTC market inspection terminal with rearrangeable candle panels and distinct native perpetual instruments. T0 stops at docking and candles.
 ## Operating Context
-Full viewport, two charts initially side by side. Pan/zoom, market/timeframe switching, saved docking layout. Public direct exchange feeds without credentials.
+Full viewport, one Binance BTCUSDT USD-M chart initially with Object Tree hidden. Pan/zoom, market/timeframe switching, saved docking layout. Public direct exchange feeds without credentials.
 ## Brand Commitments
 Original neutral name Basis. Supplied terminal screenshot governs compact monochrome chrome and market colors. No copied logos/watermarks.
 ## Evidence on Hand

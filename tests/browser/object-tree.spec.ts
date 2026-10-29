@@ -80,9 +80,10 @@ test('per-chart Object Tree resizes, nests by drag, and groups native visibility
   await expect(toggle).toHaveAttribute('title','Open Object Tree');
   await expect(toggle).toHaveAccessibleName('Open Object Tree');
   expect(await toggle.locator('svg').innerHTML()).not.toBe(closeIcon);
-  await expect(sidebar.getByRole('button',{name:'Open Object Tree'})).toHaveAttribute('title','Open Object Tree');
+  await expect(sidebar).toBeHidden();
+  await expect(toggle).toBeFocused();
   await expect(sidebar).toHaveAttribute('data-collapsed', 'true');
-  await expect.poll(() => sidebar.evaluate(element => element.getBoundingClientRect().width)).toBe(28);
+  await expect.poll(() => sidebar.evaluate(element => element.getBoundingClientRect().width)).toBe(0);
   await panel.locator('.chart-objects-toggle').click();
   await expect(toggle).toHaveAttribute('title','Close Object Tree');
   expect(await toggle.locator('svg').innerHTML()).toBe(closeIcon);
@@ -270,5 +271,6 @@ test('invalid object-tree and sidebar records stay untouched and report session-
   await expect(restored.locator('.chart-objects-panel')).toHaveAttribute('data-storage', 'degraded');
   await expect(restored.locator('.chart-object-tree-status')).toContainText('session memory');
   expect(await page.evaluate(({ treeKey, preferencesKey }) => ({ tree: localStorage.getItem(treeKey), preferences: localStorage.getItem(preferencesKey) }), { treeKey, preferencesKey })).toEqual({ tree: invalidTree, preferences: invalidPreferences });
-  await expect(restored.locator('.chart-objects-panel')).toHaveAttribute('data-collapsed', 'false');
+  await expect(restored.locator('.chart-objects-panel')).toHaveAttribute('data-collapsed', 'true');
+  await expect(restored.locator('.chart-objects-panel')).toBeHidden();
 });

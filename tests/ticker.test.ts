@@ -16,7 +16,7 @@ it('rejects duplicate thresholds, mixed ladder units, corrupt colours and invali
   const t=defaultTiers();expect(()=>validateTiers([...t,{...t[1],id:'another'}])).toThrow('unique');expect(()=>validateTiers([t[0],{...t[1],unit:'BTC'}])).toThrow('One ladder');expect(()=>validateTiers([{...t[0],buyColor:'url(evil)'}])).toThrow('colours');expect(()=>validateTiers([{...t[0],volume:2}])).toThrow('volume');
 });
 it('keeps unknown sides explicit rather than treating them as buys',()=>{const e=execution('unknown',1e6,'unknown'),c=tickerConfig({});expect(displayed(e,c)).toBe(true);expect(displayed(e,{...c,side:'buy'})).toBe(false);expect(displayed(e,{...c,side:'unknown'})).toBe(true);expect(e.side).toBe('unknown');});
-it('deduplicates executions while independent filters leave classification and notifications eligible',()=>{
+it('deduplicates executions while filters leave classification and freshness intact for the UI delivery gate',()=>{
   const p=new TickerPipeline(tickerConfig({displayMinimum:2e6,side:'sell'}),now-1000),r=p.accept(execution(),now,now-1000)!;expect(r.tier?.name).toBe('Very large');expect(r.notify).toBe(true);expect(displayed(r.execution,p.config)).toBe(false);expect(p.accept(execution(),now,now-1000)).toBeNull();expect(p.retained.length).toBe(1);
 });
 it('suppresses stale, reconnect backlog and pre-subscription events',()=>{const p=new TickerPipeline(tickerConfig({}),now-1000);expect(p.accept(execution('old',1e6,'buy',now-10000),now,now-1000)?.notify).toBe(false);expect(p.accept(execution('reconnect',1e6,'buy',now-500),now,now)?.notify).toBe(false);expect(p.accept(execution('fresh'),now,now-1000)?.notify).toBe(true);});

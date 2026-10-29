@@ -26,6 +26,8 @@ const scores: Record<Exclude<Sound,'silent'>, readonly [number,number,number][]>
 };
 export class Notifications {
   readonly gate = new NotificationGate(); private audio?: AudioContext;
+  private output?: DynamicsCompressorNode;
+  private outputHeadroom?: GainNode;
   private audioMuted = false;
   private audioListeners = new Set<() => void>();
   private tones = new Set<OscillatorNode>(); private timers = new Set<ReturnType<typeof setTimeout>>();
@@ -58,6 +60,17 @@ export class Notifications {
     try {
       if (!this.audio || this.audio.state === 'closed') {
         this.audio = new AudioContext();
+        // One shared bus controls overlapping notifications, including different tiers.
+        this.output = this.audio.createDynamicsCompressor();
+        this.output.threshold.value = -6;
+        this.output.knee.value = 6;
+        this.output.ratio.value = 12;
+        this.output.attack.value = .003;
+        this.output.release.value = .12;
+        this.outputHeadroom = this.audio.createGain();
+        this.outputHeadroom.gain.value = .8;
+        this.output.connect(this.outputHeadroom);
+        this.outputHeadroom.connect(this.audio.destination);
         this.audio.onstatechange = () => this.updateStatus();
       }
       await this.audio.resume();
@@ -105,13 +118,19 @@ export class Notifications {
   }
   private play(sound: Exclude<Sound,'silent'>, volume: number) {
     const context = this.audio; if (!context || !this.audioEnabled() || this.tones.size >= 12) return;
-    // Keep the three simultaneous bell partials below full scale at maximum volume.
-    const amplitude = Math.max(0,Math.min(1,volume))*this.settings.volume*.24;
+    // Normalize each score's simultaneous voices rather than making solo tones
+    // as quiet as one partial of a bell. Keep both saved volume controls linear.
+    const partials = sound === 'bell' ? 3 : 1;
+    const amplitude = Math.max(0,Math.min(1,volume))*this.settings.volume*.85/partials;
     if (!amplitude) return;
     for (const [frequency,offset,duration] of scores[sound]) {
       const oscillator = context.createOscillator(), gain = context.createGain(), start = context.currentTime+offset;
-      oscillator.type = 'sine'; oscillator.frequency.value = frequency; gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(amplitude,start+.008); gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
-      oscillator.connect(gain); gain.connect(context.destination); this.tones.add(oscillator);
+      oscillator.type = 'sine'; oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0,start);
+      gain.gain.linearRampToValueAtTime(amplitude,start+.008);
+      gain.gain.exponentialRampToValueAtTime(amplitude*.12,start+duration-.02);
+      gain.gain.linearRampToValueAtTime(0,start+duration);
+      oscillator.connect(gain); gain.connect(this.output!); this.tones.add(oscillator);
       oscillator.onended = () => { this.tones.delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
       oscillator.start(start); oscillator.stop(start+duration+.02);
     }
@@ -123,5 +142,5 @@ export class Notifications {
   }
   release(owner: string) { this.gate.release(owner); }
   diagnostics() { return { ...this.gate.diagnostics(), audio: this.audio?.state ?? 'disabled', audioEnabled: this.audioEnabled(), audioMuted: this.audioMuted, muted: this.settings.muted, volume: this.settings.volume, voices: this.tones.size, toasts: this.toasts.childElementCount }; }
-  dispose() { this.abort.abort(); this.audioListeners.clear(); if (this.audio) this.audio.onstatechange = null; for (const timer of this.timers) clearTimeout(timer); this.timers.clear(); for (const tone of this.tones) { tone.onended = null; try { tone.stop(); } catch {} tone.disconnect(); } this.tones.clear(); void this.audio?.close(); if(this.dialog.open)this.dialog.close(); this.dialog.remove(); this.toasts.remove(); }
+  dispose() { this.abort.abort(); this.audioListeners.clear(); if (this.audio) this.audio.onstatechange = null; for (const timer of this.timers) clearTimeout(timer); this.timers.clear(); for (const tone of this.tones) { tone.onended = null; try { tone.stop(); } catch {} tone.disconnect(); } this.tones.clear(); this.output?.disconnect(); this.outputHeadroom?.disconnect(); void this.audio?.close(); if(this.dialog.open)this.dialog.close(); this.dialog.remove(); this.toasts.remove(); }
 }

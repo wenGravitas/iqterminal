@@ -10,12 +10,14 @@ import type { NetPositioningMethod, NetPositioningVenue } from '../feed/net-posi
 import type { NetPositioningDisplay } from '../chart/net-positioning-layout';
 import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoIndicatorSettings } from './tpo-settings';
 import { TRADE_BUBBLES_ID, TRADE_BUBBLE_DEFAULT_SETTINGS, tradeBubbleSettings } from '../trade-bubbles/model';
+import { INDICATOR_COMPOSITION_SMA_ID, compositionSmaSettings, validateNumericInputs, validatePlotScaleIds } from '../scripts/composition';
 export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
 export const FOOTPRINT_ID = 'native.footprint';
 export const FOOTPRINT_TOTALS_ID = 'native.footprint-totals';
 export const TPO_ID = 'native.tpo';
+export const COMPOSITION_SMA_ID = INDICATOR_COMPOSITION_SMA_ID;
 export const DEFAULT_FOOTPRINT_TOTALS_ROWS = ['volume', 'bidVolume', 'askVolume', 'delta'] as const;
 export type FootprintTotalsSettings = { rows: import('openalgo-charts/profile').FootprintStatRow[]; highlightHighest: boolean };
 const FOOTPRINT_TOTAL_ROWS: readonly import('openalgo-charts/profile').FootprintStatRow[] = [
@@ -58,6 +60,10 @@ export interface IndicatorDefinition {
 export interface IndicatorInstance {
   instanceId: string; definitionId: string; settingsVersion: number; visible: boolean;
   source: { kind: string; [key: string]: unknown }; placement: Placement; settings: Record<string, unknown>;
+  /** Stable composition identity; independent of the market-bound `source`. */
+  paneId?: string;
+  numericInputs?: Record<string, import('../scripts/composition').NumericOutputRef>;
+  plotScaleIds?: Record<string, import('openalgo-charts').PriceScaleId>;
   /** Immutable script revision pin. Its settings/visibility are held by the instance. */
   script?: Omit<StudyPin, 'attachmentId' | 'settings' | 'visible'>;
 }
@@ -139,6 +145,12 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
       { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' }],
     placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: COMPOSITION_SMA_ID, name: 'SMA', description: 'Full-window simple moving average of a declared numeric indicator output', category: 'Volume', implementation: 'builtin',
+    settingsVersion: 1, defaults: { length: 20, color: '#63c7b2' }, settingsSchema: [
+      { key: 'source', label: 'Input', kind: 'indicator-output', defaultValue: null },
+      { key: 'length', label: 'Length', kind: 'number', defaultValue: 20 },
+      { key: 'color', label: 'Line colour', kind: 'color', defaultValue: '#63c7b2' }],
+    placements: ['overlay', 'pane'], dataRequirements: ['indicator-output:chart-candles-v1'], sourceBinding: 'chart', multiplicity: 'multiple', capabilities: { editScript: false, duplicate: true } },
 ];
 export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptInputView[] = []): IndicatorDefinition {
   const revision = record.revisions.find(r => r.id === record.currentRevision);
@@ -151,15 +163,22 @@ export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptIn
 }
 export function nativeDefinition(id: string) { return NATIVE_DEFINITIONS.find(d => d.id === id); }
 export function scriptInstance(pin: StudyPin): IndicatorInstance {
-  const { attachmentId, settings, visible, ...script } = pin;
-  return { instanceId: attachmentId, definitionId: `script:${pin.scriptId}`, settingsVersion: 1, visible, source: { kind: 'chart' }, placement: pin.placement ?? 'overlay', settings, script };
+  const { attachmentId, settings, visible, paneId, numericInputs, plotScaleIds, ...script } = pin;
+  return { instanceId: attachmentId, definitionId: `script:${pin.scriptId}`, settingsVersion: 1, visible, source: { kind: 'chart' }, placement: pin.placement ?? 'overlay', settings,
+    ...(paneId ? { paneId } : {}), ...(numericInputs ? { numericInputs: validateNumericInputs(numericInputs) } : {}),
+    ...(plotScaleIds ? { plotScaleIds: validatePlotScaleIds(plotScaleIds) } : {}), script };
 }
 export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
-  return validStudyPins(instances.filter(i => i.settingsVersion === 1 && i.source.kind === 'chart' && i.script && i.definitionId === `script:${i.script.scriptId}`).map(i => ({ ...i.script, attachmentId: i.instanceId, settings: i.settings, visible: i.visible })));
+  return validStudyPins(instances.filter(i => i.settingsVersion === 1 && i.source.kind === 'chart' && i.script && i.definitionId === `script:${i.script.scriptId}`).map(i => ({ ...i.script, attachmentId: i.instanceId, settings: i.settings, visible: i.visible,
+    ...(i.paneId ? { paneId: i.paneId } : {}), ...(i.numericInputs ? { numericInputs: validateNumericInputs(i.numericInputs) } : {}),
+    ...(i.plotScaleIds ? { plotScaleIds: validatePlotScaleIds(i.plotScaleIds) } : {}) })));
 }
-export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true): IndicatorInstance {
-  const placement = id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay';
-  return { instanceId: id, definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings };
+export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true, options: { instanceId?: string; placement?: Placement; paneId?: string; numericInputs?: unknown; plotScaleIds?: unknown } = {}): IndicatorInstance {
+  const placement = options.placement ?? (id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay');
+  return { instanceId: options.instanceId ?? (id === COMPOSITION_SMA_ID ? `sma-${crypto.randomUUID()}` : id), definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings,
+    ...(options.paneId ? { paneId: options.paneId } : {}),
+    ...(options.numericInputs ? { numericInputs: validateNumericInputs(options.numericInputs) } : {}),
+    ...(options.plotScaleIds ? { plotScaleIds: validatePlotScaleIds(options.plotScaleIds) } : {}) };
 }
 /** Bounded plain configuration. Unknown definitions and future settings versions remain recoverable. */
 export function validateInstances(value: unknown): IndicatorInstance[] {
@@ -171,11 +190,16 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
       || typeof raw.definitionId !== 'string' || raw.definitionId.length > 160 || !Number.isInteger(raw.settingsVersion) || raw.settingsVersion < 1
       || !raw.settings || typeof raw.settings !== 'object' || Array.isArray(raw.settings) || ids.has(raw.instanceId)) continue;
     const definition = nativeDefinition(raw.definitionId);
-    if (definition && singletons.has(definition.id)) continue;
+    if (definition?.multiplicity === 'single' && singletons.has(definition.id)) continue;
     let copy: IndicatorInstance;
     try { const json = JSON.stringify(raw); if (json.length > 12000) continue; copy = JSON.parse(json); } catch { continue; }
     copy.visible = raw.visible !== false; copy.source = raw.source && typeof raw.source === 'object' && typeof raw.source.kind === 'string' ? copy.source : { kind: 'chart' };
-    copy.placement = definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
+    copy.placement = definition?.placements.includes(raw.placement as Placement) ? raw.placement as Placement
+      : definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
+    if (typeof raw.paneId === 'string' && raw.paneId.length > 0 && raw.paneId.length <= 120) copy.paneId = raw.paneId; else delete copy.paneId;
+    if (raw.numericInputs && typeof raw.numericInputs === 'object' && !Array.isArray(raw.numericInputs)) copy.numericInputs = validateNumericInputs(raw.numericInputs); else delete copy.numericInputs;
+    if (raw.plotScaleIds && typeof raw.plotScaleIds === 'object' && !Array.isArray(raw.plotScaleIds)) copy.plotScaleIds = validatePlotScaleIds(raw.plotScaleIds); else delete copy.plotScaleIds;
+    if (copy.definitionId === COMPOSITION_SMA_ID && copy.settingsVersion === 1) copy.settings = { ...compositionSmaSettings(copy.settings) };
     if (copy.definitionId === EFFORT_RESULT_ID && copy.settingsVersion === 1) copy.settings = effortRecord(effortSettings(copy.settings));
     if (copy.definitionId === MARKET_CONDITIONS_ID && copy.settingsVersion === 1) copy.settings = { ...conditionsSettings(copy.settings) };
     if (copy.definitionId === ORDER_WALLS_ID && [1,2].includes(copy.settingsVersion)) { copy.settings = { ...orderWallsSettings(copy.settingsVersion === 1 && !('mode' in copy.settings) ? { ...copy.settings, mode: 'threshold' } : copy.settings) }; copy.settingsVersion = 2; }
@@ -190,7 +214,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];
       if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source };
     }
-    ids.add(copy.instanceId); if (definition) singletons.add(definition.id); result.push(copy);
+    ids.add(copy.instanceId); if (definition?.multiplicity === 'single') singletons.add(definition.id); result.push(copy);
   }
   return result;
 }

@@ -18,6 +18,8 @@ export function indicatorIcon(action: string) {
     'pane-restore': 'M5 3h8v8 M3 5v8h8',
     remove: 'M4 4l8 8M12 4l-8 8', duplicate: 'M5 5h9v9H5Z M2 10V2h8',
     source: 'M5 4L1 8l4 4 M11 4l4 4-4 4 M9 2L7 14',
+    'add-sma': 'M2 12.5 5.5 9l2.5 2.5L13.5 5l2.5 2.5 M13 5h3v3',
+    move: 'M2 8h11 M9 4l4 4-4 4 M11 2h4v4 M11 10h4v4',
   };
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 16 16'); svg.setAttribute('width','14'); svg.setAttribute('height','14'); svg.setAttribute('aria-hidden','true');
   if (action === 'loading') svg.classList.add('indicator-loading-icon');

@@ -19,8 +19,10 @@ export default defineConfig(({ mode }) => {
     '/market-data/v1/effort-result': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/depth-matrix': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/footprints': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/native-candles': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    // Candle/Footprint snapshots are history responses. Keep their transfers
+    // off the live SSH TCP connection so they cannot delay stream heartbeats.
+    '/market-data/v1/footprints': { target: 'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/native-candles': { target: 'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/stream': { target: 'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data': { target: 'http://127.0.0.1:18780', agent:historyAgent, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
   } } : undefined,

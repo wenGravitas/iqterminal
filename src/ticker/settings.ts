@@ -31,7 +31,7 @@ export class TickerSettings {
     this.select(filters,'Size filter unit',['BTC','USDT'],c.displayUnit,v=>c.displayUnit=v as TickerUnit);
     this.select(filters,'Aggressor side',['both','buy','sell','unknown'],c.side,v=>c.side=v as TickerConfig['side']);
     this.input(filters,'Mute this ticker','muted',c.muted,'checkbox',v=>c.muted=v);
-    const hint=document.createElement('p'); hint.className='footprint-settings-hint'; hint.textContent='Display filters affect rows only. Unknown side shows ?. Reported prints may aggregate executions.'; this.fields.append(hint);
+    const hint=document.createElement('p'); hint.className='footprint-settings-hint'; hint.textContent='Size and side filters apply to rows and live alerts. Unknown side shows ?. Reported prints may aggregate executions.'; this.fields.append(hint);
     const columns=document.createElement('fieldset');columns.className='ticker-column-options';const legend=document.createElement('legend');legend.textContent='Display columns';columns.append(legend);
     const time=this.input(columns,'Time (display zone, required)','time',true,'checkbox');time.disabled=true;
     for(const col of TICKER_COLUMNS)this.input(columns,col.label+' column',col.id,c.columns.includes(col.id),'checkbox',enabled=>{c.columns=TICKER_COLUMNS.filter(item=>item.id===col.id?enabled:c.columns.includes(item.id)).map(item=>item.id);});

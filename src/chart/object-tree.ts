@@ -445,7 +445,7 @@ export function reorderObjectTreeEntry(catalog: IQObjectTreeCatalog, kind: 'fold
   return moveObjectTreeEntry(catalog, kind, id, source.parentId, source.index + direction + (direction > 0 ? 1 : 0));
 }
 
-export function createObjectTreeSidebarPreferences(width = OBJECT_TREE_DEFAULT_WIDTH, collapsed = false): IQObjectTreeSidebarPreferences {
+export function createObjectTreeSidebarPreferences(width = OBJECT_TREE_DEFAULT_WIDTH, collapsed = true): IQObjectTreeSidebarPreferences {
   return {
     version: IQ_OBJECT_TREE_VERSION,
     width: Math.max(OBJECT_TREE_MIN_WIDTH, Math.min(OBJECT_TREE_MAX_WIDTH, Math.round(width))),

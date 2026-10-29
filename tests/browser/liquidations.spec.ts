@@ -36,3 +36,121 @@ test('fresh burst alerts use shared notifications; inspection and removing a con
  const burst=ticker.locator('.liquidation-bursts details').last();await burst.locator('summary').click();await expect(burst).toHaveAttribute('open','');await expect(burst).toContainText('BYBIT');
  await panel.getByRole('button',{name:'Remove Liquidations',exact:true}).click();await expect(panel.locator('[data-liquidations=true]')).toHaveCount(0);await expect(ticker.locator('[data-event-id]').first()).toBeVisible();await page.evaluate(()=>(window as any).__terminal.feed.send({type:'diagnostics'}));await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.feed.diagnostics.liquidations.clients)).toBe(1);
 });
+
+test('liquidation bar tooltip matches positioning cards with side-specific venue totals and bounded placement', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  const panel = await setup(page);
+  await addIndicator(panel, 'Liquidations');
+  await expect.poll(async () => (await state(page))?.painted).toBeGreaterThan(0);
+  const card = panel.locator('.liquidation-tooltip');
+  const hover = async (side: 'LONG' | 'SHORT') => {
+    const hit = await page.evaluate(side => {
+      const p = [...(window as any).__terminal.panels.values()][0];
+      const view = p.liquidationsView, chart = p.engine.chart, plot = chart.plotRect(view.paneIndex());
+      const bars = view.diagnostics().batch.bars;
+      for (const bar of [...bars].reverse()) {
+        const values = side === 'LONG' ? bar.longs : bar.shorts;
+        const total = values.bybit + values.binance;
+        const x = chart.timeScale.indexToX(chart.dataLayer.timeToIndexFloat(bar.time / 1000));
+        const y = view.anchor.priceScale().priceToY((side === 'LONG' ? -1 : 1) * total / 2);
+        if (total > 0 && x > 20 && x < plot.width - 20 && y > 15 && y < plot.height - 15) {
+          return { x: plot.left + x, y: plot.top + y, total, values, time: bar.time };
+        }
+      }
+      return null;
+    }, side);
+    expect(hit).not.toBeNull();
+    const stage = await panel.locator('.chart-stage').boundingBox(); expect(stage).not.toBeNull();
+    await page.mouse.move(0, 0);
+    await page.mouse.move(stage!.x + hit!.x, stage!.y + hit!.y);
+    await expect(card).toBeVisible();
+    await expect(card.locator('.positioning-tooltip-heading')).toContainText(side === 'LONG' ? 'Long liquidations' : 'Short liquidations');
+    await expect(card).toContainText('BY[P]'); await expect(card).toContainText('BN[P]');
+    await expect(card.locator('.positioning-tooltip-row')).toHaveCount(2);
+    await expect(card.locator('.positioning-tooltip-total')).toContainText('Reported (2 venues)');
+    for (const venue of ['bybit', 'binance'] as const) {
+      await expect(card.locator(`[data-venue="${venue}"] .positioning-tooltip-amount`)).toContainText(hit!.values[venue].toLocaleString('en-US', { maximumFractionDigits: 3 }));
+    }
+    await expect(card.locator('.positioning-tooltip-status')).toContainText('cumulative snapshots may overlap');
+    await expect(card.locator('.positioning-tooltip-status')).toContainText('Reported events only');
+    const bounds = (await card.boundingBox())!;
+    expect(bounds.x).toBeGreaterThanOrEqual(stage!.x);
+    expect(bounds.y).toBeGreaterThanOrEqual(stage!.y);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(stage!.x + stage!.width);
+    expect(bounds.y + bounds.height).toBeLessThanOrEqual(stage!.y + stage!.height);
+    expect(await card.evaluate((el: HTMLElement) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  };
+  for (const theme of ['dark', 'light'] as const) {
+    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    await hover('LONG');
+    await expect(card.locator('.positioning-tooltip-heading')).toContainText('USDT');
+    await page.screenshot({ path: `/tmp/liquidations-tooltip-${theme}.png` });
+    await hover('SHORT');
+  }
+  const beforeUnits = (await state(page)).batch.batchId;
+  await panel.getByRole('button', { name: 'Liquidations settings', exact: true }).click();
+  const settings = panel.getByRole('dialog', { name: 'Liquidations settings', exact: true });
+  await settings.getByLabel('Liquidation display unit', { exact: true }).selectOption('BTC');
+  await settings.getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(async () => (await state(page)).settings.units).toBe('BTC');
+  await expect.poll(async () => (await state(page)).batch.batchId).toBeGreaterThan(beforeUnits);
+  await page.setViewportSize({ width: 720, height: 860 });
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await hover('LONG'); await expect(card.locator('.positioning-tooltip-heading')).toContainText('BTC');
+  await page.screenshot({ path: '/tmp/liquidations-tooltip-narrow.png' });
+  await page.mouse.move(0, 0); await expect(card).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('liquidation venue toggles filter the pane, survive reload, and stay accessible in compact headers', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  const panel = await setup(page); await addIndicator(panel, 'Liquidations');
+  await expect.poll(async () => (await state(page))?.painted).toBeGreaterThan(0);
+  const legend = panel.getByRole('group', { name: 'Liquidation venues', exact: true });
+  const bybit = legend.getByRole('button', { name: 'Show Bybit liquidation reports', exact: true });
+  const binance = legend.getByRole('button', { name: 'Show Binance liquidation reports', exact: true });
+  await expect(bybit).toHaveAttribute('aria-pressed', 'true');
+  await expect(binance).toHaveAttribute('aria-pressed', 'true');
+  const before = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0];
+    (window as any).__liquidationVenueEngine = p.engine;
+    return p.engine.chart.timeScale.visibleRange();
+  });
+  await bybit.click();
+  await expect(bybit).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(async () => (await state(page)).batch.bars.every((bar: any) => bar.longs.bybit === 0 && bar.shorts.bybit === 0)).toBe(true);
+  expect((await state(page)).settings.venues).toEqual(['binance']);
+  await binance.focus(); await binance.press('Space');
+  await expect(binance).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(async () => (await state(page)).bars).toBe(0);
+  await expect(panel.locator('.liquidation-pane-status')).toContainText('No liquidation venues selected');
+  await bybit.focus(); await bybit.press('Space');
+  await expect(bybit).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => (await state(page)).painted).toBeGreaterThan(0);
+  await expect.poll(async () => (await state(page)).batch.events.every((event: any) => event.venue === 'bybit')).toBe(true);
+  const after = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0];
+    return { sameEngine: p.engine === (window as any).__liquidationVenueEngine, range: p.engine.chart.timeScale.visibleRange() };
+  });
+  expect(after.sameEngine).toBe(true); expect(after.range).toEqual(before);
+  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await page.screenshot({ path: '/tmp/liquidations-venues-dark.png' });
+  await page.reload();
+  await expect.poll(async () => (await state(page))?.settings.venues).toEqual(['bybit']);
+  await expect(bybit).toHaveAttribute('aria-pressed', 'true');
+  await expect(binance).toHaveAttribute('aria-pressed', 'false');
+  await page.setViewportSize({ width: 430, height: 860 });
+  await expect(bybit).toHaveAttribute('data-compact', 'true');
+  await expect(bybit.locator('span')).toBeHidden();
+  await expect(bybit).toBeVisible(); await expect(binance).toBeVisible();
+  const stage = (await panel.locator('.chart-stage').boundingBox())!, bounds = (await legend.boundingBox())!;
+  expect(bounds.x).toBeGreaterThanOrEqual(stage.x); expect(bounds.x + bounds.width).toBeLessThanOrEqual(stage.x + stage.width);
+  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await page.screenshot({ path: '/tmp/liquidations-venues-compact.png' });
+  await binance.focus(); await binance.press('Enter');
+  await expect(binance).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => (await state(page)).settings.venues.length).toBe(2);
+  expect(errors).toEqual([]);
+});

@@ -59,3 +59,21 @@ These checks use deterministic supplied payloads. They do not establish live
 stream connectivity, durable storage or historical completeness. Future estimated
 liquidation pools must use a distinct data model; the current event kind accepts
 only actual venue reports.
+
+## Bar tooltip
+
+Hover a liquidation bar to inspect the long or short side in the same compact
+card style as Net Longs/Shorts: UTC timestamp and timeframe, venue badges,
+proportional venue bars, amounts in the selected BTC/USDT unit, and a reported
+total. The card stays within the chart. Bankruptcy-price valuation, Binance
+sampling and coverage limitations remain labelled; totals describe reported
+activity, not complete exchange-wide liquidations.
+
+## Venue controls
+
+The indicator header has Bybit and Binance buttons using the same selected state
+and compact icon layout as Net Longs/Shorts. Toggle either venue to include or
+exclude its reported liquidations from this indicator's bars, markers and
+hover totals. The selection is saved per indicator and also appears in its
+settings. Both venues can be disabled; the buttons stay available to re-enable
+a source. Other liquidation widgets keep their own selections.

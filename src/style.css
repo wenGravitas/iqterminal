@@ -217,10 +217,7 @@ dialog.footprint-settings-dialog{width:min(420px,calc(100vw - 24px))}
 .chart-object-tree-menu-item{flex:none;width:100%;height:auto;min-height:25px;padding:3px 6px;border:0;background:transparent;color:var(--text);text-align:left;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:normal}
 .chart-object-tree-menu-item:hover:not(:disabled),.chart-object-tree-menu-item:focus-visible{background:var(--hover)}
 .chart-object-tree-menu-item:disabled{color:var(--muted)}
-.chart-objects-panel[data-collapsed=true]{flex-basis:28px;width:28px;min-width:28px}
-.chart-objects-panel[data-collapsed=true] .chart-object-tree-header{justify-content:center;padding:3px 1px}
-.chart-objects-panel[data-collapsed=true] .chart-object-tree-header>strong,.chart-objects-panel[data-collapsed=true] .chart-objects-summary,.chart-objects-panel[data-collapsed=true] .chart-objects-content,.chart-objects-panel[data-collapsed=true] .chart-object-tree-resize{display:none}
-.chart-objects-panel[data-collapsed=true] .chart-object-tree-collapse{width:24px}
+.chart-objects-panel[data-collapsed=true]{display:none}
 .chart-objects-panel.is-dragging .chart-object-tree-node{user-select:none}
 .chart-objects-panel .chart-object-row{display:flex;align-items:center;gap:2px;min-width:0;padding:2px;border-bottom:1px solid var(--border-soft)}
 .chart-object-pane{display:flex;flex-direction:column;gap:2px}
@@ -559,10 +556,10 @@ select:disabled{cursor:default;color:var(--muted)}
 .liquidation-bursts:empty{display:none}
 .liquidation-bursts details{padding:4px 6px}.liquidation-bursts details>div{padding:3px 0;color:var(--muted)}
 .liquidation-bursts summary{cursor:pointer;white-space:normal}.liquidation-bursts button{font:inherit;margin:3px 0}
-.liquidation-legend{top:26px;right:6px;overflow:auto;white-space:nowrap;font-size:9px}
-.liquidation-venue-label{padding:2px 4px;color:var(--muted)}
-.liquidation-tooltip{left:8px;bottom:25px;max-width:calc(100% - 20px);width:340px;padding:7px;line-height:1.5;pointer-events:none;white-space:normal}
+.liquidation-legend{top:4px;right:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap;font-size:9px}
+.liquidation-tooltip{max-height:calc(100% - 8px);overflow:hidden;white-space:normal}
 .liquidation-tooltip[hidden]{display:none}
+.liquidation-tooltip .positioning-tooltip-value{white-space:nowrap}
 .liquidation-settings fieldset{border:1px solid var(--divider);margin:7px 0;padding:6px;min-width:0}
 .liquidation-settings legend{font-size:10px;color:var(--muted)}
 .liquidation-tier{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
@@ -598,3 +595,4 @@ select:disabled{cursor:default;color:var(--muted)}
 .order-walls-settings .indicator-setting-field>span{white-space:normal;line-height:1.4}
 .order-walls-settings .order-walls-advanced{padding:3px 0;display:block}
 .order-walls-settings .order-walls-advanced>.indicator-setting-field{margin-top:8px}
+.composition-settings-group{margin:0;padding:8px;border:1px solid var(--divider);min-width:0}.composition-settings-group legend{padding:0 5px;color:var(--muted);font-size:10px;font-weight:600}.composition-settings-group .dialog-status{padding:2px 0 0}.composition-settings .indicator-setting-field select{width:100%;height:25px;border:1px solid var(--divider);border-radius:0;background:var(--input);color:var(--text);font:inherit;padding:4px}.composition-settings .indicator-setting-field input[type=number]{width:100%}

@@ -6,7 +6,7 @@ test('sound tests unlock real audio output and ticker buttons track enabled, mut
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.addInitScript(() => {
-    // Measure samples on the real gain -> output path, without replacing Web Audio.
+    // Measure the mixed output after shared compression, without replacing Web Audio.
     const connect = AudioNode.prototype.connect;
     const probe = (window as any).__audioProbe = { peak: 0, outputConnections: 0 };
     AudioNode.prototype.connect = function(this: AudioNode, destination: any, ...args: any[]) {
@@ -86,4 +86,103 @@ test('blocked audio remains disabled and explains why a test cannot play', async
   await ticker.getByRole('button', { name: 'Trade Ticker settings', exact: true }).click();
   await ticker.locator('.ticker-tier-table tbody tr').last().getByRole('button', { name: 'Test Tier' }).click();
   await expect(ticker.locator('.ticker-settings')).toContainText('Audio unavailable');
+});
+
+test('notification scores have useful sustained output and headroom when alerts overlap', async ({ page }) => {
+  await installTradeFixture(page);
+  const measurements = await page.evaluate(async () => {
+    // Render the real Notifications graph deterministically; only replace the
+    // hardware context with Web Audio's offline renderer, not its DSP nodes.
+    const NativeContext = window.AudioContext;
+    const saved = localStorage.getItem('basis.notifications.v1');
+    const Notifications = (window as any).__terminal.notifications.constructor;
+    const results: Array<{ sound: string; volume: number; overlap: boolean; peak: number; rms: number }> = [];
+    try {
+      for (const sound of ['bell', 'chime', 'alarm']) for (const volume of [0, .5, 1]) for (const overlap of [false, true]) {
+        let context!: OfflineAudioContext;
+        window.AudioContext = class {
+          constructor() {
+            context = new OfflineAudioContext(1, 96000, 48000);
+            Object.defineProperty(context, 'state', { get: () => 'running' });
+            // enable()/dispose() belong to the realtime lifecycle, while all
+            // oscillator, envelope, mixing and compressor processing stays real.
+            (context as any).resume = async () => {};
+            (context as any).close = async () => {};
+            return context;
+          }
+        } as any;
+        localStorage.setItem('basis.notifications.v1', JSON.stringify({ version: 1, muted: false, volume }));
+        const notifications = new Notifications();
+        try {
+          await notifications.enable();
+          // enable restores zero master volume; explicitly test true zero too.
+          notifications.settings.volume = volume;
+          notifications.play(sound, volume);
+          if (overlap) notifications.play(sound, volume);
+          const samples = (await context.startRendering()).getChannelData(0);
+          const count = Math.floor((sound === 'bell' ? .7 : sound === 'chime' ? .52 : .56) * 48000);
+          let peak = 0, squares = 0;
+          for (let i = 0; i < samples.length; i++) {
+            peak = Math.max(peak, Math.abs(samples[i]!));
+            if (i < count) squares += samples[i]! ** 2;
+          }
+          results.push({ sound, volume, overlap, peak, rms: Math.sqrt(squares / count) });
+        } finally { notifications.dispose(); }
+      }
+    } finally {
+      window.AudioContext = NativeContext;
+      if (saved === null) localStorage.removeItem('basis.notifications.v1');
+      else localStorage.setItem('basis.notifications.v1', saved);
+    }
+    return results;
+  });
+  for (const result of measurements) {
+    expect(result.peak, JSON.stringify(result)).toBeLessThan(.99);
+    if (result.volume === 0) expect(result.peak).toBe(0);
+    if (result.volume === .5 && !result.overlap) {
+      expect(result.rms, JSON.stringify(result)).toBeGreaterThan(result.sound === 'bell' ? .025 : .05);
+    }
+    if (result.volume === 1 && !result.overlap) {
+      const half = measurements.find(v => v.sound === result.sound && v.volume === .5 && !v.overlap)!;
+      expect(result.rms).toBeGreaterThan(half.rms);
+    }
+  }
+});
+
+test('amount filters suppress hidden-trade alerts in USDT and BTC without replay on filter changes', async ({ page }) => {
+  const worker = await installTradeFixture(page);
+  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  const ticker = page.locator('.trade-ticker').first();
+  await ticker.locator('.ticker-audio').click();
+  await expect(ticker.locator('.ticker-audio')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => worker.evaluate(() => (self as any).__tradeFixture.active)).toBe(1);
+  const minimum = ticker.getByLabel('Minimum trade size', { exact: true });
+  const retained = () => page.evaluate(() => [...(window as any).__terminal.tickers.values()][0].diagnostics().retained);
+  const delivered = () => page.evaluate(() => (window as any).__terminal.notifications.diagnostics().delivered);
+  const rows = ticker.locator('.ticker-table .ticker-row');
+  await minimum.fill('2M'); await minimum.press('Tab');
+  await worker.evaluate(() => (self as any).__tradeFixture.emit(10));
+  await expect.poll(retained).toBe(1);
+  await expect(rows).toHaveCount(0);
+  expect(await delivered()).toBe(0);
+  expect(await page.evaluate(() => (window as any).__terminal.notifications.diagnostics().voices)).toBe(0);
+  await expect(page.locator('.notification-toast')).toHaveCount(0);
+
+  await ticker.getByLabel('Trade size filter unit', { exact: true }).selectOption('BTC');
+  await minimum.fill('20'); await minimum.press('Tab');
+  await worker.evaluate(() => (self as any).__tradeFixture.emit(19.99));
+  await expect.poll(retained).toBe(2);
+  await expect(rows).toHaveCount(0);
+  expect(await delivered()).toBe(0);
+  await worker.evaluate(() => (self as any).__tradeFixture.emit(20));
+  await expect.poll(delivered).toBe(1);
+  await expect(rows).toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal.notifications.diagnostics().voices)).toBeGreaterThan(0);
+  await expect(page.locator('.notification-toast')).toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal.notifications.diagnostics().voices)).toBe(0);
+
+  await minimum.fill('0'); await minimum.press('Tab');
+  await expect(rows).toHaveCount(3);
+  expect(await delivered()).toBe(1);
+  expect(await page.evaluate(() => (window as any).__terminal.notifications.diagnostics().voices)).toBe(0);
 });

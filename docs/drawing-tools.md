@@ -10,7 +10,7 @@ Select a drawing and use **Style** in the sidebar or its Object Tree row to edit
 
 ## Object Tree
 
-Each candle chart has its own right-side **Object Tree** sidebar, 280px wide by default. Drag its left edge to resize it between 200px and 520px, or collapse it to a narrow rail and reopen it from the drawing sidebar's **Objects** control. Resizing changes the chart's available width without rebuilding its engine or reloading its feed.
+Each candle chart has its own right-side **Object Tree** sidebar, hidden on new charts and 280px wide when opened. Saved visibility is preserved. Drag its left edge to resize it between 200px and 520px, or hide it completely and reopen it from the drawing sidebar's **Objects** control. Resizing changes the chart's available width without rebuilding its engine or reloading its feed.
 
 The **Drawings** tree can hold folders and drawings at any level up to eight folder levels. Create folders and subfolders, rename them inline with **F2**, reorder or move items by dragging, or use each row's actions menu to move items to a folder. Delete a folder while keeping its contents, or remove its descendants through their drawing actions. Arrow keys navigate the visible rows; **Enter** selects a drawing or expands a folder, **Space** changes drawing visibility, and **Alt+Arrow Up/Down** reorders the focused item. Drawing context actions retain the native select, visibility, lock, settings, duplicate, reorder, and delete operations.
 

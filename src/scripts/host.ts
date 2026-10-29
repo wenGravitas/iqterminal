@@ -1,9 +1,10 @@
 import { registerIndicator, type Bar, type IndicatorApi } from 'openalgo-charts';
 import { FeedClient } from '../feed/client';
-import { depthSeriesNames, duration, type Candle, type DepthObservation, type DepthStatus, type Event, type Series, instrumentLabel, marketOf, supportsScriptDepth } from '../feed/protocol';
+import { depthSeriesNames, duration, type Candle, type DepthObservation, type DepthStatus, type Event, type Series, instrumentLabel, instrumentOf, marketOf, supportsScriptDepth } from '../feed/protocol';
 import { OpenAlgoCandleChart } from '../chart/openalgo';
 import { browserScriptWorker, ScriptWorkerClient } from './client';
 import { createScriptChartBridge, depthBandFor, requiresDepth } from './chart-adapter';
+import { isNumericOutputRef, numericOutputContextId, numericOutputId, numericOutputScaleId, numericOutputSchemaId, outputUnitForPlot, validateNumericInputs, validatePlotScaleIds, wouldCreateCycle, PRICE_PANE_ID, type NumericOutputDescriptor, type NumericOutputRef } from './composition';
 import { ScriptLibrary } from './library';
 import { requiredScriptCapabilities } from './capabilities';
 import type { ScriptBar, ScriptContext, ScriptDiagnostic, ScriptResult } from './runtime';
@@ -22,6 +23,9 @@ export interface StudyPin {
   settings: Record<string, string | number | boolean>;
   visible: boolean;
   placement?: 'overlay' | 'pane';
+  paneId?: string;
+  numericInputs?: Record<string, NumericOutputRef>;
+  plotScaleIds?: Record<string, import('openalgo-charts').PriceScaleId>;
 }
 
 export interface StudyView extends StudyPin {
@@ -29,6 +33,7 @@ export interface StudyView extends StudyPin {
   diagnostics: ScriptDiagnostic[];
   inputs: ScriptInputView[];
   outputs: Record<string, number | null>;
+  numericOutputs: NumericOutputDescriptor[];
 }
 
 export interface DepthNotice { text: string; details: string }
@@ -65,6 +70,10 @@ interface StudyInstance extends StudyPin {
   diagnostics: ScriptDiagnostic[];
   inputs: ScriptInputView[];
   outputs: Record<string, number | null>;
+  result?: ScriptResult;
+  resultRevision: number;
+  resultContextId: string;
+  resultContextRevision: number;
   needsHistory: boolean;
 }
 
@@ -76,6 +85,10 @@ export interface StudyDraft {
   description: string;
   settings: Record<string, string | number | boolean>;
   visible?: boolean;
+  paneId?: string;
+  numericInputs?: Record<string, NumericOutputRef>;
+  placement?: 'overlay' | 'pane';
+  plotScaleIds?: Record<string, import('openalgo-charts').PriceScaleId>;
 }
 
 /** Attaches isolated study workers to one native chart and persists only revision pins. */
@@ -93,6 +106,8 @@ export class ScriptStudyHost {
   private restoreErrors = new Map<string, StudyView>();
   private bands = new Map<number, BandState>();
   private listeners = new Set<() => void>();
+  private demandedOutputs = new Set<string>();
+  private externalOutputDependents = new Map<string, string[]>();
 
   constructor(
     private readonly panelId: string,
@@ -110,12 +125,54 @@ export class ScriptStudyHost {
     const active = [...this.studies.values()].map(study => ({
       attachmentId: study.attachmentId, scriptId: study.scriptId, revisionId: study.revisionId,
       title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
-      placement: study.placement, status: study.status, diagnostics: [...study.diagnostics], inputs: [...study.inputs], outputs: { ...study.outputs },
+      placement: study.placement, paneId: study.paneId, numericInputs: study.numericInputs ? { ...study.numericInputs } : undefined,
+      plotScaleIds: study.plotScaleIds ? { ...study.plotScaleIds } : undefined,
+      status: this.dependencyError(study) ?? study.status, diagnostics: [...study.diagnostics], inputs: [...study.inputs], outputs: { ...study.outputs },
+      numericOutputs: this.numericOutputsFor(study),
     }));
-    return [...active, ...this.restoreErrors.values()].map(view => ({ ...view, settings: { ...view.settings }, diagnostics: [...view.diagnostics], inputs: [...view.inputs], outputs: { ...view.outputs } }));
+    return [...active, ...this.restoreErrors.values()].map(view => ({ ...view, settings: { ...view.settings }, diagnostics: [...view.diagnostics], inputs: [...view.inputs], outputs: { ...view.outputs }, numericOutputs: [...(view.numericOutputs ?? [])] }));
   }
   paneIndex(attachmentId: string) { return this.studies.get(attachmentId)?.api.paneIndex ?? -1; }
+  apiForAttachment(attachmentId: string) { return this.studies.get(attachmentId)?.api ?? null; }
+  removeBlockReason(attachmentId: string) {
+    const source = this.pinForAttachment(attachmentId);
+    const dependent = this.allPins().find(pin => pin.attachmentId !== attachmentId
+      && Object.values(pin.numericInputs ?? {}).some(input => input.instanceId === attachmentId));
+    const externalDependent = this.externalOutputDependents.get(attachmentId)?.[0];
+    if (source && externalDependent) return `Cannot remove ${source.title} while ${externalDependent} depends on its output. Remove that study first.`;
+    return source && dependent ? `Cannot remove ${source.title} while ${dependent.title} depends on its output. Remove that study first.` : null;
+  }
   pins(): StudyPin[] { return validStudyPins([...this.pendingPins, ...[...this.studies.values()].map(study => pinOf(study)), ...[...this.restoreErrors.values()].map(pinOf)]).filter((p,i,a) => a.findIndex(v => v.attachmentId === p.attachmentId) === i); }
+  numericOutputs(): NumericOutputDescriptor[] { return [...this.studies.values()].flatMap(study => this.numericOutputsFor(study)); }
+  setNumericOutputDemand(instanceIds: readonly string[]) {
+    this.demandedOutputs = new Set(instanceIds.filter(id => typeof id === 'string' && id.length <= 120));
+    this.refreshNeededHistory();
+  }
+
+  setExternalOutputDependents(dependents: readonly { instanceId: string; title: string }[]) {
+    const next = new Map<string, string[]>();
+    for (const dependent of dependents) {
+      const names = next.get(dependent.instanceId) ?? [];
+      if (!names.includes(dependent.title)) names.push(dependent.title);
+      next.set(dependent.instanceId, names);
+    }
+    this.externalOutputDependents = next;
+    this.syncRemovalPolicies();
+  }
+
+  /** Reposition an attached worker study without replacing its worker or history. */
+  moveStudy(attachmentId: string, placement: 'overlay' | 'pane', paneId: string, paneIndex: number) {
+    const study = this.studies.get(attachmentId);
+    if (!study) return false;
+    if (!Number.isInteger(paneIndex) || paneIndex < 0 || paneIndex > this.engine.chart.panes().length) return false;
+    if (study.api.paneIndex !== paneIndex && !this.engine.chart.moveIndicator(study.api.id, paneIndex, { force: true })) return false;
+    if (study.placement === placement && study.paneId === paneId) return true;
+    study.placement = placement;
+    study.paneId = paneId;
+    this.persist();
+    this.notify();
+    return true;
+  }
 
   depthNotices(): DepthNotice[] {
     const unsupported = !supportsScriptDepth(this.series);
@@ -163,12 +220,17 @@ export class ScriptStudyHost {
   restore(pins: StudyPin[]) {
     this.pendingPins = validStudyPins(pins);
     this.restoreStarted = false;
+    this.syncRemovalPolicies();
     void this.restoreWhenReady();
   }
 
   setSeries(series: Series) {
     if (this.series.venue === series.venue && marketOf(this.series) === marketOf(series) && this.series.interval === series.interval) return;
     this.series = series; this.contextGeneration++;
+    const contextId = numericOutputContextId(series);
+    for (const study of this.studies.values()) study.numericInputs = rebaseNumericInputs(study.numericInputs, contextId);
+    this.pendingPins = this.pendingPins.map(pin => ({ ...pin, numericInputs: rebaseNumericInputs(pin.numericInputs, contextId) }));
+    for (const [id, pin] of this.restoreErrors) this.restoreErrors.set(id, { ...pin, numericInputs: rebaseNumericInputs(pin.numericInputs, contextId) });
     this.contextNeedsReload = true;
     for (const band of this.bands.values()) this.releaseBand(band);
     this.bands.clear();
@@ -179,6 +241,7 @@ export class ScriptStudyHost {
       study.status = 'reloading for the selected market';
       study.needsHistory = true;
     }
+    this.persist();
     this.notify();
   }
 
@@ -187,11 +250,7 @@ export class ScriptStudyHost {
     this.visible = visible;
     this.engine.visible = visible;
     if (!wasVisible && visible) {
-      for (const study of this.studies.values()) {
-        if (!study.needsHistory || !study.visible) continue;
-        study.needsHistory = false;
-        study.worker.history(this.scriptBars(study.depthBand));
-      }
+      for (const study of this.orderedStudies()) if (study.needsHistory && this.isNeeded(study)) this.queueHistory(study);
     }
   }
 
@@ -200,7 +259,7 @@ export class ScriptStudyHost {
     if (this.contextNeedsReload && this.studies.size) {
       this.contextNeedsReload = false;
       void this.rebuildContext();
-    } else for (const study of this.studies.values()) this.queueHistory(study);
+    } else for (const study of this.orderedStudies()) this.queueHistory(study);
     void this.restoreWhenReady();
   }
 
@@ -224,8 +283,9 @@ export class ScriptStudyHost {
       }
     }
     if (this.candles.length > 5_000) this.candles.splice(0, this.candles.length - 5_000);
-    for (const study of this.studies.values()) {
-      if (!this.visible || document.hidden || !study.visible) { study.needsHistory = true; continue; }
+    for (const study of this.orderedStudies()) {
+      if (!this.visible || document.hidden || !this.isNeeded(study)) { study.needsHistory = true; continue; }
+      if (study.needsHistory) { this.queueHistory(study); continue; }
       if (requiresHistory) study.worker.history(this.scriptBars(study.depthBand));
       else study.worker.patch(changes.map(change => ({ kind: change.kind, bar: this.scriptBar(change.bar, study.depthBand) })));
     }
@@ -235,7 +295,12 @@ export class ScriptStudyHost {
     const id = draft.attachmentId ?? `study-${crypto.randomUUID()}`;
     const intent = (this.intents.get(id) ?? 0) + 1; this.intents.set(id, intent);
     const generation = this.contextGeneration;
-    return enqueueApply(() => this.applyNow({ ...draft, attachmentId: id }, intent, generation));
+    const existing = this.studies.get(id);
+    return enqueueApply(() => this.applyNow({ ...draft, attachmentId: id,
+      paneId: draft.paneId ?? existing?.paneId, placement: draft.placement ?? existing?.placement,
+      numericInputs: draft.numericInputs ?? existing?.numericInputs,
+      plotScaleIds: draft.plotScaleIds ?? existing?.plotScaleIds,
+    }, intent, generation));
   }
 
   async applySettings(attachmentId: string, settings: Record<string, string | number | boolean>): Promise<string> {
@@ -246,6 +311,7 @@ export class ScriptStudyHost {
     return this.apply({
       attachmentId, scriptId: study.scriptId, source: revision.source,
       title: study.title, description: study.description, settings, visible: study.visible,
+      paneId: study.paneId, numericInputs: study.numericInputs, placement: study.placement, plotScaleIds: study.plotScaleIds,
     });
   }
 
@@ -299,20 +365,21 @@ export class ScriptStudyHost {
     }
     study.visible = visible;
     if (study.api.visible() !== visible) study.api.setVisible(visible);
-    if (visible) this.queueHistory(study);
-    else study.needsHistory = true;
+    this.refreshNeededHistory();
     this.persist();
     this.notify();
     return true;
   }
 
   remove(attachmentId: string, removeChartIndicator = true) {
+    if (this.removeBlockReason(attachmentId)) return false;
     this.intents.set(attachmentId, (this.intents.get(attachmentId) ?? 0) + 1);
     const pending = this.pendingPins.some(pin => pin.attachmentId === attachmentId);
     this.pendingPins = this.pendingPins.filter(pin => pin.attachmentId !== attachmentId);
     const study = this.studies.get(attachmentId);
     if (!study) {
       if (!this.restoreErrors.delete(attachmentId) && !pending) return false;
+      this.syncRemovalPolicies();
       this.persist();
       this.notify();
       return true;
@@ -324,6 +391,7 @@ export class ScriptStudyHost {
     releaseSlot(study.descriptorId);
     if (study.depthBand !== null) this.releaseDepth(study.depthBand);
     this.restoreErrors.delete(attachmentId);
+    this.syncRemovalPolicies();
     this.persist();
     this.notify();
     return true;
@@ -377,6 +445,9 @@ export class ScriptStudyHost {
     if (this.dead) throw new Error('This chart panel is closed.');
     if (!this.candles.length) throw new Error('Wait for candle history before applying a study.');
     const attachmentId = draft.attachmentId ?? `study-${crypto.randomUUID()}`;
+    const numericInputs = strictNumericInputs(draft.numericInputs);
+    const assertInputsCurrent = () => this.assertNumericInputs(attachmentId, numericInputs, generation);
+    assertInputsCurrent();
     const existing = this.studies.get(attachmentId);
     if (!existing && this.studies.size >= MAX_STUDIES_PER_CHART) throw new Error(`A chart can attach at most ${MAX_STUDIES_PER_CHART} studies.`);
     const slot = reserveSlot();
@@ -391,13 +462,18 @@ export class ScriptStudyHost {
           latest.result = result;
           if (!latest.committed) return;
           const active = this.studies.get(attachmentId);
-          if (active?.worker === candidate && active.visible) {
+          if (generation === this.contextGeneration && active?.worker === candidate && (active.visible || this.hasVisibleDependents(active.attachmentId))) {
+            active.result = result;
+            active.resultRevision++;
+            active.resultContextId = numericOutputContextId(this.series);
+            active.resultContextRevision = generation;
             active.bridge.update(result, callback => this.engine.enqueueVisible(callback));
             active.outputs = outputAtTail(result);
             const activeBand = active.depthBand === null ? null : this.bands.get(active.depthBand);
             active.status = active.depthBand === null ? 'Study ready'
               : depthStatusText(activeBand?.status ?? null, active.depthUnavailable, this.series, [...(activeBand?.samples.values() ?? [])].at(-1));
             active.diagnostics = [];
+            this.notify();
           }
         },
         onFailure: diagnostics => {
@@ -418,6 +494,7 @@ export class ScriptStudyHost {
     try {
       const result = await candidate.start(draft.source, draft.settings, this.scriptBars(null), this.context());
       assertCurrent();
+      assertInputsCurrent();
       if (!result.program) throw new Error('The script worker did not return its compiled study.');
       const needsDepth = requiresDepth(result.program, draft.settings);
       if (needsDepth) {
@@ -428,10 +505,23 @@ export class ScriptStudyHost {
       candidateDepthBand = nextDepthBand;
       const revision = await this.library.pinRevision(draft.scriptId, draft.source, requiredScriptCapabilities(result.program));
       assertCurrent();
+      assertInputsCurrent();
       bridge = createScriptChartBridge(result, descriptorId, draft.settings);
       (bridge.descriptor as { name: string }).name = draft.title;
+      if (draft.placement === 'overlay' && draft.scriptId === 'builtin.volume-histogram') {
+        (bridge.descriptor as { placement: 'pane' | 'onchart' }).placement = 'onchart';
+      }
+      const paneId = draft.paneId ?? (bridge.descriptor.placement === 'onchart' ? PRICE_PANE_ID : `study:${attachmentId}`);
+      const plotScaleIds = resolvePlotScaleIds(attachmentId, paneId, draft.plotScaleIds, draft.scriptId, result, draft.settings, this.series);
+      this.assertDependentOutputsCompatible(attachmentId, draft.scriptId, result, paneId, plotScaleIds, draft.settings);
+      assertCurrent();
+      assertInputsCurrent();
+      for (const plot of bridge.descriptor.plots) plot.priceScaleId = plotScaleIds[plot.key]!;
       registerIndicator(bridge.descriptor);
-      api = this.engine.chart.addIndicator(descriptorId, {}, { policy: { removable: true, configurable: true, movable: true } });
+      const paneIndex = paneId === PRICE_PANE_ID ? this.engine.chart.primaryPaneIndex()
+        : draft.paneId ? [...this.studies.values()].find(study => study.paneId === paneId)?.api.paneIndex ?? this.engine.chart.panes().length
+          : undefined;
+      api = this.engine.chart.addIndicator(descriptorId, {}, { ...(paneIndex === undefined ? {} : { paneIndex }), policy: { removable: true, configurable: true, movable: true } });
       api.setVisible(draft.visible ?? existing?.visible ?? true);
       api.setPolicy({ removable: true, configurable: true });
       api.legend()?.setOptions({ visible: false });
@@ -452,7 +542,8 @@ export class ScriptStudyHost {
         attachmentId, scriptId: draft.scriptId, revisionId: revision.id,
         title: draft.title, description: draft.description,
         settings: { ...draft.settings }, visible: draft.visible ?? existing?.visible ?? true,
-        placement: bridge.descriptor.placement === 'pane' ? 'pane' : 'overlay',
+        placement: bridge.descriptor.placement === 'pane' ? 'pane' : 'overlay', paneId,
+        numericInputs, plotScaleIds,
         source: draft.source, descriptorId, api, worker: candidate, bridge,
         depthBand: nextDepthBand, depthUnavailable,
         status: nextDepthBand === null ? 'Study ready' : depthStatusText(
@@ -460,11 +551,18 @@ export class ScriptStudyHost {
           depthUnavailable,
           this.series,
           nextDepthBand === null || depthUnavailable ? undefined : [...(this.bands.get(nextDepthBand)?.samples.values() ?? [])].at(-1),
-        ), diagnostics: [], inputs: inputViews(result), outputs: outputAtTail(result), needsHistory: false,
+        ), diagnostics: [], inputs: inputViews(result), outputs: outputAtTail(result), result, resultRevision: (existing?.resultRevision ?? 0) + 1,
+        resultContextId: numericOutputContextId(this.series), resultContextRevision: generation, needsHistory: false,
       };
       this.studies.set(attachmentId, instance);
+      this.syncRemovalPolicies();
+      this.refreshNeededHistory();
       latest.committed = true;
-      if (instance.visible && latest.result && latest.result !== result) bridge.update(latest.result, callback => this.engine.enqueueVisible(callback));
+      if (latest.result && latest.result !== result) {
+        instance.result = latest.result; instance.resultRevision++; instance.outputs = outputAtTail(latest.result);
+        instance.resultContextId = numericOutputContextId(this.series); instance.resultContextRevision = generation;
+        if (instance.visible || this.hasVisibleDependents(instance.attachmentId)) bridge.update(latest.result, callback => this.engine.enqueueVisible(callback));
+      }
       if (nextDepthBand !== null && !depthUnavailable) this.acquireDepth(nextDepthBand);
       if (this.visible && !document.hidden) candidate.history(this.scriptBars(nextDepthBand));
       else instance.needsHistory = true;
@@ -485,7 +583,7 @@ export class ScriptStudyHost {
   private async restoreWhenReady() {
     if (this.dead || this.restoreStarted || !this.pendingPins.length || !this.candles.length) return;
     this.restoreStarted = true;
-    const pins = this.pendingPins;
+    const pins = orderStudyPinsByDependencies(this.pendingPins);
     for (const pin of pins) {
       if (this.dead) return;
       if (this.studies.has(pin.attachmentId)) { this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId); continue; }
@@ -503,16 +601,17 @@ export class ScriptStudyHost {
       } catch (error) {
         if (this.dead || (this.intents.get(pin.attachmentId) ?? 0) !== intent) continue;
         this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId);
-        this.restoreErrors.set(pin.attachmentId, { ...pin, status: error instanceof Error ? error.message : 'Could not restore this study.', diagnostics: [], inputs: [], outputs: {} });
+        this.restoreErrors.set(pin.attachmentId, { ...pin, status: error instanceof Error ? error.message : 'Could not restore this study.', diagnostics: [], inputs: [], outputs: {}, numericOutputs: [] });
         this.persist(); this.notify();
       }
     }
   }
 
   private async rebuildContext() {
-    const drafts = [...this.studies.values()].map(study => ({
+    const drafts = this.orderedStudies().map(study => ({
       attachmentId: study.attachmentId, scriptId: study.scriptId, source: study.source,
       title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
+      paneId: study.paneId, numericInputs: study.numericInputs, placement: study.placement, plotScaleIds: study.plotScaleIds,
     }));
     for (const draft of drafts) {
       try { await this.apply(draft); }
@@ -612,8 +711,135 @@ export class ScriptStudyHost {
   }
 
   private queueHistory(study: StudyInstance) {
-    if (!this.visible || document.hidden || !study.visible) study.needsHistory = true;
+    if (!this.visible || document.hidden || !this.isNeeded(study)) study.needsHistory = true;
     else { study.needsHistory = false; study.worker.history(this.scriptBars(study.depthBand)); }
+  }
+
+  private refreshNeededHistory() {
+    for (const study of this.orderedStudies()) {
+      if (!this.isNeeded(study)) study.needsHistory = true;
+      else if (study.needsHistory) this.queueHistory(study);
+    }
+  }
+
+  private isNeeded(study: StudyInstance) { return study.visible || this.demandedOutputs.has(study.attachmentId) || this.hasVisibleDependents(study.attachmentId); }
+
+  private hasVisibleDependents(attachmentId: string) {
+    return this.hasVisibleDependentsInGraph(attachmentId, new Set());
+  }
+
+  private hasVisibleDependentsInGraph(attachmentId: string, visited: Set<string>): boolean {
+    if (this.demandedOutputs.has(attachmentId)) return true;
+    if (visited.has(attachmentId)) return false;
+    const next = new Set(visited); next.add(attachmentId);
+    return [...this.studies.values()].some(candidate => Object.values(candidate.numericInputs ?? {}).some(input => input.instanceId === attachmentId)
+      && (candidate.visible || this.hasVisibleDependentsInGraph(candidate.attachmentId, next)));
+  }
+
+  private orderedStudies() {
+    const ordered: StudyInstance[] = [], visiting = new Set<string>(), visited = new Set<string>();
+    const visit = (study: StudyInstance) => {
+      if (visited.has(study.attachmentId)) return;
+      if (visiting.has(study.attachmentId)) return;
+      visiting.add(study.attachmentId);
+      for (const input of Object.values(study.numericInputs ?? {})) {
+        const dependency = this.studies.get(input.instanceId);
+        if (dependency) visit(dependency);
+      }
+      visiting.delete(study.attachmentId); visited.add(study.attachmentId); ordered.push(study);
+    };
+    for (const study of this.studies.values()) visit(study);
+    return ordered;
+  }
+
+  private numericOutputsFor(study: StudyInstance, includeDependencyState = true): NumericOutputDescriptor[] {
+    const result = study.result;
+    if (!result?.program || !result.times || !result.values) return [];
+    const times = result.times, columns = result.values;
+    const contextRevision = this.contextGeneration;
+    const composable = supportsComposition(result.program, study.settings);
+    return result.program.outputs.plots.slice(0, 8).map(plot => {
+      const outputId = numericOutputId(study.attachmentId, plot.key);
+      const unit = outputUnitForPlot(study.scriptId, plot, result.program!, study.settings, this.series);
+      const scaleId = study.plotScaleIds?.[plot.key] ?? numericOutputScaleId(study.paneId ?? `legacy:${study.attachmentId}`, outputId, unit);
+      return {
+        kind: 'indicator-output', version: 1, instanceId: study.attachmentId, outputId, plotKey: plot.key,
+        schemaId: numericOutputSchemaId(plot.key, unit), domain: 'chart-candles-v1', contextId: study.resultContextId, unit, scaleId,
+        engineInstanceId: study.api.id,
+        title: typeof plot.title === 'string' ? plot.title : plot.key, revision: study.resultRevision, contextRevision: study.resultContextRevision,
+        available: result.ok && study.resultContextId === numericOutputContextId(this.series)
+          && study.resultContextRevision === contextRevision && times.length === (columns[plot.key]?.length ?? -1)
+          && (!includeDependencyState || !this.dependencyError(study, new Set())),
+        times, values: columns[plot.key] ?? [], composable,
+      };
+    });
+  }
+
+  private assertNumericInputs(targetId: string, inputs: Record<string, NumericOutputRef>, generation: number) {
+    if (generation !== this.contextGeneration) throw new Error('Apply cancelled: the chart data context changed. Reapply to the current chart.');
+    const dependencies = new Map([...this.studies.values()].filter(study => study.attachmentId !== targetId)
+      .map(study => [study.attachmentId, Object.values(study.numericInputs ?? {}).map(input => input.instanceId)] as const));
+    for (const [key, ref] of Object.entries(inputs)) {
+      if (!isNumericOutputRef(ref)) throw new Error(`Input ${key} is not a valid numeric output reference.`);
+      const source = this.studies.get(ref.instanceId);
+      if (!source) throw new Error(`Input ${key} source ${ref.instanceId} is unavailable. Choose an attached study output.`);
+      if (wouldCreateCycle(targetId, ref.instanceId, dependencies)) throw new Error(`Input ${key} would create a study dependency cycle.`);
+      const output = this.numericOutputsFor(source, false).find(item => item.outputId === ref.outputId);
+      if (!output || !output.composable || ref.schemaId !== output.schemaId || ref.domain !== output.domain || ref.unit !== output.unit
+        || ref.scaleId !== output.scaleId || ref.contextId !== output.contextId
+        || output.contextId !== numericOutputContextId(this.series)) {
+        throw new Error(`Input ${key} no longer matches the selected output. Refresh the source list and choose it again.`);
+      }
+    }
+  }
+
+  private assertDependentOutputsCompatible(attachmentId: string, scriptId: string, result: ScriptResult, paneId: string,
+    plotScaleIds: Record<string, import('openalgo-charts').PriceScaleId>, settings: Record<string, unknown>) {
+    for (const pin of this.allPins()) {
+      if (pin.attachmentId === attachmentId) continue;
+      for (const ref of Object.values(pin.numericInputs ?? {})) {
+        if (ref.instanceId !== attachmentId) continue;
+        if (!result.program || !supportsComposition(result.program, settings)) throw new Error(`Cannot replace this study while ${pin.title} depends on an output that is no longer compatible with managed panes.`);
+        const plot = result.program?.outputs.plots.find(item => numericOutputId(attachmentId, item.key) === ref.outputId);
+        if (!plot) throw new Error(`Cannot replace this study while ${pin.title} depends on output ${ref.plotKey}. Reapply or remove ${pin.title} first.`);
+        const unit = outputUnitForPlot(scriptId, plot, result.program!, settings, this.series);
+        const outputScaleId = plotScaleIds[plot.key] ?? numericOutputScaleId(paneId, numericOutputId(attachmentId, plot.key), unit);
+        if (numericOutputSchemaId(plot.key, unit) !== ref.schemaId || unit !== ref.unit || outputScaleId !== ref.scaleId
+          || ref.contextId !== numericOutputContextId(this.series)) {
+          throw new Error(`Cannot replace this study because ${pin.title} depends on an output whose unit, scale or context would change.`);
+        }
+      }
+    }
+  }
+
+  private dependencyError(study: StudyInstance, visited = new Set<string>()): string | null {
+    if (visited.has(study.attachmentId)) return 'Study dependency cycle detected; outputs are unavailable.';
+    const nextVisited = new Set(visited); nextVisited.add(study.attachmentId);
+    for (const [key, ref] of Object.entries(study.numericInputs ?? {})) {
+      const provider = this.studies.get(ref.instanceId);
+      if (!provider) return `Input ${key} source is unavailable; outputs are unavailable until it is restored.`;
+      const output = this.numericOutputsFor(provider, false).find(item => item.outputId === ref.outputId);
+      if (!output || !output.composable || output.schemaId !== ref.schemaId || output.contextId !== ref.contextId) {
+        return `Input ${key} source is stale; outputs are unavailable until the study is reapplied.`;
+      }
+      const upstream = this.dependencyError(provider, nextVisited);
+      if (upstream) return upstream;
+    }
+    return null;
+  }
+
+  private pinForAttachment(attachmentId: string): StudyPin | undefined {
+    return this.studies.get(attachmentId) ?? this.pendingPins.find(pin => pin.attachmentId === attachmentId)
+      ?? this.restoreErrors.get(attachmentId);
+  }
+
+  private allPins() {
+    return [...this.pendingPins, ...this.studies.values(), ...this.restoreErrors.values()]
+      .filter((pin, index, all) => all.findIndex(other => other.attachmentId === pin.attachmentId) === index);
+  }
+
+  private syncRemovalPolicies() {
+    for (const study of this.studies.values()) study.api.setPolicy({ removable: !this.removeBlockReason(study.attachmentId), configurable: true });
   }
 
   private persist() { this.save(this.pins()); }
@@ -624,6 +850,69 @@ function enqueueApply<T>(task: () => Promise<T>): Promise<T> {
   const result = applyQueue.then(task);
   applyQueue = result.then(() => undefined, () => undefined);
   return result;
+}
+
+function strictNumericInputs(value: unknown): Record<string, NumericOutputRef> {
+  if (value === undefined) return {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Numeric study inputs must be a bounded map of output references.');
+  const entries = Object.entries(value);
+  const valid = validateNumericInputs(value);
+  if (entries.length > 8 || Object.keys(valid).length !== entries.length) throw new Error('One or more numeric study inputs are invalid. Refresh the source list and choose a current output.');
+  return valid;
+}
+
+function resolvePlotScaleIds(attachmentId: string, paneId: string, requested: unknown, scriptId: string,
+  result: ScriptResult, settings: Record<string, unknown>, series: Series) {
+  const chosen = validatePlotScaleIds(requested);
+  const plotScaleIds: Record<string, import('openalgo-charts').PriceScaleId> = {};
+  for (const plot of result.program?.outputs.plots.slice(0, 8) ?? []) {
+    const unit = outputUnitForPlot(scriptId, plot, result.program!, settings, series);
+    plotScaleIds[plot.key] = chosen[plot.key] ?? (paneId === PRICE_PANE_ID && unit === instrumentOf(series).quote
+      ? 'right' : numericOutputScaleId(paneId, numericOutputId(attachmentId, plot.key), unit));
+  }
+  return plotScaleIds;
+}
+
+function supportsComposition(program: NonNullable<ScriptResult['program']>, settings: Record<string, unknown>) {
+  if (program.meta.kind !== 'study' || resolveBooleanField(program.meta.overlay, program, settings, false)) return false;
+  const plots = program.outputs.plots;
+  if (!plots.length || plots.some(plot => plot.ohlc !== null || resolveBooleanField(plot.overlay, program, settings, false))) return false;
+  const outputs = program.outputs;
+  if (outputs.levels.length || outputs.markers.length || outputs.tables.length || outputs.alerts.length || outputs.barColor || outputs.background) return false;
+  if (outputs.fills.some(fill => resolveBooleanField(fill.overlay, program, settings, false))) return false;
+  return true;
+}
+
+function resolveBooleanField(field: unknown, program: NonNullable<ScriptResult['program']>, settings: Record<string, unknown>, fallback: boolean): boolean {
+  if (typeof field === 'boolean') return field;
+  if (field === null || field === undefined) return fallback;
+  if (field && typeof field === 'object' && !Array.isArray(field) && typeof (field as { input?: unknown }).input === 'string') {
+    const key = (field as { input: string }).input;
+    const candidate = Object.hasOwn(settings, key) ? settings[key] : program.inputs.find(input => input.key === key)?.default[1];
+    return typeof candidate === 'boolean' ? candidate : fallback;
+  }
+  return fallback;
+}
+
+function rebaseNumericInputs(inputs: Record<string, NumericOutputRef> | undefined, contextId: string) {
+  if (!inputs) return undefined;
+  return Object.fromEntries(Object.entries(validateNumericInputs(inputs)).map(([key, ref]) => [key, { ...ref, contextId }]));
+}
+
+export function orderStudyPinsByDependencies(pins: readonly StudyPin[]) {
+  const byId = new Map(pins.map(pin => [pin.attachmentId, pin]));
+  const ordered: StudyPin[] = [], visited = new Set<string>(), visiting = new Set<string>();
+  const visit = (pin: StudyPin) => {
+    if (visited.has(pin.attachmentId) || visiting.has(pin.attachmentId)) return;
+    visiting.add(pin.attachmentId);
+    for (const ref of Object.values(pin.numericInputs ?? {})) {
+      const dependency = byId.get(ref.instanceId);
+      if (dependency) visit(dependency);
+    }
+    visiting.delete(pin.attachmentId); visited.add(pin.attachmentId); ordered.push(pin);
+  };
+  pins.forEach(visit);
+  return ordered;
 }
 
 function reserveSlot() {
@@ -643,6 +932,9 @@ function pinOf(study: StudyPin): StudyPin {
     attachmentId: study.attachmentId, scriptId: study.scriptId, revisionId: study.revisionId,
     title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
     ...(study.placement ? { placement: study.placement } : {}),
+    ...(study.paneId ? { paneId: study.paneId } : {}),
+    ...(study.numericInputs ? { numericInputs: { ...study.numericInputs } } : {}),
+    ...(study.plotScaleIds ? { plotScaleIds: { ...study.plotScaleIds } } : {}),
   };
 }
 
@@ -661,7 +953,10 @@ export function validStudyPins(value: unknown): StudyPin[] {
       if (/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(key)
         && (typeof setting === 'string' && setting.length <= 128 || typeof setting === 'number' && Number.isFinite(setting) || typeof setting === 'boolean')) settings[key] = setting;
     }
-    pins.push({ ...pin, settings });
+    const paneId = typeof pin.paneId === 'string' && pin.paneId.length > 0 && pin.paneId.length <= 120 ? pin.paneId : undefined;
+    const numericInputs = pin.numericInputs && typeof pin.numericInputs === 'object' && !Array.isArray(pin.numericInputs) ? validateNumericInputs(pin.numericInputs) : undefined;
+    const plotScaleIds = pin.plotScaleIds && typeof pin.plotScaleIds === 'object' && !Array.isArray(pin.plotScaleIds) ? validatePlotScaleIds(pin.plotScaleIds) : undefined;
+    pins.push({ ...pin, settings, ...(paneId ? { paneId } : {}), ...(numericInputs ? { numericInputs } : {}), ...(plotScaleIds ? { plotScaleIds } : {}) });
   }
   return pins;
 }

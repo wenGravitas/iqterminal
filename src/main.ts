@@ -53,12 +53,16 @@ function depthMatrixCount() { return dock.panels.filter(panel => panel.view.cont
 const save = () => {
   if (restoring || disposed) return;
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    saveTimer = undefined;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 5, layout: dock.toJSON() })); }
-    catch { document.querySelector('#venue-states')!.textContent = 'Layout storage unavailable'; }
-  }, 250);
+  saveTimer = setTimeout(flushLayoutSave, 250);
 };
+
+function flushLayoutSave() {
+  if (!saveTimer || restoring || disposed) return;
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 5, layout: dock.toJSON() })); }
+  catch { document.querySelector('#venue-states')!.textContent = 'Layout storage unavailable'; }
+}
 
 function addChart(series: Series = { venue: 'binance', market: 'perpetual', interval: '1m' }) {
   if (chartCount() >= PANEL_BUDGET) return;
@@ -111,7 +115,6 @@ function openEditor(targetChartId: string, attachmentId?: string) {
 function defaults() {
   dock.clear();
   addChart({ venue: 'binance', market: 'perpetual', interval: '1m' });
-  addChart({ venue: 'hyperliquid', market: 'perpetual', interval: '1m' });
 }
 
 dock = createDockview(root, {
@@ -205,7 +208,7 @@ let perf: PerformanceObserver | undefined;
 if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
-    dock, addChart, addTicker, addLiquidationTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
+    dock, dispose, addChart, addTicker, addLiquidationTicker, openWatches, tickers, notifications, openEditor, feed, panels, library, fixture,
     marketPulse,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; },
@@ -215,6 +218,9 @@ if (diagnosticsEnabled) {
 
 function dispose() {
   if (disposed) return;
+  // HMR also tears down the app, without necessarily firing pagehide first.
+  // Flush while Dockview still owns the user's panels and parameters.
+  flushLayoutSave();
   disposed = true;
   clearTimeout(saveTimer);
   clearInterval(timer);
@@ -230,9 +236,7 @@ function dispose() {
 
 if (import.meta.hot) import.meta.hot.dispose(dispose);
 window.addEventListener('pagehide', event => {
-  if (saveTimer) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 5, layout: dock.toJSON() })); } catch { /* storage may be unavailable */ }
-  }
+  flushLayoutSave();
   if (!event.persisted) dispose();
 }, { signal: abort.signal });
 
