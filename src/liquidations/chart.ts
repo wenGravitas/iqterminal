@@ -3,6 +3,16 @@ import type {LiquidationBar} from './engine';
 import type {LiquidationEvent,LiquidationCoverage,LiquidationVenue} from './model';
 import type {LiquidationSettings} from './settings';
 import {liquidationColour} from './colors';
+import {liquidationElapsedRange,type LiquidationTimeRange} from './coverage';
+type TimeRange=LiquidationTimeRange;
+/** Missing intervals stop at the known evaluation horizon, never in the future. */
+export function liquidationMissingCoverage(range:TimeRange,coverage:LiquidationCoverage|undefined,venues:readonly LiquidationVenue[],now=Date.now()):TimeRange[]{
+ const visible=liquidationElapsedRange(range,now),missing:TimeRange[]=[];
+ if(!visible)return missing;
+ const add=(from:number,to:number)=>{const end=Math.min(to,visible.to);if(from<end)missing.push({from,to:end});};
+ for(const venue of venues){const source=coverage?.sources.find(s=>s.venue===venue);if(!source){add(visible.from,visible.to);continue;}if(visible.from<source.observedFrom)add(visible.from,Math.min(visible.to,source.observedFrom));if(visible.to>source.verifiedThrough)add(Math.max(visible.from,source.verifiedThrough),visible.to);for(const gap of source.gaps)if(gap.from<visible.to&&gap.to>visible.from)add(Math.max(gap.from,visible.from),Math.min(gap.to,visible.to));}
+ return missing;
+}
 export class LiquidationHistogram implements IPrimitive {
  private host?:PrimitiveHost;coverage?:LiquidationCoverage;venues:LiquidationVenue[]=[];bars:LiquidationBar[]=[];intervalMs=60000;draws=0;painted=0;lastDrawMs=0;
  constructor(private range:()=>{from:number;to:number}){}
@@ -10,8 +20,7 @@ export class LiquidationHistogram implements IPrimitive {
  update(bars:LiquidationBar[],intervalMs:number){this.bars=bars;this.intervalMs=intervalMs;this.host?.requestUpdate();}
  autoscaleInfo(){const range=this.range();let min=0,max=0;for(const b of this.bars)if(b.time+this.intervalMs>=range.from&&b.time<=range.to){min=Math.min(min,-b.longs.bybit-b.longs.binance);max=Math.max(max,b.shorts.bybit+b.shorts.binance);}const extent=Math.max(Math.abs(min),Math.abs(max),1);return {min:-extent,max:extent};}
  draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){const started=performance.now();this.draws++;this.painted=0;const range=this.range(),scale=rc.priceScale;ctx.save();ctx.setTransform(rc.dpr,0,0,rc.dpr,0,0);ctx.beginPath();ctx.rect(0,0,rc.plotWidth,rc.plotHeight);ctx.clip();
-  const missing:{from:number;to:number}[]=[];
-  for(const venue of this.venues){const source=this.coverage?.sources.find(s=>s.venue===venue);if(!source){missing.push(range);continue;}if(range.from<source.observedFrom)missing.push({from:range.from,to:Math.min(range.to,source.observedFrom)});if(range.to>source.verifiedThrough)missing.push({from:Math.max(range.from,source.verifiedThrough),to:range.to});for(const gap of source.gaps)if(gap.from<range.to&&gap.to>range.from)missing.push({from:Math.max(gap.from,range.from),to:Math.min(gap.to,range.to)});}
+  const missing=liquidationMissingCoverage(range,this.coverage,this.venues);
   const merged:typeof missing=[];for(const gap of missing.sort((a,b)=>a.from-b.from)){const last=merged.at(-1);if(last&&gap.from<=last.to)last.to=Math.max(last.to,gap.to);else merged.push({...gap});}
   ctx.fillStyle=rc.theme.axisText;ctx.globalAlpha=.06;for(const gap of merged){const x1=rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(gap.from/1000)),x2=rc.timeScale.indexToX(rc.dataLayer.timeToIndexFloat(gap.to/1000));if(Number.isFinite(x1+x2))ctx.fillRect(x1,0,x2-x1,rc.plotHeight);}
   const zero=scale.priceToY(0);ctx.strokeStyle=rc.theme.axisText;ctx.globalAlpha=.3;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(0,zero);ctx.lineTo(rc.plotWidth,zero);ctx.stroke();ctx.setLineDash([]);

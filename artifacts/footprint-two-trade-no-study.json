@@ -13,8 +13,8 @@
     "rowSize": 1
   },
   "nativeRange": {
-    "min": 82979.6875,
-    "max": 83020.3125
+    "min": 82980.1875,
+    "max": 83020.8125
   },
   "supportOHLC": {
     "open": 83000.1,
@@ -23,10 +23,10 @@
     "close": 83000.2
   },
   "coordinate": {
-    "x": 511,
+    "x": 120.12,
     "y": 325,
     "stage": {
-      "width": 671,
+      "width": 339,
       "height": 670
     },
     "canvasLayersCovering": 2
@@ -39,15 +39,15 @@
   "cellLabels": [
     {
       "value": "0.143",
-      "font": "9px ui-monospace, SFMono-Regular, Menlo, monospace",
-      "x": 498.05,
-      "y": 324.5,
+      "font": "600 10px ui-monospace, SFMono-Regular, Menlo, Consolas, \"Liberation Mono\", monospace",
+      "x": 122,
+      "y": 325,
       "align": "center",
-      "width": 27.000198364257812,
-      "fillStyle": "#f8f9f9",
+      "width": 30.0048828125,
+      "fillStyle": "#000000",
       "absolute": {
-        "x": 503.05,
-        "y": 387.5
+        "x": 179,
+        "y": 388
       },
       "row": {
         "top": 379.99999999999994,
@@ -57,25 +57,25 @@
       "column": "bid",
       "inNativeRow": true,
       "inPlot": true,
-      "exactColorGlyphPixels": 5,
+      "exactColorGlyphPixels": 39,
       "canvas": {
         "top": 63,
-        "left": 5,
-        "width": 671,
+        "left": 57,
+        "width": 339,
         "height": 670
       }
     },
     {
       "value": "0.147",
-      "font": "9px ui-monospace, SFMono-Regular, Menlo, monospace",
-      "x": 532.95,
-      "y": 324.5,
+      "font": "600 10px ui-monospace, SFMono-Regular, Menlo, Consolas, \"Liberation Mono\", monospace",
+      "x": 172,
+      "y": 325,
       "align": "center",
-      "width": 27.000198364257812,
+      "width": 30.0048828125,
       "fillStyle": "#282f3a",
       "absolute": {
-        "x": 537.95,
-        "y": 387.5
+        "x": 229,
+        "y": 388
       },
       "row": {
         "top": 379.99999999999994,
@@ -85,71 +85,14 @@
       "column": "ask",
       "inNativeRow": true,
       "inPlot": true,
-      "exactColorGlyphPixels": 6,
+      "exactColorGlyphPixels": 41,
       "canvas": {
         "top": 63,
-        "left": 5,
-        "width": 671,
+        "left": 57,
+        "width": 339,
         "height": 670
       }
     }
   ],
-  "otherMatchingCanvasLabels": [
-    {
-      "value": "0.143",
-      "font": "8.5px ui-monospace, SFMono-Regular, Menlo, monospace",
-      "x": 511,
-      "y": 612.5,
-      "align": "center",
-      "width": 25.500335693359375,
-      "fillStyle": "#485567",
-      "absolute": {
-        "x": 516,
-        "y": 675.5
-      },
-      "row": {
-        "top": 379.99999999999994,
-        "bottom": 396.00000000000006,
-        "center": 388
-      },
-      "column": "center",
-      "inNativeRow": false,
-      "inPlot": false,
-      "exactColorGlyphPixels": 2,
-      "canvas": {
-        "top": 63,
-        "left": 5,
-        "width": 671,
-        "height": 670
-      }
-    },
-    {
-      "value": "0.147",
-      "font": "8.5px ui-monospace, SFMono-Regular, Menlo, monospace",
-      "x": 511,
-      "y": 627.5,
-      "align": "center",
-      "width": 25.500335693359375,
-      "fillStyle": "#485567",
-      "absolute": {
-        "x": 516,
-        "y": 690.5
-      },
-      "row": {
-        "top": 379.99999999999994,
-        "bottom": 396.00000000000006,
-        "center": 388
-      },
-      "column": "center",
-      "inNativeRow": false,
-      "inPlot": false,
-      "exactColorGlyphPixels": 4,
-      "canvas": {
-        "top": 63,
-        "left": 5,
-        "width": 671,
-        "height": 670
-      }
-    }
-  ]
+  "otherMatchingCanvasLabels": []
 }

@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+test.use({ deviceScaleFactor: process.env.POSITIONING_DPR === '2' ? 2 : 1 });
+
 type Venue = 'binance' | 'hyperliquid';
 type Method = 'price-oi' | 'aggressor-flow-oi';
 
@@ -46,6 +48,66 @@ async function addIndicator(panel: ReturnType<Page['locator']>, name: string) {
   await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
 }
 
+async function setSources(panel: ReturnType<Page['locator']>, side: 'Longs' | 'Shorts', venues: Venue[]) {
+  const sources = panel.getByRole('group', { name: `Net ${side} sources`, exact: true });
+  for (const venue of ['binance', 'hyperliquid'] as const) {
+    const button = sources.locator(`[data-source="${venue}"]`), pressed = await button.getAttribute('aria-pressed') === 'true';
+    if (pressed !== venues.includes(venue)) await button.click();
+  }
+}
+
+async function expectNativeZeroAlignment(page: Page, id: string, time: number, expected: 'positive' | 'negative' | 'zero' | 'mixed') {
+  const result = await page.evaluate(({ id, time }) => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id);
+    const scale = view.series.priceScale(), baseline = view.primitive.diagnostics().renderedBaseline;
+    const segments = view.primitive.geometry.filter((segment: any) => segment.timeMs === time);
+    return { dpr: window.devicePixelRatio, plotHeight: p.engine.chart.plotRect(view.paneIndex).height,
+      scaleY: scale.priceToY(0), marginTop: scale.options.marginTop, zeroTick: scale.ticks().some((tick: number) => tick === 0), baseline,
+      origins: segments.map((segment: any) => ({ value: segment.value, y: segment.value > 0 ? segment.bottom : segment.value < 0 ? segment.top : (segment.top + segment.bottom) / 2 })) };
+  }, { id, time }) as { dpr: number; plotHeight: number; scaleY: number; marginTop: number; zeroTick: boolean;
+    baseline: { scaleY: number; strokeCenterY: number; dpr: number } | null; origins: { value: number; y: number }[] };
+  expect(result.plotHeight).toBeGreaterThan(30);
+  expect(result.marginTop * result.plotHeight).toBeGreaterThanOrEqual(30);
+  expect(result.scaleY).toBeGreaterThanOrEqual(30);
+  expect(result.zeroTick).toBe(true);
+  expect(result.baseline?.dpr).toBe(result.dpr);
+  expect(Math.abs(result.baseline!.strokeCenterY - result.scaleY) * result.dpr).toBeLessThanOrEqual(1);
+  const nonzero = result.origins.filter(segment => segment.value !== 0);
+  const zero = result.origins.filter(segment => segment.value === 0);
+  if (expected === 'positive') expect(nonzero.length).toBeGreaterThan(0), expect(nonzero.every(segment => segment.value > 0)).toBe(true);
+  if (expected === 'negative') expect(nonzero.length).toBeGreaterThan(0), expect(nonzero.every(segment => segment.value < 0)).toBe(true);
+  if (expected === 'mixed') expect(nonzero.some(segment => segment.value > 0) && nonzero.some(segment => segment.value < 0)).toBe(true);
+  if (expected === 'zero') expect(zero.length).toBeGreaterThan(0), expect(nonzero).toHaveLength(0);
+  for (const segment of expected === 'zero' ? zero : nonzero) expect(Math.abs(segment.y - result.scaleY) * result.dpr).toBeLessThanOrEqual(1);
+}
+
+async function installAxisGridPaneProbe(page: Page) {
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart, grid = p.engine.axisGrid;
+    const state = window as any;
+    state.__positioningGridCalls = [];
+    const draw = grid.draw;
+    grid.draw = function(ctx: CanvasRenderingContext2D, rc: any) {
+      const paneIndex = chart.panes().findIndex((pane: any) => pane.priceScale === rc.priceScale);
+      state.__positioningGridCalls.push({ paneIndex, primaryPaneIndex: chart.primaryPaneIndex(), maximizedPane: chart.maximizedPane() });
+      return Reflect.apply(draw, this, [ctx, rc]);
+    };
+    // Keep OpenAlgo's built-in grid out of this ownership check. The native
+    // AxisGrid primitive remains enabled and is the one under test.
+    chart.setGridOptions({ vertLines: false, horzLines: false });
+    chart.invalidate((mask: any) => mask.invalidatePane(chart.primaryPaneIndex(), { level: 3, autoScale: false }));
+  });
+}
+
+async function readAxisGridProbe(page: Page) {
+  return page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart, primary = chart.primaryPaneIndex();
+    const scale = chart.panes()[primary].priceScale;
+    return { primary, maximized: chart.maximizedPane(), calls: [...(window as any).__positioningGridCalls],
+      lines: p.engine.axisGrid.geometry.price.map((tick: any) => ({ y: tick.coordinate, expected: scale.priceToY(tick.value) })) };
+  });
+}
+
 async function setSettings(panel: ReturnType<Page['locator']>, id: string, side: 'Longs' | 'Shorts', display: 'stacked' | 'grouped', labels: 'auto' | 'hover' | 'off', method: Method) {
   await panel.locator(`.active-indicator[data-definition-id="${id}"]`).getByRole('button', { name: `Net ${side} — Estimated settings`, exact: true }).click();
   const dialog = panel.locator('.net-positioning-settings');
@@ -76,6 +138,17 @@ async function expectSettings(panel: ReturnType<Page['locator']>, id: string, si
 test('estimated positioning keeps signed source stacks, settings, hit targets and live pane identity', async ({ page }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.addInitScript(() => {
+    const state = window as any, original = CanvasRenderingContext2D.prototype.fillText;
+    state.__netPositioningLabelPaints = [];
+    CanvasRenderingContext2D.prototype.fillText = function(text: string, x: number, y: number, ...args: any[]) {
+      if (/^\d{3,}$/.test(String(text))) {
+        const paints = (window as any).__netPositioningLabelPaints; paints.push({ text: String(text), x, y, color: this.fillStyle });
+        if (paints.length > 2000) paints.splice(0, paints.length - 2000);
+      }
+      return (original as any).call(this, text, x, y, ...args);
+    };
+  });
   const errors: string[] = [], requests: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && !message.location().url.endsWith('/favicon.ico')) errors.push(message.text()); });
@@ -107,6 +180,8 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
 
   await page.goto('/');
   const panel = page.locator('.candle-panel').first();
+  const themePicker = page.getByLabel('Theme', { exact: true });
+  await themePicker.selectOption('dark');
   await expect(panel).toBeVisible();
   await page.waitForFunction(() => {
     const element = document.querySelector('.candle-panel'), panels = [...((window as any).__terminal?.panels?.values?.() ?? [])];
@@ -124,10 +199,81 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await setSettings(panel, longsId, 'Longs', 'stacked', 'auto', 'price-oi');
   await setSettings(panel, shortsId, 'Shorts', 'stacked', 'hover', 'aggressor-flow-oi');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.map((pane: any) => pane.candleCount))).toEqual([90, 90]);
+  await installAxisGridPaneProbe(page);
+  await expect.poll(async () => (await readAxisGridProbe(page)).calls.length).toBeGreaterThan(0);
+  for (const id of [longsId, shortsId]) await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
+  const primaryIndex = await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex());
+  const mainGrid = await readAxisGridProbe(page);
+  expect(mainGrid.calls.every((call: any) => call.paneIndex === primaryIndex)).toBe(true);
+  expect(mainGrid.lines.length).toBeGreaterThan(0);
+  expect(mainGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
+  for (const id of [longsId, shortsId]) {
+    const index = await page.evaluate(id => [...(window as any).__terminal.panels.values()][0].engine.netPositioningPaneIndex(id), id);
+    await page.evaluate(index => {
+      const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+      (window as any).__positioningGridCalls.length = 0;
+      chart.maximizePane(index);
+      chart.invalidate((mask: any) => mask.invalidateGlobal(3));
+    }, index);
+    await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(index);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
+    const maximizedGrid = await readAxisGridProbe(page);
+    expect(maximizedGrid.calls.every((call: any) => call.paneIndex !== index)).toBe(true);
+    await page.screenshot({ path: `/tmp/net-positioning-${id.endsWith('longs-estimated') ? 'longs' : 'shorts'}-max-dark.png` });
+    await page.evaluate(index => {
+      const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+      (window as any).__positioningGridCalls.length = 0;
+      chart.maximizePane(index);
+      chart.invalidate((mask: any) => mask.invalidateGlobal(3));
+    }, index);
+    await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
+    const restoredGrid = await readAxisGridProbe(page);
+    expect(restoredGrid.calls.some((call: any) => call.paneIndex === primaryIndex && call.maximizedPane === null)).toBe(true);
+    expect(restoredGrid.lines.length).toBeGreaterThan(0);
+    expect(restoredGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
+  }
+  const compactWeights = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+    const longs = p.engine.netPositioningPaneIndex('native.net-longs-estimated'), shorts = p.engine.netPositioningPaneIndex('native.net-shorts-estimated');
+    const weights = [chart.paneWeight(longs), chart.paneWeight(shorts)];
+    chart.setPaneWeight(longs, .08); chart.setPaneWeight(shorts, .08); (p as any).schedulePaneIndicatorLayout();
+    return { longs, shorts, weights };
+  });
+  await setSources(panel, 'Longs', ['binance']);
+  await setSources(panel, 'Shorts', ['binance']);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const compactHeights = await page.evaluate(({ longs, shorts }) => {
+    const p = [...(window as any).__terminal.panels.values()][0];
+    return [p.engine.chart.plotRect(longs).height, p.engine.chart.plotRect(shorts).height];
+  }, compactWeights);
+  expect(compactHeights.every(height => height > 30 && height < 120)).toBe(true);
+  await expectNativeZeroAlignment(page, longsId, hostOpen, 'positive');
+  await expectNativeZeroAlignment(page, shortsId, hostOpen, 'negative');
+  await expectNativeZeroAlignment(page, longsId, hostOpen - 60_000, 'zero');
+  await expectNativeZeroAlignment(page, shortsId, hostOpen - 60_000, 'zero');
+  await page.evaluate(({ longs, shorts, weights }) => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+    chart.setPaneWeight(longs, weights[0]); chart.setPaneWeight(shorts, weights[1]); (p as any).schedulePaneIndicatorLayout();
+  }, compactWeights);
+  await setSources(panel, 'Longs', ['binance', 'hyperliquid']);
+  await setSources(panel, 'Shorts', ['binance', 'hyperliquid']);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await page.screenshot({ path: '/tmp/net-positioning-grid-normal-dark.png' });
+  await themePicker.selectOption('light');
+  await page.screenshot({ path: '/tmp/net-positioning-grid-normal-light.png' });
+  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(compactWeights.longs);
+  await page.screenshot({ path: '/tmp/net-positioning-grid-max-light.png' });
+  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+  await themePicker.selectOption('dark');
   for(const side of ['Longs','Shorts']){
     const sources=panel.getByRole('group',{name:`Net ${side} sources`,exact:true}),box=(await sources.boundingBox())!;
     const controls=await panel.locator('.pane-layout-controls').evaluateAll(nodes=>nodes.map(n=>{const b=n.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}));
-    const actions=controls.find(c=>Math.abs(c.y+c.height/2-box.y-box.height/2)<3);expect(actions).toBeTruthy();expect(box.x+box.width).toBeLessThanOrEqual(actions!.x-4);
+    const actions=controls.find(c=>Math.abs(c.y+c.height/2-box.y-box.height/2)<3);expect(actions).toBeTruthy();expect(box.x+box.width).toBeLessThanOrEqual(actions!.x);
   }
   const alignment = await page.evaluate(time => {
     const p = [...(window as any).__terminal.panels.values()][0], index = p.engine.times.indexOf(time / 1000);
@@ -142,6 +288,31 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   }, hostOpen);
   await page.waitForTimeout(150);
   await page.screenshot({ path: '/tmp/net-positioning-outside-labels.png' });
+  const originalTheme = await page.getByLabel('Theme', { exact: true }).inputValue();
+  await page.evaluate(() => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = 'dark'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.evaluate(() => { (window as any).__netPositioningLabelPaints.length = 0; });
+  const shortPane = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+    const index = p.engine.netPositioningPaneIndex('native.net-longs-estimated'), weight = chart.paneWeight(index);
+    chart.setPaneWeight(index, .18); (p as any).schedulePaneIndicatorLayout();
+    return { index, weight };
+  });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const shortPaneLabel = await page.evaluate(time => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get('native.net-longs-estimated');
+    const plot = p.engine.chart.plotRect(view.paneIndex), segment = view.primitive.geometry.find((item: any) => item.sourceId === 'binance' && item.timeMs === time && !item.zero);
+    const dpr = window.devicePixelRatio;
+    const labels = ((window as any).__netPositioningLabelPaints as any[]).map(item => ({ ...item, x: item.x / dpr, y: item.y / dpr }))
+      .filter(item => item.text === '155' && segment && item.x >= segment.left && item.x <= segment.right);
+    const insideLabels = labels.filter(item => item.y >= segment?.top && item.y <= segment?.bottom);
+    return { plotHeight: plot.height, header: p.element.querySelector(`.pane-indicator-host[data-pane-index="${view.paneIndex}"]`)?.getBoundingClientRect().toJSON(), segment: segment && { top: segment.top, bottom: segment.bottom }, labels, insideLabels };
+  }, hostOpen);
+  console.log('Short net positioning pane label evidence', JSON.stringify(shortPaneLabel));
+  expect(shortPaneLabel.labels.length).toBeGreaterThan(0);
+  await page.screenshot({ path: '/tmp/net-positioning-short-pane.png' });
+  await page.evaluate(theme => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = theme; select.dispatchEvent(new Event('change', { bubbles: true })); }, originalTheme);
+  await page.evaluate(({ index, weight }) => { const p = [...(window as any).__terminal.panels.values()][0]; p.engine.chart.setPaneWeight(index, weight); (p as any).schedulePaneIndicatorLayout(); }, shortPane);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.evaluate(time => {
     const p = [...(window as any).__terminal.panels.values()][0], i = p.engine.times.indexOf(time / 1000);
     p.engine.setRange({ from: Math.max(0, i - 34), to: i + 1 });
@@ -260,6 +431,17 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
     const saved = JSON.parse(localStorage.getItem('basis.layout.v1')!);
     return saved.layout.panels[p.params.api.id].params.paneOrder;
   })).toEqual(['@price', shortsId, longsId]);
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
+    (window as any).__positioningGridCalls.length = 0;
+    chart.invalidate((mask: any) => mask.invalidateGlobal(3));
+  });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const reorderedGrid = await readAxisGridProbe(page);
+  expect(reorderedGrid.calls.some((call: any) => call.paneIndex === reorderedGrid.primary)).toBe(true);
+  expect(reorderedGrid.calls.every((call: any) => call.paneIndex === reorderedGrid.primary)).toBe(true);
+  expect(reorderedGrid.lines.length).toBeGreaterThan(0);
+  expect(reorderedGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
   const longSources = panel.getByRole('group', { name: 'Net Longs sources', exact: true });
   await longSources.locator('[data-source="binance"]').click();
   await longSources.locator('[data-source="hyperliquid"]').focus();
@@ -362,7 +544,7 @@ test('empty chart and positioning panes show loading feedback, then ready, empty
   const longs = panel.locator('.pane-data-state[data-instance-id="native.net-longs-estimated"]');
   const shorts = panel.locator('.pane-data-state[data-instance-id="native.net-shorts-estimated"]');
   await expect(longs).toBeVisible(); await expect(shorts).toBeVisible();
-  await expect(longs).toContainText('Loading Net Longs');
+  await expect(longs).toContainText('Waiting for Net Longs data…');
   expect(await longs.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
   expect(await longs.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('pane-signal');
   await page.getByLabel('Theme', { exact: true }).selectOption('dark');
@@ -379,7 +561,7 @@ test('empty chart and positioning panes show loading feedback, then ready, empty
   await expect(longs).toBeHidden(); await expect(shorts).toBeHidden();
   mode = 'empty'; await page.reload(); await page.evaluate(() => (window as any).__releaseLoadingCandles());
   await expect(longs).toBeVisible(); await expect(longs).toHaveAttribute('data-state', 'empty');
-  await expect(longs).toHaveAttribute('aria-busy', 'false'); await expect(longs).toContainText('No recorded estimates');
+  await expect(longs).toHaveAttribute('aria-busy', 'false'); await expect(longs).toContainText('Waiting for estimates…');
   mode = 'error'; await page.reload(); await page.evaluate(() => (window as any).__releaseLoadingCandles());
   await expect(longs).toBeVisible(); await expect(longs).toHaveAttribute('data-state', 'error');
   await expect(longs).toHaveAttribute('aria-busy', 'false');

@@ -1,0 +1,271 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/cvd.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-indicator-info-cvd-final.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "cvd.spec.ts",
+      "file": "cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120333,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                        "column": 88,
+                        "line": 90
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').getByRole('button', { name: 'Select included CVD sources and aggregations' })\u001b[22m\n\n\n  88 |   expect((await state(page)).settings.groups[0].name).toBe('My flow basket');\n  89 |   await page.setViewportSize({width:720,height:860});\n> 90 |   await pane.getByRole('button',{name:'Select included CVD sources and aggregations'}).click();\n     |                                                                                        ^\n  91 |   await picker.getByRole('checkbox',{name:'Binance · BTCUSDT USD-M Perp',exact:true}).uncheck();\n  92 |   await picker.getByRole('button',{name:'Apply',exact:true}).click();\n  93 |   await expect(pane.locator('.cvd-status')).toHaveText('Choose at least one exchange.');\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:90:88"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:42:28.806Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/cvd-CVD-pane-reuses-source-27c75-ed-group-copies-and-anchors/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0bb6376537512963581a-5c87ff76ee4330011609",
+          "file": "cvd.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "CVD global currency, crosshair, incomplete coverage and corrected history remain honest",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18347,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected substring: \u001b[32m\"Source stale\"\u001b[39m\nReceived string:    \u001b[31m\"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected substring: \u001b[32m\"Source stale\"\u001b[39m\nReceived string:    \u001b[31m\"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:147:46",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                      "column": 46,
+                      "line": 147
+                    },
+                    "snippet": "  145 |   await expect(pane.locator('.cvd-status')).toHaveText('Some exchange data is delayed.');\n  146 |   await page.mouse.move((chartBox?.x??box.x)+x,box.y+box.height*.7);\n> 147 |   await expect(pane.locator('.cvd-tooltip')).toContainText('Source stale');\n      |                                              ^\n  148 |   await expect(pane.locator('.cvd-tooltip')).toContainText('available since');\n  149 |   await page.evaluate(()=>{const terminal=(window as any).__terminal,day=Math.floor(Date.now()/86400000)*86400000;terminal.feed.send({type:'cvd-fixture',source:'binance:spot',payload:{version:1,source:'binance:spot:BTCUSDT',stepMs:60000,from:day,to:day+180000,revision:102,snapshot:false,watermark:501,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:day,to:day+180000,gaps:[{from:day+60000,to:day+120000}]},status:'live',asOf:day+180000}});});\n  150 |   await expect(pane.locator('.cvd-status')).toHaveText('Some data is missing.');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                        "column": 46,
+                        "line": 147
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected substring: \u001b[32m\"Source stale\"\u001b[39m\nReceived string:    \u001b[31m\"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"30/10/2026, 03:02:00Total+11.9K USDTBN[S] BTCUSDT+5.96K USDTBN[P] BTCUSDT+5.96K USDTComplete through observed watermark\"\u001b[22m\n\n\n  145 |   await expect(pane.locator('.cvd-status')).toHaveText('Some exchange data is delayed.');\n  146 |   await page.mouse.move((chartBox?.x??box.x)+x,box.y+box.height*.7);\n> 147 |   await expect(pane.locator('.cvd-tooltip')).toContainText('Source stale');\n      |                                              ^\n  148 |   await expect(pane.locator('.cvd-tooltip')).toContainText('available since');\n  149 |   await page.evaluate(()=>{const terminal=(window as any).__terminal,day=Math.floor(Date.now()/86400000)*86400000;terminal.feed.send({type:'cvd-fixture',source:'binance:spot',payload:{version:1,source:'binance:spot:BTCUSDT',stepMs:60000,from:day,to:day+180000,revision:102,snapshot:false,watermark:501,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:day,to:day+180000,gaps:[{from:day+60000,to:day+120000}]},status:'live',asOf:day+180000}});});\n  150 |   await expect(pane.locator('.cvd-status')).toHaveText('Some data is missing.');\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:147:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:44:36.598Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/cvd-CVD-global-currency-cr-60c4f-ected-history-remain-honest/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                    "column": 46,
+                    "line": 147
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0bb6376537512963581a-4622d51e47c6122c357e",
+          "file": "cvd.spec.ts",
+          "line": 99,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T13:42:19.524Z",
+    "duration": 157267.514,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

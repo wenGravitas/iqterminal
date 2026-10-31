@@ -25,6 +25,8 @@ export interface ScriptResult {
   program?: CompiledProgram;
   times?: number[];
   values?: Record<string, (number | null)[]>;
+  /** Authoritative half-open output range changed by this result; absent legacy results mean full history. */
+  changedRange?: { from: number; to: number };
 }
 export interface ScriptContext { symbol: string; exchange: string; interval: string }
 
@@ -60,10 +62,14 @@ export class OpenScriptSession {
   private bars: ScriptBar[] = [];
   private settings: Record<string, unknown> = {};
   private context: ScriptContext = { symbol: 'BTCUSDT', exchange: 'Binance USD-M', interval: '1m' };
+  private lastOutputTimes?: number[];
+  private lastOutputValues?: Record<string, (number | null)[]>;
 
   constructor(private readonly compile: typeof compileStudy = compileStudy) {}
 
   start(generation: number, source: string, settings: Record<string, unknown>, bars: ScriptBar[], context: ScriptContext, cached?: CompiledProgramArtifact): ScriptResult {
+    this.lastOutputTimes = undefined;
+    this.lastOutputValues = undefined;
     if (source !== this.sourceText) {
       const cacheCandidate = isCompatibleCompiledProgram(cached, source) ? cached.program : undefined;
       const cachedIssue = cacheCandidate ? safelyValidateProgram(cacheCandidate) : null;
@@ -96,11 +102,12 @@ export class OpenScriptSession {
 
   patch(generation: number, changes: readonly { kind: 'append' | 'update'; bar: ScriptBar }[]): ScriptResult {
     if (!this.program || !this.engine) return { generation, ok: false, diagnostics: [fallbackDiagnostic()] };
+    let shifted = false;
     for (const change of changes) {
       const bar = hostBar(change.bar);
       if (change.kind === 'append') {
         this.bars.push(change.bar);
-        if (this.bars.length > MAX_SCRIPT_BARS) this.bars.shift();
+        if (this.bars.length > MAX_SCRIPT_BARS) { this.bars.shift(); shifted = true; }
         const result = this.engine.append(bar, { isConfirmed: change.bar.closed, isRealtime: true });
         if (result.diagnostic) return { generation, ok: false, diagnostics: [diagnostic(result.diagnostic)] };
       } else {
@@ -111,7 +118,14 @@ export class OpenScriptSession {
         if (result.diagnostic) return { generation, ok: false, diagnostics: [diagnostic(result.diagnostic)] };
       }
     }
-    return this.result(generation);
+    // The evaluator retains all appended rows, while this host exposes only a
+    // bounded sliding window. Rebuild the evaluator on the retained rows when
+    // that window shifts so the next result is aligned with `this.bars`.
+    if (shifted) return this.rebuild(generation);
+    // The evaluator can revise more than the candle passed to update() (for
+    // example, lookback functions can settle earlier plot values). Measure the
+    // actual normalized output delta in result()'s existing copy pass.
+    return this.result(generation, false, false);
   }
 
   get compiledProgram() { return this.program; }
@@ -133,9 +147,21 @@ export class OpenScriptSession {
     return this.result(generation, includeProgram);
   }
 
-  private result(generation: number, includeProgram = false): ScriptResult {
+  private result(generation: number, includeProgram = false, forceFullRange = true): ScriptResult {
     if (!this.program || !this.engine) return { generation, ok: false, diagnostics: [fallbackDiagnostic()] };
+    const previousTimes = this.lastOutputTimes;
+    const previousValues = this.lastOutputValues;
     const values: Record<string, (number | null)[]> = {};
+    let changedFrom = Number.MAX_SAFE_INTEGER, changedTo = 0;
+    const times = this.bars.map((bar, index) => {
+      if (previousTimes?.[index] !== bar.t) { changedFrom = Math.min(changedFrom, index); changedTo = Math.max(changedTo, index + 1); }
+      return bar.t;
+    });
+    if (previousTimes && previousTimes.length !== times.length) {
+      if (times.length < previousTimes.length) { changedFrom = 0; changedTo = times.length; }
+      else { changedFrom = Math.min(changedFrom, previousTimes.length); changedTo = Math.max(changedTo, times.length); }
+    }
+    if (!previousTimes) { changedFrom = 0; changedTo = times.length; }
     if (this.bars.length > MAX_SCRIPT_BARS || this.program.outputs.plots.length > MAX_SCRIPT_PLOTS) {
       return failure(generation, fallbackDiagnostic('The study result exceeded its bounded output size.'));
     }
@@ -147,11 +173,28 @@ export class OpenScriptSession {
       if (column.length !== this.bars.length || column.length > MAX_SCRIPT_BARS) {
         return failure(generation, fallbackDiagnostic('The study returned a misaligned or oversized plot.'));
       }
-      values[plot.key] = column.map(value => typeof value === 'number' && Number.isFinite(value) ? value : null);
+      const previous = previousValues?.[plot.key];
+      const normalized = new Array<(number | null)>(column.length);
+      for (let index = 0; index < column.length; index++) {
+        const value = column[index];
+        const current = typeof value === 'number' && Number.isFinite(value) ? value : null;
+        normalized[index] = current;
+        if (previous?.[index] !== current) { changedFrom = Math.min(changedFrom, index); changedTo = Math.max(changedTo, index + 1); }
+      }
+      if (previous && previous.length !== normalized.length) {
+        if (normalized.length < previous.length) { changedFrom = 0; changedTo = normalized.length; }
+        else { changedFrom = Math.min(changedFrom, previous.length); changedTo = Math.max(changedTo, normalized.length); }
+      }
+      values[plot.key] = normalized;
     }
+    const changedRange = forceFullRange || !previousValues
+      ? { from: 0, to: this.bars.length }
+      : { from: changedFrom === Number.MAX_SAFE_INTEGER ? this.bars.length : changedFrom, to: changedTo };
+    this.lastOutputTimes = times;
+    this.lastOutputValues = values;
     return {
       generation, ok: true, diagnostics: [], ...(includeProgram ? { program: this.program } : {}),
-      times: this.bars.map(bar => bar.t), values,
+      times, values, changedRange,
     };
   }
 }

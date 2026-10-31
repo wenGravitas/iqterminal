@@ -2,6 +2,8 @@
 
 Release 1 connects a script's declared numeric plot to a native SMA indicator and gives ordinary compatible studies stable, managed chart placement. The shipped workflow is the built-in Volume script feeding **SMA 20 · Volume**, with the pair in a lower pane or in a bounded band at the bottom of the price pane.
 
+This page records the original Release 1 scope and evidence. Release 2 later adds the specifically declared CVD and raw Open Interest outputs, shared Order Flow panes, and generic SMA-consumer recovery described in [Pane composition Release 2](pane-composition-release2.md). Test totals and captures below remain historical R1 evidence.
+
 This is local chart composition. The existing candle feed, script worker, OpenAlgo chart, and Dockview layout remain the owners of their existing data and lifecycle. It does not add another exchange connection or a new chart engine.
 
 ## Ownership
@@ -19,7 +21,7 @@ A provider must expose a current numeric plot for the same chart candle context,
 
 The built-in Volume histogram can feed the native SMA. The pair can move together to a managed lower pane or to the price pane's bottom band. The SMA can also move independently while retaining its input reference. The Move dialog makes moving the whole compatible group an explicit choice. The embedded height defaults to 20% and is bounded from 10% through 40%; the saved height is restored with the chart.
 
-The host rejects self references, dependency cycles, stale or missing outputs, mixed placements, unsupported special plots, and mismatched chart contexts. Such a reference remains inactive with a recoverable status; it does not fall back to candle close or another output. Native panes and special chart layers such as CVD, Net Longs/Shorts, Liquidations, Footprint Totals, Market Conditions, and Effort Result remain under their existing owners and are not merged into managed script panes.
+The host rejects self references, dependency cycles, stale or missing outputs, mixed placements, unsupported special plots, and mismatched chart contexts. Such a reference remains inactive with a recoverable status; it does not fall back to candle close or another output. Native panes and special chart layers retain their existing owners. Release 2 adds only the explicit CVD and raw Open Interest output contracts for native SMA consumption and managed pane placement; it does not convert these adapters into script studies or make arbitrary native plots composable.
 
 ## Calculation and lifecycle
 
@@ -59,4 +61,4 @@ Final local gates: `pnpm test` passes **659 tests across 86 files**, with **1 sk
 
 ## Release boundary
 
-Release 1 provides ordinary compatible script-output composition and the native SMA workflow. It does not deliver generic composition of special native indicators, mixed/special script overlays, multi-output drawing primitives, or a broader indicator scripting API. Those need their own source/placement contracts and verification before they can join managed groups.
+Release 1 provides ordinary compatible script-output composition and the native SMA workflow. At that release boundary it did not provide composition of special native outputs. Release 2 adds the narrowly declared CVD and raw Open Interest contracts; arbitrary native indicators, mixed/special script overlays, multi-output drawing primitives, and a broader indicator scripting API still require their own source/placement contracts and verification before joining managed groups.

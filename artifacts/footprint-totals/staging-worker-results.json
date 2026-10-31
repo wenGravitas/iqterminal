@@ -1,0 +1,172 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.footprint-staging.config.ts",
+      "tests/browser/footprint-totals-staging-worker.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.footprint-staging.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": []
+          },
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "deviceScaleFactor": 2,
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/footprint-totals/staging-worker-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_DATA_MODE=staging VITE_DIAGNOSTICS=1 pnpm dev --host 127.0.0.1 --port 4176 --strictPort",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "footprint-totals-staging-worker.spec.ts",
+      "file": "footprint-totals-staging-worker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "staging worker history warms delta flips, accepts corrections, and streams a live preview",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22943,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"worker-backed-staging-fixture-not-live-venue\",\"chartId\":\"chart-6e3b489c-6b41-471e-aeb8-984e339c5ffb\",\"nativeBootstrapCounts\":[{\"interval\":\"1m\",\"count\":1000},{\"interval\":\"5m\",\"count\":1000}],\"preparedChunks\":[{\"from\":1793370300000,\"to\":1793374200000,\"spanMs\":3900000},{\"from\":1793370300000,\"to\":1793374200000,\"spanMs\":3900000},{\"from\":1793355000000,\"to\":1793369400000,\"spanMs\":14400000},{\"from\":1793369400000,\"to\":1793370300000,\"spanMs\":900000},{\"from\":1793373000000,\"to\":1793374200000,\"spanMs\":1200000},{\"from\":1793357400000,\"to\":1793371800000,\"spanMs\":14400000},{\"from\":1793371800000,\"to\":1793373000000,\"spanMs\":1200000}],\"contextSpanMs\":19200000,\"currentTime\":1793374200,\"negativeTime\":1793373600,\"streamSubscriptions\":[{\"interval\":\"1m\",\"after\":0,\"footprint\":false,\"url\":\"ws://127.0.0.1:4176/market-data/v1/stream\"},{\"interval\":\"5m\",\"after\":0,\"footprint\":false,\"url\":\"ws://127.0.0.1:4176/market-data/v1/stream\"},{\"after\":100,\"footprint\":true,\"url\":\"ws://127.0.0.1:4176/market-data/v1/stream\"}],\"clientAcks\":[101],\"syntheticExecutions\":1,\"liveFlip\":{\"kind\":\"flip\",\"time\":1793374200,\"previousTime\":1793373900,\"direction\":\"positive\",\"previousDelta\":-40,\"currentDelta\":60,\"rawSwing\":100,\"lifecycle\":\"live\",\"strength\":0.4,\"strengthBand\":\"small\"},\"errors\":[]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T15:31:07.415Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "18a2463faf84c375b4d1-1457a8ccdbe3b93576af",
+          "file": "footprint-totals-staging-worker.spec.ts",
+          "line": 218,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T15:31:01.450Z",
+    "duration": 31706.508,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

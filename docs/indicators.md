@@ -103,6 +103,14 @@ mathematics, outcome rules, retention, replay route and measured limitations.
 
 `native.multi-venue-cvd` is an Order Flow singleton in a native lower pane. The worker's shared signed-execution service owns source history and calculation; its minute samples do not expand the host candle timeline. Venue/aggregation presentation and legend visibility are independent of source membership and never reconnect or remount the pane. Layouts retain settings and independent named group copies, not execution arrays. The BTC/USDT selector follows the existing global currency override. See [CVD controls, formulas, anchors and coverage](cvd.md).
 
+## Open Interest
+
+`native.raw-open-interest` projects observed BTC-denominated perpetual open-interest records from Binance, Hyperliquid and Bybit onto the existing candle timeline. It keeps source time, receipt time, epoch, units, quality and gap provenance. It does not estimate long/short activity or interpolate missing observations. The bounded read route is implemented but has not been deployed or live-verified; explicit browser fixtures are local deterministic evidence only. See [Pane composition Release 2](pane-composition-release2.md) for the data contract and release boundary.
+
+## Pane composition Release 2
+
+Release 2 allows native SMA to consume selected declared outputs from CVD and Open Interest, alongside compatible script outputs such as Volume. Compatible CVD, Open Interest, Volume and SMA members can share one managed pane with one header and separate scale roles. Data owners and native renderers remain independent. See [Release 2 ownership, persistence, verification and limits](pane-composition-release2.md); [Release 1 composition details](pane-composition-release1.md) remain historical for their shipped scope.
+
 ## Trade Bubbles
 
 `native.trade-bubbles` is an Order Flow chart overlay. Its worker service fans out existing Binance Spot and USD-M aggregate-trade consumers to chart-local filters and bounded snapshots. A chart ID scopes each consumer independently even when native indicator IDs match. Only Binance BTC/USDT price alignment is supported; unsupported quotes are reported and never converted implicitly. Hiding continues bounded collection, while removal releases that chart's consumer. See [Trade Bubbles source, lifecycle and performance limits](trade-bubbles.md).

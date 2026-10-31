@@ -1,0 +1,380 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/cvd.spec.ts",
+      "tests/browser/footer.spec.ts",
+      "tests/browser/open-interest-sma.spec.ts",
+      "tests/browser/liquidations.spec.ts",
+      "-g",
+      "CVD|chart footers|explicit raw BTC Open Interest|liquidation venue toggles"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-indicator-info-native-final.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "cvd.spec.ts",
+      "file": "cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27296,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:46:32.530Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bb6376537512963581a-5c87ff76ee4330011609",
+          "file": "cvd.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "CVD global currency, crosshair, incomplete coverage and corrected history remain honest",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18705,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:155:46",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                      "column": 46,
+                      "line": 155
+                    },
+                    "snippet": "  153 |   });\n  154 |   await page.mouse.move(0,0);await page.mouse.move(staleHover.x,staleHover.y,{steps:2});\n> 155 |   await expect(pane.locator('.cvd-tooltip')).toBeVisible();\n      |                                              ^\n  156 |   await expect(pane.locator('.cvd-tooltip')).toContainText('Source stale');\n  157 |   await expect(pane.locator('.cvd-tooltip')).toContainText('available since');\n  158 |   await page.evaluate(()=>{const terminal=(window as any).__terminal,day=Math.floor(Date.now()/86400000)*86400000;terminal.feed.send({type:'cvd-fixture',source:'binance:spot',payload:{version:1,source:'binance:spot:BTCUSDT',stepMs:60000,from:day,to:day+180000,revision:102,snapshot:false,watermark:501,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:day,to:day+180000,gaps:[{from:day+60000,to:day+120000}]},status:'live',asOf:day+180000}});});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                        "column": 46,
+                        "line": 155
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('[data-cvd=true]').locator('.cvd-tooltip')\u001b[22m\n\u001b[2m    13 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"cvd-tooltip net-positioning-tooltip\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  153 |   });\n  154 |   await page.mouse.move(0,0);await page.mouse.move(staleHover.x,staleHover.y,{steps:2});\n> 155 |   await expect(pane.locator('.cvd-tooltip')).toBeVisible();\n      |                                              ^\n  156 |   await expect(pane.locator('.cvd-tooltip')).toContainText('Source stale');\n  157 |   await expect(pane.locator('.cvd-tooltip')).toContainText('available since');\n  158 |   await page.evaluate(()=>{const terminal=(window as any).__terminal,day=Math.floor(Date.now()/86400000)*86400000;terminal.feed.send({type:'cvd-fixture',source:'binance:spot',payload:{version:1,source:'binance:spot:BTCUSDT',stepMs:60000,from:day,to:day+180000,revision:102,snapshot:false,watermark:501,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:day,to:day+180000,gaps:[{from:day+60000,to:day+120000}]},status:'live',asOf:day+180000}});});\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:155:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:47:01.392Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/cvd-CVD-global-currency-cr-60c4f-ected-history-remain-honest/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                    "column": 46,
+                    "line": 155
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0bb6376537512963581a-4622d51e47c6122c357e",
+          "file": "cvd.spec.ts",
+          "line": 101,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footer.spec.ts",
+      "file": "footer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "chart footers keep liquidity, connection, time axis and footprint stats separate after resize",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12949,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:47:22.170Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c5f4c4f9f8c9928dd12-d4a61d86e2bc1a65b654",
+          "file": "footer.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "liquidations.spec.ts",
+      "file": "liquidations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "liquidation venue toggles filter the pane, survive reload, and stay accessible in compact headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14690,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:47:36.623Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-1f3316f42d3e9e6cd3dc",
+          "file": "liquidations.spec.ts",
+          "line": 106,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "open-interest-sma.spec.ts",
+      "file": "open-interest-sma.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9554,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:47:51.456Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0459243dea3507bf7eef-daca347b873a493d1f83",
+          "file": "open-interest-sma.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T13:46:24.948Z",
+    "duration": 96741.2,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

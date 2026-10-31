@@ -141,8 +141,8 @@ test('Order Walls distinguishes pending replay from an empty finished history',a
     const from=Date.UTC(2026,9,27,12),to=from+4*3600000;
     (window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'loading',provisional:true,replay:{from,to,through:from+3600000}}});
   });
-  await expect(panel.locator('.order-walls-notice')).toContainText('History replay 25% · loaded through 13:00:00 UTC · remaining history pending');
-  await expect(panel.locator('.order-walls-notice')).toContainText('current wall provisional');
+  await expect(panel.locator('.order-walls-notice')).toHaveText('Loading earlier order history. Current order sizes are still updating.');
+  await expect(panel.locator('.order-walls-notice')).not.toContainText(/replay|loaded through|remaining history pending/i);
   await page.screenshot({path:'/tmp/iqterminal-order-walls-replay-progress.png'});
   await page.evaluate(()=>(window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'live',provisional:false}}));
   await expect(panel.locator('.order-walls-notice')).not.toContainText('History replay');

@@ -1,0 +1,271 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/cvd.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-indicator-info-cvd.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "cvd.spec.ts",
+      "file": "cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 13246,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m626.53125\u001b[39m\nReceived:    \u001b[31m1281\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m626.53125\u001b[39m\nReceived:    \u001b[31m1281\u001b[39m\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:28:211",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                      "column": 211,
+                      "line": 28
+                    },
+                    "snippet": "  26 |   expect(Math.abs(toolbarBox.y-legendBox.y)).toBeLessThan(1);expect(toolbarBox.x+toolbarBox.width).toBeLessThan(dividerBox.x);expect(dividerBox.x).toBeLessThan(legendBox.x);\n  27 |   const optionsBox=(await pane.locator('.cvd-controls').boundingBox())!,actionsBox=(await panel.locator(`.pane-layout-controls[data-pane-index=\"${initial.paneIndex}\"]`).boundingBox())!,titleBox=(await panel.locator(`.pane-indicator-host[data-pane-index=\"${initial.paneIndex}\"]`).boundingBox())!;\n> 28 |   expect(Math.abs(optionsBox.y+optionsBox.height/2-actionsBox.y-actionsBox.height/2)).toBeLessThan(3);expect(optionsBox.x+optionsBox.width).toBeLessThanOrEqual(actionsBox.x-4);expect(titleBox.x+titleBox.width).toBeLessThanOrEqual(optionsBox.x-4);\n     |                                                                                                                                                                                                                   ^\n  29 |   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo(),scale=v.anchor.priceScale(),plot=v.chart.plotRect(v.paneIndex());return Math.abs(scale.priceToY(r.min)-scale.priceToY(r.max))/plot.height;})).toBeGreaterThan(.45);\n  30 |   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo();return v.anchor.priceScale().priceToY(r.max)-v.controlRow.offsetTop-v.controlRow.offsetHeight;})).toBeGreaterThan(5);\n  31 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                        "column": 211,
+                        "line": 28
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m626.53125\u001b[39m\nReceived:    \u001b[31m1281\u001b[39m\n\n  26 |   expect(Math.abs(toolbarBox.y-legendBox.y)).toBeLessThan(1);expect(toolbarBox.x+toolbarBox.width).toBeLessThan(dividerBox.x);expect(dividerBox.x).toBeLessThan(legendBox.x);\n  27 |   const optionsBox=(await pane.locator('.cvd-controls').boundingBox())!,actionsBox=(await panel.locator(`.pane-layout-controls[data-pane-index=\"${initial.paneIndex}\"]`).boundingBox())!,titleBox=(await panel.locator(`.pane-indicator-host[data-pane-index=\"${initial.paneIndex}\"]`).boundingBox())!;\n> 28 |   expect(Math.abs(optionsBox.y+optionsBox.height/2-actionsBox.y-actionsBox.height/2)).toBeLessThan(3);expect(optionsBox.x+optionsBox.width).toBeLessThanOrEqual(actionsBox.x-4);expect(titleBox.x+titleBox.width).toBeLessThanOrEqual(optionsBox.x-4);\n     |                                                                                                                                                                                                                   ^\n  29 |   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo(),scale=v.anchor.priceScale(),plot=v.chart.plotRect(v.paneIndex());return Math.abs(scale.priceToY(r.min)-scale.priceToY(r.max))/plot.height;})).toBeGreaterThan(.45);\n  30 |   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo();return v.anchor.priceScale().priceToY(r.max)-v.controlRow.offsetTop-v.controlRow.offsetHeight;})).toBeGreaterThan(5);\n  31 |\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:28:211"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:32:56.999Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/cvd-CVD-pane-reuses-source-27c75-ed-group-copies-and-anchors/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                    "column": 211,
+                    "line": 28
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0bb6376537512963581a-5c87ff76ee4330011609",
+          "file": "cvd.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "CVD global currency, crosshair, incomplete coverage and corrected history remain honest",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 90627,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts",
+                        "column": 80,
+                        "line": 107
+                      },
+                      "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --enable-webgl --use-angle=swiftshader --enable-unsafe-swiftshader --user-data-dir=/tmp/playwright_chromiumdev_profile-YYOgbV --remote-debugging-pipe --no-startup-window\n<launched> pid=286498\n[pid=286498][err] [286498:286846:1030/163339.931157:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=286498][err] [286498:286846:1030/163339.933898:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=286498][err] [286498:286846:1030/163339.952673:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: PHONE_REGISTRATION_ERROR\n[pid=286498][err] [286498:286846:1030/163407.304092:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\n[pid=286498] <gracefully close start>\nCall log:\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Multi-Venue CVD settings', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" data-icon=\"settings\" data-indicator-action=\"settings\" title=\"Multi-Venue CVD settings\" aria-label=\"Multi-Venue CVD settings\" data-instance-id=\"native.multi-venue-cvd\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span>BN[P] BTCUSDT +3.38B</span> from <div data-cvd=\"true\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span>BN[P] BTCUSDT +3.38B</span> from <div data-cvd=\"true\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    130 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is visible, enabled and stable\u001b[22m\n\u001b[2m        - scrolling into view if needed\u001b[22m\n\u001b[2m        - done scrolling\u001b[22m\n\u001b[2m        - <span>BN[P] BTCUSDT +3.38B</span> from <div data-cvd=\"true\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\n\n  105 |   await global.getByLabel('Override indicator currencies').check();await global.getByLabel('Default display currency').selectOption('quote');await global.getByRole('button',{name:'Apply',exact:true}).click();\n  106 |   await expect(pane.locator('.cvd-legend')).toContainText('USDT');expect(await subscribeCount(page)).toBe(subscriptions);\n> 107 |   await panel.getByRole('button',{name:'Multi-Venue CVD settings',exact:true}).click();\n      |                                                                                ^\n  108 |   const dialog=panel.getByRole('dialog',{name:'Multi-Venue CVD settings'});\n  109 |   await expect(dialog.getByLabel('CVD display unit',{exact:true})).toBeDisabled();await expect(dialog).toContainText('Global currency setting');\n  110 |   await dialog.getByRole('button',{name:'Cancel',exact:true}).click();\n    at /home/daz/workarea/iqterminal/tests/browser/cvd.spec.ts:107:80"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:33:15.185Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/cvd-CVD-global-currency-cr-60c4f-ected-history-remain-honest/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0bb6376537512963581a-4622d51e47c6122c357e",
+          "file": "cvd.spec.ts",
+          "line": 99,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T13:32:51.508Z",
+    "duration": 116781.691,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

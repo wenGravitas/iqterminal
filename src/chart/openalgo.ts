@@ -34,12 +34,12 @@ import { ChartObjects } from 'openalgo-charts';
 import { DrawingController, InstrumentDrawings, memoryDrawingStore, registerBuiltinDrawingTools, registeredDrawingTools, type Drawing, type DrawingDocumentStore } from 'openalgo-charts/draw';
 import { duration, type CanonicalSeries } from '../feed/protocol';
 import { DEFAULT_FOOTPRINT_OPTIONS, type FootprintBar as OpenAlgoFootprintBar, type FootprintHover, type FootprintOptions } from 'openalgo-charts/profile';
-import type { Candle, FootprintBar } from '../feed/protocol';
+import type { Candle, FootprintAnalysisDemand, FootprintAnalysisSummary, FootprintBar } from '../feed/protocol';
 import { MAX_BARS } from '../feed/reconcile';
 import { formatPrice } from './format';
 import { DrawingAxisPriceLabels, registerIQDrawingLabelRenderers } from './drawing-labels';
 import { TerminalFootprint,footprintColumn } from './terminal-footprint';
-import { FootprintTotalsPane } from './footprint-totals';
+import { FootprintTotalsPane, type FootprintDeltaFlipPresentation } from './footprint-totals';
 import type { FootprintBarStats, FootprintStatRow } from 'openalgo-charts/profile';
 import { FootprintActivity } from './footprint-activity';
 import { TpoProfilePrimitive } from './tpo-profile';
@@ -100,6 +100,8 @@ export class OpenAlgoCandleChart {
   onNetPositioningVenueToggle?: (id: string, venue: NetPositioningVenue) => void;
   private netPositioningLegends = new Map<string, { element: HTMLElement; abort: AbortController; venuesKey: string }>();
   private footprintTotalsPanes = new Map<string, { series: SeriesApi; primitive: FootprintTotalsPane; paneIndex: number; autoHeight: number; autoWeight: number | null; manuallyResized: boolean }>();
+  private footprintAnalysisSummaries: readonly FootprintAnalysisSummary[] = [];
+  private footprintAnalysisNeedsSync = false;
   private readonly netPositioningViewportSubscriptions: (() => void)[] = [];
   private orderWallSegments = new Map<string, OrderWallSegment>();
   private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
@@ -286,12 +288,15 @@ export class OpenAlgoCandleChart {
       },
     });
     this.chart.addPrimitive(this.watchZones, { anchor: 'primary-pane' });
-    this.chart.addPrimitive(this.axisGrid, { anchor: 'primary-pane' });
+    this.chart.addPrimitive(this.axisGrid, this.chart.primaryPaneIndex());
     this.chart.addPrimitive(this.executionHoverRay, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.positioningRangePreview, { anchor: 'primary-pane' });
     this.chart.addPrimitive(this.candleTimer, { anchor: 'primary-pane' });
     this.setTheme(currentTheme());
     window.addEventListener(THEME_EVENT, () => this.setTheme(currentTheme()), { signal: this.inputAbort.signal });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.visible && this.footprintAnalysisNeedsSync) this.scheduler.invalidate(this);
+    }, { signal: this.inputAbort.signal });
     window.addEventListener(TIMEZONE_EVENT, event => {
       const detail = (event as CustomEvent<{ zone?: string }>).detail;
       const zone = detail?.zone ?? getDisplayTimezone();
@@ -366,6 +371,7 @@ export class OpenAlgoCandleChart {
       });
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
+      primitive.setPriceScale(series.priceScale());
       series.priceScale().setPriceFormatter(value => {
         const amount = primitive.displayCurrency === 'usdt'
           ? value.toLocaleString('en-US', { notation: 'compact', maximumFractionDigits: 2 })
@@ -429,6 +435,7 @@ export class OpenAlgoCandleChart {
       legend = { element, abort, venuesKey }; this.netPositioningLegends.set(id, legend);
     }
     legend.element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
+    legend.element.dataset.instanceId = id;
     for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
       const venue = button.dataset.source as NetPositioningVenue;
       button.setAttribute('aria-pressed', String(venues.includes(venue)));
@@ -437,15 +444,37 @@ export class OpenAlgoCandleChart {
     this.positionNetPositioningLegends();
   }
 
+  setNetPositioningLegendHost(id: string, host: HTMLElement | null) {
+    const legend = this.netPositioningLegends.get(id);
+    if (!legend) return null;
+    const element = legend.element;
+    if (host) {
+      element.dataset.paneHeader = 'true';
+      if (element.parentElement !== host) host.append(element);
+      for (const property of ['left', 'top', 'right', 'max-width', 'overflow-x', 'overflow-y', 'scrollbar-width']) {
+        element.style.removeProperty(property);
+      }
+    } else if (element.dataset.paneHeader === 'true') {
+      delete element.dataset.paneHeader;
+      this.container.append(element);
+      this.positionNetPositioningLegends();
+    }
+    return element;
+  }
+
   private positionNetPositioningLegends() {
     for (const [id, legend] of this.netPositioningLegends) {
       const view = this.netPositioningPanes.get(id); if (!view) continue;
-      const plot = this.chart.plotRect(view.paneIndex); if (!plot) { legend.element.hidden = true; continue; }
+      const plot = this.chart.plotRect(view.paneIndex);
+      const paneWidth = this.chart.panes()[view.paneIndex]?.element.clientWidth ?? this.container.clientWidth;
+      if (!plot && legend.element.dataset.paneHeader !== 'true') { legend.element.hidden = true; continue; }
       legend.element.hidden = false;
-      const compact = plot.width < 400;
+      const compact = (plot?.width ?? Math.max(0, paneWidth - 80)) < 400;
       for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
         button.dataset.compact = String(compact);
       }
+      if (legend.element.dataset.paneHeader === 'true') continue;
+      if (!plot) continue;
       legend.element.style.maxWidth = `${paneHeaderSlots(plot.width,netPositioningOptionsWidth(plot.width)).optionsWidth}px`;
       legend.element.style.overflowX = 'auto'; legend.element.style.overflowY = 'hidden'; legend.element.style.scrollbarWidth = 'none';
       const width = legend.element.getBoundingClientRect().width;
@@ -487,7 +516,8 @@ export class OpenAlgoCandleChart {
     else this.syncNetPositioningViewport();
   }
 
-  addFootprintTotalsPane(id: string, rows: readonly FootprintStatRow[], units: FootprintUnits, highlightHighest = false) {
+  addFootprintTotalsPane(id: string, rows: readonly FootprintStatRow[], units: FootprintUnits, highlightHighest = false,
+    deltaFlip: FootprintDeltaFlipPresentation = { enabled: false, target: 'delta-cell', lookback: 50, minimumStrength: .25, showLivePreview: true }) {
     let view = this.footprintTotalsPanes.get(id);
     if (!view) {
       this.ensureFootprintStatsModel();
@@ -503,8 +533,9 @@ export class OpenAlgoCandleChart {
       // A new pane still needs the current shared stats when the visible
       // footprint slice is unchanged and the refresh can skip recalculation.
       primitive.setStats(this.footprint?.stats() ?? []);
+      primitive.setAnalysisSummaries(this.footprintAnalysisSummaries);
     }
-    view.primitive.setSettings(rows, units, highlightHighest);
+    view.primitive.setSettings(rows, units, highlightHighest, deltaFlip);
     this.syncFootprintTotalsPresentation();
     this.enqueueFootprintRefresh();
     return view.paneIndex;
@@ -592,6 +623,17 @@ export class OpenAlgoCandleChart {
   }
 
   footprintTotalsPaneIndex(id: string) { return this.footprintTotalsPanes.get(id)?.paneIndex ?? -1; }
+  setFootprintAnalysisSummaries(summaries: readonly FootprintAnalysisSummary[]) {
+    this.footprintAnalysisSummaries = summaries.slice(-512);
+    this.footprintAnalysisNeedsSync = true;
+    if (!this.visible || document.hidden) { this.footprintAnalysisNeedsSync = true; return; }
+    this.applyFootprintAnalysisSummaries();
+  }
+  private applyFootprintAnalysisSummaries() {
+    if (!this.footprintAnalysisNeedsSync) return;
+    for (const view of this.footprintTotalsPanes.values()) view.primitive.setAnalysisSummaries(this.footprintAnalysisSummaries);
+    this.footprintAnalysisNeedsSync = false;
+  }
   footprintTotalsTooltip(id: string, time: number) { return this.footprintTotalsPanes.get(id)?.primitive.tooltip(time) ?? null; }
   footprintTotalsHover(id: string, time: number, x: number, y: number) {
     const hit = this.footprintTotalsPanes.get(id)?.primitive.hoverSummary(time, x, y);
@@ -1106,14 +1148,29 @@ export class OpenAlgoCandleChart {
     this.footprintIndexSeries = null;
   }
 
-  onFootprintViewport?: (from:number,to:number)=>void;
+  onFootprintViewport?: (from:number,to:number,analysis:FootprintAnalysisDemand)=>void;
   onHeatmapViewport?: (viewport:import('../feed/staging-heatmap').HeatmapViewport)=>void;
   draw() {
     if (!this.visible || document.hidden || this.disposed) return;
+    this.applyFootprintAnalysisSummaries();
     const visibleCallbacks = [...this.visibleCallbacks.values()];
     this.visibleCallbacks.clear();
     for (const callback of visibleCallbacks) callback();
-    if((this.mode==='footprint'||this.footprintTotalsPanes.size)&&this.onFootprintViewport){const times=this.visibleTimeRange();if(times)this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000));}
+    if((this.mode==='footprint'||this.footprintTotalsPanes.size)&&this.onFootprintViewport){
+      const times=this.visibleTimeRange();
+      if(times){
+        const demands=[...this.footprintTotalsPanes.values()].map(view=>view.primitive.analysisDemand()).filter(demand=>demand.enabled);
+        const analysis:FootprintAnalysisDemand=demands.length?{enabled:true,lookback:Math.max(...demands.map(demand=>demand.lookback))}:{enabled:false,lookback:50};
+        if (analysis.enabled) {
+          // The dense history request is intentionally capped. Carry the first
+          // candle that the current Totals slice can actually draw so warmup
+          // still starts N+1 slots before an older retained candidate.
+          const candidates = this.footprint?.stats() ?? [];
+          analysis.candidateFrom = candidates[0]?.time !== undefined ? candidates[0].time * 1000 : Math.floor(times.from * 1000);
+        }
+        this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000),analysis);
+      }
+    }
     if((this.heatmap||this.orderWalls)&&this.onHeatmapViewport){const times=this.visibleTimeRange(),prices=this.chart.panes()[this.chart.primaryPaneIndex()]?.priceScale.priceRange();if(times&&prices)this.onHeatmapViewport({from:Math.floor(times.from*1000),to:Math.ceil(times.to*1000),low:prices.min,high:prices.max,width:this.container.clientWidth,height:this.container.clientHeight});}
     const pending = [...this.callbacks.values()];
     this.callbacks.clear();

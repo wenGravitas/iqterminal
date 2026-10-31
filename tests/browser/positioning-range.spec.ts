@@ -17,6 +17,22 @@ test('positioning hover previews candle VA only, double-click commits a native u
  await page.getByRole('button',{name:'Close Hyperliquid · BTC Perp · 1m',exact:true}).click();
  const close=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});if(await close.isVisible())await close.click();
  await addIndicator(panel,'Net Shorts — Estimated');await expect.poll(()=>profiles).toBeGreaterThan(0);
+ const shortRow=panel.locator('.active-indicator[data-definition-id="native.net-shorts-estimated"]'),visibilityHint=shortRow.locator('button[data-indicator-action="visibility"]'),titleHint=page.locator('.indicator-title-tooltip:visible');
+ const originalHint=await visibilityHint.getAttribute('title');expect(originalHint).toContain('Hide Net Shorts');
+ await page.mouse.move(0,0);await visibilityHint.hover();
+ await expect(visibilityHint).not.toHaveAttribute('title');await expect(titleHint).toBeHidden();
+ await page.waitForTimeout(100);await expect(titleHint).toBeHidden();await expect(titleHint).toBeVisible();await expect(titleHint).toHaveText(originalHint!);
+ await visibilityHint.evaluate((element:HTMLElement)=>{element.title='Updated indicator hint';});await expect(titleHint).toHaveText('Updated indicator hint');
+ await page.mouse.move(0,0);await expect(titleHint).toBeHidden();await expect(visibilityHint).toHaveAttribute('title','Updated indicator hint');
+ await visibilityHint.evaluate((element:HTMLElement,title)=>{element.title=title!;},originalHint);await expect(visibilityHint).toHaveAttribute('title',originalHint!);
+ await panel.getByRole('button',{name:'Indicators',exact:true}).click();const picker=panel.getByRole('dialog',{name:'Add an indicator',exact:true});await expect(picker).toBeVisible();const searchHint=picker.getByRole('searchbox',{name:'Search indicators',exact:true});
+ await searchHint.evaluate((element:HTMLElement)=>{element.title='Search indicator definitions';});await searchHint.hover();await expect(titleHint).toBeVisible();await expect(titleHint).toHaveText('Search indicator definitions');
+ expect(await page.evaluate(()=>{const tooltip=document.querySelector('.indicator-title-tooltip'),dialog=document.querySelector('dialog.indicator-picker[aria-label="Add an indicator"]');return tooltip?.parentElement===dialog;})).toBe(true);
+ await picker.getByRole('button',{name:'Done',exact:true}).click();await expect(titleHint).toBeHidden();
+ expect(await page.evaluate(()=>document.querySelector('.indicator-title-tooltip')?.parentElement===document.body)).toBe(true);
+ expect(await page.evaluate(()=>document.querySelector('dialog.indicator-picker[aria-label="Add an indicator"] input[type="search"]')?.getAttribute('title'))).toBe('Search indicator definitions');
+ await visibilityHint.evaluate((element:HTMLElement)=>element.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true})));await visibilityHint.focus();await expect(titleHint).toBeVisible();const titleHintId=await titleHint.getAttribute('id');await expect(visibilityHint).toHaveAttribute('aria-describedby',new RegExp(titleHintId!));
+ await visibilityHint.evaluate((element:HTMLElement)=>element.blur());await expect(titleHint).toBeHidden();
  await expect(panel.locator('[data-mode=footprint]')).toHaveCount(0);
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.visibleBarsDrawn)).toBeGreaterThan(0);
  const hit=await page.evaluate(()=>{
@@ -26,7 +42,7 @@ test('positioning hover previews candle VA only, double-click commits a native u
   return {time:g.timeMs,drawings:p.engine.drawings.drawings().length};
  });
  const point=()=>page.evaluate(time=>{const p=[...(window as any).__terminal.panels.values()][0],v=p.engine.netPositioningPanes.values().next().value,plot=p.engine.chart.plotRect(v.paneIndex),g=v.primitive.geometry.find((g:any)=>g.timeMs===time),stage=p.element.querySelector('.chart-stage').getBoundingClientRect();return {x:stage.x+plot.left+(g.left+g.right)/2,y:stage.y+plot.top+(g.top+g.bottom)/2};},hit.time);
- let xy=await point();await page.mouse.move(xy.x,xy.y);await expect(panel.locator('.net-positioning-tooltip')).toContainText('VAH/VAL unavailable');
+ let xy=await point();const card=panel.locator('.net-positioning-tooltip');await page.mouse.move(0,0);await page.mouse.move(xy.x,xy.y);await expect(card).toBeHidden();await page.waitForTimeout(100);await expect(card).toBeHidden();await page.mouse.move(0,0);await page.waitForTimeout(550);await expect(card).toBeHidden();await page.mouse.move(xy.x,xy.y);await expect(card).toContainText('VAH/VAL unavailable');
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.active)).toBe(false);
  await page.evaluate(time=>{const p=[...(window as any).__terminal.panels.values()][0];p.footprintBars=[{time:time/1000,rowSize:10,coverage:'observed',gapBefore:false,cells:[{price:79980,bidVol:1,askVol:1},{price:79990,bidVol:40,askVol:40},{price:80000,bidVol:9,askVol:9}]}];},hit.time);
  await page.mouse.move(xy.x+1,xy.y);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].positioningRange.range)).toMatchObject({low:79990,high:80000,side:'shorts',venue:'binance'});

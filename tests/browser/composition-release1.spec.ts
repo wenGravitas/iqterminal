@@ -24,7 +24,12 @@ async function readState(page: import('@playwright/test').Page, panelId: string,
     const sourcePaneRect = sourcePane?.element.getBoundingClientRect();
     const smaValues = smaApi?.values().p0 ?? [];
     const sourceValues = sourcePlot?.values ?? [];
-    const sourceMaximum = sourceValues.reduce((maximum: number, value: unknown) => typeof value === 'number' && Number.isFinite(value) ? Math.max(maximum, value) : maximum, 0);
+    const visibleRange = chart.timeScale.visibleRange();
+    const visibleStart = Math.max(0, Math.floor(visibleRange.from) - 1);
+    const visibleEnd = Math.min(sourceValues.length, Math.ceil(visibleRange.to) + 2);
+    const visibleValues = sourceValues.slice(visibleStart, visibleEnd);
+    const sourceMaximum = visibleValues.reduce((maximum: number, value: unknown) => typeof value === 'number' && Number.isFinite(value) ? Math.max(maximum, value) : maximum, 0);
+    const historyMaximum = sourceValues.reduce((maximum: number, value: unknown) => typeof value === 'number' && Number.isFinite(value) ? Math.max(maximum, value) : maximum, 0);
     const expectedWindow = sourceValues.slice(-20);
     const expectedLast = expectedWindow.length === 20 && expectedWindow.every((value: unknown) => typeof value === 'number' && Number.isFinite(value))
       ? expectedWindow.reduce((sum: number, value: number) => sum + value, 0) / 20 : null;
@@ -47,8 +52,9 @@ async function readState(page: import('@playwright/test').Page, panelId: string,
           values: sourceRuntime.result?.values?.p0?.slice(-22) },
         apiId: sourceApi?.id, apiPane: sourceApi?.paneIndex, apiScaleId: sourceApi?.plotPriceScaleId('p0'),
         fixedRange: scale?.fixedRange, scaleMargins: scale && { top: scale.options.marginTop, bottom: scale.options.marginBottom },
-        expectedFixedMaximum: scale ? Math.max(1, sourceMaximum * 1.05) / Math.max(.08, 1 - scale.options.marginTop - scale.options.marginBottom) : null,
-        maximumValue: sourceMaximum, scaleHeight: scale?.height, maximumY: scale?.priceToY(sourceMaximum),
+        expectedFixedMaximum: scale ? Math.max(1e-8, sourceMaximum * 1.08) / Math.max(.08, 1 - scale.options.marginTop - scale.options.marginBottom) : null,
+        maximumValue: sourceMaximum, historyMaximum, visibleRange: { from: visibleRange.from, to: visibleRange.to, start: visibleStart, end: visibleEnd },
+        scaleHeight: scale?.height, maximumY: scale?.priceToY(sourceMaximum),
         coordinates: scale && {
           scaleHeight: scale.height, zeroY: scale.priceToY(0), maximumY: scale.priceToY(sourceMaximum),
           bandHeightPercent: embeddedBand?.heightPercent ?? null,
@@ -72,6 +78,43 @@ async function readState(page: import('@playwright/test').Page, panelId: string,
       paneCount: chart.panes().length,
     };
   }, { panelId, keepHandles });
+}
+
+async function capturePanelDiagnostics(page: import('@playwright/test').Page, panelId: string) {
+  return page.evaluate(id => {
+    const panel = (window as any).__terminal.panels.get(id);
+    const chart = panel.engine.chart;
+    const host = panel.studies;
+    const panes = chart.panes().map((pane: any, index: number) => ({
+      index,
+      primary: index === chart.primaryPaneIndex(),
+      connected: Boolean(pane.element?.isConnected),
+      className: typeof pane.element?.className === 'string' ? pane.element.className : '',
+      rect: pane.element?.getBoundingClientRect?.().toJSON?.() ?? null,
+      indicators: chart.indicators().filter((indicator: any) => indicator.paneIndex === index).map((indicator: any) => ({
+        id: indicator.id, paneIndex: indicator.paneIndex,
+      })),
+      managedSubjects: panel.series.indicators.filter((instance: any) => {
+        if (instance.placement === 'attachment') return false;
+        if (instance.script) return host.paneIndex(instance.instanceId) === index;
+        return panel.compositionApis.get(instance.instanceId)?.paneIndex === index;
+      }).map((instance: any) => ({ id: instance.instanceId, definitionId: instance.definitionId, placement: instance.placement })),
+      objects: panel.engine.objects.list().filter((object: any) => object.paneIndex === index).map((object: any) => ({ id: object.id, kind: object.kind })),
+      drawings: panel.engine.drawings.drawings().filter((drawing: any) => drawing.paneIndex === index).map((drawing: any) => ({ id: drawing.id, kind: drawing.kind })),
+    }));
+    return {
+      panes,
+      composition: panel.series.composition,
+      indicators: panel.series.indicators.map((instance: any) => ({ id: instance.instanceId, definitionId: instance.definitionId, placement: instance.placement, paneId: instance.paneId })),
+      studies: host.diagnostics(),
+      numericOutputs: host.numericOutputs().map((output: any) => ({ instanceId: output.instanceId, outputId: output.outputId, available: output.available, contextId: output.contextId, unit: output.unit, revision: output.revision })),
+      registry: panel.outputRegistry.diagnostics(),
+    };
+  }, panelId);
+}
+
+async function attachJson(name: string, value: unknown) {
+  await test.info().attach(name, { body: Buffer.from(`${JSON.stringify(value, null, 2)}\n`), contentType: 'application/json' });
 }
 
 function assertEmbeddedBandCoordinates(state: any, heightPercent: number) {
@@ -105,12 +148,12 @@ function bandCoordinateCapture(name: string, viewport: { width: number; height: 
   };
 }
 
-async function movePair(page: import('@playwright/test').Page, panel: import('@playwright/test').Locator, rowName: string, target: string, height?: number) {
+async function movePair(page: import('@playwright/test').Page, panel: import('@playwright/test').Locator, rowName: string, target: string, height?: number, lowerBand = false) {
   await panel.getByRole('button', { name: `Move ${rowName}`, exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Move indicator', exact: true });
   await dialog.getByLabel('Move to pane').selectOption(target);
   await dialog.getByLabel('Move all studies in this pane together').check();
-  if (height !== undefined) {
+  if (target === '@price' && height !== undefined) {
     const control = dialog.getByLabel('Embedded band height');
     await expect(control).toBeVisible();
     await control.evaluate((element, value) => {
@@ -119,6 +162,18 @@ async function movePair(page: import('@playwright/test').Page, panel: import('@p
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }, height);
     await expect(dialog.locator('output')).toHaveText(`${height}%`);
+  } else if (lowerBand) {
+    await dialog.getByLabel('Use a bottom band for zero-based outputs').check();
+    const control = dialog.getByLabel('Embedded band height');
+    await expect(control).toBeVisible();
+    if (height !== undefined) {
+      await control.evaluate((element, value) => {
+        const input = element as HTMLInputElement;
+        input.value = String(value);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }, height);
+      await expect(dialog.locator('output')).toHaveText(`${height}%`);
+    }
   }
   await dialog.getByRole('button', { name: 'Move', exact: true }).click();
 }
@@ -246,7 +301,7 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   expect(lower.source).toMatchObject({ visible: true, placement: 'pane', runtime: { workerAlive: true, timesLength: 5000 }, output: { available: true, unit: 'BTC', timesLength: 5000, valuesLength: 5000 } });
   expect(lower.sma).toMatchObject({ placement: 'pane', settings: { length: 20 }, valuesLength: 5000 });
   expect(lower.sma.input).toMatchObject({ kind: 'indicator-output', instanceId: lower.source!.id,
-    outputId: `output:${lower.source!.id}:p0`, plotKey: 'p0', unit: 'BTC', contextId: lower.source!.output.contextId, scaleId: lower.source!.output.scaleId });
+    outputId: `output:${lower.source!.id}:p0`, plotKey: 'p0', unit: 'BTC', contextId: lower.source!.output.contextId });
   expect(lower.source!.apiScaleId).toBe(lower.source!.output.scaleId);
   expect(lower.sma!.apiScaleId).toBe(lower.source!.output.scaleId);
   const lowerProviderPlot = lower.composition.plots.find((plot: any) => plot.producerInstanceId === lower.source!.id && plot.outputKey === 'p0');
@@ -390,6 +445,7 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   await restoredPanel.getByRole('button', { name: 'Hide Volume', exact: true }).click();
   await expect.poll(async () => (await readState(page, panelId)).source?.visible).toBe(false);
   const beforeSleep = await readState(page, panelId);
+  const wakeTrace: Record<string, unknown> = { beforeSleep: await capturePanelDiagnostics(page, panelId) };
   await page.evaluate(id => {
     const current = (window as any).__terminal.panels.get(id);
     current.studies.setVisible(false);
@@ -404,16 +460,44 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   await expect.poll(async () => (await readState(page, panelId)).source?.runtime?.needsHistory, { timeout: 15_000 }).toBe(true);
   await page.evaluate(() => (window as any).__terminal.feed.send({ type: 'fixture', rate: 0 }));
   const asleep = await readState(page, panelId);
+  wakeTrace.asleep = await capturePanelDiagnostics(page, panelId);
   expect(asleep.source!.runtime.resultRevision).toBe(beforeSleep.source!.runtime.resultRevision);
   expect(asleep.source!.runtime.values).toEqual(beforeSleep.source!.runtime.values);
   expect(asleep.sma!.last).toBe(beforeSleep.sma!.last);
   await page.evaluate(id => (window as any).__terminal.panels.get(id).studies.setVisible(true), panelId);
-  await expect.poll(async () => {
-    const state = await readState(page, panelId);
-    return Boolean(state.source!.runtime.resultRevision > beforeSleep.source!.runtime.resultRevision
-      && !state.source!.runtime.needsHistory && state.sma!.last !== beforeSleep.sma!.last);
-  }, { timeout: 30_000 }).toBe(true);
+  try {
+    await expect.poll(async () => {
+      const state = await readState(page, panelId);
+      return Boolean(state.source!.runtime.resultRevision > beforeSleep.source!.runtime.resultRevision
+        && !state.source!.runtime.needsHistory && state.sma!.last !== beforeSleep.sma!.last);
+    }, { timeout: 30_000 }).toBe(true);
+  } catch (error) {
+    const debug = await page.evaluate(({ id, baselineRevision, baselineSmaLast }) => {
+      const current = (window as any).__terminal.panels.get(id), host = current.studies;
+      const provider = [...host.studies.values()].find((study: any) => study.scriptId === 'builtin.volume-histogram');
+      const providerOutput = provider && host.numericOutputs().find((item: any) => item.instanceId === provider.attachmentId);
+      const sma = current.series.indicators.find((item: any) => item.definitionId === 'native.composition-sma');
+      const api = sma && current.compositionApis.get(sma.instanceId);
+      return { hostVisible: host.visible, demandedOutputs: [...host.demandedOutputs], provider: provider && {
+        visible: provider.visible, needsHistory: provider.needsHistory, resultRevision: provider.resultRevision,
+        resultRevisionAdvanced: provider.resultRevision > baselineRevision, needsHistoryClear: !provider.needsHistory,
+        status: provider.status, changedRange: provider.result?.changedRange, diagnostics: provider.diagnostics,
+        worker: provider.worker.diagnostics(), numericOutput: host.numericOutputs().find((item: any) => item.instanceId === provider.attachmentId),
+      }, outputRegistry: current.outputRegistry.diagnostics(),
+        registryProvider: providerOutput && current.outputRegistry.get(providerOutput.outputId),
+        consumer: current.outputRegistry.diagnostics().consumers.find((item: any) => item.instanceId === sma?.instanceId),
+        consumerOutput: current.outputRegistry.get(`output:${sma?.instanceId}:p0`),
+        smaSettings: api?.settings(), smaValuesLast: api?.values().p0?.at(-1), baselineSmaLast,
+        smaLastChanged: api?.values().p0?.at(-1) !== baselineSmaLast };
+    }, { id: panelId, baselineRevision: beforeSleep.source!.runtime.resultRevision, baselineSmaLast: beforeSleep.sma!.last });
+    wakeTrace.failedWake = debug;
+    await attachJson('wake-state-failure.json', wakeTrace);
+    console.log('WAKE CATCHUP DEBUG', JSON.stringify(debug));
+    throw error;
+  }
   const caughtUp = await readState(page, panelId);
+  wakeTrace.afterWake = await capturePanelDiagnostics(page, panelId);
+  await attachJson('wake-state-pass.json', wakeTrace);
   expect(caughtUp.source!.runtime.workerAlive).toBe(true);
   expect(caughtUp.source!.runtime.values).not.toEqual(beforeSleep.source!.runtime.values);
   expect(caughtUp.sma!.last).toBeCloseTo(caughtUp.sma!.expectedLast, 8);
@@ -436,16 +520,36 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   expect(returned.source!.id).toBe(providerId);
   expect(returned.sma!.input).toEqual(inputRef);
   expect(returned.composition.embeddedBands).toEqual([]);
+  expect(returned.source!.apiPane).toBe(returned.sma!.apiPane);
+  expect(returned.source!.scaleMargins?.top).toBe(.08);
+
+  await movePair(page, restoredPanel, 'SMA 20 · Volume', '@new', 35, true);
+  const lowerBand = await readState(page, panelId);
+  expect(lowerBand.composition.embeddedBands).toMatchObject([{ heightPercent: 35, memberIds: [providerId, smaId] }]);
+  expect(lowerBand.source!.apiPane).toBe(lowerBand.sma!.apiPane);
+  expect(lowerBand.source!.scaleMargins).toMatchObject({ top: 0.65, bottom: 0.02 });
+  assertEmbeddedBandCoordinates(lowerBand, 35);
 
   await expect(restoredPanel.getByRole('button', { name: 'Remove Volume', exact: true })).toBeDisabled();
   await expect(restoredPanel.getByRole('button', { name: 'Remove Volume', exact: true })).toHaveAttribute('title', /depends on its output/);
+  const cleanupTrace: Record<string, unknown> = {};
   await restoredPanel.getByRole('button', { name: 'Remove SMA 20 · Volume', exact: true }).click();
   await expect.poll(() => page.evaluate(id => (window as any).__terminal.panels.get(id).studies.views()
     .filter((view: any) => view.scriptId === 'builtin.volume-histogram').length, panelId)).toBe(1);
+  cleanupTrace.afterSmaRemoval = await capturePanelDiagnostics(page, panelId);
   await restoredPanel.getByRole('button', { name: 'Remove Volume', exact: true }).click();
-  await expect.poll(() => page.evaluate(id => {
-    const panel = (window as any).__terminal.panels.get(id);
-    return { attached: panel.studies.diagnostics().attached, workers: panel.studies.diagnostics().workers, panes: panel.engine.chart.panes().length };
-  }, panelId)).toEqual({ attached: 0, workers: 0, panes: 1 });
+  try {
+    await expect.poll(() => page.evaluate(id => {
+      const panel = (window as any).__terminal.panels.get(id);
+      return { attached: panel.studies.diagnostics().attached, workers: panel.studies.diagnostics().workers, panes: panel.engine.chart.panes().length };
+    }, panelId)).toEqual({ attached: 0, workers: 0, panes: 1 });
+  } catch (error) {
+    cleanupTrace.afterProviderRemoval = await capturePanelDiagnostics(page, panelId);
+    await attachJson('pane-cleanup-failure.json', cleanupTrace);
+    console.log('PANE CLEANUP DEBUG', JSON.stringify(cleanupTrace));
+    throw error;
+  }
+  cleanupTrace.afterProviderRemoval = await capturePanelDiagnostics(page, panelId);
+  await attachJson('pane-cleanup-pass.json', cleanupTrace);
   await writeFile('artifacts/composition-band-coordinates.json', `${JSON.stringify({ source: 'explicit development fixture', runs: bandCoordinates }, null, 2)}\n`);
 });

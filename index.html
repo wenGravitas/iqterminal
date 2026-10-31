@@ -54,6 +54,7 @@
       <footer id="commands">
         <span class="brand">BASIS</span>
         <button id="add">Add chart</button>
+        <button id="add-market-comparison">Market Comparison</button>
         <button id="add-ticker">Trade Ticker</button>
         <button id="add-liquidations">Liquidations</button>
         <button id="add-depth-matrix">Depth Matrix</button>
@@ -66,15 +67,37 @@
           <option value="light">Ivory (light)</option>
           <option value="dark">Dark</option>
         </select>
-        <span id="venue-states" role="status"></span>
+        <span id="venue-states" class="connection-status-sr-only" role="status" aria-live="polite"></span>
         <a id="licenses" href="/licenses/" aria-label="Third-party licences">Licences</a>
-        <button id="market-pulse-trigger" class="market-pulse-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="market-pulse-popover">
-          <svg data-clock-icon aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4v4l2.7 1.7"></path></svg>
-          <span data-clock>--:--:--</span><span class="market-pulse-zone-chip" data-zone-short>LOCAL</span>
-          <span class="market-pulse-trigger-state"><i data-session-indicator aria-hidden="true"></i><span data-active>No sessions</span></span>
-          <svg class="market-pulse-chevron" aria-hidden="true" viewBox="0 0 12 12"><path d="m2.5 4.5 3.5 3 3.5-3"></path></svg>
-        </button>
+        <div id="footer-status-group">
+          <button id="connection-status-trigger" type="button" aria-label="Connection status: No monitored feeds" title="Open monitored feed details" aria-haspopup="dialog" aria-expanded="false" aria-controls="connection-status-popover" data-state="idle">
+            <svg data-connection-icon aria-hidden="true" viewBox="0 0 16 16"><path d="M5 2.5v4M11 2.5v4M4 6.5h8v2a4 4 0 0 1-4 4v1.8"></path></svg>
+            <i data-connection-dot aria-hidden="true"></i>
+            <span data-connection-state class="connection-status-sr-only">No monitored feeds</span>
+          </button>
+          <button id="market-pulse-trigger" class="market-pulse-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="market-pulse-popover">
+            <svg data-clock-icon aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4v4l2.7 1.7"></path></svg>
+            <span data-clock>--:--:--</span><span class="market-pulse-zone-chip" data-zone-short>LOCAL</span>
+            <span class="market-pulse-trigger-state"><i data-session-indicator aria-hidden="true"></i><span data-active>No sessions</span></span>
+            <svg class="market-pulse-chevron" aria-hidden="true" viewBox="0 0 12 12"><path d="m2.5 4.5 3.5 3 3.5-3"></path></svg>
+          </button>
+        </div>
       </footer>
+      <section id="connection-status-popover" class="connection-status-popover" role="dialog" aria-label="Monitored feed connections" aria-modal="false" tabindex="-1" hidden>
+        <header class="connection-status-heading">
+          <div><strong>Monitored feeds</strong></div>
+          <button type="button" data-connection-close aria-label="Close connection status" title="Close">×</button>
+        </header>
+        <p class="connection-status-scope">Active candle, CVD, ticker and comparison feeds.</p>
+        <div class="connection-status-summary" data-connection-summary data-state="idle" role="status" aria-live="polite"></div>
+        <div class="connection-feed-list" data-connection-feeds role="list" aria-label="Current monitored feed statuses"></div>
+        <details class="connection-activity" open>
+          <summary><span>Recent activity</span><span data-connection-activity-count>0 / 100</span></summary>
+          <p>Observed in this browser session. Times in <span data-connection-timezone></span>. Historical server logs are not available here.</p>
+          <div class="connection-activity-list" data-connection-activity role="list" aria-label="Current-run connection activity"></div>
+          <button type="button" class="connection-clear-activity" data-connection-clear>Clear activity</button>
+        </details>
+      </section>
       <section id="market-pulse-popover" class="market-pulse-popover" role="dialog" aria-label="Market Pulse" aria-modal="false" tabindex="-1" hidden>
         <header class="market-pulse-heading">
           <button type="button" data-close aria-label="Close Market Pulse" title="Close">×</button>

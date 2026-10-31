@@ -1,0 +1,37 @@
+{
+  "baselineCommit": "efa68eaa5834ecc35c46866eae1c7c7a0735ae39",
+  "mode": "explicit browser fixture",
+  "host": "Raspberry Pi 5 Model B Rev 1.0, aarch64, Debian 12, Chromium SwiftShader",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "rateHz": 20,
+  "durationMs": 2500,
+  "counts": {
+    "indicatorReconciles": 15,
+    "activeIndicatorRenders": 16,
+    "scriptObjectProviderSyncs": 30,
+    "objectRefreshes": 90,
+    "hostNotifications": 15
+  },
+  "chartBars": 5000,
+  "studies": {
+    "context": {
+      "symbol": "BTCUSDT",
+      "exchange": "Binance USD-M",
+      "interval": "1m"
+    },
+    "attached": 1,
+    "workers": 1,
+    "depthBands": [],
+    "statuses": [
+      {
+        "id": "study-a1a889c0-94b0-46b8-acbc-6b59633b09f8",
+        "title": "Volume",
+        "status": "Study ready"
+      }
+    ]
+  },
+  "panes": 2
+}

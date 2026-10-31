@@ -1,0 +1,351 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.r2.dev.config.ts",
+      "tests/browser/liquidations.spec.ts",
+      "--grep-invert=fresh worker|explicit deterministic"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-liquidation-burst-r1-regressions.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "liquidations.spec.ts",
+      "file": "liquidations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "liquidation ticker, stacked native pane, marker settings and workspace persist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29182,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T17:32:02.177Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-d8cc836b152b4ac8e667",
+          "file": "liquidations.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "liquidation subscriptions share ingestion and replay never generates stale notifications",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24971,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T17:32:32.685Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-614d938fc7c296df59d2",
+          "file": "liquidations.spec.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "liquidation bar tooltip matches positioning cards with side-specific venue totals and bounded placement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19931,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T17:32:57.780Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-a31a5e8be5dc2bc48c65",
+          "file": "liquidations.spec.ts",
+          "line": 338,
+          "column": 1
+        },
+        {
+          "title": "liquidation venue toggles filter the pane, survive reload, and stay accessible in compact headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18546,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T17:33:17.779Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-1f3316f42d3e9e6cd3dc",
+          "file": "liquidations.spec.ts",
+          "line": 404,
+          "column": 1
+        },
+        {
+          "title": "liquidation coverage gaps stop at now across forming bars, pan, resize and themes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20628,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.liquidation-pane-status')\nExpected substring: \u001b[32m\"So\u001b[7murce disconnected / stale\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"So\u001b[7mme exchange data is delayed. Some reports may be missing.\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('.liquidation-pane-status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-pane-status')\u001b[22m\n\u001b[2m    13 × locator resolved to <div role=\"status\" class=\"cvd-status liquidation-pane-status\" title=\"Some exchange data is delayed. Some reports may be missing.\">Some exchange data is delayed. Some reports may b…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Some exchange data is delayed. Some reports may be missing.\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.liquidation-pane-status')\nExpected substring: \u001b[32m\"So\u001b[7murce disconnected / stale\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"So\u001b[7mme exchange data is delayed. Some reports may be missing.\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('.liquidation-pane-status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-pane-status')\u001b[22m\n\u001b[2m    13 × locator resolved to <div role=\"status\" class=\"cvd-status liquidation-pane-status\" title=\"Some exchange data is delayed. Some reports may be missing.\">Some exchange data is delayed. Some reports may b…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Some exchange data is delayed. Some reports may be missing.\"\u001b[22m\n\n    at capture (/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:557:61)\n    at /home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:564:17",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                      "column": 61,
+                      "line": 557
+                    },
+                    "snippet": "  555 |\n  556 |   const capture = async (width: number, height: number, theme: 'dark' | 'light') => {\n> 557 |     await page.setViewportSize({ width, height });\n      |                                                   ^\n  558 |     await page.getByLabel('Theme', { exact: true }).selectOption(theme);\n  559 |     await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));\n  560 |     if (width !== 1366) { await page.waitForTimeout(220); await installFixture('append'); }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                        "column": 61,
+                        "line": 557
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.liquidation-pane-status')\nExpected substring: \u001b[32m\"So\u001b[7murce disconnected / stale\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"So\u001b[7mme exchange data is delayed. Some reports may be missing.\u001b[27m\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first().locator('.liquidation-pane-status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-pane-status')\u001b[22m\n\u001b[2m    13 × locator resolved to <div role=\"status\" class=\"cvd-status liquidation-pane-status\" title=\"Some exchange data is delayed. Some reports may be missing.\">Some exchange data is delayed. Some reports may b…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Some exchange data is delayed. Some reports may be missing.\"\u001b[22m\n\n\n  555 |\n  556 |   const capture = async (width: number, height: number, theme: 'dark' | 'light') => {\n> 557 |     await page.setViewportSize({ width, height });\n      |                                                   ^\n  558 |     await page.getByLabel('Theme', { exact: true }).selectOption(theme);\n  559 |     await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));\n  560 |     if (width !== 1366) { await page.waitForTimeout(220); await installFixture('append'); }\n    at capture (/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:557:61)\n    at /home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:564:17"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T17:33:36.373Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/liquidations-liquidation-c-16771--bars-pan-resize-and-themes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                    "column": 61,
+                    "line": 557
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-0beb256901f71ad08a08",
+          "file": "liquidations.spec.ts",
+          "line": 456,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T17:31:57.864Z",
+    "duration": 119898.19,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

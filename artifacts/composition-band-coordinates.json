@@ -12,9 +12,9 @@
       "paneHeight": 645,
       "scaleHeight": 625,
       "zeroY": 625,
-      "maximumY": 458.3333333333333,
+      "maximumY": 462.96296296296293,
       "bandTopY": 437.5,
-      "renderedBarHeight": 166.66666666666669
+      "renderedBarHeight": 162.03703703703707
     },
     {
       "name": "embedded-720x860",
@@ -24,12 +24,12 @@
       },
       "bandHeightPercent": 30,
       "paneTop": 63,
-      "paneHeight": 737,
-      "scaleHeight": 717,
-      "zeroY": 717,
-      "maximumY": 525.8,
-      "bandTopY": 501.9,
-      "renderedBarHeight": 191.20000000000005
+      "paneHeight": 645,
+      "scaleHeight": 625,
+      "zeroY": 625,
+      "maximumY": 462.96296296296293,
+      "bandTopY": 437.5,
+      "renderedBarHeight": 162.03703703703707
     },
     {
       "name": "embedded-minimum-10-percent",
@@ -42,9 +42,9 @@
       "paneHeight": 645,
       "scaleHeight": 625,
       "zeroY": 625,
-      "maximumY": 577.3809523809524,
+      "maximumY": 578.7037037037037,
       "bandTopY": 562.5,
-      "renderedBarHeight": 47.61904761904759
+      "renderedBarHeight": 46.296296296296305
     },
     {
       "name": "embedded-maximum-40-percent",
@@ -57,9 +57,9 @@
       "paneHeight": 645,
       "scaleHeight": 625,
       "zeroY": 625,
-      "maximumY": 398.8095238095238,
+      "maximumY": 405.0925925925926,
       "bandTopY": 375,
-      "renderedBarHeight": 226.1904761904762
+      "renderedBarHeight": 219.9074074074074
     }
   ]
 }

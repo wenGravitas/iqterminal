@@ -45,6 +45,7 @@ export class ScriptWorkerClient {
   private budgetHeld = true;
   private program?: NonNullable<ScriptResult['program']>;
   private startSource?: string;
+  private metrics = { patchCalls: 0, patchRows: 0, historyCalls: 0, historyRows: 0, messagesSent: 0, historyMessagesSent: 0, patchMessagesSent: 0, resultMessages: 0, resultRows: 0 };
 
   constructor(
     factory: ScriptWorkerFactory,
@@ -83,6 +84,8 @@ export class ScriptWorkerClient {
 
   patch(changes: readonly { kind: 'append' | 'update'; bar: ScriptBar }[]) {
     if (this.disposed || !this.started || !changes.length) return;
+    this.metrics.patchCalls++;
+    this.metrics.patchRows += changes.length;
     const work = this.queued?.type === 'patch' ? this.queued : { type: 'patch' as const, changes: new Map() };
     for (const change of changes) work.changes.set(change.bar.t, change);
     if (work.changes.size > MAX_QUEUED_SCRIPT_PATCHES) this.queued = { type: 'history', bars: this.hooks.currentBars().slice(-5_000) };
@@ -92,6 +95,8 @@ export class ScriptWorkerClient {
 
   history(bars = this.hooks.currentBars()) {
     if (this.disposed || !this.started) return;
+    this.metrics.historyCalls++;
+    this.metrics.historyRows += bars.length;
     this.queued = { type: 'history', bars: bars.slice(-5_000) };
     this.pump();
   }
@@ -119,6 +124,8 @@ export class ScriptWorkerClient {
   }
 
   get alive() { return !this.disposed && this.worker !== null; }
+  diagnostics() { return { ...this.metrics, queued: this.queued?.type ?? null, generation: this.currentGeneration, alive: this.alive }; }
+  resetDiagnostics() { for (const key of Object.keys(this.metrics) as (keyof typeof this.metrics)[]) this.metrics[key] = 0; }
 
   promote() {
     if (this.disposed || !this.started || this.role !== 'candidate') throw new Error('Only a successfully started candidate can be promoted.');
@@ -147,6 +154,8 @@ export class ScriptWorkerClient {
     clearTimeout(this.waiting.timer);
     this.waiting = null;
     if (raw.ok) {
+      this.metrics.resultMessages++;
+      this.metrics.resultRows += raw.times?.length ?? 0;
       if (raw.program) {
         this.program = raw.program;
         if (this.startSource) rememberCompiledProgram(this.startSource, raw.program);
@@ -176,6 +185,9 @@ export class ScriptWorkerClient {
     const message: ScriptWorkerRequest = work.type === 'history'
       ? { type: 'history', generation, bars: work.bars }
       : { type: 'patch', generation, changes: [...work.changes.values()].sort((a, b) => a.bar.t - b.bar.t) };
+    this.metrics.messagesSent++;
+    if (message.type === 'history') this.metrics.historyMessagesSent++;
+    else this.metrics.patchMessagesSent++;
     this.beginWait(generation, SCRIPT_WORKER_PATCH_TIMEOUT_MS, 'Study calculation exceeded 500 milliseconds. Its worker was stopped; reduce the calculation cost before reapplying.');
     try { this.worker.postMessage(message); }
     catch { this.fail('The study worker could not accept an update. Its last applied values remain visible.'); }
@@ -242,6 +254,9 @@ export function validResult(value: unknown): value is ScriptResult {
   }
   if (!Array.isArray(value.times) || value.times.length > 5_000 || !value.times.every((time, i, all) => typeof time === 'number' && Number.isSafeInteger(time) && time >= 0 && (i === 0 || time > all[i - 1]!))) return false;
   if (!record(value.values) || Object.keys(value.values).length !== keys.size || ![...keys].every(key => Array.isArray(value.values![key]) && value.values![key]!.length === value.times!.length && value.values![key]!.every(v => v === null || typeof v === 'number' && Number.isFinite(v)))) return false;
+  if (value.changedRange !== undefined && (!record(value.changedRange) || !Number.isInteger(value.changedRange.from)
+    || !Number.isInteger(value.changedRange.to) || (value.changedRange.from as number) < 0
+    || (value.changedRange.to as number) < (value.changedRange.from as number) || (value.changedRange.to as number) > value.times.length)) return false;
   return value.diagnostics.length === 0;
 }
 

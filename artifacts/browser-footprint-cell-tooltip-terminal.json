@@ -1,0 +1,384 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/terminal.spec.ts",
+      "--grep",
+      "Footprint mode owns|hidden panels suspend chart frames|two-trade 1 USDT footprint row|footprint last-price line|footprint BTC/USDT toggle",
+      "--timeout=60000"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-footprint-cell-tooltip-terminal.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "terminal.spec.ts",
+      "file": "terminal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Footprint mode owns a separate subscription, renders bar revisions, and restores row settings",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 25316,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.footprint-cell-tooltip')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.footprint-cell-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.footprint-cell-tooltip')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.footprint-cell-tooltip')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.footprint-cell-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.footprint-cell-tooltip')\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:220:58",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                      "column": 58,
+                      "line": 220
+                    },
+                    "snippet": "  218 |   },barTime);\n  219 |   await page.mouse.move(gappedPoint.x,gappedPoint.y);\n> 220 |   await expect(panel.locator('.footprint-cell-tooltip')).toBeVisible();\n      |                                                          ^\n  221 |   await expect(panel.locator('.footprint-cell-tooltip .positioning-tooltip-status').last()).toContainText('Earlier data missing');\n  222 |\n  223 |   const historicalRight=await panel.evaluate(element=>{"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                        "column": 58,
+                        "line": 220
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.footprint-cell-tooltip')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.footprint-cell-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.footprint-cell-tooltip')\u001b[22m\n\n\n  218 |   },barTime);\n  219 |   await page.mouse.move(gappedPoint.x,gappedPoint.y);\n> 220 |   await expect(panel.locator('.footprint-cell-tooltip')).toBeVisible();\n      |                                                          ^\n  221 |   await expect(panel.locator('.footprint-cell-tooltip .positioning-tooltip-status').last()).toContainText('Earlier data missing');\n  222 |\n  223 |   const historicalRight=await panel.evaluate(element=>{\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:220:58"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:57:28.314Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/terminal-Footprint-mode-ow-3605b-s-and-restores-row-settings/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                    "column": 58,
+                    "line": 220
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-91392f056420bd11b864",
+          "file": "terminal.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "hidden panels suspend chart frames and panned views survive activation in Canvas2D",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8690,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:57:57.476Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-4f51407ed204445ccca4",
+          "file": "terminal.spec.ts",
+          "line": 487,
+          "column": 1
+        },
+        {
+          "title": "two-trade 1 USDT footprint row remains on-screen without an indicator scale",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9354,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:58:07.476Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-c592c73aba67da38a076",
+          "file": "terminal.spec.ts",
+          "line": 767,
+          "column": 1
+        },
+        {
+          "title": "footprint last-price line tracks executions within rows and $1 rows remain distinct",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8565,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:58:16.913Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-3efd7913e93cdb941e42",
+          "file": "terminal.spec.ts",
+          "line": 1318,
+          "column": 1
+        },
+        {
+          "title": "footprint BTC/USDT toggle preserves collection and viewport, updates totals and persists per panel",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19351,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\nExpected substring: \u001b[32m\"USDT\"\u001b[39m\nReceived string:    \u001b[31m\"Footprint\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.active-indicator[data-definition-id=\"native.footprint\"]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <div data-visible=\"true\" class=\"active-indicator\" data-instance-id=\"native.footprint\" data-definition-id=\"native.footprint\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Footprint\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\nExpected substring: \u001b[32m\"USDT\"\u001b[39m\nReceived string:    \u001b[31m\"Footprint\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.active-indicator[data-definition-id=\"native.footprint\"]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <div data-visible=\"true\" class=\"active-indicator\" data-instance-id=\"native.footprint\" data-definition-id=\"native.footprint\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Footprint\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:1408:98",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                      "column": 98,
+                      "line": 1408
+                    },
+                    "snippet": "  1406 |   await page.reload();\n  1407 |   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);\n> 1408 |   await expect(page.locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()).toContainText('USDT');\n       |                                                                                                  ^\n  1409 |   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][1].selection.footprintUnits)).toBe('btc');\n  1410 | });\n  1411 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                        "column": 98,
+                        "line": 1408
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\nExpected substring: \u001b[32m\"USDT\"\u001b[39m\nReceived string:    \u001b[31m\"Footprint\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.active-indicator[data-definition-id=\"native.footprint\"]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <div data-visible=\"true\" class=\"active-indicator\" data-instance-id=\"native.footprint\" data-definition-id=\"native.footprint\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"Footprint\"\u001b[22m\n\n\n  1406 |   await page.reload();\n  1407 |   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);\n> 1408 |   await expect(page.locator('.active-indicator[data-definition-id=\"native.footprint\"]').first()).toContainText('USDT');\n       |                                                                                                  ^\n  1409 |   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][1].selection.footprintUnits)).toBe('btc');\n  1410 | });\n  1411 |\n    at /home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts:1408:98"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:58:25.581Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/terminal-footprint-BTC-USD-7dc99-tals-and-persists-per-panel/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/terminal.spec.ts",
+                    "column": 98,
+                    "line": 1408
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f9206fb64e745a9d86f-1a450e9c59e73675e48e",
+          "file": "terminal.spec.ts",
+          "line": 1355,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T18:57:18.964Z",
+    "duration": 86418.89700000001,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

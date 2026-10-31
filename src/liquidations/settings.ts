@@ -6,7 +6,7 @@ export interface BurstRule { windowMs: number; minimum: number; count: number; c
 export interface LiquidationSettings {
   version: 1; venues: LiquidationVenue[]; side: LiquidatedSide | 'BOTH'; minimum: number; units: 'BTC' | 'USDT';
   tiers: Tier[]; muted: boolean; columns: (typeof LIQUIDATION_COLUMNS)[number][];
-  burst: BurstRule; markers: boolean; markerMinimum: number; markerDensity: number;
+  burst: BurstRule; showBursts:boolean; markers: boolean; markerMinimum: number; markerDensity: number;
   legend: boolean; paneWeight: number;
 }
 const clamp = (value: unknown, fallback: number, min: number, max: number) => typeof value === 'number' && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
@@ -21,6 +21,6 @@ export function liquidationSettings(value: unknown): LiquidationSettings {
     tiers, muted: v.muted === true, columns: LIQUIDATION_COLUMNS.filter(id => !Array.isArray(v.columns) || v.columns.includes(id)),
     burst: { windowMs: clamp(b.windowMs,12000,1000,300000), minimum: clamp(b.minimum,1000000,0,1e12), count: Math.round(clamp(b.count,3,2,4096)),
       cooldownMs: clamp(b.cooldownMs,60000,1000,3600000), alerts: b.alerts === true, sound: ['silent','bell','chime','alarm'].includes(b.sound) ? b.sound : 'chime', volume: clamp(b.volume,.5,0,1), toast: b.toast !== false },
-    markers: v.markers === true, markerMinimum: clamp(v.markerMinimum,100000,0,1e12), markerDensity: Math.round(clamp(v.markerDensity,80,1,200)), legend: v.legend !== false,
+    showBursts:v.showBursts!==false,markers: v.markers === true, markerMinimum: clamp(v.markerMinimum,100000,0,1e12), markerDensity: Math.round(clamp(v.markerDensity,80,1,200)), legend: v.legend !== false,
     paneWeight: clamp(v.paneWeight,.28,.08,3) };
 }

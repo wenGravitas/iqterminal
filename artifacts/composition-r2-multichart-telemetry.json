@@ -1,0 +1,636 @@
+{
+  "panels": [
+    {
+      "id": "chart-3f7e309b-8b96-4e6d-8f0a-317c4aee2ae0",
+      "panel": {
+        "indicatorReconciles": 0,
+        "activeIndicatorRenders": 1,
+        "objectRefreshes": 0,
+        "scriptObjectProviderSyncs": 0,
+        "dataCallbacks": 49,
+        "visibleRangeScaleUpdates": 42,
+        "autoscaleValuesScanned": 6300,
+        "sma": {
+          "fullCalls": 0,
+          "fullInputValues": 0,
+          "tailCalls": 41,
+          "tailInputValues": 0,
+          "tailValuesProcessed": 41,
+          "registryRevisions": 99,
+          "registryFullValuesProcessed": 0,
+          "registryTailValuesProcessed": 1980,
+          "derivedPublications": 99
+        }
+      },
+      "studies": {
+        "workerResults": 49,
+        "workerFailures": 0,
+        "dataNotifications": 49,
+        "statusNotifications": 0,
+        "configurationNotifications": 0,
+        "listenerCalls": 49,
+        "dataListenerCalls": 49,
+        "uiListenerCalls": 0,
+        "workers": [
+          {
+            "id": "study-1a0d35cb-7f1d-490d-91e7-5b434ccd05fb",
+            "patchCalls": 51,
+            "patchRows": 51,
+            "historyCalls": 0,
+            "historyRows": 0,
+            "messagesSent": 49,
+            "historyMessagesSent": 0,
+            "patchMessagesSent": 49,
+            "resultMessages": 49,
+            "resultRows": 245000,
+            "queued": null,
+            "generation": 51,
+            "alive": true
+          }
+        ]
+      },
+      "workers": 1
+    },
+    {
+      "id": "chart-1b6a9b9c-d8fb-4c1a-88da-797e2b16810e",
+      "panel": {
+        "indicatorReconciles": 0,
+        "activeIndicatorRenders": 1,
+        "objectRefreshes": 0,
+        "scriptObjectProviderSyncs": 0,
+        "dataCallbacks": 50,
+        "visibleRangeScaleUpdates": 42,
+        "autoscaleValuesScanned": 6300,
+        "sma": {
+          "fullCalls": 0,
+          "fullInputValues": 0,
+          "tailCalls": 41,
+          "tailInputValues": 0,
+          "tailValuesProcessed": 41,
+          "registryRevisions": 99,
+          "registryFullValuesProcessed": 0,
+          "registryTailValuesProcessed": 1980,
+          "derivedPublications": 99
+        }
+      },
+      "studies": {
+        "workerResults": 50,
+        "workerFailures": 0,
+        "dataNotifications": 50,
+        "statusNotifications": 0,
+        "configurationNotifications": 0,
+        "listenerCalls": 50,
+        "dataListenerCalls": 50,
+        "uiListenerCalls": 0,
+        "workers": [
+          {
+            "id": "study-45c33088-f03e-4e35-bdb9-ece429ec17a5",
+            "patchCalls": 51,
+            "patchRows": 51,
+            "historyCalls": 0,
+            "historyRows": 0,
+            "messagesSent": 50,
+            "historyMessagesSent": 0,
+            "patchMessagesSent": 50,
+            "resultMessages": 50,
+            "resultRows": 250000,
+            "queued": null,
+            "generation": 52,
+            "alive": true
+          }
+        ]
+      },
+      "workers": 1
+    }
+  ],
+  "feedProtocol": {
+    "commands": 3,
+    "events": 56,
+    "commandTypes": {
+      "fixture": 2,
+      "diagnostics": 1
+    },
+    "eventTypes": {
+      "status": 4,
+      "patch": 51,
+      "diagnostics": 1
+    },
+    "subscriptions": {
+      "candles": 2,
+      "cvd": 0,
+      "netPositioning": 0,
+      "rawOpenInterest": 0,
+      "depth": 0,
+      "footprint": 0
+    }
+  },
+  "feed": {
+    "series": 1,
+    "subscriptions": 2,
+    "sockets": 1,
+    "caches": [
+      {
+        "key": "binance:perpetual:BTCUSDT:1m",
+        "bars": 5000,
+        "clients": 2,
+        "pending": 0
+      }
+    ],
+    "inactiveCaches": 0,
+    "comparison": {
+      "subscriptions": 0,
+      "activeIdentities": 0,
+      "transport": "fixture",
+      "socket": "closed",
+      "socketCreations": 0,
+      "historyRequests": 0,
+      "reconnectAttempts": 0,
+      "retainedBars": 0,
+      "pendingCandles": 0,
+      "pendingHistory": 0,
+      "metadataCaches": 0
+    },
+    "cvd": {
+      "clients": 0,
+      "sources": [],
+      "fixture": true
+    },
+    "liquidations": {
+      "clients": 0,
+      "events": 0,
+      "sockets": 0,
+      "cursor": 0,
+      "state": "loading",
+      "loaded": 0,
+      "requests": 0,
+      "rejected": 0,
+      "reconnects": 0,
+      "historyPages": 0,
+      "stalePackets": 0,
+      "batches": 0
+    },
+    "tpo": {
+      "subscriptions": 0,
+      "cacheHits": 0,
+      "pagesFetched": 0,
+      "profileRecomputes": 0,
+      "nakedRecomputes": 0,
+      "livePatches": 0,
+      "groups": []
+    },
+    "depth": {
+      "subscribers": 0,
+      "bookObservers": 0,
+      "sockets": 0,
+      "state": "syncing",
+      "lastUpdateId": 0,
+      "buffered": 0,
+      "samples": 0,
+      "snapshotBidBoundary": null,
+      "snapshotAskBoundary": null,
+      "collectionStartedAt": null,
+      "synthetic": false
+    },
+    "heatmap": {
+      "transitions": 0,
+      "processingMs": 0,
+      "flushMs": 0,
+      "publications": 0,
+      "configurations": 0,
+      "consumers": 0,
+      "tickSize": null,
+      "groups": []
+    },
+    "orderWalls": {
+      "subscriptions": 0,
+      "socketsOwned": 0,
+      "projection": {
+        "projections": 0,
+        "cacheHits": 0,
+        "changedPrices": 0,
+        "trackedLevels": 0
+      },
+      "liveMode": false
+    },
+    "depthMatrix": {
+      "fixture": true,
+      "activeWidgets": 0
+    },
+    "netPositioning": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "cachedIntervals": 0,
+      "lastPollMs": 0,
+      "cache": []
+    },
+    "rawOpenInterest": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "lastPollMs": 0,
+      "fixtureSelected": true,
+      "history": {
+        "received": 0,
+        "changed": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "duplicateRows": 0,
+        "retained": 0
+      },
+      "cacheVenues": []
+    },
+    "footprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "spotFootprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "tickers": {
+      "publishedBatches": 0,
+      "publishedRecords": 0,
+      "widgets": 0,
+      "subscribers": []
+    },
+    "tradeBubbles": {
+      "subscribers": 0,
+      "feeds": [],
+      "fixture": true,
+      "caches": {
+        "binance:spot": 0,
+        "binance:perpetual": 0
+      },
+      "subscribersState": [],
+      "publishedRecords": 0,
+      "duplicateRecords": 0
+    },
+    "effortResult": [],
+    "fixture": true,
+    "networkSockets": 0,
+    "syntheticMessages": 51,
+    "historyApply": {
+      "footprintMs": 0,
+      "heatmapMs": 0,
+      "orderWallsMs": 0,
+      "footprintBatches": 0,
+      "heatmapBatches": 0,
+      "orderWallsBatches": 0
+    }
+  },
+  "cleanup": {
+    "panels": [
+      {
+        "id": "chart-3f7e309b-8b96-4e6d-8f0a-317c4aee2ae0",
+        "attached": 0,
+        "workers": 0
+      },
+      {
+        "id": "chart-1b6a9b9c-d8fb-4c1a-88da-797e2b16810e",
+        "attached": 0,
+        "workers": 0
+      }
+    ],
+    "feed": {
+      "series": 1,
+      "subscriptions": 2,
+      "sockets": 1,
+      "caches": [
+        {
+          "key": "binance:perpetual:BTCUSDT:1m",
+          "bars": 5000,
+          "clients": 2,
+          "pending": 0
+        }
+      ],
+      "inactiveCaches": 0,
+      "comparison": {
+        "subscriptions": 0,
+        "activeIdentities": 0,
+        "transport": "fixture",
+        "socket": "closed",
+        "socketCreations": 0,
+        "historyRequests": 0,
+        "reconnectAttempts": 0,
+        "retainedBars": 0,
+        "pendingCandles": 0,
+        "pendingHistory": 0,
+        "metadataCaches": 0
+      },
+      "cvd": {
+        "clients": 0,
+        "sources": [],
+        "fixture": true
+      },
+      "liquidations": {
+        "clients": 0,
+        "events": 0,
+        "sockets": 0,
+        "cursor": 0,
+        "state": "loading",
+        "loaded": 0,
+        "requests": 0,
+        "rejected": 0,
+        "reconnects": 0,
+        "historyPages": 0,
+        "stalePackets": 0,
+        "batches": 0
+      },
+      "tpo": {
+        "subscriptions": 0,
+        "cacheHits": 0,
+        "pagesFetched": 0,
+        "profileRecomputes": 0,
+        "nakedRecomputes": 0,
+        "livePatches": 0,
+        "groups": []
+      },
+      "depth": {
+        "subscribers": 0,
+        "bookObservers": 0,
+        "sockets": 0,
+        "state": "syncing",
+        "lastUpdateId": 0,
+        "buffered": 0,
+        "samples": 0,
+        "snapshotBidBoundary": null,
+        "snapshotAskBoundary": null,
+        "collectionStartedAt": null,
+        "synthetic": false
+      },
+      "heatmap": {
+        "transitions": 0,
+        "processingMs": 0,
+        "flushMs": 0,
+        "publications": 0,
+        "configurations": 0,
+        "consumers": 0,
+        "tickSize": null,
+        "groups": []
+      },
+      "orderWalls": {
+        "subscriptions": 0,
+        "socketsOwned": 0,
+        "projection": {
+          "projections": 0,
+          "cacheHits": 0,
+          "changedPrices": 0,
+          "trackedLevels": 0
+        },
+        "liveMode": false
+      },
+      "depthMatrix": {
+        "fixture": true,
+        "activeWidgets": 0
+      },
+      "netPositioning": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "cachedIntervals": 0,
+        "lastPollMs": 0,
+        "cache": []
+      },
+      "rawOpenInterest": {
+        "requests": 0,
+        "rowsReceived": 0,
+        "rowsChanged": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "errors": 0,
+        "subscribers": 0,
+        "lastPollMs": 0,
+        "fixtureSelected": true,
+        "history": {
+          "received": 0,
+          "changed": 0,
+          "snapshots": 0,
+          "patches": 0,
+          "duplicateRows": 0,
+          "retained": 0
+        },
+        "cacheVenues": []
+      },
+      "footprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "spotFootprint": {
+        "subscribers": 0,
+        "executionConsumers": 0,
+        "groups": [],
+        "sockets": 0,
+        "connected": false,
+        "tickSize": null,
+        "pending": 0,
+        "recentIds": 0,
+        "lastTradeId": null,
+        "expiredIdFloor": null,
+        "lastTradeTime": null,
+        "lastEventTime": null,
+        "counters": {
+          "messages": 0,
+          "accepted": 0,
+          "duplicates": 0,
+          "late": 0,
+          "unknownSide": 0,
+          "invalidGrid": 0,
+          "pendingFlushes": 0,
+          "socketOpens": 0,
+          "reconnects": 0,
+          "capacityDrops": 0,
+          "aggregationBatches": 0,
+          "aggregationObservations": 0,
+          "aggregationTotalMs": 0,
+          "aggregationMaxMs": 0
+        },
+        "rejected": {
+          "market": 0,
+          "contract": 0,
+          "symbol": 0,
+          "maker-side": 0,
+          "trade-id": 0,
+          "time": 0,
+          "price": 0,
+          "quantity": 0
+        },
+        "state": "loading"
+      },
+      "tickers": {
+        "publishedBatches": 0,
+        "publishedRecords": 0,
+        "widgets": 0,
+        "subscribers": []
+      },
+      "tradeBubbles": {
+        "subscribers": 0,
+        "feeds": [],
+        "fixture": true,
+        "caches": {
+          "binance:spot": 0,
+          "binance:perpetual": 0
+        },
+        "subscribersState": [],
+        "publishedRecords": 0,
+        "duplicateRecords": 0
+      },
+      "effortResult": [],
+      "fixture": true,
+      "networkSockets": 0,
+      "syntheticMessages": 63,
+      "historyApply": {
+        "footprintMs": 0,
+        "heatmapMs": 0,
+        "orderWallsMs": 0,
+        "footprintBatches": 0,
+        "heatmapBatches": 0,
+        "orderWallsBatches": 0
+      }
+    },
+    "feedProtocol": {
+      "commands": 6,
+      "events": 71,
+      "commandTypes": {
+        "fixture": 4,
+        "diagnostics": 2
+      },
+      "eventTypes": {
+        "status": 6,
+        "patch": 63,
+        "diagnostics": 2
+      },
+      "subscriptions": {
+        "candles": 2,
+        "cvd": 0,
+        "netPositioning": 0,
+        "rawOpenInterest": 0,
+        "depth": 0,
+        "footprint": 0
+      }
+    }
+  }
+}

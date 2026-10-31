@@ -1,5 +1,5 @@
 import {historyScheduler} from './history-scheduler';
-import {LiquidationCache,LiquidationBurstDetector,liquidationBars,liquidationSummary,selectedLiquidation} from '../liquidations/engine';
+import {LiquidationCache,LiquidationBurstDetector,liquidationBars,liquidationSummary,selectedLiquidation,type LiquidationBurstCoverageProof} from '../liquidations/engine';
 import {liquidationSettings} from '../liquidations/settings';
 import {parseBybitLiquidations,parseBinanceLiquidations} from '../liquidations/adapters';
 import {LIQUIDATION_MAX_EVENTS,liquidationValue,type LiquidationEvent,type LiquidationCoverage,type LiquidationHistory,type StoredLiquidation} from '../liquidations/model';
@@ -13,23 +13,23 @@ const emptyCoverage=():LiquidationCoverage=>({sources:[],retentionDays:7,head:0,
 export class LiquidationService {
  private clients=new Map<string,Client>();readonly cache=new LiquidationCache();private coverage=emptyCoverage();private socket?:WebSocket;
  private generation=0;private batch=0;private revision=0;private cursor=0;private epoch=0;private cacheEpoch=0;private state:LiquidationBatch['state']='loading';private message='Loading recorded liquidations';
- private loaded:LoadedRange[]=[];private requests=new Map<string,Promise<LoadResult>>();private retry?:ReturnType<typeof setTimeout>;private timer?:ReturnType<typeof setInterval>;private abort=new AbortController();private online=true;private lastHeartbeat=0;private reconnects=0;private fixture=false;private started=false;
+ private loaded:LoadedRange[]=[];private requests=new Map<string,Promise<LoadResult>>();private retry?:ReturnType<typeof setTimeout>;private timer?:ReturnType<typeof setInterval>;private abort=new AbortController();private online=true;private lastHeartbeat=0;private transportReady=false;private reconnects=0;private fixture=false;private started=false;
  readonly metrics={rejected:0,reconnects:0,historyPages:0,stalePackets:0,batches:0};
  constructor(private emit:(event:LiquidationBatch)=>void,private recorded:boolean,private transport:LiquidationTransport=defaultTransport){}
  setFixture(value:boolean){this.fixture=value;}
  subscribe(id:string,request:LiquidationRequest){this.unsubscribe(id);if(this.clients.size>=16)return;
-  const normalized=this.request(request),client:Client={id,request:normalized,generation:++this.generation,dirty:true,detector:new LiquidationBurstDetector(),burstKey:'',alerts:[],burstAlerts:[],truncated:false,historyEpoch:0,abort:new AbortController()};this.clients.set(id,client);
-  if(!this.timer)this.timer=setInterval(()=>{if(this.socket&&this.lastHeartbeat&&this.transport.now()-this.lastHeartbeat>16000){this.state='stale';this.message='Liquidation stream heartbeat stale';this.socket.close();}this.mark();this.flush();},1000);
+  const normalized=this.request(request),client:Client={id,request:normalized,generation:++this.generation,dirty:true,detector:new LiquidationBurstDetector(),burstKey:this.detectorKey(normalized),alerts:[],burstAlerts:[],truncated:false,historyEpoch:0,abort:new AbortController()};this.clients.set(id,client);
+  if(!this.timer)this.timer=setInterval(()=>{if(this.socket&&this.lastHeartbeat&&this.transport.now()-this.lastHeartbeat>16000){this.state='stale';this.message='Liquidation stream heartbeat stale';this.socket.close();}this.advanceBursts();this.mark();this.flush();},1000);
   if(this.fixture){if(!this.cache.events.size)this.seed();this.state='live';this.message='Explicit synthetic liquidation fixtures';this.rebuild(client);}
   else if(!this.recorded){this.state='unsupported';this.message='Recorded liquidation backend required; no synthetic/direct fallback';}
   else if(!this.started){this.started=true;void this.connect();}
   void this.history(client);this.flush();
  }
  private request(request:LiquidationRequest):LiquidationRequest {const now=this.transport.now();return {...request,settings:liquidationSettings(request.settings),from:Number.isFinite(request.from)?Math.max(0,request.from):now-900000,to:Number.isFinite(request.to)&&request.to>request.from?request.to:now,intervalMs:Number.isSafeInteger(request.intervalMs)&&request.intervalMs>0?request.intervalMs:60000};}
- update(id:string,request:LiquidationRequest){const c=this.clients.get(id);if(!c)return;c.request=this.request(request);c.generation=++this.generation;c.flight=undefined;c.alerts=[];c.burstAlerts=[];this.rebuild(c);void this.history(c);c.dirty=true;this.flush();}
- unsubscribe(id:string){const c=this.clients.get(id);c?.abort.abort();this.clients.delete(id);if(!this.clients.size){this.epoch++;this.started=false;this.abort.abort();this.abort=new AbortController();this.socket?.close();this.socket=undefined;clearInterval(this.timer);this.timer=undefined;clearTimeout(this.retry);this.requests.clear();}}
+ update(id:string,request:LiquidationRequest){const c=this.clients.get(id);if(!c)return;c.request=this.request(request);c.generation=++this.generation;c.flight=undefined;c.alerts=[];c.burstAlerts=[];if(c.burstKey!==this.detectorKey(c.request))this.rebuild(c);else this.prime(c);void this.history(c);c.dirty=true;this.flush();}
+ unsubscribe(id:string){const c=this.clients.get(id);c?.abort.abort();this.clients.delete(id);if(!this.clients.size){this.epoch++;this.started=false;this.transportReady=false;this.abort.abort();this.abort=new AbortController();this.socket?.close();this.socket=undefined;clearInterval(this.timer);this.timer=undefined;clearTimeout(this.retry);this.requests.clear();}}
  ack(id:string,generation:number,batchId:number){const c=this.clients.get(id);if(c?.generation===generation&&c.flight===batchId){c.flight=undefined;this.flush();}}
- setOnline(value:boolean){this.online=value;if(!value){this.socket?.close();this.state='disconnected';this.message='Network offline; retained liquidation history';this.mark();this.flush();}else if(this.clients.size&&!this.fixture&&this.recorded){clearTimeout(this.retry);void this.connect();}}
+ setOnline(value:boolean){this.online=value;if(!value){this.transportReady=false;this.socket?.close();this.state='disconnected';this.message='Network offline; retained liquidation history';this.mark();this.flush();}else if(this.clients.size&&!this.fixture&&this.recorded){clearTimeout(this.retry);void this.connect();}}
  private mark(){for(const c of this.clients.values())c.dirty=true;}
  private async load(from:number,to:number,signal:AbortSignal):Promise<LoadResult>{
   const now=this.transport.now();from=Math.max(from,now-7*86400000);to=Math.min(to,from+7*86400000);if(from>=to)return {truncated:false,head:0,asOf:now};
@@ -53,7 +53,7 @@ export class LiquidationService {
   for(const r of data.records)if(!Number.isSafeInteger(r.cursor)||r.cursor>data.head||!validEvent(r.event)){this.metrics.rejected++;throw Error('Invalid liquidation event payload');}}
  private async history(c:Client){if(this.fixture||!this.recorded)return;if(c.request.kind==='ticker'&&!c.request.replay&&this.coverage.sources.length)return;const epoch=++c.historyEpoch;try{const {truncated}=await this.load(Math.floor(c.request.from/60000)*60000,Math.ceil(c.request.to/60000)*60000,this.abort.signal);if(this.clients.get(c.id)!==c||epoch!==c.historyEpoch)return;c.truncated=truncated;c.dirty=true;this.flush();}catch(e){if(c.abort.signal.aborted||epoch!==c.historyEpoch||this.clients.get(c.id)!==c)return;this.message='Liquidation history unavailable: '+String((e as Error).message);this.state='stale';c.dirty=true;this.flush();}}
  private async connect(){if(!this.online||this.fixture||!this.recorded||!this.clients.size)return;
-  const epoch=++this.epoch;this.socket?.close();this.socket=undefined;this.state='loading';this.message='Reconciling recorded liquidation history';this.mark();this.flush();
+  const epoch=++this.epoch;this.transportReady=false;this.socket?.close();this.socket=undefined;this.state='loading';this.message='Reconciling recorded liquidation history';this.mark();this.flush();
   try{if(!this.cursor){const now=this.transport.now();let initial=await this.load(now-900000,now+1000,this.abort.signal);if(epoch!==this.epoch)return;
     // Bootstrap on the collector clock when the browser clock differs. Never
     // use an unrelated viewport response to advance this resume watermark.
@@ -61,26 +61,35 @@ export class LiquidationService {
    const ws=this.transport.socket(this.transport.url());this.socket=ws;this.lastHeartbeat=this.transport.now();
    ws.onopen=()=>{if(epoch!==this.epoch)return;ws.send(JSON.stringify({type:'subscribe',version:1,after:this.cursor}));};
    ws.onmessage=event=>{if(epoch!==this.epoch)return;try{const data=JSON.parse(String(event.data));this.lastHeartbeat=this.transport.now();
-    if(data.type==='reset'){this.cacheEpoch++;this.cursor=0;this.loaded=[];this.cache.clear();this.coverage=emptyCoverage();this.abort.abort();this.abort=new AbortController();this.requests.clear();for(const c of this.clients.values()){c.historyEpoch++;this.rebuild(c);}ws.close();return;}
-    if(data.type==='ready'||data.type==='health'){this.acceptCoverage(data.coverage);this.state=this.coverage.sources.every(s=>s.state==='live')?'live':'stale';this.message=this.state==='live'?'Reported liquidation streams connected':'One or more liquidation sources unavailable';this.mark();this.flush();return;}
+    if(data.type==='reset'){this.transportReady=false;this.cacheEpoch++;this.cursor=0;this.loaded=[];this.cache.clear();this.coverage=emptyCoverage();this.abort.abort();this.abort=new AbortController();this.requests.clear();for(const c of this.clients.values()){c.historyEpoch++;this.rebuild(c);}ws.close();return;}
+    if(data.type==='ready'||data.type==='health'){this.transportReady=true;this.acceptCoverage(data.coverage);this.state=this.coverage.sources.every(s=>s.state==='live')?'live':'stale';this.message=this.state==='live'?'Reported liquidation streams connected':'One or more liquidation sources unavailable';this.mark();this.flush();return;}
     if(data.type!=='liquidations'||!Array.isArray(data.records)||data.records.length>256||!Number.isSafeInteger(data.cursor))throw Error('Invalid liquidation stream packet');
     const records=data.records as StoredLiquidation[],eligible=new Set<string>();
     for(const row of records){if(!validEvent(row.event)||!Number.isSafeInteger(row.cursor))throw Error('Invalid liquidation event');if(row.cursor>data.initialHead&&this.transport.now()-row.event.receivedAtMs<=3000&&this.transport.now()-row.event.timeMs<=3000)eligible.add(row.event.id);}
-    this.ingest(records.map(row=>row.event),true,eligible);
-    this.acceptCoverage(data.coverage);this.cursor=data.cursor;ws.send(JSON.stringify({type:'ack',version:1,cursor:data.cursor}));this.reconnects=0;this.revision++;this.mark();this.flush();
+    this.acceptCoverage(data.coverage);this.ingest(records.map(row=>row.event),true,eligible);
+    this.cursor=data.cursor;ws.send(JSON.stringify({type:'ack',version:1,cursor:data.cursor}));this.reconnects=0;this.revision++;this.mark();this.flush();
    }catch{this.metrics.rejected++;ws.close();}};
-   ws.onerror=()=>{};ws.onclose=()=>{if(epoch!==this.epoch||!this.clients.size)return;this.socket=undefined;this.state='disconnected';this.message='Liquidation transport disconnected; reconnect catch-up will not alert';this.mark();this.flush();this.schedule();};
+   ws.onerror=()=>{};ws.onclose=()=>{if(epoch!==this.epoch||!this.clients.size)return;this.transportReady=false;this.socket=undefined;this.state='disconnected';this.message='Liquidation transport disconnected; reconnect catch-up will not alert';this.mark();this.flush();this.schedule();};
   }catch(e){if(epoch!==this.epoch)return;this.state='disconnected';this.message=String((e as Error).message);this.mark();this.flush();this.schedule();}
  }
  private schedule(){clearTimeout(this.retry);if(!this.online||!this.clients.size)return;this.metrics.reconnects++;this.retry=setTimeout(()=>void this.connect(),Math.min(30000,500*2**Math.min(++this.reconnects,6)));}
- private prime(c:Client){for(const event of this.cache.sorted())if(this.member(event,c))c.detector.ingest(event,c.request.settings.burst,false,this.transport.now());}
- private rebuild(c:Client){c.detector=new LiquidationBurstDetector();c.burstKey=JSON.stringify([c.request.settings.venues,c.request.settings.side,c.request.settings.burst]);this.prime(c);c.alerts=[];c.burstAlerts=[];}
- private member(e:LiquidationEvent,c:Client){return (!c.request.replay||e.timeMs>=c.request.from&&e.timeMs<Math.min(c.request.to,c.request.asOf??c.request.to))&&c.request.settings.venues.includes(e.venue)&&(c.request.settings.side==='BOTH'||c.request.settings.side===e.liquidatedSide);}
+ private detectorKey(request:LiquidationRequest){const rule=request.settings.burst;return JSON.stringify([request.settings.venues,request.settings.side,[rule.windowMs,rule.minimum,rule.count],request.replay?[request.from,request.to,request.asOf??request.to]:null]);}
+ private burstProof(c:Client,historical=false):LiquidationBurstCoverageProof{
+  const venues=c.request.settings.venues,sources=this.coverage.sources.filter(source=>venues.includes(source.venue)),complete=venues.length>0&&sources.length===venues.length;
+  const replay=c.request.replay===true,healthySources=historical||replay||this.fixture||this.online&&this.transportReady&&sources.every(source=>source.state==='live');
+  return {healthy:complete&&healthySources,observedFrom:complete?Math.max(...sources.map(source=>source.observedFrom)):Infinity,
+   verifiedThrough:sources.length?Math.min(...sources.map(source=>source.verifiedThrough)):0,gaps:sources.flatMap(source=>source.gaps)};
+ }
+ private advanceClient(c:Client,historical=false){const proof=this.burstProof(c,historical),replayClock=Math.min(c.request.to,c.request.asOf??c.request.to),localAnchor=this.lastHeartbeat||this.transport.now(),clock=c.request.replay?replayClock:historical?proof.verifiedThrough:Number.isFinite(proof.verifiedThrough)&&proof.verifiedThrough>0?this.transport.now()+(proof.verifiedThrough-localAnchor):this.transport.now();const closed=c.detector.advance(clock,c.request.settings.burst,proof);if(closed.length)c.dirty=true;}
+ private advanceBursts(){for(const c of this.clients.values())this.advanceClient(c);}
+ private prime(c:Client){const now=c.request.replay?Math.min(c.request.to,c.request.asOf??c.request.to):this.transport.now(),proof=this.burstProof(c,true);for(const event of this.cache.sorted())if(this.member(event,c))c.detector.ingest(event,c.request.settings.burst,false,now,proof);this.advanceClient(c,true);}
+ private rebuild(c:Client){c.detector=new LiquidationBurstDetector();c.burstKey=this.detectorKey(c.request);this.prime(c);c.alerts=[];c.burstAlerts=[];}
+ private member(e:LiquidationEvent,c:Client){return (!c.request.replay||e.timeMs>=c.request.from&&e.timeMs<c.request.to&&e.timeMs<=(c.request.asOf??c.request.to))&&c.request.settings.venues.includes(e.venue)&&(c.request.settings.side==='BOTH'||c.request.settings.side===e.liquidatedSide);}
  ingest(events:LiquidationEvent[],live=false,eligibleIds?:Set<string>){const now=this.transport.now(),fresh=new Map<string,LiquidationEvent>();
   for(const event of events){if(!validEvent(event)){this.metrics.rejected++;continue;}if(!this.cache.events.has(event.id))fresh.set(event.id,event);}
   this.cache.merge([...fresh.values()]);
   for(const event of fresh.values()){const eligibleLive=live&&(!eligibleIds||eligibleIds.has(event.id));
-   for(const c of this.clients.values()){if(!this.member(event,c))continue;const s=c.request.settings,burst=c.detector.ingest(event,s.burst,eligibleLive&&!c.request.replay,now);if(burst?.notify&&c.burstAlerts.length<32)c.burstAlerts.push(structuredClone(burst));
+   for(const c of this.clients.values()){if(!this.member(event,c))continue;const s=c.request.settings,burst=c.detector.ingest(event,s.burst,eligibleLive&&!c.request.replay,now,this.burstProof(c));if(burst?.notify&&c.burstAlerts.length<32)c.burstAlerts.push(structuredClone(burst));
     const eligible=eligibleLive&&!c.request.replay&&now-event.timeMs<=3000&&event.timeMs-now<=1000&&now-event.receivedAtMs<=3000;
     let winner:typeof s.tiers[number]|undefined;for(const tier of s.tiers){const size=liquidationValue(event,tier.unit);if(size!==null&&size>=tier.minimum)winner=tier;}
     if(eligible&&winner&&c.alerts.length<256)c.alerts.push({event,tierId:winner.id});c.dirty=true;

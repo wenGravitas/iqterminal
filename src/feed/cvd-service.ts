@@ -3,6 +3,10 @@ import { CVD_STEP,CVD_SOURCES,CVD_MAX_POINTS,CvdCalculation,validateCvdPayload,c
 import type { ExecutionFeed } from './bybit-service';
 interface Source {payload?:CvdPayload;rows:Map<number,CvdBucket>;revision:number;abort?:AbortController;busy:boolean;next:number;release?:()=>void;recent:Set<string>}
 interface Client {id:string;request:CvdRequest;generation:number;calculations:Map<CvdSource,CvdCalculation>;pending:Map<CvdSource,CvdSeries>;inFlight?:number}
+function historyFailureMessage(error:unknown){
+  const message=error instanceof Error?error.message:String(error);
+  return /unexpected end of json input/i.test(message)?'Incomplete JSON response':message;
+}
 export class CvdService {
   private sources=new Map<CvdSource,Source>();private clients=new Map<string,Client>();
   private timer?:ReturnType<typeof setInterval>;private generation=0;private batch=0;private online=true;
@@ -32,24 +36,36 @@ export class CvdService {
   private tick(){for(const [source,state]of this.sources)if(this.recorded&&!this.fixture&&this.online&&!state.busy&&this.now()>=state.next)void this.poll(source,state);this.flush();}
   private async poll(source:CvdSource,state:Source){
     state.busy=true;const abort=new AbortController();state.abort=abort;
-    const url=`/market-data/v1/cvd?market=${source.endsWith(':spot')?'spot':'perpetual'}${source.startsWith('bybit:')?'&venue=bybit':''}&since=${state.payload?.revision??0}`;
+    const since=state.payload?.revision??0;
+    const url=`/market-data/v1/cvd?market=${source.endsWith(':spot')?'spot':'perpetual'}${source.startsWith('bybit:')?'&venue=bybit':''}&since=${since}`;
     try{
       const value=await historyScheduler.read(url,'cvd',abort.signal,async signal=>{
-        const response=await this.request(url,{signal:AbortSignal.any([signal,AbortSignal.timeout(25000)])});
-        const data=await response.json();if(!response.ok)throw Error(data.error??`Execution history HTTP ${response.status}`);return validateCvdPayload(data,source);
+        const timeoutMs=since===0?60_000:25_000;
+        const response=await this.request(url,{signal:AbortSignal.any([signal,AbortSignal.timeout(timeoutMs)])});
+        const text=await response.text();let data:any;
+        if(!response.ok){
+          try{data=JSON.parse(text);}catch{}
+          const detail=typeof data?.error==='string'?data.error:text.trim().replace(/\s+/g,' ').slice(0,180);
+          throw Error(`Execution history HTTP ${response.status}${detail?`: ${detail}`:''}`);
+        }
+        try{data=JSON.parse(text);}catch(error){throw Error(historyFailureMessage(error));}
+        return validateCvdPayload(data,source);
       });
       if(this.sources.get(source)!==state||abort.signal.aborted)return;
       this.ingest(source,value);state.next=this.now()+1000;
     }catch(error){
       if(this.sources.get(source)!==state||abort.signal.aborted)return;
       const payload=state.payload??this.empty(source);
-      this.ingest(source,{...payload,snapshot:false,buckets:[],status:state.rows.size?'stale':'unavailable',asOf:this.now(),message:`Signed history unavailable: ${error instanceof Error?error.message:String(error)}`});
+      const status=state.rows.size?'stale':'unavailable',message=`Signed history unavailable: ${historyFailureMessage(error)}`;
+      // Failed polls do not represent a new data update. Keep the last observed
+      // timestamp, and avoid re-emitting an unchanged failure every retry.
+      if(payload.status!==status||payload.message!==message)this.ingest(source,{...payload,snapshot:false,buckets:[],status,message});
       state.next=this.now()+5000;
     }finally{state.busy=false;if(state.abort===abort)state.abort=undefined;}
   }
   private empty(source:CvdSource):CvdPayload{
     const now=this.now(),from=Math.floor((now-7*86400000)/CVD_STEP)*CVD_STEP;
-    return {version:1,source:`${source}:BTCUSDT`,stepMs:CVD_STEP,from,to:Math.ceil(now/CVD_STEP)*CVD_STEP,revision:0,snapshot:true,watermark:0,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:now,to:now,gaps:[]},status:'awaiting',asOf:now};
+    return {version:1,source:`${source}:BTCUSDT`,stepMs:CVD_STEP,from,to:Math.ceil(now/CVD_STEP)*CVD_STEP,revision:0,snapshot:true,watermark:0,baseUnit:'BTC',quoteUnit:'USDT',buckets:[],coverage:{from:now,to:now,gaps:[]},status:'awaiting',asOf:0};
   }
   ingest(source:CvdSource,payload:CvdPayload){
     const state=this.sources.get(source);if(!state)return;
@@ -77,6 +93,7 @@ export class CvdService {
   }
   private fixtureSource(source:CvdSource,state:Source){
     const payload=this.empty(source),factor=source.endsWith(':spot')?1:2,values=[100,-40,20];
+    payload.asOf=this.now();
     payload.status='live';payload.message='Fixture: synthetic signed execution history';payload.revision=1;payload.coverage={from:payload.from,to:this.now(),gaps:[]};
     for(let time=payload.from;time<payload.to;time+=CVD_STEP){const phase=Math.floor(time/CVD_STEP)%3,base=values[phase]!*factor;state.rows.set(time,{time,base,quote:base*(phase===1?88000:81000),revision:1});}
     state.payload={...payload,buckets:[]};

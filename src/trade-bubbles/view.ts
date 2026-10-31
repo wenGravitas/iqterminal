@@ -7,6 +7,7 @@ import { TradeBubblesPrimitive, type TradeBubbleHit } from '../chart/trade-bubbl
 import type { TradeBubbleBatch, TradeBubbleRecord, TradeBubbleSettings } from './model';
 import { resolveTradeBubbleSources, tradeBubbleSettings } from './model';
 import { TradeBubbleControls, type TradeTickerTierSource } from './controls';
+import { TooltipDwell } from '../tooltip-dwell';
 
 const priceFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const quantityFormat = new Intl.NumberFormat('en-US', { maximumFractionDigits: 6 });
@@ -29,6 +30,10 @@ export class TradeBubblesView {
   private listeners: Array<() => void> = [];
   private controlsAbort = new AbortController();
   private lastStatusText = '';
+  private tooltipDwell = new TooltipDwell();
+  private hoverPointerType?: string;
+  private pointerDown = false;
+  private blockedUntilMove = false;
 
   constructor(
     private host: HTMLElement,
@@ -46,13 +51,20 @@ export class TradeBubblesView {
     this.statusNode.className = 'trade-bubbles-status'; this.statusNode.setAttribute('role', 'status'); this.statusNode.setAttribute('aria-live', 'polite');
     host.append(this.tooltip); const footer = host.closest<HTMLElement>('.candle-panel')?.querySelector<HTMLElement>('.chart-footer'); footer?.append(this.statusNode);
     this.controls = new TradeBubbleControls(host.closest<HTMLElement>('.candle-panel') ?? host, this.controlsAbort.signal, tickerTierSources, change);
+    host.addEventListener('pointermove', event => { this.hoverPointerType = event.pointerType; if (!this.pointerDown) this.blockedUntilMove = false; }, { capture: true, signal: this.controlsAbort.signal });
+    host.addEventListener('pointerleave', () => { this.hoverPointerType = undefined; this.cancelTooltip(); }, { signal: this.controlsAbort.signal });
+    host.addEventListener('pointerdown', () => { this.pointerDown = true; this.blockedUntilMove = true; this.cancelTooltip(); }, { capture: true, signal: this.controlsAbort.signal });
+    host.addEventListener('pointerup', () => { this.pointerDown = false; }, { capture: true, signal: this.controlsAbort.signal });
+    host.addEventListener('wheel', () => { this.blockedUntilMove = true; this.cancelTooltip(); }, { capture: true, passive: true, signal: this.controlsAbort.signal });
     this.listeners.push(chart.subscribeCrosshairMove(event => this.crosshair(event)));
     this.configure(this.settings, series);
   }
 
   configure(value: unknown, series: Series) {
     const previousKey = this.subscriptionKey;
+    const previousSeries = this.series;
     this.settings = tradeBubbleSettings(value); this.series = series;
+    if (previousSeries.venue !== series.venue || previousSeries.market !== series.market || previousSeries.interval !== series.interval) this.cancelTooltip();
     this.resolution = resolveTradeBubbleSources(this.settings, series);
     this.primitive.setSettings(this.settings);
     this.primitive.setEnabled(this.visible && this.hostVisible && this.resolution.state === 'compatible');
@@ -89,28 +101,41 @@ export class TradeBubblesView {
     if (this.dead) return;
     const status = this.status;
     const state = this.resolution.state === 'compatible' ? status?.state ?? 'loading' : this.resolution.state;
-    const sourceText = this.resolution.state === 'compatible'
-      ? this.resolution.compatible.map(source => source === 'binance:spot' ? 'Binance Spot' : 'Binance USD-M').join(' + ')
-      : this.resolution.message;
-    const hidden = !this.visible || !this.hostVisible;
-    const message = `${hidden ? 'Hidden · still collecting · ' : ''}${sourceText} · ${state}${status?.message ? ` · ${status.message}` : ''} · ${this.records.size}/${2048} retained · ${this.primitive.diagnostics().culled} culled`;
+    let message = '';
+    if (this.visible && this.hostVisible) {
+      if (this.resolution.state === 'unavailable') message = this.resolution.requested.length ? 'Unavailable for this chart.' : 'Choose a trade source in Settings.';
+      else if (this.resolution.state === 'incompatible') message = 'These trades cannot be shown on this chart.';
+      else if (state === 'loading') message = 'Waiting for trades…';
+      else if (state === 'failed') message = 'Trade data unavailable.';
+      else if (state === 'stale' || state === 'reconnecting') message = 'Trade updates paused.';
+      else if ((status?.gaps ?? 0) > 0 || (status?.dropped ?? 0) > 0) message = 'Some trades may be missing.';
+      else if (!this.records.size) message = 'No trades above this size yet.';
+    }
     if (message === this.lastStatusText) return;
     this.lastStatusText = message; this.statusNode.textContent = message; this.statusNode.dataset.state = state;
-    this.statusNode.hidden = false;
+    this.statusNode.hidden = !message;
   }
 
   private crosshair(event: CrosshairMoveEvent) {
-    if (this.dead || !this.visible || !event.point || event.paneIndex !== this.chart.primaryPaneIndex()) { this.tooltip.hidden = true; return; }
+    if (this.dead || !this.visible || !event.point || event.paneIndex !== this.chart.primaryPaneIndex() || this.hoverPointerType === 'touch' || this.pointerDown || this.blockedUntilMove || document.hidden) { this.cancelTooltip(); return; }
     const plot = this.chart.plotRect(this.chart.primaryPaneIndex());
-    if (!plot) { this.tooltip.hidden = true; return; }
+    if (!plot) { this.cancelTooltip(); return; }
     const hit = this.primitive.hit(event.point.x - plot.left, event.point.y - plot.top);
-    if (!hit) { this.tooltip.hidden = true; return; }
-    this.renderTooltip(hit);
-    const width = this.tooltip.offsetWidth, height = this.tooltip.offsetHeight;
-    const left = Math.max(4, Math.min(this.host.clientWidth - width - 4, plot.left + hit.x + 10));
-    const top = Math.max(4, Math.min(this.host.clientHeight - height - 4, plot.top + hit.y + 10));
-    this.tooltip.style.left = `${left}px`; this.tooltip.style.top = `${top}px`; this.tooltip.hidden = false;
+    if (!hit) { this.cancelTooltip(); return; }
+    const show = () => {
+      if (this.dead || !this.visible || !this.hostVisible || this.hoverPointerType === 'touch' || this.pointerDown || document.hidden) return;
+      this.renderTooltip(hit);
+      const width = this.tooltip.offsetWidth, height = this.tooltip.offsetHeight;
+      const left = Math.max(4, Math.min(this.host.clientWidth - width - 4, plot.left + hit.x + 10));
+      const top = Math.max(4, Math.min(this.host.clientHeight - height - 4, plot.top + hit.y + 10));
+      this.tooltip.style.left = `${left}px`; this.tooltip.style.top = `${top}px`; this.tooltip.hidden = false;
+    };
+    const ready = this.tooltipDwell.request(`trade-bubble:${hit.record.id}`, show);
+    this.tooltip.hidden = !ready;
+    if (ready) show();
   }
+
+  private cancelTooltip() { this.tooltipDwell.clear(); this.tooltip.hidden = true; }
 
   private renderTooltip(hit: TradeBubbleHit) {
     const execution = hit.record.execution;
@@ -138,17 +163,17 @@ export class TradeBubblesView {
   openSettings() { this.controls.open(this.settings); }
   setVisible(visible: boolean) {
     this.visible = visible; this.primitive.setEnabled(visible && this.hostVisible && this.resolution.state === 'compatible');
-    if (!visible) this.tooltip.hidden = true;
+    if (!visible) this.cancelTooltip();
     this.renderStatus();
   }
   setHostVisible(visible: boolean) {
     this.hostVisible = visible; this.primitive.setEnabled(this.visible && visible && this.resolution.state === 'compatible');
-    if (!visible) this.tooltip.hidden = true;
+    if (!visible) this.cancelTooltip();
     this.renderStatus();
   }
   diagnostics() { return { settings: this.settings, resolution: this.resolution, status: this.status, records: this.records.size, layer: this.primitive.diagnostics() }; }
   dispose() {
-    if (this.dead) return; this.dead = true; this.release?.(); this.release = undefined;
+    if (this.dead) return; this.tooltipDwell.dispose(); this.dead = true; this.release?.(); this.release = undefined;
     this.listeners.forEach(release => release()); this.listeners = []; this.controlsAbort.abort(); this.controls.dispose(); this.chart.removePrimitive(this.primitive);
     this.tooltip.remove(); this.statusNode.remove(); this.records.clear();
   }

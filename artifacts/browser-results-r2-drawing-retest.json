@@ -1,0 +1,211 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.config.ts",
+      "tests/browser/drawing-tools.spec.ts:132"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4175",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-drawing-retest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --host 127.0.0.1 --port 4175 --outDir /tmp/iqterminal-pane-r2-dist",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "drawing-tools.spec.ts",
+      "file": "drawing-tools.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native drawing placement, IQ settings, templates and instrument scope use one-step history",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 61592,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 51,
+                        "line": 562
+                      },
+                      "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-panel-id=\"chart-8ef61f11-6206-4350-a130-522451c2fd9a\"]').locator('.chart-objects-panel').locator('.chart-object-row.kind-drawing').last().locator('button[data-object-action=\"visible\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" title=\"Hide object\" aria-label=\"Hide object\" class=\"chart-object-action\" data-object-id=\"drawing:d6\" data-object-action=\"visible\">Hide</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    27 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\n\n  560 |   const secondDrawingObjectId = await secondDrawingRow.getAttribute('data-object-id');\n  561 |   expect(secondDrawingObjectId).toBeTruthy();\n> 562 |   await objectAction(secondDrawingRow, 'visible').click();\n      |                                                   ^\n  563 |   await expect.poll(async () => (await drawingState(page, secondPerp)).drawings[0]?.visible).toBe(false);\n  564 |   expect(await secondObjectsPanel.evaluate(panel => panel.closest('.candle-panel')?.getAttribute('data-panel-id'))).toBe(secondPerpId);\n  565 |   expect((await drawingState(page, panel)).drawings.every(drawing => drawing.visible !== false)).toBe(true);\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:562:51"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "Canvas label pixel records: [{\"value\":\"4H Support\",\"x\":4,\"y\":278.00000000001575,\"width\":62.2509765625,\"font\":\"11px ui-sans-serif, system-ui, -apple-system, \\\"Segoe UI\\\", Roboto, sans-serif\",\"color\":\"#26a69a\",\"canvas\":[339,645],\"transform\":[1,1,0,0],\"scan\":[2,266,71,24],\"colorPixels\":245,\"foregroundPixels\":123,\"nonBackgroundPixels\":235},{\"value\":\"4H Support\",\"x\":4,\"y\":278.00000000001575,\"width\":62.2509765625,\"font\":\"11px ui-sans-serif, system-ui, -apple-system, \\\"Segoe UI\\\", Roboto, sans-serif\",\"color\":\"#26a69a\",\"canvas\":[339,645],\"transform\":[1,1,0,0],\"scan\":[2,266,71,24],\"colorPixels\":241,\"foregroundPixels\":122,\"nonBackgroundPixels\":235},{\"value\":\"4H Support\",\"x\":4,\"y\":278.00000000001575,\"width\":62.2509765625,\"font\":\"11px ui-sans-serif, system-ui, -apple-system, \\\"Segoe UI\\\", Roboto, sans-serif\",\"color\":\"#26a69a\",\"canvas\":[339,645],\"transform\":[1,1,0,0],\"scan\":[2,266,71,24],\"colorPixels\":241,\"foregroundPixels\":122,\"nonBackgroundPixels\":235}]\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:47:23.404Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-native-drawi-84864--scope-use-one-step-history/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-a23ac0db9621977bdcfe",
+          "file": "drawing-tools.spec.ts",
+          "line": 132,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T06:47:18.562Z",
+    "duration": 68907.29000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

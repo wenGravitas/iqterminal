@@ -1,0 +1,372 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.config.ts",
+      "tests/browser/open-interest-sma.spec.ts",
+      "tests/browser/composition-cvd.spec.ts",
+      "tests/browser/composition-sma-registry.spec.ts",
+      "tests/browser/order-flow-pane.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-repair.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --host 127.0.0.1 --port 4175 --outDir /tmp/iqterminal-pane-r2-dist",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "composition-cvd.spec.ts",
+      "file": "composition-cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD output feeds a managed SMA, preserves reset/quality metadata, and moves with its pane adapter",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 17121,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 12\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   9581,\u001b[39m\n\u001b[32m-   9583,\u001b[39m\n\u001b[32m-   9586,\u001b[39m\n\u001b[32m-   9590,\u001b[39m\n\u001b[32m-   9595,\u001b[39m\n\u001b[32m-   9601,\u001b[39m\n\u001b[32m-   9616,\u001b[39m\n\u001b[32m-   9625,\u001b[39m\n\u001b[32m-   9635,\u001b[39m\n\u001b[32m-   9646,\u001b[39m\n\u001b[32m-   9658,\u001b[39m\n\u001b[32m-   9671,\u001b[39m\n\u001b[31m+   19161,\u001b[39m\n\u001b[31m+   19163,\u001b[39m\n\u001b[31m+   19166,\u001b[39m\n\u001b[31m+   19170,\u001b[39m\n\u001b[31m+   19175,\u001b[39m\n\u001b[31m+   19181,\u001b[39m\n\u001b[31m+   19196,\u001b[39m\n\u001b[31m+   19205,\u001b[39m\n\u001b[31m+   19215,\u001b[39m\n\u001b[31m+   19226,\u001b[39m\n\u001b[31m+   19238,\u001b[39m\n\u001b[31m+   19251,\u001b[39m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 12\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   9581,\u001b[39m\n\u001b[32m-   9583,\u001b[39m\n\u001b[32m-   9586,\u001b[39m\n\u001b[32m-   9590,\u001b[39m\n\u001b[32m-   9595,\u001b[39m\n\u001b[32m-   9601,\u001b[39m\n\u001b[32m-   9616,\u001b[39m\n\u001b[32m-   9625,\u001b[39m\n\u001b[32m-   9635,\u001b[39m\n\u001b[32m-   9646,\u001b[39m\n\u001b[32m-   9658,\u001b[39m\n\u001b[32m-   9671,\u001b[39m\n\u001b[31m+   19161,\u001b[39m\n\u001b[31m+   19163,\u001b[39m\n\u001b[31m+   19166,\u001b[39m\n\u001b[31m+   19170,\u001b[39m\n\u001b[31m+   19175,\u001b[39m\n\u001b[31m+   19181,\u001b[39m\n\u001b[31m+   19196,\u001b[39m\n\u001b[31m+   19205,\u001b[39m\n\u001b[31m+   19215,\u001b[39m\n\u001b[31m+   19226,\u001b[39m\n\u001b[31m+   19238,\u001b[39m\n\u001b[31m+   19251,\u001b[39m\n\u001b[2m  ]\u001b[22m\n    at /home/daz/workarea/iqterminal/tests/browser/composition-cvd.spec.ts:171:41",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/composition-cvd.spec.ts",
+                      "column": 41,
+                      "line": 171
+                    },
+                    "snippet": "  169 |   await expect.poll(async()=> (await groupState()).consumerCurrent).toBe(true);\n  170 |   const afterMembership=await groupState();\n> 171 |   expect(afterMembership.output.values).toEqual(afterRename.output.values);\n      |                                         ^\n  172 |   expect(afterMembership.output.contextRevision).toBe(afterRename.output.contextRevision+1);\n  173 |   expect(afterMembership.output.revision).toBeGreaterThan(afterRename.output.revision);\n  174 |   expect(afterMembership.derived.values).toEqual(afterRename.derived.values);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/composition-cvd.spec.ts",
+                        "column": 41,
+                        "line": 171
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 12\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   9581,\u001b[39m\n\u001b[32m-   9583,\u001b[39m\n\u001b[32m-   9586,\u001b[39m\n\u001b[32m-   9590,\u001b[39m\n\u001b[32m-   9595,\u001b[39m\n\u001b[32m-   9601,\u001b[39m\n\u001b[32m-   9616,\u001b[39m\n\u001b[32m-   9625,\u001b[39m\n\u001b[32m-   9635,\u001b[39m\n\u001b[32m-   9646,\u001b[39m\n\u001b[32m-   9658,\u001b[39m\n\u001b[32m-   9671,\u001b[39m\n\u001b[31m+   19161,\u001b[39m\n\u001b[31m+   19163,\u001b[39m\n\u001b[31m+   19166,\u001b[39m\n\u001b[31m+   19170,\u001b[39m\n\u001b[31m+   19175,\u001b[39m\n\u001b[31m+   19181,\u001b[39m\n\u001b[31m+   19196,\u001b[39m\n\u001b[31m+   19205,\u001b[39m\n\u001b[31m+   19215,\u001b[39m\n\u001b[31m+   19226,\u001b[39m\n\u001b[31m+   19238,\u001b[39m\n\u001b[31m+   19251,\u001b[39m\n\u001b[2m  ]\u001b[22m\n\n  169 |   await expect.poll(async()=> (await groupState()).consumerCurrent).toBe(true);\n  170 |   const afterMembership=await groupState();\n> 171 |   expect(afterMembership.output.values).toEqual(afterRename.output.values);\n      |                                         ^\n  172 |   expect(afterMembership.output.contextRevision).toBe(afterRename.output.contextRevision+1);\n  173 |   expect(afterMembership.output.revision).toBeGreaterThan(afterRename.output.revision);\n  174 |   expect(afterMembership.derived.values).toEqual(afterRename.derived.values);\n    at /home/daz/workarea/iqterminal/tests/browser/composition-cvd.spec.ts:171:41"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:17:26.341Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/composition-cvd-CVD-output-d148a-moves-with-its-pane-adapter/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/composition-cvd.spec.ts",
+                    "column": 41,
+                    "line": 171
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f31b146ce865d9b09f1f-9cad80dd38dbb06e8836",
+          "file": "composition-cvd.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-sma-registry.spec.ts",
+      "file": "composition-sma-registry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native SMA output chains through the chart registry without an engine source binding",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24386,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:17:48.095Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "400bd22dfefd7a1ea87a-9e38ff741e934e5ae884",
+          "file": "composition-sma-registry.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "open-interest-sma.spec.ts",
+      "file": "open-interest-sma.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7894,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:18:14.591Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0459243dea3507bf7eef-daca347b873a493d1f83",
+          "file": "open-interest-sma.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "order-flow-pane.spec.ts",
+      "file": "order-flow-pane.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "managed Order Flow combines CVD, raw Open Interest, Volume and default SMA with one pane chrome",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25218,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Order Flow OI alignment {\"now\":1793341114489,\"hostTail\":[1793339640000,1793339700000,1793339760000,1793339820000,1793339880000,1793339940000,1793340000000,1793340060000,1793340120000,1793340180000,1793340240000,1793340300000,1793340360000,1793340420000,1793340480000,1793340540000,1793340600000,1793340660000,1793340720000,1793340780000,1793340840000,1793340900000,1793340960000,1793341020000,1793341080000],\"payload\":{\"from\":1793326714235,\"to\":1793341114235,\"asOf\":1793341114235,\"rows\":1440,\"first\":1793326744234,\"last\":1793341114234},\"worker\":{\"requests\":0,\"rowsReceived\":0,\"rowsChanged\":0,\"snapshots\":1,\"patches\":0,\"errors\":0,\"subscribers\":1,\"lastPollMs\":0,\"fixtureSelected\":true,\"history\":{\"received\":1440,\"changed\":1440,\"snapshots\":1,\"patches\":0,\"duplicateRows\":0,\"retained\":1440},\"cacheVenues\":[\"binance\",\"hyperliquid\",\"bybit\"]},\"history\":{\"received\":1440,\"changed\":1440,\"snapshots\":0,\"patches\":0,\"duplicateRows\":0,\"retained\":1440},\"points\":[[\"binance\",[{\"t\":1793339640000,\"source\":1793339674234,\"age\":25765,\"quality\":\"complete\",\"value\":1431},{\"t\":1793339700000,\"source\":1793339734234,\"age\":25765,\"quality\":\"complete\",\"value\":1433},{\"t\":1793339760000,\"source\":1793339794234,\"age\":25765,\"quality\":\"complete\",\"value\":1435},{\"t\":1793339820000,\"source\":1793339854234,\"age\":25765,\"quality\":\"complete\",\"value\":1437},{\"t\":1793339880000,\"source\":1793339914234,\"age\":25765,\"quality\":\"complete\",\"value\":1439},{\"t\":1793339940000,\"source\":1793339974234,\"age\":25765,\"quality\":\"complete\",\"value\":1441},{\"t\":1793340000000,\"source\":1793340034234,\"age\":25765,\"quality\":\"complete\",\"value\":1443},{\"t\":1793340060000,\"source\":1793340094234,\"age\":25765,\"quality\":\"complete\",\"value\":1445},{\"t\":1793340120000,\"source\":1793340154234,\"age\":25765,\"quality\":\"complete\",\"value\":1447},{\"t\":1793340180000,\"source\":1793340214234,\"age\":25765,\"quality\":\"complete\",\"value\":1449},{\"t\":1793340240000,\"source\":1793340274234,\"age\":25765,\"quality\":\"complete\",\"value\":1451},{\"t\":1793340300000,\"source\":1793340334234,\"age\":25765,\"quality\":\"complete\",\"value\":1453},{\"t\":1793340360000,\"source\":1793340394234,\"age\":25765,\"quality\":\"complete\",\"value\":1455},{\"t\":1793340420000,\"source\":1793340454234,\"age\":25765,\"quality\":\"complete\",\"value\":1457},{\"t\":1793340480000,\"source\":1793340514234,\"age\":25765,\"quality\":\"complete\",\"value\":1459},{\"t\":1793340540000,\"source\":1793340574234,\"age\":25765,\"quality\":\"complete\",\"value\":1461},{\"t\":1793340600000,\"source\":1793340634234,\"age\":25765,\"quality\":\"complete\",\"value\":1463},{\"t\":1793340660000,\"source\":1793340694234,\"age\":25765,\"quality\":\"complete\",\"value\":1465},{\"t\":1793340720000,\"source\":1793340754234,\"age\":25765,\"quality\":\"complete\",\"value\":1467},{\"t\":1793340780000,\"source\":1793340814234,\"age\":25765,\"quality\":\"complete\",\"value\":1469},{\"t\":1793340840000,\"source\":1793340874234,\"age\":25765,\"quality\":\"complete\",\"value\":1471},{\"t\":1793340900000,\"source\":1793340934234,\"age\":25765,\"quality\":\"complete\",\"value\":1473},{\"t\":1793340960000,\"source\":1793340994234,\"age\":25765,\"quality\":\"complete\",\"value\":1475},{\"t\":1793341020000,\"source\":1793341054234,\"age\":25765,\"quality\":\"complete\",\"value\":1477},{\"t\":1793341080000,\"source\":1793341114234,\"age\":122,\"quality\":\"complete\",\"value\":1479}]],[\"hyperliquid\",[{\"t\":1793339640000,\"source\":1793339674234,\"age\":25765,\"quality\":\"complete\",\"value\":1531},{\"t\":1793339700000,\"source\":1793339734234,\"age\":25765,\"quality\":\"complete\",\"value\":1533},{\"t\":1793339760000,\"source\":1793339794234,\"age\":25765,\"quality\":\"complete\",\"value\":1535},{\"t\":1793339820000,\"source\":1793339854234,\"age\":25765,\"quality\":\"complete\",\"value\":1537},{\"t\":1793339880000,\"source\":1793339914234,\"age\":25765,\"quality\":\"complete\",\"value\":1539},{\"t\":1793339940000,\"source\":1793339974234,\"age\":25765,\"quality\":\"complete\",\"value\":1541},{\"t\":1793340000000,\"source\":1793340034234,\"age\":25765,\"quality\":\"complete\",\"value\":1543},{\"t\":1793340060000,\"source\":1793340094234,\"age\":25765,\"quality\":\"complete\",\"value\":1545},{\"t\":1793340120000,\"source\":1793340154234,\"age\":25765,\"quality\":\"complete\",\"value\":1547},{\"t\":1793340180000,\"source\":1793340214234,\"age\":25765,\"quality\":\"complete\",\"value\":1549},{\"t\":1793340240000,\"source\":1793340274234,\"age\":25765,\"quality\":\"complete\",\"value\":1551},{\"t\":1793340300000,\"source\":1793340334234,\"age\":25765,\"quality\":\"complete\",\"value\":1553},{\"t\":1793340360000,\"source\":1793340394234,\"age\":25765,\"quality\":\"complete\",\"value\":1555},{\"t\":1793340420000,\"source\":1793340454234,\"age\":25765,\"quality\":\"complete\",\"value\":1557},{\"t\":1793340480000,\"source\":1793340514234,\"age\":25765,\"quality\":\"complete\",\"value\":1559},{\"t\":1793340540000,\"source\":1793340574234,\"age\":25765,\"quality\":\"complete\",\"value\":1561},{\"t\":1793340600000,\"source\":1793340634234,\"age\":25765,\"quality\":\"complete\",\"value\":1563},{\"t\":1793340660000,\"source\":1793340694234,\"age\":25765,\"quality\":\"complete\",\"value\":1565},{\"t\":1793340720000,\"source\":1793340754234,\"age\":25765,\"quality\":\"complete\",\"value\":1567},{\"t\":1793340780000,\"source\":1793340814234,\"age\":25765,\"quality\":\"complete\",\"value\":1569},{\"t\":1793340840000,\"source\":1793340874234,\"age\":25765,\"quality\":\"complete\",\"value\":1571},{\"t\":1793340900000,\"source\":1793340934234,\"age\":25765,\"quality\":\"complete\",\"value\":1573},{\"t\":1793340960000,\"source\":1793340994234,\"age\":25765,\"quality\":\"complete\",\"value\":1575},{\"t\":1793341020000,\"source\":1793341054234,\"age\":25765,\"quality\":\"complete\",\"value\":1577},{\"t\":1793341080000,\"source\":1793341114234,\"age\":122,\"quality\":\"complete\",\"value\":1579}]],[\"bybit\",[{\"t\":1793339640000,\"source\":1793339674234,\"age\":25765,\"quality\":\"complete\",\"value\":1631},{\"t\":1793339700000,\"source\":1793339734234,\"age\":25765,\"quality\":\"complete\",\"value\":1633},{\"t\":1793339760000,\"source\":1793339794234,\"age\":25765,\"quality\":\"complete\",\"value\":1635},{\"t\":1793339820000,\"source\":1793339854234,\"age\":25765,\"quality\":\"complete\",\"value\":1637},{\"t\":1793339880000,\"source\":1793339914234,\"age\":25765,\"quality\":\"complete\",\"value\":1639},{\"t\":1793339940000,\"source\":1793339974234,\"age\":25765,\"quality\":\"complete\",\"value\":1641},{\"t\":1793340000000,\"source\":1793340034234,\"age\":25765,\"quality\":\"complete\",\"value\":1643},{\"t\":1793340060000,\"source\":1793340094234,\"age\":25765,\"quality\":\"complete\",\"value\":1645},{\"t\":1793340120000,\"source\":1793340154234,\"age\":25765,\"quality\":\"complete\",\"value\":1647},{\"t\":1793340180000,\"source\":1793340214234,\"age\":25765,\"quality\":\"complete\",\"value\":1649},{\"t\":1793340240000,\"source\":1793340274234,\"age\":25765,\"quality\":\"complete\",\"value\":1651},{\"t\":1793340300000,\"source\":1793340334234,\"age\":25765,\"quality\":\"complete\",\"value\":1653},{\"t\":1793340360000,\"source\":1793340394234,\"age\":25765,\"quality\":\"complete\",\"value\":1655},{\"t\":1793340420000,\"source\":1793340454234,\"age\":25765,\"quality\":\"complete\",\"value\":1657},{\"t\":1793340480000,\"source\":1793340514234,\"age\":25765,\"quality\":\"complete\",\"value\":1659},{\"t\":1793340540000,\"source\":1793340574234,\"age\":25765,\"quality\":\"complete\",\"value\":1661},{\"t\":1793340600000,\"source\":1793340634234,\"age\":25765,\"quality\":\"complete\",\"value\":1663},{\"t\":1793340660000,\"source\":1793340694234,\"age\":25765,\"quality\":\"complete\",\"value\":1665},{\"t\":1793340720000,\"source\":1793340754234,\"age\":25765,\"quality\":\"complete\",\"value\":1667},{\"t\":1793340780000,\"source\":1793340814234,\"age\":25765,\"quality\":\"complete\",\"value\":1669},{\"t\":1793340840000,\"source\":1793340874234,\"age\":25765,\"quality\":\"complete\",\"value\":1671},{\"t\":1793340900000,\"source\":1793340934234,\"age\":25765,\"quality\":\"complete\",\"value\":1673},{\"t\":1793340960000,\"source\":1793340994234,\"age\":25765,\"quality\":\"complete\",\"value\":1675},{\"t\":1793341020000,\"source\":1793341054234,\"age\":25765,\"quality\":\"complete\",\"value\":1677},{\"t\":1793341080000,\"source\":1793341114234,\"age\":122,\"quality\":\"complete\",\"value\":1679}]],[\"total\",[{\"t\":1793339640000,\"source\":1793339674234,\"age\":25765,\"quality\":\"complete\",\"value\":4593},{\"t\":1793339700000,\"source\":1793339734234,\"age\":25765,\"quality\":\"complete\",\"value\":4599},{\"t\":1793339760000,\"source\":1793339794234,\"age\":25765,\"quality\":\"complete\",\"value\":4605},{\"t\":1793339820000,\"source\":1793339854234,\"age\":25765,\"quality\":\"complete\",\"value\":4611},{\"t\":1793339880000,\"source\":1793339914234,\"age\":25765,\"quality\":\"complete\",\"value\":4617},{\"t\":1793339940000,\"source\":1793339974234,\"age\":25765,\"quality\":\"complete\",\"value\":4623},{\"t\":1793340000000,\"source\":1793340034234,\"age\":25765,\"quality\":\"complete\",\"value\":4629},{\"t\":1793340060000,\"source\":1793340094234,\"age\":25765,\"quality\":\"complete\",\"value\":4635},{\"t\":1793340120000,\"source\":1793340154234,\"age\":25765,\"quality\":\"complete\",\"value\":4641},{\"t\":1793340180000,\"source\":1793340214234,\"age\":25765,\"quality\":\"complete\",\"value\":4647},{\"t\":1793340240000,\"source\":1793340274234,\"age\":25765,\"quality\":\"complete\",\"value\":4653},{\"t\":1793340300000,\"source\":1793340334234,\"age\":25765,\"quality\":\"complete\",\"value\":4659},{\"t\":1793340360000,\"source\":1793340394234,\"age\":25765,\"quality\":\"complete\",\"value\":4665},{\"t\":1793340420000,\"source\":1793340454234,\"age\":25765,\"quality\":\"complete\",\"value\":4671},{\"t\":1793340480000,\"source\":1793340514234,\"age\":25765,\"quality\":\"complete\",\"value\":4677},{\"t\":1793340540000,\"source\":1793340574234,\"age\":25765,\"quality\":\"complete\",\"value\":4683},{\"t\":1793340600000,\"source\":1793340634234,\"age\":25765,\"quality\":\"complete\",\"value\":4689},{\"t\":1793340660000,\"source\":1793340694234,\"age\":25765,\"quality\":\"complete\",\"value\":4695},{\"t\":1793340720000,\"source\":1793340754234,\"age\":25765,\"quality\":\"complete\",\"value\":4701},{\"t\":1793340780000,\"source\":1793340814234,\"age\":25765,\"quality\":\"complete\",\"value\":4707},{\"t\":1793340840000,\"source\":1793340874234,\"age\":25765,\"quality\":\"complete\",\"value\":4713},{\"t\":1793340900000,\"source\":1793340934234,\"age\":25765,\"quality\":\"complete\",\"value\":4719},{\"t\":1793340960000,\"source\":1793340994234,\"age\":25765,\"quality\":\"complete\",\"value\":4725},{\"t\":1793341020000,\"source\":1793341054234,\"age\":25765,\"quality\":\"complete\",\"value\":4731},{\"t\":1793341080000,\"source\":1793341114234,\"age\":122,\"quality\":\"complete\",\"value\":4737}]]]}\n"
+                    },
+                    {
+                      "text": "OI projection {\"frameQuality\":\"partial\",\"quality\":\"partial\",\"totalHead\":[{\"time\":1793041140000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793041200000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793041260000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],\"totalTail\":[{\"time\":1793340960000,\"value\":4725,\"sourceTimeMs\":1793340994234,\"observedAtMs\":1793340994734,\"ageMs\":25765,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"},{\"time\":1793341020000,\"value\":4731,\"sourceTimeMs\":1793341054234,\"observedAtMs\":1793341054734,\"ageMs\":25765,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"},{\"time\":1793341080000,\"value\":4737,\"sourceTimeMs\":1793341114234,\"observedAtMs\":1793341114734,\"ageMs\":122,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"}],\"venueHeads\":[[{\"time\":1793041140000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793041200000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],[{\"time\":1793041140000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793041200000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],[{\"time\":1793041140000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793041200000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}]]}\n"
+                    },
+                    {
+                      "text": "CVD SMA alignment {\"length\":20,\"sourceQuality\":\"partial\",\"sourceTail\":[null,null,null,null,null,28323,28329,28338,28350,28365,28383,28404,28428,28455,28485,28518,28554,28593,28635,28680,28728,28779,28833,28890,28950,29013,29079,29148,29220,29295],\"resets\":[{\"fromTime\":1793041140000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},{\"fromTime\":1793059200000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793145600000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793232000000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793341080000,\"reason\":\"Incomplete or interrupted signed execution coverage\"}],\"derivedTail\":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,28551,28585.5,28623,28663.5,28707,null],\"derivedQuality\":\"partial\",\"derivedResets\":[{\"fromTime\":1793041140000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},{\"fromTime\":1793059200000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793145600000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793232000000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793341080000,\"reason\":\"Incomplete or interrupted signed execution coverage\"}],\"latestCandle\":1793341080000,\"latestCandleClosed\":false,\"latestReset\":{\"fromTime\":1793341080000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},\"latestDailyReset\":{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},\"closedWindow\":[28365,28383,28404,28428,28455,28485,28518,28554,28593,28635,28680,28728,28779,28833,28890,28950,29013,29079,29148,29220],\"expectedPreviousClosedSma\":28707,\"previousClosedSma\":28707,\"latestSma\":null,\"sourceTailTimes\":[1793339340000,1793339400000,1793339460000,1793339520000,1793339580000,1793339640000,1793339700000,1793339760000,1793339820000,1793339880000,1793339940000,1793340000000,1793340060000,1793340120000,1793340180000,1793340240000,1793340300000,1793340360000,1793340420000,1793340480000,1793340540000,1793340600000,1793340660000,1793340720000,1793340780000,1793340840000,1793340900000,1793340960000,1793341020000,1793341080000]}\n"
+                    },
+                    {
+                      "text": "Order Flow layout geometry {\"plotLeft\":80,\"headerLeft\":86,\"headerBottom\":645,\"legend\":{\"left\":143,\"right\":1275,\"top\":593,\"bottom\":645,\"clientWidth\":1132,\"scrollWidth\":1132,\"clientHeight\":52,\"scrollHeight\":52},\"values\":[{\"left\":143,\"right\":248.203125,\"top\":593,\"bottom\":618,\"width\":105.203125},{\"left\":251.203125,\"right\":399.609375,\"top\":593,\"bottom\":618,\"width\":148.40625},{\"left\":402.609375,\"right\":551.015625,\"top\":593,\"bottom\":618,\"width\":148.40625},{\"left\":554.015625,\"right\":722.015625,\"top\":593,\"bottom\":618,\"width\":168},{\"left\":725.015625,\"right\":884.21875,\"top\":593,\"bottom\":618,\"width\":159.203125},{\"left\":887.21875,\"right\":1014.03125,\"top\":593,\"bottom\":618,\"width\":126.8125},{\"left\":1017.03125,\"right\":1116.84375,\"top\":593,\"bottom\":618,\"width\":99.8125},{\"left\":1119.84375,\"right\":1203.453125,\"top\":593,\"bottom\":618,\"width\":83.609375},{\"left\":143,\"right\":248.203125,\"top\":620,\"bottom\":645,\"width\":105.203125},{\"left\":251.203125,\"right\":334.8125,\"top\":620,\"bottom\":645,\"width\":83.609375}],\"statusHidden\":false,\"statusTop\":668.796875,\"statusBottom\":679.796875,\"bandTop\":679.8}\n"
+                    },
+                    {
+                      "text": "Order Flow narrow legend geometry {\"plotLeft\":80,\"headerLeft\":86,\"width\":1132,\"scrollWidth\":1132,\"height\":25,\"scrollHeight\":25,\"left\":143,\"right\":1275,\"top\":593,\"bottom\":618,\"headerBottom\":618,\"statusHidden\":false,\"statusBottom\":679.796875,\"bandTop\":679.8,\"buttons\":[{\"left\":143,\"right\":221.203125,\"top\":593,\"bottom\":618},{\"left\":224.203125,\"right\":334.203125,\"top\":593,\"bottom\":618},{\"left\":337.203125,\"right\":447.203125,\"top\":593,\"bottom\":618},{\"left\":450.203125,\"right\":560.203125,\"top\":593,\"bottom\":618},{\"left\":563.203125,\"right\":673.203125,\"top\":593,\"bottom\":618},{\"left\":676.203125,\"right\":786.203125,\"top\":593,\"bottom\":618},{\"left\":789.203125,\"right\":889.015625,\"top\":593,\"bottom\":618},{\"left\":892.015625,\"right\":981.03125,\"top\":593,\"bottom\":618},{\"left\":984.03125,\"right\":1089.234375,\"top\":593,\"bottom\":618},{\"left\":1092.234375,\"right\":1175.84375,\"top\":593,\"bottom\":618}]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:18:22.609Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1210505d0f685f19beff-1d70d243fad83bb42f7a",
+          "file": "order-flow-pane.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "combined native panes share raw Open Interest across charts and release it on sleep and final removal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17776,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:18:47.915Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1210505d0f685f19beff-d09bc4ae95638f41768c",
+          "file": "order-flow-pane.spec.ts",
+          "line": 428,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T06:17:20.260Z",
+    "duration": 106391.12,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

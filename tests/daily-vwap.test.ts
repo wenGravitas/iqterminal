@@ -51,8 +51,10 @@ describe('daily UTC candle VWAP',()=>{
   it('defaults gap visibility on for older saved settings and respects a saved opt-out',()=>{
     expect(dailyVwapSettings({}).nakedGaps).toBe(true);
     expect(dailyVwapSettings({nakedGaps:false}).nakedGaps).toBe(false);
+    expect(dailyVwapSettings({})).toMatchObject({readout:true,secondDeviation:false,thirdDeviation:false});
+    expect(dailyVwapSettings({readout:false,secondDeviation:true,thirdDeviation:true})).toMatchObject({readout:false,secondDeviation:true,thirdDeviation:true});
     const old = nativeInstance(DAILY_VWAP_ID,{});
-    expect(validateInstances([old])[0]!.settings.nakedGaps).toBe(true);
+    expect(validateInstances([old])[0]!.settings).toMatchObject({nakedGaps:true,readout:true,secondDeviation:false,thirdDeviation:false});
   });
   it('includes visible gap prices in autoscale only while the option is enabled',()=>{
     const overlay = new DailyVwapPrimitive({...DEFAULT_DAILY_VWAP,bands:false},()=>({from:day+86400,to:day+86400}));
@@ -61,12 +63,57 @@ describe('daily UTC candle VWAP',()=>{
     overlay.configure({...DEFAULT_DAILY_VWAP,bands:false,nakedGaps:false});
     expect(overlay.autoscaleInfo()).toEqual({min:120,max:120});
   });
+  it('autoscales to the furthest enabled deviation zone while preserving the first zone default',()=>{
+    const overlay=new DailyVwapPrimitive({...DEFAULT_DAILY_VWAP,bands:false,nakedGaps:false,secondDeviation:true},()=>({from:day,to:day+60}));
+    overlay.setData([bar(day,100,1),bar(day+60,120,1)],60);
+    expect(overlay.autoscaleInfo()).toEqual({min:90,max:130});
+    overlay.configure({...DEFAULT_DAILY_VWAP,bands:false,nakedGaps:false,secondDeviation:true,thirdDeviation:true});
+    expect(overlay.autoscaleInfo()).toEqual({min:80,max:140});
+    overlay.configure({...DEFAULT_DAILY_VWAP,bands:true,nakedGaps:false,secondDeviation:false,thirdDeviation:false});
+    expect(overlay.autoscaleInfo()).toEqual({min:100,max:120});
+  });
   it('weights prices by volume and computes population deviation with a stable recurrence',()=>{
     const calc=new DailyVwapCalculation();
     const values=calc.update([bar(day,100,1),bar(day+60,110,3)],'hlc3',60);
     expect(values[1]!.value).toBe(107.5);
     expect(values[1]!.deviation).toBeCloseTo(Math.sqrt(18.75));
     expect(values[1]!.partial).toBe(false);
+  });
+  it('splits observed candle time by close versus each contemporaneous developing VWAP',()=>{
+    const calc=new DailyVwapCalculation();
+    calc.update([bar(day,100,1),bar(day+60,110,1)],'close',60);
+    const partial=calc.developingTimeSplit(day+75)!;
+    expect(partial).toMatchObject({aboveSeconds:15,belowSeconds:0,neutralSeconds:60,observedSeconds:75});
+    expect(partial.abovePercent).toBe(20);
+    const elapsed=calc.developingTimeSplit(day+90)!;
+    expect(elapsed).toMatchObject({aboveSeconds:30,neutralSeconds:60,observedSeconds:90});
+    expect(elapsed.abovePercent).toBeCloseTo(100/3);
+    expect(elapsed.belowPercent).toBe(0);
+    // An equal close is neutral and remains in the observed-time denominator.
+    const equal=new DailyVwapCalculation();
+    equal.update([bar(day,100,1),bar(day+60,100,1)],'close',60);
+    expect(equal.developingTimeSplit(day+90)).toMatchObject({abovePercent:0,belowPercent:0,neutralSeconds:90,observedSeconds:90});
+  });
+  it('excludes missing intervals, caps a forming candle at elapsed time, and resets at UTC midnight',()=>{
+    const calc=new DailyVwapCalculation();
+    calc.update([bar(day,100,1),bar(day+120,110,1)],'close',60);
+    const split=calc.developingTimeSplit(day+150)!;
+    expect(split).toMatchObject({aboveSeconds:30,neutralSeconds:60,observedSeconds:90,partial:true});
+    expect(split.abovePercent).toBeCloseTo(100/3);
+    expect(calc.developingTimeSplit(day+120)).toMatchObject({aboveSeconds:0,neutralSeconds:60,observedSeconds:60});
+    calc.update([bar(day,100,1),bar(day+120,110,1),bar(day+86400,200,2)],'close',60);
+    expect(calc.developingTimeSplit(day+86430)).toMatchObject({day:day+86400,aboveSeconds:0,belowSeconds:0,neutralSeconds:30,observedSeconds:30,abovePercent:0,belowPercent:0});
+  });
+  it('counts valid zero-volume elapsed time and excludes malformed price or volume bars',()=>{
+    const zeroVolume=new DailyVwapCalculation();
+    zeroVolume.update([bar(day,100,1),bar(day+60,110,0)],'close',60);
+    expect(zeroVolume.developingTimeSplit(day+90)).toMatchObject({aboveSeconds:30,neutralSeconds:60,observedSeconds:90});
+    const invalidVolume=new DailyVwapCalculation();
+    invalidVolume.update([bar(day,100,1),bar(day+60,110,-1)],'close',60);
+    expect(invalidVolume.developingTimeSplit(day+90)).toMatchObject({aboveSeconds:0,neutralSeconds:60,observedSeconds:60});
+    const invalidPrice=new DailyVwapCalculation();
+    invalidPrice.update([bar(day,100,1),{...bar(day+60,110,0),high:Number.NaN}],'hl2',60);
+    expect(invalidPrice.developingTimeSplit(day+90)).toMatchObject({aboveSeconds:0,neutralSeconds:60,observedSeconds:60});
   });
   it('replaces forming volume, replays historical corrections and agrees with a fresh calculation',()=>{
     const calc=new DailyVwapCalculation(), bars=[bar(day,100,1),bar(day+60,110,3)];
@@ -76,6 +123,17 @@ describe('daily UTC candle VWAP',()=>{
     bars[0]=bar(day,90,2); bars.push(bar(day+120,115,1));
     const corrected=calc.update(bars,'close',60).map(p=>({...p}));
     expect(corrected).toEqual(new DailyVwapCalculation().update(bars,'close',60));
+  });
+  it('replaces forming readout classification and replays corrected completed candles',()=>{
+    const calc=new DailyVwapCalculation(), bars=[bar(day,100,1),bar(day+60,110,1)];
+    calc.update(bars,'close',60);
+    expect(calc.developingTimeSplit(day+120)).toMatchObject({aboveSeconds:60,neutralSeconds:60,abovePercent:50});
+    bars[1]=bar(day+60,90,1);
+    expect(calc.update(bars,'close',60)).toEqual(new DailyVwapCalculation().update(bars,'close',60));
+    expect(calc.developingTimeSplit(day+120)).toMatchObject({belowSeconds:60,neutralSeconds:60,belowPercent:50});
+    bars.push(bar(day+120,80,1));
+    calc.update(bars,'close',60);
+    expect(calc.developingTimeSplit(day+150)).toMatchObject({aboveSeconds:0,belowSeconds:90,neutralSeconds:60,observedSeconds:150,belowPercent:60});
   });
   it('resets at midnight, breaks day/gap connections and flags incomplete sessions',()=>{
     const calc=new DailyVwapCalculation();

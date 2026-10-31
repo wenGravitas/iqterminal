@@ -1,0 +1,384 @@
+{
+  "fixture": {
+    "rows": 180,
+    "venues": 3,
+    "from": 1793338749254,
+    "to": 1793353149254
+  },
+  "initial": {
+    "data": {
+      "demanded": true,
+      "hostVisible": true,
+      "subscribed": true,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 2,
+      "outputPublications": 3,
+      "subscriptionStarts": 1,
+      "subscriptionStops": 0,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestTotalBtc": 4
+      }
+    },
+    "outputId": "output:native.raw-open-interest:openInterestTotalBtc",
+    "output": {
+      "revision": 4,
+      "available": true,
+      "valueCount": 5000,
+      "tail": [
+        3369,
+        3375,
+        3381,
+        3387,
+        3393,
+        3399,
+        3405,
+        3411,
+        3417,
+        3423,
+        3429,
+        3435,
+        3441,
+        3447,
+        3453,
+        3459,
+        3465,
+        3471,
+        3477,
+        3477
+      ]
+    },
+    "smaCurrent": false,
+    "panes": 2,
+    "visible": true
+  },
+  "hiddenSource": {
+    "data": {
+      "demanded": true,
+      "hostVisible": true,
+      "subscribed": true,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 2,
+      "outputPublications": 3,
+      "subscriptionStarts": 1,
+      "subscriptionStops": 0,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestTotalBtc": 4
+      }
+    },
+    "outputId": "output:native.raw-open-interest:openInterestTotalBtc",
+    "output": {
+      "revision": 4,
+      "available": true,
+      "valueCount": 5000,
+      "tail": [
+        3369,
+        3375,
+        3381,
+        3387,
+        3393,
+        3399,
+        3405,
+        3411,
+        3417,
+        3423,
+        3429,
+        3435,
+        3441,
+        3447,
+        3453,
+        3459,
+        3465,
+        3471,
+        3477,
+        3477
+      ]
+    },
+    "smaId": "sma-eedf622d-9d76-4889-93b0-182333f1ddec",
+    "smaOutput": {
+      "revision": 6,
+      "available": true,
+      "tail": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3360,
+        3366,
+        3372,
+        3378,
+        3384,
+        3390,
+        3396,
+        3402,
+        3408,
+        3414,
+        3420,
+        3425.7
+      ]
+    },
+    "smaCurrent": true,
+    "panes": 2,
+    "visible": true
+  },
+  "beforeSleep": {
+    "data": {
+      "demanded": true,
+      "hostVisible": true,
+      "subscribed": true,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 2,
+      "outputPublications": 3,
+      "subscriptionStarts": 1,
+      "subscriptionStops": 0,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestTotalBtc": 4
+      }
+    },
+    "outputId": "output:native.raw-open-interest:openInterestTotalBtc",
+    "output": {
+      "revision": 4,
+      "available": true,
+      "valueCount": 5000,
+      "tail": [
+        3369,
+        3375,
+        3381,
+        3387,
+        3393,
+        3399,
+        3405,
+        3411,
+        3417,
+        3423,
+        3429,
+        3435,
+        3441,
+        3447,
+        3453,
+        3459,
+        3465,
+        3471,
+        3477,
+        3477
+      ]
+    },
+    "smaId": "sma-eedf622d-9d76-4889-93b0-182333f1ddec",
+    "smaOutput": {
+      "revision": 6,
+      "available": true,
+      "tail": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3360,
+        3366,
+        3372,
+        3378,
+        3384,
+        3390,
+        3396,
+        3402,
+        3408,
+        3414,
+        3420,
+        3425.7
+      ]
+    },
+    "smaCurrent": true,
+    "panes": 2,
+    "visible": true
+  },
+  "asleep": {
+    "data": {
+      "demanded": true,
+      "hostVisible": false,
+      "subscribed": false,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 2,
+      "outputPublications": 3,
+      "subscriptionStarts": 1,
+      "subscriptionStops": 1,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 5,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 5,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 5,
+        "output:native.raw-open-interest:openInterestTotalBtc": 5
+      }
+    },
+    "visible": false
+  },
+  "awake": {
+    "data": {
+      "demanded": true,
+      "hostVisible": true,
+      "subscribed": true,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 3,
+      "outputPublications": 4,
+      "subscriptionStarts": 2,
+      "subscriptionStops": 1,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 6,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 6,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 6,
+        "output:native.raw-open-interest:openInterestTotalBtc": 6
+      }
+    },
+    "output": {
+      "revision": 6,
+      "available": true,
+      "valueCount": 5000,
+      "tail": [
+        3369,
+        3375,
+        3381,
+        3387,
+        3393,
+        3399,
+        3405,
+        3411,
+        3417,
+        3423,
+        3429,
+        3435,
+        3441,
+        3447,
+        3453,
+        3459,
+        3465,
+        3471,
+        3477,
+        3477
+      ]
+    },
+    "smaCurrent": true
+  },
+  "cleanup": {
+    "mode": "BASIS · FIXTURE",
+    "worker": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 3,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 1,
+      "lastPollMs": 0,
+      "fixtureSelected": true,
+      "history": {
+        "received": 180,
+        "changed": 180,
+        "snapshots": 3,
+        "patches": 0,
+        "duplicateRows": 0,
+        "retained": 180
+      },
+      "cacheVenues": [
+        "binance",
+        "hyperliquid",
+        "bybit"
+      ]
+    },
+    "protocol": {
+      "commands": 17,
+      "events": 18,
+      "commandTypes": {
+        "subscribe": 3,
+        "cvd-subscribe": 1,
+        "cvd-ack": 1,
+        "raw-open-interest-subscribe": 3,
+        "diagnostics": 5,
+        "raw-open-interest-fixture": 1,
+        "raw-open-interest-unsubscribe": 2,
+        "unsubscribe": 1
+      },
+      "eventTypes": {
+        "status": 4,
+        "snapshot": 3,
+        "cvd-batch": 1,
+        "raw-open-interest-error": 2,
+        "diagnostics": 5,
+        "raw-open-interest-snapshot": 3
+      },
+      "subscriptions": {
+        "candles": 2,
+        "cvd": 1,
+        "netPositioning": 0,
+        "rawOpenInterest": 1,
+        "depth": 0,
+        "footprint": 0
+      }
+    },
+    "first": {
+      "demanded": true,
+      "hostVisible": true,
+      "subscribed": true,
+      "feedError": "",
+      "retainedObservations": 180,
+      "contextRevision": 0,
+      "dataRevision": 2,
+      "outputPublications": 3,
+      "subscriptionStarts": 1,
+      "subscriptionStops": 0,
+      "outputRevisions": {
+        "output:native.raw-open-interest:openInterestBinancePerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestHyperliquidPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestBybitPerpetualBtc": 4,
+        "output:native.raw-open-interest:openInterestTotalBtc": 4
+      }
+    },
+    "second": {
+      "hasDataController": false,
+      "panes": 1,
+      "apis": 0
+    },
+    "firstOrderFlowRows": [
+      "cvd",
+      "cvd",
+      "cvd",
+      "open-interest",
+      "open-interest",
+      "open-interest",
+      "open-interest",
+      "volume"
+    ]
+  },
+  "finalCleanup": {
+    "panels": 1,
+    "chartBars": 5000,
+    "chartVisible": true,
+    "chartPanes": 1,
+    "rawOISubscribers": 0,
+    "rawOIListeners": 0,
+    "cvdClients": 0,
+    "cvdListeners": 0
+  }
+}

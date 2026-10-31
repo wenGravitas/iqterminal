@@ -11,9 +11,9 @@ export class DailyVwapControls {
     const source = document.createElement('select');
     for (const [value,label] of [['hlc3','HLC3 · typical price'],['hl2','HL2 · midpoint'],['close','Close']]) source.add(new Option(label,value));
     this.inputs.set('source',source);
-    for (const key of ['bands','nakedGaps','multiplier','lineColor','bandColor','lineWidth','fillOpacity'] as const) {
+    for (const key of ['bands','secondDeviation','thirdDeviation','readout','nakedGaps','multiplier','lineColor','bandColor','lineWidth','fillOpacity'] as const) {
       const input = document.createElement('input');
-      input.type = key === 'bands' || key === 'nakedGaps' ? 'checkbox' : key.endsWith('Color') ? 'color' : 'number';
+      input.type = ['bands','secondDeviation','thirdDeviation','readout','nakedGaps'].includes(key) ? 'checkbox' : key.endsWith('Color') ? 'color' : 'number';
       if (input.type === 'number') {
         input.required = true; input.min = key === 'fillOpacity' ? '0' : key === 'multiplier' ? '.1' : '1';
         input.max = key === 'fillOpacity' ? '.3' : key === 'multiplier' ? '5' : '3';
@@ -21,10 +21,10 @@ export class DailyVwapControls {
       }
       this.inputs.set(key,input);
     }
-    const labels: Record<keyof DailyVwapSettings,string> = {source:'Price source',bands:'Show deviation bands',nakedGaps:'Show naked previous VWAP gaps',multiplier:'Band multiplier (standard deviations)',lineColor:'VWAP colour',bandColor:'Band colour',lineWidth:'VWAP line width',fillOpacity:'Band fill opacity'};
+    const labels: Record<keyof DailyVwapSettings,string> = {source:'Price source',bands:'Show first deviation zone (±1×)',secondDeviation:'Show second deviation zone (±2×)',thirdDeviation:'Show third deviation zone (±3×)',readout:'Show time above/below readout',nakedGaps:'Show naked previous VWAP gaps',multiplier:'Band multiplier (standard deviations)',lineColor:'VWAP colour',bandColor:'Band colour',lineWidth:'VWAP line width',fillOpacity:'Band fill opacity'};
     for (const [key,input] of this.inputs) { const label=document.createElement('label'); label.className='indicator-setting-field'; input.setAttribute('aria-label',labels[key]); label.append(labels[key],input); form.append(label); }
     const help=document.createElement('p'); help.className='dialog-status';
-    help.textContent='Resets at 00:00 UTC. Uses the chart’s intraday candle prices and candle volume, not individual executions. Bands use volume-weighted population standard deviation of the selected candle price. Naked gaps extend untouched previous daily closing VWAPs to the price axis until a later candle touches them. Only complete loaded days and continuous subsequent candles qualify. Loaded history can contain incomplete days; changing timeframe can change the approximation.';
+    help.textContent='Resets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.';
     const footer=document.createElement('footer'), cancel=document.createElement('button'), save=document.createElement('button');
     cancel.type='button'; cancel.textContent='Cancel'; save.type='submit'; save.textContent='Apply'; save.className='primary';
     footer.append(cancel,save); form.append(help,footer); this.dialog.append(form);

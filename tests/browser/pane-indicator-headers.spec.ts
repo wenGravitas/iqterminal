@@ -2,6 +2,25 @@ import { expect, test } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint } from './indicator-actions';
 
+async function expectPaneHeaderBounds(page: import('@playwright/test').Page, expectedHosts = 3) {
+  await expect.poll(() => page.evaluate(expected => {
+    const p = [...(window as any).__terminal.panels.values()][0], stage = p.element.querySelector('.chart-stage').getBoundingClientRect();
+    const hosts = [...p.element.querySelectorAll('.pane-indicator-host')] as HTMLElement[];
+    return hosts.length === expected && hosts.every(host => {
+      const index = Number(host.dataset.paneIndex), pane = p.engine.chart.panes()[index]?.element;
+      const paneRect = pane?.getBoundingClientRect(), plot = p.engine.chart.plotRect(index);
+      const rect = host.getBoundingClientRect();
+      const rowList = (host.querySelector('.pane-indicator-rows') as HTMLElement | null)?.getBoundingClientRect();
+      const title = (host.querySelector('.active-indicator-copy > span') as HTMLElement | null)?.getBoundingClientRect();
+      if (!paneRect || !rowList || !title) return false;
+      const contentLeft = plot ? stage.left + plot.left + 1 : paneRect.left + 5;
+      const titleLeft = plot ? stage.left + plot.left + 4 : paneRect.left + 8;
+      return Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - paneRect.right) < 2
+        && Math.abs(rowList.left - contentLeft) < 2 && Math.abs(title.left - titleLeft) < 2;
+    });
+  }, expectedHosts)).toBe(true);
+}
+
 test('pane indicators use one local header while overlays stay in the main list', async ({ page }) => {
   test.setTimeout(120_000);
   await page.addInitScript(() => {
@@ -35,9 +54,11 @@ test('pane indicators use one local header while overlays stay in the main list'
   await addIndicator(panel, 'Footprint Totals');
   await addIndicator(panel, 'Order-book Heatmap');
 
-  const paneRows = panel.locator('.pane-indicator-host > .active-indicator');
+  const paneRows = panel.locator('.pane-indicator-host .pane-indicator-rows > .active-indicator');
   const ids = ['native.net-longs-estimated', 'native.net-shorts-estimated', 'native.footprint-totals'];
   await expect(paneRows).toHaveCount(3);
+  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"] .active-indicator-copy span'))
+    .toHaveAttribute('title', 'Footprint Totals');
   await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.orderbook-heatmap"]')).toHaveCount(1);
   const mapping = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
@@ -51,7 +72,17 @@ test('pane indicators use one local header while overlays stay in the main list'
   expect(mapping.map((item: any) => item.id).sort()).toEqual([...ids].sort());
   for (const item of mapping as any[]) { expect(item.pane).toBeGreaterThan(0); expect(item.pane).toBe(item.expectedPane); }
   expect(mapping.every((item: any) => item.plot && item.plot.width >= 150 && item.plot.height >= 36)).toBe(true);
+  await expectPaneHeaderBounds(page);
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/three-native-panes.png' });
+  const themePicker = page.getByRole('combobox', { name: 'Theme', exact: true });
+  await themePicker.selectOption('dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/desktop-dark.png' });
+  await themePicker.selectOption('light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/desktop-light.png' });
+  await themePicker.selectOption('dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   const positioningSubscriptions = await page.evaluate(() => (window as any).__terminal.feed.currentNetPositioning.size);
   expect(positioningSubscriptions).toBe(1);
 
@@ -59,15 +90,34 @@ test('pane indicators use one local header while overlays stay in the main list'
     const p = [...(window as any).__terminal.panels.values()][0];
     (window as any).__paneHeaderBeforeResize = { engine: p.engine, chart: p.engine.chart, request: p.diagnostics().netPositioning.request,
       subscribers: (window as any).__terminal.feed.currentNetPositioning.size,
-      rows: [...document.querySelectorAll('.candle-panel .pane-indicator-host > .active-indicator')] };
+      rows: [...document.querySelectorAll('.candle-panel .pane-indicator-host .pane-indicator-rows > .active-indicator')] };
   });
   await page.setViewportSize({ width: 1260, height: 1080 });
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0], before = (window as any).__paneHeaderBeforeResize;
     const hosts = [...document.querySelectorAll('.candle-panel .pane-indicator-host')];
+    const alignedActionLefts = hosts.map(host => host.querySelector<HTMLElement>('.active-indicator-actions')?.getBoundingClientRect().left);
+    const groupsFit = hosts.filter(host => (host as HTMLElement).dataset.nativeChrome === 'true').every(host => {
+      const row = host.querySelector<HTMLElement>('.active-indicator');
+      const copy = row?.querySelector<HTMLElement>('.active-indicator-copy')?.getBoundingClientRect();
+      const actions = row?.querySelector<HTMLElement>('.active-indicator-actions')?.getBoundingClientRect();
+      const options = host.querySelector<HTMLElement>('.pane-indicator-rows > .net-positioning-legend[data-pane-header="true"]')?.getBoundingClientRect();
+      const paneActions = host.querySelector<HTMLElement>('.pane-layout-controls-inline')?.getBoundingClientRect();
+      return Boolean(row && copy && actions && paneActions && actions.left >= copy.right + 5 && actions.left - copy.right <= 7
+        && row.getBoundingClientRect().width < 295 && (!options || options.left > actions.right && options.right <= paneActions.left + 2));
+    });
+    const actionStripsAligned = alignedActionLefts.every((left): left is number => typeof left === 'number')
+      && Math.max(...alignedActionLefts as number[]) - Math.min(...alignedActionLefts as number[]) <= 1;
     const aligned = hosts.every(host => {
-      const index = Number((host as HTMLElement).dataset.paneIndex), plot = p.engine.chart.plotRect(index), rect = (host as HTMLElement).getBoundingClientRect(), chartRect = p.element.querySelector('.chart-stage').getBoundingClientRect();
-      return plot && Math.abs(rect.left - (chartRect.left + plot.left + 4)) < 2 && Math.abs(rect.top - (chartRect.top + plot.top)) < 2;
+      const index = Number((host as HTMLElement).dataset.paneIndex), plot = p.engine.chart.plotRect(index);
+      const paneRect = p.engine.chart.panes()[index].element.getBoundingClientRect(), rect = (host as HTMLElement).getBoundingClientRect();
+      const chartRect = p.element.querySelector('.chart-stage').getBoundingClientRect();
+      const rowList = host.querySelector<HTMLElement>('.pane-indicator-rows')?.getBoundingClientRect();
+      const title = host.querySelector<HTMLElement>('.active-indicator-copy > span')?.getBoundingClientRect();
+      return Boolean(plot && rowList && title && Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - paneRect.right) < 2
+        && Math.abs(rect.top - (chartRect.top + plot.top)) < 2
+        && Math.abs(rowList.left - (chartRect.left + plot.left + 1)) < 2
+        && Math.abs(title.left - (chartRect.left + plot.left + 4)) < 2);
     });
     const controlsFit = [...p.element.querySelectorAll('.pane-layout-controls:not([hidden])')].every((host: HTMLElement) => {
       const stage = host.closest('.chart-stage')!.getBoundingClientRect(), rect = host.getBoundingClientRect();
@@ -76,9 +126,30 @@ test('pane indicators use one local header while overlays stay in the main list'
     return p.engine === before.engine && p.engine.chart === before.chart && p.diagnostics().netPositioning.request === before.request
       && (window as any).__terminal.feed.currentNetPositioning.size === before.subscribers
       && before.rows.every((row: Element) => row.isConnected) && hosts.length === 3 && aligned
-      && controlsFit
+      && controlsFit && groupsFit && actionStripsAligned
       && Math.min(...hosts.map(host => p.engine.chart.plotRect(Number((host as HTMLElement).dataset.paneIndex)).width)) >= 150;
   })).toBe(true);
+  await expectPaneHeaderBounds(page);
+  await page.setViewportSize({ width: 680, height: 1080 });
+  await expect.poll(() => page.evaluate(() => {
+    const hosts = [...document.querySelectorAll('.candle-panel .pane-indicator-host')];
+    const headers = hosts.map(host => ({
+      header: (host as HTMLElement).getBoundingClientRect(),
+      actions: host.querySelector<HTMLElement>('.active-indicator-actions')?.getBoundingClientRect(),
+    }));
+    const actionLefts = headers.map(item => item.actions?.left);
+    return hosts.length === 3 && headers.every(({ header, actions }) => actions
+      && actions.left >= header.left && actions.right <= header.right && actions.top >= header.top && actions.bottom <= header.bottom)
+      && actionLefts.every((left): left is number => typeof left === 'number')
+      && Math.max(...actionLefts as number[]) - Math.min(...actionLefts as number[]) <= 1;
+  })).toBe(true);
+  await expectPaneHeaderBounds(page);
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/narrow-dark.png' });
+  await themePicker.selectOption('light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/narrow-light.png' });
+  await themePicker.selectOption('dark');
+  await page.setViewportSize({ width: 1260, height: 1080 });
   const longsIndex = mapping.find((item: any) => item.id === 'native.net-longs-estimated')!.pane;
   const totalsIndex = mapping.find((item: any) => item.id === 'native.footprint-totals')!.pane;
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), longsIndex);
@@ -88,11 +159,28 @@ test('pane indicators use one local header while overlays stay in the main list'
       && document.querySelectorAll('.candle-panel .pane-indicator-host').length === 1
       && ['native.net-shorts-estimated', 'native.footprint-totals'].every(id => document.querySelector(`.active-indicator-rows > .active-indicator[data-definition-id="${id}"]`));
   })).toBe(true);
+  await expectPaneHeaderBounds(page, 1);
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), longsIndex);
   await expect(paneRows).toHaveCount(3);
+  await expectPaneHeaderBounds(page);
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, true), totalsIndex);
-  await expect.poll(() => page.evaluate(() => document.querySelectorAll('.candle-panel .pane-indicator-host').length === 2
-    && document.querySelector('.active-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') !== null)).toBe(true);
+  await expect.poll(() => page.evaluate(() => document.querySelectorAll('.candle-panel .pane-indicator-host').length === 3
+    && document.querySelector('.pane-indicator-host[data-collapsed="true"] .pane-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') !== null
+    && document.querySelector('.active-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') === null)).toBe(true);
+  await expectPaneHeaderBounds(page);
+  const collapsedTotals = panel.locator(`.pane-indicator-host[data-pane-index="${totalsIndex}"][data-collapsed="true"]`);
+  const collapsedTotalsRow = collapsedTotals.locator('.active-indicator[data-definition-id="native.footprint-totals"]');
+  const totalsInfo = collapsedTotalsRow.getByRole('button', { name: 'About Footprint Totals', exact: true });
+  await expect(collapsedTotalsRow).toBeVisible();
+  await expect(totalsInfo).toBeVisible();
+  await expect(collapsedTotalsRow.getByRole('button', { name: 'Remove Footprint Totals', exact: true })).toBeVisible();
+  await expect(collapsedTotals.locator('.pane-layout-controls-inline')).toHaveCount(1);
+  await expect(collapsedTotals.locator('.pane-layout-controls-inline').getByRole('button', { name: `Expand pane ${totalsIndex + 1}`, exact: true })).toBeVisible();
+  await totalsInfo.click();
+  await expect(totalsInfo).toHaveAttribute('aria-describedby', /indicator-title-tooltip-/);
+  const tooltipId = await totalsInfo.getAttribute('aria-describedby');
+  await expect(page.locator(`#${tooltipId}`)).toContainText('selected volume figures');
+  await page.keyboard.press('Escape');
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, false), totalsIndex);
   await expect(paneRows).toHaveCount(3);
   await page.setViewportSize({ width: 2560, height: 1080 });
@@ -111,6 +199,7 @@ test('pane indicators use one local header while overlays stay in the main list'
   await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')
     .getByRole('button', { name: 'Remove Net Shorts — Estimated', exact: true }).click();
   await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')).toHaveCount(0);
+  await expectPaneHeaderBounds(page, 2);
   await expect.poll(() => page.evaluate(() => (window as any).__paneHeaderCanvasText.length)).toBe(0);
 
   const initialPrimaryIndex = await page.evaluate(() => {
@@ -142,24 +231,30 @@ test('pane indicators use one local header while overlays stay in the main list'
     const p = [...(window as any).__terminal.panels.values()][0];
     return p.engine.netPositioningPaneIndex('native.net-longs-estimated');
   })).toBe(secondaryMove.index + secondaryMove.direction);
+  await expectPaneHeaderBounds(page, 2);
   const movedSecondaryIndex = secondaryMove.index + secondaryMove.direction;
   await panel.getByRole('button', { name: secondaryMoveLabel(movedSecondaryIndex, -secondaryMove.direction), exact: true }).click();
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
     return p.engine.netPositioningPaneIndex('native.net-longs-estimated');
   })).toBe(secondaryMove.index);
+  await expectPaneHeaderBounds(page, 2);
   const secondaryControls = panel.locator(`.pane-layout-controls[data-pane-index="${secondaryMove.index}"]`);
   const paneLabel = `pane ${secondaryMove.index + 1}`;
   await secondaryControls.getByRole('button', { name: `Collapse ${paneLabel} to header only`, exact: true }).click();
   await expect.poll(() => page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.paneCollapsed(index), secondaryMove.index)).toBe(true);
+  await expectPaneHeaderBounds(page, 2);
   await expect(secondaryControls.getByRole('button', { name: `Expand ${paneLabel}`, exact: true })).toBeEnabled();
   await secondaryControls.getByRole('button', { name: `Expand ${paneLabel}`, exact: true }).click();
   await expect.poll(() => page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.paneCollapsed(index), secondaryMove.index)).toBe(false);
+  await expectPaneHeaderBounds(page, 2);
   await secondaryControls.getByRole('button', { name: `Maximize ${paneLabel}`, exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(secondaryMove.index);
+  await expectPaneHeaderBounds(page, 1);
   await expect(secondaryControls.getByRole('button', { name: 'Restore all panes', exact: true })).toBeEnabled();
   await secondaryControls.getByRole('button', { name: 'Restore all panes', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+  await expectPaneHeaderBounds(page, 2);
 
   const originalWeight = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
@@ -191,6 +286,7 @@ test('pane indicators use one local header while overlays stay in the main list'
   })).toBe(true);
   await panel.getByRole('button', { name: 'Restore all panes', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+  await expectPaneHeaderBounds(page, 2);
 });
 
 test('Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order', async ({ page }) => {

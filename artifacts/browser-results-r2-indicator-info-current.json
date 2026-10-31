@@ -1,0 +1,279 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "-c",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/indicator-info.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-indicator-info-current.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "indicator-info.spec.ts",
+      "file": "indicator-info.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "collapsed pane keeps one name and actions row, and its info control is feed-neutral at 720px",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14737,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts:23:21",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                      "column": 21,
+                      "line": 23
+                    },
+                    "snippet": "  21 |\n  22 |   const row = panel.locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]');\n> 23 |   await expect(row).toBeVisible();\n     |                     ^\n  24 |   const paneIndex = await page.evaluate(() => {\n  25 |     const p = [...(window as any).__terminal.panels.values()][0];\n  26 |     return p.engine.netPositioningPaneIndex('native.net-longs-estimated');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                        "column": 21,
+                        "line": 23
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]')\u001b[22m\n\n\n  21 |\n  22 |   const row = panel.locator('.pane-indicator-host .active-indicator[data-definition-id=\"native.net-longs-estimated\"]');\n> 23 |   await expect(row).toBeVisible();\n     |                     ^\n  24 |   const paneIndex = await page.evaluate(() => {\n  25 |     const p = [...(window as any).__terminal.panels.values()][0];\n  26 |     return p.engine.netPositioningPaneIndex('native.net-longs-estimated');\n    at /home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts:23:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:19:56.021Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/indicator-info-collapsed-p-ec380-ol-is-feed-neutral-at-720px/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                    "column": 21,
+                    "line": 23
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1587d413fb0bc445490e-15cc6f5ecdd5368ef4d3",
+          "file": "indicator-info.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "healthy chart footer stays hidden and Effort shows only a plain unavailable message",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11354,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-footer')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('.candle-panel').first().locator('.chart-footer') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-footer')\u001b[22m\n\u001b[2m    13 × locator resolved to <footer class=\"chart-footer\">…</footer>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-footer')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('.candle-panel').first().locator('.chart-footer') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-footer')\u001b[22m\n\u001b[2m    13 × locator resolved to <footer class=\"chart-footer\">…</footer>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts:78:48",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                      "column": 48,
+                      "line": 78
+                    },
+                    "snippet": "  76 |   await installDepthFixture(page);\n  77 |   const panel = page.locator('.candle-panel').first();\n> 78 |   await expect(panel.locator('.chart-footer')).toBeHidden();\n     |                                                ^\n  79 |   await expect(panel.locator('.panel-status')).toBeHidden();\n  80 |   await addIndicator(panel, 'Effort–Result');\n  81 |   const status = panel.locator('.effort-status');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                        "column": 48,
+                        "line": 78
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-footer')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('.candle-panel').first().locator('.chart-footer') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-footer')\u001b[22m\n\u001b[2m    13 × locator resolved to <footer class=\"chart-footer\">…</footer>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n\n  76 |   await installDepthFixture(page);\n  77 |   const panel = page.locator('.candle-panel').first();\n> 78 |   await expect(panel.locator('.chart-footer')).toBeHidden();\n     |                                                ^\n  79 |   await expect(panel.locator('.panel-status')).toBeHidden();\n  80 |   await addIndicator(panel, 'Effort–Result');\n  81 |   const status = panel.locator('.effort-status');\n    at /home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts:78:48"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:20:13.330Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/indicator-info-healthy-cha-550e3-a-plain-unavailable-message/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/indicator-info.spec.ts",
+                    "column": 48,
+                    "line": 78
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1587d413fb0bc445490e-5202bff25fba071328cd",
+          "file": "indicator-info.spec.ts",
+          "line": 74,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T13:19:50.940Z",
+    "duration": 35264.571,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

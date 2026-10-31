@@ -5,6 +5,7 @@ import { OpenAlgoCandleChart } from '../chart/openalgo';
 import { browserScriptWorker, ScriptWorkerClient } from './client';
 import { createScriptChartBridge, depthBandFor, requiresDepth } from './chart-adapter';
 import { isNumericOutputRef, numericOutputContextId, numericOutputId, numericOutputScaleId, numericOutputSchemaId, outputUnitForPlot, validateNumericInputs, validatePlotScaleIds, wouldCreateCycle, PRICE_PANE_ID, type NumericOutputDescriptor, type NumericOutputRef } from './composition';
+import { ChartNumericOutputRegistry, type ChartNumericOutput, type NumericChangedRange } from './output-registry';
 import { ScriptLibrary } from './library';
 import { requiredScriptCapabilities } from './capabilities';
 import type { ScriptBar, ScriptContext, ScriptDiagnostic, ScriptResult } from './runtime';
@@ -29,6 +30,8 @@ export interface StudyPin {
 }
 
 export interface StudyView extends StudyPin {
+  /** Whole-view placement eligibility; numeric output eligibility is per plot. */
+  movable: boolean;
   status: string;
   diagnostics: ScriptDiagnostic[];
   inputs: ScriptInputView[];
@@ -37,6 +40,7 @@ export interface StudyView extends StudyPin {
 }
 
 export interface DepthNotice { text: string; details: string }
+export interface ExternalNumericOutputDependent { consumerId: string; title: string; ref: NumericOutputRef }
 
 export interface ScriptInputView {
   key: string;
@@ -106,8 +110,13 @@ export class ScriptStudyHost {
   private restoreErrors = new Map<string, StudyView>();
   private bands = new Map<number, BandState>();
   private listeners = new Set<() => void>();
+  private dataListeners = new Set<() => void>();
   private demandedOutputs = new Set<string>();
-  private externalOutputDependents = new Map<string, string[]>();
+  private externalOutputDependents = new Map<string, ExternalNumericOutputDependent[]>();
+  private metrics = { workerResults: 0, workerFailures: 0, dataNotifications: 0, statusNotifications: 0, configurationNotifications: 0, listenerCalls: 0, dataListenerCalls: 0, uiListenerCalls: 0 };
+  private readonly outputRegistry: ChartNumericOutputRegistry;
+  private readonly ownsOutputRegistry: boolean;
+  private managedPaneIndexResolver?: (paneId: string, exceptAttachmentId?: string) => number;
 
   constructor(
     private readonly panelId: string,
@@ -116,17 +125,22 @@ export class ScriptStudyHost {
     private readonly library: ScriptLibrary,
     series: Series,
     private readonly save: (pins: StudyPin[]) => void,
+    outputRegistry?: ChartNumericOutputRegistry,
   ) {
     this.series = series;
+    this.outputRegistry = outputRegistry ?? new ChartNumericOutputRegistry(panelId);
+    this.ownsOutputRegistry = outputRegistry === undefined;
   }
 
   subscribe(listener: () => void) { this.listeners.add(listener); return () => this.listeners.delete(listener); }
+  subscribeData(listener: () => void) { this.dataListeners.add(listener); return () => this.dataListeners.delete(listener); }
   views(): StudyView[] {
     const active = [...this.studies.values()].map(study => ({
       attachmentId: study.attachmentId, scriptId: study.scriptId, revisionId: study.revisionId,
       title: study.title, description: study.description, settings: { ...study.settings }, visible: study.visible,
       placement: study.placement, paneId: study.paneId, numericInputs: study.numericInputs ? { ...study.numericInputs } : undefined,
       plotScaleIds: study.plotScaleIds ? { ...study.plotScaleIds } : undefined,
+      movable: Boolean(study.result?.program && supportsManagedPaneMovement(study.result.program, study.settings)),
       status: this.dependencyError(study) ?? study.status, diagnostics: [...study.diagnostics], inputs: [...study.inputs], outputs: { ...study.outputs },
       numericOutputs: this.numericOutputsFor(study),
     }));
@@ -134,12 +148,15 @@ export class ScriptStudyHost {
   }
   paneIndex(attachmentId: string) { return this.studies.get(attachmentId)?.api.paneIndex ?? -1; }
   apiForAttachment(attachmentId: string) { return this.studies.get(attachmentId)?.api ?? null; }
+  setManagedPaneIndexResolver(resolver: (paneId: string, exceptAttachmentId?: string) => number) {
+    this.managedPaneIndexResolver = resolver;
+  }
   removeBlockReason(attachmentId: string) {
     const source = this.pinForAttachment(attachmentId);
     const dependent = this.allPins().find(pin => pin.attachmentId !== attachmentId
       && Object.values(pin.numericInputs ?? {}).some(input => input.instanceId === attachmentId));
     const externalDependent = this.externalOutputDependents.get(attachmentId)?.[0];
-    if (source && externalDependent) return `Cannot remove ${source.title} while ${externalDependent} depends on its output. Remove that study first.`;
+    if (source && externalDependent) return `Cannot remove ${source.title} while ${externalDependent.title} depends on its output. Remove that study first.`;
     return source && dependent ? `Cannot remove ${source.title} while ${dependent.title} depends on its output. Remove that study first.` : null;
   }
   pins(): StudyPin[] { return validStudyPins([...this.pendingPins, ...[...this.studies.values()].map(study => pinOf(study)), ...[...this.restoreErrors.values()].map(pinOf)]).filter((p,i,a) => a.findIndex(v => v.attachmentId === p.attachmentId) === i); }
@@ -149,19 +166,23 @@ export class ScriptStudyHost {
     this.refreshNeededHistory();
   }
 
-  setExternalOutputDependents(dependents: readonly { instanceId: string; title: string }[]) {
-    const next = new Map<string, string[]>();
+  setExternalOutputDependents(dependents: readonly ExternalNumericOutputDependent[]) {
+    const next = new Map<string, ExternalNumericOutputDependent[]>();
     for (const dependent of dependents) {
-      const names = next.get(dependent.instanceId) ?? [];
-      if (!names.includes(dependent.title)) names.push(dependent.title);
-      next.set(dependent.instanceId, names);
+      if (!dependent || typeof dependent.consumerId !== 'string' || !dependent.consumerId
+        || typeof dependent.title !== 'string' || !dependent.title || !isNumericOutputRef(dependent.ref)) continue;
+      const dependentsForOutput = next.get(dependent.ref.instanceId) ?? [];
+      if (!dependentsForOutput.some(item => item.consumerId === dependent.consumerId && item.ref.outputId === dependent.ref.outputId)) {
+        dependentsForOutput.push({ consumerId: dependent.consumerId, title: dependent.title, ref: { ...dependent.ref } });
+      }
+      next.set(dependent.ref.instanceId, dependentsForOutput);
     }
     this.externalOutputDependents = next;
     this.syncRemovalPolicies();
   }
 
   /** Reposition an attached worker study without replacing its worker or history. */
-  moveStudy(attachmentId: string, placement: 'overlay' | 'pane', paneId: string, paneIndex: number) {
+  moveStudy(attachmentId: string, placement: 'overlay' | 'pane', paneId: string, paneIndex: number, options: { silent?: boolean } = {}) {
     const study = this.studies.get(attachmentId);
     if (!study) return false;
     if (!Number.isInteger(paneIndex) || paneIndex < 0 || paneIndex > this.engine.chart.panes().length) return false;
@@ -169,9 +190,17 @@ export class ScriptStudyHost {
     if (study.placement === placement && study.paneId === paneId) return true;
     study.placement = placement;
     study.paneId = paneId;
+    if (!options.silent) {
+      this.persist();
+      this.notify();
+    }
+    return true;
+  }
+
+  /** Persist and publish one completed chart-level group placement transaction. */
+  commitPlacementChanges() {
     this.persist();
     this.notify();
-    return true;
   }
 
   depthNotices(): DepthNotice[] {
@@ -235,6 +264,7 @@ export class ScriptStudyHost {
     for (const band of this.bands.values()) this.releaseBand(band);
     this.bands.clear();
     for (const study of this.studies.values()) {
+      this.outputRegistry.markUnavailable(study.attachmentId, 'Chart data context changed.');
       const needsDepth = study.depthBand !== null || study.depthUnavailable;
       study.depthBand = null;
       study.depthUnavailable = needsDepth && !supportsScriptDepth(series);
@@ -385,6 +415,8 @@ export class ScriptStudyHost {
       return true;
     }
     this.studies.delete(attachmentId);
+    this.outputRegistry.markUnavailable(attachmentId, 'Study was removed.');
+    this.outputRegistry.releaseOwner(attachmentId, 'Study was removed.');
     if (removeChartIndicator) study.api.remove({ force: true });
     study.bridge.clear();
     study.worker.dispose();
@@ -402,6 +434,8 @@ export class ScriptStudyHost {
       context: this.context(),
       attached: this.studies.size,
       workers: [...this.studies.values()].filter(study => study.worker.alive).length,
+      compositionWork: { ...this.metrics, workers: [...this.studies.values()].map(study => ({ id: study.attachmentId, ...study.worker.diagnostics() })) },
+      numericOutputs: this.outputRegistry.diagnostics(),
       depthBands: [...this.bands.values()].map(band => {
         const observations = [...band.samples.values()].sort((a, b) => a.sampledAt - b.sampledAt);
         const lastCandle = this.candles.at(-1)?.t;
@@ -421,6 +455,11 @@ export class ScriptStudyHost {
     };
   }
 
+  resetDiagnostics() {
+    for (const key of Object.keys(this.metrics) as (keyof typeof this.metrics)[]) this.metrics[key] = 0;
+    for (const study of this.studies.values()) study.worker.resetDiagnostics();
+  }
+
   dispose() {
     if (this.dead) return;
     this.dead = true; this.contextGeneration++; this.pendingPins = [];
@@ -436,6 +475,8 @@ export class ScriptStudyHost {
     for (const band of this.bands.values()) this.releaseBand(band);
     this.bands.clear();
     this.listeners.clear();
+    this.dataListeners.clear();
+    if (this.ownsOutputRegistry) this.outputRegistry.dispose();
     this.candles = [];
   }
 
@@ -459,6 +500,7 @@ export class ScriptStudyHost {
       candidate = new ScriptWorkerClient(browserScriptWorker, {
         currentBars: () => this.scriptBars(candidateDepthBand),
         onResult: result => {
+          this.metrics.workerResults++;
           latest.result = result;
           if (!latest.committed) return;
           const active = this.studies.get(attachmentId);
@@ -473,15 +515,17 @@ export class ScriptStudyHost {
             active.status = active.depthBand === null ? 'Study ready'
               : depthStatusText(activeBand?.status ?? null, active.depthUnavailable, this.series, [...(activeBand?.samples.values() ?? [])].at(-1));
             active.diagnostics = [];
-            this.notify();
+            this.publishNumericOutputs(active, result.changedRange);
+            this.notify('data');
           }
         },
         onFailure: diagnostics => {
+          this.metrics.workerFailures++;
           const active = this.studies.get(attachmentId);
           if (latest.committed && active?.worker === candidate) {
             active.status = diagnostics[0]?.message ?? 'study worker stopped';
             active.diagnostics = diagnostics;
-            this.notify();
+            this.notify('status');
           }
         },
       }, Boolean(existing));
@@ -506,24 +550,36 @@ export class ScriptStudyHost {
       const revision = await this.library.pinRevision(draft.scriptId, draft.source, requiredScriptCapabilities(result.program));
       assertCurrent();
       assertInputsCurrent();
+      // A move can finish while worker startup or revision pinning is pending.
+      // Existing attachment presentation is read from the live instance at the
+      // final synchronous commit boundary, never from the editor's old draft.
+      const currentExisting = this.studies.get(attachmentId) ?? existing;
+      const placement = currentExisting?.placement ?? draft.placement;
+      const paneId = currentExisting?.paneId ?? draft.paneId;
+      const currentScaleIds = currentExisting?.plotScaleIds ?? draft.plotScaleIds;
+      const visible = currentExisting?.visible ?? draft.visible ?? true;
       bridge = createScriptChartBridge(result, descriptorId, draft.settings);
       (bridge.descriptor as { name: string }).name = draft.title;
-      if (draft.placement === 'overlay' && draft.scriptId === 'builtin.volume-histogram') {
+      if (placement === 'overlay' && draft.scriptId === 'builtin.volume-histogram') {
         (bridge.descriptor as { placement: 'pane' | 'onchart' }).placement = 'onchart';
       }
-      const paneId = draft.paneId ?? (bridge.descriptor.placement === 'onchart' ? PRICE_PANE_ID : `study:${attachmentId}`);
-      const plotScaleIds = resolvePlotScaleIds(attachmentId, paneId, draft.plotScaleIds, draft.scriptId, result, draft.settings, this.series);
-      this.assertDependentOutputsCompatible(attachmentId, draft.scriptId, result, paneId, plotScaleIds, draft.settings);
+      const resolvedPaneId = paneId ?? (placement === 'overlay' || bridge.descriptor.placement === 'onchart' ? PRICE_PANE_ID : `study:${attachmentId}`);
+      const plotScaleIds = resolvePlotScaleIds(attachmentId, resolvedPaneId, currentScaleIds, draft.scriptId, result, draft.settings, this.series);
+      this.assertDependentOutputsCompatible(attachmentId, draft.scriptId, result, resolvedPaneId, plotScaleIds, draft.settings);
       assertCurrent();
       assertInputsCurrent();
       for (const plot of bridge.descriptor.plots) plot.priceScaleId = plotScaleIds[plot.key]!;
       registerIndicator(bridge.descriptor);
-      const paneIndex = paneId === PRICE_PANE_ID ? this.engine.chart.primaryPaneIndex()
-        : draft.paneId ? [...this.studies.values()].find(study => study.paneId === paneId)?.api.paneIndex ?? this.engine.chart.panes().length
-          : undefined;
-      api = this.engine.chart.addIndicator(descriptorId, {}, { ...(paneIndex === undefined ? {} : { paneIndex }), policy: { removable: true, configurable: true, movable: true } });
-      api.setVisible(draft.visible ?? existing?.visible ?? true);
-      api.setPolicy({ removable: true, configurable: true });
+      const siblingPaneIndex = [...this.studies.values()].find(study => study.attachmentId !== attachmentId && study.paneId === resolvedPaneId)?.api.paneIndex;
+      const existingPaneIndex = currentExisting?.paneId === resolvedPaneId ? currentExisting.api.paneIndex : undefined;
+      const managedPaneIndex = resolvedPaneId === PRICE_PANE_ID ? undefined : this.managedPaneIndexResolver?.(resolvedPaneId, attachmentId);
+      const paneIndex = resolvedPaneId === PRICE_PANE_ID ? this.engine.chart.primaryPaneIndex()
+        : managedPaneIndex !== undefined && managedPaneIndex >= 0 ? managedPaneIndex
+          : siblingPaneIndex ?? existingPaneIndex ?? this.engine.chart.panes().length;
+      const movable = supportsManagedPaneMovement(result.program, draft.settings);
+      api = this.engine.chart.addIndicator(descriptorId, {}, { ...(paneIndex === undefined ? {} : { paneIndex }), policy: { removable: true, configurable: true, movable } });
+      api.setVisible(visible);
+      api.setPolicy({ removable: true, configurable: true, movable });
       api.legend()?.setOptions({ visible: false });
 
       // Keep at least one live depth subscriber while atomically replacing an
@@ -541,8 +597,8 @@ export class ScriptStudyHost {
       const instance: StudyInstance = {
         attachmentId, scriptId: draft.scriptId, revisionId: revision.id,
         title: draft.title, description: draft.description,
-        settings: { ...draft.settings }, visible: draft.visible ?? existing?.visible ?? true,
-        placement: bridge.descriptor.placement === 'pane' ? 'pane' : 'overlay', paneId,
+        settings: { ...draft.settings }, visible,
+        placement: bridge.descriptor.placement === 'pane' ? 'pane' : 'overlay', paneId: resolvedPaneId,
         numericInputs, plotScaleIds,
         source: draft.source, descriptorId, api, worker: candidate, bridge,
         depthBand: nextDepthBand, depthUnavailable,
@@ -555,12 +611,14 @@ export class ScriptStudyHost {
         resultContextId: numericOutputContextId(this.series), resultContextRevision: generation, needsHistory: false,
       };
       this.studies.set(attachmentId, instance);
+      this.publishNumericOutputs(instance, result.changedRange);
       this.syncRemovalPolicies();
       this.refreshNeededHistory();
       latest.committed = true;
       if (latest.result && latest.result !== result) {
         instance.result = latest.result; instance.resultRevision++; instance.outputs = outputAtTail(latest.result);
         instance.resultContextId = numericOutputContextId(this.series); instance.resultContextRevision = generation;
+        this.publishNumericOutputs(instance, latest.result.changedRange);
         if (instance.visible || this.hasVisibleDependents(instance.attachmentId)) bridge.update(latest.result, callback => this.engine.enqueueVisible(callback));
       }
       if (nextDepthBand !== null && !depthUnavailable) this.acquireDepth(nextDepthBand);
@@ -601,7 +659,7 @@ export class ScriptStudyHost {
       } catch (error) {
         if (this.dead || (this.intents.get(pin.attachmentId) ?? 0) !== intent) continue;
         this.pendingPins = this.pendingPins.filter(p => p.attachmentId !== pin.attachmentId);
-        this.restoreErrors.set(pin.attachmentId, { ...pin, status: error instanceof Error ? error.message : 'Could not restore this study.', diagnostics: [], inputs: [], outputs: {}, numericOutputs: [] });
+        this.restoreErrors.set(pin.attachmentId, { ...pin, movable: false, status: error instanceof Error ? error.message : 'Could not restore this study.', diagnostics: [], inputs: [], outputs: {}, numericOutputs: [] });
         this.persist(); this.notify();
       }
     }
@@ -679,7 +737,7 @@ export class ScriptStudyHost {
       if (full) study.worker.history(this.scriptBars(percent));
       else if (tail) study.worker.patch([{ kind: 'update', bar: this.scriptBar(tail, percent) }]);
     }
-    this.notify();
+    this.notify(full ? 'status' : 'data');
   }
 
   private scriptBars(depthBand: number | null) { return this.candles.map(candle => this.scriptBar(candle, depthBand)); }
@@ -757,7 +815,6 @@ export class ScriptStudyHost {
     if (!result?.program || !result.times || !result.values) return [];
     const times = result.times, columns = result.values;
     const contextRevision = this.contextGeneration;
-    const composable = supportsComposition(result.program, study.settings);
     return result.program.outputs.plots.slice(0, 8).map(plot => {
       const outputId = numericOutputId(study.attachmentId, plot.key);
       const unit = outputUnitForPlot(study.scriptId, plot, result.program!, study.settings, this.series);
@@ -770,9 +827,33 @@ export class ScriptStudyHost {
         available: result.ok && study.resultContextId === numericOutputContextId(this.series)
           && study.resultContextRevision === contextRevision && times.length === (columns[plot.key]?.length ?? -1)
           && (!includeDependencyState || !this.dependencyError(study, new Set())),
-        times, values: columns[plot.key] ?? [], composable,
+        times, values: columns[plot.key] ?? [], composable: supportsNumericOutput(result.program!, plot),
+        changedRange: result.changedRange ?? { from: 0, to: times.length },
       };
     });
+  }
+
+  private publishNumericOutputs(study: StudyInstance, changedRange?: NumericChangedRange) {
+    const outputs: ChartNumericOutput[] = this.numericOutputsFor(study).map(output => ({
+      ...output,
+      quantity: study.scriptId === 'builtin.volume-histogram' && output.plotKey === 'p0' ? 'flow' : 'unknown',
+      marketScope: numericOutputContextId(this.series),
+      sourceScope: `script:${study.scriptId}:${study.attachmentId}`,
+      timestampConvention: 'candle-open',
+      quality: output.available ? 'complete' : 'unknown',
+      resets: [],
+      changedRange: changedRange ?? output.changedRange ?? { from: 0, to: output.values.length },
+    }));
+    if (!outputs.length) return;
+    try { this.outputRegistry.publishMany(outputs); }
+    catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.outputRegistry.markUnavailable(study.attachmentId, `Output publication failed: ${message}`);
+      study.status = 'Managed output publication failed';
+      study.diagnostics = [{ code: 'IQ2101', title: 'Managed output unavailable', message,
+        fix: 'Reapply the producer after its dependent output references are repaired.', severity: 'error', line: 1, column: 1, from: 0, to: 0 }];
+      this.notify('status');
+    }
   }
 
   private assertNumericInputs(targetId: string, inputs: Record<string, NumericOutputRef>, generation: number) {
@@ -786,7 +867,7 @@ export class ScriptStudyHost {
       if (wouldCreateCycle(targetId, ref.instanceId, dependencies)) throw new Error(`Input ${key} would create a study dependency cycle.`);
       const output = this.numericOutputsFor(source, false).find(item => item.outputId === ref.outputId);
       if (!output || !output.composable || ref.schemaId !== output.schemaId || ref.domain !== output.domain || ref.unit !== output.unit
-        || ref.scaleId !== output.scaleId || ref.contextId !== output.contextId
+        || ref.contextId !== output.contextId
         || output.contextId !== numericOutputContextId(this.series)) {
         throw new Error(`Input ${key} no longer matches the selected output. Refresh the source list and choose it again.`);
       }
@@ -795,19 +876,20 @@ export class ScriptStudyHost {
 
   private assertDependentOutputsCompatible(attachmentId: string, scriptId: string, result: ScriptResult, paneId: string,
     plotScaleIds: Record<string, import('openalgo-charts').PriceScaleId>, settings: Record<string, unknown>) {
-    for (const pin of this.allPins()) {
-      if (pin.attachmentId === attachmentId) continue;
-      for (const ref of Object.values(pin.numericInputs ?? {})) {
-        if (ref.instanceId !== attachmentId) continue;
-        if (!result.program || !supportsComposition(result.program, settings)) throw new Error(`Cannot replace this study while ${pin.title} depends on an output that is no longer compatible with managed panes.`);
-        const plot = result.program?.outputs.plots.find(item => numericOutputId(attachmentId, item.key) === ref.outputId);
-        if (!plot) throw new Error(`Cannot replace this study while ${pin.title} depends on output ${ref.plotKey}. Reapply or remove ${pin.title} first.`);
-        const unit = outputUnitForPlot(scriptId, plot, result.program!, settings, this.series);
-        const outputScaleId = plotScaleIds[plot.key] ?? numericOutputScaleId(paneId, numericOutputId(attachmentId, plot.key), unit);
-        if (numericOutputSchemaId(plot.key, unit) !== ref.schemaId || unit !== ref.unit || outputScaleId !== ref.scaleId
-          || ref.contextId !== numericOutputContextId(this.series)) {
-          throw new Error(`Cannot replace this study because ${pin.title} depends on an output whose unit, scale or context would change.`);
-        }
+    const dependents = [
+      ...this.allPins().filter(pin => pin.attachmentId !== attachmentId)
+        .flatMap(pin => Object.values(pin.numericInputs ?? {}).map(ref => ({ title: pin.title, ref }))),
+      ...(this.externalOutputDependents.get(attachmentId) ?? []).map(dependent => ({ title: dependent.title, ref: dependent.ref })),
+    ];
+    for (const { title, ref } of dependents) {
+      if (ref.instanceId !== attachmentId) continue;
+      if (!result.program) throw new Error(`Cannot replace this study while ${title} depends on an output that is no longer compatible.`);
+      const plot = result.program.outputs.plots.find(item => numericOutputId(attachmentId, item.key) === ref.outputId);
+      if (!plot || !supportsNumericOutput(result.program, plot)) throw new Error(`Cannot replace this study while ${title} depends on output ${ref.plotKey}. Reapply or remove ${title} first.`);
+      const unit = outputUnitForPlot(scriptId, plot, result.program, settings, this.series);
+      if (numericOutputSchemaId(plot.key, unit) !== ref.schemaId || unit !== ref.unit
+        || ref.contextId !== numericOutputContextId(this.series)) {
+        throw new Error(`Cannot replace this study because ${title} depends on an output whose schema, unit or context would change.`);
       }
     }
   }
@@ -839,11 +921,22 @@ export class ScriptStudyHost {
   }
 
   private syncRemovalPolicies() {
-    for (const study of this.studies.values()) study.api.setPolicy({ removable: !this.removeBlockReason(study.attachmentId), configurable: true });
+    for (const study of this.studies.values()) study.api.setPolicy({ removable: !this.removeBlockReason(study.attachmentId), configurable: true,
+      movable: Boolean(study.result?.program && supportsManagedPaneMovement(study.result.program, study.settings)) });
   }
 
   private persist() { this.save(this.pins()); }
-  private notify() { for (const listener of this.listeners) listener(); }
+  private notify(kind: 'data' | 'status' | 'configuration' = 'configuration') {
+    if (kind === 'data') this.metrics.dataNotifications++;
+    else if (kind === 'status') this.metrics.statusNotifications++;
+    else this.metrics.configurationNotifications++;
+    const listeners = kind === 'data' ? this.dataListeners : this.listeners;
+    for (const listener of listeners) {
+      this.metrics.listenerCalls++;
+      if (kind === 'data') this.metrics.dataListenerCalls++; else this.metrics.uiListenerCalls++;
+      listener();
+    }
+  }
 }
 
 function enqueueApply<T>(task: () => Promise<T>): Promise<T> {
@@ -873,7 +966,13 @@ function resolvePlotScaleIds(attachmentId: string, paneId: string, requested: un
   return plotScaleIds;
 }
 
-function supportsComposition(program: NonNullable<ScriptResult['program']>, settings: Record<string, unknown>) {
+function supportsNumericOutput(program: NonNullable<ScriptResult['program']>, plot: NonNullable<ScriptResult['program']>['outputs']['plots'][number]) {
+  // Scalar plots remain useful candle-aligned inputs when their parent study
+  // also draws a price overlay or other non-series layers.
+  return program.meta.kind === 'study' && plot.ohlc === null;
+}
+
+function supportsManagedPaneMovement(program: NonNullable<ScriptResult['program']>, settings: Record<string, unknown>) {
   if (program.meta.kind !== 'study' || resolveBooleanField(program.meta.overlay, program, settings, false)) return false;
   const plots = program.outputs.plots;
   if (!plots.length || plots.some(plot => plot.ohlc !== null || resolveBooleanField(plot.overlay, program, settings, false))) return false;

@@ -7,6 +7,7 @@ import { LevelWatchTransport } from './level-watch';
 import type { WatchCommand } from '../level-watch/types';
 import { parseLive } from './adapters';
 import { MarketService } from './service';
+import { ComparisonService, createComparisonFixtureTransport } from './comparison-service';
 import { StagingHeatmapService } from './staging-heatmap';
 import { StagingDepthMatrixService } from './staging-depth-matrix';
 import { DepthMatrixFixtureService } from './depth-matrix-fixtures';
@@ -16,6 +17,7 @@ import { BinanceDepthService } from './depth-service';
 import { DirectOrderWallsService } from './direct-order-walls';
 import { StagingOrderWallsService } from './staging-order-walls';
 import { StagingNetPositioningService } from './staging-net-positioning';
+import { StagingRawOpenInterestService } from './staging-raw-open-interest';
 import { TickerService } from './ticker-service';
 import { TradeBubbleService } from './trade-bubbles-service';
 import { BinanceFootprintService } from './footprint-service';
@@ -76,6 +78,7 @@ const tickers = new TickerService({perpetual:footprint,spot:spotFootprint,'bybit
 const tradeBubbles = new TradeBubbleService({perpetual:footprint,spot:spotFootprint}, e => scope.postMessage(e));
 const liquidations = new LiquidationService(e=>scope.postMessage(e),stagingMode);
 const cvd = new CvdService({perpetual:footprint,spot:spotFootprint,'bybit:perpetual':bybitExecutions}, e=>scope.postMessage(e), stagingMode);
+let comparison = new ComparisonService(e=>scope.postMessage(e));
 const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) : undefined;
 const stagingHeatmap = stagingMode ? new StagingHeatmapService(e=>scope.postMessage(e)) : undefined;
 const directOrderWalls = new DirectOrderWallsService(depth, emitDirect);
@@ -83,6 +86,7 @@ const stagingOrderWalls = stagingHeatmap ? new StagingOrderWallsService(stagingH
 const stagingDepthMatrix = stagingHeatmap ? new StagingDepthMatrixService(stagingHeatmap, e=>scope.postMessage(e)) : undefined;
 const depthMatrixFixtures = new DepthMatrixFixtureService(e=>scope.postMessage(e));
 const stagingNetPositioning = new StagingNetPositioningService(e => scope.postMessage(e), stagingMode);
+const stagingRawOpenInterest = new StagingRawOpenInterestService(e => scope.postMessage(e), stagingMode);
 const stagingClients = new Set<string>();
 const watchTransport=new LevelWatchTransport(message=>scope.postMessage(message),()=>stagingMode&&!fixture);
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
@@ -91,8 +95,11 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
     fixture=true; cvd.setFixture(true); liquidations.setFixture(true);
     tradeBubbles.setFixture(true);
     stagingNetPositioning.setEnabled(false);
+    stagingRawOpenInterest.setFixtureSelected(true);
     directOrderWalls.setFixture(true);
     alignFixtureToNow=Boolean((event.data as unknown as {alignToNow?:boolean}).alignToNow);
+    comparison.dispose();
+    comparison=new ComparisonService(e=>scope.postMessage(e),createComparisonFixtureTransport(),undefined,'fixture');
     tpoService.dispose();
     service.dispose();
     service=new MarketService(marketEvent,fixtureOptions());
@@ -101,6 +108,8 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   }
   if(event.data.type.startsWith('watch-')){watchTransport.command(event.data as unknown as WatchCommand);return;}
   const c=event.data;
+  if(c.type==='comparison-subscribe'||c.type==='comparison-unsubscribe'||c.type==='comparison-retry'){comparison.command(c);return;}
+  if(c.type==='online')comparison.setOnline(c.online);
   if(c.type==='liquidation-subscribe'){liquidations.subscribe(c.id,c.request);return;}
   if(c.type==='liquidation-update'){liquidations.update(c.id,c.request);return;}
   if(c.type==='liquidation-unsubscribe'){liquidations.unsubscribe(c.id);return;}
@@ -129,6 +138,9 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='tpo-retry'){tpoService.retry(c.id);return;}
   if(c.type==='net-positioning-subscribe'){stagingNetPositioning.subscribe(c.id,c.request);return;}
   if(c.type==='net-positioning-unsubscribe'){stagingNetPositioning.unsubscribe(c.id);return;}
+  if(c.type==='raw-open-interest-subscribe'){stagingRawOpenInterest.subscribe(c.id,c.request);return;}
+  if(c.type==='raw-open-interest-unsubscribe'){stagingRawOpenInterest.unsubscribe(c.id);return;}
+  if(c.type==='raw-open-interest-fixture'){if(fixture)stagingRawOpenInterest.setFixture(c.payload);return;}
   if(c.type.startsWith('depth-matrix-')){
     if(fixture){depthMatrixFixtures.command(c as Extract<Command,{type:'depth-matrix-subscribe'|'depth-matrix-settings'|'depth-matrix-viewport'|'depth-matrix-unsubscribe'|'depth-matrix-retry'}>);return;}
     if(stagingDepthMatrix){stagingDepthMatrix.command(c as Extract<Command,{type:'depth-matrix-subscribe'|'depth-matrix-settings'|'depth-matrix-viewport'|'depth-matrix-unsubscribe'|'depth-matrix-retry'}>);return;}
@@ -181,6 +193,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='footprint-retry'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='footprint-ack'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);spotFootprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };

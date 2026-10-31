@@ -4,13 +4,16 @@ import { addIndicator, chooseChartMarket } from './indicator-actions';
 test('Daily VWAP renders blue/green daily segments, updates correctly and persists native controls', async ({page}) => {
   test.setTimeout(90_000);
   const errors:string[]=[]; page.on('pageerror',error=>errors.push(error.message));
+  await page.setViewportSize({width:1366,height:768});
   await page.addInitScript(()=>{
-    const state=window as any; state.__vwapPaint=[]; state.__vwapMessages=[];
+    const state=window as any; state.__vwapPaint=[]; state.__vwapMessages=[]; state.__vwapText=[];
     const stroke=CanvasRenderingContext2D.prototype.stroke;
     CanvasRenderingContext2D.prototype.stroke=function(...args:any[]){
       if(this.strokeStyle==='#2962ff'||this.strokeStyle==='#4b9b38')state.__vwapPaint.push({color:this.strokeStyle,width:this.lineWidth,alpha:this.globalAlpha});
       return (stroke as any).apply(this,args);
     };
+    const fillText=CanvasRenderingContext2D.prototype.fillText;
+    CanvasRenderingContext2D.prototype.fillText=function(value:any,...args:any[]){if(value==='ABV'||value==='BLW')state.__vwapText.push(value);return(fillText as any).call(this,value,...args);};
     const post=Worker.prototype.postMessage;
     Worker.prototype.postMessage=function(message:any,transfer?:any){state.__vwapMessages.push(message.type);return post.call(this,message,transfer);};
   });
@@ -27,7 +30,10 @@ test('Daily VWAP renders blue/green daily segments, updates correctly and persis
   await expect(row).toBeVisible();
   await expect(row).toContainText('UTC 00:00');
   const diagnostics=()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.dailyVwapDiagnostics());
+  await expect.poll(async()=>(await diagnostics()).settings).toMatchObject({readout:true,secondDeviation:false,thirdDeviation:false});
   await expect.poll(async()=>(await diagnostics()).segments).toBeGreaterThan(0);
+  await expect.poll(async()=>(await diagnostics()).readoutGeometry).not.toBeNull();
+  await expect.poll(()=>page.evaluate(()=>(window as any).__vwapText.includes('ABV')&&(window as any).__vwapText.includes('BLW'))).toBe(true);
   await expect.poll(()=>page.evaluate(()=>(window as any).__vwapPaint.some((p:any)=>p.color==='#2962ff'))).toBe(true);
   await expect.poll(()=>page.evaluate(()=>(window as any).__vwapPaint.some((p:any)=>p.color==='#4b9b38'))).toBe(true);
   await expect.poll(() => page.evaluate(() => {
@@ -40,13 +46,32 @@ test('Daily VWAP renders blue/green daily segments, updates correctly and persis
     await expect.poll(()=>panel.evaluate(element=>getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme==='dark'?'#090909':'#f6f4ee');
     await panel.screenshot({path:`/tmp/daily-vwap-${theme}.png`});
   }
+  await page.setViewportSize({width:720,height:860});
+  for(const theme of ['dark','light']as const){
+    await page.getByLabel('Theme',{exact:true}).selectOption(theme);
+    await expect.poll(()=>panel.evaluate(element=>getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme==='dark'?'#090909':'#f6f4ee');
+    await expect.poll(async()=>{
+      const geometry=(await diagnostics()).readoutGeometry;
+      if(!geometry||geometry.x<0||geometry.y<0||geometry.x+geometry.width>geometry.plotWidth||geometry.y+geometry.height>geometry.plotHeight)return false;
+      const rightOfEnd=geometry.x>geometry.lineX+2;
+      const clearOfTail=geometry.y+geometry.height<=geometry.curveMinY||geometry.y>=geometry.curveMaxY;
+      return rightOfEnd||clearOfTail;
+    }).toBe(true);
+    await panel.screenshot({path:`/tmp/daily-vwap-${theme}-narrow.png`});
+  }
+  await page.setViewportSize({width:1366,height:768});
   await panel.getByRole('button',{name:'Daily VWAP settings',exact:true}).click();
   const dialog=panel.getByRole('dialog',{name:'Daily VWAP settings'});
   await expect(dialog).toContainText('00:00 UTC');
+  await expect(dialog.getByLabel('Show time above/below readout',{exact:true})).toBeChecked();
+  await expect(dialog.getByLabel('Show second deviation zone (±2×)',{exact:true})).not.toBeChecked();
+  await expect(dialog.getByLabel('Show third deviation zone (±3×)',{exact:true})).not.toBeChecked();
+  await dialog.getByLabel('Show second deviation zone (±2×)',{exact:true}).check();
+  await dialog.getByLabel('Show third deviation zone (±3×)',{exact:true}).check();
   await dialog.getByLabel('Band multiplier (standard deviations)',{exact:true}).fill('2');
   await dialog.getByLabel('Band fill opacity',{exact:true}).fill('.08');
   await dialog.getByRole('button',{name:'Apply',exact:true}).click();
-  await expect.poll(async()=>(await diagnostics()).settings.multiplier).toBe(2);
+  await expect.poll(async()=>(await diagnostics()).settings).toMatchObject({multiplier:2,secondDeviation:true,thirdDeviation:true,readout:true});
   await panel.getByRole('button',{name:'Hide Daily VWAP',exact:true}).click();
   await expect.poll(async()=>(await diagnostics()).mounted).toBe(false);
   await panel.getByRole('button',{name:'Show Daily VWAP',exact:true}).click();
@@ -54,10 +79,10 @@ test('Daily VWAP renders blue/green daily segments, updates correctly and persis
   expect(await page.evaluate(()=>(window as any).__vwapMessages.filter((m:string)=>m==='subscribe').length)).toBe(before);
   await expect.poll(()=>page.evaluate(()=>{
     const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
-    return (Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.daily-vwap')?.settings.multiplier;
-  })).toBe(2);
+    return (Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.daily-vwap')?.settings;
+  })).toMatchObject({multiplier:2,secondDeviation:true,thirdDeviation:true,readout:true});
   await page.reload();
-  await expect.poll(async()=>(await diagnostics()).settings?.multiplier).toBe(2);
+  await expect.poll(async()=>(await diagnostics()).settings).toMatchObject({multiplier:2,secondDeviation:true,thirdDeviation:true,readout:true});
   // Explicit fixture-only deterministic engine inputs exercise forming replacements and day reset.
   const controlled=await page.evaluate(()=>{
     const p=[...(window as any).__terminal.panels.values()][0];p.release?.();p.release=undefined;

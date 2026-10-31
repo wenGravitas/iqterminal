@@ -1,7 +1,20 @@
-import { cvdAnchorAt, cvdValues, cvdSourceLabel, type CvdPoint,type CvdSeries,type CvdSettings } from '../feed/cvd';
+import { cvdAnchorAt, cvdValues, cvdSourceLabel, CVD_STEP, type CvdPoint,type CvdSeries,type CvdSettings } from '../feed/cvd';
+import type { Candle } from '../feed/protocol';
 export interface CvdLinePoint {time:number;period:number;value:number|null;partial:boolean}
 export interface CvdLine {id:string;name:string;points:CvdLinePoint[];filtered:boolean}
+export interface CvdNumericProjection {
+  plotKey:string;title:string;unit:'BTC'|'USDT';sourceScope:string;values:(number|null)[];
+  resets:{fromTime:number;reason:string}[];quality:'complete'|'partial'|'stale'|'unavailable';available:boolean;
+}
 export function cvdLowerBound<T>(rows:readonly T[],time:number,get:(row:T)=>number){let l=0,h=rows.length;while(l<h){const m=(l+h)>>>1;if(get(rows[m]!)<time)l=m+1;else h=m;}return l;}
+function cvdGroupKey(id:string){let hash=2166136261;for(const char of id)hash=Math.imul(hash^char.charCodeAt(0),16777619);return `${id.replace(/[^A-Za-z0-9]/g,'').slice(0,16)||'Group'}${(hash>>>0).toString(36)}`;}
+export function cvdNumericPlotKey(id:string,unit:'BTC'|'USDT'){
+  const suffix=unit==='BTC'?'Btc':'Usdt';
+  if(id==='total')return `cvdTotal${suffix}`;
+  if(id.startsWith('group:'))return `cvdGroup${cvdGroupKey(id.slice(6))}${suffix}`;
+  const venue=id==='binance:spot'?'BinanceSpot':id==='binance:perpetual'?'BinancePerpetual':id==='bybit:perpetual'?'BybitPerpetual':`Source${cvdGroupKey(id)}`;
+  return `cvdVenue${venue}${suffix}`;
+}
 export class CvdPlotModel {
   readonly sources=new Map<string,CvdSeries>();readonly lines=new Map<string,CvdLine>();
   private first=Infinity;private times:number[]=[];private dirtyTimes=false;private key='';
@@ -48,6 +61,82 @@ export class CvdPlotModel {
   }
   value(id:string,time?:number){const points=this.lines.get(id)?.points??[];if(time===undefined)return points.at(-1);
     let at=cvdLowerBound(points,time,p=>p.time);if(points[at]?.time!==time)at--;return points[at];}
+
+  /** Stable native numeric outputs, projected only onto the host candle timeline. */
+  projectNumericOutputs(settings:CvdSettings,candles:readonly Candle[],intervalMs:number,now:number):CvdNumericProjection[]{
+    if(!Number.isSafeInteger(intervalMs)||intervalMs<=0)return [];
+    const host=candles.slice(-5_000);
+    const configured=[{id:'total',name:'Total',markets:[...settings.sources],scope:'cvd:included-sources'},
+      ...settings.sources.map(id=>({id,name:cvdSourceLabel(id),markets:[id],scope:`cvd:venue:${id}`})),
+      ...settings.groups.map(group=>({id:`group:${group.id}`,name:group.name,markets:group.markets,scope:`cvd:group:${group.id}`}))];
+    const projections:CvdNumericProjection[]=[];
+    for(const unit of ['BTC','USDT'] as const)for(const line of configured){
+      const values:(number|null)[]=Array(host.length).fill(null),resets:{fromTime:number;reason:string}[]=[];
+      let previousPeriod:number|undefined,previousPartial=false,partial=false,stale=false,available=false;
+      for(let index=0;index<host.length;index++){
+        const candle=host[index]!,end=candle.t+intervalMs;
+        const samples=new Map<string,{value:number;period:number;partial:boolean;stale:boolean}>();
+        for(const source of settings.sources){
+          const series=this.sources.get(source),sample=series&&projectSourcePoint(series,candle,end,now,settings,unit);
+          if(sample)samples.set(source,sample);
+          if(series?.status==='stale')stale=true;
+        }
+        let value:number|null=null,isPartial=false,period=cvdAnchorAt((candle.closed?end:Math.min(end,now))-1,settings);
+        if(line.id==='total'||line.id.startsWith('group:')){
+          const ids=line.markets.filter(id=>settings.sources.includes(id as CvdSettings['sources'][number]));
+          let sum=0,hasValue=false;
+          for(const id of ids){const sample=samples.get(id);if(!sample){isPartial=true;continue;}
+            sum+=sample.value;hasValue=true;isPartial||=sample.partial;period=sample.period;stale||=sample.stale;}
+          if(ids.length!==line.markets.length)isPartial=true;
+          if(hasValue)value=sum;
+          if(line.id==='total'&&!line.markets.length)isPartial=true;
+        }else{
+          const sample=samples.get(line.id);
+          if(sample){value=sample.value;period=sample.period;isPartial=sample.partial;stale||=sample.stale;}
+          else isPartial=true;
+        }
+        if(index>0&&candle.t-host[index-1]!.t>intervalMs){isPartial=true;pushReset(resets,candle.t,'Host candle timestamp gap');}
+        if(previousPeriod!==undefined&&period!==previousPeriod)pushReset(resets,candle.t,`${settings.anchor} UTC CVD reset`);
+        if(isPartial&&!previousPartial)pushReset(resets,candle.t,'Incomplete or interrupted signed execution coverage');
+        if(value!==null&&Number.isFinite(value)){values[index]=value;available=true;}else values[index]=null;
+        partial||=isPartial;previousPeriod=period;previousPartial=isPartial;
+      }
+      const configuredHere=line.id==='total'||line.id.startsWith('group:')
+        ? line.markets.some(id=>settings.sources.includes(id as CvdSettings['sources'][number]))
+        : settings.sources.includes(line.id as CvdSettings['sources'][number]);
+      projections.push({plotKey:cvdNumericPlotKey(line.id,unit),title:`CVD · ${line.name} (${unit})`,unit,sourceScope:line.scope,
+        values,resets,available:available&&configuredHere,
+        quality:!available||!configuredHere?'unavailable':stale?'stale':partial?'partial':'complete'});
+    }
+    return projections;
+  }
+
+  clear(){this.sources.clear();this.lines.clear();this.first=-Infinity;this.times=[];this.dirtyTimes=true;this.key='';}
+}
+
+function projectSourcePoint(series:CvdSeries,candle:Candle,candleEnd:number,now:number,settings:CvdSettings,unit:'BTC'|'USDT'){
+  if(!candle.closed&&now<candle.t)return undefined;
+  const end=candle.closed?candleEnd:Math.min(candleEnd,now);
+  const upper=cvdLowerBound(series.points,end,p=>p.time);
+  let at=upper;if(series.points[at]?.time!==end)at--;
+  let point=series.points[at];
+  // A live, not-yet-closed source minute contains an as-of-now cumulative value.
+  // Its bar endpoint lies in the future, so project it only into the current host candle.
+  const next=series.points[upper];
+  if(!candle.closed&&next&&next.time<=candleEnd&&next.time>end
+    &&next.time-CVD_STEP<=end&&series.status==='live'&&series.asOf>=next.time-CVD_STEP)point=next;
+  if(!point||!point.available)return undefined;
+  const period=cvdAnchorAt(end-1,settings);if(point.period!==period)return undefined;
+  const from=point.time<=end?point.time:candle.t;
+  const gap=series.coverage.gaps.some(item=>item.from<end&&item.to>from);
+  const coverageConfirmed=series.status==='live'?series.asOf>=end:series.coverage.to>=end;
+  const partial=point.partial||!point.observed||gap||!coverageConfirmed;
+  return {value:unit==='BTC'?point.base:point.quote,period,partial,stale:series.status==='stale'};
+}
+
+function pushReset(resets:{fromTime:number;reason:string}[],fromTime:number,reason:string){
+  if(resets.at(-1)?.fromTime===fromTime)return;
+  resets.push({fromTime,reason});if(resets.length>128)resets.shift();
 }
 export function compactCvd(value:number|null|undefined){if(value==null)return '—';const abs=Math.abs(value);const sign=value<0?'−':value>0?'+':'';
   const rounded=Number(abs.toPrecision(3));

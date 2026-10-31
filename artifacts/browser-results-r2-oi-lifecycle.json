@@ -1,0 +1,167 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.config.ts",
+      "tests/browser/open-interest-sma.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-oi-lifecycle.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --host 127.0.0.1 --port 4175 --outDir /tmp/iqterminal-pane-r2-dist",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "open-interest-sma.spec.ts",
+      "file": "open-interest-sma.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7262,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Open Interest SMA context lifecycle {\"before\":{\"consumers\":[{\"instanceId\":\"sma-c7ab3815-8f0d-4816-b623-04e603f9e306\",\"outputId\":\"output:native.raw-open-interest:openInterestTotalBtc\",\"active\":true,\"completedRevision\":5,\"current\":true}],\"bindingToken\":\"iq-sma:chart-9118c20a-9270-4823-a52e-1b469a4ba6fa:sma-c7ab3815-8f0d-4816-b623-04e603f9e306:output%3Anative.raw-open-interest%3AopenInterestTotalBtc\",\"api\":{\"id\":\"sma-c7ab3815-8f0d-4816-b623-04e603f9e306\",\"token\":\"iq-sma:chart-9118c20a-9270-4823-a52e-1b469a4ba6fa:sma-c7ab3815-8f0d-4816-b623-04e603f9e306:output%3Anative.raw-open-interest%3AopenInterestTotalBtc\"}},\"events\":[{\"operation\":\"unregister\",\"before\":true,\"stack\":[\"    at registry.unregisterConsumer (eval at evaluate (:370:30), <anonymous>:26:32)\",\"    at http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:178609\",\"    at Si._detach (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:199439)\"]},{\"operation\":\"register\",\"before\":false,\"stack\":[\"    at registry.registerConsumer (eval at evaluate (:370:30), <anonymous>:36:33)\",\"    at Object.Bw [as attach] (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:199341)\",\"    at Si._attach (http://127.0.0.1:4175/assets/index-BmtjOQal.js:12:31719)\"]},{\"operation\":\"unregister\",\"before\":false,\"stack\":[\"    at registry.unregisterConsumer (eval at evaluate (:370:30), <anonymous>:26:32)\",\"    at UC.registerConsumer (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:178421)\",\"    at registry.registerConsumer (eval at evaluate (:370:30), <anonymous>:38:14)\"]},{\"operation\":\"unregister\",\"before\":true,\"stack\":[\"    at registry.unregisterConsumer (eval at evaluate (:370:30), <anonymous>:26:32)\",\"    at http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:178609\",\"    at Si._detach (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:199439)\"]},{\"operation\":\"register\",\"before\":false,\"stack\":[\"    at registry.registerConsumer (eval at evaluate (:370:30), <anonymous>:36:33)\",\"    at Object.Bw [as attach] (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:199341)\",\"    at Si._attach (http://127.0.0.1:4175/assets/index-BmtjOQal.js:12:31719)\"]},{\"operation\":\"unregister\",\"before\":false,\"stack\":[\"    at registry.unregisterConsumer (eval at evaluate (:370:30), <anonymous>:26:32)\",\"    at UC.registerConsumer (http://127.0.0.1:4175/assets/index-BmtjOQal.js:20:178421)\",\"    at registry.registerConsumer (eval at evaluate (:370:30), <anonymous>:38:14)\"]}],\"after\":{\"consumers\":[{\"instanceId\":\"sma-c7ab3815-8f0d-4816-b623-04e603f9e306\",\"outputId\":\"output:native.raw-open-interest:openInterestTotalBtc\",\"active\":true,\"completedRevision\":7,\"current\":true}],\"bindingToken\":\"iq-sma:chart-9118c20a-9270-4823-a52e-1b469a4ba6fa:sma-c7ab3815-8f0d-4816-b623-04e603f9e306:output%3Anative.raw-open-interest%3AopenInterestTotalBtc\",\"api\":{\"id\":\"sma-c7ab3815-8f0d-4816-b623-04e603f9e306\",\"token\":\"iq-sma:chart-9118c20a-9270-4823-a52e-1b469a4ba6fa:sma-c7ab3815-8f0d-4816-b623-04e603f9e306:output%3Anative.raw-open-interest%3AopenInterestTotalBtc\"},\"output\":{\"revision\":11,\"contextRevision\":1,\"available\":true,\"nonNull\":0,\"tail\":[null,null,null,null,null]}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:09:59.235Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0459243dea3507bf7eef-daca347b873a493d1f83",
+          "file": "open-interest-sma.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T06:09:55.662Z",
+    "duration": 12332.269,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

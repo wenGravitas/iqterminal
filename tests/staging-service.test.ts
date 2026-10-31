@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { StagingFeedService, stagingMarket, validBackendBar, boundedFootprintHistory } from '../src/feed/staging-service';
 import { FootprintAccumulator } from '../src/feed/footprint';
+import { preparedFootprintAnalysisSummary } from '../src/chart/footprint-delta-flips';
+import { footprintAnalysisSourceKey } from '../src/feed/protocol';
+import { footprintForUnits } from '../src/chart/footprint-units';
 import type { Event } from '../src/feed/protocol';
 beforeEach(()=>vi.stubEnv('VITE_HISTORY_TILES','0'));afterEach(() => {vi.useRealTimers();vi.unstubAllEnvs();});
 const series = { venue: 'binance', market: 'perpetual', interval: '1m' } as const;
@@ -18,6 +21,50 @@ class Socket {
 }
 const trade = (id: number) => ({ id,timeMs:60002+id,price:84001,quantity:1,quoteNotional:84001,side:'buy' });
 const packet = (after:number, ids:number[]) => ({type:'executions',version:1,after,cursor:ids.at(-1),watermark:ids.at(-1),executions:ids.map(trade),coverage:response().coverage,collector:{state:'live',lastUpdate:900000},sentAt:900000,tickSize:.1});
+test('native candle bootstrap preserves a valid full response that takes 45 seconds',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],series={venue:'binance',market:'perpetual',interval:'5m'} as const;
+ const candles=[{t:600000,o:84000,h:84100,l:83900,c:84050,v:12,revision:1,closed:true}];let requestSignal:AbortSignal|undefined;
+ const request=vi.fn(async(_url:RequestInfo|URL,init?:RequestInit)=>{
+   requestSignal=init?.signal as AbortSignal;
+   await new Promise<void>((resolve,reject)=>{
+     const timer=setTimeout(resolve,45_000);
+     requestSignal?.addEventListener('abort',()=>{clearTimeout(timer);reject(requestSignal?.reason??new DOMException('Aborted','AbortError'));},{once:true});
+   });
+   return new Response(JSON.stringify({source:'binance-native-kline',candles}));
+ });
+ const service=new StagingFeedService(e=>events.push(e),request,()=>900000,()=>new Socket() as any);
+ try{
+   service.command({type:'subscribe',id:'slow-candles',series});
+   await vi.advanceTimersByTimeAsync(44_999);
+   expect(request).toHaveBeenCalledTimes(1);expect(requestSignal?.aborted).toBe(false);
+   expect(events.some(event=>event.type==='snapshot')).toBe(false);
+   await vi.advanceTimersByTimeAsync(1);
+   expect(requestSignal?.aborted).toBe(false);
+   expect(events.find(event=>event.type==='snapshot')).toMatchObject({type:'snapshot',candles});
+   expect(events.some(event=>event.type==='status'&&(event as any).status.state==='failed')).toBe(false);
+ }finally{service.dispose();}
+});
+test('native candle bootstrap keeps an empty upstream HTTP error status visible',async()=>{
+ vi.useFakeTimers();const events:Event[]=[];
+ const service=new StagingFeedService(e=>events.push(e),async()=>new Response('',{status:502}),()=>900000,()=>new Socket() as any);
+ try{
+   service.command({type:'subscribe',id:'bad-gateway',series});await vi.advanceTimersByTimeAsync(1);
+   const status=events.filter((event:any)=>event.type==='status').at(-1) as any;
+   expect(status.status).toMatchObject({state:'failed'});
+   expect(status.status.message).toContain('HTTP 502');
+   expect(status.status.message).not.toContain('Unexpected end of JSON');
+ }finally{service.dispose();}
+});
+test('native candle bootstrap identifies incomplete JSON from a successful response',async()=>{
+ vi.useFakeTimers();const events:Event[]=[];
+ const service=new StagingFeedService(e=>events.push(e),async()=>new Response(''),()=>900000,()=>new Socket() as any);
+ try{
+   service.command({type:'subscribe',id:'truncated-json',series});await vi.advanceTimersByTimeAsync(1);
+   const status=events.filter((event:any)=>event.type==='status').at(-1) as any;
+   expect(status.status).toMatchObject({state:'failed'});
+   expect(status.status.message).toContain('Staging history returned incomplete JSON');
+ }finally{service.dispose();}
+});
 async function setup() {
   vi.useFakeTimers(); const events: Event[] = []; const sockets: Socket[]=[];const socketUrls:string[]=[];
   const request=vi.fn(async()=>new Response(JSON.stringify(response())));
@@ -32,7 +79,7 @@ test('history seeds shared accumulator; durable batches update incrementally wit
   expect(new URL(socketUrls[0]!).searchParams.has('market')).toBe(false);
   expect(sockets[0]!.sent[0].after).toBe(10);
   sockets[0]!.receive(packet(10,[11,12]));
-  const patch:any=events.at(-1);expect(patch.type).toBe('footprint-patch');expect(patch.bars[0].aggregateRecordCount).toBe(4);expect(patch.bars[0].cells[0].askNotional).toBe(336004);
+  const patch:any=events.at(-1);expect(patch.type).toBe('footprint-patch');expect(patch.bars[0].aggregateRecordCount).toBe(4);expect(patch.bars[0].cells[0].askVol).toBe(4);expect(patch.bars[0].cells[0].askNotional).toBeUndefined();
   expect(sockets[0]!.sent.at(-1)).toEqual({type:'ack',cursor:12});
   await vi.advanceTimersByTimeAsync(4000);expect(request).toHaveBeenCalledTimes(1);service.dispose();
 });
@@ -103,4 +150,82 @@ test('history merge keeps latest live revision and evicts whole oldest bars at b
  expect(boundedFootprintHistory(bars.map(b=>({...b,cells:[...bar.cells]})))).toHaveLength(300);
 });
 test('prepared closed totals never seed the live cursor accumulator or double count replay',async()=>{vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();const g=[...(service as any).groups.values()][0];let closed:any={...bar,revision:1000,aggregateRecordCount:4,cells:[{...bar.cells[0],askVol:4,askNotional:336004}]};(service as any).prepared={load:async(_f:any,_t:any,_i:any,_r:any,_s:any,p:any)=>p([closed],true,true),dispose(){}};try{service.command({type:'footprint-viewport',id:'a',from:60000,to:120000});await vi.advanceTimersByTimeAsync(0);expect(g.cursor).toBe(10);expect(g.accumulator.snapshot()[0].cells[0].askVol).toBe(2);expect(g.bars[0].cells[0].askVol).toBe(4);sockets[0]!.receive(packet(10,[11,12]));expect(g.cursor).toBe(12);expect(g.accumulator.snapshot()[0].cells[0].askVol).toBe(4);expect(g.bars[0].cells[0].askVol).toBe(4);closed={...closed,revision:2000,cells:[{...closed.cells[0],askVol:6}]};await (service as any).loadViewport(g,'a');sockets[0]!.receive(packet(12,[13]));expect(g.bars[0].revision).toBe(2000);expect(g.bars[0].cells[0].askVol).toBe(6);expect(g.cursor).toBe(13);}finally{service.dispose();}});
+test('analysis warmup is opt-in and its failure leaves healthy visible staging data live',async()=>{
+ vi.useFakeTimers();vi.stubEnv('VITE_HISTORY_TILES','1');
+ const now=9_000_000,events:Event[]=[],sockets:Socket[]=[],urls:string[]=[];
+ const initial={...response(),status:{state:'live',lastUpdate:now}};
+ const request=vi.fn(async(url:RequestInfo|URL)=>{
+   const value=String(url);urls.push(value);
+   if(value.includes('/v2/history/footprints')){
+     const query=new URL(value,'http://localhost').searchParams;
+     if(Number(query.get('from'))<4_020_000)return new Response(JSON.stringify({error:'optional warmup unavailable'}),{status:503});
+     return new Response(JSON.stringify({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:[]}));
+   }
+   return new Response(JSON.stringify(initial));
+ });
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,url=>{const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
+ try{
+   service.command({type:'footprint-subscribe',id:'a',series,rowPrice:25});await vi.advanceTimersByTimeAsync(0);
+   const start=4_020_000,end=start+60_000;
+   service.command({type:'footprint-viewport',id:'a',from:start,to:end,analysis:{enabled:true,lookback:50}});await vi.advanceTimersByTimeAsync(0);
+   expect(urls.filter(url=>url.includes('/v2/history/footprints'))).toHaveLength(2);
+   expect(events.filter((event:any)=>event.type==='footprint-status').some((event:any)=>event.status.state==='stale')).toBe(false);
+   expect([...(service as any).groups.values()][0].bars).toHaveLength(1);
+   const before=urls.filter(url=>url.includes('/v2/history/footprints')).length;
+   service.command({type:'footprint-viewport',id:'a',from:start,to:end,analysis:{enabled:false,lookback:50}});await vi.advanceTimersByTimeAsync(0);
+   expect(urls.filter(url=>url.includes('/v2/history/footprints'))).toHaveLength(before+1);
+ }finally{service.dispose();vi.useRealTimers();}
+});
+test('bootstrap and prepared projections keep an unknown quote anchor unavailable until a new reliable candle',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();const g=[...(service as any).groups.values()][0];
+ const preparedBars=Array.from({length:40},(_,i)=>({...bar,time:60+i*60,revision:100+i}));
+ (service as any).prepared={load:async(...args:any[])=>args[5](preparedBars,true,true),dispose(){}};
+ try{
+   service.command({type:'footprint-viewport',id:'a',from:60_000,to:120_000,analysis:{enabled:false,lookback:50}});await vi.advanceTimersByTimeAsync(0);
+   expect(g.quoteAvailable.get(bar.time)).toBe(false);
+   expect(g.quoteAvailable.size).toBeLessThanOrEqual(g.accumulator.snapshot().length);
+   sockets[0]!.receive(packet(10,[11]));
+   expect(g.quoteAvailable.get(bar.time)).toBe(false);
+   expect(g.analysisSummaries.get(bar.time)?.quoteDelta).toBeUndefined();
+   expect(footprintForUnits(g.bars.find((item:any)=>item.time===bar.time),'btc')).not.toBeNull();
+   expect(footprintForUnits(g.bars.find((item:any)=>item.time===bar.time),'usdt')).toBeNull();
+   const next=packet(11,[12]);next.executions[0]!.timeMs=180_002;next.executions[0]!.quoteNotional=80_000;sockets[0]!.receive(next);
+   expect(g.quoteAvailable.get(180)).toBe(true);
+   expect(g.analysisSummaries.get(180)?.quoteDelta).toBe(80_000);
+   expect(g.quoteAvailable.get(bar.time)).toBe(false);
+ }finally{service.dispose();}
+});
+
+test('analysis warmup starts N+1 bars before the oldest rendered candidate beyond the dense four-hour cap',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service}=await setup();
+ const step=60_000,epoch=1_800_000_000_000,now=epoch+30*3_600_000;
+ (service as any).now=()=>now;
+ let captured:any[]|undefined;
+ (service as any).prepared={load:async(...args:any[])=>{captured=args;args[5]([],true,true);},dispose(){}};
+ const requestedFrom=epoch+20*3_600_000,requestedTo=now,candidateFrom=epoch+25*3_600_000;
+ try{
+   service.command({type:'footprint-viewport',id:'a',from:requestedFrom,to:requestedTo,analysis:{enabled:true,lookback:50,candidateFrom}});
+   await vi.advanceTimersByTimeAsync(1);
+   const view=[...(service as any).groups.values()][0].views.get('a');
+   expect(view.from).toBe(epoch+26*3_600_000);
+   expect(view.candidateFrom).toBe(candidateFrom);
+   expect(captured?.[0]).toBe(view.from); // Dense cells keep the four-hour cap.
+   expect(captured?.[1]).toBe(requestedTo);
+   expect(captured?.[7]).toBe(candidateFrom-51*step); // Summary-only context covers the rendered old candidate.
+ }finally{service.dispose();}
+});
+test('unrelated live ticks do not block a prepared correction to an unchanged closed summary',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();const g=[...(service as any).groups.values()][0];let finishLoad!:()=>void;
+ const corrected={...bar,revision:1000,delta:-7,cells:bar.cells.map(cell=>({...cell}))};
+ const correction=preparedFootprintAnalysisSummary(corrected,{from:60_000,to:120_000,complete:true,gaps:[]},footprintAnalysisSourceKey('perpetual','1m'),'1m',true,900_000);
+ (service as any).prepared={load:async(...args:any[])=>new Promise<void>(resolve=>{const publish=args[5];finishLoad=()=>{publish([corrected],true,true,{from:60_000,to:120_000,summaries:[correction],removedTimes:[]});resolve();};}),dispose(){}};
+ try{
+   service.command({type:'footprint-viewport',id:'a',from:60_000,to:120_000,analysis:{enabled:false,lookback:50}});await vi.advanceTimersByTimeAsync(0);
+   const unrelated=packet(10,[11]);unrelated.executions[0]!.timeMs=180_002;
+   sockets[0]!.receive(unrelated);
+   expect(g.liveSummaryVersions.has(bar.time)).toBe(false);
+   finishLoad();await vi.advanceTimersByTimeAsync(0);
+   expect(g.analysisSummaries.get(bar.time)).toMatchObject({revision:1000,revisionSource:'prepared-content-hash',delta:-7});
+ }finally{service.dispose();}
+});
 test('visible historical bars outrank a full offscreen live cache',()=>{const older=Array.from({length:48},(_,i)=>({...bar,time:(i+1)*60,cells:[...bar.cells]})),recent=Array.from({length:300},(_,i)=>({...bar,time:(i+1000)*60,cells:[...bar.cells]}));const kept=boundedFootprintHistory([...recent,...older],new Set([...older.map(b=>b.time),recent.at(-1)!.time]));expect(kept).toHaveLength(300);expect(older.every(b=>kept.some(k=>k.time===b.time))).toBe(true);expect(kept.at(-1)?.time).toBe(recent.at(-1)?.time);});

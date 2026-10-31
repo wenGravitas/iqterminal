@@ -78,8 +78,26 @@ describe('OpenScript worker session', () => {
     const patched = session.patch(3, [{ kind: 'update', bar: revised }]);
     expect(patched.ok).toBe(true);
     expect(patched.times).toEqual(input.map(bar => bar.t));
+    expect(patched.changedRange).toEqual({ from: 2, to: 3 });
     expect(Object.values(patched.values ?? {})[0]).toHaveLength(3);
     expect(Object.values(patched.values ?? {})[0]?.[2]).not.toBe(Object.values(started.values ?? {})[0]?.[2]);
+  });
+
+  it('reports only the appended tail as changed and widens retention shifts to a full window', () => {
+    const source = 'version 1\nstudy("Close")\nplot(close, "Close")';
+    const session = new OpenScriptSession();
+    const input = bars([100, 101, 102]);
+    const context = { symbol: 'BTCUSDT', exchange: 'Binance USD-M', interval: '1m' };
+    const started = session.start(7, source, {}, input, context);
+    expect(started.changedRange).toEqual({ from: 0, to: 3 });
+    const appended = session.patch(8, [{ kind: 'append', bar: { ...input[2]!, t: input[2]!.t + 60_000, revision: 9 } }]);
+    expect(appended.changedRange).toEqual({ from: 3, to: 4 });
+
+    const bounded = new OpenScriptSession();
+    const max = bars(Array.from({ length: MAX_SCRIPT_BARS }, (_, index) => index + 1));
+    expect(bounded.start(9, source, {}, max, context).ok).toBe(true);
+    const shifted = bounded.patch(10, [{ kind: 'append', bar: { ...max.at(-1)!, t: max.at(-1)!.t + 60_000, revision: 11 } }]);
+    expect(shifted.changedRange).toEqual({ from: 0, to: MAX_SCRIPT_BARS });
   });
 
   it('uses only finite whitelisted numeric depth fields and leaves unavailable cells absent', () => {

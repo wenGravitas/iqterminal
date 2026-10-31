@@ -143,7 +143,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
-  expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);
+  expect(exposedTools).toEqual(['callout', 'date-range', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'price-range', 'rectangle', 'short-position', 'text', 'trend-line']);
 
   await placeHorizontalLine(page, panel);
   let state = await drawingState(page, panel);

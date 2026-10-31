@@ -47,12 +47,12 @@ describe('OpenScript numeric provider metadata', () => {
     const [output] = study.numericOutputs();
     expect(output).toMatchObject({
       kind: 'indicator-output', version: 1, instanceId: 'provider', outputId: 'output:provider:p0',
-      schemaId: 'number:chart-candles-v1:p0:USDT:1', domain: 'chart-candles-v1',
+      schemaId: 'number:chart-candles-v1:p0:unknown:1', domain: 'chart-candles-v1', unit: null,
       contextId: numericOutputContextId(series), scaleId: 'overlay:shared-flow',
       engineInstanceId: 'engine-provider', revision: 7, contextRevision: 0, available: true, composable: true,
       times: [1_800_000_000_000, 1_800_000_060_000], values: [101, 102],
     });
-    expect(numericOutputRef(output!)).toMatchObject({ instanceId: 'provider', contextId: numericOutputContextId(series), scaleId: 'overlay:shared-flow' });
+    expect(numericOutputRef(output!)).toMatchObject({ instanceId: 'provider', contextId: numericOutputContextId(series), unit: null });
 
     provider.resultRevision++;
     provider.result = result([201, null]);
@@ -68,6 +68,7 @@ describe('OpenScript numeric provider metadata', () => {
   it('revalidates context, schema and cycles before accepting an input reference', () => {
     const study = host();
     const provider = instance('provider');
+    provider.scriptId = 'builtin.volume-histogram';
     (study as any).studies.set(provider.attachmentId, provider);
     const ref = numericOutputRef(study.numericOutputs()[0]!);
     expect(() => (study as any).assertNumericInputs('consumer', { source: ref }, 0)).not.toThrow();
@@ -82,17 +83,24 @@ describe('OpenScript numeric provider metadata', () => {
     study.dispose();
   });
 
-  it('keeps mixed placement outputs visible but rejects them as composition inputs', () => {
+  it('keeps scalar outputs consumable while overlay and special-layer studies stay unmovable', () => {
     const study = host();
-    const mixed = instance('mixed', {
+    const overlay = instance('overlay', {
       ...result(),
-      program: { ...result().program!, outputs: { ...result().program!.outputs, plots: [{ ...result().program!.outputs.plots[0]!, overlay: true }] } },
+      program: { ...result().program!, meta: { ...result().program!.meta, overlay: true } },
     } as any);
-    (study as any).studies.set(mixed.attachmentId, mixed);
-    const [output] = study.numericOutputs();
-    expect(output?.available).toBe(true);
-    expect(output?.composable).toBe(false);
-    expect(() => (study as any).assertNumericInputs('consumer', { source: numericOutputRef(output!) }, 0)).toThrow(/no longer matches/);
+    const special = instance('special', {
+      ...result(),
+      program: { ...result().program!, outputs: { ...result().program!.outputs, levels: [{ value: 100 }] } },
+    } as any);
+    (study as any).studies.set(overlay.attachmentId, overlay);
+    (study as any).studies.set(special.attachmentId, special);
+    const [overlayOutput, specialOutput] = study.numericOutputs();
+    expect(overlayOutput).toMatchObject({ available: true, composable: true, unit: null });
+    expect(specialOutput).toMatchObject({ available: true, composable: true, unit: null });
+    expect(study.views().map(view => [view.attachmentId, view.movable])).toEqual([['overlay', false], ['special', false]]);
+    expect(() => (study as any).assertNumericInputs('consumer', { source: numericOutputRef(overlayOutput!) }, 0)).not.toThrow();
+    expect(() => (study as any).assertNumericInputs('consumer', { source: numericOutputRef(specialOutput!) }, 0)).not.toThrow();
     study.dispose();
   });
 
@@ -108,6 +116,25 @@ describe('OpenScript numeric provider metadata', () => {
     expect(study.remove('provider')).toBe(false);
     expect(study.pins().map(item => item.attachmentId)).toEqual(['provider', 'consumer']);
     expect(provider.api.remove).not.toHaveBeenCalled();
+    study.dispose();
+  });
+
+  it('preflights full references from hidden native consumers before replacing a producer', () => {
+    const study = host();
+    const provider = instance('provider');
+    provider.scriptId = 'builtin.volume-histogram';
+    (study as any).studies.set(provider.attachmentId, provider);
+    const ref = numericOutputRef(study.numericOutputs()[0]!);
+    const savedRef = { ...ref };
+    study.setExternalOutputDependents([{ consumerId: 'hidden-sma', title: 'Hidden SMA 20', ref }]);
+
+    const incompatible = result();
+    incompatible.program!.outputs.plots[0]!.priceFormat = 'volume';
+    expect(() => (study as any).assertDependentOutputsCompatible('provider', 'local.provider', incompatible,
+      'pane:flow', { p0: 'overlay:shared-flow' }, {})).toThrow(/Hidden SMA 20.*schema, unit or context/);
+    expect(study.numericOutputs()[0]).toMatchObject({ unit: 'BTC', available: true });
+    expect((study as any).externalOutputDependents.get('provider')[0]).toMatchObject({ consumerId: 'hidden-sma', ref: savedRef });
+    expect(study.removeBlockReason('provider')).toContain('Hidden SMA 20 depends on its output');
     study.dispose();
   });
 
@@ -143,8 +170,8 @@ describe('OpenScript numeric provider metadata', () => {
     const provider = pin('provider');
     const source = numericOutputRef({
       kind: 'indicator-output', version: 1, instanceId: 'provider', outputId: 'output:provider:p0', plotKey: 'p0',
-      schemaId: 'number:chart-candles-v1:p0:USDT:1', domain: 'chart-candles-v1', contextId: numericOutputContextId(series),
-      unit: 'USDT', scaleId: 'overlay:shared-flow', engineInstanceId: 'engine-provider', title: 'Close', revision: 1,
+      schemaId: 'number:chart-candles-v1:p0:unknown:1', domain: 'chart-candles-v1', contextId: numericOutputContextId(series),
+      unit: null, scaleId: 'overlay:shared-flow', engineInstanceId: 'engine-provider', title: 'Close', revision: 1,
       contextRevision: 0, available: true, times: [], values: [],
     });
     const consumer = pin('consumer', { source });

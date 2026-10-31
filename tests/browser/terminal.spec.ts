@@ -29,6 +29,8 @@ test('unified catalogue exposes native layers and keeps unsupported chart market
 
 test('Footprint mode owns a separate subscription, renders bar revisions, and restores row settings',async({page})=>{
   const panel=page.locator('.candle-panel').first();
+  const tree=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});
+  if(await tree.isVisible()) await tree.click();
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal;
     const target=[...terminal.panels.values()][0];
@@ -121,16 +123,24 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
     const id=(element as HTMLElement).dataset.panelId!;
     return (window as any).__terminal.panels.get(id)?.hoveredFootprint?.cell?.price ?? null;
   })).toBe(84_000);
-  const initialHover=await panel.locator('.ohlc').evaluate(element=>({text:element.textContent,mode:(element as HTMLElement).dataset.mode,lines:element.textContent?.split('\n').length}));
-  expect(initialHover.mode).toBe('footprint');
-  expect(initialHover.lines).toBe(4);
-  expect(initialHover.text?.split('\n')[0]).toBe('84,000–84,001 USDT (upper exclusive) · bid 0.050 / ask 0.020 BTC');
-  const initialReadoutGeometry=await panel.locator('.ohlc').evaluate(element=>({height:element.clientHeight,scrollTop:element.scrollTop}));
-  expect(initialReadoutGeometry.height).toBeGreaterThan(24);
-  expect(initialReadoutGeometry.scrollTop).toBe(0);
+  const cellTooltip=panel.locator('.footprint-cell-tooltip');
+  await expect(cellTooltip).toBeVisible();
+  await expect(cellTooltip.locator('.positioning-tooltip-heading')).toContainText('Footprint cell');
+  await expect(cellTooltip.locator('.positioning-tooltip-status').last()).toContainText('Some trades may be missing');
+  await expect(cellTooltip.locator('[data-side=bid]')).toContainText('0.05 BTC');
+  await expect(cellTooltip.locator('[data-side=ask]')).toContainText('0.02 BTC');
+  const tooltipGeometry=await cellTooltip.evaluate(element=>{
+    const card=element.getBoundingClientRect(),chart=element.closest<HTMLElement>('.chart-stage')!.getBoundingClientRect();
+    return {left:card.left-chart.left,top:card.top-chart.top,right:card.right-chart.right,bottom:card.bottom-chart.bottom,width:card.width,height:card.height};
+  });
+  expect(tooltipGeometry.left).toBeGreaterThanOrEqual(-1);
+  expect(tooltipGeometry.top).toBeGreaterThanOrEqual(-1);
+  expect(tooltipGeometry.right).toBeLessThanOrEqual(1);
+  expect(tooltipGeometry.bottom).toBeLessThanOrEqual(1);
+  expect(tooltipGeometry.width).toBeGreaterThan(200);
   await page.mouse.move(1,1);
-  await expect(panel.locator('.ohlc')).toContainText('Bid');
-  await expect(panel.locator('.ohlc')).toContainText('[partial]');
+  await expect(panel.locator('.net-positioning-tooltip')).toBeHidden();
+  await expect(panel.locator('.ohlc')).toHaveCount(0);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.initialViewSet)).toBe(true);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].spacing)).toBe(112);
 
@@ -200,7 +210,8 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   expect(reactivatedTimeRange.to).toBeCloseTo(hiddenView.timeRange.to,3);
   expect(reactivatedView.from).toBeCloseTo(hiddenView.range.from,2);
   expect(reactivatedView.to).toBeCloseTo(hiddenView.range.to,2);
-  await expect(panel.locator('.ohlc')).toContainText('[gapped · gap before]');
+  const reactivatedFootprint=await page.evaluate(id=>(window as any).__terminal.panels.get(id).diagnostics().footprint.latest,hiddenView.id);
+  expect(reactivatedFootprint).toMatchObject({coverage:'gapped',gapBefore:true});
 
   const historicalRight=await panel.evaluate(element=>{
     const id=(element as HTMLElement).dataset.panelId!;const engine=(window as any).__terminal.panels.get(id).engine;
@@ -474,18 +485,18 @@ test('hidden panels suspend chart frames and panned views survive activation in 
   await page.waitForTimeout(700);
   const view=await page.evaluate(()=>(window as any).__terminal.stats().panels[0]);
   await page.evaluate(()=>{const t=(window as any).__terminal;t.feed.send({type:'fixture',rate:1000});const d=t.dock;d.panels[1].api.moveTo({group:d.panels[0].api.group,position:'center'});});await page.waitForTimeout(200);
-  const before=await page.evaluate(()=>{const t=(window as any).__terminal,p=t.stats().panels.find((panel:any)=>!panel.visible);return {...p,readout:document.querySelector(`[data-panel-id="${p.id}"] .ohlc`)?.textContent};});
+  const before=await page.evaluate(()=>{const t=(window as any).__terminal,p=t.stats().panels.find((panel:any)=>!panel.visible);return {...p,fixedReadout:Boolean(document.querySelector(`[data-panel-id="${p.id}"] .ohlc`))};});
   await page.waitForTimeout(600);
-  const after=await page.evaluate(()=>{const t=(window as any).__terminal,p=t.stats().panels.find((panel:any)=>!panel.visible);return {...p,readout:document.querySelector(`[data-panel-id="${p.id}"] .ohlc`)?.textContent};});
+  const after=await page.evaluate(()=>{const t=(window as any).__terminal,p=t.stats().panels.find((panel:any)=>!panel.visible);return {...p,fixedReadout:Boolean(document.querySelector(`[data-panel-id="${p.id}"] .ohlc`))};});
   expect(after.renderer.draws).toBe(before.renderer.draws);
   expect(after.last.c).not.toBe(before.last.c);
-  expect(after.readout).toBe(before.readout);
+  expect(before.fixedReadout).toBe(false); expect(after.fixedReadout).toBe(false);
   await page.evaluate(id=>(window as any).__terminal.dock.getPanel(id).api.setActive(),view.id);
   const restored=await page.evaluate(id=>(window as any).__terminal.stats().panels.find((panel:any)=>panel.id===id),view.id);
   expect(restored.spacing).toBe(view.spacing);expect(restored.range.to).toBeCloseTo(view.range.to,2);
   expect(restored.renderer.backend).toBe('canvas2d');
   await page.evaluate(()=>(window as any).__terminal.feed.send({type:'fixture',rate:0}));
-  await expect(page.locator('.ohlc').first()).not.toBeEmpty();
+  await expect(page.locator('.ohlc')).toHaveCount(0);
 });
 
 test('series applies late history corrections, remains capped at 5,000 bars, and chart closes cleanly',async({page})=>{
@@ -876,7 +887,7 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     cellLabels:result.cellLabels,
     otherMatchingCanvasLabels:result.labels.filter((label:any)=>!label.inNativeRow||!label.inPlot),
   },null,2));
-  await expect(panel.locator('.ohlc')).toContainText('Bid 0.143 · Ask 0.147 · Δ 0.004 BTC');
+  await expect(panel.locator('.ohlc')).toHaveCount(0);
   const center=await panel.evaluate((element,time)=>{
     const id=(element as HTMLElement).dataset.panelId!;
     const target=(window as any).__terminal.panels.get(id),chart=target.engine.chart;
@@ -885,14 +896,20 @@ test('two-trade 1 USDT footprint row remains on-screen without an indicator scal
     return {x:rect.left+x,y:rect.top+y};
   },fixture.time);
   await page.mouse.move(center.x,center.y);
-  await expect(panel.locator('.ohlc')).toContainText('83,000–83,001 USDT (upper exclusive) · bid 0.143 / ask 0.147 BTC');
+  const cellTooltip=panel.locator('.footprint-cell-tooltip');
+  await expect(cellTooltip).toBeVisible();
+  await expect(cellTooltip).toContainText('83,000–83,001 USDT');
+  await expect(cellTooltip.locator('[data-side=bid]')).toContainText('0.143 BTC');
+  await expect(cellTooltip.locator('[data-side=ask]')).toContainText('0.147 BTC');
   await panel.evaluate((element,{time,bar})=>{
     const id=(element as HTMLElement).dataset.panelId!;
     const updated={...bar,revision:bar.revision+1,cells:[{price:83000,bidVol:0.243,askVol:0.347}],delta:0.104,minDelta:-0.243,maxDelta:0.104};
     (window as any).__terminal.syntheticFootprintCallback({type:'footprint-patch',key:'synthetic',ids:[id],bars:[updated],retentionStart:time});
   },{time:fixture.time,bar:fixture.bar});
-  await expect(panel.locator('.ohlc')).toContainText('83,000–83,001 USDT (upper exclusive) · bid 0.243 / ask 0.347 BTC');
-  await expect(panel.locator('.ohlc')).toContainText('V 0.590 · Bid 0.243 · Ask 0.347 · Δ 0.104 BTC');
+  await expect(cellTooltip.locator('[data-side=bid]')).toContainText('0.243 BTC');
+  await expect(cellTooltip.locator('[data-side=ask]')).toContainText('0.347 BTC');
+  await expect(cellTooltip.locator('.positioning-tooltip-total')).toContainText('0.59 BTC');
+  await expect(cellTooltip.locator('.positioning-tooltip-value')).toContainText('Δ 0.104 BTC');
 });
 
 test('unavailable direct endpoint displays recoverable error',async({page})=>{
@@ -1293,6 +1310,7 @@ test('footprint execution feedback fades on the overlay and stops for reduced mo
 
 test('footprint last-price line tracks executions within rows and $1 rows remain distinct',async({page})=>{
   const panel=page.locator('.candle-panel').first();
+  await expect(panel.locator('.ohlc')).toHaveCount(0);
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal;
     terminal.feed.subscribeFootprint=(_id:any,_series:any,_width:any,callback:any)=>{terminal.priceLineCallback=callback;return ()=>{};};
@@ -1329,6 +1347,8 @@ test('footprint last-price line tracks executions within rows and $1 rows remain
 
 test('footprint BTC/USDT toggle preserves collection and viewport, updates totals and persists per panel',async({page})=>{
   const panel=page.locator('.candle-panel').first();
+  const tree=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});
+  if(await tree.isVisible()) await tree.click();
   await page.evaluate(()=>{
     const terminal=(window as any).__terminal;
     terminal.unitSubscriptions=0;
@@ -1347,12 +1367,10 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
     }]});
     terminal.unitRaw=structuredClone(target.footprintBars);
   });
-  await expect(panel.locator('.ohlc')).toContainText('Bid 0.001 · Ask 0.002');
+  await expect(panel.locator('.ohlc')).toHaveCount(0);
   const before=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.visibleRange());
   await setUnits(panel, 'usdt');
   await expect(units).toHaveValue('usdt');
-  await expect(panel.locator('.ohlc')).toContainText('Bid 83 · Ask 166');
-  await expect(panel.locator('.ohlc')).toContainText('USDT');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(83.0001);
   const cellPoint=await page.evaluate(()=>{
     const target=[...(window as any).__terminal.panels.values()][0],chart=target.engine.chart,bar=target.footprintBars[0];
@@ -1360,13 +1378,19 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
     return {x:bounds.left+chart.timeToCoordinate(bar.time)+chart.timeScale.barSpacing*.96/4,y:bounds.top+chart.priceToCoordinate(83000+bar.rowSize/2,0)};
   });
   await page.mouse.move(cellPoint.x,cellPoint.y);
-  await expect(panel.locator('.ohlc')).toContainText('bid 83 / ask 166 USDT');
+  const cellTooltip=panel.locator('.footprint-cell-tooltip');
+  await expect(cellTooltip).toBeVisible();
+  await expect(cellTooltip.locator('[data-side=bid]')).toContainText('83 USDT');
+  await expect(cellTooltip.locator('[data-side=ask]')).toContainText('166 USDT');
+  await expect(cellTooltip.locator('[data-side=bid]')).toContainText('0.001 BTC');
   expect(await page.evaluate(()=>(window as any).__terminal.unitSubscriptions)).toBe(1);
   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.visibleRange())).toEqual(before);
   expect(await page.evaluate(()=>JSON.stringify([...(window as any).__terminal.panels.values()][0].footprintBars)==JSON.stringify((window as any).__terminal.unitRaw))).toBe(true);
   await page.screenshot({path:'artifacts/footprint-units-usdt-1366x768.png'});
   await page.setViewportSize({width:720,height:860});
   await page.screenshot({path:'artifacts/footprint-units-usdt-720x860.png'});
+  await page.setViewportSize({width:1366,height:768});
+  await page.mouse.move(1,1);
   await setUnits(panel, 'btc');
   await expect(units).toHaveValue('btc');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(.001);
@@ -1374,6 +1398,12 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
   await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.footprintUnits)).toBe('usdt');
   await page.reload();
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
-  await expect(page.locator('.active-indicator[data-definition-id="native.footprint"]').first()).toContainText('USDT');
+  const restoredPanel=page.locator('.candle-panel').first();
+  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].selection.footprintUnits)).toBe('usdt');
+  const restoredTree=restoredPanel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});
+  if(await restoredTree.isVisible()) await restoredTree.click();
+  await restoredPanel.getByRole('button',{name:'Footprint settings',exact:true}).click();
+  await expect(restoredPanel.getByLabel('Footprint volume units',{exact:true})).toHaveValue('usdt');
+  await restoredPanel.locator('.footprint-settings-dialog').getByRole('button',{name:'Close',exact:true}).click();
   expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][1].selection.footprintUnits)).toBe('btc');
 });

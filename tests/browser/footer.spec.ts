@@ -1,4 +1,4 @@
-import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
+import { addIndicator, expectHeatmapLiveQuiet, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 
@@ -7,8 +7,10 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
   await page.emulateMedia({ colorScheme: 'dark' });
   await installDepthFixture(page);
   const panels = page.locator('.candle-panel'), first = panels.first();
+  const closeObjects = first.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
+  if (await closeObjects.isVisible()) await closeObjects.click();
   await addIndicator(first, 'Order-book Heatmap');
-  await expect(first.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(first);
   await page.evaluate(() => {
     const t = (window as any).__terminal;
     t.feed.subscribeFootprint = (_id: string, _s: any, rowSize: number, callback: any) => {
@@ -24,21 +26,33 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].footprint.latest)).not.toBeNull();
   const verify = async () => {
     const rows = await panels.evaluateAll(elements => elements.map(panel => {
-      const stage = panel.querySelector('.chart-stage')!.getBoundingClientRect(), footer = panel.querySelector('.chart-footer')!.getBoundingClientRect();
-      const status = panel.querySelector('.chart-footer .panel-status')!, box = status.getBoundingClientRect();
+      const stage = panel.querySelector('.chart-stage')!.getBoundingClientRect(), footerElement = panel.querySelector<HTMLElement>('.chart-footer')!, footer = footerElement.getBoundingClientRect();
+      const status = panel.querySelector<HTMLElement>('.panel-status')!, box = status.getBoundingClientRect();
       const notice = panel.querySelector<HTMLElement>('.heatmap-notice')!, n = notice.getBoundingClientRect();
-      const retry = status.querySelector('button')?.getBoundingClientRect();
-      return { stageBottom: stage.bottom, footerTop: footer.top, footerBottom: footer.bottom, panelBottom: panel.getBoundingClientRect().bottom,
+      const retry = !status.hidden ? status.querySelector('button')?.getBoundingClientRect() : undefined;
+      const panelBottom = panel.getBoundingClientRect().bottom, footerHidden = footerElement.hidden;
+      return { stageBottom: stage.bottom, footerTop: footer.top, footerBottom: footer.bottom, footerHeight: footer.height, footerHidden, panelBottom,
         statusTop: box.top, statusBottom: box.bottom, statusRight: box.right, footerRight: footer.right,
-        noticeTop: n.top, noticeBottom: n.bottom, noticeVisible: !notice.hidden, retryBottom: retry?.bottom,
-        canvasesInside: [...panel.querySelectorAll('canvas')].every(c => c.getBoundingClientRect().bottom <= footer.top + 1) };
+        statusVisible: !status.hidden, noticeTop: n.top, noticeBottom: n.bottom, noticeVisible: !notice.hidden, retryBottom: retry?.bottom,
+        canvasesInside: [...panel.querySelectorAll('canvas')].every(c => c.getBoundingClientRect().bottom <= (footerHidden ? panelBottom : footer.top) + 1) };
     }));
     for (const r of rows) {
-      expect(r.stageBottom).toBeLessThanOrEqual(r.footerTop); expect(r.canvasesInside).toBe(true);
-      expect(r.statusTop).toBeGreaterThanOrEqual(r.footerTop); expect(r.statusBottom).toBeLessThanOrEqual(r.footerBottom);
-      expect(r.statusRight).toBeLessThanOrEqual(r.footerRight); expect(r.footerBottom).toBeLessThanOrEqual(r.panelBottom);
-      if (r.noticeVisible) { expect(r.noticeTop).toBeGreaterThanOrEqual(r.footerTop); expect(r.statusTop).toBeGreaterThanOrEqual(r.noticeBottom); }
-      if (r.retryBottom !== undefined) expect(r.retryBottom).toBeLessThanOrEqual(r.footerBottom);
+      expect(r.canvasesInside).toBe(true);
+      if (r.footerHidden) {
+        expect(r.footerHeight).toBe(0);
+        expect(r.stageBottom).toBeLessThanOrEqual(r.panelBottom);
+        expect(r.statusVisible).toBe(false);
+        expect(r.noticeVisible).toBe(false);
+      } else {
+        expect(r.stageBottom).toBeLessThanOrEqual(r.footerTop);
+        expect(r.footerBottom).toBeLessThanOrEqual(r.panelBottom);
+        if (r.statusVisible) {
+          expect(r.statusTop).toBeGreaterThanOrEqual(r.footerTop); expect(r.statusBottom).toBeLessThanOrEqual(r.footerBottom);
+          expect(r.statusRight).toBeLessThanOrEqual(r.footerRight);
+        }
+        if (r.noticeVisible) { expect(r.noticeTop).toBeGreaterThanOrEqual(r.footerTop); if (r.statusVisible) expect(r.statusTop).toBeGreaterThanOrEqual(r.noticeBottom); }
+        if (r.retryBottom !== undefined) expect(r.retryBottom).toBeLessThanOrEqual(r.footerBottom);
+      }
     }
   };
   await verify(); await page.screenshot({ path: 'artifacts/chart-footer-dark-1366x768.png' });
@@ -47,7 +61,8 @@ test('chart footers keep liquidity, connection, time axis and footprint stats se
   await setFootprint(first, false); await verify();
   // Empty/error status remains centred with an accessible Retry control.
   await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0] as any; p.engine.setSnapshot([]); p.status = { state: 'failed', message: 'Explicit test failure', lastUpdate: 0 }; p.updateStatus(); });
-  await expect(first.locator('.chart-stage .panel-status.no-data')).toContainText('Explicit test failure');
+  await expect(first.locator('.chart-stage .panel-status.no-data')).toContainText('Data unavailable');
+  await expect(first.locator('.chart-stage .panel-status.no-data')).not.toContainText('Explicit test failure');
   await expect(first.getByRole('button', { name: 'Retry market data' })).toBeVisible();
   expect(errors).toEqual([]);
 });

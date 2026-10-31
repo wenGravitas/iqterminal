@@ -1,0 +1,125 @@
+{
+  "revision": "working-R2-generic-recovery",
+  "mode": "explicit browser fixture",
+  "host": "Raspberry Pi 5 Model B Rev 1.0, aarch64, Debian 12, Chromium SwiftShader",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "rateHz": 20,
+  "durationMs": 2500,
+  "counts": {
+    "indicatorReconciles": 0,
+    "activeIndicatorRenders": 1,
+    "scriptObjectProviderSyncs": 0,
+    "objectRefreshes": 0,
+    "hostNotifications": 0
+  },
+  "chartBars": 5000,
+  "studies": {
+    "context": {
+      "symbol": "BTCUSDT",
+      "exchange": "Binance USD-M",
+      "interval": "1m"
+    },
+    "attached": 1,
+    "workers": 1,
+    "compositionWork": {
+      "workerResults": 41,
+      "workerFailures": 0,
+      "dataNotifications": 41,
+      "statusNotifications": 0,
+      "configurationNotifications": 0,
+      "listenerCalls": 41,
+      "dataListenerCalls": 41,
+      "uiListenerCalls": 0,
+      "workers": [
+        {
+          "id": "study-ce0698fc-a6b0-4cac-bd9a-4bfde1dcb1e1",
+          "patchCalls": 52,
+          "patchRows": 52,
+          "historyCalls": 0,
+          "historyRows": 0,
+          "messagesSent": 41,
+          "historyMessagesSent": 0,
+          "patchMessagesSent": 41,
+          "resultMessages": 41,
+          "resultRows": 205000,
+          "queued": null,
+          "generation": 43,
+          "alive": true
+        }
+      ]
+    },
+    "numericOutputs": {
+      "chartId": "chart-9b8beb3d-3e78-4331-87a3-97180c265b52",
+      "revision": 86,
+      "outputs": [
+        {
+          "outputId": "output:study-ce0698fc-a6b0-4cac-bd9a-4bfde1dcb1e1:p0",
+          "instanceId": "study-ce0698fc-a6b0-4cac-bd9a-4bfde1dcb1e1",
+          "revision": 43,
+          "contextRevision": 0,
+          "available": true,
+          "quality": "complete",
+          "changedRange": {
+            "from": 4999,
+            "to": 5000
+          },
+          "values": 5000
+        },
+        {
+          "outputId": "output:sma-340aa704-b6c0-487f-bc94-6b3ad8085527:p0",
+          "instanceId": "sma-340aa704-b6c0-487f-bc94-6b3ad8085527",
+          "revision": 44,
+          "contextRevision": 0,
+          "available": true,
+          "quality": "complete",
+          "changedRange": {
+            "from": 4999,
+            "to": 5000
+          },
+          "values": 5000
+        }
+      ],
+      "consumers": [
+        {
+          "instanceId": "sma-340aa704-b6c0-487f-bc94-6b3ad8085527",
+          "outputId": "output:study-ce0698fc-a6b0-4cac-bd9a-4bfde1dcb1e1:p0",
+          "active": true,
+          "completedRevision": 43,
+          "current": true
+        }
+      ]
+    },
+    "depthBands": [],
+    "statuses": [
+      {
+        "id": "study-ce0698fc-a6b0-4cac-bd9a-4bfde1dcb1e1",
+        "title": "Volume",
+        "status": "Study ready"
+      }
+    ]
+  },
+  "panes": 2,
+  "compositionWork": {
+    "indicatorReconciles": 0,
+    "activeIndicatorRenders": 1,
+    "objectRefreshes": 0,
+    "scriptObjectProviderSyncs": 0,
+    "dataCallbacks": 41,
+    "visibleRangeScaleUpdates": 21,
+    "autoscaleValuesScanned": 7266,
+    "sma": {
+      "fullCalls": 0,
+      "fullInputValues": 0,
+      "tailCalls": 8,
+      "tailInputValues": 0,
+      "tailValuesProcessed": 8,
+      "registryRevisions": 41,
+      "registryFullValuesProcessed": 0,
+      "registryTailValuesProcessed": 820,
+      "derivedPublications": 41
+    }
+  }
+}

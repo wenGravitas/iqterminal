@@ -1,5 +1,6 @@
-import { registerIndicator, sourceValues, type Bar, type IndicatorDescriptor, type IndicatorStudySource, type PriceScaleId } from 'openalgo-charts';
-import { instrumentOf, keyOf, type Series } from '../feed/protocol';
+import { registerIndicator, type Bar, type IndicatorAttachContext, type IndicatorCalcContext, type IndicatorDescriptor, type IndicatorSettings, type IndicatorStore, type IndicatorStudySource, type PriceScaleId } from 'openalgo-charts';
+import { connectionKey, instrumentOf, type Series } from '../feed/protocol';
+import { managedNumericOutputBindingForToken, type ChartNumericOutput, type ChartNumericOutputRegistry, type NumericChangedRange, type NumericOutputResolution } from './output-registry';
 
 export const INDICATOR_COMPOSITION_VERSION = 1;
 export const INDICATOR_COMPOSITION_SMA_ID = 'native.composition-sma';
@@ -12,6 +13,16 @@ export const MIN_EMBEDDED_BAND_HEIGHT_PERCENT = 10;
 export const MAX_EMBEDDED_BAND_HEIGHT_PERCENT = 40;
 export const DEFAULT_EMBEDDED_BAND_HEIGHT_PERCENT = 20;
 
+const compositionSmaMetrics = { fullCalls: 0, fullInputValues: 0, tailCalls: 0, tailInputValues: 0, tailValuesProcessed: 0,
+  registryRevisions: 0, registryFullValuesProcessed: 0, registryTailValuesProcessed: 0, derivedPublications: 0 };
+export function resetCompositionSmaMetrics() {
+  compositionSmaMetrics.fullCalls = 0; compositionSmaMetrics.fullInputValues = 0;
+  compositionSmaMetrics.tailCalls = 0; compositionSmaMetrics.tailInputValues = 0; compositionSmaMetrics.tailValuesProcessed = 0;
+  compositionSmaMetrics.registryRevisions = 0; compositionSmaMetrics.registryFullValuesProcessed = 0;
+  compositionSmaMetrics.registryTailValuesProcessed = 0; compositionSmaMetrics.derivedPublications = 0;
+}
+export function compositionSmaDiagnostics() { return { ...compositionSmaMetrics }; }
+
 export type NumericUnit = string | null;
 export type NumericOutputRef = {
   kind: 'indicator-output';
@@ -23,20 +34,24 @@ export type NumericOutputRef = {
   domain: 'chart-candles-v1';
   contextId: string;
   unit: NumericUnit;
-  scaleId: PriceScaleId;
 };
 
 export interface NumericOutputDescriptor extends NumericOutputRef {
-  engineInstanceId: string;
+  /** Present only for providers backed by a live OpenAlgo study API. */
+  engineInstanceId?: string;
   title: string;
   revision: number;
   contextRevision: number;
   contextId: string;
   available: boolean;
+  /** Presentation assignment belongs to the output view, never its saved numeric link. */
+  scaleId: PriceScaleId;
   times: readonly number[];
   values: readonly (number | null)[];
   /** False when the producer has mixed placement or special layers that cannot join a managed pane. */
   composable?: boolean;
+  /** Authoritative half-open range changed by the latest provider revision. */
+  changedRange?: NumericChangedRange;
 }
 
 export interface CompositionPaneRecord {
@@ -109,7 +124,7 @@ export function compositionScaleId(engineScaleId: PriceScaleId) {
 
 /** Stable identity for the exact exchange candle series used by a provider. */
 export function numericOutputContextId(series: Series) {
-  return keyOf(series);
+  return `${connectionKey(series)}:${instrumentOf(series).native}`;
 }
 
 export function numericOutputSchemaId(plotKey: string, unit: NumericUnit) {
@@ -136,8 +151,7 @@ export function isNumericOutputRef(value: unknown): value is NumericOutputRef {
     || typeof value.schemaId !== 'string' || value.schemaId.length > 300
     || value.domain !== 'chart-candles-v1'
     || typeof value.contextId !== 'string' || !value.contextId || value.contextId.length > 160
-    || !(value.unit === null || typeof value.unit === 'string' && value.unit.length <= 32)
-    || typeof value.scaleId !== 'string' || !isPriceScaleId(value.scaleId)) return false;
+    || !(value.unit === null || typeof value.unit === 'string' && value.unit.length <= 32)) return false;
   return value.outputId === numericOutputId(value.instanceId, value.plotKey)
     && value.schemaId === numericOutputSchemaId(value.plotKey, value.unit);
 }
@@ -148,16 +162,21 @@ export function validateNumericInputs(value: unknown): Record<string, NumericOut
   for (const [key, item] of Object.entries(value).slice(0, MAX_COMPOSITION_PLOTS)) {
     if (/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(key) && isNumericOutputRef(item)) result[key] = {
       kind: item.kind, version: item.version, instanceId: item.instanceId, outputId: item.outputId, plotKey: item.plotKey,
-      schemaId: item.schemaId, domain: item.domain, contextId: item.contextId, unit: item.unit, scaleId: item.scaleId,
+      schemaId: item.schemaId, domain: item.domain, contextId: migrateNumericOutputContextId(item.contextId), unit: item.unit,
     };
   }
   return result;
 }
 
+/** R1 included the candle interval in a saved output context; v2 scopes links to the market. */
+export function migrateNumericOutputContextId(contextId: string) {
+  const match = /^(binance:(?:spot|perpetual):BTCUSDT|hyperliquid:perpetual:BTC|bybit:perpetual:BTCUSDT):(?:1m|5m|15m|30m|1h|4h|1d)$/.exec(contextId);
+  return match?.[1] ?? contextId;
+}
+
 export interface CompositionSmaSettings {
   length: number;
   color: string;
-  source?: IndicatorStudySource;
 }
 
 export function compositionSmaSettings(value: unknown): CompositionSmaSettings {
@@ -165,7 +184,6 @@ export function compositionSmaSettings(value: unknown): CompositionSmaSettings {
   return {
     length: clampPeriod(raw.length),
     color: typeof raw.color === 'string' && /^#(?:[\da-f]{3}|[\da-f]{6})$/i.test(raw.color) ? raw.color : '#63c7b2',
-    ...(isStudySource(raw.source) ? { source: { ...raw.source } } : {}),
   };
 }
 
@@ -225,7 +243,7 @@ export function seedCompositionPlots(instances: readonly CompositionMigrationIns
     const paneId = typeof instance.paneId === 'string' && instance.paneId.length <= 120
       ? instance.paneId : instance.placement === 'pane' ? `study:${instance.instanceId}`.slice(0, 120) : PRICE_PANE_ID;
     keys.forEach((outputKey, plotIndex) => {
-      const scaleId = scales[outputKey] ?? (outputKey === 'p0' ? instance.numericInputs?.source?.scaleId : undefined);
+      const scaleId = scales[outputKey] ?? (outputKey === 'p0' ? instance.plotScaleIds?.p0 : undefined);
       if (!scaleId || !isPriceScaleId(scaleId)) return;
       plots.push({ plotId: compositionPlotId(instance.instanceId, outputKey), producerInstanceId: instance.instanceId,
         outputKey, paneId, scaleId: compositionScaleId(scaleId), visible: instance.visible !== false,
@@ -245,7 +263,7 @@ export function seedCompositionScales(
   for (const plot of plots) {
     const instance = byId.get(plot.producerInstanceId);
     const engineScaleId = instance?.plotScaleIds?.[plot.outputKey]
-      ?? (plot.outputKey === 'p0' ? instance?.numericInputs?.source?.scaleId : undefined);
+      ?? (plot.outputKey === 'p0' ? instance?.plotScaleIds?.p0 : undefined);
     if (!engineScaleId || !isPriceScaleId(engineScaleId)) continue;
     const scaleId = compositionScaleId(engineScaleId);
     const current = byEngineScale.get(engineScaleId);
@@ -496,8 +514,7 @@ export function removeCompositionMember(state: unknown, memberId: string, instan
 
 export function outputUnitForScript(scriptId: string, plotKey: string, declaredFormat?: string): NumericUnit {
   if (scriptId === 'builtin.volume-histogram' && plotKey === 'p0') return 'BTC';
-  if (declaredFormat === 'percent') return '%';
-  if (declaredFormat === 'volume') return 'BTC';
+  void declaredFormat;
   return null;
 }
 
@@ -505,31 +522,18 @@ export function outputUnitForScript(scriptId: string, plotKey: string, declaredF
 export function outputUnitForPlot(
   scriptId: string,
   plot: { key: string; priceFormat?: unknown },
-  program: { meta: { format?: unknown }; inputs: readonly { key: string; default: readonly unknown[] }[] },
-  settings: Record<string, unknown>,
-  series: Series,
+  _program: { meta: { format?: unknown }; inputs: readonly { key: string; default: readonly unknown[] }[] },
+  _settings: Record<string, unknown>,
+  _series: Series,
 ): NumericUnit {
-  const format = resolveDeclaredField(plot.priceFormat ?? program.meta.format, program.inputs, settings);
-  if (typeof format === 'string') {
-    const unit = outputUnitForScript(scriptId, plot.key, format);
-    if (unit !== null) return unit;
-    if (format === 'price') return instrumentOf(series).quote;
-  }
-  if (scriptId === 'builtin.volume-histogram' && plot.key === 'p0') return 'BTC';
-  return null;
-}
-
-function resolveDeclaredField(field: unknown, inputs: readonly { key: string; default: readonly unknown[] }[], settings: Record<string, unknown>) {
-  if (!isRecord(field) || typeof field.input !== 'string') return field;
-  if (Object.hasOwn(settings, field.input)) return settings[field.input];
-  return inputs.find(input => input.key === field.input)?.default[1];
+  return outputUnitForScript(scriptId, plot.key);
 }
 
 export function numericOutputRef(output: NumericOutputDescriptor): NumericOutputRef {
   return {
     kind: 'indicator-output', version: 1, instanceId: output.instanceId, outputId: output.outputId,
     plotKey: output.plotKey, schemaId: output.schemaId, domain: output.domain,
-    contextId: output.contextId, unit: output.unit, scaleId: output.scaleId,
+    contextId: output.contextId, unit: output.unit,
   };
 }
 
@@ -559,9 +563,226 @@ export function fullWindowSma(values: readonly (number | null)[], length: number
 }
 
 export function fullWindowSmaTail(values: readonly (number | null)[], length: number, fromIndex: number) {
-  const output = fullWindowSma(values, length);
-  return output.slice(Math.max(0, Math.min(values.length, fromIndex)));
+  const period = clampPeriod(length);
+  const start = Math.max(0, Math.min(values.length, Math.trunc(fromIndex)));
+  if (start === values.length) return [];
+  const scanStart = Math.max(0, start - period + 1);
+  const output: (number | null)[] = Array(values.length - start).fill(null);
+  let sum = 0;
+  let validCount = 0;
+  for (let index = scanStart; index < values.length; index++) {
+    const value = finiteOrNull(values[index]);
+    if (value === null) { sum = 0; validCount = 0; }
+    else {
+      sum += value;
+      validCount++;
+      if (validCount > period) {
+        const removed = finiteOrNull(values[index - period]);
+        if (removed !== null) sum -= removed;
+        validCount--;
+      }
+      if (index >= start && validCount === period) output[index - start] = sum / period;
+    }
+  }
+  return output;
 }
+
+/** Compute only the affected full-window SMA suffix, with bounded lookback and reset-aware warmup. */
+export function fullWindowSmaRange(values: readonly (number | null)[], length: number, fromIndex: number, toIndex: number,
+  times: readonly number[] = [], resets: readonly { fromTime: number; reason?: string }[] = []) {
+  const period = clampPeriod(length);
+  const start = Math.max(0, Math.min(values.length, Math.trunc(fromIndex)));
+  const end = Math.max(start, Math.min(values.length, Math.trunc(toIndex)));
+  if (start === end) return [] as (number | null)[];
+  const scanStart = Math.max(0, start - period + 1);
+  const resetIndices = new Set<number>();
+  if (times.length === values.length) {
+    for (const reset of resets) {
+      let low = 0, high = times.length;
+      while (low < high) { const middle = (low + high) >>> 1; if (times[middle]! < reset.fromTime) low = middle + 1; else high = middle; }
+      if (low < end) resetIndices.add(low);
+    }
+  }
+  const output = Array<(number | null)>(end - start).fill(null);
+  let sum = 0, validCount = 0;
+  for (let index = scanStart; index < end; index++) {
+    if (resetIndices.has(index)) { sum = 0; validCount = 0; }
+    const value = finiteOrNull(values[index]);
+    if (value === null) { sum = 0; validCount = 0; }
+    else {
+      sum += value;
+      validCount++;
+      if (validCount > period) {
+        const removed = finiteOrNull(values[index - period]);
+        if (removed !== null) sum -= removed;
+        validCount--;
+      }
+      if (index >= start && validCount === period) output[index - start] = sum / period;
+    }
+  }
+  return output;
+}
+
+/** Maximum non-negative finite value in a bounded logical visible range. */
+export function visibleRangeMaximum(values: readonly (number | null)[], from: number, to: number, contextBars = 1) {
+  if (!Number.isFinite(from) || !Number.isFinite(to) || !values.length) return null;
+  const padding = Math.max(0, Math.min(3, Number.isFinite(contextBars) ? Math.trunc(contextBars) : 1));
+  const start = Math.max(0, Math.floor(Math.min(from, to)) - padding);
+  const end = Math.min(values.length, Math.ceil(Math.max(from, to)) + padding + 1);
+  let maximum = 0;
+  for (let index = start; index < end; index++) {
+    const value = finiteOrNull(values[index]);
+    if (value !== null && value >= maximum) maximum = value;
+  }
+  return { maximum, scannedValues: Math.max(0, end - start) };
+}
+
+interface ManagedCompositionSmaState {
+  registry: ChartNumericOutputRegistry;
+  consumerId: string;
+  ref: NumericOutputRef;
+  source?: ChartNumericOutput;
+  sourceRevision: number;
+  contextId: string;
+  contextRevision: number;
+  period: number;
+  values: (number | null)[];
+  available: boolean;
+  pendingRecompute: boolean;
+  pendingRevision: number;
+  dead: boolean;
+}
+
+const MANAGED_SMA_STORE_KEY = '__iqterminalManagedCompositionSmaV1';
+
+function managedSmaState(store: IndicatorStore): ManagedCompositionSmaState | undefined {
+  const value = store[MANAGED_SMA_STORE_KEY];
+  return value && typeof value === 'object' ? value as ManagedCompositionSmaState : undefined;
+}
+
+function scheduleManagedSmaRecompute(state: ManagedCompositionSmaState, context: IndicatorAttachContext) {
+  state.pendingRevision = state.sourceRevision;
+  if (state.pendingRecompute) return;
+  state.pendingRecompute = true;
+  queueMicrotask(() => {
+    state.pendingRecompute = false;
+    if (state.dead || context.signal?.aborted || state.pendingRevision !== state.sourceRevision
+      || !state.registry.consumerIsCurrent(state.consumerId)) return;
+    context.requestRecompute();
+  });
+}
+
+function managedSmaOutput(state: ManagedCompositionSmaState, source: ChartNumericOutput, period: number,
+  values: readonly (number | null)[], full: boolean, changedRange: { from: number; to: number }): ChartNumericOutput {
+  const output: ChartNumericOutput = {
+    kind: 'indicator-output', version: 1, instanceId: state.consumerId,
+    outputId: numericOutputId(state.consumerId, 'p0'), plotKey: 'p0',
+    schemaId: numericOutputSchemaId('p0', source.unit), domain: 'chart-candles-v1', contextId: source.contextId, unit: source.unit,
+    title: `SMA ${period} · ${source.title}`, revision: source.revision, contextRevision: source.contextRevision,
+    available: true, times: source.times, values,
+    quantity: source.quantity, marketScope: source.marketScope, sourceScope: `native-sma:${state.consumerId}`,
+    timestampConvention: source.timestampConvention, quality: source.quality, resets: source.resets,
+    changedRange: full ? { from: 0, to: source.values.length } : changedRange,
+  };
+  return output;
+}
+
+function publishManagedSmaOutput(state: ManagedCompositionSmaState, output: ChartNumericOutput) {
+  state.registry.publish(output);
+  compositionSmaMetrics.derivedPublications++;
+}
+
+function applyManagedSmaInput(state: ManagedCompositionSmaState, resolution: NumericOutputResolution, period: number,
+  context: IndicatorAttachContext) {
+  compositionSmaMetrics.registryRevisions++;
+  const source = resolution.output;
+  if (!resolution.available || !source) {
+    state.available = false;
+    state.source = source;
+    state.registry.markUnavailable(state.consumerId, resolution.reason ?? 'The selected numeric output is unavailable.');
+    scheduleManagedSmaRecompute(state, context);
+    return;
+  }
+  const previous = state.source;
+  const n = source.values.length;
+  const resetChanged = previous !== undefined && JSON.stringify(previous.resets) !== JSON.stringify(source.resets);
+  const full = !previous || !state.available || state.contextId !== source.contextId
+    || state.contextRevision !== source.contextRevision || state.period !== period || state.values.length !== n
+    || resetChanged || source.changedRange.from === 0 && source.changedRange.to === n;
+  const from = full ? 0 : Math.max(0, Math.min(n, source.changedRange.from));
+  const to = full ? n : Math.max(from, Math.min(n, source.changedRange.to + period - 1));
+  // Before the first calculation (and after a context reset), the derived
+  // cache is empty. Preflight only needs a correctly shaped candidate to
+  // validate metadata and replacement compatibility; reuse the source column
+  // until the derived values are populated rather than allocating a 5k-value
+  // placeholder on every revision.
+  const candidateValues = state.values.length === n ? state.values : source.values;
+  const candidate = managedSmaOutput(state, source, period, candidateValues, full, { from, to });
+  state.registry.preflight(candidate);
+  const changed = fullWindowSmaRange(source.values, period, from, to, source.times, source.resets);
+  compositionSmaMetrics.registryTailValuesProcessed += from === 0 && to === n ? 0 : Math.max(0, to - Math.max(0, from - period + 1));
+  if (full) {
+    compositionSmaMetrics.registryFullValuesProcessed += n;
+    state.values = changed;
+  } else {
+    for (let index = from; index < to; index++) state.values[index] = changed[index - from] ?? null;
+  }
+  state.source = source;
+  state.sourceRevision = source.revision;
+  state.contextId = source.contextId;
+  state.contextRevision = source.contextRevision;
+  state.period = period;
+  state.available = true;
+  if (!state.registry.markConsumerComplete(state.consumerId, source.revision, source.contextRevision)) return;
+  publishManagedSmaOutput(state, managedSmaOutput(state, source, period, state.values, full, { from, to }));
+  if (to > from) scheduleManagedSmaRecompute(state, context);
+}
+
+function attachManagedCompositionSma(context: IndicatorAttachContext) {
+  const token = String(context.settings().managedOutputToken ?? '');
+  const binding = managedNumericOutputBindingForToken(token);
+  if (!binding) return undefined;
+  const state: ManagedCompositionSmaState = {
+    registry: binding.registry, consumerId: binding.consumerId, ref: binding.ref,
+    sourceRevision: 0, contextId: binding.ref.contextId, contextRevision: 0,
+    period: clampPeriod(context.settings().length), values: [], available: false,
+    pendingRecompute: false, pendingRevision: 0, dead: false,
+  };
+  context.store[MANAGED_SMA_STORE_KEY] = state;
+  managedSmaContexts.set(state, context);
+  const release = binding.registry.registerConsumer(binding.consumerId, binding.ref,
+    resolution => applyManagedSmaInput(state, resolution, clampPeriod(context.settings().length), context), true);
+  return () => {
+    state.dead = true;
+    release();
+    managedSmaContexts.delete(state);
+    if (managedSmaState(context.store) === state) delete context.store[MANAGED_SMA_STORE_KEY];
+  };
+}
+
+function managedSmaValues(bars: readonly Bar[], settings: Readonly<IndicatorSettings>, store: IndicatorStore) {
+  const state = managedSmaState(store);
+  if (!state) return Array<(number | null)>(bars.length).fill(null);
+  const period = clampPeriod(settings.length);
+  if (state.available && state.source && period !== state.period) {
+    applyManagedSmaInput(state, { output: state.source, available: true }, period,
+      // `calc` may follow a settings change outside the registry callback. Keep
+      // calculation in the engine call; downstream notifications stay queued.
+      managedSmaAttachContextForRecompute(state));
+  }
+  if (!state.available || state.values.length !== bars.length) return Array<(number | null)>(bars.length).fill(null);
+  return state.values;
+}
+
+function managedSmaAttachContextForRecompute(state: ManagedCompositionSmaState): IndicatorAttachContext {
+  // The attach context is held in a module-private weak map to keep it out of
+  // persisted configuration and registry metadata.
+  const context = managedSmaContexts.get(state);
+  if (!context) throw new Error('Managed SMA attachment is no longer available.');
+  return context;
+}
+
+const managedSmaContexts = new WeakMap<ManagedCompositionSmaState, IndicatorAttachContext>();
 
 const compositionSma: IndicatorDescriptor = {
   id: INDICATOR_COMPOSITION_SMA_ID,
@@ -569,22 +790,22 @@ const compositionSma: IndicatorDescriptor = {
   category: 'Volume',
   placement: 'pane',
   inputs: [
-    { key: 'source', type: 'source', label: 'Input', default: 'close', allowStudyOutputs: true },
+    { key: 'managedOutputToken', type: 'text', label: 'Output binding', default: '', visibleWhen: { any: [] } },
     { key: 'length', type: 'number', label: 'Length', default: 20, min: 1, max: 250, step: 1 },
     { key: 'color', type: 'color', label: 'Line colour', default: '#63c7b2' },
   ],
   plots: [{ key: 'p0', type: 'line', title: 'SMA', style: { lineWidth: 1.5 }, colorKey: 'color' }],
-  calc(bars, rawSettings, _store, context) {
-    const settings = compositionSmaSettings(rawSettings);
-    const source = settings.source;
-    if (!isStudySource(source)) return { p0: bars.map(() => null) };
-    return { p0: fullWindowSma(sourceValues(bars, source, context), clampPeriod(settings.length)) };
+  attach: attachManagedCompositionSma,
+  calc(bars, settings, store) {
+    return { p0: managedSmaValues(bars, settings, store) };
   },
-  calcTail(bars, rawSettings, fromIndex, _previous, _store, context) {
-    const settings = compositionSmaSettings(rawSettings);
-    const source = settings.source;
-    if (!isStudySource(source)) return { p0: bars.slice(fromIndex).map(() => null) };
-    return { p0: fullWindowSmaTail(sourceValues(bars, source, context), clampPeriod(settings.length), fromIndex) };
+  calcTail(bars, settings, fromIndex, _previous, store) {
+    const values = managedSmaValues(bars, settings, store);
+    const start = Math.max(0, Math.min(values.length, Math.trunc(fromIndex)));
+    compositionSmaMetrics.tailCalls++;
+    const tail = values.slice(start);
+    compositionSmaMetrics.tailValuesProcessed += tail.length;
+    return { p0: tail };
   },
 };
 

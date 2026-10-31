@@ -1,11 +1,11 @@
 import {test,expect}from '@playwright/test';
 import {writeFile}from 'node:fs/promises';
 import {installDepthFixture}from './depth-fixture';
-import {addIndicator,setFootprint}from './indicator-actions';
+import {addIndicator,expectHeatmapLiveQuiet,setFootprint}from './indicator-actions';
 test('Pi observation: footprint, heatmap and walls with the liquidation pane',async({page})=>{
  test.skip(process.env.IQ_LIQUIDATION_PERF!=='1','Explicit platform performance observation only');test.setTimeout(180000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:1366,height:900});const worker=await installDepthFixture(page,120);
  const close=page.getByRole('button',{name:/^Close /});if(await close.count()>1)await close.nth(1).click();const panel=page.locator('.candle-panel').first();const tree=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});if(await tree.isVisible())await tree.click();
- await addIndicator(panel,'Order-book Heatmap');await expect(panel.locator('.heatmap-notice')).toContainText('live');await worker.evaluate(()=>(self as any).__heatmapFixture.populate());await addIndicator(panel,'Order Walls');
+ await addIndicator(panel,'Order-book Heatmap');await expectHeatmapLiveQuiet(panel);await worker.evaluate(()=>(self as any).__heatmapFixture.populate());await addIndicator(panel,'Order Walls');
  await page.evaluate(()=>{const t=(window as any).__terminal;t.feed.subscribeFootprint=(_id:string,_s:any,rowSize:number,callback:any)=>{const p=[...t.panels.values()][0],times=p.candles.slice(-120).map((c:any)=>c.t/1000);const bars=times.map((time:number,i:number)=>({time,rowSize,revision:1,open:82990,high:83050,low:82950,close:83000,delta:1,minDelta:-1,maxDelta:2,cells:Array.from({length:8},(_,j)=>({price:82900+j*25,bidVol:1+(i+j)%5,askVol:2+(i+j)%7})),coverage:'partial',gapBefore:false}));queueMicrotask(()=>callback({type:'footprint-snapshot',bars,retentionStart:times[0],status:{state:'live',message:'Explicit platform test execution fixtures',lastUpdate:Date.now(),tickSize:.1,rowSize,collectionStartedAt:Date.now(),coverage:'partial'}}));return ()=>{};};});
  await setFootprint(panel,true);await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],c=p.engine.chart;c.setAutoScale(false);c.panes()[c.primaryPaneIndex()].readoutScale().setPriceRange({min:82700,max:83350});});
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.surfaceMounted)).toBe(true);

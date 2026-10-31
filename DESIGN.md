@@ -87,7 +87,7 @@ Buttons, selects, tabs, dock panes, and chart surfaces all remain square.
 
 ## Components
 
-Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar actions are shorter; the native venue and timeframe selects keep the same treatment. Dockview tabs follow the custom Basis theme. Each panel has a compact selector toolbar and OHLC readout at the plot top. Connection status sits in a compact footer below the time axis and footprint statistics; enabled heatmap metadata occupies a separate footer row. Long text truncates with the full description on hover. Retry remains visible for failed or stale data; empty/error messages stay centred in the plot.
+Buttons share one neutral style, with a brighter charcoal hover. Chart-toolbar actions are shorter; the native venue and timeframe selects keep the same treatment. Dockview tabs follow the custom Basis theme. Each panel has a compact selector toolbar; the fixed plot-top OHLC readout is omitted. A 500 ms dwell on a painted Footprint cell opens a bounded contextual card in the shared indicator-tooltip style. Connection status sits in a compact footer below the time axis and footprint statistics; enabled heatmap metadata occupies a separate footer row. Long text truncates with the full description on hover. Retry remains visible for failed or stale data; empty/error messages stay centred in the plot.
 
 ### Order-book Heatmap
 

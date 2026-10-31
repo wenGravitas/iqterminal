@@ -2,19 +2,34 @@ import {PreparedFootprints} from './prepared-footprints';
 import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
 import { footprintTicksForPrice } from './protocol';
-import { duration, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintBar, type FootprintStatus, type Series } from './protocol';
+import { duration, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Series } from './protocol';
+import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
-interface View {from:number;to:number;key:string;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+interface View {from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+async function readStagingJson(response:Response,label:string){
+  const text=await response.text();let data:any;
+  try{data=JSON.parse(text);}catch(error){
+    if(!response.ok){const detail=text.trim().replace(/\s+/g,' ').slice(0,180);throw Error(`${label} HTTP ${response.status}${detail?`: ${detail}`:''}`);}
+    const incomplete=error instanceof Error&&/unexpected end of json input/i.test(error.message);
+    throw Error(`${label} returned ${incomplete?'incomplete':'invalid'} JSON`);
+  }
+  if(!response.ok){const detail=typeof data?.error==='string'?data.error:text.trim().replace(/\s+/g,' ').slice(0,180);throw Error(`${label} HTTP ${response.status}${detail?`: ${detail}`:''}`);}
+  return data;
+}
 interface Group {
   preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
   bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number;
+  analysisSummaries: Map<number, FootprintAnalysisSummary>; liveSummaryVersions: Map<number, number>; quoteAvailable: Map<number, boolean>;
+  streamRevision: number; appliedExecutionThroughMs: number | null;
   history?: { next: number; target: number; watermark: number }; historyAbort?: AbortController; historyBusy?: boolean; historyError?: string;
   lastStatus?: FootprintStatus; accumulator?: FootprintAccumulator; cursor?: number; from?: number; ws?: WebSocket; streamAt?: number; lastCoverage?: any; lagMs?: number;
 }
 export const stagingMarket = (series: Series) => series.venue === 'binance';
+const NATIVE_CANDLE_HISTORY_TIMEOUT_MS = 60_000;
+const FOOTPRINT_BOOTSTRAP_TIMEOUT_MS = 20_000;
 const footprintSource = (market: ReturnType<typeof marketOf>) => market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade';
 
 /** Worker-owned snapshot restore + durable cursor replay, with bounded shared caches and acknowledged IPC. */
@@ -37,15 +52,36 @@ export class StagingFeedService {
       if (!group) {
         if (this.groups.size >= 16) return;
         group = { preparedTimes:new Set(),views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
-          busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0 };
+          busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0,
+          analysisSummaries: new Map(), liveSummaryVersions: new Map(), quoteAvailable: new Map(), streamRevision: 0, appliedExecutionThroughMs: null };
         this.groups.set(key, group);
       }
       group.ids.add(c.id); this.clients.set(c.id, key);
       if (group.candles.length) this.emit({ type: 'snapshot', key, ids: [c.id], candles: group.candles });
-      if (group.bars.length && group.lastStatus) this.publish(group, { type: 'footprint-snapshot', key, ids: [...group.ids], generation: group.generation, batchId: 0, bars: group.bars, retentionStart: group.bars[0]?.time ?? null, status: group.lastStatus });
+      if (group.bars.length && group.lastStatus) this.publish(group, { type: 'footprint-snapshot', key, ids: [...group.ids], generation: group.generation, batchId: 0, bars: group.bars, analysisSummaries: [...group.analysisSummaries.values()], retentionStart: group.bars[0]?.time ?? null, status: group.lastStatus });
       this.status(group, 'loading', rowPrice === undefined ? 'Staging · loading native Binance candles' : 'Staging · loading retained aggregate executions');
       if (!group.ws) void this.load(group);
-    } else if(c.type==='footprint-viewport'){const key=this.clients.get(c.id),g=key?this.groups.get(key):undefined;if(!g||g.rowPrice===undefined||!this.usePrepared||!Number.isFinite(c.from)||!Number.isFinite(c.to)||c.from>=c.to)return;const step=duration[g.series.interval],to=Math.min(Math.ceil(c.to/step)*step,Math.floor(this.now()/step)*step),from=Math.max(step,Math.floor(Math.max(c.from,c.to-14400000)/step)*step);if(from>=to)return;const viewKey=`${from}:${to}`,old=g.views.get(c.id);if(old?.key===viewKey)return;old?.abort?.abort();g.views.set(c.id,{from,to,key:viewKey});this.status(g,g.lastStatus?.state??'loading','Staging · loading visible footprints');if(g.accumulator)void this.loadViewport(g,c.id);
+    } else if (c.type === 'footprint-viewport') {
+      const key = this.clients.get(c.id), g = key ? this.groups.get(key) : undefined;
+      if (!g || g.rowPrice === undefined || !this.usePrepared || !Number.isFinite(c.from) || !Number.isFinite(c.to) || c.from >= c.to) return;
+      const step = duration[g.series.interval];
+      const to = Math.min(Math.ceil(c.to / step) * step, Math.floor(this.now() / step) * step);
+      const from = Math.max(step, Math.floor(Math.max(c.from, c.to - 14_400_000) / step) * step);
+      if (from >= to) return;
+      const analysisEnabled = c.analysis?.enabled === true;
+      const requestedLookback = c.analysis?.lookback;
+      const analysisLookback = typeof requestedLookback === 'number' && Number.isFinite(requestedLookback)
+        ? Math.max(20, Math.min(MAX_DELTA_FLIP_LOOKBACK, Math.trunc(requestedLookback))) : DEFAULT_DELTA_FLIP_LOOKBACK;
+      const rawCandidateFrom = typeof c.analysis?.candidateFrom === 'number' && Number.isFinite(c.analysis.candidateFrom)
+        ? c.analysis.candidateFrom : c.from;
+      const candidateFrom = Math.max(step, Math.floor(rawCandidateFrom / step) * step);
+      const viewKey = `${from}:${to}:${candidateFrom}:${analysisEnabled ? analysisLookback : 0}`;
+      const old = g.views.get(c.id);
+      if (old?.key === viewKey) return;
+      old?.abort?.abort();
+      g.views.set(c.id, { from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
+      this.status(g, g.lastStatus?.state ?? 'loading', 'Staging · loading visible footprints');
+      if (g.accumulator) void this.loadViewport(g, c.id);
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
     else if (c.type === 'footprint-ack') {
       const g = this.groups.get(c.key);
@@ -70,11 +106,25 @@ export class StagingFeedService {
   }
   private refresh() {
     for (const g of this.groups.values()) {
+      if (g.rowPrice !== undefined) this.expireLivePreviews(g);
       if (g.ws && g.streamAt && this.now() - g.streamAt > 15000) { g.ws.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · stream heartbeat expired; replay pending'); }
       if (!g.ws && this.online && this.now() >= g.retryAt) { if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
       if(this.online&&this.usePrepared&&g.accumulator)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=g.retryAt)void this.loadViewport(g,id);
       if (this.online && g.history && g.history.next > g.history.target && !g.historyBusy && !g.historyError && g.cursor !== undefined) void this.loadOlder(g);
     }
+  }
+  private expireLivePreviews(g: Group) {
+    const now = this.now();
+    let changed = false;
+    for (const [time, summary] of g.analysisSummaries) {
+      if (!summary.ended && summary.previewEligible && now >= summary.coverageEvidence.toMs) {
+        g.analysisSummaries.set(time, { ...summary, previewEligible: false });
+        changed = true;
+      }
+    }
+    if (changed) this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation,
+      batchId: 0, status: g.lastStatus ?? this.footprintStatus(g, 'loading', 'Staging · updating footprint preview'),
+      analysisSummaries: [...g.analysisSummaries.values()] });
   }
   private connect(g: Group) {
     if (g.ws || !this.online || this.dead || this.groups.get(g.key) !== g) return;
@@ -89,7 +139,7 @@ export class StagingFeedService {
         if (g.ws !== ws || this.dead || !this.online) return;
         try {
           const receivedAt = this.now(); g.streamAt = receivedAt; const data = JSON.parse(String(event.data));
-          if (data.type === 'reset') { g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; throw new Error(data.reason); }
+          if (data.type === 'reset') { g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear(); g.appliedExecutionThroughMs = null; throw new Error(data.reason); }
           if (data.type === 'health') {
             const catchingUp = g.rowPrice !== undefined && g.cursor !== undefined && g.cursor < (data.watermark?.id ?? g.cursor);
             const live = !catchingUp && data.collector?.state === 'live' && this.now() - data.collector.lastUpdate < 15000;
@@ -110,18 +160,29 @@ export class StagingFeedService {
             previous = t.id;
           }
           if (previous !== data.cursor) throw new Error('Batch cursor mismatch');
-          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest({ ...t, market: marketOf(g.series) }); g.cursor = t.id; }
+          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest({ ...t, quoteNotionalText: String(t.quoteNotional), market: marketOf(g.series) }); g.cursor = t.id; g.appliedExecutionThroughMs = Math.max(g.appliedExecutionThroughMs ?? 0, t.timeMs); }
           g.lastUpdate = data.collector.lastUpdate; const priorGaps = g.lastCoverage?.gaps?.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark') ?? []; data.coverage.gaps = [...new Map([...data.coverage.gaps, ...priorGaps].map((x:any)=>[`${x.from}:${x.to}:${x.reason}`,x])).values()].slice(-512);
           g.lastCoverage = data.coverage; g.lagMs = Math.max(0, this.now() - data.sentAt);
+          const caughtUp = g.cursor === data.watermark;
+          const streamRevision = ++g.streamRevision;
           const previousBars = new Map(g.bars.map(b => [b.time,b]));
           const bars = g.accumulator.snapshot();
-          const liveBars:FootprintBar[] = bars.map(b => { const start=b.time*1000,end=start+duration[g.series.interval]; const gaps=data.coverage.gaps.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark');
-            return { ...b, coverage: b.coverage === 'capacity-limited' ? b.coverage : gaps.some((x:any)=>x.to>start&&x.from<end) ? 'gapped' : start>=data.coverage.confirmedFrom && end<=data.coverage.confirmedTo ? 'observed' : 'partial' }; });
+          retainMutableQuoteAvailability(g, bars);
+          const liveBars:FootprintBar[] = bars.map(b => {
+            if (!g.quoteAvailable.has(b.time)) g.quoteAvailable.set(b.time, hasQuoteProjection(b));
+            const source = applyQuoteAvailability(b, g.quoteAvailable.get(b.time) === true);
+            const start=source.time*1000,end=start+duration[g.series.interval]; const gaps=data.coverage.gaps.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark');
+            return { ...source, coverage: source.coverage === 'capacity-limited' ? source.coverage : gaps.some((x:any)=>x.to>start&&x.from<end) ? 'gapped' : start>=data.coverage.confirmedFrom && end<=data.coverage.confirmedTo ? 'observed' : 'partial' };
+          });
+          const canPreview = data.collector?.state === 'live' && this.now() - Number(data.collector?.lastUpdate ?? 0) <= 15_000;
+          this.updateDurableSummaries(g, liveBars, data.coverage, g.appliedExecutionThroughMs ?? 0, caughtUp, streamRevision, canPreview);
           const liveStart=Math.floor(this.now()/duration[g.series.interval])*duration[g.series.interval];
           const candidates=[...g.bars,...liveBars.filter(b=>b.time*1000>=liveStart||!g.preparedTimes.has(b.time))];g.bars=this.usePrepared?boundedFootprintHistory(candidates,this.visibleTimes(g,candidates)):liveBars;
           const dirty = new Set(g.accumulator.drainDirty().map(b => b.time));
           const status = this.footprintStatus(g, data.collector.state === 'live' && g.cursor === data.watermark ? 'live' : 'reconnecting', `Staging · durable execution stream · delivery ${g.lagMs}ms`, data); status.transport = { cursor: g.cursor!, backendSentAtMs: data.sentAt, workerReceivedAtMs: receivedAt, workerAppliedAtMs: this.now() }; g.lastStatus = status;
-          this.publish(g, { type: 'footprint-patch', key:g.key, ids:[...g.ids], generation:g.generation,batchId:0,bars:g.bars.filter(b=>dirty.has(b.time) || previousBars.get(b.time)?.coverage !== b.coverage),retentionStart:g.bars[0]?.time??null,status });
+          this.publish(g, { type: 'footprint-patch', key:g.key, ids:[...g.ids], generation:g.generation,batchId:0,
+            bars:g.bars.filter(b=>dirty.has(b.time) || previousBars.get(b.time)?.coverage !== b.coverage),
+            analysisSummaries: [...g.analysisSummaries.values()], retentionStart:g.bars[0]?.time??null,status });
           ws.send(JSON.stringify({ type:'ack',cursor:g.cursor })); g.failures=0;
         } catch (e) { this.status(g, 'stale', `Staging stream · ${e instanceof Error ? e.message : 'invalid data'} · replay pending`); ws.close(); }
       };
@@ -133,8 +194,13 @@ export class StagingFeedService {
     if (g.inFlight) {
       // Coalescing deltas must retain the latest complete bounded state; an empty
       // later patch cannot erase an update waiting behind an acknowledgement.
-      if (event.type === 'footprint-status' && g.pending && g.pending.type !== 'footprint-status') g.pending = { ...g.pending, status: event.status };
-      else g.pending = event.type === 'footprint-patch' ? { ...event, type: 'footprint-snapshot', bars: g.bars } : event;
+      if (event.type === 'footprint-status' && g.pending && g.pending.type !== 'footprint-status') {
+        g.pending = { ...g.pending, status: event.status, analysisSummaries: [...g.analysisSummaries.values()] };
+      } else if (event.type === 'footprint-patch') {
+        g.pending = { ...event, type: 'footprint-snapshot', bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()] };
+      } else if (event.type === 'footprint-status' && event.analysisSummaries) {
+        g.pending = { ...event, analysisSummaries: [...g.analysisSummaries.values()] };
+      } else g.pending = event;
       return;
     }
     const next = { ...event, ids: [...g.ids], batchId: ++this.batch };
@@ -151,12 +217,28 @@ export class StagingFeedService {
   }
   private status(g: Group, state: FootprintStatus['state'], message: string) {
     if (g.rowPrice === undefined) this.emit({ type: 'status', key: g.key, ids: [...g.ids], status: { state, message, lastUpdate: g.lastUpdate } });
-    else this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, status: g.lastStatus ? { ...g.lastStatus, history:this.historyState(g),state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message) });
+    else {
+      if (state !== 'live') this.revokeLivePreviews(g);
+      const status = g.lastStatus ? { ...g.lastStatus, history:this.historyState(g), state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message);
+      g.lastStatus = status;
+      this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+        status, analysisSummaries: [...g.analysisSummaries.values()] });
+    }
+  }
+
+  private revokeLivePreviews(g: Group) {
+    for (const [time, summary] of g.analysisSummaries) {
+      const revoked = withoutLiveFootprintPreview(summary);
+      if (revoked !== summary) g.analysisSummaries.set(time, revoked);
+    }
   }
   private async load(g: Group) {
     if (g.busy || !this.online || this.dead || this.now() < g.retryAt) return;
     g.busy = true; const abort = new AbortController(); g.abort = abort;
-    const timeout = setTimeout(() => abort.abort(), 20000);
+    // A full retained candle history can take about 45s to transfer through the
+    // staging tunnel. Keep the short bound for the smaller footprint bootstrap.
+    const timeoutMs = g.rowPrice === undefined ? NATIVE_CANDLE_HISTORY_TIMEOUT_MS : FOOTPRINT_BOOTSTRAP_TIMEOUT_MS;
+    const timeout = setTimeout(() => abort.abort(), timeoutMs);
     try {
       // Identical UTC boundaries across timeframe changes; each response captures one committed watermark.
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
@@ -164,8 +246,7 @@ export class StagingFeedService {
       const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
         : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? `HTTP ${response.status}`);
+      const data = await readStagingJson(response,'Staging history');
       if (this.groups.get(g.key) !== g || this.dead || !this.online) return;
       if (g.rowPrice === undefined) {
         if (data.source !== 'binance-native-kline' || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
@@ -183,8 +264,20 @@ export class StagingFeedService {
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
         const oldBars = g.bars;
         g.bars = data.bars; g.cursor = data.cursor ?? data.watermark; g.from = from;
+        g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
+        const caughtUp = g.cursor === data.watermark;
+        g.appliedExecutionThroughMs = caughtUp ? data.coverage.confirmedTo
+          : Math.max(0, ...g.bars.map(bar => bar.time * 1000));
+        for (const bar of g.bars) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
+        g.bars = g.bars.map(bar => applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true));
         const ticks = footprintTicksForPrice(g.rowPrice!, data.tickSize); if (ticks === null) throw new Error('Invalid staging tick size');
-        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);g.preparedTimes.clear();for(const v of g.views.values()){v.loaded=false;v.validatedAt=undefined;}
+        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);
+        retainMutableQuoteAvailability(g, g.accumulator.snapshot());
+        const analysisSourceKey = footprintAnalysisSourceKey(marketOf(g.series), g.series.interval);
+        for (const bar of g.bars) this.mergeSummary(g, durableFootprintAnalysisSummary(
+          applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true), analysisSourceKey, g.series.interval,
+          data.coverage, g.appliedExecutionThroughMs ?? 0, caughtUp, this.now(), data.status?.state === 'live'));
+        g.preparedTimes.clear();for(const v of g.views.values()){v.loaded=false;v.validatedAt=undefined;}
         g.lastCoverage = data.coverage; g.lastUpdate = Number(data.status?.lastUpdate ?? 0);
         const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
         const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
@@ -192,7 +285,8 @@ export class StagingFeedService {
         const snapshot = !oldBars.length || oldBars[0]?.time !== g.bars[0]?.time;
         const previous = new Map(oldBars.map(b => [b.time, b]));
         const changed = snapshot ? g.bars : g.bars.filter(b => JSON.stringify(previous.get(b.time)) !== JSON.stringify(b));
-        this.publish(g, { type: snapshot ? 'footprint-snapshot' : 'footprint-patch', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, bars: changed, retentionStart: g.bars[0]?.time ?? null, status });
+        this.publish(g, { type: snapshot ? 'footprint-snapshot' : 'footprint-patch', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+          bars: changed, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
       }
       g.failures = 0; g.retryAt = 0; this.connect(g);
       if (g.rowPrice !== undefined && !this.usePrepared) {
@@ -208,22 +302,112 @@ export class StagingFeedService {
       this.status(g, g.bars.length || g.candles.length ? 'stale' : 'failed', `Staging unavailable · ${error instanceof Error ? error.message : 'request failed'} · retrying; Retry available`);
     } finally { clearTimeout(timeout); g.busy = false; g.abort = undefined; }
   }
-  private async loadViewport(g:Group,id:string){const view=g.views.get(id);if(!view||view.busy||!g.accumulator)return;view.busy=true;view.abort=new AbortController();g.historyBusy=true;g.historyError=undefined;
-    try{await this.prepared.load(view.from,view.to,g.series.interval,g.rowPrice!,view.abort.signal,(bars,complete,validated)=>{if(view.abort!.signal.aborted||g.views.get(id)!==view||this.groups.get(g.key)!==g||!g.accumulator)return;if(!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))))throw Error('Invalid historical footprint bars');
-      // Closed viewport responses never advance the durable live execution cursor.
-      const step=duration[g.series.interval],liveStart=Math.floor(this.now()/step)*step;
-      for(const b of bars)if(b.time*1000<liveStart)g.preparedTimes.add(b.time);
-      if(complete&&validated)for(let at=view.from;at<Math.min(view.to,liveStart);at+=step)g.preparedTimes.add(at/1000);
-      const candidates=[...g.bars.filter(b=>!complete||!validated||b.time*1000<view.from||b.time*1000>=Math.min(view.to,liveStart)),...bars.filter(b=>b.time*1000<liveStart)];
-      g.bars=boundedFootprintHistory(candidates,this.visibleTimes(g,candidates));
-      const retained=new Set(g.bars.map(b=>b.time));g.preparedTimes=new Set([...g.preparedTimes].sort((a,b)=>Number(retained.has(b))-Number(retained.has(a))||b-a).slice(0,FOOTPRINT_MAX_BARS));
-      // Prepared closed bars are presentation replacements. The live accumulator
-      // keeps its own acknowledged cursor state and never re-ingests their totals.
-      view.loaded=complete;if(complete)view.validatedAt=this.now();
-      const status=this.footprintStatus(g,g.lastStatus?.state??'loading',`Staging · ${validated?'validated':'cached; validating'} visible footprints${complete?'':' · loading history'}`,{coverage:g.lastCoverage,tickSize:.1});g.lastStatus=status;this.publish(g,{type:'footprint-snapshot',key:g.key,ids:[...g.ids],generation:g.generation,batchId:0,bars:g.bars,retentionStart:g.bars[0]?.time??null,status});},marketOf(g.series));
-    }catch(e){if(!view.abort.signal.aborted){g.historyError=e instanceof Error?e.message:String(e);g.retryAt=this.now()+2000;this.status(g,'stale',`Staging visible footprints · ${g.historyError}`);}}
-    finally{view.busy=false;g.historyBusy=[...g.views.values()].some(v=>v.busy);}
+  private async loadViewport(g: Group, id: string) {
+    const view = g.views.get(id);
+    if (!view || view.busy || !g.accumulator) return;
+    view.busy = true; view.abort = new AbortController();
+    const requestLiveVersion = g.streamRevision;
+    const step = duration[g.series.interval];
+    // A flip at the first visible candle needs its predecessor plus N reference
+    // deltas. Disabled analysis has no offscreen warmup demand.
+    const analysisFrom = view.analysisEnabled ? Math.max(step, view.candidateFrom - (view.analysisLookback + 1) * step) : view.from;
+    try {
+      await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, view.abort.signal,
+        (bars, complete, validated, analysis) => {
+          if (view.abort!.signal.aborted || g.views.get(id) !== view || this.groups.get(g.key) !== g || !g.accumulator) return;
+          if (!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series)))) throw Error('Invalid historical footprint bars');
+          const beforeBarsKey = barRevisionKey(g.bars);
+          const wasLoaded = view.loaded === true;
+          const wasValidated = view.validatedAt !== undefined;
+          let summariesChanged = false;
+          if (analysis) {
+            for (const time of analysis.removedTimes) {
+              if ((g.liveSummaryVersions.get(time) ?? 0) > requestLiveVersion) continue;
+              summariesChanged = g.analysisSummaries.delete(time) || summariesChanged;
+            }
+            for (const summary of analysis.summaries) {
+              if ((g.liveSummaryVersions.get(summary.time) ?? 0) > requestLiveVersion) continue;
+              const allowPreview = g.lastStatus?.state === 'live' && this.now() - g.lastStatus.lastUpdate <= 15_000;
+              const safeSummary = allowPreview ? summary : withoutLiveFootprintPreview(summary);
+              summariesChanged = this.mergeSummary(g, safeSummary) || summariesChanged;
+            }
+            this.trimAnalysisSummaries(g);
+          }
+          // Closed viewport responses replace presentation bars only. They never
+          // advance the durable live cursor or replace its accumulator state.
+          const liveStart = Math.floor(this.now() / step) * step;
+          for (const bar of bars) g.preparedTimes.add(bar.time);
+          if (complete && validated) for (let at = view.from; at < Math.min(view.to, liveStart); at += step) g.preparedTimes.add(at / 1000);
+          // Prepared projections are independent presentation/analysis data.
+          // They must not seed the mutable accumulator's quote anchor.
+          const presentationBars = bars.map(bar => applyQuoteAvailability(bar, hasQuoteProjection(bar)));
+          const candidates = [...g.bars.filter(bar => !complete || !validated || bar.time * 1000 < view.from || bar.time * 1000 >= Math.min(view.to, liveStart)),
+            ...presentationBars.filter(bar => bar.time * 1000 < liveStart)];
+          g.bars = boundedFootprintHistory(candidates, this.visibleTimes(g, candidates));
+          const retained = new Set(g.bars.map(bar => bar.time));
+          g.preparedTimes = new Set([...g.preparedTimes].sort((a, b) => Number(retained.has(b)) - Number(retained.has(a)) || b - a).slice(0, FOOTPRINT_MAX_BARS));
+          view.loaded = complete; if (complete && validated) view.validatedAt = this.now();
+          const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading',
+            `Staging · ${validated ? 'validated' : 'cached; validating'} visible footprints${complete ? '' : ' · loading history'}`,
+            { coverage: g.lastCoverage, tickSize: .1 });
+          g.lastStatus = status;
+          const barsChanged = beforeBarsKey !== barRevisionKey(g.bars);
+          if (barsChanged) this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+            bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
+          else if (summariesChanged || wasLoaded !== complete || wasValidated !== (complete && validated)) this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+            status, analysisSummaries: [...g.analysisSummaries.values()] });
+        }, marketOf(g.series), analysisFrom);
+    } catch (error) {
+      if (!view.abort.signal.aborted) {
+        g.historyError = error instanceof Error ? error.message : String(error); g.retryAt = this.now() + 2000;
+        this.status(g, 'stale', `Staging visible footprints · ${g.historyError}`);
+      }
+    } finally {
+      view.busy = false;
+    }
   }
+  private updateDurableSummaries(g: Group, bars: readonly FootprintBar[], coverage: unknown, appliedThroughMs: number, caughtUp: boolean, streamRevision: number, allowPreview: boolean) {
+    const changed: FootprintAnalysisSummary[] = [];
+    const sourceKey = footprintAnalysisSourceKey(marketOf(g.series), g.series.interval);
+    for (const bar of bars) {
+      const summary = durableFootprintAnalysisSummary(bar, sourceKey, g.series.interval, coverage, appliedThroughMs, caughtUp, this.now(), allowPreview);
+      if (this.mergeSummary(g, summary)) {
+        g.liveSummaryVersions.set(bar.time, streamRevision);
+        changed.push(summary);
+      }
+    }
+    this.trimAnalysisSummaries(g);
+    return changed;
+  }
+
+  private mergeSummary(g: Group, summary: FootprintAnalysisSummary) {
+    const previous = g.analysisSummaries.get(summary.time);
+    if (previous && previous.revisionSource === summary.revisionSource) {
+      if (previous.revision > summary.revision) return false;
+      if (previous.revision === summary.revision && summary.revisionSource === 'prepared-content-hash'
+        && previous.coverageEvidence.validated && !summary.coverageEvidence.validated) return false;
+    }
+    if (previous && JSON.stringify(previous) === JSON.stringify(summary)) return false;
+    g.analysisSummaries.set(summary.time, summary);
+    return true;
+  }
+
+  private trimAnalysisSummaries(g: Group) {
+    const limit = MAX_FOOTPRINT_ANALYSIS_SUMMARIES;
+    if (g.analysisSummaries.size <= limit) return;
+    const step = duration[g.series.interval];
+    const visible = new Set<number>(), context = new Set<number>();
+    for (const view of g.views.values()) {
+      for (let at = Math.floor(view.candidateFrom / step) * step; at < view.to; at += step) visible.add(at / 1000);
+      if (view.analysisEnabled) for (let at = Math.max(step, view.candidateFrom - (view.analysisLookback + 1) * step); at < view.candidateFrom; at += step) context.add(at / 1000);
+    }
+    const ordered = [...g.analysisSummaries.keys()].sort((a, b) => Number(visible.has(b)) - Number(visible.has(a))
+      || Number(context.has(b)) - Number(context.has(a)) || b - a);
+    const keep = new Set(ordered.slice(0, limit));
+    for (const time of g.analysisSummaries.keys()) if (!keep.has(time)) g.analysisSummaries.delete(time);
+    for (const time of g.liveSummaryVersions.keys()) if (!keep.has(time)) g.liveSummaryVersions.delete(time);
+  }
+
   private visibleTimes(g:Group,bars:FootprintBar[]){return new Set(bars.filter(b=>b.time===g.accumulator?.latestTime||[...g.views.values()].some(v=>b.time*1000>=v.from&&b.time*1000<v.to)).map(b=>b.time));}
   private historyState(g:Group){const views=[...g.views.values()];return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined)};}
   private historyMessage(g: Group, message: string) {
@@ -239,6 +423,7 @@ export class StagingFeedService {
     try {
       while (g.history.next > g.history.target && !abort.signal.aborted && this.online) {
         const history: NonNullable<Group['history']> = g.history;
+        const requestLiveVersion = g.streamRevision;
         const to = history.next, from = Math.max(history.target, to - pageMs);
         const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
         const path = `/market-data/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}&watermark=${history.watermark}${marketQuery}`;
@@ -254,12 +439,21 @@ export class StagingFeedService {
         if (abort.signal.aborted || this.groups.get(g.key) !== g || !g.accumulator || g.history !== history) return;
         if (!data.bars) continue; // Retry the smaller complete-bar page.
         if (data.version !== 1 || data.watermark !== history.watermark || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((b: any) => validBackendBar(b, marketOf(g.series)) && b.time * 1000 >= from && b.time * 1000 < to)) throw new Error('Invalid older footprint history');
+        const analysisSourceKey = footprintAnalysisSourceKey(marketOf(g.series), g.series.interval);
+        for (const bar of data.bars as FootprintBar[]) {
+          if ((g.liveSummaryVersions.get(bar.time) ?? 0) <= requestLiveVersion) {
+            this.mergeSummary(g, durableFootprintAnalysisSummary(bar, analysisSourceKey, g.series.interval,
+              data.coverage, Math.min(Number(data.coverage?.confirmedTo ?? 0), g.appliedExecutionThroughMs ?? Infinity), true, this.now(), false));
+          }
+        }
+        this.trimAnalysisSummaries(g);
         const merged = boundedFootprintHistory([...data.bars, ...g.bars]);
         const full = merged.length === FOOTPRINT_MAX_BARS || merged.length < data.bars.length + g.bars.length;
-        g.accumulator.restore(merged); g.bars = merged; history.next = from;
+        g.accumulator.restore(merged); retainMutableQuoteAvailability(g, g.accumulator.snapshot()); g.bars = merged; history.next = from;
         const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading', 'Staging · retained history and durable live executions', { coverage: g.lastCoverage, tickSize: data.tickSize });
         g.lastStatus = status;
-        this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0, bars: g.bars, retentionStart: g.bars[0]?.time ?? null, status });
+        this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+          bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
         if (full) { history.next = history.target; break; }
       }
     } catch (e) { if (!abort.signal.aborted) g.historyError = e instanceof Error ? e.message : 'request failed'; }
@@ -273,13 +467,45 @@ export class StagingFeedService {
   dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
+function hasQuoteProjection(bar: FootprintBar) {
+  return [bar.quoteDelta, bar.minQuoteDelta, bar.maxQuoteDelta].every(value => typeof value === 'number' && Number.isFinite(value))
+    && bar.cells.length > 0
+    && bar.cells.every(cell => typeof cell.bidNotional === 'number' && Number.isFinite(cell.bidNotional) && cell.bidNotional >= 0
+      && typeof cell.askNotional === 'number' && Number.isFinite(cell.askNotional) && cell.askNotional >= 0);
+}
+
+function applyQuoteAvailability(bar: FootprintBar, available: boolean): FootprintBar {
+  if (!available) {
+    const withoutQuote: FootprintBar = { ...bar, cells: bar.cells.map(cell => {
+      const { bidNotional: _bid, askNotional: _ask, ...rest } = cell;
+      return rest;
+    }) };
+    delete withoutQuote.quoteDelta; delete withoutQuote.minQuoteDelta; delete withoutQuote.maxQuoteDelta;
+    return withoutQuote;
+  }
+  return bar;
+}
+
+function retainMutableQuoteAvailability(g: Group, bars: readonly FootprintBar[]) {
+  const mutableTimes = new Set(bars.map(bar => bar.time));
+  for (const time of g.quoteAvailable.keys()) if (!mutableTimes.has(time)) g.quoteAvailable.delete(time);
+  for (const bar of bars) if (!g.quoteAvailable.has(bar.time)) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
+}
+
+function barRevisionKey(bars: readonly FootprintBar[]) {
+  return bars.map(bar => `${bar.time}:${bar.revision}`).join('|');
+}
+
 export function validBackendBar(b: any, market: ReturnType<typeof marketOf> = 'perpetual'): b is FootprintBar {
   return b && Number.isSafeInteger(b.time) && b.time > 0 && Number.isSafeInteger(b.revision)
     && ['partial', 'observed', 'gapped', 'capacity-limited'].includes(b.coverage)
     && b.source === footprintSource(market) && b.granularity === 'aggregate-trade'
     && [b.open, b.high, b.low, b.close, b.delta, b.minDelta, b.maxDelta, b.rowSize].every(Number.isFinite)
     && b.low > 0 && b.high >= Math.max(b.open, b.close, b.low) && b.low <= Math.min(b.open, b.close)
-    && Array.isArray(b.cells) && b.cells.length <= 512 && b.cells.every((c: any) => [c.price, c.bidVol, c.askVol, c.bidNotional, c.askNotional].every(Number.isFinite) && c.bidVol >= 0 && c.askVol >= 0 && c.bidNotional >= 0 && c.askNotional >= 0);
+    && [b.quoteDelta, b.minQuoteDelta, b.maxQuoteDelta].every((value: unknown) => value === undefined || (typeof value === 'number' && Number.isFinite(value)))
+    && Array.isArray(b.cells) && b.cells.length <= 512 && b.cells.every((c: any) => [c.price, c.bidVol, c.askVol].every(Number.isFinite)
+      && [c.bidNotional, c.askNotional].every((value: unknown) => value === undefined || (typeof value === 'number' && Number.isFinite(value) && value >= 0))
+      && c.bidVol >= 0 && c.askVol >= 0);
 }
 
 /** Whole oldest bars are evicted; a historical response never overwrites a newer live bar. */

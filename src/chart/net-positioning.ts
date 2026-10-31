@@ -1,7 +1,7 @@
 import {candleGeometry} from 'openalgo-charts';
 import { netPositioningQuote } from '../feed/net-positioning';
 import type { QuantityCurrency } from '../currency-display';
-import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
+import type { IPrimitive, PriceScale, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import type { Candle } from '../feed/protocol';
 import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
 import { groupedSourceSlot, layoutNetPositioningSources, roundDprBoundary, type NetPositioningDisplay, type NetPositioningQuality } from './net-positioning-layout';
@@ -81,11 +81,38 @@ export class NetPositioningPane implements IPrimitive {
   private barsDrawn = 0;
   private patches = 0;
   private snapshots = 0;
+  private priceScale?: PriceScale;
+  private baseMarginTop = .1;
+  private appliedMarginTop = .1;
+  private renderedBaseline: { scaleY: number; strokeCenterY: number; dpr: number } | null = null;
 
   constructor(readonly id: string, side: NetPositioningSide, private columnGeometry=(x:number,spacing:number,dpr:number)=>{const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};}) { this.side = side; this.defaultColors = netPositioningSourceColors('dark', side); this.colors = { ...this.defaultColors }; }
   zOrder() { return 'normal' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
   detached() { this.host = undefined; }
+  setPriceScale(scale: PriceScale) {
+    this.priceScale = scale;
+    this.baseMarginTop = this.appliedMarginTop = scale.options.marginTop;
+    this.host?.requestUpdate();
+  }
+  afterAutoscale() {
+    const scale = this.priceScale;
+    if (!scale || !scale.autoScale || scale.height <= 0) return;
+    const range = this.autoscaleInfo();
+    if (!range) return;
+    const current = scale.options.marginTop;
+    if (Math.abs(current - this.appliedMarginTop) > .001) this.baseMarginTop = current;
+    const maximum = Math.min(.9, 1 - scale.options.marginBottom - .05);
+    const next = Math.max(this.baseMarginTop, Math.min(maximum, (PANE_HEADER_HEIGHT + 8) / scale.height));
+    this.appliedMarginTop = next;
+    if (Math.abs(current - next) <= .001) return;
+    scale.setOptions({ marginTop: next });
+    // setOptions only changes the margin configuration. Reapply the current
+    // primitive-owned autoscale bounds now so the axis and bars share the new
+    // range in this frame, including on a static chart.
+    scale.autoscale(range.min, range.max);
+    this.host?.requestUpdate();
+  }
   setColors(binance: string, hyperliquid: string) {
     this.defaultColors = { ...this.defaultColors, binance, hyperliquid };
     this.applyColors();
@@ -222,17 +249,22 @@ export class NetPositioningPane implements IPrimitive {
     this.drawCount++;
     this.barsDrawn = 0;
     this.geometry = [];
+    this.renderedBaseline = null;
     if (rc.plotWidth <= 0 || rc.plotHeight <= 0) return;
     const range = rc.timeScale.visibleRange();
     const from = Math.max(0, Math.floor(range.from) - 1);
     const to = Math.min(this.hostTimes.length, Math.ceil(range.to) + 1);
     const spacing = rc.timeScale.barSpacing;
-    const contentHeight = Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT);
-    const yForPrice = (price: number) => PANE_HEADER_HEIGHT + rc.priceScale.priceToY(price) * contentHeight / rc.plotHeight;
+    const yForPrice = (price: number) => rc.priceScale.priceToY(price);
     const baseline = yForPrice(0);
-    const dpr = rc.dpr;
+    const dpr = Number.isFinite(rc.dpr) && rc.dpr > 0 ? rc.dpr : 1;
+    const baselinePx = roundDprBoundary(baseline, dpr);
+    const baselineStrokeWidth = Math.max(1, Math.round(dpr));
+    const baselineStrokeCenterPx = baselinePx + (baselineStrokeWidth % 2 ? .5 : 0);
+    const zeroTopPx = baselineStrokeCenterPx - baselineStrokeWidth / 2;
+    this.renderedBaseline = { scaleY: baseline, strokeCenterY: baselineStrokeCenterPx / dpr, dpr };
     ctx.save();
-    ctx.beginPath(); ctx.rect(0, PANE_HEADER_HEIGHT * dpr, rc.plotWidth * dpr, contentHeight * dpr); ctx.clip();
+    ctx.beginPath(); ctx.rect(0, PANE_HEADER_HEIGHT * dpr, rc.plotWidth * dpr, Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT) * dpr); ctx.clip();
     ctx.font = `${9 * dpr}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
     ctx.textBaseline = 'top'; ctx.fillStyle = rc.theme?.axisText ?? '#aaa'; ctx.globalAlpha = .8;
     const health = this.error || this.venues.map(venue => `${venueShort(venue)} ${this.feeds[venue]?.state ?? 'starting'}${this.feeds[venue]?.stale ? ' · stale' : ''}`).join(' · ');
@@ -244,10 +276,9 @@ export class NetPositioningPane implements IPrimitive {
       }
       ctx.restore(); return;
     }
-    ctx.strokeStyle = rc.theme?.axisText ?? '#888'; ctx.globalAlpha = .35; ctx.lineWidth = dpr;
-    const baselinePx = roundDprBoundary(baseline, dpr);
-    ctx.beginPath(); ctx.moveTo(0, baselinePx + .5); ctx.lineTo(rc.plotWidth * dpr, baselinePx + .5); ctx.stroke();
-    const amountLabels: { text: string; x: number; y: number; color: string; alpha: number }[] = [];
+    ctx.strokeStyle = rc.theme?.axisText ?? '#888'; ctx.globalAlpha = .35; ctx.lineWidth = baselineStrokeWidth;
+    ctx.beginPath(); ctx.moveTo(0, baselineStrokeCenterPx); ctx.lineTo(rc.plotWidth * dpr, baselineStrokeCenterPx); ctx.stroke();
+    const amountLabels: { text: string; x: number; y: number; color: string; alpha: number; left: number; right: number; top: number; bottom: number }[] = [];
     for (let index = from; index < to; index++) {
       const timeMs = this.hostTimes[index]; if (timeMs === undefined) continue;
       const bar = this.candles.get(timeMs); if (!bar) continue;
@@ -266,6 +297,8 @@ export class NetPositioningPane implements IPrimitive {
         const topPx = Math.min(roundDprBoundary(yStart, dpr), roundDprBoundary(yEnd, dpr));
         const bottomPx = Math.max(roundDprBoundary(yStart, dpr), roundDprBoundary(yEnd, dpr));
         const leftPx = roundDprBoundary(left, dpr), rightPx = Math.max(leftPx + 1, roundDprBoundary(right, dpr));
+        const segmentTopPx = segment.sign === 'zero' ? zeroTopPx : topPx;
+        const segmentBottomPx = segment.sign === 'zero' ? zeroTopPx + baselineStrokeWidth : bottomPx;
         const hoverKey = `${venue}:${timeMs}`;
         const hovered = this.hovered?.sourceId === venue && this.hovered.timeMs === timeMs;
         const highlighted = this.highlightedSource ?? (rc.hoverKey?.startsWith('legend:') ? rc.hoverKey.slice('legend:'.length) as NetPositioningVenue : null);
@@ -274,19 +307,19 @@ export class NetPositioningPane implements IPrimitive {
         const partial = segment.quality === 'partial';
         ctx.fillStyle = color; ctx.globalAlpha = dimmed ? .2 : partial ? .62 : .9;
         if (segment.sign === 'zero') {
-          // A true observed zero gets a one-device-pixel tick; missing rows remain blank.
-          const zeroTop = baselinePx;
-          ctx.globalAlpha = dimmed ? .25 : .95; ctx.fillRect(leftPx, zeroTop, rightPx - leftPx, Math.max(1, Math.round(dpr)));
+          // A true observed zero gets a scale-aligned one-device-pixel tick; missing rows remain blank.
+          ctx.globalAlpha = dimmed ? .25 : .95; ctx.fillRect(leftPx, zeroTopPx, rightPx - leftPx, baselineStrokeWidth);
         } else if (bottomPx > topPx) {
           ctx.fillRect(leftPx, topPx, rightPx - leftPx, bottomPx - topPx);
         }
-        const top = topPx / dpr, bottom = bottomPx / dpr;
+        const top = segmentTopPx / dpr, bottom = segmentBottomPx / dpr;
         const geometry: SegmentGeometry = { sourceId: venue, timeMs, left:leftPx/dpr, top, right:rightPx/dpr, bottom, value: segment.value, quality: segment.quality, zero: segment.sign === 'zero' };
         this.geometry.push(geometry);
         const isHovered = hovered || rc.hoverKey === hoverKey;
         if (isHovered) {
           ctx.strokeStyle = rc.theme?.axisText ?? '#eee'; ctx.lineWidth = Math.max(1, dpr); ctx.globalAlpha = .9;
-          const inset = Math.max(.5, dpr / 2); ctx.strokeRect(leftPx + inset, topPx + inset, Math.max(0, rightPx - leftPx - inset * 2), Math.max(0, bottomPx - topPx - inset * 2));
+          const inset = Math.max(.5, dpr / 2); ctx.strokeRect(leftPx + inset, segmentTopPx + inset,
+            Math.max(0, rightPx - leftPx - inset * 2), Math.max(0, segmentBottomPx - segmentTopPx - inset * 2));
         }
         const labelText = Math.round(Math.abs(segment.value)).toLocaleString('en-US');
         const labelVisible = this.labels === 'auto' ? true : this.labels === 'hover' && isHovered;
@@ -296,17 +329,47 @@ export class NetPositioningPane implements IPrimitive {
           const textHeight = Math.max(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent, 12 * dpr);
           const ascent = Math.max(metrics.actualBoundingBoxAscent, 9 * dpr), descent = Math.max(metrics.actualBoundingBoxDescent, 3 * dpr);
           const sameSide = layout.segments.filter(item => item.sign === segment.sign);
-          const row = this.display === 'stacked' ? sameSide.indexOf(segment) : 0;
+          const row = Math.max(0, sameSide.indexOf(segment));
           const edge = this.display === 'stacked'
             ? roundDprBoundary(yForPrice(segment.sign === 'positive' ? layout.positiveTotal : layout.negativeTotal), dpr)
             : segment.sign === 'positive' ? topPx : bottomPx;
           const offset = 3 * dpr + row * (textHeight + 2 * dpr);
-          const y = segment.sign === 'positive' ? edge - offset - descent : edge + offset + ascent;
-          const textLeft = (leftPx + rightPx - metrics.width) / 2, textRight = textLeft + metrics.width;
+          const x = (leftPx + rightPx) / 2;
+          const textLeft = x - metrics.width / 2, textRight = x + metrics.width / 2;
           const healthRight = health ? ctx.measureText(health).width + 12 * dpr : 0;
           const topLimit = (PANE_HEADER_HEIGHT + (textLeft < healthRight ? 14 : 0)) * dpr;
-          if (metrics.width + 4 * dpr <= rightPx - leftPx && textLeft >= 0 && textRight <= rc.plotWidth * dpr && y - ascent >= topLimit && y + descent <= rc.plotHeight * dpr) {
-            amountLabels.push({ text: labelText, x: (leftPx + rightPx) / 2, y, color: netPositioningLabelColor(color, rc.theme?.background ?? '#090909'), alpha: dimmed ? .4 : 1 });
+          const bottomLimit = rc.plotHeight * dpr - 2 * dpr;
+          const cellWidth = Math.max(spacing, groupWidth) * dpr;
+          const cellLeft = centre * dpr - cellWidth / 2, cellRight = centre * dpr + cellWidth / 2;
+          // The visible candle cell includes the wick and body gutters, so a
+          // compact amount can fit even when the painted body is only ~24px.
+          if (metrics.width <= cellWidth && textLeft >= Math.max(0, cellLeft) && textRight <= Math.min(rc.plotWidth * dpr, cellRight)
+            && bottomLimit - topLimit >= ascent + descent) {
+            const outsideY = segment.sign === 'positive' ? edge - offset - descent : edge + offset + ascent;
+            const visibleTop = Math.max(topPx, topLimit), visibleBottom = Math.min(bottomPx, bottomLimit);
+            const insideY = (visibleTop + visibleBottom) / 2 + (ascent - descent) / 2;
+            const clampY = Math.max(topLimit + ascent, Math.min(bottomLimit - descent, outsideY));
+            const rowStep = textHeight + 2 * dpr;
+            const candidateYs = [outsideY];
+            if (visibleBottom - visibleTop >= textHeight + 2 * dpr) candidateYs.push(insideY);
+            candidateYs.push(clampY);
+            for (let shift = 1; shift <= 3; shift++) candidateYs.push(clampY + rowStep * shift, clampY - rowStep * shift);
+            const seenYs = new Set<number>();
+            for (const candidateY of candidateYs) {
+              if (seenYs.has(candidateY)) continue;
+              seenYs.add(candidateY);
+              const labelTop = candidateY - ascent, labelBottom = candidateY + descent;
+              if (labelTop < topLimit || labelBottom > bottomLimit) continue;
+              const overlaps = amountLabels.some(label => textLeft < label.right + 2 * dpr && textRight > label.left - 2 * dpr
+                && labelTop < label.bottom + 2 * dpr && labelBottom > label.top - 2 * dpr);
+              if (overlaps) continue;
+              const overBar = textLeft < rightPx && textRight > leftPx && labelTop < bottomPx && labelBottom > topPx;
+              const labelBackground = rc.theme?.background ?? '#090909';
+              const labelColor = overBar ? netPositioningTextColor(color, labelBackground) : netPositioningLabelColor(color, labelBackground);
+              amountLabels.push({ text: labelText, x, y: candidateY, color: labelColor,
+                alpha: dimmed ? .4 : 1, left: textLeft, right: textRight, top: labelTop, bottom: labelBottom });
+              break;
+            }
           }
         }
         this.barsDrawn++;
@@ -396,6 +459,7 @@ export class NetPositioningPane implements IPrimitive {
     return { currency: this.currency, mounted: Boolean(this.host), side: this.side, method: this.method, venues: [...this.venues], candleCount: this.candles.size,
       visibleDraws: this.drawCount, visibleBarsDrawn: this.barsDrawn, sourcePatches: this.patches, snapshots: this.snapshots,
       display: this.display, labels: this.labels, visibleScaleBars: this.hostTimes.slice(Math.max(0, Math.floor(this.visibleFrom)), Math.min(this.hostTimes.length, Math.ceil(this.visibleTo))).filter(time => this.candles.has(time)).length,
+      renderedBaseline: this.renderedBaseline ? { ...this.renderedBaseline } : null,
       visibleScaleMinBtc: this.visibleMin, visibleScaleMaxBtc: this.visibleMax, maxAbsBtc: Math.max(Math.abs(this.visibleMin), Math.abs(this.visibleMax)),
       feeds: Object.fromEntries(this.venues.map(venue => [venue, this.feeds[venue] ?? null])),
       unitVerification: Object.fromEntries(this.venues.map(venue => [venue, this.unitVerification[venue] ?? null])),

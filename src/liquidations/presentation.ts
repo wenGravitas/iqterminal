@@ -3,7 +3,8 @@ import type {LiquidationEvent} from './model';
 import type {LiquidationBatch} from './protocol';
 import type {LiquidationSettings} from './settings';
 import type {Notifications} from '../notifications';
-export const liquidationTime=(time:number)=>new Date(time).toISOString().slice(11,23);
+import { formatTickerTime } from '../timezone';
+export const liquidationTime=(time:number,timezone='UTC')=>formatTickerTime(time,timezone);
 export {liquidationColour}from './colors';
 export function liquidationText(e:LiquidationEvent){return `${new Date(e.timeMs).toISOString()} · ${e.venue.toUpperCase()} · ${e.liquidatedSide} liquidation · forced ${e.forcedDirection} · ${e.quoteNotional===null?'Unknown':compactSize(e.quoteNotional)} USDT · ${e.reportedPriceText} (${e.priceType}) · ${e.reportingCoverage}${e.venue==='binance'?' · cumulative order snapshot; no unique order ID':''}`;}
 export function burstText(b:LiquidationBatch['bursts'][number]){return `${b.side} LIQUIDATION BURST · ${compactSize(b.notional)} USDT · ${Math.max(1,Math.round((b.to-b.from)/1000))}s · ${Object.keys(b.venues).length} venue${Object.keys(b.venues).length===1?'':'s'}${b.venues.binance!==undefined?' · BN cumulative snapshots may overlap':''}`;}

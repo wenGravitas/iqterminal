@@ -7,7 +7,8 @@ const pin: StudyPin = { attachmentId: 'ema20', scriptId: 'builtin.ema', revision
 const legacy = { venue: 'binance', interval: '1m', type: 'footprint', rowPrice: 25, footprintUnits: 'usdt', footprint: { opacity: .35, displayMode: 'delta' }, heatmap: { enabled: true, opacity: .65, mode: 'peak' }, studies: [pin], unrelated: { preserved: true } };
 describe('unified indicator configuration', () => {
   it('registers Footprint Totals as an independent pane and preserves selected rows through reload', () => {
-    expect(footprintTotalsSettings({})).toEqual({ rows: ['volume', 'bidVolume', 'askVolume', 'delta'], highlightHighest: false });
+    expect(footprintTotalsSettings({})).toEqual({ rows: ['volume', 'bidVolume', 'askVolume', 'delta'], highlightHighest: false,
+      highlightDeltaFlips: false, deltaFlipTarget: 'delta-cell', deltaFlipLookback: 50, deltaFlipMinimumStrength: .25, showDeltaFlipLivePreview: true });
     const totals = nativeInstance(FOOTPRINT_TOTALS_ID, { rows: ['volume', 'deltaPct', 'trades', 'bad'], highlightHighest: true });
     const saved = config({ ...legacy, indicators: [totals] });
     expect(saved.indicators[0]).toMatchObject({ definitionId: FOOTPRINT_TOTALS_ID, placement: 'pane', visible: true,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { COMPOSITION_SMA_ID, nativeInstance, validateInstances } from '../src/indicators/model';
-import { applyCompositionPlotPresentation, compositionPlotId, compositionScaleId, compositionSmaSettings, migrateComposition, numericOutputContextId, numericOutputRef, reconcileCompositionPaneMembership, type NumericOutputDescriptor } from '../src/scripts/composition';
+import { applyCompositionPlotPresentation, compositionPlotId, compositionScaleId, compositionSmaSettings, migrateComposition, numericOutputContextId, numericOutputRef, outputUnitForPlot, reconcileCompositionPaneMembership, type NumericOutputDescriptor } from '../src/scripts/composition';
 
 const provider = { instanceId: 'volume-study', paneId: 'composition:volume-study', placement: 'pane' as const,
   definitionId: 'script:builtin.volume-histogram', visible: true, plotScaleIds: { p0: 'overlay:btc-volume' as const },
@@ -47,13 +47,13 @@ describe('composition config migration and SMA instances', () => {
   it('keeps one logical scale ID when dependent plots occupy different panes', () => {
     const ref = numericOutputRef(output());
     const sma = nativeInstance(COMPOSITION_SMA_ID, { length: 20, color: '#63c7b2', source: { kind: 'indicator', instanceId: provider.instanceId, plotKey: 'p0' } }, true,
-      { instanceId: 'sma-volume', placement: 'overlay', paneId: '@price', numericInputs: { source: ref }, plotScaleIds: { p0: ref.scaleId } });
+      { instanceId: 'sma-volume', placement: 'overlay', paneId: '@price', numericInputs: { source: ref }, plotScaleIds: { p0: output().scaleId } });
     const state = migrateComposition({ version: 1, panes: [], embeddedBands: [
       { id: 'band:sma-volume', title: 'Volume', memberIds: [sma.instanceId], heightPercent: 20 },
     ] }, [provider, sma]);
-    expect(state.plots.map(plot => plot.scaleId)).toEqual([compositionScaleId(ref.scaleId), compositionScaleId(ref.scaleId)]);
+    expect(state.plots.map(plot => plot.scaleId)).toEqual([compositionScaleId(output().scaleId), compositionScaleId(output().scaleId)]);
     expect(state.plots.map(plot => plot.paneId)).toEqual([provider.paneId, '@price']);
-    expect(state.scales).toMatchObject([{ scaleId: compositionScaleId(ref.scaleId), engineScaleId: ref.scaleId,
+    expect(state.scales).toMatchObject([{ scaleId: compositionScaleId(output().scaleId), engineScaleId: output().scaleId,
       unit: 'BTC', policy: 'zero-based', bandMemberships: [{ paneId: '@price', bandId: 'band:sma-volume' }] }]);
   });
 
@@ -93,15 +93,41 @@ describe('composition config migration and SMA instances', () => {
 
   it('bounds calculation/display settings and permits multiple SMA instances with distinct refs', () => {
     expect(compositionSmaSettings({ length: 5000, color: 'red', source: { kind: 'indicator', instanceId: 'volume-study', plotKey: 'p0' } }))
-      .toEqual({ length: 250, color: '#63c7b2', source: { kind: 'indicator', instanceId: 'volume-study', plotKey: 'p0' } });
+      .toEqual({ length: 250, color: '#63c7b2' });
     const ref = numericOutputRef(output());
     const first = nativeInstance(COMPOSITION_SMA_ID, { length: 20, color: '#63c7b2', source: { kind: 'indicator', instanceId: ref.instanceId, plotKey: ref.plotKey } }, true,
-      { instanceId: 'sma-volume-20', placement: 'pane', paneId: provider.paneId, numericInputs: { source: ref }, plotScaleIds: { p0: ref.scaleId } });
+      { instanceId: 'sma-volume-20', placement: 'pane', paneId: provider.paneId, numericInputs: { source: ref }, plotScaleIds: { p0: output().scaleId } });
     const second = { ...first, instanceId: 'sma-volume-50', settings: { ...first.settings, length: 50 } };
     expect(validateInstances([first, second])).toHaveLength(2);
     expect(validateInstances(JSON.parse(JSON.stringify([first, second])))).toMatchObject([
-      { instanceId: first.instanceId, numericInputs: { source: { instanceId: provider.instanceId, scaleId: ref.scaleId } }, placement: 'pane', paneId: provider.paneId },
+      { instanceId: first.instanceId, numericInputs: { source: { instanceId: provider.instanceId, contextId: ref.contextId, unit: 'BTC' } }, placement: 'pane', paneId: provider.paneId },
       { instanceId: second.instanceId, settings: { length: 50 } },
     ]);
   });
+
+  it('keeps legacy source scales as presentation while normalizing references and treats generic format as unknown units', () => {
+    const descriptor = output();
+    const legacy = { ...numericOutputRef(descriptor), scaleId: descriptor.scaleId };
+    const saved = { instanceId: 'legacy-sma', definitionId: COMPOSITION_SMA_ID, settingsVersion: 1, visible: true,
+      source: { kind: 'chart' }, placement: 'pane', settings: { length: 20, color: '#63c7b2' }, numericInputs: { source: legacy } };
+    const [restored] = validateInstances([saved]);
+    expect(restored?.numericInputs?.source).not.toHaveProperty('scaleId');
+    expect(restored?.plotScaleIds?.p0).toBe(descriptor.scaleId);
+    expect(outputUnitForPlot('local.script', { key: 'p0', priceFormat: 'volume' }, { meta: {}, inputs: [] }, {}, seriesForTest())).toBeNull();
+    expect(outputUnitForPlot('builtin.volume-histogram', { key: 'p0', priceFormat: 'price' }, { meta: {}, inputs: [] }, {}, seriesForTest())).toBe('BTC');
+  });
+
+  it('keeps logical output contexts stable across timeframes and migrates R1 interval-qualified references', () => {
+    const oneMinute = numericOutputContextId({ venue: 'binance', market: 'perpetual', interval: '1m' });
+    const fifteenMinute = numericOutputContextId({ venue: 'binance', market: 'perpetual', interval: '15m' });
+    expect(oneMinute).toBe('binance:perpetual:BTCUSDT');
+    expect(fifteenMinute).toBe(oneMinute);
+    const ref = { ...numericOutputRef(output()), contextId: `${oneMinute}:1m` };
+    const restored = validateInstances([nativeInstance(COMPOSITION_SMA_ID, { length: 20, color: '#63c7b2', source: { kind: 'indicator', instanceId: ref.instanceId, plotKey: ref.plotKey } }, true,
+      { instanceId: 'legacy-timeframe-sma', numericInputs: { source: ref } })])[0];
+    expect(restored?.numericInputs?.source?.contextId).toBe(oneMinute);
+    expect(restored?.settings).not.toHaveProperty('source');
+  });
 });
+
+function seriesForTest() { return { venue: 'binance', market: 'perpetual', interval: '1m' } as const; }

@@ -1,4 +1,4 @@
-export type HistoryLayer = 'footprint' | 'heatmap' | 'cvd' | 'liquidations';
+export type HistoryLayer = 'footprint' | 'heatmap' | 'cvd' | 'liquidations' | 'comparison';
 type Consumer<T> = {resolve:(value:T)=>void;reject:(reason:unknown)=>void;signal:AbortSignal;cancel:()=>void};
 type Work<T> = {key:string;layer:HistoryLayer;priority:number;queued:number;abort:AbortController;run:(signal:AbortSignal)=>Promise<T>;consumers:Set<Consumer<T>>;started?:number};
 /** Shared admission for history reads. Equal-priority layers alternate; cancelling

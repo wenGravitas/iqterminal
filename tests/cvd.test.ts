@@ -1,6 +1,7 @@
 import {describe,it,expect,vi,afterEach}from 'vitest';
 import {cvdSettings,cvdAnchorAt,CVD_STEP as M,CvdCalculation,cvdValues,validateCvdPayload,type CvdPayload,type CvdRequest}from '../src/feed/cvd';
-import {compactCvd,CvdPlotModel}from '../src/chart/cvd-model';
+import {compactCvd,CvdPlotModel,cvdNumericPlotKey}from '../src/chart/cvd-model';
+import {fullWindowSmaRange} from '../src/scripts/composition';
 import {CvdService}from '../src/feed/cvd-service';
 import {parseBinanceAggTrade,parseBinanceSpotAggTrade}from '../src/feed/footprint';
 import {validateInstances,nativeInstance}from '../src/indicators/model';
@@ -85,6 +86,32 @@ describe('executed flow CVD',()=>{
    expect(plot.value('total')?.value).toBe(80);expect(plot.lines.get('mix')?.filtered).toBe(true);
    plot.derive(settings,'usdt');expect(plot.value('total')?.value).toBe(2400);
  });
+ it('projects stable BTC and executed-notional outputs onto host candles without future sampling',()=>{
+   const plot=new CvdPlotModel(),calc=new CvdCalculation(request()),history=payload([100,-40,20],{asOf:day+150000});
+   calc.apply(history);
+   const spot={source:'binance:spot' as const,points:calc.snapshot(),snapshot:true,removeBefore:day,coverage:history.coverage,status:'live' as const,message:'',asOf:history.asOf};
+   const perpetual={...spot,source:'binance:perpetual' as const,points:spot.points.map(point=>({...point,base:point.base*2,quote:point.quote*2}))};
+   plot.update(spot);plot.update(perpetual);
+   const settings=cvdSettings({sources:['binance:spot','binance:perpetual'],groups:[{id:'core',name:'BTC core',markets:['binance:spot','binance:perpetual'],revision:1}]});
+   const forming=[{t:day,o:1,h:1,l:1,c:1,v:0,revision:1,closed:false}];
+   const projected=plot.projectNumericOutputs(settings,forming,5*M,day+150000);
+   expect(projected.find(output=>output.plotKey==='cvdTotalBtc')?.values).toEqual([240]);
+   expect(projected.find(output=>output.plotKey==='cvdTotalUsdt')?.values).toEqual([2400]);
+   expect(projected.map(output=>output.plotKey)).toEqual(expect.arrayContaining(['cvdVenueBinanceSpotBtc','cvdVenueBinanceSpotUsdt',cvdNumericPlotKey('group:core','BTC'),cvdNumericPlotKey('group:core','USDT')]));
+   expect(projected.every(output=>output.values.length===forming.length&&output.quality==='complete')).toBe(true);
+   const changedMode=plot.projectNumericOutputs(cvdSettings({...settings,mode:'aggregations',hidden:['total'],units:'usdt'}),forming,5*M,day+150000);
+   expect(changedMode.map(output=>output.plotKey)).toEqual(projected.map(output=>output.plotKey));
+   expect(changedMode.find(output=>output.plotKey==='cvdTotalBtc')?.values).toEqual([240]);
+   const closed=[{...forming[0]!,closed:true}],closedAtTwoMinutes=plot.projectNumericOutputs(settings,closed,2*M,day+120000);
+   expect(closedAtTwoMinutes.find(output=>output.plotKey==='cvdTotalBtc')?.values).toEqual([180]);
+   expect(closedAtTwoMinutes.find(output=>output.plotKey==='cvdTotalUsdt')?.values).toEqual([1680]);
+   const gapTimeline=[{...forming[0]!,closed:true},{...forming[0]!,t:day+M,closed:true},{...forming[0]!,t:day+5*M,closed:true},
+     {...forming[0]!,t:day+6*M,closed:true},{...forming[0]!,t:day+7*M,closed:true}];
+   const afterGap=plot.projectNumericOutputs(settings,gapTimeline,M,day+8*M).find(output=>output.plotKey==='cvdTotalBtc')!;
+   expect(afterGap.quality).toBe('partial');expect(afterGap.resets.some(reset=>reset.fromTime===day+5*M)).toBe(true);
+   const sma=fullWindowSmaRange(afterGap.values,2,0,afterGap.values.length,gapTimeline.map(candle=>candle.t),afterGap.resets);
+   expect(sma[2]).toBeNull();expect(sma[3]).toBe((afterGap.values[2]!+afterGap.values[3]!)/2);
+ });
  it('retains stale contributions in the total and marks later combined samples incomplete',()=>{
    const plot=new CvdPlotModel(),calc=new CvdCalculation(request());calc.apply(payload([100,-40,20]));
    plot.update({source,points:calc.snapshot().slice(0,1),snapshot:true,removeBefore:day,coverage:{from:day,to:day+M,gaps:[]},status:'stale',message:'disconnect',asOf:day+3*M});
@@ -151,6 +178,74 @@ describe('shared CVD worker service',()=>{
    const service=new CvdService({},e=>events.push(e),true,requestFn as any,()=>day+3*M);
    service.subscribe('empty',request({sources:[]}));await vi.advanceTimersByTimeAsync(500);expect(requestFn).not.toHaveBeenCalled();
    service.subscribe('one',request({sources:[source]}));await vi.advanceTimersByTimeAsync(20);
-   expect(events.at(-1)?.series[0]).toMatchObject({status:'unavailable',points:[]});expect(service.diagnostics().fixture).toBe(false);service.dispose();
+   expect(events.at(-1)?.series[0]).toMatchObject({status:'unavailable',points:[],asOf:0});expect(service.diagnostics().fixture).toBe(false);service.dispose();
+ });
+ it('normalizes duplicate incomplete-history errors and keeps last data time through failed retries',async()=>{
+   vi.useFakeTimers();let now=day+3*M;
+   const responses:any[]=[new Response(''),{ok:true,status:200,text:async()=>'   '}];
+   const fetcher=vi.fn(async()=>responses.shift()),events:any[]=[];
+   const service=new CvdService({},event=>events.push(event),true,fetcher as any,()=>now);
+   const ack=(event:any)=>service.ack(event.ids[0],event.generation,event.batchId);
+   try{
+     service.subscribe('one',request({sources:[source]}));await vi.advanceTimersByTimeAsync(20);
+     expect(events).toHaveLength(1);
+     expect(events[0].series[0]).toMatchObject({status:'unavailable',message:'Signed history unavailable: Incomplete JSON response',asOf:0});
+     ack(events[0]);now+=5000;await vi.advanceTimersByTimeAsync(5000);
+     expect(fetcher).toHaveBeenCalledTimes(2);expect(events).toHaveLength(1);
+   }finally{service.dispose();}
+ });
+ it('keeps the HTTP status when a failed history response has no JSON body',async()=>{
+   vi.useFakeTimers();const events:any[]=[],fetcher=vi.fn(async()=>new Response('',{status:502}));
+   const service=new CvdService({},event=>events.push(event),true,fetcher as any,()=>day+3*M);
+   try{
+     service.subscribe('one',request({sources:[source]}));await vi.advanceTimersByTimeAsync(20);
+     expect(events.at(-1)?.series[0]).toMatchObject({status:'unavailable',message:'Signed history unavailable: Execution history HTTP 502',asOf:0});
+   }finally{service.dispose();}
+ });
+ it('lets a slow full snapshot finish while delta timeouts and cancellation stay bounded',async()=>{
+   vi.useFakeTimers();vi.setSystemTime(day+3*M);
+   const events:any[]=[],timeouts:number[]=[],signals:AbortSignal[]=[];
+   const timeoutSpy=vi.spyOn(AbortSignal,'timeout').mockImplementation((milliseconds:number)=>{
+     timeouts.push(milliseconds);const controller=new AbortController();
+     setTimeout(()=>controller.abort(new DOMException('The operation timed out','TimeoutError')),milliseconds);
+     return controller.signal;
+   });
+   const wait=(signal:AbortSignal|null|undefined,milliseconds:number)=>new Promise<void>((resolve,reject)=>{
+     const finish=()=>{signal?.removeEventListener('abort',cancel);resolve();};
+     const cancel=()=>{clearTimeout(timer);signal?.removeEventListener('abort',cancel);reject(signal?.reason??new DOMException('Aborted','AbortError'));};
+     const timer=setTimeout(finish,milliseconds);
+     if(signal?.aborted)cancel();else signal?.addEventListener('abort',cancel,{once:true});
+   });
+   const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{
+     const signal=init?.signal??undefined;signals.push(signal as AbortSignal);
+     const since=Number(new URL(url,'http://localhost').searchParams.get('since'));
+     if(since===0){await wait(signal,40_000);return new Response(JSON.stringify(payload([100])));}
+     return new Promise<Response>((_resolve,reject)=>{
+       const cancel=()=>reject(signal?.reason??new DOMException('Aborted','AbortError'));
+       if(signal?.aborted)cancel();else signal?.addEventListener('abort',cancel,{once:true});
+     });
+   });
+   const service=new CvdService({},event=>events.push(event),true,fetcher as any,Date.now);
+   const acknowledge=(event:any)=>service.ack(event.ids[0],event.generation,event.batchId);
+   try{
+     service.subscribe('slow-history',request({sources:[source]}));
+     await vi.advanceTimersByTimeAsync(39_999);
+     expect(fetcher).toHaveBeenCalledTimes(1);expect(events).toHaveLength(0);expect(timeouts).toEqual([60_000]);
+     await vi.advanceTimersByTimeAsync(1);
+     expect(events.at(-1)?.series[0]).toMatchObject({status:'live'});acknowledge(events.at(-1));
+
+     await vi.advanceTimersByTimeAsync(1_000);
+     expect(fetcher).toHaveBeenCalledTimes(2);expect(timeouts).toEqual([60_000,25_000]);
+     const timedDelta=signals.at(-1)!;
+     await vi.advanceTimersByTimeAsync(25_000);
+     expect(timedDelta.aborted).toBe(true);expect(events.at(-1)?.series[0].status).toBe('stale');acknowledge(events.at(-1));
+
+     const beforeCancellation=events.length;
+     await vi.advanceTimersByTimeAsync(5_000);
+     expect(fetcher).toHaveBeenCalledTimes(3);expect(timeouts).toEqual([60_000,25_000,25_000]);
+     const cancelledRetry=signals.at(-1)!;
+     service.unsubscribe('slow-history');
+     expect(cancelledRetry.aborted).toBe(true);await Promise.resolve();expect(events).toHaveLength(beforeCancellation);
+   }finally{service.dispose();timeoutSpy.mockRestore();}
  });
 });

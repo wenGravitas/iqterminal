@@ -22,6 +22,7 @@ export class LiquidationControls {
   this.number(this.fields,'Minimum displayed liquidation size',s.minimum,0,1e12,v=>s.minimum=v);
   this.select(this.fields,'Liquidation display unit',s.units,['USDT','BTC'],v=>s.units=v as typeof s.units);
   this.toggle(this.fields,'Mute liquidation alerts',s.muted,v=>s.muted=v);
+  if(this.kind==='ticker')this.toggle(this.fields,'Show bursts in tape',s.showBursts,v=>s.showBursts=v);
   if(this.kind==='chart'){
    this.toggle(this.fields,'Show venue legend',s.legend,v=>s.legend=v);
    this.toggle(this.fields,'Show liquidations on price chart',s.markers,v=>s.markers=v);

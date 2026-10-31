@@ -1,4 +1,9 @@
-import type { Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
+export async function expectHeatmapLiveQuiet(panel: Locator) {
+  const notice = panel.locator('.heatmap-notice');
+  await expect(notice).toHaveAttribute('data-state', 'live');
+  await expect(notice).toBeHidden();
+}
 export async function addIndicator(panel: Locator, name: string) {
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
   await panel.getByRole('button', { name: `Add ${name}`, exact: true }).click();

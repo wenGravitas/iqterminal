@@ -76,6 +76,7 @@ export class MarketPulseController {
   private timelineStart = 0;
   private timelineEnd = 0;
   private timelineRefreshAt = 0;
+  private dismissExternalPopover?: () => void;
   private readonly abort = new AbortController();
 
   constructor() {
@@ -131,6 +132,11 @@ export class MarketPulseController {
 
   isOpen() { return !this.popover.hidden; }
 
+  setExternalPopoverDismiss(dismiss: () => void) { this.dismissExternalPopover = dismiss; }
+
+  /** Lets a sibling footer popover close Market Pulse without changing focus. */
+  dismissForOtherPopup() { this.close(false); }
+
   private buildStatusNodes() {
     this.timelineLabels.replaceChildren();
     for (const id of MARKET_ORDER) {
@@ -169,6 +175,7 @@ export class MarketPulseController {
   }
 
   private open() {
+    this.dismissExternalPopover?.();
     this.popover.hidden = false;
     this.trigger.setAttribute('aria-expanded', 'true');
     this.refreshSchedule(Date.now(), true);

@@ -1,0 +1,249 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "-c",
+      "playwright.r2.dev.config.ts",
+      "tests/browser/pane-indicator-headers.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.dev.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4176",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4176",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-pane-header-fix.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --host 127.0.0.1 --port 4176",
+      "url": "http://127.0.0.1:4176",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "pane-indicator-headers.spec.ts",
+      "file": "pane-indicator-headers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "pane indicators use one local header while overlays stay in the main list",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22783,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.indicator-title-tooltip')\nExpected substring: \u001b[32m\"selected volume figures\"\u001b[39m\nError: strict mode violation: locator('.indicator-title-tooltip') resolved to 2 elements:\n    1) <div role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-53cfdf68-aa77-486a-8927-5e2d21a63206\">Shows the selected volume figures for each candle…</div> aka getByRole('tooltip', { name: 'Shows the selected volume' })\n    2) <div hidden=\"\" role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f\"></div> aka locator('#indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.indicator-title-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.indicator-title-tooltip')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.indicator-title-tooltip')\nExpected substring: \u001b[32m\"selected volume figures\"\u001b[39m\nError: strict mode violation: locator('.indicator-title-tooltip') resolved to 2 elements:\n    1) <div role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-53cfdf68-aa77-486a-8927-5e2d21a63206\">Shows the selected volume figures for each candle…</div> aka getByRole('tooltip', { name: 'Shows the selected volume' })\n    2) <div hidden=\"\" role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f\"></div> aka locator('#indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.indicator-title-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.indicator-title-tooltip')\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/pane-indicator-headers.spec.ts:105:58",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/pane-indicator-headers.spec.ts",
+                      "column": 58,
+                      "line": 105
+                    },
+                    "snippet": "  103 |   await expect(collapsedTotals.locator('.pane-layout-controls-inline').getByRole('button', { name: `Expand pane ${totalsIndex + 1}`, exact: true })).toBeVisible();\n  104 |   await collapsedTotalsRow.getByRole('button', { name: 'About Footprint Totals', exact: true }).click();\n> 105 |   await expect(page.locator('.indicator-title-tooltip')).toContainText('selected volume figures');\n      |                                                          ^\n  106 |   await page.keyboard.press('Escape');\n  107 |   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, false), totalsIndex);\n  108 |   await expect(paneRows).toHaveCount(3);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/pane-indicator-headers.spec.ts",
+                        "column": 58,
+                        "line": 105
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.indicator-title-tooltip')\nExpected substring: \u001b[32m\"selected volume figures\"\u001b[39m\nError: strict mode violation: locator('.indicator-title-tooltip') resolved to 2 elements:\n    1) <div role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-53cfdf68-aa77-486a-8927-5e2d21a63206\">Shows the selected volume figures for each candle…</div> aka getByRole('tooltip', { name: 'Shows the selected volume' })\n    2) <div hidden=\"\" role=\"tooltip\" class=\"indicator-title-tooltip\" id=\"indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f\"></div> aka locator('#indicator-title-tooltip-03c8ed9b-cc24-46c9-aee0-445b000f308f')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.indicator-title-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.indicator-title-tooltip')\u001b[22m\n\n\n  103 |   await expect(collapsedTotals.locator('.pane-layout-controls-inline').getByRole('button', { name: `Expand pane ${totalsIndex + 1}`, exact: true })).toBeVisible();\n  104 |   await collapsedTotalsRow.getByRole('button', { name: 'About Footprint Totals', exact: true }).click();\n> 105 |   await expect(page.locator('.indicator-title-tooltip')).toContainText('selected volume figures');\n      |                                                          ^\n  106 |   await page.keyboard.press('Escape');\n  107 |   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, false), totalsIndex);\n  108 |   await expect(paneRows).toHaveCount(3);\n    at /home/daz/workarea/iqterminal/tests/browser/pane-indicator-headers.spec.ts:105:58"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:16:29.836Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/pane-indicator-headers-pan-1778c-rlays-stay-in-the-main-list/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/pane-indicator-headers.spec.ts",
+                    "column": 58,
+                    "line": 105
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-3e9c68102a22becfa688",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26754,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T13:16:56.704Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-05c33e22f7ccd8799ec7",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 207,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T13:16:24.722Z",
+    "duration": 61490.266,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

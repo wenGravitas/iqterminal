@@ -1,0 +1,2155 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.config.ts",
+      "tests/browser/composition-engine.spec.ts",
+      "tests/browser/composition-release1.spec.ts",
+      "tests/browser/composition-hardening.spec.ts",
+      "tests/browser/composition-pane-resolver.spec.ts",
+      "tests/browser/composition-orphan-pane.spec.ts",
+      "tests/browser/pane-indicator-headers.spec.ts",
+      "tests/browser/pane-visibility-lifecycle.spec.ts",
+      "tests/browser/object-tree.spec.ts",
+      "tests/browser/drawing-sidebar.spec.ts",
+      "tests/browser/drawing-tools.spec.ts",
+      "tests/browser/cvd.spec.ts",
+      "tests/browser/heatmap.spec.ts",
+      "tests/browser/footprint-presentation.spec.ts",
+      "tests/browser/footprint-totals.spec.ts",
+      "tests/browser/tpo.spec.ts",
+      "tests/browser/order-walls-ui.spec.ts",
+      "tests/browser/market-comparison-engine.spec.ts",
+      "tests/browser/market-comparison-fixture.spec.ts",
+      "tests/browser/order-flow-pane.spec.ts",
+      "tests/browser/open-interest-sma.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-final-regressions.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --host 127.0.0.1 --port 4175 --outDir /tmp/iqterminal-pane-r2-dist",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "composition-engine.spec.ts",
+      "file": "composition-engine.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "OpenAlgo 2.6 keeps declared study-output dependencies live in a shared pane",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3537,
+                  "error": {
+                    "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js",
+                    "stack": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n    at /home/daz/workarea/iqterminal/tests/browser/composition-engine.spec.ts:10:29",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/composition-engine.spec.ts",
+                      "column": 29,
+                      "line": 10
+                    },
+                    "snippet": "   8 | test('OpenAlgo 2.6 keeps declared study-output dependencies live in a shared pane', async ({ page }) => {\n   9 |   await page.goto('/?fixture=1');\n> 10 |   const result = await page.evaluate(async () => {\n     |                             ^\n  11 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  12 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');\n  13 |     const { createChart, registerIndicator, sourceValues } = charts;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/composition-engine.spec.ts",
+                        "column": 29,
+                        "line": 10
+                      },
+                      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n\n   8 | test('OpenAlgo 2.6 keeps declared study-output dependencies live in a shared pane', async ({ page }) => {\n   9 |   await page.goto('/?fixture=1');\n> 10 |   const result = await page.evaluate(async () => {\n     |                             ^\n  11 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  12 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');\n  13 |     const { createChart, registerIndicator, sourceValues } = charts;\n    at /home/daz/workarea/iqterminal/tests/browser/composition-engine.spec.ts:10:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:25:24.666Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/composition-engine-OpenAlg-2f8d1-ncies-live-in-a-shared-pane/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/composition-engine.spec.ts",
+                    "column": 29,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "18c0aa0aa96cff9d36c8-3f9283b310ba664c47c4",
+          "file": "composition-engine.spec.ts",
+          "line": 8,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-hardening.spec.ts",
+      "file": "composition-hardening.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "editing a moved SMA preserves its output and pane; an unavailable saved source stays open on Apply",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17744,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:25:31.246Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e671ae2d554cbc8f05f7-e7af3599a4ccbd1623a3",
+          "file": "composition-hardening.spec.ts",
+          "line": 22,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-orphan-pane.spec.ts",
+      "file": "composition-orphan-pane.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "managed pane cleanup trace reports every remaining occupant before provider removal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8374,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "ORPHAN PANE BEFORE PROVIDER REMOVAL {\"beforeSmaRemoval\":{\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]},{\"index\":1,\"primary\":false,\"elementClass\":\"\",\"connected\":true,\"indicators\":[{\"id\":\"iq-script-slot-0-1\",\"paneIndex\":1},{\"id\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"paneIndex\":1}],\"objects\":[{\"id\":\"indicator:iq-script-slot-0-1\",\"kind\":\"indicator\"},{\"id\":\"indicator:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"kind\":\"indicator\"},{\"id\":\"custom:script-study-study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"kind\":\"indicator\"}],\"drawings\":[],\"managedMembers\":[{\"id\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"definitionId\":\"native.composition-sma\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"paneIndex\":1},{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"paneIndex\":1}]}],\"composition\":{\"version\":1,\"panes\":[{\"id\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"title\":\"SMA 20 · Volume\",\"memberIds\":[\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\"],\"order\":1,\"weight\":0.32,\"collapsed\":false}],\"embeddedBands\":[],\"plots\":[{\"plotId\":\"plot:output:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed:p0\",\"producerInstanceId\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"scaleId\":\"scale:1olbtaz\",\"visible\":true,\"order\":0},{\"plotId\":\"plot:output:study-b22ecefd-1c82-47a0-b4df-82cc9290b90b:p0\",\"producerInstanceId\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"scaleId\":\"scale:1olbtaz\",\"visible\":true,\"order\":8}],\"scales\":[{\"scaleId\":\"scale:1olbtaz\",\"engineScaleId\":\"overlay:iq-lwjnt2\",\"unit\":\"BTC\",\"policy\":\"zero-based\",\"bandMemberships\":[]}],\"opaqueLegacyPanes\":[]},\"indicators\":[{\"id\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"definitionId\":\"native.composition-sma\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\"},{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\"}],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":1,\"workers\":1,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":5,\"listenerCalls\":11,\"dataListenerCalls\":1,\"uiListenerCalls\":10,\"workers\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"patchCalls\":0,\"patchRows\":0,\"historyCalls\":1,\"historyRows\":5000,\"messagesSent\":1,\"historyMessagesSent\":1,\"patchMessagesSent\":0,\"resultMessages\":2,\"resultRows\":10000,\"queued\":null,\"generation\":2,\"alive\":true}]},\"numericOutputs\":{\"chartId\":\"chart-83de7443-006b-45ad-a96e-c4a5b6d23559\",\"revision\":12,\"outputs\":[{\"outputId\":\"output:study-b22ecefd-1c82-47a0-b4df-82cc9290b90b:p0\",\"instanceId\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"revision\":2,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000},{\"outputId\":\"output:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed:p0\",\"instanceId\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"revision\":11,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000}],\"consumers\":[{\"instanceId\":\"sma-5affcd1f-1dae-4478-9e4d-008911dd3eed\",\"outputId\":\"output:study-b22ecefd-1c82-47a0-b4df-82cc9290b90b:p0\",\"active\":true,\"completedRevision\":2,\"current\":true}]},\"depthBands\":[],\"statuses\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"title\":\"Volume\",\"status\":\"Study ready\"}]}},\"beforeProviderRemoval\":{\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]},{\"index\":1,\"primary\":false,\"elementClass\":\"\",\"connected\":true,\"indicators\":[{\"id\":\"iq-script-slot-0-1\",\"paneIndex\":1}],\"objects\":[{\"id\":\"indicator:iq-script-slot-0-1\",\"kind\":\"indicator\"},{\"id\":\"custom:script-study-study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"kind\":\"indicator\"}],\"drawings\":[],\"managedMembers\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"paneIndex\":1}]}],\"composition\":{\"version\":1,\"panes\":[{\"id\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"title\":\"SMA 20 · Volume\",\"memberIds\":[\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\"],\"order\":1,\"weight\":0.32,\"collapsed\":false}],\"embeddedBands\":[],\"plots\":[{\"plotId\":\"plot:output:study-b22ecefd-1c82-47a0-b4df-82cc9290b90b:p0\",\"producerInstanceId\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\",\"scaleId\":\"scale:1olbtaz\",\"visible\":true,\"order\":0}],\"scales\":[{\"scaleId\":\"scale:1olbtaz\",\"engineScaleId\":\"overlay:iq-lwjnt2\",\"unit\":\"BTC\",\"policy\":\"zero-based\",\"bandMemberships\":[]}],\"opaqueLegacyPanes\":[]},\"indicators\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-5affcd1f-1dae-4478-9e4d-008911dd3eed-e1124799-78b7-40a6-bace-7c5241e87aec\"}],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":1,\"workers\":1,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":5,\"listenerCalls\":11,\"dataListenerCalls\":1,\"uiListenerCalls\":10,\"workers\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"patchCalls\":0,\"patchRows\":0,\"historyCalls\":1,\"historyRows\":5000,\"messagesSent\":1,\"historyMessagesSent\":1,\"patchMessagesSent\":0,\"resultMessages\":2,\"resultRows\":10000,\"queued\":null,\"generation\":2,\"alive\":true}]},\"numericOutputs\":{\"chartId\":\"chart-83de7443-006b-45ad-a96e-c4a5b6d23559\",\"revision\":13,\"outputs\":[{\"outputId\":\"output:study-b22ecefd-1c82-47a0-b4df-82cc9290b90b:p0\",\"instanceId\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"revision\":2,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000}],\"consumers\":[]},\"depthBands\":[],\"statuses\":[{\"id\":\"study-b22ecefd-1c82-47a0-b4df-82cc9290b90b\",\"title\":\"Volume\",\"status\":\"Study ready\"}]}}}\n"
+                    },
+                    {
+                      "text": "ORPHAN PANE AFTER PROVIDER REMOVAL {\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]}],\"composition\":{\"version\":1,\"panes\":[],\"embeddedBands\":[],\"plots\":[],\"scales\":[],\"opaqueLegacyPanes\":[]},\"indicators\":[],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":0,\"workers\":0,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":6,\"listenerCalls\":12,\"dataListenerCalls\":1,\"uiListenerCalls\":11,\"workers\":[]},\"numericOutputs\":{\"chartId\":\"chart-83de7443-006b-45ad-a96e-c4a5b6d23559\",\"revision\":15,\"outputs\":[],\"consumers\":[]},\"depthBands\":[],\"statuses\":[]}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:25:50.011Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc58de2418e16a6fdbea-c4662984a0496d7b590c",
+          "file": "composition-orphan-pane.spec.ts",
+          "line": 40,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-pane-resolver.spec.ts",
+      "file": "composition-pane-resolver.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD, Open Interest and Volume restore into one live managed pane without scratch panes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13301,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:25:58.478Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5aded3b5c5586aa135d0-dc763abfa2a6a225cf69",
+          "file": "composition-pane-resolver.spec.ts",
+          "line": 53,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-release1.spec.ts",
+      "file": "composition-release1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "duplicating a composed provider creates a new identity and keeps the consumer bound to its original output",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9430,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:26:12.008Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "309df0c62e69e90fbaca-8d1400af34fd2aea2830",
+          "file": "composition-release1.spec.ts",
+          "line": 181,
+          "column": 1
+        },
+        {
+          "title": "Volume output SMA composes, moves, persists a bounded band and releases cleanly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21024,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:26:21.514Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "wake-state-pass.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJiZWZvcmVTbGVlcCI6IHsKICAgICJwYW5lcyI6IFsKICAgICAgewogICAgICAgICJpbmRleCI6IDAsCiAgICAgICAgInByaW1hcnkiOiB0cnVlLAogICAgICAgICJjb25uZWN0ZWQiOiB0cnVlLAogICAgICAgICJjbGFzc05hbWUiOiAiIiwKICAgICAgICAicmVjdCI6IHsKICAgICAgICAgICJ4IjogNTcsCiAgICAgICAgICAieSI6IDYzLAogICAgICAgICAgIndpZHRoIjogMTMwNCwKICAgICAgICAgICJoZWlnaHQiOiA2NDUsCiAgICAgICAgICAidG9wIjogNjMsCiAgICAgICAgICAicmlnaHQiOiAxMzYxLAogICAgICAgICAgImJvdHRvbSI6IDcwOCwKICAgICAgICAgICJsZWZ0IjogNTcKICAgICAgICB9LAogICAgICAgICJpbmRpY2F0b3JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDAKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDAKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAgICAgImRlZmluaXRpb25JZCI6ICJuYXRpdmUuY29tcG9zaXRpb24tc21hIiwKICAgICAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAgICJkZWZpbml0aW9uSWQiOiAic2NyaXB0OmJ1aWx0aW4udm9sdW1lLWhpc3RvZ3JhbSIsCiAgICAgICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJvYmplY3RzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic291cmNlOnByaW1hcnkiLAogICAgICAgICAgICAia2luZCI6ICJzb3VyY2UiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaW5kaWNhdG9yOmlxLXNjcmlwdC1zbG90LTAtMSIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpbmRpY2F0b3I6c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJjdXN0b206c2NyaXB0LXN0dWR5LXN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJkcmF3aW5ncyI6IFtdCiAgICAgIH0KICAgIF0sCiAgICAiY29tcG9zaXRpb24iOiB7CiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInBhbmVzIjogW10sCiAgICAgICJlbWJlZGRlZEJhbmRzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJiYW5kOnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAidGl0bGUiOiAiU01BIDIwIMK3IFZvbHVtZSIsCiAgICAgICAgICAibWVtYmVySWRzIjogWwogICAgICAgICAgICAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICAgInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiCiAgICAgICAgICBdLAogICAgICAgICAgImhlaWdodFBlcmNlbnQiOiA0MAogICAgICAgIH0KICAgICAgXSwKICAgICAgInBsb3RzIjogWwogICAgICAgIHsKICAgICAgICAgICJwbG90SWQiOiAicGxvdDpvdXRwdXQ6c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZDpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgIm91dHB1dEtleSI6ICJwMCIsCiAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxMm16NmFrIiwKICAgICAgICAgICJ2aXNpYmxlIjogdHJ1ZSwKICAgICAgICAgICJvcmRlciI6IDAKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJwbG90SWQiOiAicGxvdDpvdXRwdXQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllOnAwIiwKICAgICAgICAgICJwcm9kdWNlckluc3RhbmNlSWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICJvdXRwdXRLZXkiOiAicDAiLAogICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTJtejZhayIsCiAgICAgICAgICAidmlzaWJsZSI6IGZhbHNlLAogICAgICAgICAgIm9yZGVyIjogOAogICAgICAgIH0KICAgICAgXSwKICAgICAgInNjYWxlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxMm16NmFrIiwKICAgICAgICAgICJlbmdpbmVTY2FsZUlkIjogIm92ZXJsYXk6aXEtNnBxaWsxIiwKICAgICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgICAicG9saWN5IjogInplcm8tYmFzZWQiLAogICAgICAgICAgImJhbmRNZW1iZXJzaGlwcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICAgICAiYmFuZElkIjogImJhbmQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIgogICAgICAgICAgICB9CiAgICAgICAgICBdCiAgICAgICAgfQogICAgICBdLAogICAgICAib3BhcXVlTGVnYWN5UGFuZXMiOiBbXQogICAgfSwKICAgICJpbmRpY2F0b3JzIjogWwogICAgICB7CiAgICAgICAgImlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICJkZWZpbml0aW9uSWQiOiAibmF0aXZlLmNvbXBvc2l0aW9uLXNtYSIsCiAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IiwKICAgICAgICAicGFuZUlkIjogIkBwcmljZSIKICAgICAgfSwKICAgICAgewogICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICJkZWZpbml0aW9uSWQiOiAic2NyaXB0OmJ1aWx0aW4udm9sdW1lLWhpc3RvZ3JhbSIsCiAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IiwKICAgICAgICAicGFuZUlkIjogIkBwcmljZSIKICAgICAgfQogICAgXSwKICAgICJzdHVkaWVzIjogewogICAgICAiY29udGV4dCI6IHsKICAgICAgICAic3ltYm9sIjogIkJUQ1VTRFQiLAogICAgICAgICJleGNoYW5nZSI6ICJCaW5hbmNlIFVTRC1NIiwKICAgICAgICAiaW50ZXJ2YWwiOiAiMW0iCiAgICAgIH0sCiAgICAgICJhdHRhY2hlZCI6IDEsCiAgICAgICJ3b3JrZXJzIjogMSwKICAgICAgImNvbXBvc2l0aW9uV29yayI6IHsKICAgICAgICAid29ya2VyUmVzdWx0cyI6IDIsCiAgICAgICAgIndvcmtlckZhaWx1cmVzIjogMCwKICAgICAgICAiZGF0YU5vdGlmaWNhdGlvbnMiOiAxLAogICAgICAgICJzdGF0dXNOb3RpZmljYXRpb25zIjogMCwKICAgICAgICAiY29uZmlndXJhdGlvbk5vdGlmaWNhdGlvbnMiOiA1LAogICAgICAgICJsaXN0ZW5lckNhbGxzIjogMTEsCiAgICAgICAgImRhdGFMaXN0ZW5lckNhbGxzIjogMSwKICAgICAgICAidWlMaXN0ZW5lckNhbGxzIjogMTAsCiAgICAgICAgIndvcmtlcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAicGF0Y2hDYWxscyI6IDAsCiAgICAgICAgICAgICJwYXRjaFJvd3MiOiAwLAogICAgICAgICAgICAiaGlzdG9yeUNhbGxzIjogMSwKICAgICAgICAgICAgImhpc3RvcnlSb3dzIjogNTAwMCwKICAgICAgICAgICAgIm1lc3NhZ2VzU2VudCI6IDEsCiAgICAgICAgICAgICJoaXN0b3J5TWVzc2FnZXNTZW50IjogMSwKICAgICAgICAgICAgInBhdGNoTWVzc2FnZXNTZW50IjogMCwKICAgICAgICAgICAgInJlc3VsdE1lc3NhZ2VzIjogMiwKICAgICAgICAgICAgInJlc3VsdFJvd3MiOiAxMDAwMCwKICAgICAgICAgICAgInF1ZXVlZCI6IG51bGwsCiAgICAgICAgICAgICJnZW5lcmF0aW9uIjogMiwKICAgICAgICAgICAgImFsaXZlIjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgIm51bWVyaWNPdXRwdXRzIjogewogICAgICAgICJjaGFydElkIjogImNoYXJ0LWNmMTg3ZTkzLWVmODAtNDljZi1hYzU1LWZlNmY0NWU3MzM3NCIsCiAgICAgICAgInJldmlzaW9uIjogMTIsCiAgICAgICAgIm91dHB1dHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICAgInJldmlzaW9uIjogMiwKICAgICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgICAgfSwKICAgICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZDpwMCIsCiAgICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgICAicmV2aXNpb24iOiAxMCwKICAgICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgICAgfSwKICAgICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAgICJhY3RpdmUiOiB0cnVlLAogICAgICAgICAgICAiY29tcGxldGVkUmV2aXNpb24iOiAyLAogICAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICAgIH0KICAgICAgICBdCiAgICAgIH0sCiAgICAgICJkZXB0aEJhbmRzIjogW10sCiAgICAgICJzdGF0dXNlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICJ0aXRsZSI6ICJWb2x1bWUiLAogICAgICAgICAgInN0YXR1cyI6ICJTdHVkeSByZWFkeSIKICAgICAgICB9CiAgICAgIF0KICAgIH0sCiAgICAibnVtZXJpY091dHB1dHMiOiBbCiAgICAgIHsKICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllOnAwIiwKICAgICAgICAiYXZhaWxhYmxlIjogdHJ1ZSwKICAgICAgICAiY29udGV4dElkIjogImJpbmFuY2U6cGVycGV0dWFsOkJUQ1VTRFQiLAogICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgInJldmlzaW9uIjogMgogICAgICB9CiAgICBdLAogICAgInJlZ2lzdHJ5IjogewogICAgICAiY2hhcnRJZCI6ICJjaGFydC1jZjE4N2U5My1lZjgwLTQ5Y2YtYWM1NS1mZTZmNDVlNzMzNzQiLAogICAgICAicmV2aXNpb24iOiAxMiwKICAgICAgIm91dHB1dHMiOiBbCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICJyZXZpc2lvbiI6IDIsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZDpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAgICJyZXZpc2lvbiI6IDEwLAogICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAiYXZhaWxhYmxlIjogdHJ1ZSwKICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICJmcm9tIjogMCwKICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgICJ2YWx1ZXMiOiA1MDAwCiAgICAgICAgfQogICAgICBdLAogICAgICAiY29uc3VtZXJzIjogWwogICAgICAgIHsKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAiY29tcGxldGVkUmV2aXNpb24iOiAyLAogICAgICAgICAgImN1cnJlbnQiOiB0cnVlCiAgICAgICAgfQogICAgICBdCiAgICB9CiAgfSwKICAiYXNsZWVwIjogewogICAgInBhbmVzIjogWwogICAgICB7CiAgICAgICAgImluZGV4IjogMCwKICAgICAgICAicHJpbWFyeSI6IHRydWUsCiAgICAgICAgImNvbm5lY3RlZCI6IHRydWUsCiAgICAgICAgImNsYXNzTmFtZSI6ICIiLAogICAgICAgICJyZWN0IjogewogICAgICAgICAgIngiOiA1NywKICAgICAgICAgICJ5IjogNjMsCiAgICAgICAgICAid2lkdGgiOiAxMzA0LAogICAgICAgICAgImhlaWdodCI6IDY1MiwKICAgICAgICAgICJ0b3AiOiA2MywKICAgICAgICAgICJyaWdodCI6IDEzNjEsCiAgICAgICAgICAiYm90dG9tIjogNzE1LAogICAgICAgICAgImxlZnQiOiA1NwogICAgICAgIH0sCiAgICAgICAgImluZGljYXRvcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAicGFuZUluZGV4IjogMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgICAicGFuZUluZGV4IjogMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgIm1hbmFnZWRTdWJqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogIm5hdGl2ZS5jb21wb3NpdGlvbi1zbWEiLAogICAgICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICAgImRlZmluaXRpb25JZCI6ICJzY3JpcHQ6YnVpbHRpbi52b2x1bWUtaGlzdG9ncmFtIiwKICAgICAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgIm9iamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzb3VyY2U6cHJpbWFyeSIsCiAgICAgICAgICAgICJraW5kIjogInNvdXJjZSIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpbmRpY2F0b3I6aXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImN1c3RvbTpzY3JpcHQtc3R1ZHktc3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImRyYXdpbmdzIjogW10KICAgICAgfQogICAgXSwKICAgICJjb21wb3NpdGlvbiI6IHsKICAgICAgInZlcnNpb24iOiAxLAogICAgICAicGFuZXMiOiBbXSwKICAgICAgImVtYmVkZGVkQmFuZHMiOiBbCiAgICAgICAgewogICAgICAgICAgImlkIjogImJhbmQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICJ0aXRsZSI6ICJTTUEgMjAgwrcgVm9sdW1lIiwKICAgICAgICAgICJtZW1iZXJJZHMiOiBbCiAgICAgICAgICAgICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIKICAgICAgICAgIF0sCiAgICAgICAgICAiaGVpZ2h0UGVyY2VudCI6IDQwCiAgICAgICAgfQogICAgICBdLAogICAgICAicGxvdHMiOiBbCiAgICAgICAgewogICAgICAgICAgInBsb3RJZCI6ICJwbG90Om91dHB1dDpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkOnAwIiwKICAgICAgICAgICJwcm9kdWNlckluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjEybXo2YWsiLAogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgIm9yZGVyIjogMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgInBsb3RJZCI6ICJwbG90Om91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgInByb2R1Y2VySW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgIm91dHB1dEtleSI6ICJwMCIsCiAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxMm16NmFrIiwKICAgICAgICAgICJ2aXNpYmxlIjogZmFsc2UsCiAgICAgICAgICAib3JkZXIiOiA4CiAgICAgICAgfQogICAgICBdLAogICAgICAic2NhbGVzIjogWwogICAgICAgIHsKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjEybXo2YWsiLAogICAgICAgICAgImVuZ2luZVNjYWxlSWQiOiAib3ZlcmxheTppcS02cHFpazEiLAogICAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAgICJwb2xpY3kiOiAiemVyby1iYXNlZCIsCiAgICAgICAgICAiYmFuZE1lbWJlcnNoaXBzIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgICAgICJiYW5kSWQiOiAiYmFuZDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0KICAgICAgICB9CiAgICAgIF0sCiAgICAgICJvcGFxdWVMZWdhY3lQYW5lcyI6IFtdCiAgICB9LAogICAgImluZGljYXRvcnMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgImRlZmluaXRpb25JZCI6ICJuYXRpdmUuY29tcG9zaXRpb24tc21hIiwKICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiLAogICAgICAgICJwYW5lSWQiOiAiQHByaWNlIgogICAgICB9LAogICAgICB7CiAgICAgICAgImlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgImRlZmluaXRpb25JZCI6ICJzY3JpcHQ6YnVpbHRpbi52b2x1bWUtaGlzdG9ncmFtIiwKICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiLAogICAgICAgICJwYW5lSWQiOiAiQHByaWNlIgogICAgICB9CiAgICBdLAogICAgInN0dWRpZXMiOiB7CiAgICAgICJjb250ZXh0IjogewogICAgICAgICJzeW1ib2wiOiAiQlRDVVNEVCIsCiAgICAgICAgImV4Y2hhbmdlIjogIkJpbmFuY2UgVVNELU0iLAogICAgICAgICJpbnRlcnZhbCI6ICIxbSIKICAgICAgfSwKICAgICAgImF0dGFjaGVkIjogMSwKICAgICAgIndvcmtlcnMiOiAxLAogICAgICAiY29tcG9zaXRpb25Xb3JrIjogewogICAgICAgICJ3b3JrZXJSZXN1bHRzIjogMiwKICAgICAgICAid29ya2VyRmFpbHVyZXMiOiAwLAogICAgICAgICJkYXRhTm90aWZpY2F0aW9ucyI6IDEsCiAgICAgICAgInN0YXR1c05vdGlmaWNhdGlvbnMiOiAwLAogICAgICAgICJjb25maWd1cmF0aW9uTm90aWZpY2F0aW9ucyI6IDUsCiAgICAgICAgImxpc3RlbmVyQ2FsbHMiOiAxMSwKICAgICAgICAiZGF0YUxpc3RlbmVyQ2FsbHMiOiAxLAogICAgICAgICJ1aUxpc3RlbmVyQ2FsbHMiOiAxMCwKICAgICAgICAid29ya2VycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAgICJwYXRjaENhbGxzIjogMCwKICAgICAgICAgICAgInBhdGNoUm93cyI6IDAsCiAgICAgICAgICAgICJoaXN0b3J5Q2FsbHMiOiAxLAogICAgICAgICAgICAiaGlzdG9yeVJvd3MiOiA1MDAwLAogICAgICAgICAgICAibWVzc2FnZXNTZW50IjogMSwKICAgICAgICAgICAgImhpc3RvcnlNZXNzYWdlc1NlbnQiOiAxLAogICAgICAgICAgICAicGF0Y2hNZXNzYWdlc1NlbnQiOiAwLAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiAyLAogICAgICAgICAgICAicmVzdWx0Um93cyI6IDEwMDAwLAogICAgICAgICAgICAicXVldWVkIjogbnVsbCwKICAgICAgICAgICAgImdlbmVyYXRpb24iOiAyLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtY2YxODdlOTMtZWY4MC00OWNmLWFjNTUtZmU2ZjQ1ZTczMzc0IiwKICAgICAgICAicmV2aXNpb24iOiAxMiwKICAgICAgICAib3V0cHV0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAicmV2aXNpb24iOiAyLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6IDEwLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImNvbnN1bWVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllOnAwIiwKICAgICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDIsCiAgICAgICAgICAgICJjdXJyZW50IjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInRpdGxlIjogIlZvbHVtZSIsCiAgICAgICAgICAic3RhdHVzIjogIlN0dWR5IHJlYWR5IgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFsKICAgICAgewogICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICJjb250ZXh0SWQiOiAiYmluYW5jZTpwZXJwZXR1YWw6QlRDVVNEVCIsCiAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAicmV2aXNpb24iOiAyCiAgICAgIH0KICAgIF0sCiAgICAicmVnaXN0cnkiOiB7CiAgICAgICJjaGFydElkIjogImNoYXJ0LWNmMTg3ZTkzLWVmODAtNDljZi1hYzU1LWZlNmY0NWU3MzM3NCIsCiAgICAgICJyZXZpc2lvbiI6IDEyLAogICAgICAib3V0cHV0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInJldmlzaW9uIjogMiwKICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkOnAwIiwKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgInJldmlzaW9uIjogMTAsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgewogICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAiYWN0aXZlIjogdHJ1ZSwKICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDIsCiAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9LAogICJhZnRlcldha2UiOiB7CiAgICAicGFuZXMiOiBbCiAgICAgIHsKICAgICAgICAiaW5kZXgiOiAwLAogICAgICAgICJwcmltYXJ5IjogdHJ1ZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA2MywKICAgICAgICAgICJ3aWR0aCI6IDEzMDQsCiAgICAgICAgICAiaGVpZ2h0IjogNjUyLAogICAgICAgICAgInRvcCI6IDYzLAogICAgICAgICAgInJpZ2h0IjogMTM2MSwKICAgICAgICAgICJib3R0b20iOiA3MTUsCiAgICAgICAgICAibGVmdCI6IDU3CiAgICAgICAgfSwKICAgICAgICAiaW5kaWNhdG9ycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImlxLXNjcmlwdC1zbG90LTAtMSIsCiAgICAgICAgICAgICJwYW5lSW5kZXgiOiAwCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJwYW5lSW5kZXgiOiAwCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAibWFuYWdlZFN1YmplY3RzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJkZWZpbml0aW9uSWQiOiAibmF0aXZlLmNvbXBvc2l0aW9uLXNtYSIsCiAgICAgICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNvdXJjZTpwcmltYXJ5IiwKICAgICAgICAgICAgImtpbmQiOiAic291cmNlIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjppcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaW5kaWNhdG9yOnNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiY3VzdG9tOnNjcmlwdC1zdHVkeS1zdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZHJhd2luZ3MiOiBbXQogICAgICB9CiAgICBdLAogICAgImNvbXBvc2l0aW9uIjogewogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJwYW5lcyI6IFtdLAogICAgICAiZW1iZWRkZWRCYW5kcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiYmFuZDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInRpdGxlIjogIlNNQSAyMCDCtyBWb2x1bWUiLAogICAgICAgICAgIm1lbWJlcklkcyI6IFsKICAgICAgICAgICAgInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAgICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIgogICAgICAgICAgXSwKICAgICAgICAgICJoZWlnaHRQZXJjZW50IjogNDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJwbG90cyI6IFsKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2Q6cDAiLAogICAgICAgICAgInByb2R1Y2VySW5zdGFuY2VJZCI6ICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAgICJvdXRwdXRLZXkiOiAicDAiLAogICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTJtejZhayIsCiAgICAgICAgICAidmlzaWJsZSI6IHRydWUsCiAgICAgICAgICAib3JkZXIiOiAwCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjEybXo2YWsiLAogICAgICAgICAgInZpc2libGUiOiBmYWxzZSwKICAgICAgICAgICJvcmRlciI6IDgKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJzY2FsZXMiOiBbCiAgICAgICAgewogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTJtejZhayIsCiAgICAgICAgICAiZW5naW5lU2NhbGVJZCI6ICJvdmVybGF5OmlxLTZwcWlrMSIsCiAgICAgICAgICAidW5pdCI6ICJCVEMiLAogICAgICAgICAgInBvbGljeSI6ICJ6ZXJvLWJhc2VkIiwKICAgICAgICAgICJiYW5kTWVtYmVyc2hpcHMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAgICAgImJhbmRJZCI6ICJiYW5kOnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIKICAgICAgICAgICAgfQogICAgICAgICAgXQogICAgICAgIH0KICAgICAgXSwKICAgICAgIm9wYXF1ZUxlZ2FjeVBhbmVzIjogW10KICAgIH0sCiAgICAiaW5kaWNhdG9ycyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogIm5hdGl2ZS5jb21wb3NpdGlvbi1zbWEiLAogICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIsCiAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIsCiAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiCiAgICAgIH0KICAgIF0sCiAgICAic3R1ZGllcyI6IHsKICAgICAgImNvbnRleHQiOiB7CiAgICAgICAgInN5bWJvbCI6ICJCVENVU0RUIiwKICAgICAgICAiZXhjaGFuZ2UiOiAiQmluYW5jZSBVU0QtTSIsCiAgICAgICAgImludGVydmFsIjogIjFtIgogICAgICB9LAogICAgICAiYXR0YWNoZWQiOiAxLAogICAgICAid29ya2VycyI6IDEsCiAgICAgICJjb21wb3NpdGlvbldvcmsiOiB7CiAgICAgICAgIndvcmtlclJlc3VsdHMiOiAzLAogICAgICAgICJ3b3JrZXJGYWlsdXJlcyI6IDAsCiAgICAgICAgImRhdGFOb3RpZmljYXRpb25zIjogMiwKICAgICAgICAic3RhdHVzTm90aWZpY2F0aW9ucyI6IDAsCiAgICAgICAgImNvbmZpZ3VyYXRpb25Ob3RpZmljYXRpb25zIjogNSwKICAgICAgICAibGlzdGVuZXJDYWxscyI6IDEyLAogICAgICAgICJkYXRhTGlzdGVuZXJDYWxscyI6IDIsCiAgICAgICAgInVpTGlzdGVuZXJDYWxscyI6IDEwLAogICAgICAgICJ3b3JrZXJzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAgICAgInBhdGNoQ2FsbHMiOiAwLAogICAgICAgICAgICAicGF0Y2hSb3dzIjogMCwKICAgICAgICAgICAgImhpc3RvcnlDYWxscyI6IDIsCiAgICAgICAgICAgICJoaXN0b3J5Um93cyI6IDEwMDAwLAogICAgICAgICAgICAibWVzc2FnZXNTZW50IjogMiwKICAgICAgICAgICAgImhpc3RvcnlNZXNzYWdlc1NlbnQiOiAyLAogICAgICAgICAgICAicGF0Y2hNZXNzYWdlc1NlbnQiOiAwLAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiAzLAogICAgICAgICAgICAicmVzdWx0Um93cyI6IDE1MDAwLAogICAgICAgICAgICAicXVldWVkIjogbnVsbCwKICAgICAgICAgICAgImdlbmVyYXRpb24iOiAzLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtY2YxODdlOTMtZWY4MC00OWNmLWFjNTUtZmU2ZjQ1ZTczMzc0IiwKICAgICAgICAicmV2aXNpb24iOiAxNCwKICAgICAgICAib3V0cHV0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAicmV2aXNpb24iOiAzLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6IDExLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImNvbnN1bWVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllOnAwIiwKICAgICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDMsCiAgICAgICAgICAgICJjdXJyZW50IjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInRpdGxlIjogIlZvbHVtZSIsCiAgICAgICAgICAic3RhdHVzIjogIlN0dWR5IHJlYWR5IgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFsKICAgICAgewogICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICJjb250ZXh0SWQiOiAiYmluYW5jZTpwZXJwZXR1YWw6QlRDVVNEVCIsCiAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAicmV2aXNpb24iOiAzCiAgICAgIH0KICAgIF0sCiAgICAicmVnaXN0cnkiOiB7CiAgICAgICJjaGFydElkIjogImNoYXJ0LWNmMTg3ZTkzLWVmODAtNDljZi1hYzU1LWZlNmY0NWU3MzM3NCIsCiAgICAgICJyZXZpc2lvbiI6IDE0LAogICAgICAib3V0cHV0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInJldmlzaW9uIjogMywKICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkOnAwIiwKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS05ZmNiZGM2NC1mMmE1LTQzMGUtODgwMi1jOGEyZjkxNmNhM2QiLAogICAgICAgICAgInJldmlzaW9uIjogMTEsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgewogICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZCIsCiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAiYWN0aXZlIjogdHJ1ZSwKICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDMsCiAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9Cn0K"
+                    },
+                    {
+                      "name": "pane-cleanup-pass.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJhZnRlclNtYVJlbW92YWwiOiB7CiAgICAicGFuZXMiOiBbCiAgICAgIHsKICAgICAgICAiaW5kZXgiOiAwLAogICAgICAgICJwcmltYXJ5IjogdHJ1ZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA2MywKICAgICAgICAgICJ3aWR0aCI6IDEzMDQsCiAgICAgICAgICAiaGVpZ2h0IjogNDk0LAogICAgICAgICAgInRvcCI6IDYzLAogICAgICAgICAgInJpZ2h0IjogMTM2MSwKICAgICAgICAgICJib3R0b20iOiA1NTcsCiAgICAgICAgICAibGVmdCI6IDU3CiAgICAgICAgfSwKICAgICAgICAiaW5kaWNhdG9ycyI6IFtdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNvdXJjZTpwcmltYXJ5IiwKICAgICAgICAgICAgImtpbmQiOiAic291cmNlIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImRyYXdpbmdzIjogW10KICAgICAgfSwKICAgICAgewogICAgICAgICJpbmRleCI6IDEsCiAgICAgICAgInByaW1hcnkiOiBmYWxzZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA1NTcsCiAgICAgICAgICAid2lkdGgiOiAxMzA0LAogICAgICAgICAgImhlaWdodCI6IDE1OCwKICAgICAgICAgICJ0b3AiOiA1NTcsCiAgICAgICAgICAicmlnaHQiOiAxMzYxLAogICAgICAgICAgImJvdHRvbSI6IDcxNSwKICAgICAgICAgICJsZWZ0IjogNTcKICAgICAgICB9LAogICAgICAgICJpbmRpY2F0b3JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDEKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICAgICAicGxhY2VtZW50IjogInBhbmUiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjppcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiY3VzdG9tOnNjcmlwdC1zdHVkeS1zdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZHJhd2luZ3MiOiBbXQogICAgICB9CiAgICBdLAogICAgImNvbXBvc2l0aW9uIjogewogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJwYW5lcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiY29tcG9zaXRpb246c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZC02ZGQ1YzU0Ni00MmEyLTQ1OWQtYjQ2ZC0yNTRmMjgzNDg1NDMiLAogICAgICAgICAgInRpdGxlIjogIlNNQSAyMCDCtyBWb2x1bWUiLAogICAgICAgICAgIm1lbWJlcklkcyI6IFsKICAgICAgICAgICAgInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIKICAgICAgICAgIF0sCiAgICAgICAgICAib3JkZXIiOiAxLAogICAgICAgICAgIndlaWdodCI6IDAuMzIsCiAgICAgICAgICAiY29sbGFwc2VkIjogZmFsc2UKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJlbWJlZGRlZEJhbmRzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJiYW5kOnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAidGl0bGUiOiAiU01BIDIwIMK3IFZvbHVtZSIsCiAgICAgICAgICAibWVtYmVySWRzIjogWwogICAgICAgICAgICAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIgogICAgICAgICAgXSwKICAgICAgICAgICJoZWlnaHRQZXJjZW50IjogMzUKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJwbG90cyI6IFsKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiY29tcG9zaXRpb246c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZC02ZGQ1YzU0Ni00MmEyLTQ1OWQtYjQ2ZC0yNTRmMjgzNDg1NDMiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTJtejZhayIsCiAgICAgICAgICAidmlzaWJsZSI6IGZhbHNlLAogICAgICAgICAgIm9yZGVyIjogMAogICAgICAgIH0KICAgICAgXSwKICAgICAgInNjYWxlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxMm16NmFrIiwKICAgICAgICAgICJlbmdpbmVTY2FsZUlkIjogIm92ZXJsYXk6aXEtNnBxaWsxIiwKICAgICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgICAicG9saWN5IjogInplcm8tYmFzZWQiLAogICAgICAgICAgImJhbmRNZW1iZXJzaGlwcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJwYW5lSWQiOiAiY29tcG9zaXRpb246c21hLTlmY2JkYzY0LWYyYTUtNDMwZS04ODAyLWM4YTJmOTE2Y2EzZC02ZGQ1YzU0Ni00MmEyLTQ1OWQtYjQ2ZC0yNTRmMjgzNDg1NDMiLAogICAgICAgICAgICAgICJiYW5kSWQiOiAiYmFuZDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0KICAgICAgICB9CiAgICAgIF0sCiAgICAgICJvcGFxdWVMZWdhY3lQYW5lcyI6IFtdCiAgICB9LAogICAgImluZGljYXRvcnMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICJwbGFjZW1lbnQiOiAicGFuZSIsCiAgICAgICAgInBhbmVJZCI6ICJjb21wb3NpdGlvbjpzbWEtOWZjYmRjNjQtZjJhNS00MzBlLTg4MDItYzhhMmY5MTZjYTNkLTZkZDVjNTQ2LTQyYTItNDU5ZC1iNDZkLTI1NGYyODM0ODU0MyIKICAgICAgfQogICAgXSwKICAgICJzdHVkaWVzIjogewogICAgICAiY29udGV4dCI6IHsKICAgICAgICAic3ltYm9sIjogIkJUQ1VTRFQiLAogICAgICAgICJleGNoYW5nZSI6ICJCaW5hbmNlIFVTRC1NIiwKICAgICAgICAiaW50ZXJ2YWwiOiAiMW0iCiAgICAgIH0sCiAgICAgICJhdHRhY2hlZCI6IDEsCiAgICAgICJ3b3JrZXJzIjogMSwKICAgICAgImNvbXBvc2l0aW9uV29yayI6IHsKICAgICAgICAid29ya2VyUmVzdWx0cyI6IDQzLAogICAgICAgICJ3b3JrZXJGYWlsdXJlcyI6IDAsCiAgICAgICAgImRhdGFOb3RpZmljYXRpb25zIjogNDIsCiAgICAgICAgInN0YXR1c05vdGlmaWNhdGlvbnMiOiAwLAogICAgICAgICJjb25maWd1cmF0aW9uTm90aWZpY2F0aW9ucyI6IDcsCiAgICAgICAgImxpc3RlbmVyQ2FsbHMiOiA1NiwKICAgICAgICAiZGF0YUxpc3RlbmVyQ2FsbHMiOiA0MiwKICAgICAgICAidWlMaXN0ZW5lckNhbGxzIjogMTQsCiAgICAgICAgIndvcmtlcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAicGF0Y2hDYWxscyI6IDQzLAogICAgICAgICAgICAicGF0Y2hSb3dzIjogNDMsCiAgICAgICAgICAgICJoaXN0b3J5Q2FsbHMiOiAyLAogICAgICAgICAgICAiaGlzdG9yeVJvd3MiOiAxMDAwMCwKICAgICAgICAgICAgIm1lc3NhZ2VzU2VudCI6IDQyLAogICAgICAgICAgICAiaGlzdG9yeU1lc3NhZ2VzU2VudCI6IDIsCiAgICAgICAgICAgICJwYXRjaE1lc3NhZ2VzU2VudCI6IDQwLAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiA0MywKICAgICAgICAgICAgInJlc3VsdFJvd3MiOiAyMTUwMDAsCiAgICAgICAgICAgICJxdWV1ZWQiOiBudWxsLAogICAgICAgICAgICAiZ2VuZXJhdGlvbiI6IDQzLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtY2YxODdlOTMtZWY4MC00OWNmLWFjNTUtZmU2ZjQ1ZTczMzc0IiwKICAgICAgICAicmV2aXNpb24iOiA5OSwKICAgICAgICAib3V0cHV0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWU6cDAiLAogICAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgICAicmV2aXNpb24iOiA0MywKICAgICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICAgImZyb20iOiA0OTk5LAogICAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgICAgfSwKICAgICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJjb25zdW1lcnMiOiBbXQogICAgICB9LAogICAgICAiZGVwdGhCYW5kcyI6IFtdLAogICAgICAic3RhdHVzZXMiOiBbCiAgICAgICAgewogICAgICAgICAgImlkIjogInN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZSIsCiAgICAgICAgICAidGl0bGUiOiAiVm9sdW1lIiwKICAgICAgICAgICJzdGF0dXMiOiAiU3R1ZHkgcmVhZHkiCiAgICAgICAgfQogICAgICBdCiAgICB9LAogICAgIm51bWVyaWNPdXRwdXRzIjogWwogICAgICB7CiAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktYzkwZWFjMmItYzk5Yi00YjE5LWFkNmItYWI0ZDM1YTA4ODllIiwKICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgImNvbnRleHRJZCI6ICJiaW5hbmNlOnBlcnBldHVhbDpCVENVU0RUIiwKICAgICAgICAidW5pdCI6ICJCVEMiLAogICAgICAgICJyZXZpc2lvbiI6IDQzCiAgICAgIH0KICAgIF0sCiAgICAicmVnaXN0cnkiOiB7CiAgICAgICJjaGFydElkIjogImNoYXJ0LWNmMTg3ZTkzLWVmODAtNDljZi1hYzU1LWZlNmY0NWU3MzM3NCIsCiAgICAgICJyZXZpc2lvbiI6IDk5LAogICAgICAib3V0cHV0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LWM5MGVhYzJiLWM5OWItNGIxOS1hZDZiLWFiNGQzNWEwODg5ZTpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS1jOTBlYWMyYi1jOTliLTRiMTktYWQ2Yi1hYjRkMzVhMDg4OWUiLAogICAgICAgICAgInJldmlzaW9uIjogNDMsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiA0OTk5LAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJjb25zdW1lcnMiOiBbXQogICAgfQogIH0sCiAgImFmdGVyUHJvdmlkZXJSZW1vdmFsIjogewogICAgInBhbmVzIjogWwogICAgICB7CiAgICAgICAgImluZGV4IjogMCwKICAgICAgICAicHJpbWFyeSI6IHRydWUsCiAgICAgICAgImNvbm5lY3RlZCI6IHRydWUsCiAgICAgICAgImNsYXNzTmFtZSI6ICIiLAogICAgICAgICJyZWN0IjogewogICAgICAgICAgIngiOiA1NywKICAgICAgICAgICJ5IjogNjMsCiAgICAgICAgICAid2lkdGgiOiAxMzA0LAogICAgICAgICAgImhlaWdodCI6IDY1MiwKICAgICAgICAgICJ0b3AiOiA2MywKICAgICAgICAgICJyaWdodCI6IDEzNjEsCiAgICAgICAgICAiYm90dG9tIjogNzE1LAogICAgICAgICAgImxlZnQiOiA1NwogICAgICAgIH0sCiAgICAgICAgImluZGljYXRvcnMiOiBbXSwKICAgICAgICAibWFuYWdlZFN1YmplY3RzIjogW10sCiAgICAgICAgIm9iamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzb3VyY2U6cHJpbWFyeSIsCiAgICAgICAgICAgICJraW5kIjogInNvdXJjZSIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJkcmF3aW5ncyI6IFtdCiAgICAgIH0KICAgIF0sCiAgICAiY29tcG9zaXRpb24iOiB7CiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInBhbmVzIjogW10sCiAgICAgICJlbWJlZGRlZEJhbmRzIjogW10sCiAgICAgICJwbG90cyI6IFtdLAogICAgICAic2NhbGVzIjogW10sCiAgICAgICJvcGFxdWVMZWdhY3lQYW5lcyI6IFtdCiAgICB9LAogICAgImluZGljYXRvcnMiOiBbXSwKICAgICJzdHVkaWVzIjogewogICAgICAiY29udGV4dCI6IHsKICAgICAgICAic3ltYm9sIjogIkJUQ1VTRFQiLAogICAgICAgICJleGNoYW5nZSI6ICJCaW5hbmNlIFVTRC1NIiwKICAgICAgICAiaW50ZXJ2YWwiOiAiMW0iCiAgICAgIH0sCiAgICAgICJhdHRhY2hlZCI6IDAsCiAgICAgICJ3b3JrZXJzIjogMCwKICAgICAgImNvbXBvc2l0aW9uV29yayI6IHsKICAgICAgICAid29ya2VyUmVzdWx0cyI6IDQzLAogICAgICAgICJ3b3JrZXJGYWlsdXJlcyI6IDAsCiAgICAgICAgImRhdGFOb3RpZmljYXRpb25zIjogNDIsCiAgICAgICAgInN0YXR1c05vdGlmaWNhdGlvbnMiOiAwLAogICAgICAgICJjb25maWd1cmF0aW9uTm90aWZpY2F0aW9ucyI6IDgsCiAgICAgICAgImxpc3RlbmVyQ2FsbHMiOiA1NywKICAgICAgICAiZGF0YUxpc3RlbmVyQ2FsbHMiOiA0MiwKICAgICAgICAidWlMaXN0ZW5lckNhbGxzIjogMTUsCiAgICAgICAgIndvcmtlcnMiOiBbXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtY2YxODdlOTMtZWY4MC00OWNmLWFjNTUtZmU2ZjQ1ZTczMzc0IiwKICAgICAgICAicmV2aXNpb24iOiAxMDEsCiAgICAgICAgIm91dHB1dHMiOiBbXSwKICAgICAgICAiY29uc3VtZXJzIjogW10KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogW10KICAgIH0sCiAgICAibnVtZXJpY091dHB1dHMiOiBbXSwKICAgICJyZWdpc3RyeSI6IHsKICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtY2YxODdlOTMtZWY4MC00OWNmLWFjNTUtZmU2ZjQ1ZTczMzc0IiwKICAgICAgInJldmlzaW9uIjogMTAxLAogICAgICAib3V0cHV0cyI6IFtdLAogICAgICAiY29uc3VtZXJzIjogW10KICAgIH0KICB9Cn0K"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "309df0c62e69e90fbaca-6fa885d0fa8af88e45b0",
+          "file": "composition-release1.spec.ts",
+          "line": 260,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "cvd.spec.ts",
+      "file": "cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17736,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:26:42.766Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bb6376537512963581a-5c87ff76ee4330011609",
+          "file": "cvd.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "CVD global currency, crosshair, incomplete coverage and corrected history remain honest",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8499,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:00.639Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bb6376537512963581a-4622d51e47c6122c357e",
+          "file": "cvd.spec.ts",
+          "line": 99,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "drawing-sidebar.spec.ts",
+      "file": "drawing-sidebar.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "drawing sidebar groups tools, cycles anchor snapping, and fits a narrow chart pane",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5211,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m700\u001b[39m\nReceived:   \u001b[31m1364\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m700\u001b[39m\nReceived:   \u001b[31m1364\u001b[39m\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-sidebar.spec.ts:85:28",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-sidebar.spec.ts",
+                      "column": 28,
+                      "line": 85
+                    },
+                    "snippet": "  83 |   }, panelId);\n  84 |   expect(layout.paneWidth).toBeGreaterThan(500);\n> 85 |   expect(layout.paneWidth).toBeLessThan(700);\n     |                            ^\n  86 |   expect(layout.railWidth).toBeGreaterThan(0);\n  87 |   expect(layout.objectTreeWidth).toBe(280);\n  88 |   expect(layout.chartWidth).toBeGreaterThan(320);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-sidebar.spec.ts",
+                        "column": 28,
+                        "line": 85
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m700\u001b[39m\nReceived:   \u001b[31m1364\u001b[39m\n\n  83 |   }, panelId);\n  84 |   expect(layout.paneWidth).toBeGreaterThan(500);\n> 85 |   expect(layout.paneWidth).toBeLessThan(700);\n     |                            ^\n  86 |   expect(layout.railWidth).toBeGreaterThan(0);\n  87 |   expect(layout.objectTreeWidth).toBe(280);\n  88 |   expect(layout.chartWidth).toBeGreaterThan(320);\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-sidebar.spec.ts:85:28"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:09.220Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-sidebar-drawing-si-6776d-nd-fits-a-narrow-chart-pane/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-sidebar.spec.ts",
+                    "column": 28,
+                    "line": 85
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5cb44b3d600952e4ce62-ed19b6a5c13ebdf45874",
+          "file": "drawing-sidebar.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "drawing placement shows a crosshair from sidebar and floating tools and restores normal pointer modes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5173,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:16.459Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5cb44b3d600952e4ce62-cfc7d6fff73c57b8c93a",
+          "file": "drawing-sidebar.spec.ts",
+          "line": 107,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "drawing-tools.spec.ts",
+      "file": "drawing-tools.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native drawing placement, IQ settings, templates and instrument scope use one-step history",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4351,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:146:24",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 24,
+                      "line": 146
+                    },
+                    "snippet": "  144 |   if (!panelId) throw new Error('Candle panel id is missing');\n  145 |   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());\n> 146 |   expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);\n      |                        ^\n  147 |\n  148 |   await placeHorizontalLine(page, panel);\n  149 |   let state = await drawingState(page, panel);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 24,
+                        "line": 146
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m\n\n  144 |   if (!panelId) throw new Error('Candle panel id is missing');\n  145 |   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());\n> 146 |   expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);\n      |                        ^\n  147 |\n  148 |   await placeHorizontalLine(page, panel);\n  149 |   let state = await drawingState(page, panel);\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:146:24"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:23.086Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-native-drawi-84864--scope-use-one-step-history/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 24,
+                    "line": 146
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-a23ac0db9621977bdcfe",
+          "file": "drawing-tools.spec.ts",
+          "line": 132,
+          "column": 1
+        },
+        {
+          "title": "every exposed native drawing tool completes its required anchors",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22716,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:689:55",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 55,
+                      "line": 689
+                    },
+                    "snippet": "  687 |   }\n  688 |\n> 689 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  690 |   const nativeIds = await page.evaluate(panelId => {\n  691 |     const view = (window as any).__terminal.panels.get(panelId);\n  692 |     const drawings = view.engine.drawings.drawings();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 55,
+                        "line": 689
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  687 |   }\n  688 |\n> 689 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  690 |   const nativeIds = await page.evaluate(panelId => {\n  691 |     const view = (window as any).__terminal.panels.get(panelId);\n  692 |     const drawings = view.engine.drawings.drawings();\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:689:55"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:30.620Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-every-expose-61d9e-pletes-its-required-anchors/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 55,
+                    "line": 689
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-fc36182591b2e65f30cb",
+          "file": "drawing-tools.spec.ts",
+          "line": 639,
+          "column": 1
+        },
+        {
+          "title": "text templates use an included label as native text content and preserve omitted content",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 10160,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:804:55",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 55,
+                      "line": 804
+                    },
+                    "snippet": "  802 |   const sourceId = drawings[0]!.id;\n  803 |   const targetId = drawings[1]!.id;\n> 804 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  805 |   const objectIdFor = async (drawingId: string) => page.evaluate(({ panelId, drawingId }) =>\n  806 |     (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,\n  807 |   { panelId, drawingId });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 55,
+                        "line": 804
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    12 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  802 |   const sourceId = drawings[0]!.id;\n  803 |   const targetId = drawings[1]!.id;\n> 804 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  805 |   const objectIdFor = async (drawingId: string) => page.evaluate(({ panelId, drawingId }) =>\n  806 |     (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,\n  807 |   { panelId, drawingId });\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:804:55"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:27:58.947Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-text-templat-c9d73-nd-preserve-omitted-content/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 55,
+                    "line": 804
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-687bb0207d10f73e0018",
+          "file": "drawing-tools.spec.ts",
+          "line": 773,
+          "column": 1
+        },
+        {
+          "title": "Callout placement, native text templates, history, and saved coordinates",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11240,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:922:55",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 55,
+                      "line": 922
+                    },
+                    "snippet": "  920 |   await page.keyboard.press('Escape');\n  921 |\n> 922 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  923 |   const objectId = await page.evaluate(({ panelId, drawingId }) =>\n  924 |     (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,\n  925 |   { panelId, drawingId });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 55,
+                        "line": 922
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  920 |   await page.keyboard.press('Escape');\n  921 |\n> 922 |   await expect(panel.locator('.chart-objects-panel')).toBeVisible();\n      |                                                       ^\n  923 |   const objectId = await page.evaluate(({ panelId, drawingId }) =>\n  924 |     (window as any).__terminal.panels.get(panelId).engine.objects.list().find((item: any) => item.sourceId === drawingId)?.id as string,\n  925 |   { panelId, drawingId });\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:922:55"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:28:13.917Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-Callout-plac-dc2a2-story-and-saved-coordinates/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 55,
+                    "line": 922
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-b3c365ca7166a38cd872",
+          "file": "drawing-tools.spec.ts",
+          "line": 867,
+          "column": 1
+        },
+        {
+          "title": "template storage corruption stays intact while the session catalog remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9667,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:28:30.619Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-e862a2db6f8066be5e96",
+          "file": "drawing-tools.spec.ts",
+          "line": 1025,
+          "column": 1
+        },
+        {
+          "title": "drawing document write failure keeps session drawings and leaves the separate template catalog writable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4899,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:28:41.555Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-ebaf81cb0aaa9f9d0045",
+          "file": "drawing-tools.spec.ts",
+          "line": 1046,
+          "column": 1
+        },
+        {
+          "title": "corrupt drawing document stays untouched while another valid local catalog remains readable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7002,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:28:46.537Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-d4c8cec6f9883f27e44e",
+          "file": "drawing-tools.spec.ts",
+          "line": 1074,
+          "column": 1
+        },
+        {
+          "title": "Footprint and Heatmap appear once in IQ Objects and accept a drawing overlay",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15603,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1141:30",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 30,
+                      "line": 1141
+                    },
+                    "snippet": "  1139 |\n  1140 |   const objectsPanel = panel.locator('.chart-objects-panel');\n> 1141 |   await expect(objectsPanel).toBeVisible();\n       |                              ^\n  1142 |   const footprintRow = objectsPanel.locator('.chart-object-row.kind-profile').filter({ hasText: 'Footprint' });\n  1143 |   const heatmapRow = objectsPanel.locator('.chart-object-row.kind-indicator').filter({ hasText: 'Order-book Heatmap' });\n  1144 |   await expect(footprintRow).toHaveCount(1);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 30,
+                        "line": 1141
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.chart-objects-panel')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.chart-objects-panel') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.chart-objects-panel')\u001b[22m\n\u001b[2m    13 × locator resolved to <aside data-focused=\"false\" data-storage=\"saved\" data-collapsed=\"true\" class=\"chart-objects-panel\" aria-label=\"Chart object tree\">…</aside>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  1139 |\n  1140 |   const objectsPanel = panel.locator('.chart-objects-panel');\n> 1141 |   await expect(objectsPanel).toBeVisible();\n       |                              ^\n  1142 |   const footprintRow = objectsPanel.locator('.chart-object-row.kind-profile').filter({ hasText: 'Footprint' });\n  1143 |   const heatmapRow = objectsPanel.locator('.chart-object-row.kind-indicator').filter({ hasText: 'Order-book Heatmap' });\n  1144 |   await expect(footprintRow).toHaveCount(1);\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1141:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:28:53.579Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-Footprint-an-7e400-nd-accept-a-drawing-overlay/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 30,
+                    "line": 1141
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-686660d3ee33262bb55e",
+          "file": "drawing-tools.spec.ts",
+          "line": 1109,
+          "column": 1
+        },
+        {
+          "title": "Level Watch Objects visibility, instrument guard and picking disarm drawings",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8343,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1174:29",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 29,
+                      "line": 1174
+                    },
+                    "snippet": "  1172 |   if (!panelId) throw new Error('Candle panel id is missing');\n  1173 |   const watchButton = panel.getByRole('button', { name: 'Watch level', exact: true });\n> 1174 |   await expect(watchButton).toBeEnabled();\n       |                             ^\n  1175 |   const watch = { id: 'fixture-watch', revision: 1, definition: { name: 'Fixture watch', lower: 82900, upper: 83100, invalidation: 82800, thesis: 'fixture', expiresAt: Date.now() + 60_000 }, state: 'draft', quality: 'fixture', reason: 'browser fixture', armedAt: Date.now() };\n  1176 |   await page.evaluate(({ panelId, watch }) => (window as any).__terminal.panels.get(panelId).setWatchZones([watch]), { panelId, watch });\n  1177 |   const objectsPanel = panel.locator('.chart-objects-panel');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 29,
+                        "line": 1174
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n\n\n  1172 |   if (!panelId) throw new Error('Candle panel id is missing');\n  1173 |   const watchButton = panel.getByRole('button', { name: 'Watch level', exact: true });\n> 1174 |   await expect(watchButton).toBeEnabled();\n       |                             ^\n  1175 |   const watch = { id: 'fixture-watch', revision: 1, definition: { name: 'Fixture watch', lower: 82900, upper: 83100, invalidation: 82800, thesis: 'fixture', expiresAt: Date.now() + 60_000 }, state: 'draft', quality: 'fixture', reason: 'browser fixture', armedAt: Date.now() };\n  1176 |   await page.evaluate(({ panelId, watch }) => (window as any).__terminal.panels.get(panelId).setWatchZones([watch]), { panelId, watch });\n  1177 |   const objectsPanel = panel.locator('.chart-objects-panel');\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1174:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:29:11.995Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-Level-Watch--e9300-and-picking-disarm-drawings/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 29,
+                    "line": 1174
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-ea0bdc226913a1471c36",
+          "file": "drawing-tools.spec.ts",
+          "line": 1167,
+          "column": 1
+        },
+        {
+          "title": "horizontal and vertical measures in Positions support placement, history and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:29:24.520Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-f24729a032e40d887715",
+          "file": "drawing-tools.spec.ts",
+          "line": 1200,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footprint-presentation.spec.ts",
+      "file": "footprint-presentation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "footprint text scales with zoom and independent opacity settings persist without resetting collection",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12339,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:59:140",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                      "column": 140,
+                      "line": 59
+                    },
+                    "snippet": "  57 |   await page.setViewportSize({ width: 720, height: 860 });\n  58 |   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));\n> 59 |   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);\n     |                                                                                                                                            ^\n  60 |   await page.screenshot({ path: 'artifacts/footprint-prominent-light-720x860.png' });\n  61 |   await page.setViewportSize({ width: 1366, height: 768 });\n  62 |   await page.waitForTimeout(400); await page.reload();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                        "column": 140,
+                        "line": 59
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  57 |   await page.setViewportSize({ width: 720, height: 860 });\n  58 |   await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.timeScale.setRightOffset(0));\n> 59 |   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);\n     |                                                                                                                                            ^\n  60 |   await page.screenshot({ path: 'artifacts/footprint-prominent-light-720x860.png' });\n  61 |   await page.setViewportSize({ width: 1366, height: 768 });\n  62 |   await page.waitForTimeout(400); await page.reload();\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:59:140"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:29:33.449Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/footprint-presentation-foo-19fd0-ithout-resetting-collection/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                    "column": 140,
+                    "line": 59
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-78bd3c44a6e0acbe4f1a",
+          "file": "footprint-presentation.spec.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "title": "18-level footprint shows distinct VAH and VAL with transparent histogram backgrounds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8495,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:29:48.494Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-dd85dffe254193108592",
+          "file": "footprint-presentation.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "delta profile applies native presentation without restarting collection and persists",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 30557,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                        "column": 14,
+                        "line": 228
+                      },
+                      "message": "Error: page.waitForFunction: Test timeout of 30000ms exceeded.\n\n  226 |   await page.setViewportSize({ width: 1366, height: 768 });\n  227 |   await page.waitForTimeout(400); await page.reload();\n> 228 |   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);\n      |              ^\n  229 |   await footprintSettings(panel); await expect(page.getByRole('combobox', { name: 'Cell display', exact: true })).toHaveValue('delta-profile');\n  230 |   await expect(page.getByRole('combobox', { name: 'Cells', exact: true })).toHaveValue('profile');\n  231 | });\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:228:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:29:58.669Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/footprint-presentation-del-7de51-ing-collection-and-persists/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-83eb839f61801bd7205e",
+          "file": "footprint-presentation.spec.ts",
+          "line": 194,
+          "column": 1
+        },
+        {
+          "title": "volume delta candle shows paired profiles without embedded totals or restarting collection",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 13416,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:283:140",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                      "column": 140,
+                      "line": 283
+                    },
+                    "snippet": "  281 |   await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-1366x768.png' });\n  282 |   await page.setViewportSize({ width: 720, height: 860 });\n> 283 |   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);\n      |                                                                                                                                            ^\n  284 |   await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-720x860.png' });\n  285 |   await page.setViewportSize({ width: 1366, height: 768 });\n  286 |   await page.waitForTimeout(400); await page.reload();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                        "column": 140,
+                        "line": 283
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m360\u001b[39m\nReceived:   \u001b[31m578\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  281 |   await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-1366x768.png' });\n  282 |   await page.setViewportSize({ width: 720, height: 860 });\n> 283 |   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.chart.plotRect(0).width)).toBeLessThan(360);\n      |                                                                                                                                            ^\n  284 |   await page.screenshot({ path: 'artifacts/footprint-volume-delta-candle-720x860.png' });\n  285 |   await page.setViewportSize({ width: 1366, height: 768 });\n  286 |   await page.waitForTimeout(400); await page.reload();\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts:283:140"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:30:31.421Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/footprint-presentation-vol-8da3b-ls-or-restarting-collection/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-presentation.spec.ts",
+                    "column": 140,
+                    "line": 283
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-daa5dc2df0344df124f4",
+          "file": "footprint-presentation.spec.ts",
+          "line": 233,
+          "column": 1
+        },
+        {
+          "title": "smaller bid profile remains visible beneath enlarged quantity labels",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14012,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:30:50.140Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-b07df979f53eb8256879",
+          "file": "footprint-presentation.spec.ts",
+          "line": 294,
+          "column": 1
+        },
+        {
+          "title": "footprint quantity labels remain readable over low-contrast red and green fills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5859,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:31:06.181Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-d666c558148eb3836877",
+          "file": "footprint-presentation.spec.ts",
+          "line": 322,
+          "column": 1
+        },
+        {
+          "title": "dense synthetic footprint stays crisp at DPR 1 and 2",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15329,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:31:12.120Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-362bd71d73b3100388ad",
+          "file": "footprint-presentation.spec.ts",
+          "line": 373,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footprint-totals.spec.ts",
+      "file": "footprint-totals.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Footprint Totals owns a lower pane while sharing one footprint collection",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 90586,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/footprint-totals.spec.ts",
+                        "column": 14,
+                        "line": 310
+                      },
+                      "message": "Error: page.waitForFunction: Test timeout of 90000ms exceeded.\n\n  308 |   })).toBe(true);\n  309 |   await page.reload();\n> 310 |   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);\n      |              ^\n  311 |   const persisted = await page.evaluate(() => {\n  312 |     const terminal = (window as any).__terminal;\n  313 |     const candlePanel = [...terminal.panels.values()].find((item: any) => item.selection.indicators.some((indicator: any) => indicator.definitionId === 'native.footprint-totals')) as any;\n    at /home/daz/workarea/iqterminal/tests/browser/footprint-totals.spec.ts:310:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:31:27.583Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/footprint-totals-Footprint-05c9d-ng-one-footprint-collection/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ea77fb1ed2c009a5bce0-e6e2a633ded3a32e4b9d",
+          "file": "footprint-totals.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "heatmap.spec.ts",
+      "file": "heatmap.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 23022,
+                  "error": {
+                    "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'id')\n    at eval (eval at evaluate (:370:30), <anonymous>:4:40)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'id')\n    at eval (eval at evaluate (:370:30), <anonymous>:4:40)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:370:30), <anonymous>:4:40)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts:116:14",
+                    "location": {
+                      "file": "eval at evaluate (:370:30), <anonymous>",
+                      "column": 40,
+                      "line": 4
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at evaluate (:370:30), <anonymous>",
+                        "column": 40,
+                        "line": 4
+                      },
+                      "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'id')\n    at eval (eval at evaluate (:370:30), <anonymous>:4:40)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:370:30), <anonymous>:4:40)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts:116:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:33:01.889Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/heatmap-worker-heatmap-sha-1fc00-ng-hidden-tabs-and-disposal/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at evaluate (:370:30), <anonymous>",
+                    "column": 40,
+                    "line": 4
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-caf8d619f4789feddffc",
+          "file": "heatmap.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "heatmap labels, settings, resize, unsupported instruments and saved layouts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12107,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m100\u001b[39m\nReceived:   \u001b[31m100\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m100\u001b[39m\nReceived:   \u001b[31m100\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts:178:90",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts",
+                      "column": 90,
+                      "line": 178
+                    },
+                    "snippet": "  176 |   await page.mouse.move(axis.x, axis.y);\n  177 |   await page.mouse.wheel(0, -180);\n> 178 |   await expect.poll(async () => { const r = await priceRange(); return r.max - r.min; }).toBeLessThan(beforeWheel.max - beforeWheel.min);\n      |                                                                                          ^\n  179 |   const beforePan = await priceRange();\n  180 |   await page.mouse.move(plot!.x + plot!.width / 2, plot!.y + plot!.height / 2);\n  181 |   await page.mouse.down(); await page.mouse.move(plot!.x + plot!.width / 2 + 30, plot!.y + plot!.height / 2 + 30, { steps: 8 }); await page.mouse.up();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts",
+                        "column": 90,
+                        "line": 178
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m100\u001b[39m\nReceived:   \u001b[31m100\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  176 |   await page.mouse.move(axis.x, axis.y);\n  177 |   await page.mouse.wheel(0, -180);\n> 178 |   await expect.poll(async () => { const r = await priceRange(); return r.max - r.min; }).toBeLessThan(beforeWheel.max - beforeWheel.min);\n      |                                                                                          ^\n  179 |   const beforePan = await priceRange();\n  180 |   await page.mouse.move(plot!.x + plot!.width / 2, plot!.y + plot!.height / 2);\n  181 |   await page.mouse.down(); await page.mouse.move(plot!.x + plot!.width / 2 + 30, plot!.y + plot!.height / 2 + 30, { steps: 8 }); await page.mouse.up();\n    at /home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts:178:90"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:33:30.469Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/heatmap-heatmap-labels-set-c2b44-struments-and-saved-layouts/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/heatmap.spec.ts",
+                    "column": 90,
+                    "line": 178
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-7171dcffaeedb7414eb9",
+          "file": "heatmap.spec.ts",
+          "line": 127,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "market-comparison-engine.spec.ts",
+      "file": "market-comparison-engine.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "OpenAlgo 2.6 comparison handles share a common percentage baseline and preserve price gaps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 2,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:33:47.341Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "8b22a57fe3e90dbf3998-64bbee8c855b93439a81",
+          "file": "market-comparison-engine.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "common mode reports no baseline without a shared timestamp and keeps the available subset comparable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8b22a57fe3e90dbf3998-57672e975903174a49ac",
+          "file": "market-comparison-engine.spec.ts",
+          "line": 55,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "market-comparison-fixture.spec.ts",
+      "file": "market-comparison-fixture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit development comparison fixtures render without reaching the public venue",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-eb7a19b08f1a66f76de4",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "comparison controls rebase the full selected window and persist colors, visibility, theme, and timezone",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-23fbed52e508fa41ac1e",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 53,
+          "column": 1
+        },
+        {
+          "title": "matching comparison panels share one upstream set, pause hidden chart drawing, and release repeated resources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-d48036d401aa177d800c",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "keeps native crosshair prices and a stable timestamp baseline, then promotes the next visible market",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-6b7980f82f8a2f45c427",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 205,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "object-tree.spec.ts",
+      "file": "object-tree.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "per-chart Object Tree resizes, nests by drag, and groups native visibility in one undo step",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-3614dd4164e264cc6e78",
+          "file": "object-tree.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "Object Tree handles hundreds of folders through delegated row actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-080463909dff2b1f9b9d",
+          "file": "object-tree.spec.ts",
+          "line": 227,
+          "column": 1
+        },
+        {
+          "title": "invalid object-tree and sidebar records stay untouched and report session-only state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-ea5d5f481704275a3f70",
+          "file": "object-tree.spec.ts",
+          "line": 253,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "open-interest-sma.spec.ts",
+      "file": "open-interest-sma.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0459243dea3507bf7eef-daca347b873a493d1f83",
+          "file": "open-interest-sma.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "order-flow-pane.spec.ts",
+      "file": "order-flow-pane.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "managed Order Flow combines CVD, raw Open Interest, Volume and default SMA with one pane chrome",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "1210505d0f685f19beff-1d70d243fad83bb42f7a",
+          "file": "order-flow-pane.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "combined native panes share raw Open Interest across charts and release it on sleep and final removal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "1210505d0f685f19beff-d09bc4ae95638f41768c",
+          "file": "order-flow-pane.spec.ts",
+          "line": 428,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "order-walls-ui.spec.ts",
+      "file": "order-walls-ui.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Order Walls settings persist and remain a single viewport consumer alongside Heatmap",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-52dba947506bd748bb7b",
+          "file": "order-walls-ui.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "wall tooltip uses the historical hit value and labels unknown bounds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-13cc14f94df581937622",
+          "file": "order-walls-ui.spec.ts",
+          "line": 95,
+          "column": 1
+        },
+        {
+          "title": "Order Walls distinguishes pending replay from an empty finished history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-71c6ae62437483ff1c7b",
+          "file": "order-walls-ui.spec.ts",
+          "line": 132,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pane-indicator-headers.spec.ts",
+      "file": "pane-indicator-headers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "pane indicators use one local header while overlays stay in the main list",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-3e9c68102a22becfa688",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-05c33e22f7ccd8799ec7",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 196,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pane-visibility-lifecycle.spec.ts",
+      "file": "pane-visibility-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "visible native indicator panes are removed and restored without orphan panes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "08307b2a7d5ac99080eb-16408b26cb0c3030cabe",
+          "file": "pane-visibility-lifecycle.spec.ts",
+          "line": 17,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "tpo.spec.ts",
+      "file": "tpo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "UTC TPO settings preserve its worker group, apply colors and retry the chart client",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "653643ff9f1cc36530d8-4401b992316b0ac3de1d",
+          "file": "tpo.spec.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "title": "UTC TPO uses plot CSS coordinates on a DPR 2 canvas across UTC day boundaries",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "653643ff9f1cc36530d8-d00791f8cc09380dc256",
+          "file": "tpo.spec.ts",
+          "line": 199,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T06:25:16.043Z",
+    "duration": 511435.82,
+    "expected": 16,
+    "skipped": 20,
+    "unexpected": 14,
+    "flaky": 0
+  }
+}

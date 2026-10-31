@@ -1,4 +1,4 @@
-import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
+import { addIndicator, expectHeatmapLiveQuiet, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 
@@ -57,7 +57,7 @@ test('themes restyle candles, footprint, liquidity, editor and hidden charts wit
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await addIndicator(panel, 'Order-book Heatmap');
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   await page.evaluate(() => {
     const t = (window as any).__terminal;
     t.feed.subscribeFootprint = (_id: string, _s: any, row: number, callback: any) => {
@@ -96,8 +96,9 @@ test('themes restyle candles, footprint, liquidity, editor and hidden charts wit
   }
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
   await panel.getByRole('button', { name: 'Add EMA overlay', exact: true }).click();
-  await expect(panel.locator('.indicator-picker .dialog-status')).toContainText('added');
-  await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
+  const indicatorDialog = panel.getByRole('dialog', { name: 'Add an indicator', exact: true });
+  await expect(indicatorDialog.locator('.dialog-status')).toContainText('added');
+  await indicatorDialog.getByRole('button', { name: 'Done', exact: true }).click();
   await page.evaluate(() => { const t = (window as any).__terminal; t.openEditor([...t.panels.keys()][0]); });
   await expect(page.locator('.script-editor-panel')).toBeVisible();
   await picker.selectOption('light');

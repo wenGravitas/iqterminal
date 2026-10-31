@@ -3,6 +3,7 @@ import type { FootprintBar } from './feed/protocol';
 import type { FootprintUnits } from './chart/footprint-units';
 import { footprintForUnits } from './chart/footprint-units';
 import type { FootprintTotalsPane } from './chart/footprint-totals';
+import type { DeltaFlipAssessment } from './chart/footprint-delta-flips';
 
 export type TotalsHover = NonNullable<ReturnType<FootprintTotalsPane['hoverSummary']>>;
 const SIGNED = new Set<FootprintStatRow>(['delta', 'minDelta', 'maxDelta', 'cvd', 'deltaPct']);
@@ -45,7 +46,23 @@ export function renderFootprintTotalsTooltip(element: HTMLElement, data: TotalsH
     if (metric.key !== 'trades' && metric.key !== 'deltaPct') amount.append(node('small', 'positioning-tooltip-secondary', format(other[metric.key], metric.key, data.units === 'btc' ? 'usdt' : 'btc')));
     row.append(node('span', 'positioning-tooltip-label', metric.label), amount); rows.append(row);
   }
+  const flip = data.deltaFlip as DeltaFlipAssessment | null;
+  const flipInfo = flip?.kind === 'flip' ? node('div', 'positioning-tooltip-muted', '') : null;
+  if (flip?.kind === 'flip' && flipInfo) {
+    const formatDelta = (value: number) => `${value < 0 ? '−' : value > 0 ? '+' : ''}${Math.abs(value).toLocaleString('en-US', { maximumFractionDigits: data.units === 'btc' ? 6 : 2 })} ${data.units.toUpperCase()}`;
+    const grade = flip.strengthBand === 'small' ? 'Small' : flip.strengthBand === 'medium' ? 'Medium'
+      : flip.strengthBand === 'strong' ? 'Strong' : flip.strengthBand === 'below-minimum' ? 'Below minimum' : 'Strength unavailable';
+    const lifecycle = flip.lifecycle === 'live' ? 'Live' : 'Closed';
+    const strength = flip.strength === null
+      ? `Strength unavailable — ${flip.unavailableReason === 'insufficient-history' ? 'insufficient history' : flip.unavailableReason === 'zero-baseline' ? 'reference median is zero' : 'USDT notional projection unavailable'}`
+      : `Relative strength ${flip.strength.toFixed(1)}×${flip.strengthBand === 'below-minimum' ? ` · below ${Number(data.deltaFlipMinimumStrength ?? 0).toFixed(2)}× minimum` : ''}`;
+    flipInfo.className = 'footprint-totals-tooltip-flip';
+    const swing = `${Math.abs(flip.rawSwing).toLocaleString('en-US', { maximumFractionDigits: data.units === 'btc' ? 6 : 2 })} ${data.units.toUpperCase()}`;
+    flipInfo.textContent = `${flip.direction === 'positive' ? 'Positive' : 'Negative'} delta flip · ${grade} · ${lifecycle}\n${formatDelta(flip.previousDelta)} → ${formatDelta(flip.currentDelta)} · swing ${swing}\n${strength}`;
+  }
+  const previewLimitation = data.deltaFlipUnavailableReason === 'preview-provenance-unknown'
+    ? node('div', 'footprint-totals-tooltip-flip', 'Live preview unavailable — coverage provenance is unknown') : null;
   const footer = node('div', 'positioning-tooltip-total positioning-tooltip-muted', `${context.coverage}${context.gapBefore ? ' · gap before' : ''}`);
   const source = node('div', 'positioning-tooltip-muted positioning-tooltip-status', context.source);
-  element.replaceChildren(header, title, rows, footer, source);
+  element.replaceChildren(header, title, rows, ...(flipInfo ? [flipInfo] : previewLimitation ? [previewLimitation] : []), footer, source);
 }

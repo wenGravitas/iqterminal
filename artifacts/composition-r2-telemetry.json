@@ -1,0 +1,69 @@
+{
+  "panel": {
+    "indicatorReconciles": 0,
+    "activeIndicatorRenders": 1,
+    "objectRefreshes": 0,
+    "scriptObjectProviderSyncs": 0,
+    "dataCallbacks": 50,
+    "visibleRangeScaleUpdates": 35,
+    "autoscaleValuesScanned": 12110,
+    "sma": {
+      "fullCalls": 0,
+      "fullInputValues": 0,
+      "tailCalls": 13,
+      "tailInputValues": 0,
+      "tailValuesProcessed": 13,
+      "registryRevisions": 50,
+      "registryFullValuesProcessed": 0,
+      "registryTailValuesProcessed": 1000,
+      "derivedPublications": 50
+    }
+  },
+  "studies": {
+    "workerResults": 50,
+    "workerFailures": 0,
+    "dataNotifications": 50,
+    "statusNotifications": 0,
+    "configurationNotifications": 0,
+    "listenerCalls": 50,
+    "dataListenerCalls": 50,
+    "uiListenerCalls": 0,
+    "workers": [
+      {
+        "id": "study-0383343e-9f5d-4235-a346-388933e9fe4c",
+        "patchCalls": 50,
+        "patchRows": 50,
+        "historyCalls": 0,
+        "historyRows": 0,
+        "messagesSent": 50,
+        "historyMessagesSent": 0,
+        "patchMessagesSent": 50,
+        "resultMessages": 50,
+        "resultRows": 250000,
+        "queued": null,
+        "generation": 52,
+        "alive": true
+      }
+    ]
+  },
+  "feedProtocol": {
+    "commands": 2,
+    "events": 54,
+    "commandTypes": {
+      "fixture": 2
+    },
+    "eventTypes": {
+      "status": 4,
+      "patch": 50
+    },
+    "subscriptions": {
+      "candles": 1,
+      "cvd": 0,
+      "netPositioning": 0,
+      "rawOpenInterest": 0,
+      "depth": 0,
+      "footprint": 0
+    }
+  },
+  "feed": {}
+}

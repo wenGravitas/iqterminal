@@ -81,7 +81,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const hosts = Array.from(p.element.querySelectorAll('.pane-indicator-host')) as HTMLElement[];
     return hosts.length === 1 && hosts.every(host => {
       const index = Number(host.dataset.paneIndex), plot = p.engine.chart.plotRect(index), rect = host.getBoundingClientRect();
-      return plot && Math.abs(rect.left - (chartRect.left + plot.left + 4)) < 2 && Math.abs(rect.top - (chartRect.top + plot.top)) < 2;
+      return plot && Math.abs(rect.left - (chartRect.left + plot.left)) < 2 && Math.abs(rect.top - (chartRect.top + plot.top)) < 2;
     });
   });
   await expect.poll(paneHeadersAligned).toBe(true);
@@ -284,6 +284,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
   await panel.getByRole('button', { name: 'Footprint Totals settings', exact: true }).click();
   const expandedRows = panel.getByRole('dialog', { name: 'Footprint Totals settings', exact: true });
   await expandedRows.getByLabel('Bid volume', { exact: true }).check();
+  await expandedRows.getByLabel('Minimum relative strength', { exact: true }).fill('0');
   await expandedRows.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect.poll(() => page.evaluate(() => {
     const t = (window as any).__terminal, p = [...t.panels.values()].find((item: any) => item.engine?.footprintTotalsDiagnostics().length) as any;
@@ -312,9 +313,144 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     const terminal = (window as any).__terminal;
     const candlePanel = [...terminal.panels.values()].find((item: any) => item.selection.indicators.some((indicator: any) => indicator.definitionId === 'native.footprint-totals')) as any;
     const indicator = candlePanel.selection.indicators.find((item: any) => item.definitionId === 'native.footprint-totals');
-    return { rows: indicator.settings.rows, highlightHighest: indicator.settings.highlightHighest, interval: candlePanel.selection.interval, market: candlePanel.selection.market,
+    return { rows: indicator.settings.rows, highlightHighest: indicator.settings.highlightHighest,
+      highlightDeltaFlips: indicator.settings.highlightDeltaFlips, deltaFlipMinimumStrength: indicator.settings.deltaFlipMinimumStrength,
+      interval: candlePanel.selection.interval, market: candlePanel.selection.market,
       paneIndex: candlePanel.engine.footprintTotalsPaneIndex(indicator.instanceId) };
   });
-  expect(persisted).toEqual({ rows: ['volume', 'delta', 'trades'], highlightHighest: true, interval: '5m', market: 'spot', paneIndex: 1 });
+  expect(persisted).toEqual({ rows: ['volume', 'delta', 'trades'], highlightHighest: true, highlightDeltaFlips: true,
+    deltaFlipMinimumStrength: 0, interval: '5m', market: 'spot', paneIndex: 1 });
   expect(errors).toEqual([]);
+});
+
+test('delta flip settings request the exact reference demand and the tooltip reports unavailable strength', async ({ page }) => {
+  test.setTimeout(90_000);
+  await installDepthFixture(page);
+  await page.setViewportSize({ width: 2560, height: 1080 });
+  const panel = page.locator('.candle-panel').first();
+  await page.evaluate(() => {
+    const terminal = (window as any).__terminal;
+    terminal.feed.subscribeFootprint = (id: string, series: any, rowPrice: number, callback: any) => {
+      setTimeout(() => {
+        const p = [...terminal.panels.values()][0] as any;
+        const times = p.candles.slice(-3).map((candle: any) => candle.t / 1000);
+        const visibleDeltas = [-40, 60, -80];
+        const bars = times.map((time: number, index: number) => {
+          const delta = visibleDeltas[index]!, bidVol = Math.max(0, -delta), askVol = Math.max(0, delta);
+          return { time, revision: 1, rowSize: rowPrice,
+          cells: [{ price: 83_000, bidVol, askVol, bidNotional: bidVol * 83_000, askNotional: askVol * 83_000 }],
+          open: 83_000, high: 83_025, low: 82_975, close: 83_010, delta,
+          minDelta: Math.min(0, delta), maxDelta: Math.max(0, delta), quoteDelta: delta * 83_000,
+          source: series.market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade', granularity: 'aggregate-trade',
+          coverage: 'partial', gapBefore: false, aggregateRecordCount: 1 };
+        });
+        const now = Date.now();
+        callback({ type: 'footprint-snapshot', key: 'delta-fixture', ids: [id], bars, retentionStart: times[0], generation: 1, batchId: 1,
+          status: { state: 'live', message: 'Explicit browser fixture', lastUpdate: now, tickSize: .1, rowSize: rowPrice,
+            collectionStartedAt: now, firstTradeAt: now, lastTradeAt: now, eventTime: now,
+            outages: 0, capacityDrops: 0, unknownSideRecords: 0, unknownSideVolume: 0, lateRecords: 0,
+            retentionStart: times[0], coverage: 'partial' } });
+      }, 100);
+      return () => {};
+    };
+  });
+  await setFootprint(panel, true);
+  await addIndicator(panel, 'Footprint Totals');
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
+  })).toMatchObject({ enabled: true, lookback: 50 });
+
+  await panel.getByRole('button', { name: 'Footprint Totals settings', exact: true }).click();
+  const dialog = panel.getByRole('dialog', { name: 'Footprint Totals settings', exact: true });
+  await expect(dialog.getByLabel('Highlight delta flips', { exact: true })).toBeChecked();
+  await expect(dialog.getByLabel('Reference lookback', { exact: true })).toHaveValue('50');
+  await expect(dialog.getByText('Minimum strength (× median; 0 = All flips with valid history)', { exact: true })).toBeVisible();
+  await dialog.getByLabel('Delta', { exact: true }).uncheck();
+  await expect(dialog.getByText('Delta is hidden. Enable the Delta row to see this highlight, or choose Whole column.', { exact: true })).toBeVisible();
+  await dialog.getByLabel('Delta', { exact: true }).check();
+  await dialog.getByLabel('Reference lookback', { exact: true }).fill('20');
+  await dialog.getByLabel('Delta flip target', { exact: true }).selectOption('whole-column');
+  await dialog.getByLabel('Highlight highest value in each row', { exact: true }).check();
+  await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
+  })).toMatchObject({ enabled: true, target: 'whole-column', lookback: 20 });
+
+  const time = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const step = ({ '1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '4h': 14400, '1d': 86400 } as any)[p.selection.interval];
+    const current = p.engine.latestBar.time, sourceKey = `binance:${p.selection.market ?? 'perpetual'}:BTCUSDT:aggregate-trade:${p.selection.interval}`;
+    const summaries = Array.from({ length: 24 }, (_, index) => {
+      const time = current - (23 - index) * step;
+      const delta = index < 20 ? 10 : index === 20 ? 60 : index === 21 ? -40 : index === 22 ? 60 : -80;
+      const fromMs = time * 1000, toMs = fromMs + step * 1000;
+      return { time, revision: 1, revisionSource: 'direct-accumulator', sourceKey, delta, quoteDelta: delta * 83_000,
+        coverage: 'observed', gapBefore: false, ended: true, completionSource: 'accepted-execution-time', previewEligible: false,
+        coverageEvidence: { provenance: 'direct-feed', fromMs, toMs, validated: true, complete: true,
+          confirmedFromMs: fromMs - 1, confirmedToMs: toMs, gapCount: 0, nonTailGapCount: 0, unconfirmedTailFromMs: null } };
+    });
+    p.engine.setFootprintAnalysisSummaries(summaries);
+    return current;
+  });
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
+  })).toMatchObject({ candidates: 3, highlighted: 3 });
+  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await page.waitForTimeout(100);
+  await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-positive-negative-dark.png' });
+  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await page.waitForTimeout(100);
+  await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-positive-negative-light.png' });
+  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const step = ({ '1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '4h': 14400, '1d': 86400 } as any)[p.selection.interval];
+    const current = p.engine.latestBar.time, sourceKey = `binance:${p.selection.market ?? 'perpetual'}:BTCUSDT:aggregate-trade:${p.selection.interval}`;
+    const summaries = Array.from({ length: 24 }, (_, index) => {
+      const time = current - (23 - index) * step;
+      const delta = index < 20 ? 10 : index === 20 ? 60 : index === 21 ? -40 : index === 22 ? 60 : -80;
+      const fromMs = time * 1000, toMs = fromMs + step * 1000;
+      const base = { time, revision: 1, revisionSource: 'direct-accumulator', sourceKey, delta, quoteDelta: delta * 83_000,
+        coverage: 'observed', gapBefore: false, ended: true, completionSource: 'accepted-execution-time', previewEligible: false,
+        coverageEvidence: { provenance: 'direct-feed', fromMs, toMs, validated: true, complete: true,
+          confirmedFromMs: fromMs, confirmedToMs: toMs, gapCount: 0, nonTailGapCount: 0, unconfirmedTailFromMs: null } };
+      return index === 23 ? { ...base, revision: 2, coverage: 'partial', ended: false, completionSource: 'unknown', previewEligible: true,
+        coverageEvidence: { ...base.coverageEvidence, complete: false, confirmedToMs: fromMs + step * 500 } } : base;
+    });
+    p.engine.setFootprintAnalysisSummaries(summaries);
+  });
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
+  })).toMatchObject({ highlighted: 3 });
+  await page.waitForTimeout(100);
+  await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-live-dark.png' });
+  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await page.waitForTimeout(100);
+  await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-live-light.png' });
+  await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const summaries = p.engine.footprintAnalysisSummaries.map((summary: any) => ({ ...summary,
+      coverageEvidence: { ...summary.coverageEvidence } }));
+    summaries[19].coverage = 'gapped'; summaries[19].coverageEvidence.complete = false; summaries[19].coverageEvidence.gapCount = 1;
+    summaries[19].coverageEvidence.nonTailGapCount = 1;
+    p.engine.setFootprintAnalysisSummaries(summaries);
+  });
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
+  })).toMatchObject({ candidates: 3, highlighted: 0 });
+  const hover = await page.evaluate(time => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any, pane = p.engine.footprintTotalsPaneIndex('native.footprint-totals');
+    const plot = p.engine.chart.plotRect(pane), x = p.engine.chart.timeScale.indexToX(p.engine.chart.dataLayer.timeToIndex(time));
+    return { x: plot.left + x, y: plot.top + 39 };
+  }, time);
+  const stage = await panel.locator('.chart-stage').boundingBox();
+  await page.mouse.move(stage!.x + hover.x, stage!.y + hover.y);
+  const tooltip = panel.locator('.footprint-totals-tooltip');
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip.locator('.footprint-totals-tooltip-flip')).toContainText('Strength unavailable — insufficient history');
 });

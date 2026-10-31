@@ -1,6 +1,6 @@
 import { installDepthFixture } from './depth-fixture';
 import { expect,test } from '@playwright/test';
-import { addIndicator, chooseChartMarket, setFootprint } from './indicator-actions';
+import { addIndicator, chooseChartMarket, expectHeatmapLiveQuiet, setFootprint } from './indicator-actions';
 test('Market Conditions switches modes in one native pane and persists configuration',async({page})=>{
  test.setTimeout(60000);const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto('/?fixture=1');await page.setViewportSize({width:1920,height:1080});
@@ -59,7 +59,7 @@ test('Market Conditions coexists with Footprint, Totals and Heatmap on the share
  });
  await setFootprint(panel,true);await addIndicator(panel,'Footprint Totals');await addIndicator(panel,'Order-book Heatmap');
  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].diagnostics().footprint.bars)).toBeGreaterThan(0);
- await expect(panel.locator('.heatmap-notice')).toContainText('live');await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
+ await expectHeatmapLiveQuiet(panel);await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
  await expect(panel.locator('.market-conditions-summary')).toContainText('TRADEABILITY:');await expect(panel.locator('.market-conditions-summary')).not.toContainText('WARMING');
  expect(errors).toEqual([]);
 });

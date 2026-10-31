@@ -1,0 +1,32 @@
+{
+  "mode": "explicit-fixture",
+  "evidence": [
+    {
+      "width": 1366,
+      "height": 768,
+      "theme": "dark",
+      "path": "artifacts/pane-indicator-headers/cvd-follow-desktop-dark.png",
+      "line": "total",
+      "dotLine": "total",
+      "errorX": -0.000048828127546585165,
+      "errorY": -0.000014421589412449975,
+      "inside": true,
+      "plainQuality": true,
+      "readableAmounts": true
+    },
+    {
+      "width": 720,
+      "height": 860,
+      "theme": "light",
+      "path": "artifacts/pane-indicator-headers/cvd-follow-narrow-light.png",
+      "line": "total",
+      "dotLine": "total",
+      "errorX": 0.000012207028703414835,
+      "errorY": 0.000015756646234876825,
+      "inside": true,
+      "plainQuality": true,
+      "readableAmounts": true
+    }
+  ],
+  "errors": []
+}

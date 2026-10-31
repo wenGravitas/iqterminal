@@ -11,6 +11,7 @@ import type { NetPositioningDisplay } from '../chart/net-positioning-layout';
 import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoIndicatorSettings } from './tpo-settings';
 import { TRADE_BUBBLES_ID, TRADE_BUBBLE_DEFAULT_SETTINGS, tradeBubbleSettings } from '../trade-bubbles/model';
 import { INDICATOR_COMPOSITION_SMA_ID, compositionSmaSettings, validateNumericInputs, validatePlotScaleIds } from '../scripts/composition';
+import { OPEN_INTEREST_ID, openInterestSettings } from './open-interest-data';
 export { ORDER_WALLS_ID } from '../feed/order-walls';
 
 export const INDICATOR_CONFIG_VERSION = 1;
@@ -19,7 +20,15 @@ export const FOOTPRINT_TOTALS_ID = 'native.footprint-totals';
 export const TPO_ID = 'native.tpo';
 export const COMPOSITION_SMA_ID = INDICATOR_COMPOSITION_SMA_ID;
 export const DEFAULT_FOOTPRINT_TOTALS_ROWS = ['volume', 'bidVolume', 'askVolume', 'delta'] as const;
-export type FootprintTotalsSettings = { rows: import('openalgo-charts/profile').FootprintStatRow[]; highlightHighest: boolean };
+export const DEFAULT_FOOTPRINT_TOTALS_SETTINGS = {
+  rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: false, highlightDeltaFlips: true,
+  deltaFlipTarget: 'delta-cell' as const, deltaFlipLookback: 50, deltaFlipMinimumStrength: 0.25, showDeltaFlipLivePreview: true,
+};
+export type FootprintTotalsSettings = {
+  rows: import('openalgo-charts/profile').FootprintStatRow[]; highlightHighest: boolean;
+  highlightDeltaFlips: boolean; deltaFlipTarget: 'delta-cell' | 'whole-column'; deltaFlipLookback: number;
+  deltaFlipMinimumStrength: number; showDeltaFlipLivePreview: boolean;
+};
 const FOOTPRINT_TOTAL_ROWS: readonly import('openalgo-charts/profile').FootprintStatRow[] = [
   'volume', 'bidVolume', 'askVolume', 'delta', 'minDelta', 'maxDelta', 'deltaPct', 'cvd', 'trades',
 ];
@@ -27,7 +36,18 @@ export function footprintTotalsSettings(value: unknown): FootprintTotalsSettings
   const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const source = Array.isArray(raw.rows) ? raw.rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS];
   const rows = FOOTPRINT_TOTAL_ROWS.filter(row => source.includes(row));
-  return { rows: rows.length ? rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: raw.highlightHighest === true };
+  const lookback = typeof raw.deltaFlipLookback === 'number' && Number.isFinite(raw.deltaFlipLookback)
+    ? Math.max(20, Math.min(200, Math.trunc(raw.deltaFlipLookback))) : DEFAULT_FOOTPRINT_TOTALS_SETTINGS.deltaFlipLookback;
+  const minimum = typeof raw.deltaFlipMinimumStrength === 'number' && Number.isFinite(raw.deltaFlipMinimumStrength)
+    && raw.deltaFlipMinimumStrength >= 0 ? raw.deltaFlipMinimumStrength : DEFAULT_FOOTPRINT_TOTALS_SETTINGS.deltaFlipMinimumStrength;
+  return {
+    rows: rows.length ? rows : [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: raw.highlightHighest === true,
+    // A missing flag is the legacy saved state. New instances seed the defaults below.
+    highlightDeltaFlips: raw.highlightDeltaFlips === true,
+    deltaFlipTarget: raw.deltaFlipTarget === 'whole-column' ? 'whole-column' : 'delta-cell',
+    deltaFlipLookback: lookback, deltaFlipMinimumStrength: minimum,
+    showDeltaFlipLivePreview: raw.showDeltaFlipLivePreview !== false,
+  };
 }
 export const HEATMAP_ID = 'native.orderbook-heatmap';
 export const NET_LONGS_ID = 'native.net-longs-estimated';
@@ -73,6 +93,9 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
   {id:CVD_ID,name:'Multi-Venue CVD',description:'Executed aggressor-side cumulative volume delta · historical/live · Spot and Perpetual',category:'Order Flow',implementation:'builtin',
    settingsVersion:1,defaults:{...cvdSettings(undefined)},settingsSchema:[{key:'anchor',label:'Reset mode',kind:'select',defaultValue:'daily'},{key:'units',label:'Quantity unit',kind:'select',defaultValue:'btc'}],
    placements:['pane'],dataRequirements:['signed-executions'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
+  {id:OPEN_INTEREST_ID,name:'Open Interest',description:'Observed BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverage',category:'Order Flow',implementation:'builtin',
+   settingsVersion:1,defaults:{...openInterestSettings(undefined)},settingsSchema:[{key:'venues',label:'Perpetual venues',kind:'native',defaultValue:['binance','hyperliquid','bybit']}],
+   placements:['pane'],dataRequirements:['observed-perpetual-open-interest-levels'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   {id:TRADE_BUBBLES_ID,name:'Trade Bubbles',description:'Size-scaled BTCUSDT executions · independent shared-feed overlay',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...TRADE_BUBBLE_DEFAULT_SETTINGS,tiers:TRADE_BUBBLE_DEFAULT_SETTINGS.tiers.map(tier=>({...tier}))},settingsSchema:[
     {key:'sourceMode',label:'Execution sources',kind:'select',defaultValue:'follow-chart'},
     {key:'minimumNotionalUsdt',label:'Minimum notional (USDT)',kind:'number',defaultValue:100000},
@@ -92,9 +115,14 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       ...['displayMode','cellStyle','opacity','showCandle','showPoc','showValueArea','showDiagonalImbalances','stackedImbalances','imbalanceRatio','imbalanceThreshold'].map(key => ({ key: `view.${key}`, label: key, kind: 'native', defaultValue: DEFAULT_FOOTPRINT_VIEW[key as keyof typeof DEFAULT_FOOTPRINT_VIEW] }))],
     placements: ['price-presentation'], dataRequirements: ['executions'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: FOOTPRINT_TOTALS_ID, name: 'Footprint Totals', description: 'Per-candle footprint statistics on their own time-aligned pane', category: 'Order Flow', implementation: 'builtin',
-    settingsVersion: 1, defaults: { rows: [...DEFAULT_FOOTPRINT_TOTALS_ROWS], highlightHighest: false }, settingsSchema: [
+    settingsVersion: 1, defaults: { ...DEFAULT_FOOTPRINT_TOTALS_SETTINGS }, settingsSchema: [
       { key: 'rows', label: 'Statistics rows', kind: 'multi', defaultValue: [...DEFAULT_FOOTPRINT_TOTALS_ROWS] },
-      { key: 'highlightHighest', label: 'Highlight highest value in each row', kind: 'boolean', defaultValue: false }],
+      { key: 'highlightHighest', label: 'Highlight highest value in each row', kind: 'boolean', defaultValue: false },
+      { key: 'highlightDeltaFlips', label: 'Highlight delta flips', kind: 'boolean', defaultValue: true },
+      { key: 'deltaFlipTarget', label: 'Target', kind: 'select', defaultValue: 'delta-cell' },
+      { key: 'deltaFlipLookback', label: 'Reference lookback', kind: 'number', defaultValue: 50 },
+      { key: 'deltaFlipMinimumStrength', label: 'Minimum relative strength', kind: 'number', defaultValue: 0.25 },
+      { key: 'showDeltaFlipLivePreview', label: 'Show live preview', kind: 'boolean', defaultValue: true }],
     placements: ['pane'], dataRequirements: ['executions'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: HEATMAP_ID, name: 'Order-book Heatmap', description: 'Observed resting liquidity · Binance BTCUSDT Spot and USD-M Perp', category: 'Order Flow', implementation: 'builtin',
     settingsVersion: 1, defaults: { rowPrice: 10, bucketMs: 500, mode: 'average', opacity: .85, intensity: 100, minimum: .01, labels: 'auto', bids: true, asks: true },
@@ -174,7 +202,7 @@ export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
     ...(i.plotScaleIds ? { plotScaleIds: validatePlotScaleIds(i.plotScaleIds) } : {}) })));
 }
 export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true, options: { instanceId?: string; placement?: Placement; paneId?: string; numericInputs?: unknown; plotScaleIds?: unknown } = {}): IndicatorInstance {
-  const placement = options.placement ?? (id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay');
+  const placement = options.placement ?? (id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === OPEN_INTEREST_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay');
   return { instanceId: options.instanceId ?? (id === COMPOSITION_SMA_ID ? `sma-${crypto.randomUUID()}` : id), definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings,
     ...(options.paneId ? { paneId: options.paneId } : {}),
     ...(options.numericInputs ? { numericInputs: validateNumericInputs(options.numericInputs) } : {}),
@@ -199,6 +227,17 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (typeof raw.paneId === 'string' && raw.paneId.length > 0 && raw.paneId.length <= 120) copy.paneId = raw.paneId; else delete copy.paneId;
     if (raw.numericInputs && typeof raw.numericInputs === 'object' && !Array.isArray(raw.numericInputs)) copy.numericInputs = validateNumericInputs(raw.numericInputs); else delete copy.numericInputs;
     if (raw.plotScaleIds && typeof raw.plotScaleIds === 'object' && !Array.isArray(raw.plotScaleIds)) copy.plotScaleIds = validatePlotScaleIds(raw.plotScaleIds); else delete copy.plotScaleIds;
+    // R1 stored the chosen source scale in both the reference and the plot
+    // assignment. Keep that legacy presentation hint on the SMA plot before
+    // normalizing the input reference to a scale-independent calculation link.
+    if (copy.definitionId === COMPOSITION_SMA_ID && !copy.plotScaleIds?.p0
+      && raw.numericInputs && typeof raw.numericInputs === 'object' && !Array.isArray(raw.numericInputs)) {
+      const legacySource = (raw.numericInputs as Record<string, unknown>).source;
+      const legacyScaleId = legacySource && typeof legacySource === 'object' && !Array.isArray(legacySource)
+        ? (legacySource as Record<string, unknown>).scaleId : undefined;
+      const sourceScale = validatePlotScaleIds({ p0: legacyScaleId }).p0;
+      if (sourceScale) copy.plotScaleIds = { ...copy.plotScaleIds, p0: sourceScale };
+    }
     if (copy.definitionId === COMPOSITION_SMA_ID && copy.settingsVersion === 1) copy.settings = { ...compositionSmaSettings(copy.settings) };
     if (copy.definitionId === EFFORT_RESULT_ID && copy.settingsVersion === 1) copy.settings = effortRecord(effortSettings(copy.settings));
     if (copy.definitionId === MARKET_CONDITIONS_ID && copy.settingsVersion === 1) copy.settings = { ...conditionsSettings(copy.settings) };
@@ -206,6 +245,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (copy.definitionId === FOOTPRINT_TOTALS_ID && copy.settingsVersion === 1) copy.settings = { ...footprintTotalsSettings(copy.settings) };
     if (copy.definitionId === LIQUIDATIONS_ID && copy.settingsVersion === 1) copy.settings = {...liquidationSettings(copy.settings)};
     if (copy.definitionId === CVD_ID && copy.settingsVersion === 1) copy.settings = { ...cvdSettings(copy.settings) };
+    if (copy.definitionId === OPEN_INTEREST_ID && copy.settingsVersion === 1) copy.settings = { ...openInterestSettings(copy.settings) };
     if (copy.definitionId === TRADE_BUBBLES_ID && copy.settingsVersion === 1) copy.settings = { ...tradeBubbleSettings(copy.settings) };
     if (copy.definitionId === DAILY_VWAP_ID && copy.settingsVersion === 1) copy.settings = { ...dailyVwapSettings(copy.settings) };
     if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };

@@ -1,5 +1,5 @@
 import { chooseChartMarket } from './indicator-actions';
-import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
+import { addIndicator, expectHeatmapLiveQuiet, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect, type Page } from '@playwright/test';
 
 import { installDepthFixture } from './depth-fixture';
@@ -28,7 +28,7 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   const worker = await installDepthFixture(page), panel = page.locator('.candle-panel').first();
   const tree = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true }); if (await tree.isVisible()) await tree.click();
   await addIndicator(panel, 'Order-book Heatmap');
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   // Pin the fixture's view to its supplied depth range, independent of autoscale/clock boundaries.
   await page.evaluate(() => { const e = ([...(window as any).__terminal.panels.values()][0] as any).engine; e.chart.panes()[0].priceScale.setAutoScale(false); e.chart.panes()[0].priceScale.setPriceRange({min:82650,max:83350}); });
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.bins)).toBeGreaterThan(0);
@@ -84,7 +84,9 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
     return { x: box.left + bin.x + (bin.right-bin.x)/4, y: box.top + (bin.y + bin.bottom) / 2 };
   });
   await page.mouse.move(bucketPoint.x, bucketPoint.y);
-  await expect(panel.locator('.ohlc')).toContainText('83,000–83,025 USDT (upper exclusive)');
+  const cellTooltip=panel.locator('.footprint-cell-tooltip');
+  await expect(cellTooltip).toBeVisible();
+  await expect(cellTooltip).toContainText('83,000–83,025 USDT');
   await page.screenshot({ path: 'artifacts/footprint-fixed-bucket-1366x768.png' });
   await setPriceLevel(panel, '50');
   await expect.poll(async () => (await rows()).some((b: any) => b.high-b.low !== 50)).toBe(false);
@@ -101,10 +103,11 @@ test('worker heatmap shares depth studies, survives chart switching, hidden tabs
   expect(hover).not.toBeNull(); const bounds = await panel.locator('.chart-stage').boundingBox();
   await page.mouse.move(bounds!.x + hover!.x, bounds!.y + hover!.y);
   await expect(panel.locator('.heatmap-readout')).toContainText('Resting');
-  await expect(panel.locator('.ohlc')).toContainText('BTC');
+  await expect(panel.locator('.net-positioning-tooltip')).toBeHidden();
+  await expect(panel.locator('.footprint-cell-tooltip')).toHaveCount(0);
   await page.screenshot({ path: 'artifacts/orderbook-heatmap-footprint-1366x768.png' });
   await setFootprint(panel, false);
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   const candleStart = (await page.evaluate(() => (window as any).__terminal.stats().panels[0].heatmap.status)).collectionStart;
   await panel.getByRole('button', { name: 'Order-book Heatmap settings', exact: true }).click();
   await panel.locator('dialog.heatmap-settings').getByLabel('Opacity', { exact: true }).fill('0.3');
@@ -129,7 +132,7 @@ test('heatmap labels, settings, resize, unsupported instruments and saved layout
   await installDepthFixture(page); const panel = page.locator('.candle-panel').first();
   const tree = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true }); if (await tree.isVisible()) await tree.click();
   await addIndicator(panel, 'Order-book Heatmap');
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   // Explicit long session tiles exercise actual primitive LOD and labels, independent of wall-clock wait.
   await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any, engine = p.engine;

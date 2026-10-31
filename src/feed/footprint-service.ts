@@ -1,4 +1,6 @@
 import { canonicalFootprintRowPrice, canonicalSeries, duration, footprintTicksForPrice, marketOf, validFootprintRowPrice, type Event, type FootprintBar, type FootprintRowTicks, type FootprintStatus, type Interval, type Market, type Series } from './protocol';
+import { footprintAnalysisSourceKey, type FootprintAnalysisSummary } from './protocol';
+import { directFootprintAnalysisSummary, MAX_FOOTPRINT_ANALYSIS_SUMMARIES } from '../chart/footprint-delta-flips';
 import {
   FOOTPRINT_FLUSH_MS, FOOTPRINT_MAX_PENDING, FOOTPRINT_MAX_RECENT_IDS,
   DEFAULT_FOOTPRINT_LIMITS,
@@ -64,10 +66,13 @@ interface Group {
   lateRecords: number;
   buyVolume: number;
   sellVolume: number;
+  previewExpiredTime?: number;
   inFlight?: { batchId: number; event: FootprintTransportEvent };
   pendingSnapshot: boolean;
   pendingBars: Map<number, FootprintBar>;
   pendingStatus?: FootprintStatus;
+  /** Cell-free direct-feed history outlives the denser 300-bar accumulator window. */
+  analysisSummaries: Map<number, FootprintAnalysisSummary>;
 }
 
 type FootprintTransportEvent = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
@@ -175,7 +180,7 @@ export class BinanceFootprintService {
         key, market: this.market, interval: series.interval, rowPrice, rowTicks: this.tickSize === null ? null : footprintTicksForPrice(rowPrice, this.tickSize), generation: ++this.nextGeneration, ids: new Set(),
         collectionStartedAt: this.transport.now(), firstTradeAt: null, lastTradeAt: null, eventTime: null,
         lastUpdate: 0, dirty: false, outages: 0, unknownSideRecords: 0, unknownSideVolume: 0,
-        lateRecords: 0, buyVolume: 0, sellVolume: 0, pendingSnapshot: false, pendingBars: new Map(),
+        lateRecords: 0, buyVolume: 0, sellVolume: 0, pendingSnapshot: false, pendingBars: new Map(), analysisSummaries: new Map(),
       };
       if (this.tickSize !== null) this.resolveGroupGrid(group);
       this.groups.set(key, group);
@@ -418,6 +423,17 @@ export class BinanceFootprintService {
       this.outageOpen = false;
       let appliedAny = false;
       for (const group of this.groups.values()) {
+        // Keep the previous candle's cell-free analysis summary at the exact
+        // boundary where the next accepted execution proves it has ended. The
+        // dense accumulator may evict that candle before the next transport
+        // flush, so reconstructing summaries from drainDirty() can lose a full
+        // batch of history when executions span many bars.
+        const stepMs = duration[group.interval];
+        const incomingBarTime = Math.floor(trade.timeMs / stepMs) * stepMs / 1000;
+        const previousLatest = group.accumulator?.latestTime !== null
+          && group.accumulator?.latestTime !== undefined
+          && group.accumulator.latestTime !== incomingBarTime
+          ? group.accumulator.latest : null;
         const result = group.accumulator?.ingest(trade);
         if (result === 'applied') {
           appliedAny = true;
@@ -429,12 +445,14 @@ export class BinanceFootprintService {
           if (trade.side === 'buy') group.buyVolume += trade.quantity;
           else if (trade.side === 'sell') group.sellVolume += trade.quantity;
           group.outages = group.accumulator?.outages ?? 0;
+          if (previousLatest) this.refreshAnalysisSummaries(group, [previousLatest]);
         } else if (result === 'capacity') {
           group.dirty = true;
           group.lastTradeAt = trade.timeMs;
           group.eventTime = trade.eventTimeMs;
           group.lastUpdate = this.lastUpdate;
           group.outages = group.accumulator?.outages ?? 0;
+          if (previousLatest) this.refreshAnalysisSummaries(group, [previousLatest]);
         } else if (result === 'unknown-side') {
           group.unknownSideRecords++;
           group.unknownSideVolume += trade.quantity;
@@ -480,17 +498,38 @@ export class BinanceFootprintService {
     for (const consumer of this.executionConsumers.values()) consumer([], {state:this.state,message:this.message,lastUpdate:this.lastUpdate},this.liveSince,this.executionIntegrity());
     this.counters.late++;
     for (const group of this.groups.values()) {
-      if (group.accumulator?.markCoverageGap(trade.timeMs)) {
-        group.lateRecords++;
-        group.dirty = true;
-      }
+      const markedInAccumulator = group.accumulator?.markCoverageGap(trade.timeMs) ?? false;
+      if (markedInAccumulator) group.dirty = true;
+      // A late record can target a candle that has already left the dense
+      // accumulator. Its bounded summary must still invalidate dependent flips.
+      const time = Math.floor(trade.timeMs / duration[group.interval]) * duration[group.interval] / 1000;
+      const previous = group.analysisSummaries.get(time);
+      if (markedInAccumulator || previous) group.lateRecords++;
+      if (previous) group.analysisSummaries.set(time, {
+        ...previous, coverage: previous.coverage === 'capacity-limited' ? previous.coverage : 'gapped', gapBefore: true, previewEligible: false,
+        coverageEvidence: { ...previous.coverageEvidence, complete: false,
+          gapCount: Math.max(1, previous.coverageEvidence.gapCount),
+          nonTailGapCount: Math.max(1, previous.coverageEvidence.nonTailGapCount) },
+      });
+      if (previous) this.queueStatus(group);
     }
   }
 
   private check() {
-    if (this.state === 'live' && this.lastUpdate && this.transport.now() - this.lastUpdate > STALE_AFTER_MS) {
+    const now = this.transport.now();
+    if (this.state === 'live' && this.lastUpdate && now - this.lastUpdate > STALE_AFTER_MS) {
       this.markOutage();
       this.setStatus('stale', `No valid Binance ${this.market} aggTrade observation for 15s · retained coverage marked gapped; waiting for reconnect or new trades`);
+    }
+    for (const group of this.groups.values()) {
+      const latest = group.accumulator?.latestTime;
+      if (latest !== null && latest !== undefined && group.previewExpiredTime !== latest
+        && now >= latest * 1000 + duration[group.interval]) {
+        group.previewExpiredTime = latest;
+        // Re-evaluate the live summary once at the boundary. This removes a
+        // preview without treating wall-clock passage as reliable closure.
+        this.queueStatus(group);
+      }
     }
   }
 
@@ -519,11 +558,13 @@ export class BinanceFootprintService {
   }
 
   private queueStatus(group: Group) {
+    this.refreshAnalysisSummaries(group);
     group.pendingStatus = this.statusFor(group);
     this.dispatchPending(group);
   }
 
   private queueSnapshot(group: Group) {
+    this.refreshAnalysisSummaries(group);
     group.pendingSnapshot = true;
     group.pendingBars.clear();
     group.pendingStatus = this.statusFor(group);
@@ -531,6 +572,9 @@ export class BinanceFootprintService {
   }
 
   private queuePatch(group: Group, bars: FootprintBar[]) {
+    const previousTimes = new Set(bars.map(bar => bar.time - duration[group.interval] / 1000));
+    const newlyCompleted = (group.accumulator?.snapshot() ?? []).filter(bar => previousTimes.has(bar.time));
+    this.refreshAnalysisSummaries(group, [...bars, ...newlyCompleted]);
     const retentionStart = group.accumulator?.oldestTime ?? null;
     if (retentionStart === null) {
       group.pendingSnapshot = true;
@@ -560,6 +604,7 @@ export class BinanceFootprintService {
       event = {
         type: 'footprint-snapshot', key: group.key, ids: [...group.ids], generation, batchId,
         bars, retentionStart: group.accumulator?.oldestTime ?? null,
+        analysisSummaries: [...group.analysisSummaries.values()],
         status: group.pendingStatus ?? this.statusFor(group),
       };
       group.pendingStatus = undefined;
@@ -569,18 +614,35 @@ export class BinanceFootprintService {
       event = {
         type: 'footprint-patch', key: group.key, ids: [...group.ids], generation, batchId,
         bars, retentionStart: group.accumulator?.oldestTime ?? null,
+        analysisSummaries: [...group.analysisSummaries.values()],
         status: group.pendingStatus ?? this.statusFor(group),
       };
       group.pendingStatus = undefined;
     } else if (group.pendingStatus) {
       event = {
         type: 'footprint-status', key: group.key, ids: [...group.ids], generation, batchId,
+        analysisSummaries: [...group.analysisSummaries.values()],
         status: group.pendingStatus,
       };
       group.pendingStatus = undefined;
     } else return;
     group.inFlight = { batchId, event };
     this.emit(event);
+  }
+
+  private refreshAnalysisSummaries(group: Group, changedBars?: readonly FootprintBar[]) {
+    const bars = changedBars ?? group.accumulator?.snapshot() ?? [];
+    const sourceKey = footprintAnalysisSourceKey(group.market, group.interval);
+    const status = this.statusFor(group);
+    for (const bar of bars) {
+      const summary = directFootprintAnalysisSummary(bar, sourceKey, group.interval, status, this.transport.now());
+      const previous = group.analysisSummaries.get(summary.time);
+      if (!previous || JSON.stringify(previous) !== JSON.stringify(summary)) group.analysisSummaries.set(summary.time, summary);
+    }
+    if (group.analysisSummaries.size > MAX_FOOTPRINT_ANALYSIS_SUMMARIES) {
+      const oldestFirst = [...group.analysisSummaries.keys()].sort((a, b) => a - b);
+      for (const time of oldestFirst.slice(0, group.analysisSummaries.size - MAX_FOOTPRINT_ANALYSIS_SUMMARIES)) group.analysisSummaries.delete(time);
+    }
   }
 
   private markOutage() {

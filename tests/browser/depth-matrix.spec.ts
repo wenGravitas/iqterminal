@@ -188,7 +188,7 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   await expect.poll(() => scroll.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await page.waitForTimeout(350);
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null'));
-  expect(saved.version).toBe(5);
+  expect(saved.version).toBe(6);
   const params = Object.values(saved.layout.panels).find((panel: any) => panel.contentComponent === 'depth-matrix') as any;
   expect(params.params).toMatchObject({ sources: ['binance-perpetual', 'binance-spot'], bucketWidth: '5000', columnWidth: 150, scale: 'shared', wallMode: 'off' });
   params.params.sources = ['binance-perpetual', 'binance-spot', 'bybit-spot', 'bybit-perpetual', 'hyperliquid-perpetual'];

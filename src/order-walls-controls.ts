@@ -21,6 +21,7 @@ export class OrderWallsControls {
   private status?: OrderWallStatus;
   private supported = false;
   private sourceLabel = 'Binance BTCUSDT';
+  private noticeAllowed = false;
   private topFields: HTMLElement[] = [];
   private thresholdFields: HTMLElement[] = [];
   private relativeFields: HTMLElement[] = [];
@@ -130,34 +131,33 @@ export class OrderWallsControls {
   sync(settings: OrderWallsSettings, supported: boolean, attached = true, visible = true, series?: Series) {
     this.current = orderWallsSettings(settings); this.supported = supported;
     if(series)this.sourceLabel=instrumentLabel(series);
-    this.notice.hidden = !attached || !visible;
+    this.noticeAllowed = attached && visible;
     this.renderStatus();
   }
 
   setStatus(status?: OrderWallStatus) { this.status = status; this.renderStatus(); }
 
   private renderStatus() {
+    let message = '';
     if (!this.supported) {
       this.notice.dataset.state = 'unavailable';
-      this.notice.textContent = 'Order Walls unavailable · Binance BTCUSDT Spot or USD-M Perp only';
-      this.notice.title = 'Hyperliquid has no supported order-book history source in this terminal.';
-      return;
+      message = 'Order-book data unavailable for this market. Use Binance BTCUSDT.';
+    } else if (!this.status) {
+      this.notice.dataset.state = 'loading'; message = 'Waiting for order-book data…';
+    } else {
+      const status = this.status, replayPending = status.replay && status.replay.through < status.replay.to;
+      this.notice.dataset.state = status.state;
+      if (replayPending) message = status.provisional
+        ? 'Loading earlier order history. Current order sizes are still updating.' : 'Loading earlier order history…';
+      else if (status.state === 'loading') message = 'Waiting for order-book data…';
+      else if (status.state === 'stale') message = 'Updates paused.';
+      else if (status.state === 'unavailable') message = 'Order-book data unavailable.';
+      else if (status.coverage?.partial || status.rankingScope?.partial || status.bookScope && (!status.bookScope.bidComplete || !status.bookScope.askComplete)) message = 'Some order-book data is missing.';
+      else if (status.valueHistoryLimited || status.episodeHistoryLimited) message = 'Some earlier order history is unavailable.';
+      else if (status.provisional) message = 'Order sizes are still updating.';
     }
-    if (!this.status) { this.notice.dataset.state = 'loading'; this.notice.textContent = 'Order Walls · waiting for observed book history'; return; }
-    const state = this.status.state === 'live' ? 'live' : this.status.state;
-    this.notice.dataset.state = state;
-    const coverage = this.status.coverage?.complete ? 'complete history' : this.status.coverage?.partial ? 'partial history' : '';
-    const scope = this.status.rankingScope?.partial ? ' · partial ranking scope · observed Top N only' : this.status.bookScope && (!this.status.bookScope.bidComplete || !this.status.bookScope.askComplete) ? ' · partial book scope' : '';
-    const detail = [this.status.message,this.status.coverage?.reason,this.status.valueHistoryLimited?'Earlier quantity/rank detail evicted; narrow the replay window.':undefined,this.status.episodeHistoryLimited?'Earlier selection episodes evicted; narrow the replay window.':undefined].filter((v,i,a)=>v&&a.indexOf(v)===i).map(v=>` · ${v}`).join('');
-    const resolution = this.current.aggregation === 'auto' && Number.isFinite(this.status.resolvedPriceWidth)
-      ? ` · Auto $${this.status.resolvedPriceWidth!.toLocaleString('en-US')} rows` : '';
-    const provisional = this.status.provisional ? ' · current wall provisional while history catches up' : '';
-    const replay = this.status.replay;
-    const progress = replay && replay.to > replay.from
-      ? ` · History replay ${Math.min(100, Math.floor(100 * (replay.through - replay.from) / (replay.to - replay.from)))}% · loaded through ${new Date(replay.through).toISOString().slice(11, 19)} UTC · remaining history pending`
-      : '';
-    this.notice.textContent = `Order Walls · ${this.sourceLabel} · ${state}${resolution}${progress}${provisional}${coverage ? ` · ${coverage}` : ''}${scope}${detail}`;
-    this.notice.title = this.notice.textContent;
+    this.notice.textContent = message; this.notice.title = message;
+    this.notice.hidden = !this.noticeAllowed || !message;
   }
 
   open(settings: OrderWallsSettings) {

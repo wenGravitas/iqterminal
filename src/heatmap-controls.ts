@@ -64,12 +64,17 @@ export class HeatmapControls {
   }
   setStatus(status?: HeatmapStatus) { this.status = status; this.renderStatus(); }
   private renderStatus() {
-    if (!this.current.enabled) return;
     const s = this.status;
-    const detail=s&&(s.state==='failed'||s.message.startsWith('Staging'))?` · ${s.message}`:'';
-    const collection=s?.collectionStart?` · since ${utc(s.collectionStart)}`:s?.state==='failed'?'':' · collecting…';
-    this.notice.textContent = !this.supported ? 'Heatmap unavailable · Binance BTCUSDT USD-M only' : !s ? 'Heatmap · syncing…' : `Heatmap · ${s.state} · ${this.units.toUpperCase()} · ${this.current.mode === 'peak' ? 'observed peak' : 'time-weighted average'}${detail}${s.capacityLimited ? ' · row limit' : ''}${collection}${s.retentionStart ? ` · retained ${utc(s.retentionStart)}` : ''}`;
-    this.notice.title = !this.supported ? this.notice.textContent : `${this.notice.textContent}\n${s?.message ?? 'Waiting for synchronized depth'}`;
+    this.notice.dataset.state = !this.supported ? 'unavailable' : s?.state ?? 'loading';
+    if (!this.current.enabled) { this.notice.hidden = true; return; }
+    const message = !this.supported ? 'Heatmap unavailable for this market. Use Binance BTCUSDT.'
+      : !s || s.state === 'syncing' ? 'Waiting for order-book data…'
+        : s.state === 'failed' ? 'Heatmap data unavailable.'
+          : s.state === 'stale' ? 'Updates paused.'
+            : s.capacityLimited ? 'Some older heatmap data may be missing.' : '';
+    this.notice.textContent = message;
+    this.notice.hidden = !this.current.enabled || !message;
+    this.notice.title = message;
   }
   hover(hit: ReturnType<OrderBookHeatmap['hoverAt']>) {
     this.externalTooltip = '';

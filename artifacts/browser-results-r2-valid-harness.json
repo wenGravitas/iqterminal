@@ -1,0 +1,2137 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.r2.config.ts",
+      "tests/browser/composition-release1.spec.ts",
+      "tests/browser/composition-hardening.spec.ts",
+      "tests/browser/composition-pane-resolver.spec.ts",
+      "tests/browser/composition-orphan-pane.spec.ts",
+      "tests/browser/pane-indicator-headers.spec.ts",
+      "tests/browser/pane-visibility-lifecycle.spec.ts",
+      "tests/browser/object-tree.spec.ts",
+      "tests/browser/drawing-sidebar.spec.ts",
+      "tests/browser/drawing-tools.spec.ts",
+      "tests/browser/cvd.spec.ts",
+      "tests/browser/heatmap.spec.ts",
+      "tests/browser/footprint-presentation.spec.ts",
+      "tests/browser/footprint-totals.spec.ts",
+      "tests/browser/tpo.spec.ts",
+      "tests/browser/order-walls-ui.spec.ts",
+      "tests/browser/market-comparison-engine.spec.ts",
+      "tests/browser/market-comparison-fixture.spec.ts",
+      "tests/browser/order-flow-pane.spec.ts",
+      "tests/browser/open-interest-sma.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.r2.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4175",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-results-r2-valid-harness.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --host 127.0.0.1 --port 4175 --outDir /tmp/iqterminal-pane-r2-dist",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "composition-hardening.spec.ts",
+      "file": "composition-hardening.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "editing a moved SMA preserves its output and pane; an unavailable saved source stays open on Apply",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27037,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:35:15.377Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e671ae2d554cbc8f05f7-e7af3599a4ccbd1623a3",
+          "file": "composition-hardening.spec.ts",
+          "line": 22,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-orphan-pane.spec.ts",
+      "file": "composition-orphan-pane.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "managed pane cleanup trace reports every remaining occupant before provider removal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8876,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "ORPHAN PANE BEFORE PROVIDER REMOVAL {\"beforeSmaRemoval\":{\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]},{\"index\":1,\"primary\":false,\"elementClass\":\"\",\"connected\":true,\"indicators\":[{\"id\":\"iq-script-slot-0-1\",\"paneIndex\":1},{\"id\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"paneIndex\":1}],\"objects\":[{\"id\":\"indicator:iq-script-slot-0-1\",\"kind\":\"indicator\"},{\"id\":\"indicator:sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"kind\":\"indicator\"},{\"id\":\"custom:script-study-study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"kind\":\"indicator\"}],\"drawings\":[],\"managedMembers\":[{\"id\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"definitionId\":\"native.composition-sma\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"paneIndex\":1},{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"paneIndex\":1}]}],\"composition\":{\"version\":1,\"panes\":[{\"id\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"title\":\"SMA 20 · Volume\",\"memberIds\":[\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"sma-42b04966-f000-4e46-9df1-e895cb845be6\"],\"order\":1,\"weight\":0.32,\"collapsed\":false}],\"embeddedBands\":[],\"plots\":[{\"plotId\":\"plot:output:sma-42b04966-f000-4e46-9df1-e895cb845be6:p0\",\"producerInstanceId\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"scaleId\":\"scale:1kxy2ue\",\"visible\":true,\"order\":0},{\"plotId\":\"plot:output:study-3a5a3936-581e-4792-8b02-fa5c426f716f:p0\",\"producerInstanceId\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"scaleId\":\"scale:1kxy2ue\",\"visible\":true,\"order\":8}],\"scales\":[{\"scaleId\":\"scale:1kxy2ue\",\"engineScaleId\":\"overlay:iq-12w8w9b\",\"unit\":\"BTC\",\"policy\":\"zero-based\",\"bandMemberships\":[]}],\"opaqueLegacyPanes\":[]},\"indicators\":[{\"id\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"definitionId\":\"native.composition-sma\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\"},{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\"}],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":1,\"workers\":1,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":5,\"listenerCalls\":11,\"dataListenerCalls\":1,\"uiListenerCalls\":10,\"workers\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"patchCalls\":0,\"patchRows\":0,\"historyCalls\":1,\"historyRows\":5000,\"messagesSent\":1,\"historyMessagesSent\":1,\"patchMessagesSent\":0,\"resultMessages\":2,\"resultRows\":10000,\"queued\":null,\"generation\":2,\"alive\":true}]},\"numericOutputs\":{\"chartId\":\"chart-2850e699-5c91-4420-b10e-526fa3aafadf\",\"revision\":12,\"outputs\":[{\"outputId\":\"output:study-3a5a3936-581e-4792-8b02-fa5c426f716f:p0\",\"instanceId\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"revision\":2,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000},{\"outputId\":\"output:sma-42b04966-f000-4e46-9df1-e895cb845be6:p0\",\"instanceId\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"revision\":11,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000}],\"consumers\":[{\"instanceId\":\"sma-42b04966-f000-4e46-9df1-e895cb845be6\",\"outputId\":\"output:study-3a5a3936-581e-4792-8b02-fa5c426f716f:p0\",\"active\":true,\"completedRevision\":2,\"current\":true}]},\"depthBands\":[],\"statuses\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"title\":\"Volume\",\"status\":\"Study ready\"}]}},\"beforeProviderRemoval\":{\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]},{\"index\":1,\"primary\":false,\"elementClass\":\"\",\"connected\":true,\"indicators\":[{\"id\":\"iq-script-slot-0-1\",\"paneIndex\":1}],\"objects\":[{\"id\":\"indicator:iq-script-slot-0-1\",\"kind\":\"indicator\"},{\"id\":\"custom:script-study-study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"kind\":\"indicator\"}],\"drawings\":[],\"managedMembers\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"paneIndex\":1}]}],\"composition\":{\"version\":1,\"panes\":[{\"id\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"title\":\"SMA 20 · Volume\",\"memberIds\":[\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\"],\"order\":1,\"weight\":0.32,\"collapsed\":false}],\"embeddedBands\":[],\"plots\":[{\"plotId\":\"plot:output:study-3a5a3936-581e-4792-8b02-fa5c426f716f:p0\",\"producerInstanceId\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"outputKey\":\"p0\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\",\"scaleId\":\"scale:1kxy2ue\",\"visible\":true,\"order\":0}],\"scales\":[{\"scaleId\":\"scale:1kxy2ue\",\"engineScaleId\":\"overlay:iq-12w8w9b\",\"unit\":\"BTC\",\"policy\":\"zero-based\",\"bandMemberships\":[]}],\"opaqueLegacyPanes\":[]},\"indicators\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"definitionId\":\"script:builtin.volume-histogram\",\"paneId\":\"composition:sma-42b04966-f000-4e46-9df1-e895cb845be6-5e621d55-dee0-4d68-a15d-fcf4ad56e646\"}],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":1,\"workers\":1,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":5,\"listenerCalls\":11,\"dataListenerCalls\":1,\"uiListenerCalls\":10,\"workers\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"patchCalls\":0,\"patchRows\":0,\"historyCalls\":1,\"historyRows\":5000,\"messagesSent\":1,\"historyMessagesSent\":1,\"patchMessagesSent\":0,\"resultMessages\":2,\"resultRows\":10000,\"queued\":null,\"generation\":2,\"alive\":true}]},\"numericOutputs\":{\"chartId\":\"chart-2850e699-5c91-4420-b10e-526fa3aafadf\",\"revision\":13,\"outputs\":[{\"outputId\":\"output:study-3a5a3936-581e-4792-8b02-fa5c426f716f:p0\",\"instanceId\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"revision\":2,\"contextRevision\":0,\"available\":true,\"quality\":\"complete\",\"changedRange\":{\"from\":0,\"to\":5000},\"values\":5000}],\"consumers\":[]},\"depthBands\":[],\"statuses\":[{\"id\":\"study-3a5a3936-581e-4792-8b02-fa5c426f716f\",\"title\":\"Volume\",\"status\":\"Study ready\"}]}}}\n"
+                    },
+                    {
+                      "text": "ORPHAN PANE AFTER PROVIDER REMOVAL {\"panes\":[{\"index\":0,\"primary\":true,\"elementClass\":\"\",\"connected\":true,\"indicators\":[],\"objects\":[{\"id\":\"source:primary\",\"kind\":\"source\"}],\"drawings\":[],\"managedMembers\":[]}],\"composition\":{\"version\":1,\"panes\":[],\"embeddedBands\":[],\"plots\":[],\"scales\":[],\"opaqueLegacyPanes\":[]},\"indicators\":[],\"study\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1m\"},\"attached\":0,\"workers\":0,\"compositionWork\":{\"workerResults\":2,\"workerFailures\":0,\"dataNotifications\":1,\"statusNotifications\":0,\"configurationNotifications\":6,\"listenerCalls\":12,\"dataListenerCalls\":1,\"uiListenerCalls\":11,\"workers\":[]},\"numericOutputs\":{\"chartId\":\"chart-2850e699-5c91-4420-b10e-526fa3aafadf\",\"revision\":15,\"outputs\":[],\"consumers\":[]},\"depthBands\":[],\"statuses\":[]}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:35:44.711Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc58de2418e16a6fdbea-c4662984a0496d7b590c",
+          "file": "composition-orphan-pane.spec.ts",
+          "line": 40,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-pane-resolver.spec.ts",
+      "file": "composition-pane-resolver.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD, Open Interest and Volume restore into one live managed pane without scratch panes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11640,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:35:53.663Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5aded3b5c5586aa135d0-dc763abfa2a6a225cf69",
+          "file": "composition-pane-resolver.spec.ts",
+          "line": 53,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "composition-release1.spec.ts",
+      "file": "composition-release1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "duplicating a composed provider creates a new identity and keeps the consumer bound to its original output",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7889,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:36:05.404Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "309df0c62e69e90fbaca-8d1400af34fd2aea2830",
+          "file": "composition-release1.spec.ts",
+          "line": 181,
+          "column": 1
+        },
+        {
+          "title": "Volume output SMA composes, moves, persists a bounded band and releases cleanly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18360,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:36:13.355Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "wake-state-pass.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJiZWZvcmVTbGVlcCI6IHsKICAgICJwYW5lcyI6IFsKICAgICAgewogICAgICAgICJpbmRleCI6IDAsCiAgICAgICAgInByaW1hcnkiOiB0cnVlLAogICAgICAgICJjb25uZWN0ZWQiOiB0cnVlLAogICAgICAgICJjbGFzc05hbWUiOiAiIiwKICAgICAgICAicmVjdCI6IHsKICAgICAgICAgICJ4IjogNTcsCiAgICAgICAgICAieSI6IDYzLAogICAgICAgICAgIndpZHRoIjogMTMwNCwKICAgICAgICAgICJoZWlnaHQiOiA2NDUsCiAgICAgICAgICAidG9wIjogNjMsCiAgICAgICAgICAicmlnaHQiOiAxMzYxLAogICAgICAgICAgImJvdHRvbSI6IDcwOCwKICAgICAgICAgICJsZWZ0IjogNTcKICAgICAgICB9LAogICAgICAgICJpbmRpY2F0b3JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDAKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDAKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAgICAgImRlZmluaXRpb25JZCI6ICJuYXRpdmUuY29tcG9zaXRpb24tc21hIiwKICAgICAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAgICJkZWZpbml0aW9uSWQiOiAic2NyaXB0OmJ1aWx0aW4udm9sdW1lLWhpc3RvZ3JhbSIsCiAgICAgICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJvYmplY3RzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic291cmNlOnByaW1hcnkiLAogICAgICAgICAgICAia2luZCI6ICJzb3VyY2UiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaW5kaWNhdG9yOmlxLXNjcmlwdC1zbG90LTAtMSIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpbmRpY2F0b3I6c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJjdXN0b206c2NyaXB0LXN0dWR5LXN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAgICJraW5kIjogImluZGljYXRvciIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJkcmF3aW5ncyI6IFtdCiAgICAgIH0KICAgIF0sCiAgICAiY29tcG9zaXRpb24iOiB7CiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInBhbmVzIjogW10sCiAgICAgICJlbWJlZGRlZEJhbmRzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJiYW5kOnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAidGl0bGUiOiAiU01BIDIwIMK3IFZvbHVtZSIsCiAgICAgICAgICAibWVtYmVySWRzIjogWwogICAgICAgICAgICAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiCiAgICAgICAgICBdLAogICAgICAgICAgImhlaWdodFBlcmNlbnQiOiA0MAogICAgICAgIH0KICAgICAgXSwKICAgICAgInBsb3RzIjogWwogICAgICAgIHsKICAgICAgICAgICJwbG90SWQiOiAicGxvdDpvdXRwdXQ6c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YjpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgIm91dHB1dEtleSI6ICJwMCIsCiAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxNnNodnZlIiwKICAgICAgICAgICJ2aXNpYmxlIjogdHJ1ZSwKICAgICAgICAgICJvcmRlciI6IDAKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJwbG90SWQiOiAicGxvdDpvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICJwcm9kdWNlckluc3RhbmNlSWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICJvdXRwdXRLZXkiOiAicDAiLAogICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTZzaHZ2ZSIsCiAgICAgICAgICAidmlzaWJsZSI6IGZhbHNlLAogICAgICAgICAgIm9yZGVyIjogOAogICAgICAgIH0KICAgICAgXSwKICAgICAgInNjYWxlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxNnNodnZlIiwKICAgICAgICAgICJlbmdpbmVTY2FsZUlkIjogIm92ZXJsYXk6aXEtdTFjaWxoIiwKICAgICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgICAicG9saWN5IjogInplcm8tYmFzZWQiLAogICAgICAgICAgImJhbmRNZW1iZXJzaGlwcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICAgICAiYmFuZElkIjogImJhbmQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIgogICAgICAgICAgICB9CiAgICAgICAgICBdCiAgICAgICAgfQogICAgICBdLAogICAgICAib3BhcXVlTGVnYWN5UGFuZXMiOiBbXQogICAgfSwKICAgICJpbmRpY2F0b3JzIjogWwogICAgICB7CiAgICAgICAgImlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICJkZWZpbml0aW9uSWQiOiAibmF0aXZlLmNvbXBvc2l0aW9uLXNtYSIsCiAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IiwKICAgICAgICAicGFuZUlkIjogIkBwcmljZSIKICAgICAgfSwKICAgICAgewogICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICJkZWZpbml0aW9uSWQiOiAic2NyaXB0OmJ1aWx0aW4udm9sdW1lLWhpc3RvZ3JhbSIsCiAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IiwKICAgICAgICAicGFuZUlkIjogIkBwcmljZSIKICAgICAgfQogICAgXSwKICAgICJzdHVkaWVzIjogewogICAgICAiY29udGV4dCI6IHsKICAgICAgICAic3ltYm9sIjogIkJUQ1VTRFQiLAogICAgICAgICJleGNoYW5nZSI6ICJCaW5hbmNlIFVTRC1NIiwKICAgICAgICAiaW50ZXJ2YWwiOiAiMW0iCiAgICAgIH0sCiAgICAgICJhdHRhY2hlZCI6IDEsCiAgICAgICJ3b3JrZXJzIjogMSwKICAgICAgImNvbXBvc2l0aW9uV29yayI6IHsKICAgICAgICAid29ya2VyUmVzdWx0cyI6IDIsCiAgICAgICAgIndvcmtlckZhaWx1cmVzIjogMCwKICAgICAgICAiZGF0YU5vdGlmaWNhdGlvbnMiOiAxLAogICAgICAgICJzdGF0dXNOb3RpZmljYXRpb25zIjogMCwKICAgICAgICAiY29uZmlndXJhdGlvbk5vdGlmaWNhdGlvbnMiOiA1LAogICAgICAgICJsaXN0ZW5lckNhbGxzIjogMTEsCiAgICAgICAgImRhdGFMaXN0ZW5lckNhbGxzIjogMSwKICAgICAgICAidWlMaXN0ZW5lckNhbGxzIjogMTAsCiAgICAgICAgIndvcmtlcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAicGF0Y2hDYWxscyI6IDAsCiAgICAgICAgICAgICJwYXRjaFJvd3MiOiAwLAogICAgICAgICAgICAiaGlzdG9yeUNhbGxzIjogMSwKICAgICAgICAgICAgImhpc3RvcnlSb3dzIjogNTAwMCwKICAgICAgICAgICAgIm1lc3NhZ2VzU2VudCI6IDEsCiAgICAgICAgICAgICJoaXN0b3J5TWVzc2FnZXNTZW50IjogMSwKICAgICAgICAgICAgInBhdGNoTWVzc2FnZXNTZW50IjogMCwKICAgICAgICAgICAgInJlc3VsdE1lc3NhZ2VzIjogMiwKICAgICAgICAgICAgInJlc3VsdFJvd3MiOiAxMDAwMCwKICAgICAgICAgICAgInF1ZXVlZCI6IG51bGwsCiAgICAgICAgICAgICJnZW5lcmF0aW9uIjogMiwKICAgICAgICAgICAgImFsaXZlIjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgIm51bWVyaWNPdXRwdXRzIjogewogICAgICAgICJjaGFydElkIjogImNoYXJ0LTUyOTBiNjc2LWNmNTItNDI2ZC1iMWIyLTUxNDMwM2ZlNTJkNCIsCiAgICAgICAgInJldmlzaW9uIjogMTIsCiAgICAgICAgIm91dHB1dHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgInJldmlzaW9uIjogMiwKICAgICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgICAgfSwKICAgICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YjpwMCIsCiAgICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgICAicmV2aXNpb24iOiAxMCwKICAgICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgICAgfSwKICAgICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAgICJhY3RpdmUiOiB0cnVlLAogICAgICAgICAgICAiY29tcGxldGVkUmV2aXNpb24iOiAyLAogICAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICAgIH0KICAgICAgICBdCiAgICAgIH0sCiAgICAgICJkZXB0aEJhbmRzIjogW10sCiAgICAgICJzdGF0dXNlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICJ0aXRsZSI6ICJWb2x1bWUiLAogICAgICAgICAgInN0YXR1cyI6ICJTdHVkeSByZWFkeSIKICAgICAgICB9CiAgICAgIF0KICAgIH0sCiAgICAibnVtZXJpY091dHB1dHMiOiBbCiAgICAgIHsKICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAiYXZhaWxhYmxlIjogdHJ1ZSwKICAgICAgICAiY29udGV4dElkIjogImJpbmFuY2U6cGVycGV0dWFsOkJUQ1VTRFQiLAogICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgInJldmlzaW9uIjogMgogICAgICB9CiAgICBdLAogICAgInJlZ2lzdHJ5IjogewogICAgICAiY2hhcnRJZCI6ICJjaGFydC01MjkwYjY3Ni1jZjUyLTQyNmQtYjFiMi01MTQzMDNmZTUyZDQiLAogICAgICAicmV2aXNpb24iOiAxMiwKICAgICAgIm91dHB1dHMiOiBbCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICJyZXZpc2lvbiI6IDIsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YjpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAgICJyZXZpc2lvbiI6IDEwLAogICAgICAgICAgImNvbnRleHRSZXZpc2lvbiI6IDAsCiAgICAgICAgICAiYXZhaWxhYmxlIjogdHJ1ZSwKICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICJjaGFuZ2VkUmFuZ2UiOiB7CiAgICAgICAgICAgICJmcm9tIjogMCwKICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgICJ2YWx1ZXMiOiA1MDAwCiAgICAgICAgfQogICAgICBdLAogICAgICAiY29uc3VtZXJzIjogWwogICAgICAgIHsKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAiY29tcGxldGVkUmV2aXNpb24iOiAyLAogICAgICAgICAgImN1cnJlbnQiOiB0cnVlCiAgICAgICAgfQogICAgICBdCiAgICB9CiAgfSwKICAiYXNsZWVwIjogewogICAgInBhbmVzIjogWwogICAgICB7CiAgICAgICAgImluZGV4IjogMCwKICAgICAgICAicHJpbWFyeSI6IHRydWUsCiAgICAgICAgImNvbm5lY3RlZCI6IHRydWUsCiAgICAgICAgImNsYXNzTmFtZSI6ICIiLAogICAgICAgICJyZWN0IjogewogICAgICAgICAgIngiOiA1NywKICAgICAgICAgICJ5IjogNjMsCiAgICAgICAgICAid2lkdGgiOiAxMzA0LAogICAgICAgICAgImhlaWdodCI6IDY1MiwKICAgICAgICAgICJ0b3AiOiA2MywKICAgICAgICAgICJyaWdodCI6IDEzNjEsCiAgICAgICAgICAiYm90dG9tIjogNzE1LAogICAgICAgICAgImxlZnQiOiA1NwogICAgICAgIH0sCiAgICAgICAgImluZGljYXRvcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAicGFuZUluZGV4IjogMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgICAicGFuZUluZGV4IjogMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgIm1hbmFnZWRTdWJqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogIm5hdGl2ZS5jb21wb3NpdGlvbi1zbWEiLAogICAgICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgImRlZmluaXRpb25JZCI6ICJzY3JpcHQ6YnVpbHRpbi52b2x1bWUtaGlzdG9ncmFtIiwKICAgICAgICAgICAgInBsYWNlbWVudCI6ICJvdmVybGF5IgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgIm9iamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzb3VyY2U6cHJpbWFyeSIsCiAgICAgICAgICAgICJraW5kIjogInNvdXJjZSIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJpbmRpY2F0b3I6aXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImN1c3RvbTpzY3JpcHQtc3R1ZHktc3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgImtpbmQiOiAiaW5kaWNhdG9yIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImRyYXdpbmdzIjogW10KICAgICAgfQogICAgXSwKICAgICJjb21wb3NpdGlvbiI6IHsKICAgICAgInZlcnNpb24iOiAxLAogICAgICAicGFuZXMiOiBbXSwKICAgICAgImVtYmVkZGVkQmFuZHMiOiBbCiAgICAgICAgewogICAgICAgICAgImlkIjogImJhbmQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICJ0aXRsZSI6ICJTTUEgMjAgwrcgVm9sdW1lIiwKICAgICAgICAgICJtZW1iZXJJZHMiOiBbCiAgICAgICAgICAgICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIKICAgICAgICAgIF0sCiAgICAgICAgICAiaGVpZ2h0UGVyY2VudCI6IDQwCiAgICAgICAgfQogICAgICBdLAogICAgICAicGxvdHMiOiBbCiAgICAgICAgewogICAgICAgICAgInBsb3RJZCI6ICJwbG90Om91dHB1dDpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiOnAwIiwKICAgICAgICAgICJwcm9kdWNlckluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjE2c2h2dmUiLAogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgIm9yZGVyIjogMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgInBsb3RJZCI6ICJwbG90Om91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICAgInByb2R1Y2VySW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgIm91dHB1dEtleSI6ICJwMCIsCiAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxNnNodnZlIiwKICAgICAgICAgICJ2aXNpYmxlIjogZmFsc2UsCiAgICAgICAgICAib3JkZXIiOiA4CiAgICAgICAgfQogICAgICBdLAogICAgICAic2NhbGVzIjogWwogICAgICAgIHsKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjE2c2h2dmUiLAogICAgICAgICAgImVuZ2luZVNjYWxlSWQiOiAib3ZlcmxheTppcS11MWNpbGgiLAogICAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAgICJwb2xpY3kiOiAiemVyby1iYXNlZCIsCiAgICAgICAgICAiYmFuZE1lbWJlcnNoaXBzIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgICAgICJiYW5kSWQiOiAiYmFuZDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0KICAgICAgICB9CiAgICAgIF0sCiAgICAgICJvcGFxdWVMZWdhY3lQYW5lcyI6IFtdCiAgICB9LAogICAgImluZGljYXRvcnMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgImRlZmluaXRpb25JZCI6ICJuYXRpdmUuY29tcG9zaXRpb24tc21hIiwKICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiLAogICAgICAgICJwYW5lSWQiOiAiQHByaWNlIgogICAgICB9LAogICAgICB7CiAgICAgICAgImlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgImRlZmluaXRpb25JZCI6ICJzY3JpcHQ6YnVpbHRpbi52b2x1bWUtaGlzdG9ncmFtIiwKICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiLAogICAgICAgICJwYW5lSWQiOiAiQHByaWNlIgogICAgICB9CiAgICBdLAogICAgInN0dWRpZXMiOiB7CiAgICAgICJjb250ZXh0IjogewogICAgICAgICJzeW1ib2wiOiAiQlRDVVNEVCIsCiAgICAgICAgImV4Y2hhbmdlIjogIkJpbmFuY2UgVVNELU0iLAogICAgICAgICJpbnRlcnZhbCI6ICIxbSIKICAgICAgfSwKICAgICAgImF0dGFjaGVkIjogMSwKICAgICAgIndvcmtlcnMiOiAxLAogICAgICAiY29tcG9zaXRpb25Xb3JrIjogewogICAgICAgICJ3b3JrZXJSZXN1bHRzIjogMiwKICAgICAgICAid29ya2VyRmFpbHVyZXMiOiAwLAogICAgICAgICJkYXRhTm90aWZpY2F0aW9ucyI6IDEsCiAgICAgICAgInN0YXR1c05vdGlmaWNhdGlvbnMiOiAwLAogICAgICAgICJjb25maWd1cmF0aW9uTm90aWZpY2F0aW9ucyI6IDUsCiAgICAgICAgImxpc3RlbmVyQ2FsbHMiOiAxMSwKICAgICAgICAiZGF0YUxpc3RlbmVyQ2FsbHMiOiAxLAogICAgICAgICJ1aUxpc3RlbmVyQ2FsbHMiOiAxMCwKICAgICAgICAid29ya2VycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAgICJwYXRjaENhbGxzIjogMCwKICAgICAgICAgICAgInBhdGNoUm93cyI6IDAsCiAgICAgICAgICAgICJoaXN0b3J5Q2FsbHMiOiAxLAogICAgICAgICAgICAiaGlzdG9yeVJvd3MiOiA1MDAwLAogICAgICAgICAgICAibWVzc2FnZXNTZW50IjogMSwKICAgICAgICAgICAgImhpc3RvcnlNZXNzYWdlc1NlbnQiOiAxLAogICAgICAgICAgICAicGF0Y2hNZXNzYWdlc1NlbnQiOiAwLAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiAyLAogICAgICAgICAgICAicmVzdWx0Um93cyI6IDEwMDAwLAogICAgICAgICAgICAicXVldWVkIjogbnVsbCwKICAgICAgICAgICAgImdlbmVyYXRpb24iOiAyLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtNTI5MGI2NzYtY2Y1Mi00MjZkLWIxYjItNTE0MzAzZmU1MmQ0IiwKICAgICAgICAicmV2aXNpb24iOiAxMiwKICAgICAgICAib3V0cHV0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAicmV2aXNpb24iOiAyLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6IDEwLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImNvbnN1bWVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDIsCiAgICAgICAgICAgICJjdXJyZW50IjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInRpdGxlIjogIlZvbHVtZSIsCiAgICAgICAgICAic3RhdHVzIjogIlN0dWR5IHJlYWR5IgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFsKICAgICAgewogICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICJjb250ZXh0SWQiOiAiYmluYW5jZTpwZXJwZXR1YWw6QlRDVVNEVCIsCiAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAicmV2aXNpb24iOiAyCiAgICAgIH0KICAgIF0sCiAgICAicmVnaXN0cnkiOiB7CiAgICAgICJjaGFydElkIjogImNoYXJ0LTUyOTBiNjc2LWNmNTItNDI2ZC1iMWIyLTUxNDMwM2ZlNTJkNCIsCiAgICAgICJyZXZpc2lvbiI6IDEyLAogICAgICAib3V0cHV0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInJldmlzaW9uIjogMiwKICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiOnAwIiwKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgInJldmlzaW9uIjogMTAsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgewogICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAiYWN0aXZlIjogdHJ1ZSwKICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDIsCiAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9LAogICJhZnRlcldha2UiOiB7CiAgICAicGFuZXMiOiBbCiAgICAgIHsKICAgICAgICAiaW5kZXgiOiAwLAogICAgICAgICJwcmltYXJ5IjogdHJ1ZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA2MywKICAgICAgICAgICJ3aWR0aCI6IDEzMDQsCiAgICAgICAgICAiaGVpZ2h0IjogNjUyLAogICAgICAgICAgInRvcCI6IDYzLAogICAgICAgICAgInJpZ2h0IjogMTM2MSwKICAgICAgICAgICJib3R0b20iOiA3MTUsCiAgICAgICAgICAibGVmdCI6IDU3CiAgICAgICAgfSwKICAgICAgICAiaW5kaWNhdG9ycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImlxLXNjcmlwdC1zbG90LTAtMSIsCiAgICAgICAgICAgICJwYW5lSW5kZXgiOiAwCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJwYW5lSW5kZXgiOiAwCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAibWFuYWdlZFN1YmplY3RzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJkZWZpbml0aW9uSWQiOiAibmF0aXZlLmNvbXBvc2l0aW9uLXNtYSIsCiAgICAgICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICAgICAicGxhY2VtZW50IjogIm92ZXJsYXkiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNvdXJjZTpwcmltYXJ5IiwKICAgICAgICAgICAgImtpbmQiOiAic291cmNlIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjppcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaW5kaWNhdG9yOnNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiY3VzdG9tOnNjcmlwdC1zdHVkeS1zdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZHJhd2luZ3MiOiBbXQogICAgICB9CiAgICBdLAogICAgImNvbXBvc2l0aW9uIjogewogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJwYW5lcyI6IFtdLAogICAgICAiZW1iZWRkZWRCYW5kcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiYmFuZDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInRpdGxlIjogIlNNQSAyMCDCtyBWb2x1bWUiLAogICAgICAgICAgIm1lbWJlcklkcyI6IFsKICAgICAgICAgICAgInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAgICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIgogICAgICAgICAgXSwKICAgICAgICAgICJoZWlnaHRQZXJjZW50IjogNDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJwbG90cyI6IFsKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2I6cDAiLAogICAgICAgICAgInByb2R1Y2VySW5zdGFuY2VJZCI6ICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAgICJvdXRwdXRLZXkiOiAicDAiLAogICAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTZzaHZ2ZSIsCiAgICAgICAgICAidmlzaWJsZSI6IHRydWUsCiAgICAgICAgICAib3JkZXIiOiAwCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiQHByaWNlIiwKICAgICAgICAgICJzY2FsZUlkIjogInNjYWxlOjE2c2h2dmUiLAogICAgICAgICAgInZpc2libGUiOiBmYWxzZSwKICAgICAgICAgICJvcmRlciI6IDgKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJzY2FsZXMiOiBbCiAgICAgICAgewogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTZzaHZ2ZSIsCiAgICAgICAgICAiZW5naW5lU2NhbGVJZCI6ICJvdmVybGF5OmlxLXUxY2lsaCIsCiAgICAgICAgICAidW5pdCI6ICJCVEMiLAogICAgICAgICAgInBvbGljeSI6ICJ6ZXJvLWJhc2VkIiwKICAgICAgICAgICJiYW5kTWVtYmVyc2hpcHMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAicGFuZUlkIjogIkBwcmljZSIsCiAgICAgICAgICAgICAgImJhbmRJZCI6ICJiYW5kOnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIKICAgICAgICAgICAgfQogICAgICAgICAgXQogICAgICAgIH0KICAgICAgXSwKICAgICAgIm9wYXF1ZUxlZ2FjeVBhbmVzIjogW10KICAgIH0sCiAgICAiaW5kaWNhdG9ycyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogIm5hdGl2ZS5jb21wb3NpdGlvbi1zbWEiLAogICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIsCiAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICJwbGFjZW1lbnQiOiAib3ZlcmxheSIsCiAgICAgICAgInBhbmVJZCI6ICJAcHJpY2UiCiAgICAgIH0KICAgIF0sCiAgICAic3R1ZGllcyI6IHsKICAgICAgImNvbnRleHQiOiB7CiAgICAgICAgInN5bWJvbCI6ICJCVENVU0RUIiwKICAgICAgICAiZXhjaGFuZ2UiOiAiQmluYW5jZSBVU0QtTSIsCiAgICAgICAgImludGVydmFsIjogIjFtIgogICAgICB9LAogICAgICAiYXR0YWNoZWQiOiAxLAogICAgICAid29ya2VycyI6IDEsCiAgICAgICJjb21wb3NpdGlvbldvcmsiOiB7CiAgICAgICAgIndvcmtlclJlc3VsdHMiOiAzLAogICAgICAgICJ3b3JrZXJGYWlsdXJlcyI6IDAsCiAgICAgICAgImRhdGFOb3RpZmljYXRpb25zIjogMiwKICAgICAgICAic3RhdHVzTm90aWZpY2F0aW9ucyI6IDAsCiAgICAgICAgImNvbmZpZ3VyYXRpb25Ob3RpZmljYXRpb25zIjogNSwKICAgICAgICAibGlzdGVuZXJDYWxscyI6IDEyLAogICAgICAgICJkYXRhTGlzdGVuZXJDYWxscyI6IDIsCiAgICAgICAgInVpTGlzdGVuZXJDYWxscyI6IDEwLAogICAgICAgICJ3b3JrZXJzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgInBhdGNoQ2FsbHMiOiAwLAogICAgICAgICAgICAicGF0Y2hSb3dzIjogMCwKICAgICAgICAgICAgImhpc3RvcnlDYWxscyI6IDIsCiAgICAgICAgICAgICJoaXN0b3J5Um93cyI6IDEwMDAwLAogICAgICAgICAgICAibWVzc2FnZXNTZW50IjogMiwKICAgICAgICAgICAgImhpc3RvcnlNZXNzYWdlc1NlbnQiOiAyLAogICAgICAgICAgICAicGF0Y2hNZXNzYWdlc1NlbnQiOiAwLAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiAzLAogICAgICAgICAgICAicmVzdWx0Um93cyI6IDE1MDAwLAogICAgICAgICAgICAicXVldWVkIjogbnVsbCwKICAgICAgICAgICAgImdlbmVyYXRpb24iOiAzLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtNTI5MGI2NzYtY2Y1Mi00MjZkLWIxYjItNTE0MzAzZmU1MmQ0IiwKICAgICAgICAicmV2aXNpb24iOiAxNCwKICAgICAgICAib3V0cHV0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAicmV2aXNpb24iOiAzLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJyZXZpc2lvbiI6IDExLAogICAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAgICJxdWFsaXR5IjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICAgInRvIjogNTAwMAogICAgICAgICAgICB9LAogICAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImNvbnN1bWVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICAgImFjdGl2ZSI6IHRydWUsCiAgICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDMsCiAgICAgICAgICAgICJjdXJyZW50IjogdHJ1ZQogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInRpdGxlIjogIlZvbHVtZSIsCiAgICAgICAgICAic3RhdHVzIjogIlN0dWR5IHJlYWR5IgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFsKICAgICAgewogICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICJjb250ZXh0SWQiOiAiYmluYW5jZTpwZXJwZXR1YWw6QlRDVVNEVCIsCiAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAicmV2aXNpb24iOiAzCiAgICAgIH0KICAgIF0sCiAgICAicmVnaXN0cnkiOiB7CiAgICAgICJjaGFydElkIjogImNoYXJ0LTUyOTBiNjc2LWNmNTItNDI2ZC1iMWIyLTUxNDMwM2ZlNTJkNCIsCiAgICAgICJyZXZpc2lvbiI6IDE0LAogICAgICAib3V0cHV0cyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAiaW5zdGFuY2VJZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInJldmlzaW9uIjogMywKICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAiZnJvbSI6IDAsCiAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiOnAwIiwKICAgICAgICAgICJpbnN0YW5jZUlkIjogInNtYS01YjliYTY5Ni1iZWMyLTRmZTgtOTEzNy1lNGYyMTA1Y2IyN2IiLAogICAgICAgICAgInJldmlzaW9uIjogMTEsCiAgICAgICAgICAiY29udGV4dFJldmlzaW9uIjogMCwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgImNoYW5nZWRSYW5nZSI6IHsKICAgICAgICAgICAgImZyb20iOiAwLAogICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICB9LAogICAgICAgICAgInZhbHVlcyI6IDUwMDAKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJjb25zdW1lcnMiOiBbCiAgICAgICAgewogICAgICAgICAgImluc3RhbmNlSWQiOiAic21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3YiIsCiAgICAgICAgICAib3V0cHV0SWQiOiAib3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAiYWN0aXZlIjogdHJ1ZSwKICAgICAgICAgICJjb21wbGV0ZWRSZXZpc2lvbiI6IDMsCiAgICAgICAgICAiY3VycmVudCI6IHRydWUKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9Cn0K"
+                    },
+                    {
+                      "name": "pane-cleanup-pass.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJhZnRlclNtYVJlbW92YWwiOiB7CiAgICAicGFuZXMiOiBbCiAgICAgIHsKICAgICAgICAiaW5kZXgiOiAwLAogICAgICAgICJwcmltYXJ5IjogdHJ1ZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA2MywKICAgICAgICAgICJ3aWR0aCI6IDEzMDQsCiAgICAgICAgICAiaGVpZ2h0IjogNDk0LAogICAgICAgICAgInRvcCI6IDYzLAogICAgICAgICAgInJpZ2h0IjogMTM2MSwKICAgICAgICAgICJib3R0b20iOiA1NTcsCiAgICAgICAgICAibGVmdCI6IDU3CiAgICAgICAgfSwKICAgICAgICAiaW5kaWNhdG9ycyI6IFtdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNvdXJjZTpwcmltYXJ5IiwKICAgICAgICAgICAgImtpbmQiOiAic291cmNlIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImRyYXdpbmdzIjogW10KICAgICAgfSwKICAgICAgewogICAgICAgICJpbmRleCI6IDEsCiAgICAgICAgInByaW1hcnkiOiBmYWxzZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA1NTcsCiAgICAgICAgICAid2lkdGgiOiAxMzA0LAogICAgICAgICAgImhlaWdodCI6IDE1OCwKICAgICAgICAgICJ0b3AiOiA1NTcsCiAgICAgICAgICAicmlnaHQiOiAxMzYxLAogICAgICAgICAgImJvdHRvbSI6IDcxNSwKICAgICAgICAgICJsZWZ0IjogNTcKICAgICAgICB9LAogICAgICAgICJpbmRpY2F0b3JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiaXEtc2NyaXB0LXNsb3QtMC0xIiwKICAgICAgICAgICAgInBhbmVJbmRleCI6IDEKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICAgICAicGxhY2VtZW50IjogInBhbmUiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogImluZGljYXRvcjppcS1zY3JpcHQtc2xvdC0wLTEiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiaWQiOiAiY3VzdG9tOnNjcmlwdC1zdHVkeS1zdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAia2luZCI6ICJpbmRpY2F0b3IiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZHJhd2luZ3MiOiBbXQogICAgICB9CiAgICBdLAogICAgImNvbXBvc2l0aW9uIjogewogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJwYW5lcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiY29tcG9zaXRpb246c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3Yi00NzYxNWYwMi1jZTEyLTRiYTctOGIwNi0wNjBlOWVhYzdkMmIiLAogICAgICAgICAgInRpdGxlIjogIlNNQSAyMCDCtyBWb2x1bWUiLAogICAgICAgICAgIm1lbWJlcklkcyI6IFsKICAgICAgICAgICAgInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIKICAgICAgICAgIF0sCiAgICAgICAgICAib3JkZXIiOiAxLAogICAgICAgICAgIndlaWdodCI6IDAuMzIsCiAgICAgICAgICAiY29sbGFwc2VkIjogZmFsc2UKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJlbWJlZGRlZEJhbmRzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJiYW5kOnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAidGl0bGUiOiAiU01BIDIwIMK3IFZvbHVtZSIsCiAgICAgICAgICAibWVtYmVySWRzIjogWwogICAgICAgICAgICAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIgogICAgICAgICAgXSwKICAgICAgICAgICJoZWlnaHRQZXJjZW50IjogMzUKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJwbG90cyI6IFsKICAgICAgICB7CiAgICAgICAgICAicGxvdElkIjogInBsb3Q6b3V0cHV0OnN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMzpwMCIsCiAgICAgICAgICAicHJvZHVjZXJJbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAib3V0cHV0S2V5IjogInAwIiwKICAgICAgICAgICJwYW5lSWQiOiAiY29tcG9zaXRpb246c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3Yi00NzYxNWYwMi1jZTEyLTRiYTctOGIwNi0wNjBlOWVhYzdkMmIiLAogICAgICAgICAgInNjYWxlSWQiOiAic2NhbGU6MTZzaHZ2ZSIsCiAgICAgICAgICAidmlzaWJsZSI6IGZhbHNlLAogICAgICAgICAgIm9yZGVyIjogMAogICAgICAgIH0KICAgICAgXSwKICAgICAgInNjYWxlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NhbGVJZCI6ICJzY2FsZToxNnNodnZlIiwKICAgICAgICAgICJlbmdpbmVTY2FsZUlkIjogIm92ZXJsYXk6aXEtdTFjaWxoIiwKICAgICAgICAgICJ1bml0IjogIkJUQyIsCiAgICAgICAgICAicG9saWN5IjogInplcm8tYmFzZWQiLAogICAgICAgICAgImJhbmRNZW1iZXJzaGlwcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJwYW5lSWQiOiAiY29tcG9zaXRpb246c21hLTViOWJhNjk2LWJlYzItNGZlOC05MTM3LWU0ZjIxMDVjYjI3Yi00NzYxNWYwMi1jZTEyLTRiYTctOGIwNi0wNjBlOWVhYzdkMmIiLAogICAgICAgICAgICAgICJiYW5kSWQiOiAiYmFuZDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0KICAgICAgICB9CiAgICAgIF0sCiAgICAgICJvcGFxdWVMZWdhY3lQYW5lcyI6IFtdCiAgICB9LAogICAgImluZGljYXRvcnMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAiZGVmaW5pdGlvbklkIjogInNjcmlwdDpidWlsdGluLnZvbHVtZS1oaXN0b2dyYW0iLAogICAgICAgICJwbGFjZW1lbnQiOiAicGFuZSIsCiAgICAgICAgInBhbmVJZCI6ICJjb21wb3NpdGlvbjpzbWEtNWI5YmE2OTYtYmVjMi00ZmU4LTkxMzctZTRmMjEwNWNiMjdiLTQ3NjE1ZjAyLWNlMTItNGJhNy04YjA2LTA2MGU5ZWFjN2QyYiIKICAgICAgfQogICAgXSwKICAgICJzdHVkaWVzIjogewogICAgICAiY29udGV4dCI6IHsKICAgICAgICAic3ltYm9sIjogIkJUQ1VTRFQiLAogICAgICAgICJleGNoYW5nZSI6ICJCaW5hbmNlIFVTRC1NIiwKICAgICAgICAiaW50ZXJ2YWwiOiAiMW0iCiAgICAgIH0sCiAgICAgICJhdHRhY2hlZCI6IDEsCiAgICAgICJ3b3JrZXJzIjogMSwKICAgICAgImNvbXBvc2l0aW9uV29yayI6IHsKICAgICAgICAid29ya2VyUmVzdWx0cyI6IDYxLAogICAgICAgICJ3b3JrZXJGYWlsdXJlcyI6IDAsCiAgICAgICAgImRhdGFOb3RpZmljYXRpb25zIjogNjAsCiAgICAgICAgInN0YXR1c05vdGlmaWNhdGlvbnMiOiAwLAogICAgICAgICJjb25maWd1cmF0aW9uTm90aWZpY2F0aW9ucyI6IDcsCiAgICAgICAgImxpc3RlbmVyQ2FsbHMiOiA3NCwKICAgICAgICAiZGF0YUxpc3RlbmVyQ2FsbHMiOiA2MCwKICAgICAgICAidWlMaXN0ZW5lckNhbGxzIjogMTQsCiAgICAgICAgIndvcmtlcnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgICAicGF0Y2hDYWxscyI6IDYxLAogICAgICAgICAgICAicGF0Y2hSb3dzIjogNjEsCiAgICAgICAgICAgICJoaXN0b3J5Q2FsbHMiOiAyLAogICAgICAgICAgICAiaGlzdG9yeVJvd3MiOiAxMDAwMCwKICAgICAgICAgICAgIm1lc3NhZ2VzU2VudCI6IDYwLAogICAgICAgICAgICAiaGlzdG9yeU1lc3NhZ2VzU2VudCI6IDIsCiAgICAgICAgICAgICJwYXRjaE1lc3NhZ2VzU2VudCI6IDU4LAogICAgICAgICAgICAicmVzdWx0TWVzc2FnZXMiOiA2MSwKICAgICAgICAgICAgInJlc3VsdFJvd3MiOiAzMDUwMDAsCiAgICAgICAgICAgICJxdWV1ZWQiOiBudWxsLAogICAgICAgICAgICAiZ2VuZXJhdGlvbiI6IDYxLAogICAgICAgICAgICAiYWxpdmUiOiB0cnVlCiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAibnVtZXJpY091dHB1dHMiOiB7CiAgICAgICAgImNoYXJ0SWQiOiAiY2hhcnQtNTI5MGI2NzYtY2Y1Mi00MjZkLWIxYjItNTE0MzAzZmU1MmQ0IiwKICAgICAgICAicmV2aXNpb24iOiAxMzUsCiAgICAgICAgIm91dHB1dHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICAgImluc3RhbmNlSWQiOiAic3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzIiwKICAgICAgICAgICAgInJldmlzaW9uIjogNjEsCiAgICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgICAiYXZhaWxhYmxlIjogdHJ1ZSwKICAgICAgICAgICAgInF1YWxpdHkiOiAiY29tcGxldGUiLAogICAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAgICJmcm9tIjogNDk5OSwKICAgICAgICAgICAgICAidG8iOiA1MDAwCiAgICAgICAgICAgIH0sCiAgICAgICAgICAgICJ2YWx1ZXMiOiA1MDAwCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiY29uc3VtZXJzIjogW10KICAgICAgfSwKICAgICAgImRlcHRoQmFuZHMiOiBbXSwKICAgICAgInN0YXR1c2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzMiLAogICAgICAgICAgInRpdGxlIjogIlZvbHVtZSIsCiAgICAgICAgICAic3RhdHVzIjogIlN0dWR5IHJlYWR5IgogICAgICAgIH0KICAgICAgXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFsKICAgICAgewogICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgIm91dHB1dElkIjogIm91dHB1dDpzdHVkeS0wM2IwYjdjMS1jODczLTRkZTItOTNlYi1kMzFiN2EwMWUyMzM6cDAiLAogICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICJjb250ZXh0SWQiOiAiYmluYW5jZTpwZXJwZXR1YWw6QlRDVVNEVCIsCiAgICAgICAgInVuaXQiOiAiQlRDIiwKICAgICAgICAicmV2aXNpb24iOiA2MQogICAgICB9CiAgICBdLAogICAgInJlZ2lzdHJ5IjogewogICAgICAiY2hhcnRJZCI6ICJjaGFydC01MjkwYjY3Ni1jZjUyLTQyNmQtYjFiMi01MTQzMDNmZTUyZDQiLAogICAgICAicmV2aXNpb24iOiAxMzUsCiAgICAgICJvdXRwdXRzIjogWwogICAgICAgIHsKICAgICAgICAgICJvdXRwdXRJZCI6ICJvdXRwdXQ6c3R1ZHktMDNiMGI3YzEtYzg3My00ZGUyLTkzZWItZDMxYjdhMDFlMjMzOnAwIiwKICAgICAgICAgICJpbnN0YW5jZUlkIjogInN0dWR5LTAzYjBiN2MxLWM4NzMtNGRlMi05M2ViLWQzMWI3YTAxZTIzMyIsCiAgICAgICAgICAicmV2aXNpb24iOiA2MSwKICAgICAgICAgICJjb250ZXh0UmV2aXNpb24iOiAwLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicXVhbGl0eSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAiY2hhbmdlZFJhbmdlIjogewogICAgICAgICAgICAiZnJvbSI6IDQ5OTksCiAgICAgICAgICAgICJ0byI6IDUwMDAKICAgICAgICAgIH0sCiAgICAgICAgICAidmFsdWVzIjogNTAwMAogICAgICAgIH0KICAgICAgXSwKICAgICAgImNvbnN1bWVycyI6IFtdCiAgICB9CiAgfSwKICAiYWZ0ZXJQcm92aWRlclJlbW92YWwiOiB7CiAgICAicGFuZXMiOiBbCiAgICAgIHsKICAgICAgICAiaW5kZXgiOiAwLAogICAgICAgICJwcmltYXJ5IjogdHJ1ZSwKICAgICAgICAiY29ubmVjdGVkIjogdHJ1ZSwKICAgICAgICAiY2xhc3NOYW1lIjogIiIsCiAgICAgICAgInJlY3QiOiB7CiAgICAgICAgICAieCI6IDU3LAogICAgICAgICAgInkiOiA2MywKICAgICAgICAgICJ3aWR0aCI6IDEzMDQsCiAgICAgICAgICAiaGVpZ2h0IjogNjUyLAogICAgICAgICAgInRvcCI6IDYzLAogICAgICAgICAgInJpZ2h0IjogMTM2MSwKICAgICAgICAgICJib3R0b20iOiA3MTUsCiAgICAgICAgICAibGVmdCI6IDU3CiAgICAgICAgfSwKICAgICAgICAiaW5kaWNhdG9ycyI6IFtdLAogICAgICAgICJtYW5hZ2VkU3ViamVjdHMiOiBbXSwKICAgICAgICAib2JqZWN0cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImlkIjogInNvdXJjZTpwcmltYXJ5IiwKICAgICAgICAgICAgImtpbmQiOiAic291cmNlIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImRyYXdpbmdzIjogW10KICAgICAgfQogICAgXSwKICAgICJjb21wb3NpdGlvbiI6IHsKICAgICAgInZlcnNpb24iOiAxLAogICAgICAicGFuZXMiOiBbXSwKICAgICAgImVtYmVkZGVkQmFuZHMiOiBbXSwKICAgICAgInBsb3RzIjogW10sCiAgICAgICJzY2FsZXMiOiBbXSwKICAgICAgIm9wYXF1ZUxlZ2FjeVBhbmVzIjogW10KICAgIH0sCiAgICAiaW5kaWNhdG9ycyI6IFtdLAogICAgInN0dWRpZXMiOiB7CiAgICAgICJjb250ZXh0IjogewogICAgICAgICJzeW1ib2wiOiAiQlRDVVNEVCIsCiAgICAgICAgImV4Y2hhbmdlIjogIkJpbmFuY2UgVVNELU0iLAogICAgICAgICJpbnRlcnZhbCI6ICIxbSIKICAgICAgfSwKICAgICAgImF0dGFjaGVkIjogMCwKICAgICAgIndvcmtlcnMiOiAwLAogICAgICAiY29tcG9zaXRpb25Xb3JrIjogewogICAgICAgICJ3b3JrZXJSZXN1bHRzIjogNjEsCiAgICAgICAgIndvcmtlckZhaWx1cmVzIjogMCwKICAgICAgICAiZGF0YU5vdGlmaWNhdGlvbnMiOiA2MCwKICAgICAgICAic3RhdHVzTm90aWZpY2F0aW9ucyI6IDAsCiAgICAgICAgImNvbmZpZ3VyYXRpb25Ob3RpZmljYXRpb25zIjogOCwKICAgICAgICAibGlzdGVuZXJDYWxscyI6IDc1LAogICAgICAgICJkYXRhTGlzdGVuZXJDYWxscyI6IDYwLAogICAgICAgICJ1aUxpc3RlbmVyQ2FsbHMiOiAxNSwKICAgICAgICAid29ya2VycyI6IFtdCiAgICAgIH0sCiAgICAgICJudW1lcmljT3V0cHV0cyI6IHsKICAgICAgICAiY2hhcnRJZCI6ICJjaGFydC01MjkwYjY3Ni1jZjUyLTQyNmQtYjFiMi01MTQzMDNmZTUyZDQiLAogICAgICAgICJyZXZpc2lvbiI6IDEzNywKICAgICAgICAib3V0cHV0cyI6IFtdLAogICAgICAgICJjb25zdW1lcnMiOiBbXQogICAgICB9LAogICAgICAiZGVwdGhCYW5kcyI6IFtdLAogICAgICAic3RhdHVzZXMiOiBbXQogICAgfSwKICAgICJudW1lcmljT3V0cHV0cyI6IFtdLAogICAgInJlZ2lzdHJ5IjogewogICAgICAiY2hhcnRJZCI6ICJjaGFydC01MjkwYjY3Ni1jZjUyLTQyNmQtYjFiMi01MTQzMDNmZTUyZDQiLAogICAgICAicmV2aXNpb24iOiAxMzcsCiAgICAgICJvdXRwdXRzIjogW10sCiAgICAgICJjb25zdW1lcnMiOiBbXQogICAgfQogIH0KfQo="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "309df0c62e69e90fbaca-6fa885d0fa8af88e45b0",
+          "file": "composition-release1.spec.ts",
+          "line": 260,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "cvd.spec.ts",
+      "file": "cvd.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23941,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:36:31.786Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bb6376537512963581a-5c87ff76ee4330011609",
+          "file": "cvd.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "CVD global currency, crosshair, incomplete coverage and corrected history remain honest",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15164,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:36:55.811Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bb6376537512963581a-4622d51e47c6122c357e",
+          "file": "cvd.spec.ts",
+          "line": 99,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "drawing-sidebar.spec.ts",
+      "file": "drawing-sidebar.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "drawing sidebar groups tools, cycles anchor snapping, and fits a narrow chart pane",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9804,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:37:11.207Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5cb44b3d600952e4ce62-ed19b6a5c13ebdf45874",
+          "file": "drawing-sidebar.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "drawing placement shows a crosshair from sidebar and floating tools and restores normal pointer modes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9078,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:37:21.079Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5cb44b3d600952e4ce62-cfc7d6fff73c57b8c93a",
+          "file": "drawing-sidebar.spec.ts",
+          "line": 107,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "drawing-tools.spec.ts",
+      "file": "drawing-tools.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native drawing placement, IQ settings, templates and instrument scope use one-step history",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7199,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:146:24",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 24,
+                      "line": 146
+                    },
+                    "snippet": "  144 |   if (!panelId) throw new Error('Candle panel id is missing');\n  145 |   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());\n> 146 |   expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);\n      |                        ^\n  147 |\n  148 |   await placeHorizontalLine(page, panel);\n  149 |   let state = await drawingState(page, panel);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 24,
+                        "line": 146
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"callout\",\u001b[22m\n\u001b[31m+   \"date-range\",\u001b[39m\n\u001b[2m    \"fib-retracement\",\u001b[22m\n\u001b[2m    \"horizontal-line\",\u001b[22m\n\u001b[2m    \"horizontal-ray\",\u001b[22m\n\u001b[2m    \"long-position\",\u001b[22m\n\u001b[31m+   \"price-range\",\u001b[39m\n\u001b[2m    \"rectangle\",\u001b[22m\n\u001b[2m    \"short-position\",\u001b[22m\n\u001b[2m    \"text\",\u001b[22m\n\u001b[2m    \"trend-line\",\u001b[22m\n\u001b[2m  ]\u001b[22m\n\n  144 |   if (!panelId) throw new Error('Candle panel id is missing');\n  145 |   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());\n> 146 |   expect(exposedTools).toEqual(['callout', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'rectangle', 'short-position', 'text', 'trend-line']);\n      |                        ^\n  147 |\n  148 |   await placeHorizontalLine(page, panel);\n  149 |   let state = await drawingState(page, panel);\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:146:24"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:37:30.388Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-native-drawi-84864--scope-use-one-step-history/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 24,
+                    "line": 146
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-a23ac0db9621977bdcfe",
+          "file": "drawing-tools.spec.ts",
+          "line": 132,
+          "column": 1
+        },
+        {
+          "title": "every exposed native drawing tool completes its required anchors",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28187,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:37:40.527Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-fc36182591b2e65f30cb",
+          "file": "drawing-tools.spec.ts",
+          "line": 639,
+          "column": 1
+        },
+        {
+          "title": "text templates use an included label as native text content and preserve omitted content",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:38:10.846Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-687bb0207d10f73e0018",
+          "file": "drawing-tools.spec.ts",
+          "line": 773,
+          "column": 1
+        },
+        {
+          "title": "Callout placement, native text templates, history, and saved coordinates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:38:27.077Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-b3c365ca7166a38cd872",
+          "file": "drawing-tools.spec.ts",
+          "line": 867,
+          "column": 1
+        },
+        {
+          "title": "template storage corruption stays intact while the session catalog remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8680,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:38:46.710Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-e862a2db6f8066be5e96",
+          "file": "drawing-tools.spec.ts",
+          "line": 1025,
+          "column": 1
+        },
+        {
+          "title": "drawing document write failure keeps session drawings and leaves the separate template catalog writable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7281,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:38:55.466Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-ebaf81cb0aaa9f9d0045",
+          "file": "drawing-tools.spec.ts",
+          "line": 1046,
+          "column": 1
+        },
+        {
+          "title": "corrupt drawing document stays untouched while another valid local catalog remains readable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10051,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:39:02.800Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-d4c8cec6f9883f27e44e",
+          "file": "drawing-tools.spec.ts",
+          "line": 1074,
+          "column": 1
+        },
+        {
+          "title": "Footprint and Heatmap appear once in IQ Objects and accept a drawing overlay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18497,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:39:12.939Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-686660d3ee33262bb55e",
+          "file": "drawing-tools.spec.ts",
+          "line": 1109,
+          "column": 1
+        },
+        {
+          "title": "Level Watch Objects visibility, instrument guard and picking disarm drawings",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11302,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1174:29",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                      "column": 29,
+                      "line": 1174
+                    },
+                    "snippet": "  1172 |   if (!panelId) throw new Error('Candle panel id is missing');\n  1173 |   const watchButton = panel.getByRole('button', { name: 'Watch level', exact: true });\n> 1174 |   await expect(watchButton).toBeEnabled();\n       |                             ^\n  1175 |   const watch = { id: 'fixture-watch', revision: 1, definition: { name: 'Fixture watch', lower: 82900, upper: 83100, invalidation: 82800, thesis: 'fixture', expiresAt: Date.now() + 60_000 }, state: 'draft', quality: 'fixture', reason: 'browser fixture', armedAt: Date.now() };\n  1176 |   await page.evaluate(({ panelId, watch }) => (window as any).__terminal.panels.get(panelId).setWatchZones([watch]), { panelId, watch });\n  1177 |   const objectsPanel = panel.locator('.chart-objects-panel');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                        "column": 29,
+                        "line": 1174
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().getByRole('button', { name: 'Watch level', exact: true })\u001b[22m\n\n\n  1172 |   if (!panelId) throw new Error('Candle panel id is missing');\n  1173 |   const watchButton = panel.getByRole('button', { name: 'Watch level', exact: true });\n> 1174 |   await expect(watchButton).toBeEnabled();\n       |                             ^\n  1175 |   const watch = { id: 'fixture-watch', revision: 1, definition: { name: 'Fixture watch', lower: 82900, upper: 83100, invalidation: 82800, thesis: 'fixture', expiresAt: Date.now() + 60_000 }, state: 'draft', quality: 'fixture', reason: 'browser fixture', armedAt: Date.now() };\n  1176 |   await page.evaluate(({ panelId, watch }) => (window as any).__terminal.panels.get(panelId).setWatchZones([watch]), { panelId, watch });\n  1177 |   const objectsPanel = panel.locator('.chart-objects-panel');\n    at /home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts:1174:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:39:31.501Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/drawing-tools-Level-Watch--e9300-and-picking-disarm-drawings/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/drawing-tools.spec.ts",
+                    "column": 29,
+                    "line": 1174
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-ea0bdc226913a1471c36",
+          "file": "drawing-tools.spec.ts",
+          "line": 1167,
+          "column": 1
+        },
+        {
+          "title": "horizontal and vertical measures in Positions support placement, history and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11463,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:39:45.111Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edccdf57117f6c2a2602-f24729a032e40d887715",
+          "file": "drawing-tools.spec.ts",
+          "line": 1200,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footprint-presentation.spec.ts",
+      "file": "footprint-presentation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "footprint text scales with zoom and independent opacity settings persist without resetting collection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14375,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:39:58.273Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-78bd3c44a6e0acbe4f1a",
+          "file": "footprint-presentation.spec.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "title": "18-level footprint shows distinct VAH and VAL with transparent histogram backgrounds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8986,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:40:12.713Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-dd85dffe254193108592",
+          "file": "footprint-presentation.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "delta profile applies native presentation without restarting collection and persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12085,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:40:21.756Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-83eb839f61801bd7205e",
+          "file": "footprint-presentation.spec.ts",
+          "line": 194,
+          "column": 1
+        },
+        {
+          "title": "volume delta candle shows paired profiles without embedded totals or restarting collection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14128,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:40:33.938Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-daa5dc2df0344df124f4",
+          "file": "footprint-presentation.spec.ts",
+          "line": 233,
+          "column": 1
+        },
+        {
+          "title": "smaller bid profile remains visible beneath enlarged quantity labels",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11395,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:40:48.163Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-b07df979f53eb8256879",
+          "file": "footprint-presentation.spec.ts",
+          "line": 294,
+          "column": 1
+        },
+        {
+          "title": "footprint quantity labels remain readable over low-contrast red and green fills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8241,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:40:59.671Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-d666c558148eb3836877",
+          "file": "footprint-presentation.spec.ts",
+          "line": 322,
+          "column": 1
+        },
+        {
+          "title": "dense synthetic footprint stays crisp at DPR 1 and 2",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15646,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:41:08.002Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd27dec4d1c654ba357f-362bd71d73b3100388ad",
+          "file": "footprint-presentation.spec.ts",
+          "line": 373,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footprint-totals.spec.ts",
+      "file": "footprint-totals.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Footprint Totals owns a lower pane while sharing one footprint collection",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25974,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:41:23.721Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ea77fb1ed2c009a5bce0-e6e2a633ded3a32e4b9d",
+          "file": "footprint-totals.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "heatmap.spec.ts",
+      "file": "heatmap.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "worker heatmap shares depth studies, survives chart switching, hidden tabs and disposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19825,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:41:49.928Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-caf8d619f4789feddffc",
+          "file": "heatmap.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "heatmap labels, settings, resize, unsupported instruments and saved layouts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:09.816Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2274b30623d54bcb5def-7171dcffaeedb7414eb9",
+          "file": "heatmap.spec.ts",
+          "line": 127,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "market-comparison-engine.spec.ts",
+      "file": "market-comparison-engine.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "OpenAlgo 2.6 comparison handles share a common percentage baseline and preserve price gaps",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4946,
+                  "error": {
+                    "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js",
+                    "stack": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n    at /home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts:5:29",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                      "column": 29,
+                      "line": 5
+                    },
+                    "snippet": "  3 | test('OpenAlgo 2.6 comparison handles share a common percentage baseline and preserve price gaps', async ({ page }) => {\n  4 |   await page.goto('/?fixture=1');\n> 5 |   const result = await page.evaluate(async () => {\n    |                             ^\n  6 |     // The installed browser build is the authority for this host integration.\n  7 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  8 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                        "column": 29,
+                        "line": 5
+                      },
+                      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n\n  3 | test('OpenAlgo 2.6 comparison handles share a common percentage baseline and preserve price gaps', async ({ page }) => {\n  4 |   await page.goto('/?fixture=1');\n> 5 |   const result = await page.evaluate(async () => {\n    |                             ^\n  6 |     // The installed browser build is the authority for this host integration.\n  7 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  8 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');\n    at /home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts:5:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:25.301Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/market-comparison-engine-O-421ea-ine-and-preserve-price-gaps/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                    "column": 29,
+                    "line": 5
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8b22a57fe3e90dbf3998-64bbee8c855b93439a81",
+          "file": "market-comparison-engine.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "common mode reports no baseline without a shared timestamp and keeps the available subset comparable",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5520,
+                  "error": {
+                    "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js",
+                    "stack": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n    at /home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts:57:29",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                      "column": 29,
+                      "line": 57
+                    },
+                    "snippet": "  55 | test('common mode reports no baseline without a shared timestamp and keeps the available subset comparable', async ({ page }) => {\n  56 |   await page.goto('/?fixture=1');\n> 57 |   const result = await page.evaluate(async () => {\n     |                             ^\n  58 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  59 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');\n  60 |     const host = document.createElement('div');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                        "column": 29,
+                        "line": 57
+                      },
+                      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:4175/node_modules/.vite/deps/openalgo-charts.js\n\n  55 | test('common mode reports no baseline without a shared timestamp and keeps the available subset comparable', async ({ page }) => {\n  56 |   await page.goto('/?fixture=1');\n> 57 |   const result = await page.evaluate(async () => {\n     |                             ^\n  58 |     // @ts-expect-error Vite's optimized browser entry is available only in the browser dev server.\n  59 |     const charts = await import(/* @vite-ignore */ '/node_modules/.vite/deps/openalgo-charts.js') as typeof import('openalgo-charts');\n  60 |     const host = document.createElement('div');\n    at /home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts:57:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:32.264Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/market-comparison-engine-c-2d5a5-available-subset-comparable/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/market-comparison-engine.spec.ts",
+                    "column": 29,
+                    "line": 57
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8b22a57fe3e90dbf3998-57672e975903174a49ac",
+          "file": "market-comparison-engine.spec.ts",
+          "line": 55,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "market-comparison-fixture.spec.ts",
+      "file": "market-comparison-fixture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit development comparison fixtures render without reaching the public venue",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4994,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:41.769Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-eb7a19b08f1a66f76de4",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "comparison controls rebase the full selected window and persist colors, visibility, theme, and timezone",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9766,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Compact 24h comparison viewport: {\"visibleDataBars\":1440,\"plotWidth\":146,\"viewportWidth\":500,\"panelWidth\":236,\"stageWidth\":228,\"range\":{\"from\":3,\"to\":1445}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:48.097Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-23fbed52e508fa41ac1e",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 53,
+          "column": 1
+        },
+        {
+          "title": "matching comparison panels share one upstream set, pause hidden chart drawing, and release repeated resources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 75000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8069,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:42:57.937Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-d48036d401aa177d800c",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "keeps native crosshair prices and a stable timestamp baseline, then promotes the next visible market",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6552,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:43:06.081Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9bf01a48665b748b727c-6b7980f82f8a2f45c427",
+          "file": "market-comparison-fixture.spec.ts",
+          "line": 205,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "object-tree.spec.ts",
+      "file": "object-tree.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "per-chart Object Tree resizes, nests by drag, and groups native visibility in one undo step",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17214,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:43:12.735Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-3614dd4164e264cc6e78",
+          "file": "object-tree.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "Object Tree handles hundreds of folders through delegated row actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12404,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:43:30.053Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-080463909dff2b1f9b9d",
+          "file": "object-tree.spec.ts",
+          "line": 227,
+          "column": 1
+        },
+        {
+          "title": "invalid object-tree and sidebar records stay untouched and report session-only state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10543,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:43:42.513Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5e36b2e08d0d40792d37-ea5d5f481704275a3f70",
+          "file": "object-tree.spec.ts",
+          "line": 253,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "open-interest-sma.spec.ts",
+      "file": "open-interest-sma.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "explicit raw BTC Open Interest fixture feeds a chart-scoped SMA and survives an independent move and hidden source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:43:53.143Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0459243dea3507bf7eef-daca347b873a493d1f83",
+          "file": "open-interest-sma.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "order-flow-pane.spec.ts",
+      "file": "order-flow-pane.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "managed Order Flow combines CVD, raw Open Interest, Volume and default SMA with one pane chrome",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24708,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Order Flow OI alignment {\"now\":1793342652058,\"hostTail\":[1793341200000,1793341260000,1793341320000,1793341380000,1793341440000,1793341500000,1793341560000,1793341620000,1793341680000,1793341740000,1793341800000,1793341860000,1793341920000,1793341980000,1793342040000,1793342100000,1793342160000,1793342220000,1793342280000,1793342340000,1793342400000,1793342460000,1793342520000,1793342580000,1793342640000],\"payload\":{\"from\":1793328251463,\"to\":1793342651463,\"asOf\":1793342651463,\"rows\":1440,\"first\":1793328281462,\"last\":1793342651462},\"worker\":{\"requests\":0,\"rowsReceived\":0,\"rowsChanged\":0,\"snapshots\":1,\"patches\":0,\"errors\":0,\"subscribers\":1,\"lastPollMs\":0,\"fixtureSelected\":true,\"history\":{\"received\":1440,\"changed\":1440,\"snapshots\":1,\"patches\":0,\"duplicateRows\":0,\"retained\":1440},\"cacheVenues\":[\"binance\",\"hyperliquid\",\"bybit\"]},\"history\":{\"received\":1440,\"changed\":1440,\"snapshots\":0,\"patches\":0,\"duplicateRows\":0,\"retained\":1440},\"points\":[[\"binance\",[{\"t\":1793341200000,\"source\":1793341241462,\"age\":18537,\"quality\":\"complete\",\"value\":1432},{\"t\":1793341260000,\"source\":1793341301462,\"age\":18537,\"quality\":\"complete\",\"value\":1434},{\"t\":1793341320000,\"source\":1793341361462,\"age\":18537,\"quality\":\"complete\",\"value\":1436},{\"t\":1793341380000,\"source\":1793341421462,\"age\":18537,\"quality\":\"complete\",\"value\":1438},{\"t\":1793341440000,\"source\":1793341481462,\"age\":18537,\"quality\":\"complete\",\"value\":1440},{\"t\":1793341500000,\"source\":1793341541462,\"age\":18537,\"quality\":\"complete\",\"value\":1442},{\"t\":1793341560000,\"source\":1793341601462,\"age\":18537,\"quality\":\"complete\",\"value\":1444},{\"t\":1793341620000,\"source\":1793341661462,\"age\":18537,\"quality\":\"complete\",\"value\":1446},{\"t\":1793341680000,\"source\":1793341721462,\"age\":18537,\"quality\":\"complete\",\"value\":1448},{\"t\":1793341740000,\"source\":1793341781462,\"age\":18537,\"quality\":\"complete\",\"value\":1450},{\"t\":1793341800000,\"source\":1793341841462,\"age\":18537,\"quality\":\"complete\",\"value\":1452},{\"t\":1793341860000,\"source\":1793341901462,\"age\":18537,\"quality\":\"complete\",\"value\":1454},{\"t\":1793341920000,\"source\":1793341961462,\"age\":18537,\"quality\":\"complete\",\"value\":1456},{\"t\":1793341980000,\"source\":1793342021462,\"age\":18537,\"quality\":\"complete\",\"value\":1458},{\"t\":1793342040000,\"source\":1793342081462,\"age\":18537,\"quality\":\"complete\",\"value\":1460},{\"t\":1793342100000,\"source\":1793342141462,\"age\":18537,\"quality\":\"complete\",\"value\":1462},{\"t\":1793342160000,\"source\":1793342201462,\"age\":18537,\"quality\":\"complete\",\"value\":1464},{\"t\":1793342220000,\"source\":1793342261462,\"age\":18537,\"quality\":\"complete\",\"value\":1466},{\"t\":1793342280000,\"source\":1793342321462,\"age\":18537,\"quality\":\"complete\",\"value\":1468},{\"t\":1793342340000,\"source\":1793342381462,\"age\":18537,\"quality\":\"complete\",\"value\":1470},{\"t\":1793342400000,\"source\":1793342441462,\"age\":18537,\"quality\":\"complete\",\"value\":1472},{\"t\":1793342460000,\"source\":1793342501462,\"age\":18537,\"quality\":\"complete\",\"value\":1474},{\"t\":1793342520000,\"source\":1793342561462,\"age\":18537,\"quality\":\"complete\",\"value\":1476},{\"t\":1793342580000,\"source\":1793342621462,\"age\":18537,\"quality\":\"complete\",\"value\":1478},{\"t\":1793342640000,\"source\":1793342651462,\"age\":301,\"quality\":\"complete\",\"value\":1479}]],[\"hyperliquid\",[{\"t\":1793341200000,\"source\":1793341241462,\"age\":18537,\"quality\":\"complete\",\"value\":1532},{\"t\":1793341260000,\"source\":1793341301462,\"age\":18537,\"quality\":\"complete\",\"value\":1534},{\"t\":1793341320000,\"source\":1793341361462,\"age\":18537,\"quality\":\"complete\",\"value\":1536},{\"t\":1793341380000,\"source\":1793341421462,\"age\":18537,\"quality\":\"complete\",\"value\":1538},{\"t\":1793341440000,\"source\":1793341481462,\"age\":18537,\"quality\":\"complete\",\"value\":1540},{\"t\":1793341500000,\"source\":1793341541462,\"age\":18537,\"quality\":\"complete\",\"value\":1542},{\"t\":1793341560000,\"source\":1793341601462,\"age\":18537,\"quality\":\"complete\",\"value\":1544},{\"t\":1793341620000,\"source\":1793341661462,\"age\":18537,\"quality\":\"complete\",\"value\":1546},{\"t\":1793341680000,\"source\":1793341721462,\"age\":18537,\"quality\":\"complete\",\"value\":1548},{\"t\":1793341740000,\"source\":1793341781462,\"age\":18537,\"quality\":\"complete\",\"value\":1550},{\"t\":1793341800000,\"source\":1793341841462,\"age\":18537,\"quality\":\"complete\",\"value\":1552},{\"t\":1793341860000,\"source\":1793341901462,\"age\":18537,\"quality\":\"complete\",\"value\":1554},{\"t\":1793341920000,\"source\":1793341961462,\"age\":18537,\"quality\":\"complete\",\"value\":1556},{\"t\":1793341980000,\"source\":1793342021462,\"age\":18537,\"quality\":\"complete\",\"value\":1558},{\"t\":1793342040000,\"source\":1793342081462,\"age\":18537,\"quality\":\"complete\",\"value\":1560},{\"t\":1793342100000,\"source\":1793342141462,\"age\":18537,\"quality\":\"complete\",\"value\":1562},{\"t\":1793342160000,\"source\":1793342201462,\"age\":18537,\"quality\":\"complete\",\"value\":1564},{\"t\":1793342220000,\"source\":1793342261462,\"age\":18537,\"quality\":\"complete\",\"value\":1566},{\"t\":1793342280000,\"source\":1793342321462,\"age\":18537,\"quality\":\"complete\",\"value\":1568},{\"t\":1793342340000,\"source\":1793342381462,\"age\":18537,\"quality\":\"complete\",\"value\":1570},{\"t\":1793342400000,\"source\":1793342441462,\"age\":18537,\"quality\":\"complete\",\"value\":1572},{\"t\":1793342460000,\"source\":1793342501462,\"age\":18537,\"quality\":\"complete\",\"value\":1574},{\"t\":1793342520000,\"source\":1793342561462,\"age\":18537,\"quality\":\"complete\",\"value\":1576},{\"t\":1793342580000,\"source\":1793342621462,\"age\":18537,\"quality\":\"complete\",\"value\":1578},{\"t\":1793342640000,\"source\":1793342651462,\"age\":301,\"quality\":\"complete\",\"value\":1579}]],[\"bybit\",[{\"t\":1793341200000,\"source\":1793341241462,\"age\":18537,\"quality\":\"complete\",\"value\":1632},{\"t\":1793341260000,\"source\":1793341301462,\"age\":18537,\"quality\":\"complete\",\"value\":1634},{\"t\":1793341320000,\"source\":1793341361462,\"age\":18537,\"quality\":\"complete\",\"value\":1636},{\"t\":1793341380000,\"source\":1793341421462,\"age\":18537,\"quality\":\"complete\",\"value\":1638},{\"t\":1793341440000,\"source\":1793341481462,\"age\":18537,\"quality\":\"complete\",\"value\":1640},{\"t\":1793341500000,\"source\":1793341541462,\"age\":18537,\"quality\":\"complete\",\"value\":1642},{\"t\":1793341560000,\"source\":1793341601462,\"age\":18537,\"quality\":\"complete\",\"value\":1644},{\"t\":1793341620000,\"source\":1793341661462,\"age\":18537,\"quality\":\"complete\",\"value\":1646},{\"t\":1793341680000,\"source\":1793341721462,\"age\":18537,\"quality\":\"complete\",\"value\":1648},{\"t\":1793341740000,\"source\":1793341781462,\"age\":18537,\"quality\":\"complete\",\"value\":1650},{\"t\":1793341800000,\"source\":1793341841462,\"age\":18537,\"quality\":\"complete\",\"value\":1652},{\"t\":1793341860000,\"source\":1793341901462,\"age\":18537,\"quality\":\"complete\",\"value\":1654},{\"t\":1793341920000,\"source\":1793341961462,\"age\":18537,\"quality\":\"complete\",\"value\":1656},{\"t\":1793341980000,\"source\":1793342021462,\"age\":18537,\"quality\":\"complete\",\"value\":1658},{\"t\":1793342040000,\"source\":1793342081462,\"age\":18537,\"quality\":\"complete\",\"value\":1660},{\"t\":1793342100000,\"source\":1793342141462,\"age\":18537,\"quality\":\"complete\",\"value\":1662},{\"t\":1793342160000,\"source\":1793342201462,\"age\":18537,\"quality\":\"complete\",\"value\":1664},{\"t\":1793342220000,\"source\":1793342261462,\"age\":18537,\"quality\":\"complete\",\"value\":1666},{\"t\":1793342280000,\"source\":1793342321462,\"age\":18537,\"quality\":\"complete\",\"value\":1668},{\"t\":1793342340000,\"source\":1793342381462,\"age\":18537,\"quality\":\"complete\",\"value\":1670},{\"t\":1793342400000,\"source\":1793342441462,\"age\":18537,\"quality\":\"complete\",\"value\":1672},{\"t\":1793342460000,\"source\":1793342501462,\"age\":18537,\"quality\":\"complete\",\"value\":1674},{\"t\":1793342520000,\"source\":1793342561462,\"age\":18537,\"quality\":\"complete\",\"value\":1676},{\"t\":1793342580000,\"source\":1793342621462,\"age\":18537,\"quality\":\"complete\",\"value\":1678},{\"t\":1793342640000,\"source\":1793342651462,\"age\":301,\"quality\":\"complete\",\"value\":1679}]],[\"total\",[{\"t\":1793341200000,\"source\":1793341241462,\"age\":18537,\"quality\":\"complete\",\"value\":4596},{\"t\":1793341260000,\"source\":1793341301462,\"age\":18537,\"quality\":\"complete\",\"value\":4602},{\"t\":1793341320000,\"source\":1793341361462,\"age\":18537,\"quality\":\"complete\",\"value\":4608},{\"t\":1793341380000,\"source\":1793341421462,\"age\":18537,\"quality\":\"complete\",\"value\":4614},{\"t\":1793341440000,\"source\":1793341481462,\"age\":18537,\"quality\":\"complete\",\"value\":4620},{\"t\":1793341500000,\"source\":1793341541462,\"age\":18537,\"quality\":\"complete\",\"value\":4626},{\"t\":1793341560000,\"source\":1793341601462,\"age\":18537,\"quality\":\"complete\",\"value\":4632},{\"t\":1793341620000,\"source\":1793341661462,\"age\":18537,\"quality\":\"complete\",\"value\":4638},{\"t\":1793341680000,\"source\":1793341721462,\"age\":18537,\"quality\":\"complete\",\"value\":4644},{\"t\":1793341740000,\"source\":1793341781462,\"age\":18537,\"quality\":\"complete\",\"value\":4650},{\"t\":1793341800000,\"source\":1793341841462,\"age\":18537,\"quality\":\"complete\",\"value\":4656},{\"t\":1793341860000,\"source\":1793341901462,\"age\":18537,\"quality\":\"complete\",\"value\":4662},{\"t\":1793341920000,\"source\":1793341961462,\"age\":18537,\"quality\":\"complete\",\"value\":4668},{\"t\":1793341980000,\"source\":1793342021462,\"age\":18537,\"quality\":\"complete\",\"value\":4674},{\"t\":1793342040000,\"source\":1793342081462,\"age\":18537,\"quality\":\"complete\",\"value\":4680},{\"t\":1793342100000,\"source\":1793342141462,\"age\":18537,\"quality\":\"complete\",\"value\":4686},{\"t\":1793342160000,\"source\":1793342201462,\"age\":18537,\"quality\":\"complete\",\"value\":4692},{\"t\":1793342220000,\"source\":1793342261462,\"age\":18537,\"quality\":\"complete\",\"value\":4698},{\"t\":1793342280000,\"source\":1793342321462,\"age\":18537,\"quality\":\"complete\",\"value\":4704},{\"t\":1793342340000,\"source\":1793342381462,\"age\":18537,\"quality\":\"complete\",\"value\":4710},{\"t\":1793342400000,\"source\":1793342441462,\"age\":18537,\"quality\":\"complete\",\"value\":4716},{\"t\":1793342460000,\"source\":1793342501462,\"age\":18537,\"quality\":\"complete\",\"value\":4722},{\"t\":1793342520000,\"source\":1793342561462,\"age\":18537,\"quality\":\"complete\",\"value\":4728},{\"t\":1793342580000,\"source\":1793342621462,\"age\":18537,\"quality\":\"complete\",\"value\":4734},{\"t\":1793342640000,\"source\":1793342651462,\"age\":301,\"quality\":\"complete\",\"value\":4737}]]]}\n"
+                    },
+                    {
+                      "text": "OI projection {\"frameQuality\":\"partial\",\"quality\":\"partial\",\"totalHead\":[{\"time\":1793042700000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793042760000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793042820000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],\"totalTail\":[{\"time\":1793342520000,\"value\":4728,\"sourceTimeMs\":1793342561462,\"observedAtMs\":1793342561962,\"ageMs\":18537,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"},{\"time\":1793342580000,\"value\":4734,\"sourceTimeMs\":1793342621462,\"observedAtMs\":1793342621962,\"ageMs\":18537,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"},{\"time\":1793342640000,\"value\":4737,\"sourceTimeMs\":1793342651462,\"observedAtMs\":1793342651962,\"ageMs\":301,\"epoch\":null,\"unit\":\"BTC\",\"quality\":\"complete\",\"reset\":false,\"source\":\"verified perpetual venues\",\"sourceTimeQuality\":\"collector-sampled\"}],\"venueHeads\":[[{\"time\":1793042700000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793042760000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],[{\"time\":1793042700000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793042760000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}],[{\"time\":1793042700000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null},{\"time\":1793042760000,\"value\":null,\"sourceTimeMs\":null,\"observedAtMs\":null,\"ageMs\":null,\"epoch\":null,\"unit\":null,\"quality\":\"unavailable\",\"reset\":false,\"source\":null,\"sourceTimeQuality\":null}]]}\n"
+                    },
+                    {
+                      "text": "CVD SMA alignment {\"length\":20,\"sourceQuality\":\"partial\",\"sourceTail\":[null,null,null,null,null,30423,30429,30438,30450,30465,30483,30504,30528,30555,30585,30618,30654,30693,30735,30780,30828,30879,30933,30990,31050,31113,31179,31248,31320,31395],\"resets\":[{\"fromTime\":1793042700000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},{\"fromTime\":1793059200000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793145600000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793232000000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793342640000,\"reason\":\"Incomplete or interrupted signed execution coverage\"}],\"derivedTail\":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30651,30685.5,30723,30763.5,30807,null],\"derivedQuality\":\"partial\",\"derivedResets\":[{\"fromTime\":1793042700000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},{\"fromTime\":1793059200000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793145600000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793232000000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},{\"fromTime\":1793342640000,\"reason\":\"Incomplete or interrupted signed execution coverage\"}],\"latestCandle\":1793342640000,\"latestCandleClosed\":false,\"latestReset\":{\"fromTime\":1793342640000,\"reason\":\"Incomplete or interrupted signed execution coverage\"},\"latestDailyReset\":{\"fromTime\":1793318400000,\"reason\":\"daily UTC CVD reset\"},\"closedWindow\":[30465,30483,30504,30528,30555,30585,30618,30654,30693,30735,30780,30828,30879,30933,30990,31050,31113,31179,31248,31320],\"expectedPreviousClosedSma\":30807,\"previousClosedSma\":30807,\"latestSma\":null,\"sourceTailTimes\":[1793340900000,1793340960000,1793341020000,1793341080000,1793341140000,1793341200000,1793341260000,1793341320000,1793341380000,1793341440000,1793341500000,1793341560000,1793341620000,1793341680000,1793341740000,1793341800000,1793341860000,1793341920000,1793341980000,1793342040000,1793342100000,1793342160000,1793342220000,1793342280000,1793342340000,1793342400000,1793342460000,1793342520000,1793342580000,1793342640000]}\n"
+                    },
+                    {
+                      "text": "Order Flow layout geometry {\"plotLeft\":80,\"headerLeft\":86,\"headerBottom\":645,\"legend\":{\"left\":143,\"right\":1275,\"top\":593,\"bottom\":645,\"clientWidth\":1132,\"scrollWidth\":1132,\"clientHeight\":52,\"scrollHeight\":52},\"values\":[{\"left\":143,\"right\":248.203125,\"top\":593,\"bottom\":618,\"width\":105.203125},{\"left\":251.203125,\"right\":399.609375,\"top\":593,\"bottom\":618,\"width\":148.40625},{\"left\":402.609375,\"right\":551.015625,\"top\":593,\"bottom\":618,\"width\":148.40625},{\"left\":554.015625,\"right\":722.015625,\"top\":593,\"bottom\":618,\"width\":168},{\"left\":725.015625,\"right\":884.21875,\"top\":593,\"bottom\":618,\"width\":159.203125},{\"left\":887.21875,\"right\":1014.03125,\"top\":593,\"bottom\":618,\"width\":126.8125},{\"left\":1017.03125,\"right\":1116.84375,\"top\":593,\"bottom\":618,\"width\":99.8125},{\"left\":1119.84375,\"right\":1203.453125,\"top\":593,\"bottom\":618,\"width\":83.609375},{\"left\":143,\"right\":248.203125,\"top\":620,\"bottom\":645,\"width\":105.203125},{\"left\":251.203125,\"right\":334.8125,\"top\":620,\"bottom\":645,\"width\":83.609375}],\"statusHidden\":false,\"statusTop\":668.796875,\"statusBottom\":679.796875,\"bandTop\":679.8}\n"
+                    },
+                    {
+                      "text": "Order Flow narrow legend geometry {\"plotLeft\":80,\"headerLeft\":86,\"width\":486,\"scrollWidth\":486,\"height\":79,\"scrollHeight\":79,\"left\":143,\"right\":629,\"top\":665,\"bottom\":744,\"headerBottom\":744,\"statusHidden\":false,\"statusBottom\":767.796875,\"bandTop\":767.8,\"buttons\":[{\"left\":143,\"right\":221.203125,\"top\":665,\"bottom\":690},{\"left\":224.203125,\"right\":334.203125,\"top\":665,\"bottom\":690},{\"left\":337.203125,\"right\":447.203125,\"top\":665,\"bottom\":690},{\"left\":450.203125,\"right\":560.203125,\"top\":665,\"bottom\":690},{\"left\":143,\"right\":253,\"top\":692,\"bottom\":717},{\"left\":256,\"right\":366,\"top\":692,\"bottom\":717},{\"left\":369,\"right\":468.8125,\"top\":692,\"bottom\":717},{\"left\":471.8125,\"right\":560.828125,\"top\":692,\"bottom\":717},{\"left\":143,\"right\":248.203125,\"top\":719,\"bottom\":744},{\"left\":251.203125,\"right\":334.8125,\"top\":719,\"bottom\":744}]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:44:00.568Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1210505d0f685f19beff-1d70d243fad83bb42f7a",
+          "file": "order-flow-pane.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "combined native panes share raw Open Interest across charts and release it on sleep and final removal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:44:25.333Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1210505d0f685f19beff-d09bc4ae95638f41768c",
+          "file": "order-flow-pane.spec.ts",
+          "line": 476,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "order-walls-ui.spec.ts",
+      "file": "order-walls-ui.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Order Walls settings persist and remain a single viewport consumer alongside Heatmap",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12371,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:44:38.351Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-52dba947506bd748bb7b",
+          "file": "order-walls-ui.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "wall tooltip uses the historical hit value and labels unknown bounds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4382,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:44:50.775Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-13cc14f94df581937622",
+          "file": "order-walls-ui.spec.ts",
+          "line": 95,
+          "column": 1
+        },
+        {
+          "title": "Order Walls distinguishes pending replay from an empty finished history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5253,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:44:55.208Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "43a59d388531dd92f93f-71c6ae62437483ff1c7b",
+          "file": "order-walls-ui.spec.ts",
+          "line": 132,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pane-indicator-headers.spec.ts",
+      "file": "pane-indicator-headers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "pane indicators use one local header while overlays stay in the main list",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17913,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:45:00.552Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-3e9c68102a22becfa688",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:45:18.539Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-05c33e22f7ccd8799ec7",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 196,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pane-visibility-lifecycle.spec.ts",
+      "file": "pane-visibility-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "visible native indicator panes are removed and restored without orphan panes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:45:31.343Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "08307b2a7d5ac99080eb-16408b26cb0c3030cabe",
+          "file": "pane-visibility-lifecycle.spec.ts",
+          "line": 17,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "tpo.spec.ts",
+      "file": "tpo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "UTC TPO settings preserve its worker group, apply colors and retry the chart client",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18018,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:45:53.814Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "653643ff9f1cc36530d8-4401b992316b0ac3de1d",
+          "file": "tpo.spec.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "title": "UTC TPO uses plot CSS coordinates on a DPR 2 canvas across UTC day boundaries",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7474,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T06:46:11.893Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "653643ff9f1cc36530d8-d00791f8cc09380dc256",
+          "file": "tpo.spec.ts",
+          "line": 199,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T06:35:07.698Z",
+    "duration": 672245.219,
+    "expected": 45,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

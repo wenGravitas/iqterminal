@@ -15,7 +15,7 @@ class WorkerMock {
 
 const series = { venue: 'binance', market: 'perpetual', interval: '1m' } as const;
 const clients: FeedClient[] = [];
-afterEach(() => { clients.splice(0).forEach(client => client.dispose()); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => { clients.splice(0).forEach(client => client.dispose()); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 function setup() {
   vi.stubGlobal('Worker', WorkerMock);
   const client = new FeedClient(); clients.push(client);
@@ -78,4 +78,17 @@ it('routes Spot footprint and heatmap requests with explicit Spot market identit
   });
   client.subscribeHeatmap('spot-chart', { rowPrice: 25, bucketMs: 500, candleMs: 60_000 }, () => {}, 'spot');
   expect(worker.messages.find(command => command.type === 'heatmap-subscribe')).toMatchObject({ type: 'heatmap-subscribe', market: 'spot' });
+});
+
+it('sends analysis warmup demand on viewport updates without replacing the feed subscription', () => {
+  vi.stubEnv('VITE_DATA_MODE', 'staging');
+  const { client, worker } = setup();
+  client.subscribeFootprint('chart', series, 25, () => {});
+  const subscription = token(worker);
+  client.requestFootprintViewport('chart', 60_000, 360_000, { enabled: true, lookback: 50 });
+  expect(worker.messages.at(-1)).toEqual({ type: 'footprint-viewport', id: subscription, from: 60_000, to: 360_000,
+    analysis: { enabled: true, lookback: 50 } });
+  client.requestFootprintViewport('chart', 60_000, 360_000, { enabled: false, lookback: 50 });
+  expect(worker.messages.at(-1)).toMatchObject({ type: 'footprint-viewport', id: subscription, analysis: { enabled: false, lookback: 50 } });
+  expect(worker.messages.filter(command => command.type === 'footprint-subscribe')).toHaveLength(1);
 });

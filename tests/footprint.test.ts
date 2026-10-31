@@ -320,6 +320,8 @@ describe('shared Binance footprint worker service', () => {
     expect(replacement.bars).toHaveLength(12);
     expect(replacement.bars[0]!.time).toBe(base / 1000 + 39 * 60);
     expect(replacement.bars.at(-1)?.aggregateRecordCount).toBe(1);
+    expect(replacement.analysisSummaries).toHaveLength(50);
+    expect(replacement.analysisSummaries!.length).toBeLessThanOrEqual(512);
     expect(replacement.status.state).toBe('live');
     const staleGeneration = replacement.generation + 1;
     service.acknowledge(replacement.key, staleGeneration, replacement.batchId);
@@ -400,6 +402,26 @@ describe('shared Binance footprint worker service', () => {
     const latePatch = test.events.filter(event => event.type === 'footprint-patch').at(-1);
     expect(latePatch?.type === 'footprint-patch' ? latePatch.bars[0] : undefined).toMatchObject({ aggregateRecordCount: 2, coverage: 'gapped' });
     expect(service.diagnostics()).toMatchObject({ counters: { accepted: 2, late: 1 }, groups: [{ lateRecords: 1 }] });
+  });
+
+  it('retains cell-free direct analysis beyond dense-bar eviction and gaps a late offscreen correction', async () => {
+    const test = setup();
+    service.subscribe('a', { venue: 'binance', market: 'perpetual', interval: '1m' }, 1);
+    await test.advance(0); test.sockets[0]!.open();
+    for (let id = 1; id <= 22; id++) {
+      test.sockets[0]!.update(record(id, base + (id - 1) * 60_000 + 1_000));
+      await test.advance(100);
+    }
+    const full = test.events.filter(event => event.type === 'footprint-patch').at(-1);
+    expect(service.diagnostics().groups[0]?.bars).toBe(12);
+    expect(full?.type === 'footprint-patch' ? full.analysisSummaries?.length : 0).toBe(22);
+    expect(full?.type === 'footprint-patch' ? full.analysisSummaries?.[0]?.time : null).toBe(base / 1000);
+
+    test.sockets[0]!.update(record(23, base + 1_000));
+    await test.advance(100);
+    const correction = test.events.filter(event => event.type === 'footprint-status').at(-1);
+    expect(correction?.type === 'footprint-status' ? correction.analysisSummaries?.find(summary => summary.time === base / 1000) : null)
+      .toMatchObject({ coverage: 'gapped', gapBefore: true, coverageEvidence: { complete: false, nonTailGapCount: 1 } });
   });
 
   it('marks retained bar coverage gapped when a live socket falls silent, then resumes', async () => {

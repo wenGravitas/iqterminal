@@ -1,15 +1,33 @@
 import { compactVol } from 'openalgo-charts/profile';
-import { addIndicator, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
-import { test, expect } from '@playwright/test';
+import { addIndicator, expectHeatmapLiveQuiet, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
+import { test, expect, type Page, type Worker } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { footprintColumn } from '../../src/chart/terminal-footprint';
 
+async function freezeFixtureTimeToLatestCandle(page: Page, worker: Worker) {
+  const fixedNow = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const latestStart = p.candles.at(-1)?.t;
+    if (!Number.isFinite(latestStart)) throw new Error('Native fixture has no finite latest candle timestamp');
+    return latestStart + 5_000;
+  });
+  await page.evaluate(at => {
+    const start = performance.now();
+    Date.now = () => at + performance.now() - start;
+  }, fixedNow);
+  await worker.evaluate(at => {
+    const start = performance.now();
+    Date.now = () => at + performance.now() - start;
+  }, fixedNow);
+}
+
 test('footprint text scales with zoom and independent opacity settings persist without resetting collection', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
-  await page.emulateMedia({ colorScheme: 'dark' }); await installDepthFixture(page);
+  await page.emulateMedia({ colorScheme: 'dark' }); const worker = await installDepthFixture(page);
+  await freezeFixtureTimeToLatestCandle(page, worker);
   const panel = page.locator('.candle-panel').first();
   await addIndicator(panel, 'Order-book Heatmap');
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   await page.evaluate(() => {
     const t = (window as any).__terminal;
     t.feed.subscribeFootprint = (_id: string, _s: any, rowSize: number, callback: any) => {
@@ -24,7 +42,7 @@ test('footprint text scales with zoom and independent opacity settings persist w
   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprint?.cellFont)).toBeGreaterThanOrEqual(9);
   await expect.poll(() => page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).heatmapStatus.collectionStart)).not.toBeNull();
   await setUnits(panel, 'usdt');
-  await expect(panel.locator('.heatmap-notice')).toContainText('USDT');
+  await expectHeatmapLiveQuiet(panel);
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     const b = p.engine.heatmap.bins.find((b: any) => b.bid > 0);
@@ -233,6 +251,7 @@ test('delta profile applies native presentation without restarting collection an
 test('volume delta candle shows paired profiles without embedded totals or restarting collection', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.emulateMedia({ colorScheme: 'dark' }); const worker = await installDepthFixture(page);
+  await freezeFixtureTimeToLatestCandle(page, worker);
   const panel = page.locator('.candle-panel').first();
   await page.evaluate(() => {
     const t = (window as any).__terminal; t.profileSubscriptions = 0;
@@ -248,7 +267,7 @@ test('volume delta candle shows paired profiles without embedded totals or resta
   });
   await setFootprint(panel, true);
   await addIndicator(panel, 'Order-book Heatmap');
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expectHeatmapLiveQuiet(panel);
   await worker.evaluate(() => {
     const socket = (self as any).__heatmapFixture.socket, previous = socket.last;
     socket.last++;

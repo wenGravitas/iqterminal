@@ -1,0 +1,384 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/browser/liquidations.spec.ts",
+      "--config=playwright.liquidation-coverage.tmp.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal/playwright.liquidation-coverage.tmp.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4193",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4193",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/browser-liquidation-coverage-current.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "liquidations.spec.ts",
+      "file": "liquidations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "liquidation ticker, stacked native pane, marker settings and workspace persist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30817,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:23.478Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-d8cc836b152b4ac8e667",
+          "file": "liquidations.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "liquidation subscriptions share ingestion and replay never generates stale notifications",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 41334,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:36:55.545Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-614d938fc7c296df59d2",
+          "file": "liquidations.spec.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "fresh burst alerts use shared notifications; inspection and removing a consumer preserve the tape",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15997,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:36.961Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-26d9698225e4f4fceb64",
+          "file": "liquidations.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "liquidation bar tooltip matches positioning cards with side-specific venue totals and bounded placement",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14458,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.liquidation-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.liquidation-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-tooltip')\u001b[22m\n\u001b[2m    12 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"liquidation-tooltip net-positioning-tooltip\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.liquidation-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.liquidation-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-tooltip')\u001b[22m\n\u001b[2m    12 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"liquidation-tooltip net-positioning-tooltip\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at hover (/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:67:24)\n    at /home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:86:5",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                      "column": 24,
+                      "line": 67
+                    },
+                    "snippet": "  65 |     await page.mouse.move(0, 0);\n  66 |     await page.mouse.move(stage!.x + hit!.x, stage!.y + hit!.y);\n> 67 |     await expect(card).toBeVisible();\n     |                        ^\n  68 |     await expect(card.locator('.positioning-tooltip-heading')).toContainText(side === 'LONG' ? 'Long liquidations' : 'Short liquidations');\n  69 |     await expect(card).toContainText('BY[P]'); await expect(card).toContainText('BN[P]');\n  70 |     await expect(card.locator('.positioning-tooltip-row')).toHaveCount(2);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                        "column": 24,
+                        "line": 67
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.candle-panel').first().locator('.liquidation-tooltip')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.candle-panel').first().locator('.liquidation-tooltip') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first().locator('.liquidation-tooltip')\u001b[22m\n\u001b[2m    12 × locator resolved to <div hidden=\"\" role=\"tooltip\" class=\"liquidation-tooltip net-positioning-tooltip\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  65 |     await page.mouse.move(0, 0);\n  66 |     await page.mouse.move(stage!.x + hit!.x, stage!.y + hit!.y);\n> 67 |     await expect(card).toBeVisible();\n     |                        ^\n  68 |     await expect(card.locator('.positioning-tooltip-heading')).toContainText(side === 'LONG' ? 'Long liquidations' : 'Short liquidations');\n  69 |     await expect(card).toContainText('BY[P]'); await expect(card).toContainText('BN[P]');\n  70 |     await expect(card.locator('.positioning-tooltip-row')).toHaveCount(2);\n    at hover (/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:67:24)\n    at /home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts:86:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:37:53.011Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal/test-results/liquidations-liquidation-b-e02eb-otals-and-bounded-placement/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal/tests/browser/liquidations.spec.ts",
+                    "column": 24,
+                    "line": 67
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-a31a5e8be5dc2bc48c65",
+          "file": "liquidations.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "liquidation venue toggles filter the pane, survive reload, and stay accessible in compact headers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18162,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:10.090Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-1f3316f42d3e9e6cd3dc",
+          "file": "liquidations.spec.ts",
+          "line": 106,
+          "column": 1
+        },
+        {
+          "title": "liquidation coverage gaps stop at now across forming bars, pan, resize and themes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18990,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"kind\":\"explicit liquidation coverage fixture on installed chart engine\",\"bars\":[1793354280000,1793363160000,1793363820000],\"pastGap\":{\"from\":1793356680000,\"to\":1793357400000,\"reason\":\"fixture-disconnect\"},\"captures\":[{\"path\":\"artifacts/liquidations/coverage-now-1366x768-dark.png\",\"plotWidth\":1224,\"overlayRects\":2,\"futureOverlayRects\":0},{\"path\":\"artifacts/liquidations/coverage-now-1366x768-light.png\",\"plotWidth\":1224,\"overlayRects\":2,\"futureOverlayRects\":0},{\"path\":\"artifacts/liquidations/coverage-now-720x860-light.png\",\"plotWidth\":578,\"overlayRects\":2,\"futureOverlayRects\":0},{\"path\":\"artifacts/liquidations/coverage-now-720x860-dark.png\",\"plotWidth\":578,\"overlayRects\":2,\"futureOverlayRects\":0}]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T12:38:29.980Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "25255ac89ce01356cf6f-0beb256901f71ad08a08",
+          "file": "liquidations.spec.ts",
+          "line": 158,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-30T12:36:21.673Z",
+    "duration": 148182.907,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
