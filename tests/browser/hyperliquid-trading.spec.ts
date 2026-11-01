@@ -12,7 +12,7 @@ async function installMockTradingWorker(page: Page) {
     const win = window as any;
     const NativeWorker = window.Worker;
     const agentKey = '__test_only_hl_agent_address';
-    win.__tradingMock = { workers: 0, requests: [], submitted: [], modified: [], canceled: [], modifyError: '', orderPrice: '84000', positionSize: '0.02', extraOrders: [], instances: [], storageAvailable: true, sessionOnlyAvailable: false };
+    win.__tradingMock = { workers: 0, requests: [], submitted: [], modified: [], canceled: [], modifyError: '', orderPrice: '84000', positionSize: '0.02', extraOrders: [], instances: [], storageAvailable: true, sessionOnlyAvailable: false, legacyBinding: false };
 
     const snapshot = (network: 'mainnet' | 'testnet', principal: string, authorized = false, agentAddress: string | null = null) => {
       const orderPrice = String(win.__tradingMock.orderPrice);
@@ -21,7 +21,7 @@ async function installMockTradingWorker(page: Page) {
         accountValue: '10000', marginUsed: '150', withdrawable: '9850', totalNotional: '1680',
         positions: Number(win.__tradingMock.positionSize) > 0 ? [{ coin: 'BTC', size: String(win.__tradingMock.positionSize), side: 'long', entryPrice: '83900', unrealizedPnl: '12.5', liquidationPrice: '80000', leverage: '5' }] : [],
         orders: [{ coin: 'BTC', id: 77, cloid: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', side: 'buy', price: orderPrice, size: '0.01', originalSize: '0.01', timestamp: Date.now(), status: 'open', reduceOnly: false, trigger: false, triggerPrice: null, triggerMarket: false, kind: 'limit' }, ...(win.__tradingMock.extraOrders ?? [])],
-        fills: [], midPrice: orderPrice, markPrice: orderPrice, szDecimals: 5, btcAsset: 0,
+        fills: [], midPrice: orderPrice, midPriceUpdatedAt: Date.now(), markPrice: orderPrice, markPriceUpdatedAt: Date.now(), szDecimals: 5, btcAsset: 0,
         agentAddress, agentAuthorized: authorized, agentValidUntil: null, error: null,
       };
     };
@@ -32,11 +32,16 @@ async function installMockTradingWorker(page: Page) {
       private agentAddress: string | null = null;
       private authorized = false;
       private sessionOnly = false;
+      private pendingLegacyToken: string | null = null;
       private orders: any[] = [];
       private dead = false;
       private lastSnapshotAt = 0;
       constructor() { super(); win.__tradingMock.workers += 1; win.__tradingMock.instances.push(this); }
-      private emit(data: unknown) { if (!this.dead) this.dispatchEvent(new MessageEvent('message', { data })); }
+      private emit(data: any) {
+        if (this.dead) return;
+        const scoped = data?.type === 'vault-state' ? { ...data, network: this.network, principal: this.principal } : data;
+        this.dispatchEvent(new MessageEvent('message', { data: scoped }));
+      }
       private reply(id: number, value?: unknown, error?: string) { this.emit({ type: 'result', id, ...(error ? { error } : { value }) }); }
       private publish() {
         const value = snapshot(this.network, this.principal, this.authorized, this.agentAddress);
@@ -51,7 +56,11 @@ async function installMockTradingWorker(page: Page) {
             this.network = message.network; this.principal = message.principal; this.agentAddress = localStorage.getItem(agentKey); this.authorized = false; this.sessionOnly = false;
             this.publish(); this.reply(message.id, snapshot(this.network, this.principal, false, this.agentAddress)); return;
           case 'vault-info':
-            this.agentAddress = localStorage.getItem(agentKey); this.emit({ type: 'vault-state', address: this.agentAddress, exists: !!this.agentAddress, unlocked: false, storageAvailable: win.__tradingMock.storageAvailable, sessionOnlyAvailable: win.__tradingMock.sessionOnlyAvailable }); this.reply(message.id, { address: this.agentAddress, exists: !!this.agentAddress, unlocked: false, storageAvailable: win.__tradingMock.storageAvailable, sessionOnlyAvailable: win.__tradingMock.sessionOnlyAvailable }); return;
+            this.agentAddress = localStorage.getItem(agentKey);
+            const legacyInfo = { address: this.agentAddress, exists: !!this.agentAddress || win.__tradingMock.legacyBinding,
+              unlocked: false, legacyNeedsBinding: win.__tradingMock.legacyBinding, storageAvailable: win.__tradingMock.storageAvailable,
+              sessionOnlyAvailable: win.__tradingMock.sessionOnlyAvailable };
+            this.emit({ type: 'vault-state', ...legacyInfo }); this.reply(message.id, legacyInfo); return;
           case 'vault-import':
           case 'vault-generate':
             this.agentAddress = '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf'; localStorage.setItem(agentKey, this.agentAddress);
@@ -61,11 +70,31 @@ async function installMockTradingWorker(page: Page) {
             this.agentAddress = '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf'; this.sessionOnly = true; this.authorized = true;
             this.publish(); this.emit({ type: 'vault-state', address: this.agentAddress, exists: true, unlocked: true, storageAvailable: false, sessionOnlyAvailable: true, sessionOnly: true }); this.reply(message.id, { address: this.agentAddress, authorized: true, sessionOnly: true }); return;
           case 'vault-unlock':
+            if (win.__tradingMock.legacyBinding) {
+              this.pendingLegacyToken = 'legacy-confirmation-token';
+              this.emit({ type: 'vault-state', address: null, exists: true, unlocked: false, legacyNeedsBinding: true, storageAvailable: true });
+              this.reply(message.id, { legacyBindingRequired: true, token: this.pendingLegacyToken, network: this.network,
+                principal: this.principal, address: '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf' }); return;
+            }
             this.authorized = true; this.publish(); this.emit({ type: 'vault-state', address: this.agentAddress, exists: true, unlocked: true, storageAvailable: true, sessionOnlyAvailable: false });
             this.reply(message.id, { address: this.agentAddress, authorized: true }); return;
+          case 'vault-bind-legacy':
+            if (!this.pendingLegacyToken || message.token !== this.pendingLegacyToken || message.network !== this.network || message.principal !== this.principal) {
+              this.reply(message.id, undefined, 'Legacy binding token or account scope is invalid'); return;
+            }
+            this.pendingLegacyToken = null; win.__tradingMock.legacyBinding = false;
+            this.agentAddress = '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf'; this.authorized = true;
+            localStorage.setItem(agentKey, this.agentAddress); this.publish();
+            this.emit({ type: 'vault-state', address: this.agentAddress, exists: true, unlocked: true, legacyNeedsBinding: false, storageAvailable: true });
+            this.reply(message.id, { address: this.agentAddress, authorized: true, bound: true }); return;
+          case 'vault-cancel-legacy-binding':
+            if (!this.pendingLegacyToken || message.token !== this.pendingLegacyToken) { this.reply(message.id, undefined, 'Legacy binding token is invalid'); return; }
+            this.pendingLegacyToken = null; this.emit({ type: 'vault-state', address: null, exists: true, unlocked: false, legacyNeedsBinding: true, storageAvailable: true });
+            this.reply(message.id, true); return;
           case 'vault-lock':
             this.authorized = false; if (this.sessionOnly) this.agentAddress = null; this.sessionOnly = false; this.publish(); this.emit({ type: 'vault-state', address: this.agentAddress, exists: !!this.agentAddress, unlocked: false, storageAvailable: win.__tradingMock.storageAvailable, sessionOnlyAvailable: win.__tradingMock.sessionOnlyAvailable, sessionOnly: false, ...(win.__tradingMock.storageAvailable === false ? { error: 'Session-only agent was discarded when locked' } : {}) }); this.reply(message.id, true); return;
           case 'vault-remove':
+          case 'vault-forget':
             localStorage.removeItem(agentKey); this.agentAddress = null; this.authorized = false; this.sessionOnly = false;
             this.emit({ type: 'vault-state', address: null, exists: false, unlocked: false, storageAvailable: win.__tradingMock.storageAvailable, sessionOnlyAvailable: win.__tradingMock.sessionOnlyAvailable }); this.reply(message.id, true); return;
           case 'submit-order': {
@@ -220,7 +249,7 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   await page.getByRole('button', { name: 'Review order', exact: true }).click();
   const dialog = page.locator('dialog.hl-confirm');
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('MAINNET · BUY 0.001 BTC · 84000 · Gtc');
+  await expect(dialog).toContainText(`MAINNET · account ${PRINCIPAL} · Hyperliquid BTC perpetual · BUY 0.001 BTC · 84000 · Gtc`);
   const confirm = dialog.getByRole('button', { name: 'Confirm action', exact: true });
   await expect(confirm).toBeDisabled();
   await dialog.getByLabel('Type MAINNET to confirm a mainnet action').fill('MAINNET');
@@ -239,7 +268,7 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   expect(layout).not.toContain(PRIVATE_KEY);
   expect(layout).not.toContain(PASSPHRASE);
   await page.reload();
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await expect(page.locator('.hyperliquid-trading')).toBeVisible();
   await expect(page.getByText('Hyperliquid · BTC Perpetual', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Hyperliquid principal address')).toHaveValue(PRINCIPAL);
   await expect(page.locator('.hl-agent-status')).toContainText('Agent locked · key remains encrypted at rest');
@@ -247,6 +276,67 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   const restoredStorage = await page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('basis.')).map(([, value]) => value).join('\n'));
   expect(restoredStorage).not.toContain(PRIVATE_KEY);
   expect(restoredStorage).not.toContain(PASSPHRASE);
+});
+
+test('order review binds confirmation to the principal shown and refuses a changed account', async ({ page }) => {
+  await openTradingAndUnlock(page, 'mainnet');
+  await page.getByLabel('BTC order size').fill('0.001');
+  await page.getByLabel('BTC order limit price').fill('84000');
+  await page.getByRole('button', { name: 'Review order', exact: true }).click();
+  const dialog = page.locator('dialog.hl-confirm');
+  await expect(dialog).toContainText(`account ${PRINCIPAL} · Hyperliquid BTC perpetual`);
+
+  await page.evaluate(async () => {
+    await (window as any).__terminal.trading.setConfig('mainnet', `0x${'22'.repeat(20)}`);
+  });
+  await dialog.getByLabel('Type MAINNET to confirm a mainnet action').fill('MAINNET');
+  await dialog.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  await expect(page.locator('.hl-message')).toContainText('Selected account changed while this review was open');
+  expect(await page.evaluate(() => (window as any).__tradingMock.submitted)).toHaveLength(0);
+});
+
+test('legacy vault binding names the selected account and requires an explicit one-time confirmation', async ({ page }) => {
+  await installMockTradingWorker(page);
+  await page.goto('/');
+  await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
+  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await page.evaluate(() => { (window as any).__tradingMock.legacyBinding = true; });
+  await page.getByLabel('Network').selectOption('testnet');
+  await page.getByLabel('Hyperliquid principal address').fill(PRINCIPAL);
+  await page.getByRole('button', { name: 'Connect', exact: true }).click();
+  await expect(page.locator('.hl-status')).toContainText('TESTNET · LIVE');
+  await expect(page.locator('.hl-agent-address')).toContainText('Unscoped legacy encrypted key');
+  await expect(page.locator('.hl-agent-status')).toContainText('Review and confirm the exact account binding');
+
+  const passphrase = page.getByLabel('Agent vault passphrase');
+  const review = page.getByRole('button', { name: 'Review legacy binding', exact: true });
+  await passphrase.fill(PASSPHRASE);
+  await review.click();
+  const dialog = page.locator('dialog.hl-confirm');
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('Bind unscoped legacy agent key');
+  await expect(dialog.locator('.hl-confirm-copy')).toContainText(`TESTNET principal ${PRINCIPAL}`);
+  await expect(dialog.locator('.hl-confirm-copy')).toContainText(AGENT);
+  await expect(dialog.locator('.hl-mainnet-guard')).toBeHidden();
+  await dialog.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(page.locator('.hl-message')).toContainText('Legacy key binding canceled');
+  const canceledState = await page.evaluate(() => (window as any).__terminal.trading.state);
+  expect(canceledState.vault).toMatchObject({ exists: true, legacyNeedsBinding: true, unlocked: false });
+  expect(canceledState.owner.owned).toBe(false);
+  expect(await page.evaluate(() => (window as any).__tradingMock.requests.map((item: any) => item.type)))
+    .not.toContain('vault-bind-legacy');
+
+  await passphrase.fill(PASSPHRASE);
+  await review.click();
+  await dialog.getByRole('button', { name: 'Confirm action', exact: true }).click();
+  await expect(page.locator('.hl-agent-status')).toContainText('Agent authorized by principal');
+  const boundState = await page.evaluate(() => (window as any).__terminal.trading.state);
+  expect(boundState.vault).toMatchObject({ exists: true, legacyNeedsBinding: false, unlocked: true, address: AGENT });
+  expect(boundState.owner.owned).toBe(true);
+  const requestTypes = await page.evaluate(() => (window as any).__tradingMock.requests.map((item: any) => item.type));
+  expect(requestTypes.filter((type: string) => type === 'vault-cancel-legacy-binding')).toHaveLength(1);
+  expect(requestTypes.filter((type: string) => type === 'vault-bind-legacy')).toHaveLength(1);
+  expect(requestTypes).not.toContain('vault-import');
 });
 
 test('session-only mode does not persist the agent and Lock discards it', async ({ page }) => {
@@ -426,7 +516,7 @@ test('chart context drafts and draggable trade lines stay outside the drawing in
   await modifyDraft.getByRole('button', { name: 'Review & submit', exact: true }).click();
   const modifyConfirm = chartPanel.locator('.hl-chart-confirm');
   await expect(modifyConfirm).toBeVisible();
-  await expect(modifyConfirm).toContainText(`MAINNET · modify BUY order #77 · 0.01 BTC @ ${draftedPrice}`);
+  await expect(modifyConfirm).toContainText(`MAINNET · account ${PRINCIPAL} · Hyperliquid BTC perpetual · modify BUY order #77 · 0.01 BTC @ ${draftedPrice}`);
   const modifyConfirmButton = modifyConfirm.getByRole('button', { name: 'Confirm', exact: true });
   await expect(modifyConfirmButton).toBeDisabled();
   expect(await page.evaluate(() => (window as any).__tradingMock.modified.length)).toBe(0);

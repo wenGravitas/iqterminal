@@ -86,7 +86,7 @@ describe('Hyperliquid trading chart levels', () => {
         { coin: 'BTC', id: 3, cloid: null, side: 'buy', price: '97000', size: '0.01', originalSize: '0.01', timestamp: 3, status: 'open', reduceOnly: false, trigger: false, triggerPrice: null, triggerMarket: false, kind: 'limit' },
         { coin: 'ETH', id: 4, cloid: null, side: 'buy', price: '3000', size: '1', originalSize: '1', timestamp: 4, status: 'open', reduceOnly: false, trigger: false, triggerPrice: null, triggerMarket: false, kind: 'limit' },
       ],
-      fills: [], midPrice: '100001', markPrice: '100002', szDecimals: 5, btcAsset: 0,
+      fills: [], midPrice: '100001', midPriceUpdatedAt: Date.now(), markPrice: '100002', markPriceUpdatedAt: Date.now(), szDecimals: 5, btcAsset: 0,
       agentAddress: null, agentAuthorized: false, agentValidUntil: null, error: null,
     };
     const levels = tradingLevels(snapshot);
@@ -106,7 +106,7 @@ describe('Hyperliquid trading chart levels', () => {
         coin: 'BTC', id: index, cloid: null, side: 'buy' as const, price: String(100_000 + index), size: '0.01', originalSize: '0.01',
         timestamp: index, status: 'open', reduceOnly: false, trigger: false, triggerPrice: null, triggerMarket: false, kind: 'limit' as const,
       })),
-      fills: [], midPrice: null, markPrice: 'not-a-price', szDecimals: 5, btcAsset: 0,
+      fills: [], midPrice: null, midPriceUpdatedAt: 0, markPrice: 'not-a-price', markPriceUpdatedAt: Date.now(), szDecimals: 5, btcAsset: 0,
       agentAddress: null, agentAuthorized: false, agentValidUntil: null, error: null,
     };
     const levels = tradingLevels(snapshot);

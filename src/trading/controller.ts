@@ -3,7 +3,7 @@ import {
   type OrderAttempt, type OrderIntent, type TradingNetwork, type TradingSnapshot,
 } from './model';
 import type { TradingWorkerEvent, TradingWorkerRequest } from './protocol';
-import { SigningOwner } from './owner';
+import { SigningOwner, type SigningLease } from './owner';
 
 export interface TradingConfig {
   version: 1;
@@ -17,6 +17,7 @@ export interface VaultState {
   address: string | null;
   unlocked: boolean;
   exists: boolean;
+  legacyNeedsBinding: boolean;
   storageAvailable: boolean | null;
   sessionOnly: boolean;
   sessionOnlyAvailable: boolean;
@@ -48,7 +49,7 @@ export const MAX_INACTIVITY_MINUTES = 120;
 const EMPTY_SNAPSHOT = (network: TradingNetwork, principal: string): TradingSnapshot => ({
   network, principal, feedState: 'disconnected', lastMessageAt: 0, lastSnapshotAt: 0,
   accountValue: null, marginUsed: null, withdrawable: null, totalNotional: null,
-  positions: [], orders: [], fills: [], midPrice: null, markPrice: null, szDecimals: null, btcAsset: null,
+  positions: [], orders: [], fills: [], midPrice: null, midPriceUpdatedAt: 0, markPrice: null, markPriceUpdatedAt: 0, szDecimals: null, btcAsset: null,
   agentAddress: null, agentAuthorized: false, agentValidUntil: null, error: null,
 });
 
@@ -118,10 +119,14 @@ export class TradingController {
   private dead = false;
   private configValue: TradingConfig;
   private snapshotValue: TradingSnapshot;
-  private vaultValue: VaultState = { address: null, unlocked: false, exists: false, storageAvailable: null, sessionOnly: false, sessionOnlyAvailable: false, error: null };
+  private vaultValue: VaultState = { address: null, unlocked: false, exists: false, legacyNeedsBinding: false, storageAvailable: null, sessionOnly: false, sessionOnlyAvailable: false, error: null };
   private ownerValue: SigningOwnerState;
   private attemptsValue: OrderAttempt[];
   private busyValue = 0;
+  private ownerLease: SigningLease | null = null;
+  private ownerActionGeneration = 0;
+  private ownerTransitionBusy = false;
+  private pendingLegacyBinding: { token: string; network: TradingNetwork; principal: string; address: string; generation: number } | null = null;
   readonly ready: Promise<unknown>;
 
   constructor(options: { workerFactory?: () => Worker; owner?: SigningOwner; fixtureMode?: boolean } = {}) {
@@ -145,7 +150,7 @@ export class TradingController {
   get state(): TradingControllerState {
     return {
       config: { ...this.configValue }, snapshot: this.snapshotValue, vault: { ...this.vaultValue },
-      owner: { ...this.ownerValue }, attempts: [...this.attemptsValue], busy: this.busyValue,
+      owner: { ...this.ownerValue }, attempts: [...this.attemptsValue], busy: this.busyValue + Number(this.ownerTransitionBusy),
       executionDisabled: this.fixtureMode,
     };
   }
@@ -162,6 +167,8 @@ export class TradingController {
     await this.lock().catch(() => {});
     this.configValue = { ...this.configValue, version: 1, network, principal: normalized, connected: Boolean(normalized) };
     this.snapshotValue = EMPTY_SNAPSHOT(network, normalized);
+    this.vaultValue = { ...this.vaultValue, address: null, unlocked: false, exists: false, legacyNeedsBinding: false,
+      sessionOnly: false, error: null };
     this.attemptsValue = restoreAttempts(network, normalized);
     try { localStorage.setItem(TRADING_SNAPSHOT_KEY, JSON.stringify(this.configValue)); }
     catch { this.vaultValue = { ...this.vaultValue, error: 'Account settings are session-only because browser storage is unavailable' }; }
@@ -174,6 +181,8 @@ export class TradingController {
     await this.lock().catch(() => {});
     this.configValue = { ...this.configValue, connected: false };
     this.snapshotValue = EMPTY_SNAPSHOT(this.configValue.network, '');
+    this.vaultValue = { ...this.vaultValue, address: null, unlocked: false, exists: false, legacyNeedsBinding: false,
+      sessionOnly: false, error: null };
     try { localStorage.setItem(TRADING_SNAPSHOT_KEY, JSON.stringify(this.configValue)); }
     catch { this.vaultValue = { ...this.vaultValue, error: 'Disconnect is session-only because browser storage is unavailable' }; }
     this.publish();
@@ -182,7 +191,7 @@ export class TradingController {
 
   async forgetDevice() {
     await this.lock().catch(() => {});
-    await this.request('vault-remove');
+    await this.request('vault-forget');
     const prefix = `${TRADING_SNAPSHOT_KEY}.attempts:`;
     try {
       for (let index = localStorage.length - 1; index >= 0; index--) {
@@ -195,6 +204,7 @@ export class TradingController {
     this.attemptsValue = [];
     this.vaultValue = {
       address: null, exists: false, unlocked: false, sessionOnly: false,
+      legacyNeedsBinding: false,
       storageAvailable: this.vaultValue.storageAvailable,
       sessionOnlyAvailable: this.vaultValue.sessionOnlyAvailable,
       error: this.vaultValue.storageAvailable === false ? 'Encrypted key was session-only and has been discarded' : null,
@@ -223,29 +233,133 @@ export class TradingController {
   async generateSessionAgent() { return this.sessionAgentRequest('vault-session-generate'); }
   async importSessionAgent(privateKey: string) { return this.sessionAgentRequest('vault-session-import', { privateKey }); }
 
+  private beginOwnerTransition() {
+    if (this.ownerTransitionBusy) throw new Error('Another agent vault action is already in progress');
+    this.ownerTransitionBusy = true;
+    const generation = ++this.ownerActionGeneration;
+    this.publish();
+    return generation;
+  }
+
+  private assertOwnerTransitionCurrent(generation: number) {
+    if (this.dead || generation !== this.ownerActionGeneration) throw new Error('Agent action was canceled because the selected account or lock state changed');
+  }
+
+  private finishOwnerTransition(generation: number) {
+    if (generation !== this.ownerActionGeneration) return;
+    this.ownerTransitionBusy = false;
+    this.publish();
+  }
+
+  private async releaseOwnerLease(lease: SigningLease | null | undefined) {
+    if (!lease) { await this.owner.release(); return; }
+    if (this.ownerLease?.id === lease.id) this.ownerLease = null;
+    await this.owner.release(lease);
+  }
+
   private async sessionAgentRequest(type: 'vault-session-generate' | 'vault-session-import', fields: Record<string, unknown> = {}) {
     if (this.fixtureMode) throw new Error(FIXTURE_EXECUTION_DISABLED);
     if (!this.configValue.connected || !this.configValue.principal) throw new Error('Connect an account before creating a session-only agent');
     if (this.vaultValue.storageAvailable !== false || !this.vaultValue.sessionOnlyAvailable) throw new Error('Session-only mode is available only when IndexedDB is unavailable and secure signing is supported');
-    const acquired = await this.owner.acquire();
-    if (!acquired) throw new Error('Another tab owns the signing session; lock it there before continuing');
-    try { return await this.request(type, fields); }
-    catch (error) { await this.owner.release(); throw error; }
+    const generation = this.beginOwnerTransition();
+    let lease: SigningLease | null = null;
+    try {
+      lease = await this.owner.acquire();
+      this.assertOwnerTransitionCurrent(generation);
+      if (!lease) throw new Error('Another tab owns the signing session; lock it there before continuing');
+      this.ownerLease = lease;
+      const value = await this.request(type, fields);
+      this.assertOwnerTransitionCurrent(generation);
+      return value;
+    } catch (error) {
+      if (lease) await this.releaseOwnerLease(lease);
+      throw error;
+    } finally { this.finishOwnerTransition(generation); }
   }
 
   async unlock(passphrase: string) {
     if (this.fixtureMode) throw new Error(FIXTURE_EXECUTION_DISABLED);
     if (!this.configValue.connected || !this.configValue.principal) throw new Error('Connect a principal address before unlocking the agent');
-    const acquired = await this.owner.acquire();
-    if (!acquired) throw new Error('Another tab owns the signing session; lock it there before unlocking here');
-    try { return await this.request('vault-unlock', { passphrase }); }
-    catch (error) { await this.owner.release(); throw error; }
+    const generation = this.beginOwnerTransition();
+    let lease: SigningLease | null = null;
+    try {
+      lease = await this.owner.acquire();
+      this.assertOwnerTransitionCurrent(generation);
+      if (!lease) throw new Error('Another tab owns the signing session; lock it there before unlocking here');
+      this.ownerLease = lease;
+      const value = await this.request('vault-unlock', { passphrase });
+      this.assertOwnerTransitionCurrent(generation);
+      if (value && typeof value === 'object' && (value as Record<string, unknown>).legacyBindingRequired === true) {
+        const prompt = value as Record<string, unknown>;
+        const network = prompt.network, principal = prompt.principal, address = prompt.address, token = prompt.token;
+        if ((network !== 'mainnet' && network !== 'testnet') || typeof principal !== 'string' || typeof address !== 'string'
+          || typeof token !== 'string' || normalizeAddress(principal) !== normalizeAddress(this.configValue.principal)
+          || network !== this.configValue.network) throw new Error('Legacy key binding response does not match the selected account');
+        this.pendingLegacyBinding = { token, network, principal: normalizeAddress(principal), address, generation };
+        this.publish();
+      }
+      return value;
+    } catch (error) {
+      if (lease) await this.releaseOwnerLease(lease);
+      throw error;
+    } finally { this.finishOwnerTransition(generation); }
+  }
+
+  async bindLegacyAgent(token: string) {
+    const pending = this.pendingLegacyBinding;
+    if (!pending || pending.token !== token) throw new Error('Legacy key binding expired; unlock it again');
+    if (pending.network !== this.configValue.network || pending.principal !== normalizeAddress(this.configValue.principal)) {
+      throw new Error('Selected account changed before legacy key binding; no key was moved');
+    }
+    if (pending.generation !== this.ownerActionGeneration || !this.ownerLease || !this.owner.state.owned) {
+      throw new Error('Signing ownership changed before legacy key binding; unlock again');
+    }
+    if (this.ownerTransitionBusy) throw new Error('Another agent vault action is already in progress');
+    const generation = pending.generation;
+    this.ownerTransitionBusy = true; this.publish();
+    try {
+      const value = await this.request('vault-bind-legacy', { token, network: pending.network, principal: pending.principal });
+      this.assertOwnerTransitionCurrent(generation);
+      this.pendingLegacyBinding = null;
+      return value;
+    } catch (error) {
+      if (generation === this.ownerActionGeneration) {
+        this.pendingLegacyBinding = null;
+        const lease = this.ownerLease; this.ownerLease = null;
+        if (lease) await this.owner.release(lease);
+      }
+      throw error;
+    } finally { this.finishOwnerTransition(generation); }
+  }
+
+  async cancelLegacyBinding(token: string) {
+    const pending = this.pendingLegacyBinding;
+    if (!pending) return;
+    if (pending.token !== token) throw new Error('Legacy key binding token does not match the pending confirmation');
+    if (this.ownerTransitionBusy) throw new Error('Another agent vault action is already in progress');
+    const generation = ++this.ownerActionGeneration;
+    this.ownerTransitionBusy = true; this.pendingLegacyBinding = null; this.publish();
+    const lease = this.ownerLease; this.ownerLease = null;
+    try { await this.request('vault-cancel-legacy-binding', { token }); }
+    finally {
+      if (lease) await this.owner.release(lease); else await this.owner.release();
+      this.finishOwnerTransition(generation);
+    }
   }
 
   async lock() {
-    if (this.dead) { await this.owner.release(); return; }
+    const generation = ++this.ownerActionGeneration;
+    this.ownerTransitionBusy = true; this.pendingLegacyBinding = null; this.publish();
+    const lease = this.ownerLease; this.ownerLease = null;
+    if (this.dead) {
+      if (lease) await this.owner.release(lease); else await this.owner.release();
+      this.finishOwnerTransition(generation); return;
+    }
     try { await this.request('vault-lock'); }
-    finally { await this.owner.release(); }
+    finally {
+      if (lease) await this.owner.release(lease); else await this.owner.release();
+      this.finishOwnerTransition(generation);
+    }
   }
 
   async submit(intent: OrderIntent, options: { kind?: 'limit' | 'market' | 'takeProfit' | 'stopLoss'; triggerPrice?: string; slippageBps?: number } = {}) {
@@ -275,7 +389,13 @@ export class TradingController {
   }
 
   private async configureWorker() {
-    const result = await this.request('configure', { network: this.configValue.network, principal: this.configValue.connected ? this.configValue.principal : '', inactivityMinutes: this.configValue.inactivityMinutes, fixtureMode: this.fixtureMode });
+    const restoredAttempts = this.attemptsValue.map(attempt => attempt.phase === 'submitting'
+      ? { ...attempt, phase: 'unknown' as const, updatedAt: Date.now(), message: 'The previous browser session ended during submission. Check this client order ID; do not resubmit.' }
+      : attempt);
+    const result = await this.request('configure', {
+      network: this.configValue.network, principal: this.configValue.connected ? this.configValue.principal : '',
+      inactivityMinutes: this.configValue.inactivityMinutes, fixtureMode: this.fixtureMode, attempts: restoredAttempts,
+    });
     await this.request('vault-info');
     if (!this.configValue.connected) return result;
     for (const attempt of [...this.attemptsValue]) {
@@ -321,18 +441,31 @@ export class TradingController {
   private onMessage = (event: MessageEvent<TradingWorkerEvent>) => {
     const message = event.data;
     if (!message || typeof message !== 'object') return;
-    if (message.type === 'snapshot') { this.snapshotValue = message.snapshot; this.publish(); return; }
+    if (message.type === 'snapshot') {
+      const expectedPrincipal = this.configValue.connected ? this.configValue.principal : '';
+      if (message.snapshot.network !== this.configValue.network || normalizeAddress(message.snapshot.principal) !== normalizeAddress(expectedPrincipal)) return;
+      this.snapshotValue = message.snapshot; this.publish(); return;
+    }
     if (message.type === 'attempt') { this.saveAttempt(message.attempt); return; }
     if (message.type === 'vault-state') {
+      const expectedPrincipal = this.configValue.connected ? this.configValue.principal : '';
+      if (message.network !== this.configValue.network || normalizeAddress(message.principal) !== normalizeAddress(expectedPrincipal)) return;
       this.vaultValue = {
         address: message.address, exists: message.exists, unlocked: message.unlocked,
+        legacyNeedsBinding: message.legacyNeedsBinding ?? false,
         storageAvailable: message.storageAvailable === undefined ? this.vaultValue.storageAvailable : message.storageAvailable,
         sessionOnly: message.sessionOnly ?? false,
         sessionOnlyAvailable: message.sessionOnlyAvailable ?? this.vaultValue.sessionOnlyAvailable,
         error: message.error ?? null,
       };
       this.publish();
-      if (!message.unlocked && this.owner.state.owned) void this.owner.release();
+      if (message.releaseOwner) {
+        this.ownerActionGeneration++;
+        this.ownerTransitionBusy = false;
+        this.pendingLegacyBinding = null;
+        const lease = this.ownerLease; this.ownerLease = null;
+        void (lease ? this.owner.release(lease) : this.owner.release());
+      }
       return;
     }
     if (message.type !== 'result') return;
@@ -357,6 +490,14 @@ export class TradingController {
   private saveAttempt(attempt: OrderAttempt) {
     if (!validAttempt(attempt, attempt.network, attempt.principal)) return;
     const key = attempt.cloid.toLowerCase();
+    const currentPrincipal = this.configValue.connected ? this.configValue.principal : '';
+    if (attempt.network !== this.configValue.network || normalizeAddress(attempt.principal) !== normalizeAddress(currentPrincipal)) {
+      const accountAttempts = restoreAttempts(attempt.network, attempt.principal);
+      const merged = [...accountAttempts.filter(item => item.cloid.toLowerCase() !== key), { ...attempt }].slice(-ATTEMPT_LIMIT);
+      try { localStorage.setItem(attemptStorageKey(attempt.network, attempt.principal), JSON.stringify(merged)); }
+      catch { /* retain the active account view when another account's late event arrives */ }
+      return;
+    }
     this.attemptsValue = [...this.attemptsValue.filter(item => item.cloid.toLowerCase() !== key), { ...attempt }].slice(-ATTEMPT_LIMIT);
     try { localStorage.setItem(attemptStorageKey(attempt.network, attempt.principal), JSON.stringify(this.attemptsValue.filter(item => item.network === attempt.network && normalizeAddress(item.principal) === normalizeAddress(attempt.principal)))); }
     catch { /* attempts stay available for this session */ }

@@ -252,7 +252,12 @@ export class HyperliquidTradingChartOverlay {
   private syncActions() {
     const canSign = this.overlayAvailable() && !this.state.executionDisabled && this.state.owner.owned && this.state.vault.unlocked && this.state.snapshot.agentAuthorized && !this.state.busy;
     for (const control of this.actions.querySelectorAll<HTMLButtonElement>('button')) control.disabled = !canSign || !this.crosshairPrice;
-    this.draftSubmit.disabled = !canSign || !this.draft;
+    const orderOperation = this.draft?.kind === 'modify'
+      ? this.state.snapshot.orderOperations?.find(item => (item.orderId === this.draft!.orderId || item.resolvedOrderId === this.draft!.orderId
+        || item.possibleOrderIds?.includes(this.draft!.orderId!)) && item.phase !== 'rejected')
+      : undefined;
+    this.draftSubmit.disabled = !canSign || !this.draft || !!orderOperation;
+    if (orderOperation && this.draft) this.draftStatus.textContent = `Order #${this.draft.orderId} has a ${orderOperation.phase} ${orderOperation.kind} operation; wait for canonical exchange reconciliation`;
   }
 
   private contextMenu(event: ContextMenuEvent) {
@@ -275,6 +280,13 @@ export class HyperliquidTradingChartOverlay {
   }
 
   private openModifyDraft(order: TradingOrder, price: number) {
+    const operation = this.state.snapshot.orderOperations?.find(item => (item.orderId === order.id || item.resolvedOrderId === order.id
+      || item.possibleOrderIds?.includes(order.id)
+      || Boolean(item.cloid && order.cloid && item.cloid.toLowerCase() === order.cloid.toLowerCase())) && item.phase !== 'rejected');
+    if (operation) {
+      this.draftStatus.textContent = `Order #${order.id} has a ${operation.phase} ${operation.kind} operation; wait for canonical exchange reconciliation`;
+      return;
+    }
     const size = order.originalSize;
     this.draft = { kind: 'modify', orderId: order.id, originalPrice: order.price, price: roundedPrice(price, this.state.snapshot.szDecimals ?? 0), size, side: order.side };
     this.primitive.setPreview(order.id, Number(this.draft.price)); this.syncDraft();
@@ -317,15 +329,19 @@ export class HyperliquidTradingChartOverlay {
 
   private async submitDraft() {
     const draft = this.draft; if (!draft) return;
+    const identity = { network: this.state.config.network, principal: this.state.config.principal };
     const szDecimals = this.state.snapshot.szDecimals;
     if (szDecimals === null) { this.draftStatus.textContent = 'BTC precision metadata is not available'; return; }
     const price = draft.price.trim(), size = draft.size.trim();
     const priceError = validatePrice(price, szDecimals); if (priceError) { this.draftStatus.textContent = priceError; return; }
     const sizeError = validateSize(size, szDecimals); if (sizeError) { this.draftStatus.textContent = sizeError; return; }
     const summary = draft.kind === 'modify'
-      ? `${this.state.config.network.toUpperCase()} · modify ${draft.side.toUpperCase()} order #${draft.orderId} · ${size} BTC @ ${price}`
-      : `${this.state.config.network.toUpperCase()} · ${draft.side.toUpperCase()} limit ${size} BTC @ ${price} · GTC`;
+      ? `${identity.network.toUpperCase()} · account ${identity.principal || 'not connected'} · Hyperliquid BTC perpetual · modify ${draft.side.toUpperCase()} order #${draft.orderId} · ${size} BTC @ ${price}`
+      : `${identity.network.toUpperCase()} · account ${identity.principal || 'not connected'} · Hyperliquid BTC perpetual · ${draft.side.toUpperCase()} limit ${size} BTC @ ${price} · GTC`;
     if (!await this.confirm(summary)) return;
+    if (this.state.config.network !== identity.network || this.state.config.principal !== identity.principal) {
+      this.discardDraft('Selected account changed while this review was open · no action was sent · draft discarded'); return;
+    }
     this.draftSubmit.disabled = true; this.draftStatus.textContent = 'Submitting once; reconciling with Hyperliquid…';
     try {
       if (draft.kind === 'modify') {

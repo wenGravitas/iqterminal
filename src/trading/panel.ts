@@ -1,5 +1,5 @@
 import type { IContentRenderer, IDockviewPanelProps } from 'dockview-core';
-import { closePositionSize, isFreshPrice, marketIocLimit, orderFilledSize, orderIntent, positiveDecimal, validateOrderNotional, validatePrice, validateSize, type OrderAttempt, type TradingOrder, type TradingPosition, type TradingNetwork } from './model';
+import { closePositionSize, isFreshPrice, marketIocLimit, orderFilledSize, orderIntent, positiveDecimal, validateLeverage, validateOrderNotional, validatePrice, validateSize, type OrderAttempt, type TradingOrder, type TradingPosition, type TradingNetwork } from './model';
 import { DEFAULT_INACTIVITY_MINUTES, MAX_INACTIVITY_MINUTES, MIN_INACTIVITY_MINUTES, type TradingController, type TradingControllerState } from './controller';
 
 function button(label: string, title = label, className = '') {
@@ -30,11 +30,13 @@ interface OrderRow {
   root: HTMLElement;
   title: HTMLDivElement;
   detail: HTMLDivElement;
+  operation: HTMLDivElement;
   price: HTMLInputElement;
   size: HTMLInputElement;
   modify: HTMLButtonElement;
   cancel: HTMLButtonElement;
 }
+interface ActionIdentity { network: TradingNetwork; principal: string }
 
 /** Compact native DOM Hyperliquid BTC perpetual panel. */
 export class TradingPanel implements IContentRenderer {
@@ -197,6 +199,20 @@ export class TradingPanel implements IContentRenderer {
     this.release = this.controller.subscribe(state => this.render(state), this.abort.signal);
   }
 
+  private actionIdentity(): ActionIdentity {
+    return { network: this.state.config.network, principal: this.state.config.principal };
+  }
+
+  private actionIdentityLabel(identity: ActionIdentity) {
+    return `${identity.network.toUpperCase()} · account ${identity.principal || 'not connected'} · Hyperliquid BTC perpetual`;
+  }
+
+  private requireSameActionIdentity(identity: ActionIdentity) {
+    if (this.state.config.network === identity.network && this.state.config.principal === identity.principal) return true;
+    this.setMessage('Selected account changed while this review was open. No action was sent; review it again.');
+    return false;
+  }
+
   private section(title: string, body: HTMLElement) {
     const section = document.createElement('section'); section.className = 'hl-section';
     const heading = document.createElement('h2'); heading.textContent = title;
@@ -226,27 +242,37 @@ export class TradingPanel implements IContentRenderer {
       this.metric('BTC mark', state.snapshot.markPrice), this.metric('BTC mid', state.snapshot.midPrice),
     );
     this.renderPositions(state);
-    this.renderOrders(state.snapshot.orders);
+    this.renderOrders(state.snapshot.orders, state);
     this.renderFills(state);
     this.renderAttempts(state.attempts);
-    this.vaultAddress.textContent = state.vault.address ? `Agent ${state.vault.address}` : state.vault.exists ? 'Encrypted key exists · address unavailable' : 'No encrypted agent stored';
+    this.vaultAddress.textContent = state.vault.legacyNeedsBinding
+      ? 'Unscoped legacy encrypted key · explicit account binding required'
+      : state.vault.address ? `Agent ${state.vault.address}` : state.vault.exists ? 'Encrypted key exists · address unavailable' : 'No encrypted agent stored';
     this.ownerStatus.textContent = state.owner.owned ? 'SIGNING TAB' : state.owner.otherOwner ? 'SIGNING IN OTHER TAB' : state.owner.supported ? 'LOCKED' : 'WEB LOCKS REQUIRED';
     this.ownerStatus.dataset.state = state.owner.owned ? 'owned' : state.owner.otherOwner ? 'other' : 'locked';
     this.agentStatus.textContent = state.executionDisabled
       ? 'DIAGNOSTIC FIXTURE MODE · agent keys and real exchange actions are disabled'
       : state.vault.sessionOnly
       ? (state.snapshot.agentAuthorized ? 'SESSION-ONLY · agent key is in this tab only and will be discarded on lock, timeout or close' : 'SESSION-ONLY · agent key remains in this tab only; authorize it on Hyperliquid before signing')
-      : state.vault.error ?? (state.vault.unlocked
+      : state.vault.error ?? (state.vault.legacyNeedsBinding
+      ? 'Legacy key has no saved network or principal. Review and confirm the exact account binding after passphrase and authorization checks.'
+      : state.vault.unlocked
       ? (state.snapshot.agentAuthorized ? `Agent authorized by principal${state.snapshot.agentValidUntil ? ` until ${new Date(state.snapshot.agentValidUntil).toLocaleString()}` : ''}` : 'Agent unlocked · authorization missing or expired')
       : state.snapshot.agentAddress ? 'Agent locked · key remains encrypted at rest' : 'Create or import a dedicated agent key');
     if (document.activeElement !== this.inactivityMinutes) this.inactivityMinutes.value = String(state.config.inactivityMinutes ?? DEFAULT_INACTIVITY_MINUTES);
-    this.leverage.value = state.snapshot.positions[0]?.leverage ?? this.leverage.value;
+    if (document.activeElement !== this.leverage && state.snapshot.btcLeverage !== null && state.snapshot.btcLeverage !== undefined) this.leverage.value = String(state.snapshot.btcLeverage);
+    this.leverage.max = state.snapshot.btcMaxLeverage ? String(state.snapshot.btcMaxLeverage) : '';
     const configured = Boolean(state.config.principal);
     const unlocked = state.vault.unlocked && state.owner.owned && state.snapshot.agentAuthorized;
-    for (const control of this.element.querySelectorAll<HTMLButtonElement>('[data-action="leverage"],.hl-submit,[data-order-action="modify"],[data-order-action="cancel"]')) control.disabled = state.executionDisabled || !unlocked || state.busy > 0;
+    for (const control of this.element.querySelectorAll<HTMLButtonElement>('[data-action="leverage"],.hl-submit')) control.disabled = state.executionDisabled || !unlocked || state.busy > 0;
     for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="unlock"]')) button.disabled = state.executionDisabled || !configured || !state.vault.exists || state.owner.otherOwner || !state.owner.supported || state.busy > 0;
+    for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="unlock"]')) button.textContent = state.vault.legacyNeedsBinding ? 'Review legacy binding' : 'Unlock';
     for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="lock"]')) button.disabled = !state.vault.unlocked || !state.owner.owned || state.busy > 0;
-    for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="generate"],[data-action="import"],[data-action="remove"]')) button.disabled = (state.executionDisabled && button.dataset.action !== 'remove') || state.busy > 0 || (state.vault.exists && !['remove'].includes(button.dataset.action ?? ''));
+    for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="generate"],[data-action="import"],[data-action="remove"]')) {
+      button.disabled = (state.executionDisabled && button.dataset.action !== 'remove') || state.busy > 0
+        || (state.vault.exists && !['remove'].includes(button.dataset.action ?? ''))
+        || button.dataset.action === 'remove' && state.vault.legacyNeedsBinding;
+    }
     for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="session-generate"],[data-action="session-import"]')) button.disabled = state.executionDisabled || !state.config.connected || !state.vault.sessionOnlyAvailable || !state.owner.supported || state.owner.otherOwner || state.busy > 0;
     for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="forget"]')) button.disabled = state.busy > 0;
     for (const button of this.element.querySelectorAll<HTMLButtonElement>('[data-action="disconnect"]')) button.disabled = !state.config.connected || state.busy > 0;
@@ -315,7 +341,7 @@ export class TradingPanel implements IContentRenderer {
     let plan: ReturnType<typeof this.preparePositionClose>;
     try { plan = this.preparePositionClose(position, percent, before); }
     catch (error) { this.setMessage(error instanceof Error ? error.message : 'Position close is unavailable'); return; }
-    const summary = `${plan.network.toUpperCase()} · account ${plan.principal} · close ${percent}% of ${plan.positionSide.toUpperCase()} ${plan.positionSize} BTC · submit reduce-only ${plan.side.toUpperCase()} ${plan.size} BTC protected IOC · midpoint ${plan.midPrice}, limit bound ${plan.limitPrice}, max slippage ${plan.slippageBps} bps. Existing TP/SL orders stay in place unless a fresh account snapshot confirms the position is flat and you separately approve their cancellation.`;
+    const summary = `${plan.network.toUpperCase()} · account ${plan.principal} · Hyperliquid BTC perpetual · close ${percent}% of ${plan.positionSide.toUpperCase()} ${plan.positionSize} BTC · submit reduce-only ${plan.side.toUpperCase()} ${plan.size} BTC protected IOC · midpoint ${plan.midPrice}, limit bound ${plan.limitPrice}, max slippage ${plan.slippageBps} bps. Existing TP/SL orders stay in place unless a fresh account snapshot confirms the position is flat and you separately approve their cancellation.`;
     if (!await this.confirm('Close BTC position', summary)) return;
     if (this.state.config.network !== plan.network || this.state.config.principal !== plan.principal) { this.setMessage('Selected account changed during confirmation; close was not submitted'); return; }
     let reviewed: ReturnType<typeof this.preparePositionClose>;
@@ -365,7 +391,7 @@ export class TradingPanel implements IContentRenderer {
 
   private async reviewProtectiveOrderCleanup(network: TradingNetwork, principal: string, orders: TradingOrder[]) {
     const ids = orders.map(order => order.id);
-    const summary = `${network.toUpperCase()} · account ${principal} · the authoritative BTC snapshot is flat. Cancel only these remaining reduce-only TP/SL orders: ${orders.map(order => `#${order.id} ${order.kind} ${order.side} ${order.size} BTC`).join('; ')}. No other orders will be canceled.`;
+    const summary = `${network.toUpperCase()} · account ${principal} · Hyperliquid BTC perpetual · the authoritative BTC snapshot is flat. Cancel only these remaining reduce-only TP/SL orders: ${orders.map(order => `#${order.id} ${order.kind} ${order.side} ${order.size} BTC`).join('; ')}. No other orders will be canceled.`;
     if (!await this.confirm('Cancel remaining BTC protective orders', summary)) {
       this.setMessage(`BTC position is flat; ${ids.length} reduce-only TP/SL order(s) remain for individual review`); return;
     }
@@ -384,7 +410,7 @@ export class TradingPanel implements IContentRenderer {
     this.setMessage(reconciled ? `BTC position is flat; cancellation of ${current.length} protective order(s) is reflected in the refreshed account snapshot` : `BTC position is flat; cancellation requests were sent for ${current.length} protective order(s), but no fresh snapshot arrived`);
   }
 
-  private renderOrders(orders: TradingOrder[]) {
+  private renderOrders(orders: TradingOrder[], state: TradingControllerState) {
     const key = orders.map(order => `${order.id}:${order.status}`).join('|');
     if (key !== this.ordersKey) {
       this.ordersKey = key;
@@ -393,14 +419,14 @@ export class TradingPanel implements IContentRenderer {
       for (const order of orders) {
         let row = this.orderRows.get(order.id);
         if (!row) { row = this.createOrderRow(order); this.orderRows.set(order.id, row); }
-        this.updateOrderRow(row, order);
+        this.updateOrderRow(row, order, state);
       }
       const ordered = orders.map(order => this.orderRows.get(order.id)!.root);
       for (let i = 0; i < ordered.length; i++) if (this.orders.children.item(i) !== ordered[i]) this.orders.insertBefore(ordered[i]!, this.orders.children.item(i));
       while (this.orders.children.length > ordered.length) this.orders.lastElementChild?.remove();
       if (!orders.length) { const empty = document.createElement('p'); empty.className = 'hl-empty'; empty.textContent = 'No open BTC orders'; this.orders.replaceChildren(empty); }
     } else {
-      for (const order of orders) { const row = this.orderRows.get(order.id); if (row) this.updateOrderRow(row, order); }
+      for (const order of orders) { const row = this.orderRows.get(order.id); if (row) this.updateOrderRow(row, order, state); }
     }
   }
 
@@ -408,20 +434,37 @@ export class TradingPanel implements IContentRenderer {
     const root = document.createElement('article'); root.className = 'hl-order-row'; root.dataset.orderId = String(order.id);
     const title = document.createElement('div'); title.className = 'hl-order-title';
     const detail = document.createElement('div'); detail.className = 'hl-order-detail';
+    const operation = document.createElement('div'); operation.className = 'hl-order-operation'; operation.setAttribute('role', 'status'); operation.hidden = true;
     const edit = document.createElement('div'); edit.className = 'hl-order-edit';
     const price = input(order.trigger ? `New trigger price for order ${order.id}` : `New price for order ${order.id}`); price.inputMode = 'decimal';
     const size = input(`New size for order ${order.id}`); size.inputMode = 'decimal';
     const modify = button('Modify'); modify.dataset.orderAction = 'modify';
     const cancel = button('Cancel'); cancel.dataset.orderAction = 'cancel';
-    edit.append(price, size, modify, cancel); root.append(title, detail, edit); return { root, title, detail, price, size, modify, cancel };
+    edit.append(price, size, modify, cancel); root.append(title, detail, operation, edit); return { root, title, detail, operation, price, size, modify, cancel };
   }
 
-  private updateOrderRow(row: OrderRow, order: TradingOrder) {
+  private updateOrderRow(row: OrderRow, order: TradingOrder, state: TradingControllerState) {
     const filled = orderFilledSize(order), isPartial = Boolean(positiveDecimal(filled));
     row.title.textContent = `${order.kind === 'takeProfit' ? 'TAKE PROFIT' : order.kind === 'stopLoss' ? 'STOP LOSS' : order.side.toUpperCase()} ${format(order.size, 5)} BTC remaining${order.reduceOnly ? ' · reduce only' : ''} @ ${format(order.trigger && order.triggerPrice ? order.triggerPrice : order.price)}`;
     row.detail.textContent = `#${order.id} · ${isPartial ? `PARTIAL · ${format(filled, 5)} filled of ${format(order.originalSize, 5)} BTC · ` : ''}${order.status}${order.trigger ? ` · trigger ${format(order.triggerPrice)}` : ''}${order.cloid ? ` · ${order.cloid.slice(0, 10)}…` : ''}`;
     if (document.activeElement !== row.price) row.price.value = order.trigger && order.triggerPrice ? order.triggerPrice : order.price;
     if (document.activeElement !== row.size) row.size.value = order.originalSize;
+    const operation = (state.snapshot.orderOperations ?? []).find(item => item.orderId === order.id
+      || item.resolvedOrderId === order.id || item.possibleOrderIds?.includes(order.id)
+      || Boolean(item.cloid && order.cloid && item.cloid.toLowerCase() === order.cloid.toLowerCase()));
+    row.operation.hidden = !operation;
+    row.operation.textContent = operation ? `${operation.phase.toUpperCase()} · ${operation.message}` : '';
+    row.root.dataset.operation = operation?.phase ?? '';
+    const locked = state.executionDisabled || !state.vault.unlocked || !state.owner.owned || !state.snapshot.agentAuthorized;
+    const actionReason = state.executionDisabled ? 'Real exchange actions are disabled in diagnostic fixture mode'
+      : locked ? 'Unlock an authorized agent in the signing-owner tab first'
+        : state.busy > 0 ? 'Wait for the current trading action to finish' : null;
+    const operationBlocks = operation && operation.phase !== 'rejected';
+    const pendingReason = operationBlocks ? `${operation!.kind === 'cancel' ? 'Cancel' : 'Modify'} is ${operation!.phase}; ${operation!.phase === 'unknown' ? 'refresh and reconcile before retrying' : 'wait for canonical exchange reconciliation'}` : null;
+    for (const control of [row.price, row.size, row.modify, row.cancel]) {
+      control.disabled = Boolean(actionReason || pendingReason);
+      control.title = pendingReason ?? actionReason ?? control.getAttribute('aria-label') ?? control.textContent ?? '';
+    }
   }
 
   private renderFills(state: TradingControllerState) {
@@ -458,6 +501,7 @@ export class TradingPanel implements IContentRenderer {
   }
 
   private async reviewOrder() {
+    const identity = this.actionIdentity();
     const snapshot = this.state.snapshot, kind = this.kind.value as 'limit' | 'market' | 'takeProfit' | 'stopLoss';
     const size = this.size.value.trim(), price = this.price.value.trim(), triggerPrice = this.triggerPrice.value.trim();
     if (snapshot.szDecimals === null) { this.setMessage('BTC precision metadata is not available yet'); return; }
@@ -470,26 +514,32 @@ export class TradingPanel implements IContentRenderer {
     this.slippage.setCustomValidity('');
     const intent = orderIntent({ side: this.side.value as 'buy' | 'sell', size, price: kind === 'market' ? snapshot.midPrice ?? '0' : price, reduceOnly: this.reduceOnly.checked || kind === 'takeProfit' || kind === 'stopLoss', tif: kind === 'market' ? 'Ioc' : this.tif.value as 'Gtc' | 'Ioc' });
     const previewPrice = kind === 'market' && snapshot.midPrice ? `${snapshot.midPrice} mid · protected limit ±${slippageBps} bps` : (kind === 'takeProfit' || kind === 'stopLoss') ? `${price} limit · trigger ${triggerPrice}` : `${price} · ${intent.tif}`;
-    const summary = `${this.state.config.network.toUpperCase()} · ${intent.side.toUpperCase()} ${size} BTC · ${previewPrice}${intent.reduceOnly ? ' · reduce only' : ''} · cloid ${intent.cloid}`;
+    const summary = `${this.actionIdentityLabel(identity)} · ${intent.side.toUpperCase()} ${size} BTC · ${previewPrice}${intent.reduceOnly ? ' · reduce only' : ''} · cloid ${intent.cloid}`;
     if (!await this.confirm('Place Hyperliquid BTC order', summary)) return;
+    if (!this.requireSameActionIdentity(identity)) return;
     this.size.value = ''; this.message.textContent = 'Submitting once; uncertain outcomes are reconciled by client order ID and will not be resent.';
     await this.perform(() => this.controller.submit(intent, { kind, triggerPrice: kind === 'takeProfit' || kind === 'stopLoss' ? triggerPrice : undefined, slippageBps }), 'Order attempt recorded');
   }
 
   private async reviewLeverage() {
+    const identity = this.actionIdentity();
     const leverage = Number(this.leverage.value), isCross = this.leverageMode.value === 'cross';
-    if (!Number.isSafeInteger(leverage) || leverage < 1 || leverage > 100) { this.leverage.setCustomValidity('Use a whole number from 1 to 100'); this.leverage.reportValidity(); return; }
+    const leverageError = validateLeverage(leverage, this.state.snapshot.btcMaxLeverage);
+    if (leverageError) { this.leverage.setCustomValidity(leverageError); this.leverage.reportValidity(); return; }
     this.leverage.setCustomValidity('');
-    if (!await this.confirm('Update BTC leverage', `${this.state.config.network.toUpperCase()} · ${leverage}x · ${isCross ? 'cross' : 'isolated'} margin`)) return;
+    if (!await this.confirm('Update BTC leverage', `${this.actionIdentityLabel(identity)} · ${leverage}x · ${isCross ? 'cross' : 'isolated'} margin`)) return;
+    if (!this.requireSameActionIdentity(identity)) return;
     await this.perform(() => this.controller.setLeverage(leverage, isCross), 'Leverage update submitted');
   }
 
   private async orderAction(buttonNode: HTMLButtonElement) {
+    const identity = this.actionIdentity();
     const root = buttonNode.closest<HTMLElement>('[data-order-id]'), id = Number(root?.dataset.orderId), order = this.state.snapshot.orders.find(item => item.id === id);
     if (!root || !order || !Number.isSafeInteger(id)) { this.setMessage('Order is no longer in the live open-order snapshot. Refresh first.'); return; }
     const action = buttonNode.dataset.orderAction;
     if (action === 'cancel') {
-      if (!await this.confirm('Cancel BTC order', `${this.state.config.network.toUpperCase()} · ${order.side.toUpperCase()} ${order.size} BTC @ ${order.price} · order ${order.id}`)) return;
+      if (!await this.confirm('Cancel BTC order', `${this.actionIdentityLabel(identity)} · ${order.side.toUpperCase()} ${order.size} BTC @ ${order.price} · order ${order.id}`)) return;
+      if (!this.requireSameActionIdentity(identity)) return;
       await this.perform(() => this.controller.cancel(id), 'Cancel submitted; reconciling live order status'); return;
     }
     if (action === 'modify') {
@@ -498,7 +548,8 @@ export class TradingPanel implements IContentRenderer {
       if (this.state.snapshot.szDecimals === null) { this.setMessage('BTC precision metadata is not available'); return; }
       const priceError = validatePrice(price, this.state.snapshot.szDecimals); if (priceError) { this.setMessage(priceError); return; }
       const sizeError = validateSize(size, this.state.snapshot.szDecimals); if (sizeError) { this.setMessage(sizeError); return; }
-      if (!await this.confirm(order.trigger ? 'Modify BTC trigger order' : 'Modify BTC order', `${this.state.config.network.toUpperCase()} · order ${id} · ${order.side.toUpperCase()} ${size} BTC · ${order.trigger ? 'trigger' : 'limit'} ${price}${order.reduceOnly ? ' · reduce only' : ''}`)) return;
+      if (!await this.confirm(order.trigger ? 'Modify BTC trigger order' : 'Modify BTC order', `${this.actionIdentityLabel(identity)} · order ${id} · ${order.side.toUpperCase()} ${size} BTC · ${order.trigger ? 'trigger' : 'limit'} ${price}${order.reduceOnly ? ' · reduce only' : ''}`)) return;
+      if (!this.requireSameActionIdentity(identity)) return;
       await this.perform(() => this.controller.modify(id, price, size), 'Modify submitted; reconciling live order status');
     }
   }
@@ -534,7 +585,29 @@ export class TradingPanel implements IContentRenderer {
     }
     if (action === 'unlock') {
       const passphrase = this.passphrase.value;
-      try { await this.perform(() => this.controller.unlock(passphrase), 'Agent unlocked for this tab'); }
+      try {
+        const outcome = await this.controller.unlock(passphrase);
+        if (outcome && typeof outcome === 'object' && (outcome as Record<string, unknown>).legacyBindingRequired === true) {
+          const prompt = outcome as Record<string, unknown>;
+          const token = String(prompt.token ?? '');
+          const network = prompt.network === 'mainnet' || prompt.network === 'testnet' ? prompt.network : this.state.config.network;
+          const principal = typeof prompt.principal === 'string' ? prompt.principal : this.state.config.principal;
+          const address = typeof prompt.address === 'string' ? prompt.address : 'unknown agent';
+          const accepted = await this.confirm('Bind unscoped legacy agent key',
+            `Verified agent ${address} was encrypted without a network or principal. Bind it to ${network.toUpperCase()} principal ${principal}? This will encrypt a scoped p=3 record and remove the unscoped copy in one storage transaction. If the transaction fails, the legacy record remains unchanged.`, false);
+          if (!accepted) {
+            await this.controller.cancelLegacyBinding(token).catch(() => {});
+            this.setMessage('Legacy key binding canceled · the unscoped encrypted record remains unchanged');
+            return;
+          }
+          if (this.state.config.network !== network || this.state.config.principal.toLowerCase() !== principal.toLowerCase()) {
+            await this.controller.cancelLegacyBinding(token).catch(() => {});
+            this.setMessage('Selected account changed · no legacy key was bound');
+            return;
+          }
+          await this.perform(() => this.controller.bindLegacyAgent(token), 'Legacy agent bound to the selected account and unlocked');
+        } else this.setMessage('Agent unlocked for this tab');
+      } catch (error) { this.setMessage(error instanceof Error ? error.message : 'Unable to unlock agent'); }
       finally { this.passphrase.value = ''; }
       return;
     }

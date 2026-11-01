@@ -20,30 +20,35 @@ class MockWorker {
   readonly messages: Record<string, any>[] = [];
   vaultInfoState: Record<string, any> = { address: null, exists: false, unlocked: false, storageAvailable: true, sessionOnlyAvailable: false };
   private listeners = new Map<string, Set<EventListener>>();
+  private network: 'mainnet' | 'testnet' = 'mainnet';
+  private principal = '';
   terminated = false;
   addEventListener(type: string, listener: EventListener) { const set = this.listeners.get(type) ?? new Set(); set.add(listener); this.listeners.set(type, set); }
   removeEventListener(type: string, listener: EventListener) { this.listeners.get(type)?.delete(listener); }
   terminate() { this.terminated = true; }
-  emitVaultInfo() { this.emit({ type: 'vault-state', ...this.vaultInfoState }); }
+  emitVaultInfo() { this.emit({ type: 'vault-state', network: this.network, principal: this.principal, ...this.vaultInfoState }); }
   postMessage(message: Record<string, any>) {
     this.messages.push(message);
     if (message.type === 'activity' || message.type === 'dispose') return;
-    if (message.type === 'configure') this.emit({ type: 'snapshot', snapshot: emptySnapshot(message.network, message.principal) });
-    if (message.type === 'vault-info') this.emit({ type: 'vault-state', ...this.vaultInfoState });
-    if (message.type === 'vault-remove') {
+    if (message.type === 'configure') {
+      this.network = message.network; this.principal = message.principal;
+      this.emit({ type: 'snapshot', snapshot: emptySnapshot(message.network, message.principal) });
+    }
+    if (message.type === 'vault-info') this.emitVaultInfo();
+    if (message.type === 'vault-remove' || message.type === 'vault-forget') {
       this.vaultInfoState = { ...this.vaultInfoState, address: null, exists: false, unlocked: false, sessionOnly: false };
-      this.emit({ type: 'vault-state', ...this.vaultInfoState });
+      this.emitVaultInfo();
     }
     this.emit({ type: 'result', id: message.id, value: message.type === 'configure' ? emptySnapshot(message.network, message.principal) : true });
   }
-  private emit(data: unknown) { for (const listener of this.listeners.get('message') ?? []) listener({ data } as MessageEvent); }
+  emit(data: unknown) { for (const listener of this.listeners.get('message') ?? []) listener({ data } as MessageEvent); }
 }
 
 function emptySnapshot(network: 'mainnet' | 'testnet', principal: string): TradingSnapshot {
   return {
     network, principal, feedState: 'disconnected', lastMessageAt: 0, lastSnapshotAt: 0,
     accountValue: null, marginUsed: null, withdrawable: null, totalNotional: null,
-    positions: [], orders: [], fills: [], midPrice: null, markPrice: null, szDecimals: null, btcAsset: null,
+    positions: [], orders: [], fills: [], midPrice: null, midPriceUpdatedAt: 0, markPrice: null, markPriceUpdatedAt: 0, szDecimals: null, btcAsset: null,
     agentAddress: null, agentAuthorized: false, agentValidUntil: null, error: null,
   };
 }
@@ -64,7 +69,7 @@ function owner() {
   const fake = {
     state: { owned: false, otherOwner: false, supported: true },
     subscribe(listener: (owned: boolean, otherOwner: boolean) => void) { listeners.add(listener); listener(false, false); return () => listeners.delete(listener); },
-    acquire: async () => true,
+    acquire: async () => ({ id: 1 }),
     release: async () => {},
     dispose() {},
   };
@@ -161,7 +166,7 @@ describe('Hyperliquid trading controller lifecycle', () => {
     const { controller, worker } = createController();
     await controller.ready;
     await controller.forgetDevice();
-    expect(worker.messages.some(message => message.type === 'vault-remove')).toBe(true);
+    expect(worker.messages.some(message => message.type === 'vault-forget')).toBe(true);
     expect(storage.entries()).toEqual([]);
     expect(controller.state.config).toMatchObject({ principal: '', connected: false, network: 'testnet' });
   });
@@ -189,10 +194,11 @@ describe('Hyperliquid trading controller lifecycle', () => {
     storage.setItem(TRADING_SNAPSHOT_KEY, JSON.stringify({ version: 1, network: 'testnet', principal: PRINCIPAL }));
     storage.setItem(`${TRADING_SNAPSHOT_KEY}.attempts:testnet:${PRINCIPAL.toLowerCase()}`, JSON.stringify([attempt('testnet', PRINCIPAL)]));
     storage.setItem(`${TRADING_SNAPSHOT_KEY}.attempts:mainnet:${PRINCIPAL.toLowerCase()}`, JSON.stringify([attempt('mainnet', PRINCIPAL)]));
-    const { controller } = createController();
+    const { controller, worker } = createController();
     await controller.ready;
     expect(controller.state.attempts).toHaveLength(1);
     expect(controller.state.attempts[0]?.network).toBe('testnet');
+    expect(worker.messages.find(message => message.type === 'configure')?.attempts).toEqual([expect.objectContaining({ cloid: CLOID, phase: 'unknown' })]);
   });
 
   it('switches the public worker identity without carrying snapshot rows across accounts', async () => {
@@ -203,5 +209,22 @@ describe('Hyperliquid trading controller lifecycle', () => {
       ['testnet', PRINCIPAL.toLowerCase()], ['mainnet', `0x${'34'.repeat(20)}`],
     ]);
     expect(controller.state.snapshot).toMatchObject({ network: 'mainnet', principal: `0x${'34'.repeat(20)}`, positions: [], orders: [], fills: [] });
+  });
+
+  it('keeps late account snapshots out of the active view and preserves late attempts under their original identity', async () => {
+    const oldPrincipal = PRINCIPAL.toLowerCase();
+    const newPrincipal = `0x${'34'.repeat(20)}`;
+    const { controller, worker } = createController();
+    await controller.setConfig('testnet', oldPrincipal);
+    await controller.setConfig('mainnet', newPrincipal);
+    const currentBefore = controller.state.snapshot;
+    worker.emit({ type: 'snapshot', snapshot: { ...emptySnapshot('testnet', oldPrincipal), accountValue: '999', orders: [{ id: 71 }] } });
+    worker.emit({ type: 'attempt', attempt: attempt('testnet', oldPrincipal) });
+
+    expect(controller.state.snapshot).toBe(currentBefore);
+    expect(controller.state.snapshot).toMatchObject({ network: 'mainnet', principal: newPrincipal, accountValue: null, orders: [] });
+    expect(controller.state.attempts).toEqual([]);
+    const previousJournal = JSON.parse(storage.getItem(`${TRADING_SNAPSHOT_KEY}.attempts:testnet:${oldPrincipal}`) ?? '[]');
+    expect(previousJournal).toEqual([expect.objectContaining({ cloid: CLOID, network: 'testnet', principal: oldPrincipal })]);
   });
 });

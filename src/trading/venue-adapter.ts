@@ -19,6 +19,12 @@ export interface TradingVenueAccount {
 export interface TradingVenueMarketMetadata {
   instrumentId: number | null;
   sizeDecimals: number | null;
+  maxLeverage: number | null;
+}
+
+export interface TradingVenueActiveAssetData {
+  leverage: number | null;
+  availableToTrade: [string, string] | null;
 }
 
 export interface TradingVenueSnapshot {
@@ -26,6 +32,15 @@ export interface TradingVenueSnapshot {
   orders: TradingOrder[];
   fills: TradingFill[];
   market: TradingVenueMarketMetadata;
+  activeAssetData: TradingVenueActiveAssetData | null;
+}
+
+/** A typed venue rejection is a definite response, unlike a transport failure. */
+export class TradingVenueRejectedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TradingVenueRejectedError';
+  }
 }
 
 export interface TradingVenueAuthorization {
@@ -40,7 +55,8 @@ export type TradingVenueUpdate =
   | { type: 'order-updates'; value: TradingOrder[] }
   | { type: 'fills'; value: TradingFill[]; snapshot: boolean }
   | { type: 'mid-price'; value: string | null }
-  | { type: 'mark-price'; value: string | null };
+  | { type: 'mark-price'; value: string | null }
+  | { type: 'subscriptions-ready'; orderUpdates: boolean; fills: boolean; reconnected: boolean };
 
 export type TradingVenueOrderType =
   | { kind: 'limit'; timeInForce: OrderIntent['tif'] }
@@ -64,6 +80,11 @@ export interface TradingVenueModifyRequest {
   reduceOnly: boolean;
   clientOrderId: string | null;
   type: TradingVenueOrderType;
+}
+
+export interface TradingVenueModifyResult {
+  /** Optional canonical replacement ID when the venue response includes it. */
+  orderId: number | null;
 }
 
 export interface TradingVenueOrderResult {
@@ -90,7 +111,7 @@ export interface TradingVenueAdapter {
   readAuthorizations(): Promise<TradingVenueAuthorization[]>;
   setSigningAccount(account: LocalAccount | null): void;
   placeOrder(request: TradingVenueOrderRequest): Promise<TradingVenueOrderResult>;
-  modifyOrder(request: TradingVenueModifyRequest): Promise<void>;
+  modifyOrder(request: TradingVenueModifyRequest): Promise<TradingVenueModifyResult>;
   cancelOrder(instrumentId: number, orderId: number): Promise<void>;
   setLeverage(instrumentId: number, leverage: number, marginMode: 'cross' | 'isolated'): Promise<void>;
   readOrderStatus(clientOrderId: string): Promise<TradingVenueOrderStatus>;

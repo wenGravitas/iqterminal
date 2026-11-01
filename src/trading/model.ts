@@ -3,6 +3,27 @@ import Decimal from 'decimal.js';
 export type TradingNetwork = 'testnet' | 'mainnet';
 export type FeedState = 'disconnected' | 'connecting' | 'live' | 'stale' | 'failed';
 export type OrderPhase = 'submitting' | 'resting' | 'partiallyFilled' | 'filled' | 'triggering' | 'canceled' | 'rejected' | 'unknown';
+export type TradingOrderOperationKind = 'modify' | 'cancel';
+export type TradingOrderOperationPhase = 'pending' | 'reconciling' | 'unknown' | 'rejected';
+
+export interface TradingOrderOperation {
+  orderId: number;
+  resolvedOrderId?: number;
+  possibleOrderIds?: number[];
+  priorOrderIds: number[];
+  cloid: string | null;
+  side: 'buy' | 'sell';
+  reduceOnly: boolean;
+  trigger: boolean;
+  orderKind: TradingOrder['kind'];
+  kind: TradingOrderOperationKind;
+  phase: TradingOrderOperationPhase;
+  createdAt: number;
+  updatedAt: number;
+  message: string;
+  requestedPrice?: string;
+  requestedSize?: string;
+}
 
 export interface TradingPosition {
   coin: string;
@@ -56,10 +77,20 @@ export interface TradingSnapshot {
   positions: TradingPosition[];
   orders: TradingOrder[];
   fills: TradingFill[];
+  /** Exact exchange mutation states for open BTC orders; never inferred as canceled. */
+  orderOperations?: TradingOrderOperation[];
   midPrice: string | null;
+  midPriceUpdatedAt: number;
   markPrice: string | null;
+  markPriceUpdatedAt: number;
   szDecimals: number | null;
   btcAsset: number | null;
+  /** Live BTC universe cap from the venue's current metadata. */
+  btcMaxLeverage?: number | null;
+  /** Current configured BTC leverage from activeAssetData. */
+  btcLeverage?: number | null;
+  /** Venue-reported per-direction trade capacity from activeAssetData. */
+  btcAvailableToTrade?: [string, string] | null;
   agentAddress: string | null;
   agentAuthorized: boolean;
   agentValidUntil: number | null;
@@ -134,6 +165,49 @@ export function validateOrderNotional(size: string, limitPrice: string): string 
   if (!amount || !price) return 'A positive order size and limit price are required';
   if (amount.mul(price).lt(10)) return 'Hyperliquid BTC orders must be at least $10 notional at the limit price';
   return null;
+}
+
+export function validateLeverage(value: number, maxLeverage: number | null | undefined): string | null {
+  if (!Number.isSafeInteger(value) || value < 1) return 'Leverage must be a positive whole number';
+  if (!Number.isSafeInteger(maxLeverage) || !maxLeverage || maxLeverage < 1) return 'Current BTC maximum leverage is unavailable; refresh account metadata';
+  return value <= maxLeverage ? null : `BTC leverage exceeds the current venue maximum of ${maxLeverage}x`;
+}
+
+/** Margin needed for a new/increased non-reduce-only order under the actual BTC leverage setting. */
+export function validateAvailableMargin(size: string, price: string, leverage: number | null | undefined, availableMargin: string | null, alreadyReservedNotional = '0'): string | null {
+  const amount = positiveDecimal(size), limit = positiveDecimal(price);
+  if (!amount || !limit) return 'A positive order size and price are required to check available margin';
+  if (!Number.isSafeInteger(leverage) || !leverage || leverage < 1) return 'Current BTC leverage is unavailable; refresh active asset data before opening exposure';
+  const available = nonnegativeDecimal(availableMargin ?? '');
+  if (!available) return 'Available account margin is unavailable from the fresh account snapshot';
+  const reserved = nonnegativeDecimal(alreadyReservedNotional);
+  if (!reserved) return 'Current order reservation is unavailable for margin validation';
+  const required = Decimal.max(amount.mul(limit).minus(reserved), 0).div(leverage);
+  if (required.gt(available)) return `Insufficient available margin: this order needs about $${required.toFixed(2)} at ${leverage}x; $${available.toFixed(2)} is available`;
+  return null;
+}
+
+export function validateReduceOnlyOrder(side: OrderIntent['side'], size: string, position: TradingPosition | undefined): string | null {
+  if (!position) return 'A reduce-only BTC order requires a current open BTC position';
+  const reducingSide = position.side === 'long' ? 'sell' : 'buy';
+  if (side !== reducingSide) return `Reduce-only ${position.side} orders must use the ${reducingSide.toUpperCase()} side`;
+  const amount = positiveDecimal(size), available = positiveDecimal(position.size);
+  if (!amount || !available) return 'Current BTC position size is unavailable for reduce-only validation';
+  if (amount.gt(available)) return `Reduce-only size exceeds the current ${position.side} position of ${position.size} BTC`;
+  return null;
+}
+
+export function validateTriggerOrientation(kind: 'takeProfit' | 'stopLoss', side: OrderIntent['side'], triggerPrice: string, markPrice: string | null): string | null {
+  const trigger = positiveDecimal(triggerPrice), mark = positiveDecimal(markPrice ?? '');
+  if (!trigger || !mark) return 'A fresh live BTC mark is required to validate trigger direction';
+  const takeProfitAbove = side === 'sell';
+  const correctlyOriented = kind === 'takeProfit'
+    ? takeProfitAbove ? trigger.gt(mark) : trigger.lt(mark)
+    : takeProfitAbove ? trigger.lt(mark) : trigger.gt(mark);
+  if (correctlyOriented) return null;
+  return kind === 'takeProfit'
+    ? `Take-profit trigger must be beyond the live mark (${side === 'sell' ? 'above' : 'below'} ${mark.toString()})`
+    : `Stop-loss trigger must be beyond the live mark (${side === 'sell' ? 'below' : 'above'} ${mark.toString()})`;
 }
 
 export function closePositionSize(positionSize: string, percent: 25 | 50 | 100, szDecimals: number): string {
@@ -253,8 +327,21 @@ export function reconcileOrderAttempt(attempt: OrderAttempt, orders: readonly Tr
   return attempt;
 }
 
+const PRICE_FRESHNESS_MS = 5_000;
+function isFreshQuote(price: string | null, updatedAt: number, now: number) {
+  return price !== null && updatedAt > 0 && now >= updatedAt && now - updatedAt <= PRICE_FRESHNESS_MS
+    && positiveDecimal(price) !== null;
+}
+
+export function isFreshMidPrice(snapshot: TradingSnapshot, now = Date.now()) {
+  return isFreshQuote(snapshot.midPrice, snapshot.midPriceUpdatedAt, now);
+}
+
+export function isFreshMarkPrice(snapshot: TradingSnapshot, now = Date.now()) {
+  return isFreshQuote(snapshot.markPrice, snapshot.markPriceUpdatedAt, now);
+}
+
 export function isFreshPrice(snapshot: TradingSnapshot, now = Date.now()) {
-  return snapshot.feedState === 'live' && now - snapshot.lastMessageAt <= 5_000
-    && snapshot.midPrice !== null && positiveDecimal(snapshot.midPrice) !== null;
+  return snapshot.feedState === 'live' && isFreshMidPrice(snapshot, now);
 }
 

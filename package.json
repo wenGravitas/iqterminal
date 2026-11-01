@@ -12,7 +12,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:browser": "playwright test",
+    "test:trading:browser": "VITE_DIAGNOSTICS=1 pnpm build && pnpm exec playwright test tests/browser/hyperliquid-trading.spec.ts",
     "probe:hyperliquid-reconnect": "node scripts/hyperliquid-public-reconnect-probe.mjs",
+    "testnet:acceptance": "node --experimental-strip-types scripts/hyperliquid-testnet-acceptance.mjs",
+    "testnet:acceptance:dry-run": "node --experimental-strip-types scripts/hyperliquid-testnet-acceptance.mjs --dry-run",
+    "test:testnet-acceptance-runner": "node --experimental-strip-types --test scripts/hyperliquid-testnet-acceptance.test.mjs",
     "bench": "node scripts/bench.mjs",
     "smoke:live": "node scripts/live.mjs",
     "smoke:live-spot": "node scripts/live-spot.mjs",
@@ -30,6 +34,7 @@
   "devDependencies": {
     "@playwright/test": "1.64.0",
     "@types/node": "26.6.4",
+    "fake-indexeddb": "6.2.7",
     "typescript": "7.0.2",
     "vite": "8.3.4",
     "vitest": "5.0.3"
