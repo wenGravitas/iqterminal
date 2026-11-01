@@ -12,15 +12,20 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:browser": "playwright test",
+    "probe:hyperliquid-reconnect": "node scripts/hyperliquid-public-reconnect-probe.mjs",
     "bench": "node scripts/bench.mjs",
     "smoke:live": "node scripts/live.mjs",
     "smoke:live-spot": "node scripts/live-spot.mjs",
     "bench:order-wall-top-levels": "node scripts/order-wall-top-levels-bench.mjs"
   },
   "dependencies": {
+    "@nktkas/hyperliquid": "0.33.3",
+    "@noble/hashes": "2.4.0",
+    "decimal.js": "10.6.0",
     "dockview-core": "8.4.1",
     "openalgo-charts": "2.6.0",
-    "openalgo-script": "0.8.1"
+    "openalgo-script": "0.8.1",
+    "viem": "2.57.13"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

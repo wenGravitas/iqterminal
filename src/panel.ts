@@ -65,6 +65,8 @@ import { OpenAlgoCandleChart } from './chart/openalgo';
 import type { Scheduler } from './chart/scheduler';
 import type { FootprintUnits } from './chart/footprint-units';
 import { getDisplayTimezone, TIMEZONE_EVENT } from './timezone';
+import type { TradingController } from './trading/controller';
+import { HyperliquidTradingChartOverlay } from './trading/chart-overlay';
 import { MAX_STUDIES_PER_CHART, ScriptStudyHost, validStudyPins, type ScriptInputView, type StudyPin } from './scripts/host';
 import type { ScriptLibrary, ScriptRecord } from './scripts/library';
 import { makeInputControl, readInputSettings } from './scripts/input-controls';
@@ -161,7 +163,7 @@ export interface FootprintViewOptions {
   imbalanceRatio: 2 | 3 | 4;
   imbalanceThreshold: number;
 }
-export interface PanelConfig extends CanonicalSeries { candleElapsedTimer: boolean; floatingDrawingToolbar: FloatingDrawingToolbarSettings; paneOrder?: string[]; composition: IndicatorCompositionState; indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; wheelMode: 'tradingview' | 'both-axes'; drawingMagnet: MagnetMode; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
+export interface PanelConfig extends CanonicalSeries { candleElapsedTimer: boolean; tradingOverlay: boolean; floatingDrawingToolbar: FloatingDrawingToolbarSettings; paneOrder?: string[]; composition: IndicatorCompositionState; indicatorVersion: number; indicators: IndicatorInstance[]; basePriceVisible: boolean; type: 'candle' | 'footprint'; grid: boolean; wheelMode: 'tradingview' | 'both-axes'; drawingMagnet: MagnetMode; rowPrice: number; footprintUnits: FootprintUnits; footprint: FootprintViewOptions; heatmap: HeatmapSettings; studies: StudyPin[] }
 function legacyConfig(value: unknown) {
   const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const series = canonicalSeries(value) ?? { venue: 'binance' as const, market: 'perpetual' as const, interval: '1m' as const };
@@ -188,6 +190,7 @@ function legacyConfig(value: unknown) {
   const wantsFootprint = source.type === 'footprint' && supportsDepth(series);
   return { ...series, type: wantsFootprint ? 'footprint' as const : 'candle' as const, rowPrice,
     candleElapsedTimer: source.candleElapsedTimer !== false,
+    tradingOverlay: source.tradingOverlay === true && series.venue === 'hyperliquid' && series.market === 'perpetual',
     grid: typeof source.grid === 'boolean' ? source.grid : true,
     wheelMode: source.wheelMode === 'both-axes' ? 'both-axes' as const : 'tradingview' as const,
     drawingMagnet, floatingDrawingToolbar: floatingDrawingToolbarSettings(source.floatingDrawingToolbar, DRAWING_TOOL_IDS),
@@ -276,6 +279,7 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsAutoPriceWidth = 50;
   private orderWallsStatus?: OrderWallStatus;
   private toolbarWrap = document.createElement('div');
+  private tradingOverlayButton = document.createElement('button');
   private chartWorkspace = document.createElement('div');
   private floatingDrawingToolbar?: FloatingDrawingToolbar;
   private floatingDrawingToggle = document.createElement('button');
@@ -437,6 +441,7 @@ export class CandlePanel implements IContentRenderer {
   private footprintFields = document.createElement('div');
   private footprintBusy = false;
   private engine?: OpenAlgoCandleChart;
+  private tradingChartOverlay?: HyperliquidTradingChartOverlay;
   private studyHost?: ScriptStudyHost;
   private watchList:LevelWatch[]=[];
   private watchButton?:HTMLButtonElement;
@@ -521,6 +526,7 @@ export class CandlePanel implements IContentRenderer {
     private refreshExecutionHover: (chartId: string) => void,
     private notifications: Notifications,
     private tickerTierSources: () => TradeTickerTierSource[] = () => [],
+    private tradingController?: TradingController,
   ) {
     this.element.className = 'candle-panel';
     this.indicatorTitleHints = new IndicatorTitleHints();
@@ -605,7 +611,10 @@ export class CandlePanel implements IContentRenderer {
     this.compositionControls = new CompositionControls((output, settings, instanceId, changeScale) => this.addCompositionSma(output, settings, instanceId, changeScale));
     this.placementControls = new CompositionPlacementControls((instanceId, targetId, together, heightPercent, lowerBand) =>
       this.compositionPlacement.move(instanceId, targetId, together, heightPercent, lowerBand));
-    this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.metadata);
+    this.tradingOverlayButton.type = 'button'; this.tradingOverlayButton.className = 'hl-chart-toggle';
+    this.tradingOverlayButton.textContent = 'Trade lines'; this.tradingOverlayButton.title = 'Show Hyperliquid BTC position and order levels';
+    this.tradingOverlayButton.setAttribute('aria-pressed', 'false'); this.tradingOverlayButton.hidden = true;
+    this.toolbar.append(this.marketButton, this.interval, this.indicators, this.chartSettings, this.latest, this.tradingOverlayButton, this.metadata);
     this.drawPlacementState.className = 'drawing-placement-state';
     this.drawPlacementState.setAttribute('role', 'status');
     this.drawPlacementState.setAttribute('aria-live', 'polite');
@@ -762,6 +771,11 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params, true);
+    if (this.tradingController) {
+      const release = this.tradingController.subscribe(() => this.syncTradingOverlay(), this.abort.signal);
+      this.subscriptions.push({ dispose: release });
+    }
+    this.syncTradingOverlay();
     this.loadObjectTreeSidebarPreferences();
     this.updateDrawingSnapButton();
     this.wheelMode.value = this.selection.wheelMode;
@@ -797,6 +811,11 @@ export class CandlePanel implements IContentRenderer {
     this.objectsTreeResize.addEventListener('keydown', event => this.objectTreeResizeKeydown(event), options);
     this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
     this.interval.addEventListener('change', () => this.select(), options);
+    this.tradingOverlayButton.addEventListener('click', () => {
+      if (this.tradingOverlayButton.hidden) return;
+      this.selection = config({ ...this.selection, tradingOverlay: !this.selection.tradingOverlay });
+      params.api.updateParameters(this.selection); this.syncTradingOverlay(); this.save();
+    }, options);
     this.drawingSidebar.addEventListener('click', event => this.drawingSidebarClick(event), options);
     this.drawingSidebarMenuLayer.addEventListener('click', event => this.drawingFlyoutClick(event), options);
     this.drawingSidebarMenuLayer.addEventListener('keydown', event => {
@@ -928,6 +947,8 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d', params.api.id, this.selection);
+    if (this.tradingController) this.tradingChartOverlay = new HyperliquidTradingChartOverlay(this.engine.chart, this.chart, this.tradingController);
+    this.syncTradingOverlay();
     this.engine.drawings.setOptions({ magnet: this.selection.drawingMagnet });
     this.releaseWatchObjects = this.engine.objects.register({
       id: 'level-watch-zones',
@@ -4785,6 +4806,7 @@ export class CandlePanel implements IContentRenderer {
       nextSelection = config({ ...nextSelection, indicators });
     }
     this.selection = nextSelection;
+    this.syncTradingOverlay();
     this.cancelWatchPick?.();this.setWatchZones(this.watchList);
     this.params.api.updateParameters(this.selection);
     this.updateFootprintControls();
@@ -4805,6 +4827,23 @@ export class CandlePanel implements IContentRenderer {
     this.syncTpo();
     this.refreshExecutionHover(this.params.api.id);
     this.save();
+  }
+
+  private syncTradingOverlay() {
+    const eligible = this.selection?.venue === 'hyperliquid' && this.selection.market === 'perpetual';
+    const mainnet = this.tradingController?.state.config.network === 'mainnet';
+    this.tradingOverlayButton.hidden = !eligible;
+    this.tradingOverlayButton.disabled = eligible && !mainnet;
+    this.tradingOverlayButton.setAttribute('aria-pressed', String(eligible && mainnet && this.selection.tradingOverlay));
+    this.tradingOverlayButton.textContent = eligible && !mainnet ? 'Trade lines · mainnet only'
+      : this.selection.tradingOverlay && eligible ? 'Trade lines · on' : 'Trade lines';
+    this.tradingOverlayButton.title = eligible && !mainnet
+      ? 'Unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices'
+      : eligible
+        ? 'Show Hyperliquid BTC position, PnL, mark, liquidation, TP/SL and order levels'
+      : 'Trading overlays are available on Hyperliquid BTC perpetual only';
+    if (eligible && this.selection.tradingOverlay) this.tradingChartOverlay?.enable();
+    else this.tradingChartOverlay?.disable();
   }
 
   private subscribe() {
@@ -5591,6 +5630,7 @@ export class CandlePanel implements IContentRenderer {
     this.releaseOutputRegistry?.(); this.releaseOutputRegistry = undefined;
     this.outputRegistry?.dispose();
     this.engine?.dispose();
+    this.tradingChartOverlay?.dispose(); this.tradingChartOverlay = undefined;
     this.register(this.params.api.id, null);
   }
 }

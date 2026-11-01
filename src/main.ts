@@ -24,6 +24,9 @@ import { DepthMatrixPanel } from './depth-matrix-panel';
 import { DEFAULT_DEPTH_MATRIX_SETTINGS } from './feed/depth-matrix';
 import { MarketComparisonPanel } from './market-comparison/panel';
 import { defaultMarketComparisonConfig } from './market-comparison/model';
+import { TradingController } from './trading/controller';
+import { TradingPanel } from './trading/panel';
+import { TRADING_PANEL_ID } from './trading/model';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 const query = new URL(location.href).searchParams;
@@ -33,6 +36,7 @@ if (fixture) document.querySelector('.brand')!.textContent = 'BASIS · FIXTURE';
 const feed = new FeedClient(fixture, alignFixtureToNow);
 const scheduler = new Scheduler();
 const notifications = new Notifications();
+const trading = new TradingController({ fixtureMode: fixture });
 const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
 const panels = new Map<string, CandlePanelInstance>();
@@ -43,6 +47,8 @@ const add = document.querySelector<HTMLButtonElement>('#add')!;
 const addComparison = document.querySelector<HTMLButtonElement>('#add-market-comparison')!;
 const addDepth = document.querySelector<HTMLButtonElement>('#add-depth-matrix')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
+const addTrading = document.querySelector<HTMLButtonElement>('#add-hyperliquid-trading')!;
+const tradingStatusButton = document.querySelector<HTMLButtonElement>('#trading-status')!;
 const currencySettings = new CurrencyDisplaySettings(document.querySelector<HTMLButtonElement>('#global-settings')!);
 const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
 const marketPulse = new MarketPulseController();
@@ -69,7 +75,7 @@ function flushLayoutSave() {
   saveTimer = undefined;
   const status = document.querySelector<HTMLElement>('#venue-states')!;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 6, layout: dock.toJSON() }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 7, layout: dock.toJSON() }));
     if (status.textContent === 'Layout storage unavailable') { status.textContent = ''; status.classList.add('connection-status-sr-only'); }
   } catch {
     status.textContent = 'Layout storage unavailable';
@@ -123,6 +129,15 @@ function addDepthMatrix() {
   save();
 }
 
+function addHyperliquidTrading() {
+  const existing = dock.getPanel(TRADING_PANEL_ID);
+  if (existing) { existing.api.setActive(); return; }
+  dock.addPanel({ id: TRADING_PANEL_ID, component: 'hyperliquid-trading', title: 'Trading · HL BTC', params: {},
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
+    initialWidth: Math.min(360, Math.max(300, Math.round(root.clientWidth / 3))), minimumWidth: 280, minimumHeight: 220 });
+  save();
+}
+
 function openWatches(bounds?:{lower:number;upper:number}){const existing=dock.getPanel('level-watch');if(existing)existing.api.setActive();else dock.addPanel({id:'level-watch',component:'level-watch',title:'Level Watch',params:{},position:dock.activePanel?{referencePanel:dock.activePanel,direction:'right'}:undefined,minimumWidth:280,minimumHeight:180});if(bounds)watchPanel?.openDraft(bounds);save();}
 function focusWatch(w:LevelWatch){const panel=[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual');if(panel)panel.focusWatch(w);else {addChart();queueMicrotask(()=>[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual')?.focusWatch(w));}}
 function openEditor(targetChartId: string, attachmentId?: string) {
@@ -162,6 +177,7 @@ dock = createDockview(root, {
     if(options.name==='liquidation-ticker')return new LiquidationTickerPanel(feed,scheduler,notifications,save,focusLiquidation);
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
     if(options.name==='depth-matrix') return new DepthMatrixPanel(feed,save);
+    if(options.name==='hyperliquid-trading') return new TradingPanel(trading);
     if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);},(sourceId,execution)=>executionHover.publish(sourceId,execution),execution=>executionHover.addExecutionRay(execution));
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {
@@ -169,7 +185,7 @@ dock = createDockview(root, {
         else {executionHover.registerChart(id,null);panels.delete(id);}
         editor?.refreshTargets();
       }, openEditor, id => executionHover.refreshChart(id), notifications,
-      () => [...tickers.values()].map(panel => panel.tierSnapshot()));
+      () => [...tickers.values()].map(panel => panel.tierSnapshot()), trading);
     }
     if (options.name === 'script-editor') {
       editor = new LazyScriptEditorPanel(library, () => [...panels].map(([id, panel]) => ({ id, panel })), save);
@@ -218,6 +234,8 @@ const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.s
 document.querySelector('#add-liquidations')!.addEventListener('click',()=>addLiquidationTicker(),{signal:abort.signal});
 document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
 addDepth.addEventListener('click', () => addDepthMatrix(), { signal: abort.signal });
+addTrading.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
+tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
 addComparison.addEventListener('click', () => addMarketComparison(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
@@ -225,6 +243,30 @@ window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: '
 reset.addEventListener('click', () => { defaults(); save(); }, { signal: abort.signal });
 window.addEventListener('online', () => feed.send({ type: 'online', online: true }), { signal: abort.signal });
 window.addEventListener('offline', () => feed.send({ type: 'online', online: false }), { signal: abort.signal });
+
+let tradingStatusInitialized = false;
+const previousTradingAttempts = new Map<string, string>();
+const releaseTradingStatus = trading.subscribe(state => {
+  const network = state.config.network.toUpperCase();
+  const feed = state.snapshot.feedState.toUpperCase();
+  const signing = state.vault.unlocked && state.owner.owned ? 'SIGNING' : state.owner.otherOwner ? 'OTHER TAB' : 'LOCKED';
+  tradingStatusButton.textContent = state.config.principal ? `HL · ${network} · ${feed} · ${signing}` : 'HL · disconnected';
+  tradingStatusButton.dataset.state = !state.config.principal ? 'disconnected' : state.snapshot.feedState;
+  tradingStatusButton.title = state.snapshot.error ?? (state.config.principal ? `${network} · ${state.config.principal} · ${signing} · Open Hyperliquid BTC trading` : 'Select a Hyperliquid principal in the trading panel');
+  if (tradingStatusInitialized) for (const attempt of state.attempts) {
+    const key = attempt.cloid.toLowerCase(), previous = previousTradingAttempts.get(key);
+    if (previous && previous !== attempt.phase && ['filled', 'rejected', 'canceled'].includes(attempt.phase)) {
+      notifications.deliver({ eventId: `${key}:${attempt.phase}:${attempt.updatedAt}`, ruleId: 'hyperliquid-order-status', owner: 'hyperliquid-trading',
+        timeMs: attempt.updatedAt, fresh: Date.now() - attempt.updatedAt <= 3_000, title: `Hyperliquid order ${attempt.phase}`,
+        text: `${attempt.intent.side.toUpperCase()} ${attempt.intent.size} BTC · ${attempt.message}`, sound: 'silent', volume: 0, toast: true });
+    }
+    previousTradingAttempts.set(key, attempt.phase);
+  }
+  if (!tradingStatusInitialized) {
+    for (const attempt of state.attempts) previousTradingAttempts.set(attempt.cloid.toLowerCase(), attempt.phase);
+    tradingStatusInitialized = true;
+  }
+});
 
 const timer = setInterval(() => {
   if (document.hidden) return;
@@ -236,7 +278,7 @@ let perf: PerformanceObserver | undefined;
 if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
-    dock, dispose, addChart, addMarketComparison, addTicker, addLiquidationTicker, openWatches, tickers, notifications, openEditor, feed, panels, marketComparisons, library, fixture,
+    dock, dispose, addChart, addMarketComparison, addTicker, addLiquidationTicker, addHyperliquidTrading, openWatches, tickers, notifications, openEditor, feed, panels, marketComparisons, library, fixture, trading,
     marketPulse, connectionStatus,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), marketComparisons: [...marketComparisons.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, feedProtocol: feed.protocolDiagnostics(), frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; feed.resetProtocolDiagnostics(); for (const panel of panels.values()) panel.resetCompositionDiagnostics(); },
@@ -255,10 +297,12 @@ function dispose() {
   abort.abort();
   appearance.dispose(); currencySettings.dispose();
   connectionStatus.dispose();
+  releaseTradingStatus();
   marketPulse.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
   scheduler.dispose(); notifications.dispose();
+  trading.dispose();
   releaseWatches?.();feed.dispose();
   perf?.disconnect();
 }

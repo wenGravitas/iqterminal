@@ -1,6 +1,6 @@
 # Basis — terminal T0
 
-A saved, dockable BTC candlestick workspace with Binance BTCUSDT Spot, Binance USD-M perpetual, and Hyperliquid BTC perpetual instruments. The initial pair remains Binance USD-M and Hyperliquid perpetual. Vanilla strict TypeScript, Dockview Core, and official OpenAlgo Charts 2.6.0 using its Canvas2D renderer. Optional OpenScript studies run locally in bounded dedicated workers. No account, keys or React. An optional staging market-data backend supports local development.
+A saved, dockable BTC candlestick workspace with Binance BTCUSDT Spot, Binance USD-M perpetual, and Hyperliquid BTC perpetual instruments. The initial pair remains Binance USD-M and Hyperliquid perpetual. Vanilla strict TypeScript, Dockview Core, and official OpenAlgo Charts 2.6.0 using its Canvas2D renderer. Optional OpenScript studies run locally in bounded dedicated workers. Hyperliquid BTC manual trading is optional and uses a separately encrypted local agent key; the app never asks for a master seed phrase or private key. No React. An optional staging market-data backend supports local development.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -60,6 +60,10 @@ Add **Trade Ticker** from the bottom toolbar for live Binance BTCUSDT USD-M repo
 ## Trade Bubbles
 
 Add **Trade Bubbles** from a candle chart's **Indicators → Order Flow** catalogue for a bounded overlay of Binance BTCUSDT Spot or USD-M aggregate executions. Follow-chart and explicit-source modes keep source selection visible; Hyperliquid BTC/USD is reported incompatible rather than silently converted. Each chart retains its own 2,048-print session and filters. See [Trade Bubbles sources, display settings and limits](docs/trade-bubbles.md).
+
+## Hyperliquid BTC trading
+
+Add **Trading · HL BTC** from the footer for an optional dockable Hyperliquid BTC perpetual account and order panel. It reads the selected master/sub-account address and uses a separately authorized API-wallet agent for manual actions. The agent key is encrypted in this browser when IndexedDB is available; if IndexedDB is unavailable but secure Web Crypto remains available, a session-only agent can be used and is discarded by Lock, timeout, reload or close. Start on Testnet and follow the setup, mainnet checks, security limits and evidence matrix in [Hyperliquid Trading R1](docs/hyperliquid-trading.md). TP and SL are separate trigger actions, and uncertain outcomes are reconciled without automatic resubmission.
 
 ## Local OpenScript studies
 
