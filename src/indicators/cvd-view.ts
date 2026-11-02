@@ -12,10 +12,12 @@ import {anchorTimeAxisToPrimary}from '../chart/primary-time-axis';
 import {getDisplayTimezone}from '../timezone';
 import type {CvdDataController} from './cvd-data';
 import {TooltipDwell} from '../tooltip-dwell';
+import {cvdEndLabels,cvdLabelGutterWidth} from '../chart/cvd-end-labels';
+import {indicatorIcon} from './icons';
 
 class CvdLines implements IPrimitive {
   private host?:PrimitiveHost;draws=0;segments=0;
-  constructor(readonly model:CvdPlotModel,private settings:()=>CvdSettings,private range:()=>{from:number;to:number},private foreground:()=>string){}
+  constructor(readonly model:CvdPlotModel,private settings:()=>CvdSettings,private range:()=>{from:number;to:number},private foreground:()=>string,private endLabels:(rc:PrimitiveRenderContext,width:number)=>void){}
   zOrder(){return 'normal' as const;}attached(host:PrimitiveHost){this.host=host;}detached(){this.host=undefined;}
   update(){this.host?.requestUpdate();}
   autoscaleInfo(){
@@ -28,7 +30,8 @@ class CvdLines implements IPrimitive {
   }
   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     const settings=this.settings(),range=this.range();this.segments=0;this.draws++;
-    ctx.save();ctx.setTransform(rc.dpr,0,0,rc.dpr,0,0);ctx.beginPath();ctx.rect(0,0,rc.plotWidth,rc.plotHeight);ctx.clip();
+    const gutterWidth=cvdLabelGutterWidth(rc.plotWidth),strokeWidth=rc.plotWidth-gutterWidth;
+    ctx.save();ctx.setTransform(rc.dpr,0,0,rc.dpr,0,0);ctx.beginPath();ctx.rect(0,0,strokeWidth,rc.plotHeight);ctx.clip();
     const zero=rc.priceScale.priceToY(0);ctx.strokeStyle=rc.theme.axisText;ctx.globalAlpha=.25;ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(0,zero);ctx.lineTo(rc.plotWidth,zero);ctx.stroke();
     // Components first, prominent combined total last.
     const lines=[...this.model.lines.values()].sort((a,b)=>Number(a.id==='total')-Number(b.id==='total'));
@@ -50,6 +53,7 @@ class CvdLines implements IPrimitive {
       }
     }
     ctx.restore();
+    this.endLabels(rc,gutterWidth);
   }
 }
 interface CvdHoverTarget { id:string; name:string; time:number; value:number; partial:boolean; x:number; y:number }
@@ -61,6 +65,7 @@ export class CvdView implements Drawable {
   private paneControlHome?:HTMLElement;
   private listeners:(()=>void)[]=[];private releaseDataListener?:()=>void;private hoverTime?:number;private hoverPoint?:{x:number;y:number};private hoverPaneIndex?:number;private hoverPointerType?:string;private hoverPointerDown=false;private tooltipBlockedUntilMove=false;private paneHoverAbort?:AbortController;private lastLegendKey='';private tooltipDwell=new TooltipDwell();
   private lastTooltipLineKey='';
+  private endLabelLayer=document.createElement('div');private endLabelNodes=new Map<string,HTMLElement>();
   private scaleTop=.16;private lastHostTimes='';private hostCandles:readonly Candle[]=[];private lineButtons=new Map<string,HTMLButtonElement>();private assignedScaleId:PriceScaleId;private ownsPaneWeight:boolean;private readonly cvdScaleIds=new Set<PriceScaleId>();
   constructor(private chart:Chart,private scheduler:Scheduler,series:Series,private change:(settings:CvdSettings)=>void,
     private data:CvdDataController,private scaleIdForUnit:(unit:'BTC'|'USDT')=>PriceScaleId,initialPaneIndex=-1,preservePaneLayout=false){
@@ -70,7 +75,9 @@ export class CvdView implements Drawable {
     this.anchor=this.createAnchor(index,[]);
     this.pane=chart.panes()[index]!.element;this.tooltipHost=this.pane.closest<HTMLElement>('.chart-stage')??this.pane;this.pane.dataset.cvd='true';if(this.ownsPaneWeight)chart.setPaneWeight(index,.28);
     this.anchor.priceScale().setOptions({marginTop:.16,marginBottom:.12,minMove:0,minPrecision:2});
-    this.primitive=new CvdLines(this.model,()=>this.settings,()=>this.visibleRange(),()=>getComputedStyle(this.pane).getPropertyValue('--text').trim()||'#c7c7c7');chart.addPrimitive(this.primitive,index);chart.panes()[index]?.bindPrimitiveScale(this.primitive,this.assignedScaleId);
+    this.primitive=new CvdLines(this.model,()=>this.settings,()=>this.visibleRange(),()=>getComputedStyle(this.pane).getPropertyValue('--text').trim()||'#c7c7c7',(rc,width)=>this.renderEndLabels(rc,width));chart.addPrimitive(this.primitive,index);chart.panes()[index]?.bindPrimitiveScale(this.primitive,this.assignedScaleId);
+    this.endLabelLayer.className='cvd-end-labels';this.endLabelLayer.setAttribute('aria-hidden','true');this.pane.append(this.endLabelLayer);
+    for(const type of ['pointerdown','mousedown','dblclick','wheel','contextmenu'])document.addEventListener(type,event=>{if(event.target instanceof Node&&this.endLabelLayer.contains(event.target)){event.stopPropagation();if(type==='wheel'||type==='contextmenu')event.preventDefault();}},{capture:true,passive:false,signal:this.abort.signal});
     this.controlRow.className='cvd-controls net-positioning-legend';
     this.toolbar.className='cvd-toolbar';this.toolbar.setAttribute('role','group');this.toolbar.setAttribute('aria-label','CVD presentation');
     for(const [value,label]of [['venues','Venues'],['aggregations','Aggregations']]as const){
@@ -155,7 +162,7 @@ export class CvdView implements Drawable {
     this.pane.dataset.cvd='true';
     this.chart.addPrimitive(this.primitive,actualIndex);
     this.chart.panes()[actualIndex]?.bindPrimitiveScale(this.primitive,this.assignedScaleId);
-    this.pane.append(this.controlRow,this.status);
+    this.pane.append(this.controlRow,this.status,this.endLabelLayer);
     this.syncPriceAxisPlacements();anchorTimeAxisToPrimary(this.chart);
     this.invalidate();
     return true;
@@ -190,7 +197,7 @@ export class CvdView implements Drawable {
     this.anchor.setData(candles.map(c=>({time:c.t/1000,open:0,high:0,low:0,close:0,volume:0})));
     this.invalidate();
   }
-  setVisible(value:boolean){this.visible=value;if(!value)this.cancelTooltip();if(value)this.invalidate();}
+  setVisible(value:boolean){this.visible=value;this.endLabelLayer.hidden=!value;if(!value)this.cancelTooltip();if(value)this.invalidate();}
   /** Let the managed Order Flow pane own shared chrome while leaving this view's settings available. */
   setCombinedChrome(value:boolean){
     this.combinedChrome=value;this.syncPriceAxisPlacements();this.controlRow.hidden=value;this.status.hidden=value;this.cancelTooltip();
@@ -208,7 +215,18 @@ export class CvdView implements Drawable {
       if(placement?.side!==side)this.chart.setPriceAxisPlacement(paneIndex,scaleId,side);
     }
   }
-  private invalidate(){if(!this.dead){this.primitive.update();this.scheduler.invalidate(this);}}
+  private paddingUpdate=false;private gutterOffset?:{before:number;applied:number};
+  private ensureGutterPadding(){
+    if(this.paddingUpdate||!this.visible)return;
+    const plot=this.chart.plotRect(this.paneIndex());if(!plot)return;
+    const scale=this.chart.timeScale,offset=scale.rightOffset;
+    const required=(cvdLabelGutterWidth(plot.width)+4)/scale.barSpacing;
+    if(offset<0||offset>=required)return;
+    const before=this.gutterOffset&&Math.abs(offset-this.gutterOffset.applied)<1e-6?this.gutterOffset.before:offset;
+    this.paddingUpdate=true;this.gutterOffset={before,applied:required};
+    try{scale.setRightOffset(required);}finally{this.paddingUpdate=false;}
+  }
+  private invalidate(){if(!this.dead){this.ensureGutterPadding();this.primitive.update();this.scheduler.invalidate(this);}}
   private cancelTooltip(){this.tooltipDwell.clear();this.tooltip.hidden=true;this.hoverDot.hidden=true;this.lastTooltipLineKey='';}
   private bindPaneHoverEvents(pane:HTMLElement){
     this.paneHoverAbort?.abort();const hoverAbort=this.paneHoverAbort=new AbortController(),signal=hoverAbort.signal;
@@ -299,7 +317,7 @@ export class CvdView implements Drawable {
   private updateHoverOverlay(plot:NonNullable<ReturnType<Chart['plotRect']>>,unit:string){
     const pointer=this.hoverPoint;
     if(!this.tooltipDwell.isActive('cvd')||!pointer||this.dead||!this.visible||this.combinedChrome||document.hidden||this.hoverPointerType==='touch'||this.hoverPointerDown||this.tooltipBlockedUntilMove
-      ||this.hoverPaneIndex!==this.paneIndex()||pointer.x<plot.left||pointer.x>plot.left+plot.width||pointer.y<plot.top||pointer.y>plot.top+plot.height){
+      ||this.hoverPaneIndex!==this.paneIndex()||pointer.x<plot.left||pointer.x>plot.left+plot.width-cvdLabelGutterWidth(plot.width)||pointer.y<plot.top||pointer.y>plot.top+plot.height){
       this.tooltip.hidden=true;this.hoverDot.hidden=true;return;
     }
     const localX=pointer.x-plot.left;
@@ -351,6 +369,7 @@ export class CvdView implements Drawable {
       button.title=`${line.name}${line.filtered?' · filtered to included markets':''} · ${compactCvd(value)} ${unit.toUpperCase()} · Line visibility only; contribution remains included`;
     }
     const plot=this.chart.plotRect(this.paneIndex());
+    if(!plot)this.endLabelLayer.hidden=true;
     if(plot&&this.controlRow.dataset.paneHeader!=='true')for(const controls of [this.controlRow]){
       controls.style.right=`${Math.max(6,this.pane.clientWidth-plot.left-plot.width+PANE_HEADER_ACTION_SPACE)}px`;
       controls.style.maxWidth=`${paneHeaderSlots(plot.width,620).optionsWidth}px`;
@@ -362,6 +381,30 @@ export class CvdView implements Drawable {
     if(plot)this.updateHoverOverlay(plot,unit);else this.cancelTooltip();
     this.chart.invalidate(mask=>mask.invalidatePane(this.paneIndex(),{level:InvalidationLevel.Full,autoScale:true}));
   }
+  private renderEndLabels(rc:PrimitiveRenderContext,width:number){
+    const plot=this.chart.plotRect(this.paneIndex());
+    this.endLabelLayer.hidden=this.dead||!this.visible||!plot||width<=0;
+    if(this.endLabelLayer.hidden||!plot)return;
+    const header=this.controlRow.closest('.pane-indicator-host')??this.controlRow;
+    const top=header instanceof HTMLElement&&!header.hidden?Math.max(0,Math.min(rc.plotHeight,header.getBoundingClientRect().bottom-this.pane.getBoundingClientRect().top)):0;
+    this.endLabelLayer.style.top=`${top}px`;this.endLabelLayer.style.left=`${plot.left+plot.width-width}px`;this.endLabelLayer.style.width=`${width}px`;this.endLabelLayer.style.height=`${Math.max(0,rc.plotHeight-top)}px`;
+    const unit=effectiveCurrency(this.settings.units).toUpperCase();
+    const {rows,omitted}=cvdEndLabels(this.model.lines.values(),this.settings.hidden,unit,Math.max(0,rc.plotHeight-top),value=>rc.priceScale.priceToY(value)-top);
+    this.endLabelLayer.title=omitted?`${omitted} more line labels · increase pane height`:'';
+    const active=new Set(rows.map(row=>row.id));
+    for(const [id,node] of this.endLabelNodes)if(!active.has(id)){node.remove();this.endLabelNodes.delete(id);}
+    for(const row of rows){
+      let label=this.endLabelNodes.get(row.id);
+      if(!label){label=document.createElement('div');label.className='cvd-end-label market-comparison-right-label';label.dataset.lineId=row.id;
+        const name=document.createElement('span');name.className='cvd-end-label-name';const value=document.createElement('span');value.className='cvd-end-label-value';
+        label.append(document.createElement('span'),name,value);this.endLabelNodes.set(row.id,label);this.endLabelLayer.append(label);}
+      if(label.dataset.direction!==row.direction){label.firstElementChild!.replaceChildren(indicatorIcon(`change-${row.direction}`));label.dataset.direction=row.direction;}
+      label.children[1]!.textContent=row.name;label.children[2]!.textContent=row.text;label.dataset.partial=String(row.partial);
+      label.style.top=`${row.y-7}px`;label.style.color=this.lineColor(this.model.lines.get(row.id)!);label.style.maxWidth=`${Math.max(0,width-2)}px`;
+      label.title=`${row.fullName} · ${row.value.toLocaleString('en-US',{maximumFractionDigits:8})} ${unit} · ${new Date(row.time).toISOString()}${row.partial?' · Partial coverage':''}`;
+    }
+  }
+  valueScale() { return this.anchor.priceScale(); }
   diagnostics(){return {paneIndex:this.paneIndex(),settings:this.settings,coverage:this.coverage(),sources:[...this.model.sources.values()].map(s=>({source:s.source,points:s.points.length,status:s.status,coverage:s.coverage,message:s.message,asOf:s.asOf,latest:s.points.at(-1)})),lines:[...this.model.lines.values()].map(l=>({id:l.id,filtered:l.filtered,latest:l.points.at(-1)})),draws:this.primitive.draws,segments:this.primitive.segments};}
-  dispose(){if(this.dead)return;this.tooltipDwell.dispose();this.paneHoverAbort?.abort();this.dead=true;this.releaseDataListener?.();this.abort.abort();this.listeners.forEach(release=>release());this.controls.dispose();this.picker.dispose();this.scheduler.remove(this);this.chart.removePrimitive(this.primitive);this.controlRow.remove();this.status.remove();this.hoverDot.remove();this.tooltip.remove();this.anchor.remove();this.syncPriceAxisPlacements();this.pane.removeAttribute('data-cvd');anchorTimeAxisToPrimary(this.chart);}
+  dispose(){if(this.dead)return;this.tooltipDwell.dispose();this.paneHoverAbort?.abort();this.dead=true;if(this.gutterOffset&&Math.abs(this.chart.timeScale.rightOffset-this.gutterOffset.applied)<1e-6)this.chart.timeScale.setRightOffset(this.gutterOffset.before);this.releaseDataListener?.();this.abort.abort();this.listeners.forEach(release=>release());this.controls.dispose();this.picker.dispose();this.scheduler.remove(this);this.chart.removePrimitive(this.primitive);this.controlRow.remove();this.status.remove();this.hoverDot.remove();this.tooltip.remove();this.endLabelLayer.remove();this.endLabelNodes.clear();this.anchor.remove();this.syncPriceAxisPlacements();this.pane.removeAttribute('data-cvd');anchorTimeAxisToPrimary(this.chart);}
 }

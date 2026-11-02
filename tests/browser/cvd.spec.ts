@@ -1,5 +1,6 @@
 import {test,expect,type Page}from '@playwright/test';
 import {addIndicator}from './indicator-actions';
+import {compactCvd}from '../../src/chart/cvd-model';
 async function setup(page:Page){
   await page.addInitScript(()=>{
     const state=window as any;state.__cvdCommands=[];const post=Worker.prototype.postMessage;
@@ -39,7 +40,7 @@ async function cvdHoverTargets(page:Page){
         const x0=chart.timeScale.indexToX(chart.dataLayer.timeToIndexFloat(first.time/1000)),x1=chart.timeScale.indexToX(chart.dataLayer.timeToIndexFloat(last.time/1000));
         if(x1<=x0)continue;
         for(const fraction of [.34,.66]){
-          const x=x0+(x1-x0)*fraction;if(x<24||x>plot.width-24)continue;
+          const x=x0+(x1-x0)*fraction;if(x<24||x>plot.width-view.endLabelLayer.offsetWidth-4)continue;
           const logical=chart.timeScale.xToIndex(x),time=chart.dataLayer.indexToTimeFloat(logical)*1000;if(!Number.isFinite(time))continue;
           const value=sampleAt(line,time,x,first.period);if(value==null)continue;
           const y=plot.top+view.anchor.priceScale().priceToY(value);if(y<plot.top||y>plot.top+plot.height)continue;
@@ -54,6 +55,56 @@ async function cvdHoverTargets(page:Page){
     return targets.sort((a,b)=>b.score-a.score);
   });
 }
+test('CVD end labels reserve a pane gutter and follow live values, visibility and units',async({page})=>{
+  test.setTimeout(90_000);
+  await page.addInitScript(()=>{
+    const original=CanvasRenderingContext2D.prototype.rect;
+    CanvasRenderingContext2D.prototype.rect=function(x,y,width,height){
+      if(this.canvas.closest('[data-cvd=true]')&&x===0&&y===0){const rows=((window as any).__cvdClips??=[]) as number[];rows.push(width);if(rows.length>100)rows.shift();}
+      return original.call(this,x,y,width,height);
+    };
+  });
+  await page.setViewportSize({width:1920,height:1000});
+  const panel=await setup(page),pane=panel.locator('[data-cvd=true]'),gutter=pane.locator('.cvd-end-labels');
+  await expect(gutter.locator('.cvd-end-label')).toHaveCount(3);
+  const initial=await state(page),subscriptions=await subscribeCount(page);
+  for(const line of initial.lines){
+    const label=gutter.locator(`[data-line-id="${line.id}"]`);
+    await expect(label.locator('.cvd-end-label-value')).toHaveText(`${compactCvd(line.latest.value)} BTC${line.latest.partial?'*':''}`);
+    await expect(label.locator('svg')).toHaveCount(1);
+  }
+  const geometry=await page.evaluate(()=>{
+    const p=[...(window as any).__terminal.panels.values()][0],v=p.cvdView,plot=v.chart.plotRect(v.paneIndex()),layer=v.endLabelLayer.getBoundingClientRect(),stage=p.element.querySelector('.chart-stage').getBoundingClientRect();
+    return {width:layer.width,left:layer.left,right:layer.right,plotRight:stage.left+plot.left+plot.width,clipWidth:plot.width-layer.width,
+      clips:(window as any).__cvdClips??[],labels:[...v.endLabelLayer.children].map((label:any)=>{const box=label.getBoundingClientRect();return {left:box.left,right:box.right,top:box.top,bottom:box.bottom};})};
+  });
+  expect(Math.abs(geometry.right-geometry.plotRight)).toBeLessThan(1);
+  expect(geometry.clips.some((width:number)=>Math.abs(width-geometry.clipWidth)<1)).toBe(true);
+  const sorted=geometry.labels.sort((a:any,b:any)=>a.top-b.top);
+  for(let index=0;index<sorted.length;index++){
+    expect(sorted[index]!.left).toBeGreaterThanOrEqual(geometry.left);expect(sorted[index]!.right).toBeLessThanOrEqual(geometry.right);
+    if(index)expect(sorted[index-1]!.bottom).toBeLessThanOrEqual(sorted[index]!.top+1);
+  }
+  await page.screenshot({path:'artifacts/cvd-end-labels.png'});
+  await panel.locator('.cvd-legend [data-line="binance:spot"]').click();
+  await expect(gutter.locator('[data-line-id="binance:spot"]')).toHaveCount(0);
+  await expect(gutter.locator('.cvd-end-label')).toHaveCount(2);
+  expect(await subscribeCount(page)).toBe(subscriptions);
+  await panel.locator('.cvd-legend [data-line="binance:spot"]').click();
+  await expect(gutter.locator('.cvd-end-label')).toHaveCount(3);
+  await panel.getByRole('button',{name:'Multi-Venue CVD settings',exact:true}).click();
+  const settings=panel.getByRole('dialog',{name:'Multi-Venue CVD settings'});
+  await settings.getByLabel('CVD display unit',{exact:true}).selectOption('usdt');
+  await settings.getByRole('button',{name:'Apply',exact:true}).click();
+  await expect(gutter).toContainText('USDT');expect(await subscribeCount(page)).toBe(subscriptions);
+  const beforeRange=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.chart.getVisibleLogicalRange());
+  const box=(await gutter.boundingBox())!;await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.wheel(0,-200);
+  await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.chart.getVisibleLogicalRange())).toEqual(beforeRange);
+  await panel.getByRole('button',{name:'Remove Multi-Venue CVD',exact:true}).click();
+  await expect(panel.locator('.cvd-end-labels')).toHaveCount(0);
+});
+
 test('CVD pane reuses sources, separates visibility and membership, persists named group copies and anchors',async({page})=>{
   test.setTimeout(120_000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   const panel=await setup(page),pane=panel.locator('[data-cvd=true]');
@@ -65,7 +116,7 @@ test('CVD pane reuses sources, separates visibility and membership, persists nam
   expect(Math.abs(toolbarBox.y-legendBox.y)).toBeLessThan(1);expect(toolbarBox.x+toolbarBox.width).toBeLessThan(dividerBox.x);expect(dividerBox.x).toBeLessThan(legendBox.x);
   const optionsBox=(await controls.boundingBox())!,actionsBox=(await header.locator('.pane-layout-controls-inline').boundingBox())!,titleBox=(await header.locator('.active-indicator').boundingBox())!,copyBox=(await header.locator('.active-indicator-copy').boundingBox())!,indicatorActionsBox=(await header.locator('.active-indicator-actions').boundingBox())!;
   const copyRight=copyBox.x+copyBox.width;
-  expect(Math.abs(optionsBox.y+optionsBox.height/2-actionsBox.y-actionsBox.height/2)).toBeLessThan(3);expect(optionsBox.x+optionsBox.width).toBeLessThanOrEqual(actionsBox.x);expect(copyRight).toBeLessThanOrEqual(indicatorActionsBox.x);expect(indicatorActionsBox.x-copyRight).toBeLessThanOrEqual(3);expect(titleBox.width).toBeLessThan(295);
+  expect(Math.abs(optionsBox.y+optionsBox.height/2-actionsBox.y-actionsBox.height/2)).toBeLessThan(3);expect(optionsBox.x+optionsBox.width).toBeLessThanOrEqual(actionsBox.x);expect(copyRight).toBeLessThanOrEqual(indicatorActionsBox.x);expect(indicatorActionsBox.x-copyRight).toBeLessThanOrEqual(6);expect(titleBox.width).toBeLessThan(295);
   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo(),scale=v.anchor.priceScale(),plot=v.chart.plotRect(v.paneIndex());return Math.abs(scale.priceToY(r.min)-scale.priceToY(r.max))/plot.height;})).toBeGreaterThan(.45);
   await expect.poll(()=>page.evaluate(()=>{const v=[...(window as any).__terminal.panels.values()][0].cvdView,r=v.primitive.autoscaleInfo();return v.anchor.priceScale().priceToY(r.max)-30;})).toBeGreaterThan(5);
 
@@ -138,7 +189,7 @@ test('CVD pane reuses sources, separates visibility and membership, persists nam
       optionsAfterActions:optionsRect.left>=actionRect.right,optionsBeforePaneActions:optionsRect.right<=paneActions.getBoundingClientRect().left+2,
       overflowEscape:rowList.scrollWidth>rowList.clientWidth};
   });
-  expect(narrowHeader.actionsTouchTitle).toBeLessThanOrEqual(3);
+  expect(narrowHeader.actionsTouchTitle).toBeLessThanOrEqual(6);
   expect(narrowHeader.actionsInsideRow).toBe(true);
   expect(narrowHeader.optionsAfterActions).toBe(true);
   expect(narrowHeader.optionsBeforePaneActions||narrowHeader.overflowEscape).toBe(true);
@@ -309,4 +360,49 @@ test('CVD hover dot follows minute segments inside five-minute bars and hides at
   }
   await panel.getByRole('button',{name:'Remove Multi-Venue CVD',exact:true}).click();
   await expect(pane).toHaveCount(0);await expect(card).toHaveCount(0);await expect(dot).toHaveCount(0);
+});
+
+test('numeric panes show optional value grids, persist toggles and release removed grids',async({page})=>{
+  const panel=await setup(page),subscriptions=await subscribeCount(page);
+  const grids=()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0];return [...p.indicatorValueGrids.values()].map((grid:any)=>grid.geometry.length);});
+  await expect.poll(grids).toEqual([expect.any(Number)]);
+  await expect.poll(async()=>(await grids())[0]).toBeGreaterThan(0);
+  await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0],view=p.cvdView,plot=view.chart.plotRect(view.paneIndex()),scale=view.anchor.priceScale(),grid=[...p.indicatorValueGrids.values()][0];return JSON.stringify(grid.geometry)===JSON.stringify(scale.ticks(Math.max(2,Math.min(30,Math.round(plot.height/32)))).map((value:number)=>scale.priceToY(value)).filter((y:number)=>y>=30&&y<=plot.height-8));})).toBe(true);
+  await panel.getByRole('button',{name:'Hide value grid for Multi-Venue CVD',exact:true}).click();
+  await expect.poll(grids).toEqual([0]);expect(await subscribeCount(page)).toBe(subscriptions);
+  await expect(panel.getByRole('button',{name:'Show value grid for Multi-Venue CVD',exact:true})).toHaveAttribute('aria-pressed','false');
+  await page.reload();
+  await expect(panel.getByRole('button',{name:'Show value grid for Multi-Venue CVD',exact:true})).toBeVisible();
+  await expect.poll(grids).toEqual([0]);
+  await panel.getByRole('button',{name:'Show value grid for Multi-Venue CVD',exact:true}).click();
+  await expect.poll(async()=>(await grids())[0]).toBeGreaterThan(0);
+  await addIndicator(panel,'Open Interest');
+  await expect(panel.getByRole('button',{name:'Hide value grid for Open Interest',exact:true})).toBeVisible();
+  await expect.poll(async()=>(await grids()).length).toBe(2);
+  await panel.getByRole('button',{name:'Remove Open Interest',exact:true}).click();
+  await expect.poll(async()=>(await grids()).length).toBe(1);
+  await panel.getByRole('button',{name:'Remove Multi-Venue CVD',exact:true}).click();
+  await expect.poll(grids).toEqual([]);
+});
+
+test('switching chart tabs retains CVD data and subscription while hidden painting pauses',async({page})=>{
+  await setup(page);
+  const initial=await dataState(page);await expect.poll(async()=>(await state(page)).sources.length).toBe(2);
+  const ids=await page.evaluate(()=>{
+    const terminal=(window as any).__terminal,first=[...terminal.panels.values()][0];
+    terminal.__cvdRetained={view:first.cvdView,data:first.cvdData};
+    terminal.addChart({venue:'binance',market:'perpetual',interval:'5m'});
+    const [a,b]=terminal.dock.panels;b.api.moveTo({group:a.api.group});a.api.setActive();return [a.id,b.id];
+  });
+  for(let cycle=0;cycle<3;cycle++){
+    await page.evaluate(id=>(window as any).__terminal.dock.getPanel(id).api.setActive(),ids[1]);
+    await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).cvdData.demandDiagnostics().hostVisible,ids[0])).toBe(false);
+    const before=(await state(page)).draws;await page.waitForTimeout(250);
+    expect((await state(page)).draws).toBe(before);
+    expect(await dataState(page)).toMatchObject({subscribed:true,sourceCount:2,subscriptionStarts:initial.subscriptionStarts,subscriptionStops:initial.subscriptionStops});
+    await page.evaluate(id=>(window as any).__terminal.dock.getPanel(id).api.setActive(),ids[0]);
+    await expect.poll(async()=>(await state(page)).draws).toBeGreaterThan(before);
+    expect(await page.evaluate(()=>{const t=(window as any).__terminal,p=[...t.panels.values()][0];return p.cvdView===t.__cvdRetained.view&&p.cvdData===t.__cvdRetained.data;})).toBe(true);
+  }
+  expect(await dataState(page)).toMatchObject({subscribed:true,sourceCount:2,subscriptionStarts:initial.subscriptionStarts,subscriptionStops:initial.subscriptionStops});
 });

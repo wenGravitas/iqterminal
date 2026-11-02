@@ -41,6 +41,11 @@ describe('unified indicator configuration', () => {
     expect(studyPins(result).map(p => p.settings.length)).toEqual([20,50]);
     expect(config({ ...c, indicators: result }).studies).toEqual(pins);
   });
+  it('preserves the pane grid preference when the script host republishes pins', () => {
+    const initial = withStudyPins([], [pin]).map(instance => ({ ...instance, priceGrid: false }));
+    const refreshed = withStudyPins(initial, [{ ...pin, settings: { length: 50 } }]);
+    expect(refreshed[0]).toMatchObject({ priceGrid: false, settings: { length: 50 } });
+  });
   it('retains unknown definitions and future settings without activating or duplicating them', () => {
     const unknownScript = nativeInstance('script:future-language', { retained: true });
     expect(withStudyPins([unknownScript], [])).toEqual([unknownScript]);

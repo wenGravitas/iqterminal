@@ -79,6 +79,8 @@ export interface IndicatorDefinition {
 }
 export interface IndicatorInstance {
   instanceId: string; definitionId: string; settingsVersion: number; visible: boolean;
+  /** Missing in older layouts means enabled. Shared panes use one value grid. */
+  priceGrid?: boolean;
   source: { kind: string; [key: string]: unknown }; placement: Placement; settings: Record<string, unknown>;
   /** Stable composition identity; independent of the market-bound `source`. */
   paneId?: string;
@@ -221,6 +223,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (definition?.multiplicity === 'single' && singletons.has(definition.id)) continue;
     let copy: IndicatorInstance;
     try { const json = JSON.stringify(raw); if (json.length > 12000) continue; copy = JSON.parse(json); } catch { continue; }
+    if (typeof raw.priceGrid !== 'boolean') delete copy.priceGrid;
     copy.visible = raw.visible !== false; copy.source = raw.source && typeof raw.source === 'object' && typeof raw.source.kind === 'string' ? copy.source : { kind: 'chart' };
     copy.placement = definition?.placements.includes(raw.placement as Placement) ? raw.placement as Placement
       : definition?.placements[0] ?? (['overlay','pane','attachment','price-presentation'].includes(raw.placement) ? raw.placement : 'overlay');
@@ -252,7 +255,7 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];
-      if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source };
+      if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source, ...(typeof copy.priceGrid === 'boolean' ? { priceGrid: copy.priceGrid } : {}) };
     }
     ids.add(copy.instanceId); if (definition?.multiplicity === 'single') singletons.add(definition.id); result.push(copy);
   }
@@ -271,7 +274,7 @@ export function migrateIndicators(source: Record<string, unknown>, legacy: {
 /** Script host stays authoritative for successful applies, including editor operations. */
 export function withStudyPins(instances: readonly IndicatorInstance[], pins: StudyPin[]) {
   const native = instances.filter(i => !i.definitionId.startsWith('script:') || i.settingsVersion !== 1 || i.source.kind !== 'chart' || !studyPins([i]).length);
-  return validateInstances([...native, ...pins.map(scriptInstance)]);
+  return validateInstances([...native, ...pins.map(pin => { const instance = scriptInstance(pin), previous = instances.find(item => item.instanceId === instance.instanceId); return { ...instance, ...(typeof previous?.priceGrid === 'boolean' ? { priceGrid: previous.priceGrid } : {}) }; })]);
 }
 
 /** Runtime handles never enter saved configuration. Existing hosts own all calculations/resources. */

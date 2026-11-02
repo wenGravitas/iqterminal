@@ -580,6 +580,12 @@ select:disabled{cursor:default;color:var(--muted)}
 .cvd-legend .net-positioning-source{flex-shrink:0;max-width:180px;overflow:hidden;text-overflow:ellipsis}
 .cvd-legend [data-line=total]{font-weight:600}
 .cvd-status{position:absolute;left:6px;bottom:4px;right:70px;color:var(--muted);font-size:9px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cvd-end-labels{position:absolute;top:0;z-index:4;overflow:hidden;background:var(--chart);pointer-events:auto}
+.cvd-end-labels[hidden]{display:none}
+.cvd-end-label{right:1px;gap:3px!important}
+.cvd-end-label>span:first-child{display:flex;flex:none}
+.cvd-end-label-name{flex:0 1 auto}
+.cvd-end-label-value{flex:none}
 .cvd-hover-dot{position:absolute;z-index:7;top:0;left:0;width:9px;height:9px;box-sizing:border-box;border:1px solid var(--chart);outline:1px solid var(--cvd-hover-color,var(--text));outline-offset:1px;border-radius:50%;background:var(--cvd-hover-color,var(--text));pointer-events:none;transform:translate3d(var(--cvd-hover-x,-1000px),var(--cvd-hover-y,-1000px),0) translate(-50%,-50%);transition:transform 120ms cubic-bezier(.16,1,.3,1)}
 .cvd-hover-dot[hidden]{display:none!important}
 .cvd-tooltip{left:0;top:0;bottom:auto;width:min(280px,calc(100% - 8px));max-width:calc(100% - 8px);max-height:calc(100% - 8px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;transform:translate3d(var(--cvd-tooltip-x,-1000px),var(--cvd-tooltip-y,-1000px),0);transition:transform 120ms cubic-bezier(.16,1,.3,1)}
@@ -819,14 +825,21 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 .market-comparison-panel{height:100%;width:100%;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--chart);color:var(--text);font:10px ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;font-variant-numeric:tabular-nums}
 .market-comparison-toolbar{display:flex;align-items:center;gap:5px;min-height:31px;padding:3px 7px;background:var(--chrome);border-bottom:1px solid var(--border-soft);overflow:hidden}
 .market-comparison-toolbar button,.market-comparison-toolbar select{height:23px;flex:none;font-size:10px}
+.market-comparison-toolbar>button[aria-label="Choose comparison markets"]{flex:0 1 auto;min-width:25px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .market-comparison-toolbar select{border:1px solid var(--divider);background:var(--input)}
 .market-comparison-toolbar .market-comparison-follow[data-state=live]{color:var(--up)}
 .market-comparison-toolbar .market-comparison-follow[data-state=paused]{color:var(--muted)}
-.market-comparison-baseline{min-width:0;margin-left:auto;overflow:hidden;color:var(--muted);text-align:right;text-overflow:ellipsis;white-space:nowrap}
 .market-comparison-stage{position:relative;display:flex;flex:1;min-width:0;min-height:70px;overflow:hidden;margin:5px 4px 0;background:var(--chart)}
-.market-comparison-canvas-host{flex:1;width:0;height:100%;min-width:0;min-height:0;overflow:hidden}
-.market-comparison-labels{position:relative;flex:0 0 80px;width:80px;min-width:0;z-index:2;overflow:hidden;pointer-events:none;background:var(--chart)}
-.market-comparison-right-label{position:absolute;display:block;width:max-content;overflow:hidden;padding:1px 3px;background:var(--overlay);font-size:9px;line-height:11px;text-align:right;text-overflow:ellipsis;white-space:nowrap}
+.market-comparison-canvas-host{flex:1;width:100%;height:100%;min-width:0;min-height:0;overflow:hidden}
+.market-comparison-labels{position:absolute;top:0;bottom:0;width:90px;z-index:2;overflow:hidden;pointer-events:auto;background:var(--chart)}
+.market-comparison-right-label{position:absolute;display:flex;align-items:center;gap:2px;width:max-content;overflow:hidden;padding:1px 3px;background:var(--overlay);font-size:9px;line-height:11px;text-align:right;white-space:nowrap}
+.market-comparison-right-label svg{width:7px;height:9px;flex:none}
+.market-comparison-right-label>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.market-comparison-panel[data-compact=true] .market-comparison-toolbar{justify-content:flex-end;border-bottom:0;background:var(--chart)}
+.market-comparison-panel[data-compact=true] .market-comparison-toolbar>:not(.market-comparison-compact),.market-comparison-panel[data-compact=true] .market-comparison-legend,.market-comparison-panel[data-compact=true] .market-comparison-status,.market-comparison-panel[data-compact=true] .market-comparison-readout{display:none}
+.market-comparison-panel[data-compact=true] .market-comparison-canvas-host{position:absolute;inset:0 auto 0 0;width:var(--comparison-compact-chart-width,240px)!important;visibility:hidden;pointer-events:none}
+.market-comparison-panel[data-compact=true] .market-comparison-labels{left:0!important;right:0;width:100%!important}
+.market-comparison-panel[data-compact=true] .market-comparison-right-label svg{width:9px;height:11px}
 .market-comparison-message{position:absolute;z-index:3;left:50%;top:50%;max-width:calc(100% - 20px);transform:translate(-50%,-50%);padding:6px 8px;border:1px solid var(--divider);background:var(--overlay);color:var(--muted);text-align:center;pointer-events:none}
 .market-comparison-message[hidden],.market-comparison-retry[hidden]{display:none!important}
 .market-comparison-readout{position:absolute;z-index:3;left:7px;right:7px;bottom:2px;overflow:hidden;color:var(--muted);font-size:9px;line-height:12px;text-overflow:ellipsis;white-space:nowrap;pointer-events:none;background:var(--overlay)}

@@ -21,7 +21,7 @@ test('CVD output feeds a managed SMA, preserves reset/quality metadata, and move
     return current.outputRegistry.get(`output:${cvd.instanceId}:cvdTotalBtc`)?.available;
   },panelId)).toBe(true);
 
-  await panel.locator('[data-cvd=true]').getByRole('button',{name:'Select included CVD sources and aggregations'}).click();
+  await panel.locator('.cvd-controls').getByRole('button',{name:'Select included CVD sources and aggregations'}).click();
   const picker=panel.getByRole('dialog',{name:'Select markets'});
   await picker.getByLabel('Aggregation name',{exact:true}).fill('R2 aggregation consumer');
   await picker.getByRole('button',{name:'Save selection as aggregation'}).click();
@@ -92,7 +92,7 @@ test('CVD output feeds a managed SMA, preserves reset/quality metadata, and move
   expect(moved.subscriptions).toBe(initial.subscriptions);
   expect(moved.scales).toEqual(initial.scales);
 
-  const cvdPane=panel.locator('[data-cvd=true]');
+  const cvdPane=panel.locator('.cvd-controls');
   await cvdPane.getByRole('button',{name:'Aggregations',exact:true}).click();
   await cvdPane.getByRole('button',{name:'Hide line: R2 aggregation consumer',exact:true}).click();
   await cvdPane.getByRole('button',{name:'Venues',exact:true}).click();

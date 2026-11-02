@@ -6,13 +6,15 @@ async function expectReservedLabelGutter(panel: Locator) {
   const bounds = await panel.evaluate(element => {
     const gutter = element.querySelector('.market-comparison-labels')!.getBoundingClientRect();
     const host = element.querySelector('.market-comparison-canvas-host')!.getBoundingClientRect();
-    return { width: gutter.width, hostRight: host.right, gutterLeft: gutter.left, gutterRight: gutter.right,
-      canvasRight: [...element.querySelectorAll('.market-comparison-canvas-host canvas')].map(canvas => canvas.getBoundingClientRect().right),
+    const chart = [...(window as any).__terminal.marketComparisons.values()].find((item: any) => item.element === element).chartHost.chart;
+    const plot = chart.plotRect(0), priceAxis = chart.priceAxisLayout().find((slot: any) => slot.scaleId === 'right');
+    return { width: gutter.width, plotRight: host.left + plot.left + plot.width, gutterLeft: gutter.left, gutterRight: gutter.right,
+      axisLeft: priceAxis ? host.left + priceAxis.x : null,
       labels: [...element.querySelectorAll('.market-comparison-right-label')].map(label => ({ left: label.getBoundingClientRect().left, right: label.getBoundingClientRect().right })) };
   });
-  expect(bounds.width).toBe(80);
-  expect(bounds.hostRight).toBeLessThanOrEqual(bounds.gutterLeft);
-  for (const right of bounds.canvasRight) expect(right).toBeLessThanOrEqual(bounds.gutterLeft);
+  expect(bounds.width).toBe(90);
+  expect(bounds.plotRight).toBeLessThanOrEqual(bounds.gutterLeft);
+  if (bounds.axisLeft !== null) expect(bounds.gutterRight).toBeLessThanOrEqual(bounds.axisLeft);
   for (const label of bounds.labels) {
     expect(label.left).toBeGreaterThanOrEqual(bounds.gutterLeft);
     expect(label.right).toBeLessThanOrEqual(bounds.gutterRight);
@@ -58,6 +60,7 @@ test('explicit development comparison fixtures render without reaching the publi
   const transport = await routeHyperliquid(page);
   await page.goto('/?fixture=1');
   const panel = await addComparison(page);
+  await expect(panel.locator('.market-comparison-baseline')).toHaveCount(0);
   const latest = panel.locator('.market-comparison-follow');
   await expect(latest).toHaveText('');
   await expect(latest).toHaveAttribute('title', 'Following the newest shared candle · click to pause');
@@ -90,9 +93,10 @@ test('pan and zoom keep comparison data live without resetting the adjusted view
   const original = await range();
   const box = await panel.locator('.market-comparison-canvas-host').boundingBox();
   if (!box) throw new Error('Comparison chart is not laid out');
-  await page.mouse.move(box.x + box.width * .45, box.y + box.height * .5);
+  const plot = await panel.evaluate(element => [...(window as any).__terminal.marketComparisons.values()].find((item: any) => item.element === element).chartHost.chart.plotRect(0));
+  await page.mouse.move(box.x + plot.left + plot.width * .45, box.y + plot.top + plot.height * .5);
   await page.mouse.down();
-  await page.mouse.move(box.x + box.width * .65, box.y + box.height * .5, { steps: 8 });
+  await page.mouse.move(box.x + plot.left + plot.width * .65, box.y + plot.top + plot.height * .5, { steps: 8 });
   await page.mouse.up();
   await expect.poll(range).not.toEqual(original);
   await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
@@ -142,6 +146,62 @@ test('pan and zoom keep comparison data live without resetting the adjusted view
   await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
 });
 
+test('compact mode keeps live instrument labels with direction icons and restores the chart', async ({ page }) => {
+  await routeHyperliquid(page);
+  await page.goto('/?fixture=1');
+  const panel = await addComparison(page);
+  const expandedWidth = await panel.evaluate(element => element.getBoundingClientRect().width);
+  await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);
+  const baseline = await page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].diagnostics().baselineTime);
+  await panel.getByRole('button', { name: 'Compact mode', exact: true }).click();
+  await expect(panel).toHaveAttribute('data-compact', 'true');
+  await expect.poll(() => panel.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(116);
+  await expect(panel.locator('.market-comparison-canvas-host')).toBeHidden();
+  await expect(panel.locator('.market-comparison-legend')).toBeHidden();
+  await expect(panel.locator('.market-comparison-status')).toBeHidden();
+  await expect(panel.locator('.market-comparison-toolbar button:visible')).toHaveCount(1);
+  expect(await page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].diagnostics().baselineTime)).toBe(baseline);
+  await page.evaluate(() => {
+    const instance = [...(window as any).__terminal.marketComparisons.values()][0];
+    for (const [symbol, percent] of [['BTC', 1], ['xyz:XYZ100', -1], ['xyz:SP500', 0]] as const) {
+      const source = instance.sources.get(symbol), previous = source.candles.at(-1);
+      const instrument = instance.config.instruments.find((item: any) => item.identity.symbol === symbol);
+      const close = instance.baselineClose(symbol) * (1 + percent / 100);
+      instance.onFeedEvent({ type: 'comparison-patch', ids: ['compact-direction-check'], identity: instrument.identity,
+        candles: [{ ...previous, c: close, h: Math.max(previous.h, close), l: Math.min(previous.l, close), revision: previous.revision + 1 }], status: source.status });
+    }
+  });
+  for (const [symbol, direction, value] of [['BTC', 'up', '+1.00%'], ['xyz:XYZ100', 'down', '-1.00%'], ['xyz:SP500', 'equal', '+0.00%']]) {
+    const label = panel.locator(`.market-comparison-right-label[data-symbol="${symbol}"]`);
+    await expect(label).toHaveAttribute('data-direction', direction);
+    await expect(label).toContainText(value);
+    await expect(label.locator('svg')).toHaveCount(1);
+  }
+  await expect.poll(() => workerComparisonStats(page)).toMatchObject({ subscriptions: 1, activeIdentities: 5, socket: 'connected' });
+  await expect.poll(() => panel.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(116);
+  await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);
+  await page.screenshot({ path: 'artifacts/market-comparison-compact.png' });
+  await expect.poll(() => page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem('basis.layout.v1') ?? '{}');
+    return Object.values(saved.layout?.panels ?? {}).some((item: any) => item.contentComponent === 'market-comparison' && item.params.compact === true);
+  })).toBe(true);
+  await page.reload();
+  const restored = page.locator('.market-comparison-panel');
+  await expect(restored).toHaveAttribute('data-compact', 'true');
+  await expect.poll(() => restored.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(116);
+  await expect(restored.locator('.market-comparison-right-label')).toHaveCount(5);
+  await restored.getByRole('button', { name: 'Show comparison chart', exact: true }).click();
+  await expect(restored).toHaveAttribute('data-compact', 'false');
+  // Serialized dock borders can shift the content box by a couple of pixels.
+  await expect.poll(async () => Math.abs((await restored.evaluate(element => element.getBoundingClientRect().width)) - expandedWidth)).toBeLessThanOrEqual(3);
+  await expect(restored.locator('.market-comparison-canvas-host')).toBeVisible();
+  await expect(restored.locator('.market-comparison-legend')).toBeVisible();
+  await expect.poll(() => restored.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(236);
+  await expect.poll(() => restored.locator('.market-comparison-labels').evaluate(element => element.getBoundingClientRect().width)).toBe(90);
+  await expectReservedLabelGutter(restored);
+  await expect(restored.locator('.market-comparison-right-label svg')).toHaveCount(5);
+});
+
 test('comparison controls rebase the full selected window and persist colors, visibility, theme, and timezone', async ({ page }) => {
   test.setTimeout(60_000);
   const transport = await routeHyperliquid(page);
@@ -167,7 +227,7 @@ test('comparison controls rebase the full selected window and persist colors, vi
   console.log(`Compact 24h comparison viewport: ${JSON.stringify(fullDayView)}`);
   expect(fullDayView.panelWidth).toBeGreaterThanOrEqual(235);
   expect(fullDayView.panelWidth).toBeLessThanOrEqual(245);
-  expect(fullDayView.plotWidth).toBeGreaterThanOrEqual(144);
+  expect(fullDayView.plotWidth).toBeGreaterThanOrEqual(136);
   expect(fullDayView.visibleDataBars, `24h/1m view was clamped at compact width: ${JSON.stringify(fullDayView)}`).toBeGreaterThanOrEqual(1_440);
   await expectReservedLabelGutter(panel);
 
@@ -211,7 +271,8 @@ test('comparison controls rebase the full selected window and persist colors, vi
   await expect.poll(() => page.locator('html').getAttribute('data-theme')).toBe('light');
   await page.locator('#market-pulse-trigger').click();
   await page.locator('[data-timezone="UTC"]').click();
-  await expect(panel.locator('.market-comparison-baseline')).toContainText('UTC');
+  await expect(panel.locator('.market-comparison-baseline')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].displayZone)).toBe('UTC');
 
   await page.reload();
   const restored = page.locator('.market-comparison-panel');
@@ -258,9 +319,9 @@ test('matching comparison panels share one upstream set, pause hidden chart draw
   await page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).params.api.setActive(), hiddenId);
   await expect.poll(() => page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).diagnostics().visible, hiddenId)).toBe(true);
   await page.waitForTimeout(120);
-  const drawCount = await page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).diagnostics().drawStats, hiddenId);
   await page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).params.api.setActive(), visibleId);
   await expect.poll(() => page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).diagnostics().visible, hiddenId)).toBe(false);
+  const drawCount = await page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).diagnostics().drawStats, hiddenId);
   await page.waitForTimeout(250);
   expect(await page.evaluate(id => (window as any).__terminal.marketComparisons.get(id).diagnostics().drawStats, hiddenId)).toBe(drawCount);
 
@@ -331,4 +392,28 @@ test('keeps native crosshair prices and a stable timestamp baseline, then promot
   await dialog.getByRole('button', { name: 'Cancel' }).click();
   expect(transport.apiRequests).toEqual([]);
   expect(transport.websocketConnections).toBe(0);
+});
+
+
+test('price lines default on, toggle every market and persist without resubscribing', async ({ page }) => {
+  await routeHyperliquid(page);
+  await page.goto('/?fixture=1');
+  let panel = await addComparison(page);
+  const styles = () => panel.evaluate(element => {
+    const widget = [...(window as any).__terminal.marketComparisons.values()].find((item: any) => item.element === element);
+    return widget.chartHost.chart.panes()[0].series().map((item: any) => ({ line: item.style.priceLineVisible, label: item.style.lastValueVisible }));
+  });
+  await expect(panel.getByRole('button', { name: 'Hide price lines', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(styles).toEqual(Array.from({ length: 5 }, () => ({ line: true, label: false })));
+  const before = await workerComparisonStats(page);
+  await panel.getByRole('button', { name: 'Hide price lines', exact: true }).click();
+  await expect.poll(styles).toEqual(Array.from({ length: 5 }, () => ({ line: false, label: false })));
+  expect(await workerComparisonStats(page)).toMatchObject({ subscriptions: before.subscriptions, activeIdentities: before.activeIdentities });
+  await page.reload();
+  panel = page.locator('.market-comparison-panel');
+  await expect(panel.locator('.market-comparison-status')).toContainText('5/5 connected');
+  await expect(panel.getByRole('button', { name: 'Show price lines', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(styles).toEqual(Array.from({ length: 5 }, () => ({ line: false, label: false })));
+  await panel.getByRole('button', { name: 'Show price lines', exact: true }).click();
+  await expect.poll(styles).toEqual(Array.from({ length: 5 }, () => ({ line: true, label: false })));
 });

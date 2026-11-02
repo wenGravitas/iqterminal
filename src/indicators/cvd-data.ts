@@ -29,14 +29,12 @@ export class CvdDataController {
   private subscriptionStarts = 0;
   private subscriptionStops = 0;
   private dead = false;
-  private readonly visibilityListener = () => this.syncSubscription();
 
   constructor(private readonly chartId: string, private readonly instanceId: string, private readonly feed: FeedClient,
     private readonly registry: ChartNumericOutputRegistry, settings: unknown, series: Series, private readonly now = Date.now) {
     this.settings = cvdSettings(settings);
     this.series = series;
     this.contextId = numericOutputContextId(series);
-    document.addEventListener('visibilitychange', this.visibilityListener);
     this.configure(settings, series);
     this.publishOutputs(true);
   }
@@ -99,10 +97,10 @@ export class CvdDataController {
     this.syncSubscription();
   }
 
+  /** Visibility gates painting in CvdView/Scheduler, never the bounded data stream. */
   setHostVisible(visible: boolean) {
     if (this.dead || this.hostVisible === visible) return;
     this.hostVisible = visible;
-    this.syncSubscription();
   }
 
   subscribe(listener: (event: CvdEvent) => void) {
@@ -147,7 +145,6 @@ export class CvdDataController {
   dispose() {
     if (this.dead) return;
     this.dead = true;
-    document.removeEventListener('visibilitychange', this.visibilityListener);
     this.release?.(); this.release = undefined; this.listeners.clear();
     this.registry.releaseOwner(this.instanceId, 'Multi-Venue CVD was removed.');
     this.model.clear();
@@ -155,7 +152,7 @@ export class CvdDataController {
 
   private syncSubscription() {
     const supported = instrumentOf(this.series).base === 'BTC';
-    const key = this.dataDemand && this.hostVisible && !document.hidden && supported && this.settings.sources.length
+    const key = this.dataDemand && supported && this.settings.sources.length
       ? requestKey(this.settings) : '';
     if (key === this.requestKey) return;
     if(this.release)this.subscriptionStops++;

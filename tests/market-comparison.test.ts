@@ -6,7 +6,7 @@ import {
 } from '../src/feed/comparison';
 import { ComparisonService, fetchComparisonHistory, parseComparisonLive, type ComparisonTransport } from '../src/feed/comparison-service';
 import type { Candle } from '../src/feed/protocol';
-import { defaultMarketComparisonConfig, marketComparisonConfig, validMarketComparisonConfig } from '../src/market-comparison/model';
+import { comparisonDirection, defaultMarketComparisonConfig, marketComparisonConfig, validMarketComparisonConfig } from '../src/market-comparison/model';
 import { PANEL_BUDGET, restoreValue } from '../src/layout';
 
 const now = Date.UTC(2026, 9, 29, 12, 0);
@@ -64,6 +64,23 @@ async function settle() {
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe('Hyperliquid Market Comparison contract', () => {
+  it('defaults price lines on and preserves explicit choices', () => {
+    const { showPriceLines: _lines, ...legacy } = defaultMarketComparisonConfig();
+    expect(marketComparisonConfig(legacy).showPriceLines).toBe(true);
+    expect(marketComparisonConfig({ ...legacy, showPriceLines: false }).showPriceLines).toBe(false);
+    expect(validMarketComparisonConfig({ ...legacy, showPriceLines: 'yes' })).toBe(false);
+  });
+  it('preserves legacy settings with compact mode off and saves explicit compact choices', () => {
+    const { compact: _compact, ...legacy } = defaultMarketComparisonConfig();
+    expect(marketComparisonConfig(legacy)).toEqual(defaultMarketComparisonConfig());
+    expect(marketComparisonConfig({ ...legacy, compact: true }).compact).toBe(true);
+    expect(marketComparisonConfig({ ...legacy, compact: true, expandedWidth: 480 }).expandedWidth).toBe(480);
+    expect(validMarketComparisonConfig({ ...legacy, expandedWidth: -1 })).toBe(false);
+    expect(validMarketComparisonConfig({ ...legacy, compact: 'yes' })).toBe(false);
+    expect(comparisonDirection(1)).toBe('up');
+    expect(comparisonDirection(-1)).toBe('down');
+    for (const zero of [0, -0, .004, -.004]) expect(comparisonDirection(zero)).toBe('equal');
+  });
   it('keeps the bounded catalogue and exact perpetual identity; rejects mismatched candle rows', () => {
     expect(comparisonMarkets.map(market => market.id)).toEqual(['BTC', 'xyz:XYZ100', 'xyz:SP500', 'xyz:GOLD', 'xyz:CL', 'xyz:SILVER']);
     const identity = comparisonIdentity('xyz:GOLD', '5m');

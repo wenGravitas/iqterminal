@@ -265,6 +265,7 @@ export class OpenInterestView implements Drawable {
     }
     this.chart.invalidate(mask => mask.invalidatePane(this.paneIndex(), { level: InvalidationLevel.Full, autoScale: true }));
   }
+  valueScale() { return this.anchor.priceScale(); }
   diagnostics() { return { paneIndex: this.paneIndex(), quality: this.data.viewFrame().quality, lines: [...this.data.viewFrame().lines].map(([id, line]) => ({ id, latest: line.points.at(-1) })), draws: this.primitive.draws, segments: this.primitive.segments }; }
   dispose() {
     if (this.dead) return; this.tooltipDwell.dispose(); this.paneHoverAbort?.abort(); this.dead = true; this.releaseDataListener?.(); this.abort.abort(); this.listeners.forEach(release => release()); this.scheduler.remove(this);

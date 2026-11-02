@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyObjectTreeFolderVisibility, clearObjectTreeDrawingName, createEmptyObjectTree, createMemoryObjectTreeStorage, createObjectTreeFolder, deleteObjectTreeFolder,
   findObjectTreeEntry, IQObjectTreeRepository, locateObjectTreeEntry, moveObjectTreeEntry, objectTreeFolderDepth,
-  objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderVisibilityState, objectTreeStorageKey, parseIQObjectTreeCatalog, reconcileObjectTree,
+  objectTreeIndicatorIds, objectTreeFolderIndicatorIds, objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderVisibilityState, objectTreeStorageKey, parseIQObjectTreeCatalog, reconcileObjectTree,
   renameObjectTreeDrawing, renameObjectTreeFolder, reorderObjectTreeEntry, type IQObjectTreeCatalog, type IQObjectTreeStorage, type ObjectTreeEntry,
   setObjectTreeFolderSidebar,
 } from '../src/chart/object-tree';
@@ -198,5 +198,32 @@ describe('per-chart object tree catalog', () => {
     const saved = repo.save(createObjectTreeFolder(repo.load(), null, 'folder-a', 'Session only')!);
     expect(repo.error()?.message).toBe('quota denied');
     expect(repo.load()).toEqual(saved);
+  });
+});
+
+
+describe('mixed drawing and indicator folders', () => {
+  it('preserves legacy folders while reconciling stable indicator identities and pruning only removed instances', () => {
+    const legacy: IQObjectTreeCatalog = { version: 1, revision: 4, entries: [{ type: 'folder', id: 'f', name: 'Plan', children: [{ type: 'drawing', drawingId: 'd', name: 'Level' }] }] };
+    let mixed = reconcileObjectTree(parseIQObjectTreeCatalog(JSON.stringify(legacy)), ['d'], ['cvd', 'sma-1', 'sma-2']).catalog;
+    mixed = moveObjectTreeEntry(mixed, 'indicator', 'cvd', 'f', 1)!;
+    mixed = moveObjectTreeEntry(mixed, 'indicator', 'sma-1', 'f', 2)!;
+    expect(objectTreeFolderIndicatorIds(mixed.entries, 'f')).toEqual(['cvd', 'sma-1']);
+    expect(objectTreeFolderDrawingIds(mixed.entries, 'f')).toEqual(['d']);
+    const restored = parseIQObjectTreeCatalog(JSON.stringify(mixed));
+    expect(restored).toEqual(mixed);
+    expect(reconcileObjectTree(restored, ['d'], ['cvd', 'sma-1', 'sma-2']).changed).toBe(false);
+    const pruned = reconcileObjectTree(restored, ['d'], ['cvd', 'sma-2']).catalog;
+    expect(objectTreeFolderIndicatorIds(pruned.entries, 'f')).toEqual(['cvd']);
+    expect(objectTreeIndicatorIds(pruned.entries)).toEqual(['cvd', 'sma-2']);
+    expect(findObjectTreeEntry(pruned.entries, 'drawing', 'd')).toMatchObject({ name: 'Level' });
+    expect(objectTreeIndicatorIds(deleteObjectTreeFolder(pruned, 'f')!.entries)).toEqual(['cvd', 'sma-2']);
+  });
+  it('rejects duplicate indicator references and keeps typed identities distinct during reordering', () => {
+    const mixed = parseIQObjectTreeCatalog({ version: 1, revision: 0, entries: [{ type: 'drawing', drawingId: 'same' }, { type: 'indicator', indicatorId: 'same' }] });
+    expect(locateObjectTreeEntry(mixed.entries, 'indicator', 'same')?.index).toBe(1);
+    expect(reorderObjectTreeEntry(mixed, 'indicator', 'same', -1)?.entries[0]).toMatchObject({ type: 'indicator', indicatorId: 'same' });
+    expect(() => parseIQObjectTreeCatalog({ ...mixed, entries: [...mixed.entries, { type: 'indicator', indicatorId: 'same' }] })).toThrow(/indicator appears more than once/);
+    expect(renameObjectTreeDrawing(mixed, 'same', 'Renamed')?.entries[1]).toEqual({ type: 'indicator', indicatorId: 'same' });
   });
 });

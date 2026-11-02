@@ -27,6 +27,9 @@ export interface MarketComparisonConfig {
   window: ComparisonWindow;
   presentation: typeof MARKET_COMPARISON_PRESENTATION;
   follow: 'live' | 'paused';
+  compact: boolean;
+  showPriceLines: boolean;
+  expandedWidth?: number;
   instruments: MarketComparisonInstrumentConfig[];
 }
 
@@ -49,6 +52,8 @@ export function defaultMarketComparisonConfig(): MarketComparisonConfig {
     window: '4h',
     presentation: MARKET_COMPARISON_PRESENTATION,
     follow: 'live',
+    compact: false,
+    showPriceLines: true,
     instruments: DEFAULT_MARKETS.map(symbol => ({
       identity: comparisonIdentity(symbol, interval),
       color: MARKET_COMPARISON_COLORS[symbol],
@@ -62,13 +67,17 @@ export function marketComparisonConfig(value: unknown): MarketComparisonConfig {
   if (!validMarketComparisonConfig(value)) return fallback;
   const candidate = value as MarketComparisonConfig;
   return { version: MARKET_COMPARISON_CONFIG_VERSION, interval: candidate.interval, window: candidate.window,
-    presentation: MARKET_COMPARISON_PRESENTATION, follow: candidate.follow,
+    presentation: MARKET_COMPARISON_PRESENTATION, follow: candidate.follow, compact: candidate.compact ?? false, showPriceLines: candidate.showPriceLines ?? true,
+    ...(candidate.expandedWidth === undefined ? {} : { expandedWidth: candidate.expandedWidth }),
     instruments: candidate.instruments.map(item => ({ identity: { ...item.identity }, color: item.color.toLowerCase(), visible: item.visible })) };
 }
 
 export function validMarketComparisonConfig(value: unknown): value is MarketComparisonConfig {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Partial<MarketComparisonConfig>;
+  if (candidate.showPriceLines !== undefined && typeof candidate.showPriceLines !== 'boolean') return false;
+  if (candidate.compact !== undefined && typeof candidate.compact !== 'boolean') return false;
+  if (candidate.expandedWidth !== undefined && (!Number.isFinite(candidate.expandedWidth) || candidate.expandedWidth < 240 || candidate.expandedWidth > 32768)) return false;
   if (candidate.version !== MARKET_COMPARISON_CONFIG_VERSION || !validComparisonInterval(candidate.interval)
     || !validComparisonWindow(candidate.window) || candidate.presentation !== MARKET_COMPARISON_PRESENTATION
     || (candidate.follow !== 'live' && candidate.follow !== 'paused') || !Array.isArray(candidate.instruments)
@@ -119,6 +128,11 @@ export function setMarketComparisonColor(config: MarketComparisonConfig, symbol:
 
 export function comparisonLabels(config: MarketComparisonConfig) {
   return config.instruments.map(item => ({ ...comparisonMarket(item.identity.symbol)!, ...item }));
+}
+
+export function comparisonDirection(percent: number): 'up' | 'equal' | 'down' {
+  const displayed = Number(percent.toFixed(2));
+  return displayed > 0 ? 'up' : displayed < 0 ? 'down' : 'equal';
 }
 
 export type { ComparisonInterval, ComparisonWindow };

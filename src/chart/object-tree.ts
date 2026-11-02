@@ -15,6 +15,13 @@ export interface ObjectTreeDrawingEntry {
   name?: string;
 }
 
+export interface ObjectTreeIndicatorEntry {
+  type: 'indicator';
+  indicatorId: string;
+}
+
+export type ObjectTreeEntryKind = 'folder' | 'drawing' | 'indicator';
+
 export interface ObjectTreeFolderEntry {
   type: 'folder';
   id: string;
@@ -24,7 +31,7 @@ export interface ObjectTreeFolderEntry {
   sidebarIcon?: string;
 }
 
-export type ObjectTreeEntry = ObjectTreeDrawingEntry | ObjectTreeFolderEntry;
+export type ObjectTreeEntry = ObjectTreeDrawingEntry | ObjectTreeIndicatorEntry | ObjectTreeFolderEntry;
 
 export interface IQObjectTreeCatalog {
   version: typeof IQ_OBJECT_TREE_VERSION;
@@ -86,6 +93,7 @@ export function parseIQObjectTreeCatalog(input: unknown): IQObjectTreeCatalog {
 
   const folderIds = new Set<string>();
   const drawingIds = new Set<string>();
+  const indicatorIds = new Set<string>();
   let count = 0;
   const parseEntries = (entries: unknown[], depth: number): ObjectTreeEntry[] => entries.map(value => {
     count++;
@@ -96,6 +104,12 @@ export function parseIQObjectTreeCatalog(input: unknown): IQObjectTreeCatalog {
       if (drawingIds.has(drawingId)) throw new IQObjectTreeError('A drawing appears more than once in the object tree');
       drawingIds.add(drawingId);
       return { type: 'drawing', drawingId, ...(entry.name === undefined ? {} : { name: folderName(entry.name) }) };
+    }
+    if (entry.type === 'indicator') {
+      const indicatorId = safeId(entry.indicatorId, 'Indicator id');
+      if (indicatorIds.has(indicatorId)) throw new IQObjectTreeError('An indicator appears more than once in the object tree');
+      indicatorIds.add(indicatorId);
+      return { type: 'indicator', indicatorId };
     }
     if (entry.type !== 'folder') throw new IQObjectTreeError('Object tree entry type is unsupported');
     if (depth >= OBJECT_TREE_MAX_DEPTH) throw new IQObjectTreeError(`Object tree folders cannot be nested deeper than ${OBJECT_TREE_MAX_DEPTH} levels`);
@@ -194,8 +208,9 @@ export class IQObjectTreeRepository {
   error(): Error | undefined { return this.writeError; }
 }
 
-export function reconcileObjectTree(catalog: IQObjectTreeCatalog, liveDrawingIds: readonly string[]): { catalog: IQObjectTreeCatalog; changed: boolean } {
+export function reconcileObjectTree(catalog: IQObjectTreeCatalog, liveDrawingIds: readonly string[], liveIndicatorIds: readonly string[] = []): { catalog: IQObjectTreeCatalog; changed: boolean } {
   const live = new Set(liveDrawingIds);
+  const liveIndicators = new Set(liveIndicatorIds), foundIndicators = new Set<string>();
   const found = new Set<string>();
   let changed = false;
   const prune = (entries: readonly ObjectTreeEntry[]): ObjectTreeEntry[] => {
@@ -205,6 +220,9 @@ export function reconcileObjectTree(catalog: IQObjectTreeCatalog, liveDrawingIds
         if (!live.has(entry.drawingId)) { changed = true; continue; }
         found.add(entry.drawingId);
         result.push(entry);
+      } else if (entry.type === 'indicator') {
+        if (!liveIndicators.has(entry.indicatorId)) { changed = true; continue; }
+        foundIndicators.add(entry.indicatorId); result.push(entry);
       } else {
         const children = prune(entry.children);
         if (children.length !== entry.children.length) changed = true;
@@ -219,13 +237,15 @@ export function reconcileObjectTree(catalog: IQObjectTreeCatalog, liveDrawingIds
     entries.push({ type: 'drawing', drawingId });
     changed = true;
   }
+  for (const indicatorId of liveIndicatorIds) if (!foundIndicators.has(indicatorId)) { entries.push({ type: 'indicator', indicatorId }); changed = true; }
   return { catalog: changed ? { ...catalog, entries } : catalog, changed };
 }
 
-export function findObjectTreeEntry(entries: readonly ObjectTreeEntry[], kind: 'folder' | 'drawing', id: string): ObjectTreeEntry | undefined {
+export function findObjectTreeEntry(entries: readonly ObjectTreeEntry[], kind: ObjectTreeEntryKind, id: string): ObjectTreeEntry | undefined {
   for (const entry of entries) {
     if (kind === 'folder' && entry.type === 'folder' && entry.id === id) return entry;
     if (kind === 'drawing' && entry.type === 'drawing' && entry.drawingId === id) return entry;
+    if (kind === 'indicator' && entry.type === 'indicator' && entry.indicatorId === id) return entry;
     if (entry.type === 'folder') {
       const found = findObjectTreeEntry(entry.children, kind, id);
       if (found) return found;
@@ -249,7 +269,7 @@ export function objectTreeDrawingIds(entries: readonly ObjectTreeEntry[]): strin
   const ids: string[] = [];
   for (const entry of entries) {
     if (entry.type === 'drawing') ids.push(entry.drawingId);
-    else ids.push(...objectTreeDrawingIds(entry.children));
+    else if (entry.type === 'folder') ids.push(...objectTreeDrawingIds(entry.children));
   }
   return ids;
 }
@@ -257,6 +277,15 @@ export function objectTreeDrawingIds(entries: readonly ObjectTreeEntry[]): strin
 export function objectTreeFolderDrawingIds(entries: readonly ObjectTreeEntry[], folderId: string): string[] {
   const folder = findObjectTreeEntry(entries, 'folder', folderId);
   return folder?.type === 'folder' ? objectTreeDrawingIds(folder.children) : [];
+}
+
+export function objectTreeIndicatorIds(entries: readonly ObjectTreeEntry[]): string[] {
+  return entries.flatMap(entry => entry.type === 'indicator' ? [entry.indicatorId] : entry.type === 'folder' ? objectTreeIndicatorIds(entry.children) : []);
+}
+
+export function objectTreeFolderIndicatorIds(entries: readonly ObjectTreeEntry[], folderId: string): string[] {
+  const folder = findObjectTreeEntry(entries, 'folder', folderId);
+  return folder?.type === 'folder' ? objectTreeIndicatorIds(folder.children) : [];
 }
 
 export function objectTreeFolderVisibilityState(
@@ -298,11 +327,11 @@ function containerAt(entries: ObjectTreeEntry[], parentId: string | null): Objec
   return parent?.type === 'folder' ? parent.children : undefined;
 }
 
-function locate(entries: ObjectTreeEntry[], kind: 'folder' | 'drawing', id: string): { parentId: string | null; index: number; entry: ObjectTreeEntry } | undefined {
+function locate(entries: ObjectTreeEntry[], kind: ObjectTreeEntryKind, id: string): { parentId: string | null; index: number; entry: ObjectTreeEntry } | undefined {
   const walk = (siblings: ObjectTreeEntry[], parentId: string | null): ReturnType<typeof locate> => {
     for (let index = 0; index < siblings.length; index++) {
       const entry = siblings[index]!;
-      if ((kind === 'folder' && entry.type === 'folder' && entry.id === id) || (kind === 'drawing' && entry.type === 'drawing' && entry.drawingId === id)) {
+      if ((kind === 'folder' && entry.type === 'folder' && entry.id === id) || (kind === 'drawing' && entry.type === 'drawing' && entry.drawingId === id) || (kind === 'indicator' && entry.type === 'indicator' && entry.indicatorId === id)) {
         return { parentId, index, entry };
       }
       if (entry.type === 'folder') {
@@ -314,7 +343,7 @@ function locate(entries: ObjectTreeEntry[], kind: 'folder' | 'drawing', id: stri
   return walk(entries, null);
 }
 
-export function locateObjectTreeEntry(entries: ObjectTreeEntry[], kind: 'folder' | 'drawing', id: string): { parentId: string | null; index: number; entry: ObjectTreeEntry } | undefined {
+export function locateObjectTreeEntry(entries: ObjectTreeEntry[], kind: ObjectTreeEntryKind, id: string): { parentId: string | null; index: number; entry: ObjectTreeEntry } | undefined {
   return locate(entries, kind, id);
 }
 
@@ -353,7 +382,7 @@ export function renameObjectTreeFolder(catalog: IQObjectTreeCatalog, id: string,
   const rename = (entries: readonly ObjectTreeEntry[]): ObjectTreeEntry[] => entries.map(entry => {
     if (entry.type !== 'folder') return entry;
     if (entry.id === id) { changed = true; return { ...entry, name: validatedName }; }
-    return { ...entry, children: rename(entry.children) };
+    return entry.type === 'folder' ? { ...entry, children: rename(entry.children) } : entry;
   });
   const entries = rename(catalog.entries);
   return changed ? { ...catalog, entries } : null;
@@ -383,7 +412,7 @@ export function renameObjectTreeDrawing(catalog: IQObjectTreeCatalog, id: string
       changed = true;
       return { ...entry, name: validatedName };
     }
-    return { ...entry, children: rename(entry.children) };
+    return entry.type === 'folder' ? { ...entry, children: rename(entry.children) } : entry;
   });
   const entries = rename(catalog.entries);
   return changed ? { ...catalog, entries } : null;
@@ -398,7 +427,7 @@ export function clearObjectTreeDrawingName(catalog: IQObjectTreeCatalog, id: str
       changed = true;
       return rest;
     }
-    return { ...entry, children: clear(entry.children) };
+    return entry.type === 'folder' ? { ...entry, children: clear(entry.children) } : entry;
   });
   const entries = clear(catalog.entries);
   return changed ? { ...catalog, entries } : null;
@@ -430,7 +459,7 @@ function insertInto(entries: ObjectTreeEntry[], parentId: string | null, index: 
 
 export function moveObjectTreeEntry(
   catalog: IQObjectTreeCatalog,
-  kind: 'folder' | 'drawing',
+  kind: ObjectTreeEntryKind,
   id: string,
   parentId: string | null,
   index: number,
@@ -449,7 +478,7 @@ export function moveObjectTreeEntry(
   const remove = (entries: readonly ObjectTreeEntry[]): ObjectTreeEntry[] => {
     const result: ObjectTreeEntry[] = [];
     for (const entry of entries) {
-      if ((kind === 'folder' && entry.type === 'folder' && entry.id === id) || (kind === 'drawing' && entry.type === 'drawing' && entry.drawingId === id)) continue;
+      if ((kind === 'folder' && entry.type === 'folder' && entry.id === id) || (kind === 'drawing' && entry.type === 'drawing' && entry.drawingId === id) || (kind === 'indicator' && entry.type === 'indicator' && entry.indicatorId === id)) continue;
       result.push(entry.type === 'folder' ? { ...entry, children: remove(entry.children) } : entry);
     }
     return result;
@@ -463,7 +492,7 @@ export function moveObjectTreeEntry(
   return { ...catalog, entries: insertInto(without, parentId, boundedIndex, source.entry) };
 }
 
-export function reorderObjectTreeEntry(catalog: IQObjectTreeCatalog, kind: 'folder' | 'drawing', id: string, direction: -1 | 1): IQObjectTreeCatalog | null {
+export function reorderObjectTreeEntry(catalog: IQObjectTreeCatalog, kind: ObjectTreeEntryKind, id: string, direction: -1 | 1): IQObjectTreeCatalog | null {
   const source = locate(catalog.entries, kind, id);
   if (!source) return null;
   return moveObjectTreeEntry(catalog, kind, id, source.parentId, source.index + direction + (direction > 0 ? 1 : 0));

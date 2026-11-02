@@ -101,16 +101,15 @@ test('direct Hyperliquid comparison history and stream render, configure, and re
   const beforePan = await page.evaluate(() => {
     const instance = [...(window as any).__terminal.marketComparisons.values()][0];
     const chart = instance.chartHost.chart, range = chart.getVisibleLogicalRange();
-    return { baseline: instance.diagnostics().baselineTime, baselineLabel: document.querySelector('.market-comparison-baseline')?.textContent, range: { from: range.from, to: range.to } };
+    return { baseline: instance.diagnostics().baselineTime, range: { from: range.from, to: range.to } };
   });
   await page.evaluate(() => {
     const instance = [...(window as any).__terminal.marketComparisons.values()][0], chart = instance.chartHost.chart;
     const range = chart.getVisibleLogicalRange(); chart.setVisibleLogicalRange({ from: range.from - 12, to: range.to - 12 });
   });
-  const afterPan = await page.evaluate(() => ({ baseline: [...(window as any).__terminal.marketComparisons.values()][0].diagnostics().baselineTime,
-    baselineLabel: document.querySelector('.market-comparison-baseline')?.textContent }));
+  const afterPan = await page.evaluate(() => ({ baseline: [...(window as any).__terminal.marketComparisons.values()][0].diagnostics().baselineTime }));
   expect(afterPan.baseline).toBeLessThan(beforePan.baseline);
-  expect(afterPan.baselineLabel).not.toBe(beforePan.baselineLabel);
+  await expect(panel.locator('.market-comparison-baseline')).toHaveCount(0);
   await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].config.follow)).toBe('live');
   await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);

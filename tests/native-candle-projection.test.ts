@@ -73,6 +73,31 @@ describe('native candle-aligned output projection', () => {
     cvd.dispose(); oi.dispose();
   });
 
+  it('retains CVD collection and history across host/browser visibility changes, but releases actual demand', () => {
+    const doc = { hidden: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }; vi.stubGlobal('document', doc);
+    const release = vi.fn(); let receive: (event: any) => void = () => {};
+    const feed = { subscribeCvd: vi.fn((_id, _request, listener) => { receive = listener; return release; }) } as any;
+    const registry = new ChartNumericOutputRegistry('chart');
+    const cvd = new CvdDataController('chart', 'cvd', feed, registry, {}, series, () => base + 60_000);
+    cvd.setDataDemand(true); cvd.setHostCandles(candles());
+    const point = { time: base + 60_000, period: Math.floor(base / 86_400_000) * 86_400_000, base: 12, quote: 100, observed: true, available: true, partial: false, reset: true };
+    const event = (value: number) => ({ type: 'cvd-batch', ids: ['test'], generation: 1, batchId: 1, series: [{ source: 'binance:spot', points: [{ ...point, base: value }], snapshot: true, removeBefore: base,
+      coverage: { from: base, to: base + 120_000, gaps: [] }, status: 'live', asOf: base + 120_000 }] });
+    receive(event(12));
+    cvd.setHostVisible(false); doc.hidden = true;
+    expect(cvd.model.sources.size).toBe(1); expect(release).not.toHaveBeenCalled();
+    receive(event(24));
+    expect(cvd.model.sources.get('binance:spot')?.points[0]?.base).toBe(24);
+    cvd.setHostVisible(true); doc.hidden = false;
+    expect(feed.subscribeCvd).toHaveBeenCalledTimes(1);
+    expect(cvd.demandDiagnostics()).toMatchObject({ subscriptionStarts: 1, subscriptionStops: 0, subscribed: true });
+    const oldReceive = receive; cvd.setDataDemand(false);
+    expect(release).toHaveBeenCalledTimes(1); expect(cvd.model.sources.size).toBe(0);
+    oldReceive(event(99)); expect(cvd.model.sources.size).toBe(0);
+    cvd.setDataDemand(true); expect(feed.subscribeCvd).toHaveBeenCalledTimes(2);
+    cvd.dispose(); expect(release).toHaveBeenCalledTimes(2);
+  });
+
   it('does not reproject or invalidate CVD for repeated failure/as-of-only polls', () => {
     vi.stubGlobal('document', { hidden: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
     const registry = new ChartNumericOutputRegistry('chart'), feed = {} as any;

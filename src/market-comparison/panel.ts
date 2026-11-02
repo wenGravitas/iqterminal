@@ -1,6 +1,6 @@
-import type { ComparisonHandle, CrosshairMoveEvent, SeriesApi, Chart as OpenAlgoChart, SeriesDataItem } from 'openalgo-charts';
+import type { ComparisonHandle, CrosshairMoveEvent, SeriesApi, Chart as OpenAlgoChart, SeriesDataItem, IPrimitive } from 'openalgo-charts';
 import { comparisonController, createChart, epochMsToUtcSeconds } from 'openalgo-charts';
-import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
+import type { IDockviewPanelProps, IContentRenderer, DockviewGroupPanel } from 'dockview-core';
 import type { Scheduler, Drawable } from '../chart/scheduler';
 import type { FeedClient } from '../feed/client';
 import type { Candle } from '../feed/protocol';
@@ -12,13 +12,15 @@ import { CHART_THEMES, currentTheme, THEME_EVENT } from '../theme';
 import { getDisplayTimezone, TIMEZONE_EVENT } from '../timezone';
 import { indicatorIcon } from '../indicators/icons';
 import {
-  comparisonRequest, defaultMarketComparisonConfig, marketComparisonConfig,
+  comparisonRequest, comparisonDirection, defaultMarketComparisonConfig, marketComparisonConfig,
   MARKET_COMPARISON_COLORS, setMarketComparisonColor, setMarketComparisonInterval,
   setMarketComparisonSymbols, setMarketComparisonVisibility,
   type MarketComparisonConfig,
 } from './model';
 
 const MIN_LABEL_GAP = 13;
+const LABEL_GUTTER_SCALE = 'overlay:market-comparison-labels';
+const LABEL_COLUMN_WIDTH = 90;
 const dataItems = (candles: readonly Candle[]): SeriesDataItem[] => candles.map(candle => ({
   time: epochMsToUtcSeconds(candle.t), open: candle.o, high: candle.h, low: candle.l, close: candle.c, volume: candle.v,
 }));
@@ -47,9 +49,9 @@ class ScheduledComparisonChart implements Drawable {
       },
       renderer: 'canvas2d', theme: CHART_THEMES[currentTheme()], timezone: getDisplayTimezone(),
       branding: false, watermark: false, timeNavigator: false, shortcuts: false, doubleClick: 'none',
-      priceAxisWidth: 82, timeAxisHeight: 20,
+      priceAxisWidth: LABEL_COLUMN_WIDTH, timeAxisHeight: 20,
       grid: { vertLines: false, horzLines: false, spacing: 90, vertColor: CHART_THEMES[currentTheme()].grid, horzColor: CHART_THEMES[currentTheme()].grid, lineWidth: 1 },
-      timeScale: { barSpacing: 7, minBarSpacing: 0.1, maxBarSpacing: 320, rightOffset: 4 },
+      timeScale: { barSpacing: 7, minBarSpacing: 0.08, maxBarSpacing: 320, rightOffset: 2 },
       navigation: { panEnabled: true, zoomEnabled: true, mousePan: 'both', defaultVisibleBars: 120, defaultBarSpacing: 7 },
       zoomAnchor: 'cursor', animZoom: false, animAutoscale: false,
       priceFormatter: value => Number(value).toFixed(2),
@@ -94,7 +96,12 @@ export class MarketComparisonPanel implements IContentRenderer {
   private feedGeneration = 0;
   private disposed = false;
   private applyingViewport = false;
+  // A bound, non-data primitive reserves one native axis column for DOM labels.
+  private labelGutter: IPrimitive = { zOrder: () => 'bottom', draw: () => {}, autoscaleInfo: () => null };
   private viewportAdjusted = false;
+  private compactViewport?: { from: number; to: number };
+  private constraintGroup?: DockviewGroupPanel;
+  private releaseGroupConstraints?: () => void;
   private lastFollowTime = -Infinity;
   private initialViewSet = false;
   private pendingWindowHistory = false;
@@ -110,8 +117,9 @@ export class MarketComparisonPanel implements IContentRenderer {
   private windowSelect = document.createElement('select');
   private intervalSelect = document.createElement('select');
   private followButton = document.createElement('button');
+  private priceLinesButton = document.createElement('button');
+  private compactButton = document.createElement('button');
   private retryButton = document.createElement('button');
-  private baselineLabel = document.createElement('span');
   private stage = document.createElement('div');
   private chartSurface = document.createElement('div');
   private labelLayer = document.createElement('div');
@@ -136,12 +144,15 @@ export class MarketComparisonPanel implements IContentRenderer {
     for (const [value, label] of [['1m', '1M'], ['5m', '5M'], ['15m', '15M']]) this.intervalSelect.add(new Option(label, value));
     this.followButton.type = 'button'; this.followButton.className = 'market-comparison-follow chart-latest-button';
     this.followButton.append(indicatorIcon('latest'));
+    this.compactButton.type = 'button'; this.compactButton.className = 'market-comparison-compact chart-latest-button';
     this.retryButton.type = 'button'; this.retryButton.textContent = 'RETRY'; this.retryButton.title = 'Retry direct Hyperliquid history and stream'; this.retryButton.hidden = true;
-    this.baselineLabel.className = 'market-comparison-baseline'; this.baselineLabel.setAttribute('aria-live', 'polite');
-    this.toolbar.append(this.marketsButton, this.windowSelect, this.intervalSelect, this.followButton, this.retryButton, this.baselineLabel);
+    this.priceLinesButton.type = 'button'; this.priceLinesButton.className = 'market-comparison-price-lines chart-latest-button';
+    this.priceLinesButton.append(indicatorIcon('price-line'));
+    this.toolbar.append(this.compactButton, this.marketsButton, this.windowSelect, this.intervalSelect, this.priceLinesButton, this.followButton, this.retryButton);
     this.stage.className = 'market-comparison-stage';
     this.chartSurface.className = 'market-comparison-canvas-host';
     this.labelLayer.className = 'market-comparison-labels'; this.labelLayer.setAttribute('aria-hidden', 'true');
+    this.labelLayer.setAttribute('role', 'list'); this.labelLayer.setAttribute('aria-label', 'Comparison instrument changes');
     this.message.className = 'market-comparison-message'; this.message.hidden = true; this.message.setAttribute('role', 'status');
     this.readout.className = 'market-comparison-readout'; this.readout.setAttribute('aria-live', 'polite');
     this.stage.append(this.chartSurface, this.labelLayer, this.message, this.readout);
@@ -160,7 +171,10 @@ export class MarketComparisonPanel implements IContentRenderer {
     params.api.updateParameters(this.config);
     params.api.setTitle('Market Comparison');
     this.chartHost = new ScheduledComparisonChart(this.chartSurface, this.scheduler, () => this.renderRightLabels());
-    this.primarySeries = this.chartHost.chart.addSeries('line', { style: { color: MARKET_COMPARISON_COLORS.BTC, precision: 2, priceLineVisible: false, lastValueVisible: false, title: 'BTC' } });
+    this.primarySeries = this.chartHost.chart.addSeries('line', { style: { color: MARKET_COMPARISON_COLORS.BTC, precision: 2, priceLineVisible: this.config.showPriceLines, lastValueVisible: false, title: 'BTC' } });
+    this.chartHost.chart.addPrimitive(this.labelGutter);
+    this.chartHost.chart.panes()[this.chartHost.chart.primaryPaneIndex()]!.bindPrimitiveScale(this.labelGutter, LABEL_GUTTER_SCALE);
+    this.chartHost.chart.setPriceAxisPlacement(this.chartHost.chart.primaryPaneIndex(), LABEL_GUTTER_SCALE, 'right', 0);
     this.syncPriceAxisSpace();
     this.controller = comparisonController(this.chartHost.chart, { mode: 'percentage', baseline: 'common' });
     this.controller.setBaseline('common');
@@ -170,12 +184,14 @@ export class MarketComparisonPanel implements IContentRenderer {
       this.chartHost.chart.on('zoom', () => this.onViewportChange()),
       this.chartHost.chart.on('resize', () => {
         this.syncPriceAxisSpace();
+        if (this.config.compact && this.compactViewport) this.restoreViewport(this.compactViewport);
         const source = this.currentPrimary ? this.sources.get(this.currentPrimary) : undefined;
-        if (this.config.follow === 'live' && !this.viewportAdjusted && this.initialViewSet && !this.pendingWindowHistory && source?.status.historyPending !== true) this.followWindow(true);
+        if (!this.config.compact && this.config.follow === 'live' && !this.viewportAdjusted && this.initialViewSet && !this.pendingWindowHistory && source?.status.historyPending !== true) this.followWindow(true);
         this.chartHost?.invalidate();
       }),
     ].map(dispose => ({ dispose })));
     this.listeners.push(params.api.onDidVisibilityChange(() => this.setDockVisible(params.api.isVisible)),
+      params.api.onDidGroupChange(() => this.syncMinimumWidth()),
       params.api.onDidDimensionsChange(() => { this.chartHost?.invalidate(); }));
     this.setDockVisible(params.api.isVisible);
     this.syncControls();
@@ -188,7 +204,21 @@ export class MarketComparisonPanel implements IContentRenderer {
     this.marketsButton.addEventListener('click', () => this.openMarketDialog(), options);
     this.windowSelect.addEventListener('change', () => this.applyConfig({ ...this.config, window: this.windowSelect.value as MarketComparisonConfig['window'] }), options);
     this.intervalSelect.addEventListener('change', () => this.changeInterval(this.intervalSelect.value as MarketComparisonConfig['interval']), options);
+    this.priceLinesButton.addEventListener('click', () => this.applyConfig({ ...this.config, showPriceLines: !this.config.showPriceLines }), options);
     this.followButton.addEventListener('click', () => this.setFollow(this.viewportAdjusted || this.config.follow !== 'live'), options);
+    this.compactButton.addEventListener('click', () => {
+      const compact = !this.config.compact;
+      const expandedWidth = compact ? Math.max(240, Math.min(32768, Math.round(this.params.api.group.width))) : this.config.expandedWidth;
+      if (compact) {
+        this.compactViewport = this.captureViewport() ?? undefined;
+        this.element.style.setProperty('--comparison-compact-chart-width', `${Math.max(240, this.chartSurface.clientWidth)}px`);
+      } else {
+        this.element.style.removeProperty('--comparison-compact-chart-width');
+        this.compactViewport = undefined;
+      }
+      this.applyConfig({ ...this.config, compact, expandedWidth });
+      this.params.api.setSize({ width: compact ? 112 : expandedWidth ?? 240 });
+    }, options);
     this.retryButton.addEventListener('click', () => this.feed.retryComparison(this.params.api.id), options);
     this.marketDialog.addEventListener('click', event => {
       if (event.target === this.marketDialog) this.marketDialog.close();
@@ -205,7 +235,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     window.addEventListener(TIMEZONE_EVENT, event => {
       const detail = (event as CustomEvent<{ zone?: string }>).detail;
       this.displayZone = detail?.zone ?? getDisplayTimezone();
-      this.syncBaselineLabel(); this.updateReadout(); this.chartHost?.chart.setTimezone(this.displayZone); this.chartHost?.invalidate();
+      this.syncBaseline(); this.updateReadout(); this.chartHost?.chart.setTimezone(this.displayZone); this.chartHost?.invalidate();
     }, options);
     document.addEventListener('visibilitychange', () => { this.pageVisible = !document.hidden; this.syncVisibleState(); }, options);
   }
@@ -312,6 +342,19 @@ export class MarketComparisonPanel implements IContentRenderer {
   }
 
   private syncControls() {
+    this.priceLinesButton.title = this.config.showPriceLines ? 'Hide price lines' : 'Show price lines';
+    this.priceLinesButton.setAttribute('aria-label', this.priceLinesButton.title);
+    this.priceLinesButton.setAttribute('aria-pressed', String(this.config.showPriceLines));
+    this.element.dataset.compact = String(this.config.compact);
+    this.labelLayer.setAttribute('aria-hidden', String(!this.config.compact));
+    this.syncMinimumWidth();
+    this.compactButton.title = this.config.compact ? 'Show comparison chart' : 'Compact mode';
+    this.compactButton.setAttribute('aria-label', this.compactButton.title);
+    this.compactButton.setAttribute('aria-pressed', String(this.config.compact));
+    const compactIcon = this.config.compact ? 'pane-expand' : 'pane-collapse';
+    if (this.compactButton.dataset.icon !== compactIcon) {
+      this.compactButton.replaceChildren(indicatorIcon(compactIcon)); this.compactButton.dataset.icon = compactIcon;
+    }
     this.windowSelect.value = this.config.window; this.intervalSelect.value = this.config.interval;
     const selected = this.config.instruments.length;
     this.marketsButton.textContent = `Markets · ${selected}`;
@@ -333,6 +376,27 @@ export class MarketComparisonPanel implements IContentRenderer {
       if (this.disposed || generation !== this.feedGeneration) return;
       this.onFeedEvent(event);
     });
+  }
+
+  private restoreGroupMinimum() {
+    const group = this.constraintGroup;
+    if (!group) return;
+    const active = group.activePanel?.id === this.params.api.id
+      ? group.panels.find(panel => panel.id !== this.params.api.id) : group.activePanel;
+    if (active) group.api.setConstraints({ minimumWidth: active.minimumWidth ?? 100 });
+  }
+
+  private syncMinimumWidth() {
+    const group = this.params.api.group;
+    if (this.constraintGroup !== group) {
+      this.releaseGroupConstraints?.(); this.restoreGroupMinimum();
+      this.constraintGroup = group;
+      const listener = group.api.onDidActivePanelChange(() => this.syncMinimumWidth());
+      this.releaseGroupConstraints = () => listener.dispose();
+    }
+    const active = group.activePanel;
+    const minimumWidth = active?.id === this.params.api.id && this.config.compact ? 104 : active?.minimumWidth ?? 240;
+    if (group.minimumWidth !== minimumWidth) group.api.setConstraints({ minimumWidth });
   }
 
   private onFeedEvent(event: ComparisonEvent) {
@@ -367,14 +431,15 @@ export class MarketComparisonPanel implements IContentRenderer {
   private syncPriceAxisSpace() {
     const chart = this.chartHost?.chart;
     if (!chart) return;
-    // Preserve at least 144 px of plot at the minimum widget width. The gutter
+    // Preserve at least 136 px of plot at the minimum widget width. The gutter
     // still quotes every market's percentage when the duplicate axis is hidden.
-    const side = this.chartSurface.clientWidth < 226 ? 'hidden' : 'right';
+    const side = this.chartSurface.clientWidth < 2 * LABEL_COLUMN_WIDTH + 136 ? 'hidden' : 'right';
     const pane = chart.primaryPaneIndex();
-    if (chart.priceAxisPlacement(pane, 'right')?.side === side) return;
+    const placement = chart.priceAxisPlacement(pane, 'right');
+    if (placement?.side === side && placement.order === 1) return;
     const applying = this.applyingViewport;
     this.applyingViewport = true;
-    try { chart.setPriceAxisPlacement(pane, 'right', side); }
+    try { chart.setPriceAxisPlacement(pane, 'right', side, 1); }
     finally { this.applyingViewport = applying; }
   }
 
@@ -388,12 +453,12 @@ export class MarketComparisonPanel implements IContentRenderer {
       this.currentPrimary = nextPrimary;
       if (nextPrimary) {
         const first = usable[0]!;
-        this.primarySeries.applyOptions({ color: first.configured.color, title: first.market.shortLabel, visible: true });
+        this.primarySeries.applyOptions({ color: first.configured.color, title: first.market.shortLabel, visible: true, priceLineVisible: this.config.showPriceLines });
         this.primarySeries.setData(dataItems(first.source.candles));
       } else this.primarySeries.setData([]);
     } else if (nextPrimary) {
       const primary = usable[0]!;
-      this.primarySeries.applyOptions({ color: primary.configured.color, title: primary.market.shortLabel, visible: true });
+      this.primarySeries.applyOptions({ color: primary.configured.color, title: primary.market.shortLabel, visible: true, priceLineVisible: this.config.showPriceLines });
       this.primarySeries.setData(dataItems(primary.source.candles));
     }
     const targetSymbols = new Set(usable.slice(1).map(item => item.market.id));
@@ -403,9 +468,12 @@ export class MarketComparisonPanel implements IContentRenderer {
     for (const item of usable.slice(1)) {
       const bars = dataItems(item.source.candles);
       const handle = this.handles.get(item.market.id);
-      if (handle) handle.setBars(bars);
+      if (handle) {
+        handle.series.applyOptions({ color: item.configured.color, priceLineVisible: this.config.showPriceLines });
+        handle.setBars(bars);
+      }
       else this.handles.set(item.market.id, this.controller.add({ symbol: item.market.shortLabel, bars, color: item.configured.color,
-        style: { color: item.configured.color, precision: 2, priceLineVisible: false, lastValueVisible: false, title: item.market.shortLabel } }));
+        style: { color: item.configured.color, precision: 2, priceLineVisible: this.config.showPriceLines, lastValueVisible: false, title: item.market.shortLabel } }));
     }
     this.controller.setBaseline('common');
     if (this.config.follow === 'live' && !this.viewportAdjusted && nextPrimary) {
@@ -417,6 +485,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     if (this.handles.size === 0 && nextPrimary) this.applySingleSeriesPercentScale(usable[0]!.source.candles);
     this.refreshBaseline();
     this.refreshLineReadout();
+    if (this.config.compact) this.compactViewport = this.captureViewport() ?? undefined;
   }
 
   private applySingleSeriesPercentScale(candles: readonly Candle[]) {
@@ -463,7 +532,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     const current = chart.getVisibleLogicalRange();
     if (!reset && current && current.to >= last && current.to - current.from >= count * .75) return;
     this.applyingViewport = true;
-    chart.setVisibleLogicalRange({ from: Math.max(0, last - count + 1), to: last + 3 });
+    chart.setVisibleLogicalRange({ from: Math.max(0, last - count + 1), to: last + 1.5 });
     this.applyingViewport = false;
     this.initialViewSet = true;
     this.refreshBaseline();
@@ -490,7 +559,7 @@ export class MarketComparisonPanel implements IContentRenderer {
   }
 
   private refresh() {
-    this.renderLegend(); this.renderStatus(); this.syncBaselineLabel(); this.updateMessage();
+    this.renderLegend(); this.renderStatus(); this.syncBaseline(); this.updateMessage();
     this.chartHost?.invalidate();
   }
 
@@ -550,15 +619,8 @@ export class MarketComparisonPanel implements IContentRenderer {
     this.message.hidden = true; this.stage.dataset.state = 'ready';
   }
 
-  private syncBaselineLabel() {
-    const time = this.currentBaselineTime();
-    this.currentBaseline = time;
-    if (time === null) { this.baselineLabel.textContent = 'Baseline · —'; this.baselineLabel.title = 'Waiting for one UTC candle timestamp shared by every visible line'; return; }
-    const formatted = new Intl.DateTimeFormat('en-GB', { timeZone: this.displayZone, day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(time * 1000);
-    const zone = this.displayZone === 'UTC' ? 'UTC' : new Intl.DateTimeFormat('en-GB', { timeZone: this.displayZone, timeZoneName: 'short' })
-      .formatToParts(time * 1000).find(part => part.type === 'timeZoneName')?.value ?? this.displayZone;
-    this.baselineLabel.textContent = `T0 ${formatted} · ${zone}`;
-    this.baselineLabel.title = `Common candle-open baseline · ${new Date(time * 1000).toISOString()} · display ${this.displayZone}`;
+  private syncBaseline() {
+    this.currentBaseline = this.currentBaselineTime();
   }
 
   private latestPercent(symbol: ComparisonMarketId) {
@@ -584,6 +646,11 @@ export class MarketComparisonPanel implements IContentRenderer {
   private renderRightLabels() {
     const chart = this.chartHost?.chart;
     if (!chart || !this.chartHost?.visible) return;
+    const gutter = chart.priceAxisLayout().find(slot => slot.scaleId === LABEL_GUTTER_SCALE);
+    if (gutter && !this.config.compact) {
+      this.labelLayer.style.left = `${gutter.x}px`;
+      this.labelLayer.style.width = `${gutter.width}px`;
+    }
     const primary = this.currentPrimary;
     if (!primary) { this.labelLayer.replaceChildren(); return; }
     const baselineTime = this.currentBaselineTime();
@@ -621,11 +688,19 @@ export class MarketComparisonPanel implements IContentRenderer {
     const fragment = document.createDocumentFragment();
     for (const candidate of candidates) {
       const label = document.createElement('span'); label.className = 'market-comparison-right-label';
+      label.dataset.symbol = candidate.symbol;
       label.style.color = candidate.color; label.style.top = `${candidate.y - labelHeight / 2}px`;
       label.style.right = '1px';
       label.style.maxWidth = `${Math.max(1, this.labelLayer.clientWidth - 2)}px`;
       label.title = `${candidate.label} · ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}% from ${new Date(baselineTime * 1000).toISOString()}`;
-      label.textContent = `${candidate.label} ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}%`;
+      const direction = comparisonDirection(candidate.percent);
+      label.dataset.direction = direction;
+      label.setAttribute('role', 'listitem');
+      label.setAttribute('aria-label', `${candidate.label} ${candidate.percent.toFixed(2)}%, ${direction === 'equal' ? 'unchanged' : direction}`);
+      label.append(indicatorIcon(`change-${direction}`));
+      const text = document.createElement('span');
+      text.textContent = `${candidate.label} ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}%`;
+      label.append(text);
       fragment.append(label);
     }
     this.labelLayer.replaceChildren(fragment);
@@ -643,14 +718,14 @@ export class MarketComparisonPanel implements IContentRenderer {
 
   private refreshBaseline() {
     this.currentBaseline = this.currentBaselineTime();
-    this.syncBaselineLabel();
+    this.syncBaseline();
     this.renderLegend();
     this.updateMessage();
     this.chartHost?.invalidate();
   }
 
   private refreshLineReadout() {
-    this.renderLegend(); this.syncBaselineLabel(); this.updateMessage();
+    this.renderLegend(); this.syncBaseline(); this.updateMessage();
   }
 
   private updateReadout(event?: CrosshairMoveEvent) {
@@ -697,6 +772,7 @@ export class MarketComparisonPanel implements IContentRenderer {
   dispose() {
     if (this.disposed) return;
     this.disposed = true; this.feedGeneration++; this.release?.(); this.release = undefined;
+    this.releaseGroupConstraints?.(); this.restoreGroupMinimum();
     if (this.marketDialog.open) this.marketDialog.close();
     this.abort.abort(); this.listeners.forEach(listener => listener.dispose());
     this.controller?.destroy(); this.handles.clear(); this.chartHost?.dispose(); this.chartHost = undefined;

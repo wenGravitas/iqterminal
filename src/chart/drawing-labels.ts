@@ -1,12 +1,13 @@
 import {compactVenueText,venueLabelIcon,amountCaption,labelCurrency,type LabelVenue,type LabelAmount} from './venue-label';
 import { drawFibRetracement, IQ_FIB_DEFAULT_STYLE } from './drawing-fibonacci';
+import { measureDrawingDistance } from './drawing-measure-hit';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import { getDrawingTool, registerDrawingTool, type DrawContext, type Drawing, type DrawingController, type DrawingTool } from 'openalgo-charts/draw';
 
 const wrappedDraw = Symbol.for('iqterminal.drawing-label-renderer.v1');
 type WrappedDraw = DrawingTool['draw'] & { [wrappedDraw]?: true };
 const labelTools = ['horizontal-line', 'horizontal-ray'] as const;
-const rendererTools=[...labelTools,'rectangle','fib-retracement'] as const;
+const rendererTools=[...labelTools,'rectangle','fib-retracement','price-range','date-range'] as const;
 const fontStack = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
 interface AxisPriceLabel { price: number; y: number; color: string; alpha: number }
 
@@ -26,6 +27,7 @@ export function registerIQDrawingLabelRenderers() {
         }
       : tool.settings;
     const draw: WrappedDraw = context => {
+      if (id === 'price-range' || id === 'date-range') { nativeDraw(context); return; }
       if (id === 'fib-retracement') { drawFibRetracement(context, nativeDraw); return; }
       if(id==='rectangle'){
         if(context.drawing.props?.positioningRange){nativeDraw({...context,drawing:{...context.drawing,text:{...context.drawing.text,value:''}}});const xs=context.pts.map(p=>p.x);if(Math.max(...xs)>=0&&Math.min(...xs)<=context.rc.plotWidth*context.rc.dpr)drawIQLabel(context,id);}
@@ -40,7 +42,8 @@ export function registerIQDrawingLabelRenderers() {
       drawIQLabel(context, id);
     };
     Object.defineProperty(draw, wrappedDraw, { value: true });
-    registerDrawingTool({ ...tool, ...(id === 'fib-retracement' ? { defaultStyle: IQ_FIB_DEFAULT_STYLE } : {}), settings, draw });
+    registerDrawingTool({ ...tool, ...(id === 'fib-retracement' ? { defaultStyle: IQ_FIB_DEFAULT_STYLE } : {}),
+      ...(id === 'price-range' || id === 'date-range' ? { distance: (x: number, y: number, context: Parameters<typeof measureDrawingDistance>[3]) => measureDrawingDistance(id, x, y, context) } : {}), settings, draw });
   }
 }
 

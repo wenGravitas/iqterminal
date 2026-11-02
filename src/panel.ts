@@ -1,3 +1,4 @@
+import { IndicatorValueGrid } from './chart/indicator-value-grid';
 import {venueBadge,venueIconPath} from './chart/venue-label';
 import {candleValueArea,positioningRangeLabel,type PositioningRange} from './chart/positioning-range';
 import { LiquidationControls } from './liquidations/controls';
@@ -76,10 +77,10 @@ import { captureIQDrawingTemplateSettings, createLocalStorageDrawingTemplateStor
 import {
   applyObjectTreeFolderVisibility, clearObjectTreeDrawingName, createEmptyObjectTree, createLocalStorageObjectTreeStorage, createMemoryObjectTreeStorage, createObjectTreeFolder,
   createObjectTreeSidebarPreferences, deleteObjectTreeFolder, findObjectTreeEntry, IQObjectTreeRepository,
-  objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderPaths, objectTreeFolderVisibilityState, objectTreeSidebarStorageKey, objectTreeStorageKey,
+  objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderPaths, objectTreeSidebarStorageKey, objectTreeStorageKey,
   parseIQObjectTreeSidebarPreferences, reconcileObjectTree, renameObjectTreeFolder, reorderObjectTreeEntry,
   locateObjectTreeEntry, moveObjectTreeEntry, objectTreeFolderDepth, OBJECT_TREE_DEFAULT_WIDTH, OBJECT_TREE_MAX_WIDTH, OBJECT_TREE_MIN_WIDTH, OBJECT_TREE_MAX_DEPTH, renameObjectTreeDrawing,
-  type IQObjectTreeCatalog, type IQObjectTreeSidebarPreferences, type ObjectTreeEntry,
+  type IQObjectTreeCatalog, type IQObjectTreeSidebarPreferences, type ObjectTreeEntry, type ObjectTreeEntryKind, objectTreeFolderIndicatorIds,
   setObjectTreeFolderSidebar,
 } from './chart/object-tree';
 
@@ -318,7 +319,7 @@ export class CandlePanel implements IContentRenderer {
   private objectTreeSidebarWarning = '';
   private objectTreeScope = '';
   private objectTreeFocusedKey = '';
-  private objectTreeMenuTarget?: { kind: 'folder' | 'drawing'; id: string };
+  private objectTreeMenuTarget?: { kind: ObjectTreeEntryKind; id: string };
   private objectMenuFromChart = false;
   private renamingFolderId?: string;
   private renamingDrawingId?: string;
@@ -359,6 +360,7 @@ export class CandlePanel implements IContentRenderer {
   private activeIndicators = document.createElement('details');
   private activeSummary = document.createElement('summary');
   private activeRows = document.createElement('div');
+  private indicatorValueGrids = new Map<HTMLElement, IndicatorValueGrid>();
   private paneIndicatorLayer = document.createElement('div');
   private primaryPaneCollapsedHeader = document.createElement('div');
   private indicatorRowViews = new Map<string, { element: HTMLDivElement; name: HTMLSpanElement; warning: HTMLElement; controls: HTMLDivElement; buttons: Map<string, HTMLButtonElement>; actionsKey: string }>();
@@ -660,14 +662,14 @@ export class CandlePanel implements IContentRenderer {
     this.objectsNewFolder.type = 'button'; this.objectsNewFolder.className = 'chart-object-tree-new-folder';
     this.objectsNewFolder.dataset.treeAction = 'new-folder'; this.objectsNewFolder.textContent = 'New folder';
     treeToolbar.append(this.objectsNewFolder);
-    this.objectsTree.className = 'chart-object-tree'; this.objectsTree.setAttribute('role', 'tree'); this.objectsTree.setAttribute('aria-label', 'Drawings');
+    this.objectsTree.className = 'chart-object-tree'; this.objectsTree.setAttribute('role', 'tree'); this.objectsTree.setAttribute('aria-label', 'Drawings and indicators');
     this.objectsTreeStatus.className = 'chart-object-tree-status'; this.objectsTreeStatus.setAttribute('role', 'status'); this.objectsTreeStatus.setAttribute('aria-live', 'polite');
     this.objectsInventory.className = 'chart-object-inventory';
-    const inventoryHeading = document.createElement('h3'); inventoryHeading.textContent = 'Other chart objects';
+    const inventoryHeading = document.createElement('h3'); inventoryHeading.textContent = 'Chart sources';
     this.objectsInventoryRows.className = 'chart-object-inventory-rows';
     this.objectsInventory.append(inventoryHeading, this.objectsInventoryRows);
     this.objectsRows.append(treeToolbar, this.objectsTree, this.objectsTreeStatus, this.objectsInventory);
-    this.emptyObjectsMessage.className = 'chart-object-empty'; this.emptyObjectsMessage.textContent = 'No drawings';
+    this.emptyObjectsMessage.className = 'chart-object-empty'; this.emptyObjectsMessage.textContent = 'No drawings or indicators';
     this.objectsTree.append(this.emptyObjectsMessage);
     this.objectsTreeResize.className = 'chart-object-tree-resize'; this.objectsTreeResize.setAttribute('role', 'separator');
     this.objectsTreeResize.setAttribute('aria-label', 'Resize object tree sidebar');
@@ -809,7 +811,8 @@ export class CandlePanel implements IContentRenderer {
     this.objectsRows.addEventListener('click', event => this.objectTreeClick(event), options);
     this.objectsRows.addEventListener('dblclick', event => {
       const node = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
-      if (node?.dataset.treeKind && node.dataset.treeId) this.beginTreeRename(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId);
+      if (node?.dataset.treeKind === 'indicator' && node.dataset.treeId) { const object = this.treeLeafObject('indicator', node.dataset.treeId); if (object) this.applyNativeObjectAction(object, 'settings'); }
+      else if (node?.dataset.treeKind && node.dataset.treeId) this.beginTreeRename(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId);
     }, options);
     this.objectsRows.addEventListener('contextmenu', event => this.objectTreeContextMenu(event), options);
     this.objectsRows.addEventListener('keydown', event => this.objectTreeKeydown(event), options);
@@ -1756,20 +1759,55 @@ export class CandlePanel implements IContentRenderer {
     return resolved;
   }
 
+  private indicatorTreeObject(instance: IndicatorInstance): ChartObjectSnapshot {
+    const dependent = this.selection.indicators.some(item => Object.values(item.numericInputs ?? {}).some(input => input.instanceId === instance.instanceId));
+    return { id: `iq-indicator:${instance.instanceId}`, sourceId: instance.instanceId, kind: 'indicator',
+      name: instance.definitionId === COMPOSITION_SMA_ID ? this.compositionSmaTitle(instance) : nativeDefinition(instance.definitionId)?.name ?? instance.script?.title ?? 'Unavailable indicator',
+      paneIndex: Math.max(0, this.indicatorPaneIndex(instance)), visible: instance.visible && (![HEATMAP_ID, ORDER_WALLS_ID].includes(instance.definitionId) || instance.settings.enabled !== false),
+      selected: false, capabilities: { select: true, focus: true, visibility: true, lock: false,
+        settings: Boolean(nativeDefinition(instance.definitionId) || instance.script), remove: !dependent && !(instance.script && this.studyHost?.removeBlockReason(instance.instanceId)) } };
+  }
+
+  private treeLeafObject(kind: 'drawing' | 'indicator', id: string): ChartObjectSnapshot | undefined {
+    if (kind === 'drawing') return this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+    const instance = this.selection.indicators.find(item => item.instanceId === id);
+    return instance ? this.indicatorTreeObject(instance) : undefined;
+  }
+
+  private objectSnapshot(id: string): ChartObjectSnapshot | undefined {
+    return id.startsWith('iq-indicator:') ? this.treeLeafObject('indicator', id.slice('iq-indicator:'.length)) : this.engine?.objects.get(id);
+  }
+
+  private focusTreeObject(object: ChartObjectSnapshot) {
+    this.params.api.setActive();
+    if (object.id.startsWith('iq-indicator:')) this.chart.focus();
+    else { this.engine?.objects.select(object.id); this.engine?.objects.focus(object.id); }
+    this.syncDrawingActions();
+  }
+
+  private setTreeIndicatorsVisible(ids: readonly string[], visible: boolean) {
+    const selected = new Set(ids);
+    const footprint = this.selection.indicators.find(item => selected.has(item.instanceId) && item.definitionId === FOOTPRINT_ID);
+    const type = footprint && (!visible || supportsDepth(this.selection)) ? (visible ? 'footprint' as const : 'candle' as const) : this.selection.type;
+    let changed = type !== this.selection.type;
+    const indicators = this.selection.indicators.map(instance => {
+      if (!selected.has(instance.instanceId)) return instance;
+      if (visible && (instance.definitionId === FOOTPRINT_ID || instance.definitionId === FOOTPRINT_TOTALS_ID) && !supportsDepth(this.selection)) return instance;
+      if (visible && instance.definitionId === FOOTPRINT_TOTALS_ID && type !== 'footprint') return instance;
+      const settings = instance.definitionId === HEATMAP_ID || instance.definitionId === ORDER_WALLS_ID ? { ...instance.settings, enabled: visible } : instance.settings;
+      if (instance.visible === visible && settings === instance.settings) return instance;
+      changed = true; return { ...instance, visible, settings };
+    });
+    if (!changed) return;
+    this.selection = config({ ...this.selection, type, indicators });
+    this.params.api.updateParameters(this.selection); this.reconcileIndicators(); this.save();
+  }
+
   private renderDrawingObjects() {
     const listed = this.engine?.objects.list() ?? [];
-    const coreIds = new Set([TRADE_BUBBLES_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID]);
-    const scriptIds = new Set((this.studyHost?.views() ?? []).map(view => view.attachmentId));
-    const objects = listed.filter(object => {
-      if (object.kind !== 'indicator') return true;
-      const identity = `${object.id} ${object.sourceId}`;
-      if (object.id.startsWith('custom:iqterminal-') || object.id.startsWith('custom:script-study-')) return true;
-      for (const instance of this.selection.indicators) {
-        if (coreIds.has(instance.definitionId) && (identity.includes(instance.instanceId) || identity.includes(instance.definitionId))) return false;
-        if (scriptIds.has(instance.instanceId) && identity.includes(instance.instanceId)) return false;
-      }
-      return true;
-    });
+    const indicators = this.selection.indicators.map(instance => this.indicatorTreeObject(instance));
+    const objects = [...listed.filter(object => object.kind !== 'indicator'
+      && !object.id.startsWith('custom:script-study-') && !object.id.startsWith('custom:iqterminal-')), ...indicators];
     this.objectsToggle.dataset.count = String(objects.length);
     this.syncObjectTreeToggle();
     this.updateObjectsSummary();
@@ -1782,13 +1820,13 @@ export class CandlePanel implements IContentRenderer {
     }
 
     const drawings = objects.filter(object => object.kind === 'drawing');
-    const inventory = objects.filter(object => object.kind !== 'drawing');
-    const reconciled = reconcileObjectTree(this.objectTreeCatalog, drawings.map(object => object.sourceId));
+    const inventory = objects.filter(object => object.kind !== 'drawing' && object.kind !== 'indicator');
+    const reconciled = reconcileObjectTree(this.objectTreeCatalog, drawings.map(object => object.sourceId), this.selection.indicators.map(instance => instance.instanceId));
     if (reconciled.changed) {
       this.objectTreeCatalog = reconciled.catalog;
       this.persistObjectTree();
     }
-    this.renderObjectTree(drawings);
+    this.renderObjectTree([...drawings, ...indicators]);
     this.renderFolderSidebar();
     this.renderObjectInventory(inventory);
     this.updateObjectTreeStatus();
@@ -1830,12 +1868,12 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private renderObjectTree(drawings: readonly ChartObjectSnapshot[]) {
-    const byDrawingId = new Map(drawings.map(object => [object.sourceId, object]));
+    const byDrawingId = new Map(drawings.map(object => [`${object.kind}:${object.sourceId}`, object]));
     const desired = this.objectTreeCatalog.entries.map(entry => this.renderObjectTreeNode(entry, byDrawingId, 1)).filter((node): node is HTMLDivElement => Boolean(node));
     reconcileElementChildren(this.objectsTree, desired);
     const activeKeys = new Set<string>();
     const collectKeys = (entries: readonly ObjectTreeEntry[]) => entries.forEach(entry => {
-      activeKeys.add(entry.type === 'folder' ? `folder:${entry.id}` : `drawing:${entry.drawingId}`);
+      activeKeys.add(entry.type === 'folder' ? `folder:${entry.id}` : `${entry.type}:${entry.type === 'drawing' ? entry.drawingId : entry.indicatorId}`);
       if (entry.type === 'folder') collectKeys(entry.children);
     });
     collectKeys(this.objectTreeCatalog.entries);
@@ -1852,7 +1890,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private renderObjectTreeNode(entry: ObjectTreeEntry, drawings: ReadonlyMap<string, ChartObjectSnapshot>, level: number): HTMLDivElement | undefined {
-    const key = entry.type === 'folder' ? `folder:${entry.id}` : `drawing:${entry.drawingId}`;
+    const key = entry.type === 'folder' ? `folder:${entry.id}` : `${entry.type}:${entry.type === 'drawing' ? entry.drawingId : entry.indicatorId}`;
     let node = this.treeNodes.get(key);
     if (!node) {
       node = document.createElement('div');
@@ -1864,7 +1902,7 @@ export class CandlePanel implements IContentRenderer {
         const row = document.createElement('div'); row.className = 'chart-object-folder-row';
         const expand = this.objectTreeControl('Expand folder', 'expand', 'chart-object-folder-expand');
         expand.dataset.treeAction = 'expand';
-        const visible = this.objectTreeControl('Show all drawings in folder', 'eye', 'chart-object-folder-visibility');
+        const visible = this.objectTreeControl('Show all objects in folder', 'eye', 'chart-object-folder-visibility');
         visible.dataset.treeAction = 'folder-visibility';
         const name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name';
         name.dataset.treeAction = 'toggle-folder';
@@ -1879,7 +1917,7 @@ export class CandlePanel implements IContentRenderer {
         node.append(row, children);
         this.treeRows.set(key, row);
       } else {
-        const object = drawings.get(entry.drawingId);
+        const object = drawings.get(`${entry.type}:${entry.type === 'drawing' ? entry.drawingId : entry.type === 'indicator' ? entry.indicatorId : ''}`);
         if (!object) return undefined;
         const row = this.updateObjectRow(object);
         row.dataset.treeRow = 'true';
@@ -1889,12 +1927,12 @@ export class CandlePanel implements IContentRenderer {
       this.treeNodes.set(key, node);
     }
     node.dataset.treeKind = entry.type;
-    node.dataset.treeId = entry.type === 'folder' ? entry.id : entry.drawingId;
+    node.dataset.treeId = entry.type === 'folder' ? entry.id : entry.type === 'drawing' ? entry.drawingId : entry.indicatorId;
     node.draggable = true;
     node.setAttribute('aria-level', String(level));
     node.dataset.treeKey = key;
-    if (entry.type === 'drawing') {
-      const object = drawings.get(entry.drawingId);
+    if (entry.type !== 'folder') {
+      const object = drawings.get(`${entry.type}:${entry.type === 'drawing' ? entry.drawingId : entry.type === 'indicator' ? entry.indicatorId : ''}`);
       if (!object) return undefined;
       const row = this.updateObjectRow(object);
       if (node.firstElementChild !== row) node.replaceChildren(row);
@@ -1902,6 +1940,7 @@ export class CandlePanel implements IContentRenderer {
       row.dataset.objectPaneIndex = String(object.paneIndex);
       const name = row.querySelector<HTMLButtonElement>('.chart-object-name');
       let renameInput = row.querySelector<HTMLInputElement>('.chart-object-drawing-name-input');
+      if (entry.type === 'indicator') { node.removeAttribute('aria-expanded'); return node; }
       if (this.renamingDrawingId === entry.drawingId) {
         if (!renameInput) {
           renameInput = this.makeTreeRenameInput('drawing', entry.drawingId);
@@ -1945,8 +1984,9 @@ export class CandlePanel implements IContentRenderer {
     visible.dataset.visibilityState = state;
     visible.setAttribute('aria-pressed', String(state === 'all'));
     visible.replaceChildren(drawingSidebarIcon(state === 'none' ? 'hiddenEye' : 'eye'));
-    visible.setAttribute('aria-label', state === 'all' ? `Hide all drawings in ${entry.name}` : `Show all drawings in ${entry.name}`);
-    visible.title = state === 'all' ? 'Hide all drawings in folder' : state === 'mixed' ? 'Show all drawings in folder' : 'Show all drawings in folder';
+    const contents = objectTreeFolderIndicatorIds(this.objectTreeCatalog.entries, entry.id).length ? 'objects' : 'drawings';
+    visible.setAttribute('aria-label', state === 'all' ? `Hide all ${contents} in ${entry.name}` : `Show all ${contents} in ${entry.name}`);
+    visible.title = state === 'all' ? 'Hide all objects in folder' : state === 'mixed' ? 'Show all objects in folder' : 'Show all objects in folder';
     let renameInput = row.querySelector<HTMLInputElement>('.chart-object-folder-name-input');
     if (this.renamingFolderId === entry.id) {
       if (!renameInput) {
@@ -1967,7 +2007,7 @@ export class CandlePanel implements IContentRenderer {
         name = document.createElement('button'); name.type = 'button'; name.className = 'chart-object-folder-name'; name.dataset.treeAction = 'toggle-folder';
         more.before(name);
       }
-      name.title = `${entry.name} · ${objectTreeFolderDrawingIds(this.objectTreeCatalog.entries, entry.id).length} drawings`;
+      name.title = `${entry.name} · ${objectTreeFolderDrawingIds(this.objectTreeCatalog.entries, entry.id).length + objectTreeFolderIndicatorIds(this.objectTreeCatalog.entries, entry.id).length} objects`;
       name.textContent = entry.name;
     }
     more.dataset.treeId = entry.id;
@@ -2018,7 +2058,7 @@ export class CandlePanel implements IContentRenderer {
           button.title = folder.name;
           button.setAttribute('aria-label', `Toggle ${folder.name} visibility`);
           button.setAttribute('aria-pressed', String(state === 'all'));
-          button.setAttribute('aria-description', state === 'all' ? 'Hide all folder drawings' : 'Show all folder drawings');
+          button.setAttribute('aria-description', state === 'all' ? 'Hide all folder objects' : 'Show all folder objects');
           button.dataset.visibilityState = state;
           buttons.push(button);
         }
@@ -2031,10 +2071,14 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private folderVisibilityState(folderId: string): 'all' | 'none' | 'mixed' {
-    return objectTreeFolderVisibilityState(this.objectTreeCatalog.entries, folderId, id => {
-      const drawing = this.engine?.drawings.get(id);
-      return drawing ? drawing.visible !== false : undefined;
-    });
+    const visibility = [
+      ...objectTreeFolderDrawingIds(this.objectTreeCatalog.entries, folderId).flatMap(id => { const drawing = this.engine?.drawings.get(id); return drawing ? [drawing.visible !== false] : []; }),
+      ...objectTreeFolderIndicatorIds(this.objectTreeCatalog.entries, folderId).flatMap(id => {
+        const instance = this.selection.indicators.find(item => item.instanceId === id);
+        return instance ? [this.indicatorTreeObject(instance).visible] : [];
+      }),
+    ];
+    return visibility.length && visibility.every(Boolean) ? 'all' : visibility.some(Boolean) ? 'mixed' : 'none';
   }
 
   private firstVisibleObjectTreeKey() {
@@ -2129,6 +2173,7 @@ export class CandlePanel implements IContentRenderer {
 
   private setFolderVisibility(folderId: string, visible: boolean) {
     if (!this.engine) return;
+    const indicatorIds = objectTreeFolderIndicatorIds(this.objectTreeCatalog.entries, folderId);
     const changed = applyObjectTreeFolderVisibility(
       this.objectTreeCatalog.entries,
       folderId,
@@ -2136,7 +2181,8 @@ export class CandlePanel implements IContentRenderer {
       id => this.engine?.drawings.get(id),
       patches => this.engine?.drawings.updateMany(patches),
     );
-    if (!changed) return;
+    if (indicatorIds.length) this.setTreeIndicatorsVisible(indicatorIds, visible);
+    if (!changed && !indicatorIds.length) return;
     this.engine.objects.refresh();
     this.syncDrawingActions();
   }
@@ -2146,7 +2192,7 @@ export class CandlePanel implements IContentRenderer {
     if (!node?.dataset.treeKind || !node.dataset.treeId) return;
     event.preventDefault(); event.stopPropagation();
     this.objectTreeFocusedKey = node.dataset.treeKey ?? '';
-    this.openObjectTreeMenu(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId, event.clientX, event.clientY);
+    this.openObjectTreeMenu(node.dataset.treeKind as ObjectTreeEntryKind, node.dataset.treeId, event.clientX, event.clientY);
   }
 
   private drawingContextMenu(event: ContextMenuEvent) {
@@ -2165,7 +2211,7 @@ export class CandlePanel implements IContentRenderer {
     else this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
   }
 
-  private openObjectTreeMenu(kind: 'folder' | 'drawing', id: string, clientX = 0, clientY = 0, fromChart = false) {
+  private openObjectTreeMenu(kind: ObjectTreeEntryKind, id: string, clientX = 0, clientY = 0, fromChart = false) {
     this.objectMenuFromChart = fromChart;
     this.objectsTreeMenu.setAttribute('aria-label', fromChart ? 'Drawing actions' : 'Object Tree actions');
     this.objectTreeFocusedKey = `${kind}:${id}`;
@@ -2181,8 +2227,8 @@ export class CandlePanel implements IContentRenderer {
     };
     const targetEntry = findObjectTreeEntry(this.objectTreeCatalog.entries, kind, id);
     if (!targetEntry) return;
-    if (kind === 'drawing') {
-      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+    if (kind !== 'folder') {
+      const object = this.treeLeafObject(kind, id);
       if (!object) return;
       if (fromChart) {
         if (object.capabilities.remove) add('Delete', 'remove');
@@ -2192,10 +2238,10 @@ export class CandlePanel implements IContentRenderer {
         add('Select', 'select');
         if (object.capabilities.visibility) add(object.visible ? 'Hide' : 'Show', 'visible');
         if (object.capabilities.lock) add(object.locked ? 'Unlock' : 'Lock', 'lock');
-        add('Rename', 'rename');
+        if (kind === 'drawing') add('Rename', 'rename');
         if ((targetEntry as Extract<ObjectTreeEntry, { type: 'drawing' }>).name !== undefined) add('Use drawing tool name', 'reset-name');
         if (object.kind === 'drawing' || object.capabilities.settings) add('Settings', 'settings');
-        add('Duplicate', 'duplicate');
+        if (kind === 'drawing') add('Duplicate', 'duplicate');
         add('Move up', 'move-up'); add('Move down', 'move-down');
         if (object.capabilities.remove) add('Delete', 'remove');
         this.addMoveToFolderMenuItems(add, kind, id);
@@ -2204,7 +2250,8 @@ export class CandlePanel implements IContentRenderer {
       const folder = targetEntry as Extract<ObjectTreeEntry, { type: 'folder' }>;
       add('Rename', 'rename');
       add('New subfolder', 'new-subfolder', { disabled: (objectTreeFolderDepth(this.objectTreeCatalog.entries, id) ?? OBJECT_TREE_MAX_DEPTH) >= OBJECT_TREE_MAX_DEPTH });
-      add('Show all drawings', 'show-folder'); add('Hide all drawings', 'hide-folder');
+      const contents = objectTreeFolderIndicatorIds(this.objectTreeCatalog.entries, id).length ? 'objects' : 'drawings';
+      add(`Show all ${contents}`, 'show-folder'); add(`Hide all ${contents}`, 'hide-folder');
       add('Move up', 'move-up'); add('Move down', 'move-down');
       add('Delete folder (keep contents)', 'delete-folder');
       this.addMoveToFolderMenuItems(add, kind, id);
@@ -2222,7 +2269,7 @@ export class CandlePanel implements IContentRenderer {
 
   private addMoveToFolderMenuItems(
     add: (label: string, action: string, options?: { parentId?: string | null; disabled?: boolean }) => HTMLButtonElement,
-    kind: 'folder' | 'drawing', id: string,
+    kind: ObjectTreeEntryKind, id: string,
   ) {
     add('Move to Folder · Root', 'move', { parentId: null });
     const forbidden = kind === 'folder'
@@ -2240,7 +2287,7 @@ export class CandlePanel implements IContentRenderer {
     if (!button || !target || button.disabled) return;
     const action = button.dataset.menuAction;
     const folderTarget = button.dataset.menuParentId || null;
-    if (action === 'rename') this.beginTreeRename(target.kind, target.id);
+    if (action === 'rename' && target.kind !== 'indicator') this.beginTreeRename(target.kind, target.id);
     else if (action === 'new-subfolder') this.createFolder(target.id);
     else if (action === 'show-folder') this.setFolderVisibility(target.id, true);
     else if (action === 'hide-folder') this.setFolderVisibility(target.id, false);
@@ -2252,13 +2299,13 @@ export class CandlePanel implements IContentRenderer {
         ? moveObjectTreeEntry(this.objectTreeCatalog, target.kind, target.id, folderTarget, folderTarget ? Number.MAX_SAFE_INTEGER : Number.MAX_SAFE_INTEGER)
         : reorderObjectTreeEntry(this.objectTreeCatalog, target.kind, target.id, action === 'move-up' ? -1 : 1);
       if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); }
-    } else if (target.kind === 'drawing') {
-      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === target.id);
+    } else if (target.kind !== 'folder') {
+      const object = this.treeLeafObject(target.kind, target.id);
       if (action === 'reset-name') {
         const next = clearObjectTreeDrawingName(this.objectTreeCatalog, target.id);
         if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); }
       } else if (object && action === 'select') {
-        this.engine?.objects.select(object.id); this.engine?.objects.focus(object.id); this.params.api.setActive(); this.syncDrawingActions();
+        this.focusTreeObject(object);
       } else if (object && action) this.applyNativeObjectAction(object, action);
       if (action === 'remove') this.objectTreeFocusedKey = '';
     }
@@ -2287,7 +2334,7 @@ export class CandlePanel implements IContentRenderer {
     const node = target.closest<HTMLElement>('[role="treeitem"]');
     if (!node) return;
     const key = node.dataset.treeKey ?? '';
-    const kind = node.dataset.treeKind as 'folder' | 'drawing' | undefined;
+    const kind = node.dataset.treeKind as ObjectTreeEntryKind | undefined;
     const id = node.dataset.treeId ?? '';
     const visibleNodes = [...this.objectsTree.querySelectorAll<HTMLElement>('[role="treeitem"]')].filter(item => !item.closest('[hidden]'));
     const current = visibleNodes.indexOf(node);
@@ -2313,28 +2360,28 @@ export class CandlePanel implements IContentRenderer {
     } else if ((event.key === 'Enter' || event.key === ' ') && kind === 'folder') {
       this.collapsedTreeFolders.has(id) ? this.collapsedTreeFolders.delete(id) : this.collapsedTreeFolders.add(id);
       this.renderDrawingObjects(); focus(this.objectTreeNode(key));
-    } else if (event.key === 'Enter' && kind === 'drawing') {
-      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
-      if (object) { this.engine?.objects.select(object.id); this.engine?.objects.focus(object.id); this.params.api.setActive(); this.syncDrawingActions(); }
+    } else if (event.key === 'Enter' && kind && kind !== 'folder') {
+      const object = this.treeLeafObject(kind, id);
+      if (object) { this.focusTreeObject(object); }
       event.preventDefault();
-    } else if (event.key === ' ' && kind === 'drawing') {
-      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+    } else if (event.key === ' ' && kind && kind !== 'folder') {
+      const object = this.treeLeafObject(kind, id);
       if (object) this.applyNativeObjectAction(object, 'visible');
       event.preventDefault();
-    } else if (event.key === 'F2' && kind) {
+    } else if (event.key === 'F2' && kind && kind !== 'indicator') {
       this.beginTreeRename(kind, id); event.preventDefault();
     } else if ((event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) && kind) {
       this.objectTreeFocusedKey = key; this.openObjectTreeMenu(kind, id); event.preventDefault();
-    } else if ((event.key === 'Delete' || event.key === 'Backspace') && kind === 'drawing') {
-      const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
+    } else if ((event.key === 'Delete' || event.key === 'Backspace') && kind && kind !== 'folder') {
+      const object = this.treeLeafObject(kind, id);
       if (object?.capabilities.remove) this.applyNativeObjectAction(object, 'remove');
       event.preventDefault();
     } else if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown') && kind) {
       const next = reorderObjectTreeEntry(this.objectTreeCatalog, kind, id, event.key === 'ArrowUp' ? -1 : 1);
       if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); focus(this.objectTreeNode(key)); }
       event.preventDefault();
-    } else if (event.altKey && event.key === 'ArrowLeft' && kind === 'drawing') {
-      const next = moveObjectTreeEntry(this.objectTreeCatalog, 'drawing', id, null, Number.MAX_SAFE_INTEGER);
+    } else if (event.altKey && event.key === 'ArrowLeft' && kind && kind !== 'folder') {
+      const next = moveObjectTreeEntry(this.objectTreeCatalog, kind, id, null, Number.MAX_SAFE_INTEGER);
       if (next) { this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects(); focus(this.objectTreeNode(key)); }
       event.preventDefault();
     }
@@ -2368,15 +2415,15 @@ export class CandlePanel implements IContentRenderer {
 
   private objectTreeDrop(event: DragEvent) {
     if (!event.dataTransfer) return;
-    let source: { kind: 'folder' | 'drawing'; id: string };
-    try { source = JSON.parse(event.dataTransfer.getData('text/plain')) as { kind: 'folder' | 'drawing'; id: string }; }
+    let source: { kind: ObjectTreeEntryKind; id: string };
+    try { source = JSON.parse(event.dataTransfer.getData('text/plain')) as { kind: ObjectTreeEntryKind; id: string }; }
     catch { return; }
-    if ((source.kind !== 'folder' && source.kind !== 'drawing') || typeof source.id !== 'string') return;
+    if ((source.kind !== 'folder' && source.kind !== 'drawing' && source.kind !== 'indicator') || typeof source.id !== 'string') return;
     event.preventDefault();
     const target = (event.target as HTMLElement).closest<HTMLElement>('[data-tree-kind]');
     let parentId: string | null = null, index = Number.MAX_SAFE_INTEGER;
     if (target?.dataset.treeKind && target.dataset.treeId) {
-      const targetKind = target.dataset.treeKind as 'folder' | 'drawing';
+      const targetKind = target.dataset.treeKind as ObjectTreeEntryKind;
       const targetLocation = locateObjectTreeEntry(this.objectTreeCatalog.entries, targetKind, target.dataset.treeId);
       const rect = targetKind === 'folder'
         ? target.querySelector<HTMLElement>(':scope > .chart-object-folder-row')?.getBoundingClientRect() ?? target.getBoundingClientRect()
@@ -2420,16 +2467,14 @@ export class CandlePanel implements IContentRenderer {
       name.addEventListener('click', () => {
         const id = row!.dataset.objectId ?? '';
         this.params.api.setActive();
-        this.engine?.objects.select(id);
-        this.engine?.objects.focus(id);
-        this.syncDrawingActions();
+        const object = this.objectSnapshot(id); if (object) this.focusTreeObject(object);
       });
     }
     const drawing = object.kind === 'drawing'
       ? this.engine?.drawings.get(object.sourceId) ?? this.engine?.drawings.get(object.id)
       : undefined;
     const nameText = drawing ? drawingDisplayName(drawing, object.name) : object.name;
-    const nameTitle = `${object.kind} · pane ${object.paneIndex + 1}${object.hiddenOnInterval ? ' · hidden on this timeframe' : ''}`;
+    const nameTitle = `${object.kind} · ${object.id.startsWith('iq-indicator:') && !object.visible ? 'hidden' : `pane ${object.paneIndex + 1}`}${object.hiddenOnInterval ? ' · hidden on this timeframe' : ''}`;
     if (name.textContent !== nameText) name.textContent = nameText;
     if (name.title !== nameTitle) name.title = nameTitle;
     if (object.hiddenOnInterval) name.dataset.hiddenOnInterval = 'true';
@@ -2441,7 +2486,7 @@ export class CandlePanel implements IContentRenderer {
     if (object.kind === 'drawing') actions.push({ icon: 'duplicate', action: 'duplicate', title: 'Duplicate drawing' });
     if (object.kind === 'drawing' || object.capabilities.settings) actions.push({ icon: 'settings', action: 'settings', title: 'Open object settings' });
     if (object.capabilities.remove) actions.push({ icon: 'trash', action: 'remove', title: 'Remove object' });
-    if (object.kind === 'drawing') actions.push({ icon: 'more', action: 'more', title: 'More drawing actions' });
+    if (object.kind === 'drawing' || object.id.startsWith('iq-indicator:')) actions.push({ icon: 'more', action: 'more', title: object.kind === 'drawing' ? 'More drawing actions' : 'More indicator actions' });
     const actionButtons = actions.map(({ icon, action, title }) => {
       let button = [...row!.querySelectorAll<HTMLButtonElement>('button[data-object-action]')].find(candidate => candidate.dataset.objectAction === action);
       if (!button) button = this.objectActionButton(icon, action, object.id, title);
@@ -2476,7 +2521,7 @@ export class CandlePanel implements IContentRenderer {
     button.title = title; button.setAttribute('aria-label', title); button.dataset.objectAction = action; button.dataset.objectId = id;
     button.addEventListener('click', event => {
       event.stopPropagation();
-      if (action === 'more') this.openObjectTreeMenu('drawing', this.engine?.objects.get(id)?.sourceId ?? id, (event as MouseEvent).clientX, (event as MouseEvent).clientY);
+      if (action === 'more') { const object = this.objectSnapshot(button.dataset.objectId ?? ''); if (object) this.openObjectTreeMenu(object.kind === 'drawing' ? 'drawing' : 'indicator', object.sourceId, (event as MouseEvent).clientX, (event as MouseEvent).clientY); }
       else this.drawingObjectAction(event);
     });
     return button;
@@ -2486,7 +2531,7 @@ export class CandlePanel implements IContentRenderer {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-object-action]');
     if (!button || !this.engine) return;
     const id = button.dataset.objectId ?? '';
-    const object = this.engine.objects.get(id);
+    const object = this.objectSnapshot(id);
     if (!object) return;
     this.applyNativeObjectAction(object, button.dataset.objectAction ?? '');
   }
@@ -2494,6 +2539,13 @@ export class CandlePanel implements IContentRenderer {
   private applyNativeObjectAction(object: ChartObjectSnapshot, action: string) {
     if (!this.engine) return;
     const id = object.id;
+    if (id.startsWith('iq-indicator:')) {
+      const instance = this.selection.indicators.find(item => item.instanceId === object.sourceId); if (!instance) return;
+      if (action === 'visible' && object.capabilities.visibility) this.setTreeIndicatorsVisible([instance.instanceId], !object.visible);
+      else if (action === 'remove' && object.capabilities.remove) this.removeIndicatorInstance(instance.instanceId);
+      else if (action === 'settings' && object.capabilities.settings) this.openIndicatorSettings(instance);
+      this.renderDrawingObjects(); return;
+    }
     switch (action) {
       case 'visible': {
         if (object.kind === 'drawing') {
@@ -4063,6 +4115,11 @@ export class CandlePanel implements IContentRenderer {
     const action = button.dataset.indicatorAction;
     if (action === 'history' && instance.definitionId === EFFORT_RESULT_ID) this.effortView?.openHistory();
     else if (action === 'settings') this.openIndicatorSettings(instance);
+    else if (action === 'grid') {
+      const paneIndex = this.indicatorPaneIndex(instance), enabled = !this.indicatorGridEnabled(instance);
+      this.selection = config({ ...this.selection, indicators: this.selection.indicators.map(item => this.hasIndicatorValueGrid(item) && (paneIndex >= 0 ? this.indicatorPaneIndex(item) === paneIndex : item.instanceId === instance.instanceId) ? { ...item, priceGrid: enabled } : item) });
+      this.params.api.updateParameters(this.selection); this.syncIndicatorValueGrids(); this.renderActiveIndicators(); this.save();
+    }
     else if (action === 'add-sma') this.openCompositionSma(instance.instanceId);
     else if (action === 'move') this.openCompositionPlacement(instance);
     else if (action === 'visibility') {
@@ -4356,7 +4413,7 @@ export class CandlePanel implements IContentRenderer {
       || row.instance.definitionId === COMPOSITION_SMA_ID || row.instance.definitionId === CVD_ID || row.instance.definitionId === OPEN_INTEREST_ID;
     const canMove = row.instance.script ? Boolean(providerView?.movable)
       : row.instance.definitionId === COMPOSITION_SMA_ID || (row.instance.definitionId === CVD_ID || row.instance.definitionId === OPEN_INTEREST_ID) && row.instance.visible;
-    const actions = ['visibility', 'settings', ...(canAddSma ? ['add-sma'] : []), ...(canMove ? ['move'] : []), ...(row.instance.script ? ['source', 'duplicate'] : []), ...(row.instance.definitionId === EFFORT_RESULT_ID ? ['history'] : []), 'info', 'remove'];
+    const actions = ['visibility', 'settings', ...(this.hasIndicatorValueGrid(row.instance) ? ['grid'] : []), ...(canAddSma ? ['add-sma'] : []), ...(canMove ? ['move'] : []), ...(row.instance.script ? ['source', 'duplicate'] : []), ...(row.instance.definitionId === EFFORT_RESULT_ID ? ['history'] : []), 'info', 'remove'];
     const actionsKey = actions.join('|');
     let view = this.indicatorRowViews.get(row.instance.instanceId);
     if (view?.actionsKey !== actionsKey) {
@@ -4386,7 +4443,7 @@ export class CandlePanel implements IContentRenderer {
     view.warning.hidden = !row.warning;
     for (const [action, button] of view.buttons) {
       const label = action === 'visibility' ? `${instance.visible ? 'Hide' : 'Show'} ${row.name}` : action === 'settings' ? `${row.name} settings`
-        : action === 'add-sma' ? `Add moving average to ${row.name}` : action === 'move' ? `Move ${row.name}` : action === 'source' ? `Edit Script for ${row.name}`
+        : action === 'grid' ? `${this.indicatorGridEnabled(instance) ? 'Hide' : 'Show'} value grid for ${row.name}` : action === 'add-sma' ? `Add moving average to ${row.name}` : action === 'move' ? `Move ${row.name}` : action === 'source' ? `Edit Script for ${row.name}`
           : action === 'history' ? `${row.name} history` : `${action === 'remove' ? 'Remove' : 'Duplicate'} ${row.name}`;
       button.dataset.instanceId = instance.instanceId;
       button.setAttribute('aria-label', action === 'info' ? `About ${row.name}` : label);
@@ -4405,6 +4462,7 @@ export class CandlePanel implements IContentRenderer {
         button.title = loading ? `${label} · Loading` : label;
         button.setAttribute('aria-pressed', String(instance.visible));
       }
+      else if (action === 'grid') button.setAttribute('aria-pressed', String(this.indicatorGridEnabled(instance)));
       else button.removeAttribute('aria-pressed');
       const wallMarketUnsupported = instance.definitionId === ORDER_WALLS_ID && this.selection.venue === 'hyperliquid';
       const dependent = this.selection.indicators.find(candidate => Object.values(candidate.numericInputs ?? {}).some(input => input.instanceId === instance.instanceId));
@@ -4709,9 +4767,48 @@ export class CandlePanel implements IContentRenderer {
     return '';
   }
 
+  private hasIndicatorValueGrid(instance: IndicatorInstance) {
+    if (instance.placement !== 'pane') return false;
+    return [CVD_ID, OPEN_INTEREST_ID, LIQUIDATIONS_ID, EFFORT_RESULT_ID, COMPOSITION_SMA_ID, ...NET_POSITIONING_IDS].includes(instance.definitionId)
+      || Boolean(instance.script && this.studyHost?.views().find(view => view.attachmentId === instance.instanceId)?.numericOutputs.length);
+  }
+
+  private indicatorGridEnabled(instance: IndicatorInstance) {
+    const pane = this.indicatorPaneIndex(instance);
+    return pane < 0 ? instance.priceGrid !== false : this.selection.indicators.filter(item => this.hasIndicatorValueGrid(item) && this.indicatorPaneIndex(item) === pane).every(item => item.priceGrid !== false);
+  }
+
+  private syncIndicatorValueGrids() {
+    const chart = this.engine?.chart; if (!chart) return;
+    const panes = new Map<number, IndicatorInstance[]>();
+    for (const instance of this.selection.indicators) {
+      if (!this.hasIndicatorValueGrid(instance)) continue;
+      const index = this.indicatorPaneIndex(instance);
+      if (index < 0 || index === chart.primaryPaneIndex()) continue;
+      const members = panes.get(index) ?? []; members.push(instance); panes.set(index, members);
+    }
+    const active = new Set<HTMLElement>();
+    for (const [index, members] of panes) {
+      const element = chart.panes()[index]?.element; if (!element) continue;
+      active.add(element);
+      let grid = this.indicatorValueGrids.get(element);
+      if (!grid) { grid = new IndicatorValueGrid(() => {
+        const currentIndex = chart.panes().findIndex(pane => pane.element === element);
+        if (currentIndex < 0) return undefined;
+        if (this.cvdView?.paneIndex() === currentIndex) return this.cvdView.valueScale();
+        if (this.openInterestView?.paneIndex() === currentIndex) return this.openInterestView.valueScale();
+        const pane = chart.panes()[currentIndex]!;
+        return pane.axisScales().find(scale => scale.scaled) ?? pane.readoutScale();
+      }); this.indicatorValueGrids.set(element, grid); chart.addPrimitive(grid, index); }
+      grid.configure(members.every(instance => instance.priceGrid !== false), members.some(instance => instance.definitionId === CVD_ID));
+    }
+    for (const [element, grid] of this.indicatorValueGrids) if (!active.has(element)) { chart.removePrimitive(grid); this.indicatorValueGrids.delete(element); }
+  }
+
   private renderActiveIndicators() {
     if (!this.selection || this.dead) return;
     this.compositionWork.activeIndicatorRenders++;
+    this.syncIndicatorValueGrids();
     this.fitPrimaryPaneCollapseWeight();
     const studies = this.studyHost?.views() ?? [];
     const mainRows: HTMLDivElement[] = [];
@@ -4757,6 +4854,7 @@ export class CandlePanel implements IContentRenderer {
     } else { this.indicatorErrorRow?.remove(); }
     this.reconcileIndicatorChildren(this.activeRows, this.indicatorErrorRow ? [...mainRows, this.indicatorErrorRow] : mainRows);
     for (const [id, view] of this.indicatorRowViews) if (!activeIds.has(id)) { view.element.remove(); this.indicatorRowViews.delete(id); }
+    this.renderDrawingObjects();
   }
 
   private async openPicker() {
@@ -5749,6 +5847,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsPanel.remove();
     for (const host of this.paneIndicatorHosts.values()) host.remove(); this.paneIndicatorHosts.clear();
     for (const host of this.paneControlHosts.values()) host.element.remove(); this.paneControlHosts.clear();
+    for (const grid of this.indicatorValueGrids.values()) this.engine?.chart.removePrimitive(grid); this.indicatorValueGrids.clear();
     this.paneIndicatorLayer.remove(); this.indicatorRowViews.clear();
     this.paneLoadingLayer.remove(); this.paneLoaders.clear();
     this.objectsRows.replaceChildren();

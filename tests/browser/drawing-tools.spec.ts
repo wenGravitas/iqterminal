@@ -1166,14 +1166,14 @@ test('Footprint and Heatmap appear once in IQ Objects and accept a drawing overl
   await addIndicator(panel, 'Footprint');
   await addIndicator(panel, 'Order-book Heatmap');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].footprint.bars)).toBeGreaterThan(0);
-  await expect(panel.locator('.heatmap-notice')).toContainText('live');
+  await expect(panel.locator('.heatmap-notice')).toHaveAttribute('data-state', 'live');
   await placeHorizontalLine(page, panel, 9);
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
 
   const objectsPanel = panel.locator('.chart-objects-panel');
   await expect(objectsPanel).toBeVisible();
-  const footprintRow = objectsPanel.locator('.chart-object-row.kind-profile').filter({ hasText: 'Footprint' });
+  const footprintRow = objectsPanel.locator('.chart-object-row.kind-indicator').filter({ hasText: 'Footprint' });
   const heatmapRow = objectsPanel.locator('.chart-object-row.kind-indicator').filter({ hasText: 'Order-book Heatmap' });
   await expect(footprintRow).toHaveCount(1);
   await expect(heatmapRow).toHaveCount(1);
@@ -1268,4 +1268,36 @@ test('horizontal and vertical measures in Positions support placement, history a
   await page.reload();
   await expect.poll(async () => (await drawingState(page, panel)).drawings.map(({ tool, points }) => ({ tool, points }))).toEqual(geometry);
   expect(errors).toEqual([]);
+});
+
+for (const dpr of [1, 2]) test.describe(`collapsed measure picking at DPR ${dpr}`, () => {
+  test.use({ deviceScaleFactor: dpr });
+  test('right-clicks hit the visible fallback spans without selecting their anchors', async ({ page }) => {
+    await page.goto('/?fixture=1&fixtureTime=now');
+    await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+    const panel = page.locator('.candle-panel').first();
+    const panelId = (await panel.getAttribute('data-panel-id'))!;
+    const targets = await page.evaluate(id => {
+      const engine = (window as any).__terminal.panels.get(id).engine, chart = engine.chart;
+      const plot = chart.plotRect(0), scale = chart.panes()[0].readoutScale();
+      return ['price-range', 'date-range'].map((tool, index) => {
+        const time = chart.coordinateToTime(plot.left + plot.width * (.3 + index * .3));
+        const price = scale.yToPrice(plot.height * (.3 + index * .3));
+        const drawing = engine.drawings.add({ tool, paneIndex: 0, points: [{ time, price }, { time, price }] });
+        const x = chart.timeToCoordinate(time), y = chart.priceToCoordinate(price, 0);
+        return { tool, id: drawing.id, x: x + (tool === 'price-range' ? 40 : 0), y: y + (tool === 'date-range' ? 30 : 0) };
+      });
+    }, panelId);
+    const menu = page.getByRole('menu', { name: 'Drawing actions', exact: true });
+    for (const target of targets) {
+      await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.select(null), panelId);
+      await panel.locator('.chart-stage').click({ button: 'right', position: { x: target.x, y: target.y } });
+      await expect(menu).toBeVisible();
+      await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings']);
+      await menu.getByRole('menuitem', { name: 'Settings', exact: true }).click();
+      const settings = panel.getByRole('dialog', { name: 'Drawing settings', exact: true });
+      await expect(settings.locator('.drawing-settings-title')).toHaveText(`${target.tool} settings`);
+      await settings.getByRole('button', { name: 'Cancel', exact: true }).click();
+    }
+  });
 });
