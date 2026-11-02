@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 import { addIndicator } from './indicator-actions';
@@ -72,7 +73,7 @@ test('two managed Volume → SMA charts share one candle cache and clean up inde
   if (!firstPanelId) throw new Error('First fixture chart panel ID is missing.');
   const first = await attachVolumeSma(firstPanel);
 
-  await page.getByRole('button', { name: 'Add chart', exact: true }).click();
+  await addWidget(page, 'Chart');
   await expect(page.locator('.candle-panel')).toHaveCount(2);
   const secondPanel = page.locator('.candle-panel').nth(1);
   const secondPanelId = await secondPanel.getAttribute('data-panel-id');

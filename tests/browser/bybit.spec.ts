@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { test,expect } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 import { addIndicator } from './indicator-actions';
@@ -12,7 +13,7 @@ test('Bybit ticker selections, execution labels, CVD membership and persistence'
   self.WebSocket=new Proxy(Original,{construct(target,args){return String(args[0]).includes('stream.bybit.com/v5/public/linear')?new Socket():Reflect.construct(target,args);}}) as any;
   probe.emit=()=>{const now=Date.now();probe.socket.onmessage?.({data:JSON.stringify({topic:'publicTrade.BTCUSDT',type:'snapshot',ts:now,data:[{s:'BTCUSDT',i:'bybit-fixture-one',T:now,S:'Sell',p:'80000.10',v:'1.25'}]})});};
  });
- await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+ await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
  await ticker.getByRole('button',{name:'Ticker markets',exact:true}).click();const picker=ticker.locator('.market-picker').first();
  await picker.getByRole('checkbox',{name:'Binance · BTCUSDT USD-M Perp',exact:true}).uncheck();await picker.getByRole('checkbox',{name:'Bybit · BTCUSDT Perp',exact:true}).check();await picker.getByRole('button',{name:'Apply',exact:true}).click();
  await expect.poll(()=>worker.evaluate(()=>(self as any).__bybitFixture.socket?.readyState)).toBe(1);await worker.evaluate(()=>(self as any).__bybitFixture.emit());
@@ -21,7 +22,7 @@ test('Bybit ticker selections, execution labels, CVD membership and persistence'
  await pane.getByRole('button',{name:'Select included CVD sources and aggregations'}).click();const cvdPicker=chart.getByRole('dialog',{name:'Select markets'});
  await cvdPicker.getByRole('checkbox',{name:'Bybit · BTCUSDT Perp',exact:true}).check();await cvdPicker.getByRole('button',{name:'Apply',exact:true}).click();
  await expect(pane).toContainText('BY[P] BTCUSDT');await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].cvdView.diagnostics().sources.length)).toBe(3);
- await expect.poll(()=>page.evaluate(()=>{const layout=JSON.parse(localStorage.getItem('basis.layout.v1')!);return JSON.stringify(layout).includes('bybit:perpetual');})).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>{const layout=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);return JSON.stringify(layout).includes('bybit:perpetual');})).toBe(true);
  await page.screenshot({path:'/tmp/bybit-ticker-cvd.png'});expect(errors).toEqual([]);
  await page.reload();await expect(page.locator('[data-cvd=true]')).toContainText('BY[P] BTCUSDT');
 });

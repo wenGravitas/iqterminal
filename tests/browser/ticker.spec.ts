@@ -1,9 +1,10 @@
+import { addWidget, selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 
 test('clear trades empties the panel tape without resetting the shared feed',async({page})=>{
-  const worker=await installTradeFixture(page);await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  const worker=await installTradeFixture(page);await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
   await worker.evaluate(()=>(self as any).__tradeFixture.emit(10));const rows=ticker.locator('.ticker-table .ticker-row');await expect(rows).toHaveCount(1);await expect(rows.first()).toHaveAttribute('data-execution-id','binance:perpetual:BTCUSDT:agg:1');
   const before=await worker.evaluate(()=>(self as any).__tradeFixture.sockets);
@@ -14,7 +15,7 @@ test('clear trades empties the panel tape without resetting the shared feed',asy
 
 test('ticker reported prints, tiers, notifications, pause, shared footprint socket and persistence',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.emulateMedia({colorScheme:'dark'});const worker=await installTradeFixture(page);
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
   await ticker.getByRole('button',{name:'Enable audio',exact:true}).click();await expect(ticker.getByRole('button',{name:'Audio enabled'})).toBeVisible();
   await ticker.getByRole('button',{name:'Ticker markets',exact:true}).click();const picker=ticker.locator('.market-picker').first();await picker.getByRole('searchbox',{name:'Search markets'}).fill('BTCUSDT');await expect(picker.getByRole('checkbox',{name:'Binance · BTCUSDT USD-M Perp',exact:true})).toBeChecked();await expect(picker.getByRole('checkbox',{name:'Binance · BTCUSDT Spot',exact:true})).toBeEnabled();await picker.getByRole('button',{name:'Cancel',exact:true}).click();
@@ -34,7 +35,7 @@ test('ticker header controls remain accessible without horizontal scroll at narr
   await installTradeFixture(page);
   // Keep the requested 594px ticker width inside one root split.
   await page.getByRole('button',{name:'Close Hyperliquid · BTC Perp · 1m',exact:true}).click();
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await expect(ticker.getByRole('button',{name:'Pause',exact:true}).locator('svg')).toHaveCount(1);
   await expect(ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).locator('svg')).toHaveCount(1);
   await expect(ticker.getByRole('button',{name:'Enable audio',exact:true}).locator('svg')).toHaveCount(1);
@@ -51,7 +52,7 @@ test('ticker header controls remain accessible without horizontal scroll at narr
 
 test('chart single market picker, independent ticker instances, hidden rendering and complete teardown',async({page})=>{
   const worker=await installTradeFixture(page);const chart=page.locator('.candle-panel').first();await chooseChartMarket(chart,'Binance · BTCUSDT Spot');await expect(chart.getByRole('button',{name:'Chart market',exact:true})).toContainText('Spot');await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].series.market)).toBe('spot');
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();await expect(page.locator('.trade-ticker')).toHaveCount(2);await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);await worker.evaluate(()=>(self as any).__tradeFixture.emit(.5));await expect(page.locator('.trade-ticker').first().locator('.ticker-table .ticker-row')).toHaveCount(1);await expect(page.locator('.trade-ticker').last().locator('.ticker-table .ticker-row')).toHaveCount(1);
+  await addWidget(page, 'Trade Ticker');await addWidget(page, 'Trade Ticker');await expect(page.locator('.trade-ticker')).toHaveCount(2);await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);await worker.evaluate(()=>(self as any).__tradeFixture.emit(.5));await expect(page.locator('.trade-ticker').first().locator('.ticker-table .ticker-row')).toHaveCount(1);await expect(page.locator('.trade-ticker').last().locator('.ticker-table .ticker-row')).toHaveCount(1);
   await page.evaluate(()=>{const t=(window as any).__terminal,panels=t.dock.panels.filter((p:any)=>p.view.contentComponent==='trade-ticker');panels[1].api.moveTo({group:panels[0].api.group});panels[0].api.setActive();});
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.tickers.values()].filter((p:any)=>!p.diagnostics().visible).length)).toBe(1);const hidden=await page.evaluate(()=>[...(window as any).__terminal.tickers.values()].find((p:any)=>!p.diagnostics().visible).diagnostics().draws);await worker.evaluate(()=>(self as any).__tradeFixture.emit(.2));await page.waitForTimeout(450);expect(await page.evaluate(()=>[...(window as any).__terminal.tickers.values()].find((p:any)=>!p.diagnostics().visible).diagnostics().draws)).toBe(hidden);
   await page.setViewportSize({width:720,height:860});await page.screenshot({path:'artifacts/trade-ticker-720x860.png'});
@@ -60,7 +61,7 @@ test('chart single market picker, independent ticker instances, hidden rendering
 
 test('Spot ticker receives Spot prints with isolated market identity and tape',async({page})=>{
   const worker=await installTradeFixture(page);
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();
+  await addWidget(page, 'Trade Ticker');await addWidget(page, 'Trade Ticker');
   const tickers=page.locator('.trade-ticker'),perpetual=tickers.nth(0),spot=tickers.nth(1);
   await spot.getByRole('button',{name:'Ticker markets',exact:true}).click();const picker=spot.locator('.market-picker').first();
   await picker.getByRole('searchbox',{name:'Search markets'}).fill('BTCUSDT');
@@ -77,7 +78,7 @@ test('Spot ticker receives Spot prints with isolated market identity and tape',a
 });
 
 test('virtual tape scrolls retained prints without stopping ingestion and keyboard picker cancels its draft',async({page})=>{
-  const worker=await installTradeFixture(page);await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker');await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
+  const worker=await installTradeFixture(page);await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker');await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
   await worker.evaluate(()=>{for(let n=0;n<120;n++)(self as any).__tradeFixture.emit(.01);});await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.tickers.values()][0].diagnostics().retained)).toBe(120);
   await expect.poll(()=>ticker.locator('.ticker-table .ticker-row').count()).toBeLessThan(100);const latest=await ticker.locator('.ticker-table .ticker-row').first().getAttribute('data-execution-id');
   await ticker.locator('.ticker-viewport').evaluate(e=>e.scrollTop=500);await expect(ticker.getByRole('button',{name:'Return to live'})).toBeVisible();await expect.poll(()=>ticker.locator('.ticker-table .ticker-row').first().getAttribute('data-execution-id')).not.toBe(latest);
@@ -86,7 +87,7 @@ test('virtual tape scrolls retained prints without stopping ingestion and keyboa
 });
 
 test('compact tier table edits every setting, validates duplicates and keeps cancel draft-only',async({page})=>{
-  const worker=await installTradeFixture(page);await page.emulateMedia({colorScheme:'dark'});await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker');await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();const settings=ticker.locator('.ticker-settings'),rows=settings.locator('.ticker-tier-table tbody tr');await expect(rows).toHaveCount(3);
+  const worker=await installTradeFixture(page);await page.emulateMedia({colorScheme:'dark'});await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker');await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();const settings=ticker.locator('.ticker-settings'),rows=settings.locator('.ticker-tier-table tbody tr');await expect(rows).toHaveCount(3);
   await expect.poll(()=>settings.locator('.ticker-tiers').evaluate(e=>e.getBoundingClientRect().height)).toBeLessThan(160);await page.screenshot({path:'artifacts/ticker-settings-table-1366x768.png'});await page.setViewportSize({width:720,height:860});await page.emulateMedia({colorScheme:'light'});await page.screenshot({path:'artifacts/ticker-settings-table-720x860.png'});await page.setViewportSize({width:1366,height:768});await page.emulateMedia({colorScheme:'dark'});
   const first=rows.first();await first.getByLabel('Tier name',{exact:true}).fill('Quiet');await first.getByLabel('Sound volume (%)',{exact:true}).fill('35');await first.getByLabel('Brief pulse',{exact:true}).check();await first.getByLabel('Show toast',{exact:true}).check();await first.getByLabel('Sound',{exact:true}).selectOption('chime');await first.getByLabel('Minimum size',{exact:true}).fill('100000');await settings.getByRole('button',{name:'Apply',exact:true}).click();await expect(settings.locator('.dialog-status')).toContainText('unique');await expect(settings).toBeVisible();await first.getByLabel('Minimum size',{exact:true}).fill('0');
   await settings.getByRole('button',{name:'Add tier'}).click();await expect(rows).toHaveCount(4);await expect(rows.last().getByLabel('Tier name',{exact:true})).toBeFocused();await rows.last().getByRole('button',{name:'Delete tier'}).click();await expect(rows).toHaveCount(3);await settings.getByRole('button',{name:'Apply',exact:true}).click();
@@ -98,7 +99,7 @@ test('compact tier table edits every setting, validates duplicates and keeps can
 
 test('quick BTC/USDT size combo and optional columns preserve feeds and saved settings',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const worker=await installTradeFixture(page);
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await worker.evaluate(()=>{const p=(self as any).__tradeFixture;p.emit(.5);p.emit(2);});await expect(ticker.locator('.ticker-table .ticker-row')).toHaveCount(2);
   const minimum=ticker.getByRole('combobox',{name:'Minimum trade size',exact:true});await minimum.fill('100K');await minimum.press('Tab');await expect(ticker.locator('.ticker-table .ticker-row')).toHaveCount(1);
   await ticker.getByLabel('Trade size filter unit',{exact:true}).selectOption('BTC');await minimum.fill('1');await minimum.press('Tab');await expect(ticker.locator('.ticker-table .ticker-row')).toHaveCount(1);
@@ -112,7 +113,7 @@ test('quick BTC/USDT size combo and optional columns preserve feeds and saved se
 });
 
 test('inward buy/sell bars share a scale, freeze on pause and persist appearance',async({page})=>{
-  await page.emulateMedia({colorScheme:'dark'});const worker=await installTradeFixture(page);await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();
+  await page.emulateMedia({colorScheme:'dark'});const worker=await installTradeFixture(page);await addWidget(page, 'Trade Ticker');
   await page.evaluate(()=>{const t=(window as any).__terminal;const p=t.dock.panels.find((p:any)=>p.view.contentComponent==='trade-ticker');p.api.setSize({width:850});});
   const ticker=page.locator('.trade-ticker'),rows=ticker.locator('.ticker-table .ticker-row');
   await worker.evaluate(()=>{const f=(self as any).__tradeFixture;f.emit(20,'buy');f.emit(10,'sell');f.emit(5,'buy');f.emit(2,'sell');});await expect(rows).toHaveCount(4);
@@ -124,12 +125,12 @@ test('inward buy/sell bars share a scale, freeze on pause and persist appearance
   await page.screenshot({path:'artifacts/ticker-volume-bars-1366x768.png'});
   await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();const settings=ticker.locator('.ticker-settings');await settings.getByLabel('Scale window (seconds)',{exact:true}).fill('0');await settings.getByRole('button',{name:'Apply',exact:true}).click();await expect(settings.getByRole('status')).toContainText('5–300');await settings.getByLabel('Scale window (seconds)',{exact:true}).fill('30');await settings.getByLabel('Bar opacity (%)',{exact:true}).fill('25');await settings.getByRole('button',{name:'Apply',exact:true}).click();
   await expect(ticker.locator('.ticker-table')).toHaveCSS('--ticker-bar-opacity','0.25');expect(await worker.evaluate(()=>(self as any).__tradeFixture.sockets)).toBe(1);
-  await page.setViewportSize({width:720,height:860});await page.locator('#theme').selectOption('light');await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();await page.screenshot({path:'artifacts/ticker-volume-bars-720x860.png'});await settings.getByLabel('Show volume bars',{exact:true}).uncheck();await settings.getByRole('button',{name:'Apply',exact:true}).click();expect((await widths()).every(r=>r.width==='0%')).toBe(true);
+  await page.setViewportSize({width:720,height:860});await selectTheme(page, 'light');await ticker.getByRole('button',{name:'Trade Ticker settings',exact:true}).click();await page.screenshot({path:'artifacts/ticker-volume-bars-720x860.png'});await settings.getByLabel('Show volume bars',{exact:true}).uncheck();await settings.getByRole('button',{name:'Apply',exact:true}).click();expect((await widths()).every(r=>r.width==='0%')).toBe(true);
   await page.waitForTimeout(400);await page.reload();await page.locator('.trade-ticker').getByRole('button',{name:'Trade Ticker settings',exact:true}).click();await expect(page.locator('.ticker-settings').getByLabel('Show volume bars',{exact:true})).not.toBeChecked();await expect(page.locator('.ticker-settings').getByLabel('Scale window (seconds)',{exact:true})).toHaveValue('30');await expect(page.locator('.ticker-settings').getByLabel('Bar opacity (%)',{exact:true})).toHaveValue('25');
 });
 
 test('visible histogram rows stay proportional across window expiry, raw eviction and a new maximum',async({page})=>{
-  const worker=await installTradeFixture(page);await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  const worker=await installTradeFixture(page);await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await page.evaluate(()=>{const panel=(window as any).__terminal.dock.panels.find((p:any)=>p.view.contentComponent==='trade-ticker');panel.api.setSize({width:850});});
   await ticker.getByLabel('Trade size filter unit',{exact:true}).selectOption('USDT');
   const minimum=ticker.getByRole('combobox',{name:'Minimum trade size',exact:true});await minimum.fill('100K');await minimum.press('Tab');
@@ -157,7 +158,7 @@ test('visible histogram rows stay proportional across window expiry, raw evictio
 
 test('hidden prints cannot evict an already printed matching trade',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const worker=await installTradeFixture(page);
-  await page.getByRole('button',{name:'Trade Ticker',exact:true}).click();const ticker=page.locator('.trade-ticker').first();
+  await addWidget(page, 'Trade Ticker');const ticker=page.locator('.trade-ticker').first();
   await expect.poll(()=>worker.evaluate(()=>(self as any).__tradeFixture.active)).toBe(1);
   await ticker.getByRole('combobox',{name:'Minimum trade size',exact:true}).fill('100K');await ticker.getByRole('combobox',{name:'Minimum trade size',exact:true}).press('Tab');
   await worker.evaluate(()=>(self as any).__tradeFixture.emit(10));const row=ticker.locator('.ticker-row');await expect(row).toHaveCount(1);const id=await row.getAttribute('data-execution-id'),text=await row.textContent();

@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 import { addIndicator } from './indicator-actions';
@@ -529,7 +530,7 @@ test('combined native panes share raw Open Interest across charts and release it
   await expect(first.locator('[data-open-interest="true"] .open-interest-toolbar')).toBeHidden();
   await expect(first.locator('.order-flow-value').filter({ hasText: 'Volume' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Add chart', exact: true }).click();
+  await addWidget(page, 'Chart');
   await expect(charts).toHaveCount(2);
   const second = charts.nth(1);
   const secondId = await second.getAttribute('data-panel-id');

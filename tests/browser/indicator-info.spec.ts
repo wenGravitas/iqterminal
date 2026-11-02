@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator } from './indicator-actions';
@@ -102,15 +103,15 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   await info.evaluate((element: HTMLElement) => element.blur());
   await expect(focusedTooltip).toBeHidden();
 
-  await page.locator('#theme').selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect.poll(() => panel.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe('#090909');
   await page.screenshot({ path: 'artifacts/indicator-info-collapsed-720-dark.png' });
-  await page.locator('#theme').selectOption('light');
+  await selectTheme(page, 'light');
   await expect.poll(() => panel.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe('#f6f4ee');
   await page.screenshot({ path: 'artifacts/indicator-info-collapsed-720-ivory.png' });
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.screenshot({ path: 'artifacts/indicator-info-collapsed-1366-ivory.png' });
-  await page.locator('#theme').selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect.poll(() => panel.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe('#090909');
   await page.screenshot({ path: 'artifacts/indicator-info-collapsed-1366-dark.png' });
 

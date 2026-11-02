@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 
@@ -42,13 +43,13 @@ test('Daily VWAP renders blue/green daily segments, updates correctly and persis
     return latest.value>=range.min && latest.value<=range.max;
   })).toBe(true);
   for(const theme of ['dark','light']as const){
-    await page.getByLabel('Theme',{exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(()=>panel.evaluate(element=>getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme==='dark'?'#090909':'#f6f4ee');
     await panel.screenshot({path:`/tmp/daily-vwap-${theme}.png`});
   }
   await page.setViewportSize({width:720,height:860});
   for(const theme of ['dark','light']as const){
-    await page.getByLabel('Theme',{exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(()=>panel.evaluate(element=>getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme==='dark'?'#090909':'#f6f4ee');
     await expect.poll(async()=>{
       const geometry=(await diagnostics()).readoutGeometry;
@@ -78,7 +79,7 @@ test('Daily VWAP renders blue/green daily segments, updates correctly and persis
   await expect.poll(async()=>(await diagnostics()).points).toBe(5000);
   expect(await page.evaluate(()=>(window as any).__vwapMessages.filter((m:string)=>m==='subscribe').length)).toBe(before);
   await expect.poll(()=>page.evaluate(()=>{
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return (Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.daily-vwap')?.settings;
   })).toMatchObject({multiplier:2,secondDeviation:true,thirdDeviation:true,readout:true});
   await page.reload();
@@ -141,7 +142,7 @@ test('naked daily VWAP gaps reach the axis, toggle persistently and clear on a w
   expect(geometry.every((g:any)=>g.fromX>=0&&g.fromX<g.toX&&g.y>0)).toBe(true);
   expect(geometry.map((g:any)=>g.fromX).some((x:number)=>x>0)).toBe(true);
   for(const theme of ['dark','light']as const){
-    await page.getByLabel('Theme',{exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await panel.screenshot({path:`/tmp/daily-vwap-gaps-${theme}.png`});
   }
   await panel.getByRole('button',{name:'Daily VWAP settings',exact:true}).click();
@@ -152,7 +153,7 @@ test('naked daily VWAP gaps reach the axis, toggle persistently and clear on a w
   await dialog.getByRole('button',{name:'Apply',exact:true}).click();
   await expect.poll(async()=>(await diagnostics()).gapGeometry?.length).toBe(0);
   await expect.poll(()=>page.evaluate(()=>{
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return (Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.daily-vwap')?.settings.nakedGaps;
   })).toBe(false);
   await panel.getByRole('button',{name:'Daily VWAP settings',exact:true}).click();

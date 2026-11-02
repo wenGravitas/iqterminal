@@ -1,10 +1,11 @@
+import { addWidget } from './footer-actions';
 import { expect, test } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 
 test('a ticker execution hovers at its exact price and time on matching charts only, then clears', async ({ page }, testInfo) => {
   test.setTimeout(30_000);
   const worker = await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker').first();
   await expect.poll(() => worker.evaluate(() => (self as any).__tradeFixture.active)).toBe(1);
 
@@ -94,7 +95,7 @@ test('a ticker execution hovers at its exact price and time on matching charts o
 test('double-click or Enter adds one editable native execution ray per matching chart', async ({ page }, testInfo) => {
   test.setTimeout(45_000);
   const worker = await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker').first();
   await expect.poll(() => worker.evaluate(() => (self as any).__tradeFixture.active)).toBe(1);
 

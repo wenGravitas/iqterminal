@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -59,7 +60,7 @@ test('shows explicit fixture feed state, preserves popup interaction, and fits d
   ];
   for (const size of sizes) {
     await page.setViewportSize({ width: size.width, height: size.height });
-    await page.locator('#theme').selectOption(size.theme);
+    await selectTheme(page, size.theme);
     await trigger.click();
     await expect(connectionPopover).toBeVisible();
     const geometry = await page.evaluate(() => {

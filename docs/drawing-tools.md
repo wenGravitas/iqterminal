@@ -36,11 +36,13 @@ Use the chart-header capture action, chart context menu or **Alt+Shift+J** to sa
 
 ## Saved data
 
-Each chart panel stores a separate drawing document for each instrument in browser `localStorage`, under `iqterminal:drawings:<encoded panel id>:<encoded venue:market>:<encoded symbol>`. The chart interval is outside the key, so changing timeframe keeps the same instrument's drawings. Spot, USD-M perpetual, and Hyperliquid perpetual have distinct scopes. Chart layout restoration retains panel IDs; closing a chart disposes its live controller but does not delete the saved document for that panel and instrument. A newly created chart has its own panel scope.
+Each chart panel stores a separate drawing document for each instrument in its workspace registry `panelState`, using the logical key `iqterminal:drawings:<encoded panel id>:<encoded venue:market>:<encoded symbol>`. The chart interval is outside the key, so changing timeframe keeps the same instrument's drawings. Spot, USD-M perpetual, and Hyperliquid perpetual have distinct scopes. Chart layout restoration retains panel IDs; closing a chart disposes its live controller but does not delete the saved document for that panel and instrument. A newly created chart has its own panel scope.
 
-Object Tree folders and optional drawing display names use versioned records at `iqterminal:object-tree:v1:<encoded panel id>:<encoded venue:market>:<encoded symbol>`, with no timeframe in the key. Sidebar width and collapsed state use the sibling panel-scoped record `iqterminal:object-tree-sidebar:v1:<encoded panel id>`. Invalid or unsupported records are preserved and the affected tree uses session memory with a visible status message; failed writes do not disable chart drawings.
+Object Tree folders and optional drawing display names use workspace-owned versioned records at `iqterminal:object-tree:v1:<encoded panel id>:<encoded venue:market>:<encoded symbol>`, with no timeframe in the key. Sidebar width and collapsed state use the sibling panel-scoped record `iqterminal:object-tree-sidebar:v1:<encoded panel id>`. Invalid or unsupported records are preserved and the affected tree uses session memory with a visible status message; failed writes do not disable chart drawings.
 
-Templates use the separate versioned catalog `iqterminal:drawing-templates:v1`. Malformed or unsupported stored drawing/template data is left untouched; the affected feature uses an in-memory session copy and reports the storage issue. If a drawing-document write fails, drawings remain usable in the current session but edits made after the failure are not guaranteed to survive a reload.
+Workspace duplication copies all instrument documents and Object Tree/sidebar records into fresh panel IDs. Legacy localStorage drawing/tree keys are retained as migration recovery originals. See [Workspaces Release 1](workspaces-release1.md) for ownership, switching and recovery.
+
+Templates use the separate global versioned catalog `iqterminal:drawing-templates:v1`. Malformed or unsupported stored drawing/template data is left untouched; the affected feature uses an in-memory session copy and reports the storage issue. If a drawing-document write fails, drawings remain usable in the current session but edits made after the failure are not guaranteed to survive a reload.
 
 ## Verification limits
 

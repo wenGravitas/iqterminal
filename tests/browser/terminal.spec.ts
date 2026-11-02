@@ -255,7 +255,7 @@ test('Footprint mode owns a separate subscription, renders bar revisions, and re
   await expect(panel.locator('.instrument-meta')).toContainText('Price level (USDT) · $5');
   await expect.poll(()=>panel.evaluate(element=>{
     const id=(element as HTMLElement).dataset.panelId!;
-    return JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[id]?.params;
+    return JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))||'{}').layout?.panels?.[id]?.params;
   })).toMatchObject({type:'footprint',rowPrice:5});
   await page.setViewportSize({width:720,height:860});
   await panel.locator('.chart-toolbar').evaluate(toolbar=>{toolbar.scrollLeft=toolbar.scrollWidth;});
@@ -415,7 +415,7 @@ test('charts render, controls persist, corrupt layout recovers',async({page})=>{
   await expect(page.locator('select[aria-label=Timeframe]').first()).toHaveValue('15m');
   await page.reload();
   await expect(page.locator('select[aria-label=Timeframe]').first()).toHaveValue('15m');
-  await page.evaluate(()=>localStorage.setItem('basis.layout.v1','{broken'));
+  await page.evaluate(()=>{localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1','{broken');});
   await page.reload();await expect(page.locator('select[aria-label=Timeframe]').first()).toHaveValue('1m');
 });
 
@@ -425,7 +425,7 @@ test('Binance Spot stays a distinct BTCUSDT series and legacy layouts keep defau
     const layout=terminal.dock.toJSON();
     const binance=Object.values(layout.panels).find((panel:any)=>panel.params?.venue==='binance') as any;
     if(binance)delete binance.params.market;
-    localStorage.setItem('basis.layout.v1',JSON.stringify({version:1,layout}));
+    localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1',JSON.stringify({version:1,layout}));
   });
   await page.reload();
   const instrument=page.getByRole('button',{name:'Chart market',exact:true}).first();
@@ -715,7 +715,7 @@ test('Footprint price level defaults to $25, rejects off-grid edits, and restore
   await setPriceLevel(panel, '50');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
   const panelId=await panel.getAttribute('data-panel-id');
-  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[[...(window as any).__terminal.panels.values()][0].params.api.id]?.params?.rowPrice)).toBe(50);
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))||'{}').layout?.panels?.[[...(window as any).__terminal.panels.values()][0].params.api.id]?.params?.rowPrice)).toBe(50);
   const writesAt50=await page.evaluate(()=>(window as any).__terminal.footprintPersistenceWrites());
   expect(writesAt50.parameters).toBe(writesAt25.parameters+1);
   expect(writesAt50.saves).toBe(writesAt25.saves+1);
@@ -739,7 +739,7 @@ test('Footprint price level defaults to $25, rejects off-grid edits, and restore
   await expect.poll(()=>price.evaluate((element:HTMLInputElement)=>element.validationMessage)).toContain('tick size, $0.1');
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.footprintSubscriptions)).toEqual([25,50]);
   await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].footprint.latest?.close)).toBe(83_001);
-  await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.rowPrice)).toBe(50);
+  await expect.poll(()=>panel.evaluate(element=>JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.rowPrice)).toBe(50);
   if(await panel.locator('.footprint-settings-dialog').isVisible()) await panel.locator('.footprint-settings-dialog').getByRole('button',{name:'Close',exact:true}).click();
   await setFootprint(panel, false);
   await page.reload();
@@ -1395,7 +1395,7 @@ test('footprint BTC/USDT toggle preserves collection and viewport, updates total
   await expect(units).toHaveValue('btc');
   await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].engine.latestFootprintStats()?.bidVolume)).toBe(.001);
   await setUnits(panel, 'usdt');
-  await expect.poll(()=>panel.evaluate(element=>JSON.parse(localStorage.getItem('basis.layout.v1')||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.footprintUnits)).toBe('usdt');
+  await expect.poll(()=>panel.evaluate(element=>JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))||'{}').layout?.panels?.[(element as HTMLElement).dataset.panelId!]?.params?.footprintUnits)).toBe('usdt');
   await page.reload();
   await page.waitForFunction(()=>(window as any).__terminal?.stats().panels.length===2);
   const restoredPanel=page.locator('.candle-panel').first();

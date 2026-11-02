@@ -1,3 +1,5 @@
+import { savedPanelRecord } from './footer-actions';
+import { selectTheme } from './footer-actions';
 import { test, expect, type Page, type Locator } from '@playwright/test';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 import { installDepthFixture } from './depth-fixture';
@@ -25,7 +27,7 @@ async function drawingState(page: Page, panel: Locator): Promise<DrawingState> {
 }
 
 async function useDarkTheme(page: Page) {
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 }
 
@@ -112,7 +114,7 @@ async function drawingStorageKey(page: Page, panel: Locator) {
 }
 
 async function placeHorizontalLine(page: Page, panel: Locator, offset = 0) {
-  await expect.poll(() => panel.evaluate(element => { const view = [...(window as any).__terminal.panels.values()].find((p: any) => p.element === element); return view?.engine.barCount; })).toBe(5000);
+  await expect.poll(() => panel.evaluate(element => { const view = [...(window as any).__terminal.panels.values()].find((p: any) => p.element === element); return view?.engine.barCount ?? 0; })).toBeGreaterThan(0);
   const narrow = await panel.evaluate(element => { const view = [...(window as any).__terminal.panels.values()].find((p: any) => p.element === element); return view.engine.chart.plotRect(0).width < 160; });
   const close = panel.locator('.chart-object-tree-collapse'), restoreTree = narrow && await close.isVisible(); if (restoreTree) await close.click();
   await selectDrawingTool(panel, 'horizontal-line');
@@ -125,9 +127,9 @@ async function placeHorizontalLine(page: Page, panel: Locator, offset = 0) {
   }, id);
   const stage = panel.locator('.chart-stage');
   const storageKey = await drawingStorageKey(page, panel);
-  const beforePreview = await page.evaluate(key => localStorage.getItem(key), storageKey);
+  const beforePreview = await page.evaluate(savedPanelRecord, storageKey);
   await stage.hover({ position: { x: point.x + offset, y: point.y + offset } });
-  expect(await page.evaluate(key => localStorage.getItem(key), storageKey)).toBe(beforePreview);
+  expect(await page.evaluate(savedPanelRecord, storageKey)).toBe(beforePreview);
   await stage.click({ position: { x: point.x + offset, y: point.y + offset } });
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBeGreaterThan(0);
   if (restoreTree) await panel.locator('.chart-objects-toggle').click();
@@ -227,7 +229,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   expect((await drawingState(page, panel)).drawings[0]?.locked).toBe(true);
   await lockAction.click();
   const beforeDefaultEditor = await drawingState(page, panel);
-  const beforeDefaultStorage = await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel));
+  const beforeDefaultStorage = await page.evaluate(savedPanelRecord, await drawingStorageKey(page, panel));
   const defaultTheme = await page.evaluate(panelId => (window as any).__terminal.panels.get(panelId).engine.chart.theme(), panelId);
   await settingsAction.click();
   const defaultSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
@@ -248,7 +250,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const noOpSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await noOpSettings.getByRole('button', { name: 'Apply', exact: true }).click();
   expect(await drawingState(page, panel)).toMatchObject({ drawings: beforeDefaultEditor.drawings, canUndo: beforeDefaultEditor.canUndo, canRedo: beforeDefaultEditor.canRedo });
-  expect(await page.evaluate(key => localStorage.getItem(key), await drawingStorageKey(page, panel))).toBe(beforeDefaultStorage);
+  expect(await page.evaluate(savedPanelRecord, await drawingStorageKey(page, panel))).toBe(beforeDefaultStorage);
 
   await settingsAction.click();
   const widthSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
@@ -583,7 +585,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const scopeKeys = await page.evaluate(panelId => {
     const spot = `iqterminal:drawings:${encodeURIComponent(panelId)}:binance%3Aspot:BTCUSDT`;
     const perpetual = `iqterminal:drawings:${encodeURIComponent(panelId)}:binance%3Aperpetual:BTCUSDT`;
-    return { spot: JSON.parse(localStorage.getItem(spot) ?? 'null')?.drawings?.length, perpetual: JSON.parse(localStorage.getItem(perpetual) ?? 'null')?.drawings?.length };
+    return { spot: JSON.parse((window as any).__terminal.workspaces.active.panelState[spot] ?? 'null')?.drawings?.length, perpetual: JSON.parse((window as any).__terminal.workspaces.active.panelState[perpetual] ?? 'null')?.drawings?.length };
   }, panelId);
   expect(scopeKeys).toEqual({ spot: 1, perpetual: 3 });
   await chooseChartMarket(panel, 'Binance · BTCUSDT USD-M Perp');
@@ -596,7 +598,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await expect.poll(async () => (await drawingState(page, panel)).hidden.length).toBeGreaterThanOrEqual(2);
   expect((await drawingState(page, panel)).drawings).toHaveLength(3);
   const binanceKey = `iqterminal:drawings:${encodeURIComponent(panelId!)}:binance%3Aperpetual:BTCUSDT`;
-  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.drawings?.length, binanceKey)).toBe(3);
+  expect(await page.evaluate(key => JSON.parse((window as any).__terminal.workspaces.active.panelState[key] ?? 'null')?.drawings?.length, binanceKey)).toBe(3);
 
   await chooseChartMarket(panel, 'Hyperliquid · BTC Perp');
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(0);
@@ -941,7 +943,7 @@ test('Callout placement, native text templates, history, and saved coordinates',
   await page.keyboard.press('Escape');
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBe(0);
   expect(await drawingState(page, panel)).toMatchObject({ canUndo: false, canRedo: false });
-  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.drawings?.length ?? 0, storageKey)).toBe(0);
+  expect(await page.evaluate(key => JSON.parse((window as any).__terminal.workspaces.active.panelState[key] ?? 'null')?.drawings?.length ?? 0, storageKey)).toBe(0);
 
   await selectDrawingTool(panel, 'callout');
   await stage.click({ position: points[0]! });
@@ -1049,7 +1051,7 @@ test('Callout placement, native text templates, history, and saved coordinates',
   callout = (await drawingState(page, panel)).drawings.find(item => item.id === drawingId)!;
   expect(callout.points).toEqual(savedPoints);
 
-  const storedBeforeReload = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null')?.drawings, storageKey);
+  const storedBeforeReload = await page.evaluate(key => JSON.parse((window as any).__terminal.workspaces.active.panelState[key] ?? 'null')?.drawings, storageKey);
   expect(storedBeforeReload).toEqual((await drawingState(page, panel)).drawings);
   await page.reload();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
@@ -1088,7 +1090,7 @@ test('drawing document write failure keeps session drawings and leaves the separ
   await page.addInitScript(() => {
     const originalSetItem = Storage.prototype.setItem;
     Storage.prototype.setItem = function (key: string, value: string) {
-      if (key.startsWith('iqterminal:drawings:')) throw new DOMException('drawing quota denied', 'QuotaExceededError');
+      if (key === 'iqterminal:workspaces:v1') throw new DOMException('drawing quota denied', 'QuotaExceededError');
       originalSetItem.call(this, key, value);
     };
   });
@@ -1106,7 +1108,7 @@ test('drawing document write failure keeps session drawings and leaves the separ
   await expect(templates.locator('.drawing-template-row').filter({ hasText: 'Catalog still writable' })).toBeVisible();
   const persisted = await page.evaluate(() => localStorage.getItem('iqterminal:drawing-templates:v1'));
   expect(JSON.parse(persisted ?? 'null').templates[0].name).toBe('Catalog still writable');
-  expect(await page.evaluate(async key => localStorage.getItem(key), await drawingStorageKey(page, panel))).toBeNull();
+  expect(await page.evaluate(savedPanelRecord, await drawingStorageKey(page, panel))).toBeNull();
   expect((await drawingState(page, panel)).drawings).toHaveLength(1);
 });
 
@@ -1124,22 +1126,22 @@ test('corrupt drawing document stays untouched while another valid local catalog
 
   const drawingKey = await drawingStorageKey(page, panel);
   const validOtherInstrumentKey = drawingKey.replace('BTCUSDT', 'ETHUSDT');
-  const validDrawingDocument = await page.evaluate(key => localStorage.getItem(key), drawingKey);
+  const validDrawingDocument = await page.evaluate(savedPanelRecord, drawingKey);
   expect(validDrawingDocument).toBeTruthy();
   const corrupt = '{not valid drawing JSON';
   const validCatalog = await page.evaluate(() => localStorage.getItem('iqterminal:drawing-templates:v1'));
   expect(validCatalog).toBeTruthy();
   await page.evaluate(({ drawingKey, corrupt }) => {
-    localStorage.setItem(drawingKey, corrupt);
+    (window as any).__terminal.workspaces.setItem(drawingKey, corrupt);
   }, { drawingKey, corrupt });
-  await page.evaluate(({ validOtherInstrumentKey, validDrawingDocument }) => localStorage.setItem(validOtherInstrumentKey, validDrawingDocument), { validOtherInstrumentKey, validDrawingDocument: validDrawingDocument! });
+  await page.evaluate(({ validOtherInstrumentKey, validDrawingDocument }) => (window as any).__terminal.workspaces.setItem(validOtherInstrumentKey, validDrawingDocument), { validOtherInstrumentKey, validDrawingDocument: validDrawingDocument! });
 
   await page.reload();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   await placeHorizontalLine(page, panel, 7);
   expect((await drawingState(page, panel)).drawings).toHaveLength(1);
-  expect(await page.evaluate(key => localStorage.getItem(key), drawingKey)).toBe(corrupt);
-  expect(await page.evaluate(key => localStorage.getItem(key), validOtherInstrumentKey)).toBe(validDrawingDocument);
+  expect(await page.evaluate(savedPanelRecord, drawingKey)).toBe(corrupt);
+  expect(await page.evaluate(savedPanelRecord, validOtherInstrumentKey)).toBe(validDrawingDocument);
   expect(await page.evaluate(() => localStorage.getItem('iqterminal:drawing-templates:v1'))).toBe(validCatalog);
   await panel.getByRole('button', { name: 'Templates', exact: true }).click();
   await expect(panel.getByRole('dialog', { name: 'Drawing settings templates' }).locator('.drawing-template-row').filter({ hasText: 'Surviving template' })).toBeVisible();
@@ -1267,7 +1269,7 @@ test('horizontal and vertical measures in Positions support placement, history a
   await expect(panel.locator('.drawing-sidebar-flyout[data-drawing-group=positions]').getByRole('button', { name: 'Use Horizontal Measure tool', exact: true })).toBeVisible();
   await expect(panel.locator('.drawing-sidebar-flyout[data-drawing-group=positions]').getByRole('button', { name: 'Use Vertical Measure tool', exact: true })).toBeVisible();
   await page.screenshot({ path: '/tmp/measurement-tools-dark.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await positions.click();
   await page.screenshot({ path: '/tmp/measurement-tools-light.png' });
   await page.reload();

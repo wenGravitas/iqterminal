@@ -1,3 +1,4 @@
+import { openGlobalSettings, selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint } from './indicator-actions';
@@ -183,7 +184,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
     expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(box!.y + box!.height);
     return { point, box: box! };
   };
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   const hovered = await hoverTotals();
   await expect(card).toContainText('Footprint Totals'); await expect(card).toContainText('UTC');
   await expect(card.locator('.footprint-totals-tooltip-row')).toHaveCount(4);
@@ -193,9 +194,9 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
   await page.mouse.move(hovered.box.x + hovered.point.gutterX, hovered.box.y + hovered.point.y);
   await expect(card).toBeHidden();
 
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await hoverTotals(); await page.screenshot({ path: '/tmp/footprint-totals-tooltip-light.png' });
-  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await openGlobalSettings(page);
   const global = page.getByRole('dialog', { name: 'Global settings', exact: true });
   await global.getByLabel('Override indicator currencies').check();
   await global.getByLabel('Default display currency').selectOption('quote');
@@ -203,7 +204,7 @@ test('Footprint Totals owns a lower pane while sharing one footprint collection'
   await hoverTotals();
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('913,000 USDT');
   await expect(card.locator('.positioning-tooltip-secondary').first()).toContainText('11 BTC');
-  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await openGlobalSettings(page);
   await global.getByLabel('Override indicator currencies').uncheck();
   await global.getByRole('button', { name: 'Apply', exact: true }).click();
   await page.mouse.move(0, 0); await expect(card).toBeHidden();
@@ -398,13 +399,13 @@ test('delta flip settings request the exact reference demand and the tooltip rep
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
   })).toMatchObject({ candidates: 3, highlighted: 3 });
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-positive-negative-dark.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-positive-negative-light.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     const step = ({ '1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '4h': 14400, '1d': 86400 } as any)[p.selection.interval];
@@ -428,7 +429,7 @@ test('delta flip settings request the exact reference demand and the tooltip rep
   })).toMatchObject({ highlighted: 3 });
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-live-dark.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-live-light.png' });
   await page.evaluate(() => {

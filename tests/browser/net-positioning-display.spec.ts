@@ -1,3 +1,4 @@
+import { openGlobalSettings, selectTheme } from './footer-actions';
 import { expect, test, type Page } from '@playwright/test';
 
 test.use({ deviceScaleFactor: process.env.POSITIONING_DPR === '2' ? 2 : 1 });
@@ -181,7 +182,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await page.goto('/');
   const panel = page.locator('.candle-panel').first();
   const themePicker = page.getByLabel('Theme', { exact: true });
-  await themePicker.selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect(panel).toBeVisible();
   await page.waitForFunction(() => {
     const element = document.querySelector('.candle-panel'), panels = [...((window as any).__terminal?.panels?.values?.() ?? [])];
@@ -262,14 +263,14 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await setSources(panel, 'Shorts', ['binance', 'hyperliquid']);
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.screenshot({ path: '/tmp/net-positioning-grid-normal-dark.png' });
-  await themePicker.selectOption('light');
+  await selectTheme(page, 'light');
   await page.screenshot({ path: '/tmp/net-positioning-grid-normal-light.png' });
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(compactWeights.longs);
   await page.screenshot({ path: '/tmp/net-positioning-grid-max-light.png' });
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
-  await themePicker.selectOption('dark');
+  await selectTheme(page, 'dark');
   for(const side of ['Longs','Shorts']){
     const sources=panel.getByRole('group',{name:`Net ${side} sources`,exact:true}),box=(await sources.boundingBox())!;
     const controls=await panel.locator('.pane-layout-controls').evaluateAll(nodes=>nodes.map(n=>{const b=n.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}));
@@ -382,7 +383,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await expect(card).toBeHidden();
 
   // Currency is a display projection: the same chart, source request and BTC history survive.
-  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await openGlobalSettings(page);
   const global = page.getByRole('dialog', { name: 'Global settings', exact: true });
   await expect(global.getByLabel('Default display currency')).toHaveValue('quote');
   await global.getByLabel('Override indicator currencies').check();
@@ -405,7 +406,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('USDT');
   await expect(card.locator('.positioning-tooltip-secondary').first()).toContainText('BTC');
   await page.screenshot({ path: '/tmp/net-positioning-quote-hover.png' });
-  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await openGlobalSettings(page);
   await global.getByLabel('Override indicator currencies').uncheck();
   await global.getByRole('button', { name: 'Apply', exact: true }).click();
 
@@ -428,7 +429,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   });
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
-    const saved = JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved = JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return saved.layout.panels[p.params.api.id].params.paneOrder;
   })).toEqual(['@price', shortsId, longsId]);
   await page.evaluate(() => {
@@ -496,7 +497,7 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   await expect(panel.getByRole('group', { name: 'Net Longs sources', exact: true }).locator('button')).toHaveCount(3);
   expect((await panel.getByRole('group', { name: 'Net Longs sources', exact: true }).boundingBox())!.width).toBeGreaterThanOrEqual(46);
   await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-dark.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-light.png' });
   expect(errors).toEqual([]);
 });
@@ -547,9 +548,9 @@ test('empty chart and positioning panes show loading feedback, then ready, empty
   await expect(longs).toContainText('Waiting for Net Longs data…');
   expect(await longs.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
   expect(await longs.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('pane-signal');
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.screenshot({ path: '/tmp/pane-loading-dark.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.setViewportSize({ width: 720, height: 900 });
   await page.screenshot({ path: '/tmp/pane-loading-light-narrow.png' });
   await page.emulateMedia({ reducedMotion: 'reduce' });

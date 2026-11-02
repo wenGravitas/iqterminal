@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { test, expect } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 
@@ -23,7 +24,7 @@ test('sound tests unlock real audio output and ticker buttons track enabled, mut
     } as typeof AudioNode.prototype.connect;
   });
   const worker = await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker').first(), audio = ticker.locator('.ticker-audio');
   await expect(audio).toHaveAttribute('aria-pressed', 'false');
   await expect(audio).toHaveAttribute('title', 'Audio disabled · Enable audio');
@@ -51,7 +52,7 @@ test('sound tests unlock real audio output and ticker buttons track enabled, mut
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.notifications.diagnostics().voices)).toBe(0);
   await audio.click();
   await expect(audio).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const second = page.locator('.trade-ticker').last().locator('.ticker-audio');
   await expect(second).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Notifications', exact: true }).click();
@@ -79,7 +80,7 @@ test('sound tests unlock real audio output and ticker buttons track enabled, mut
 test('blocked audio remains disabled and explains why a test cannot play', async ({ page }) => {
   await page.addInitScript(() => { window.AudioContext = class { constructor() { throw new Error('Audio blocked'); } } as any; });
   await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker');
   await ticker.locator('.ticker-audio').click();
   await expect(ticker.locator('.ticker-audio')).toHaveAttribute('aria-pressed', 'false');
@@ -151,7 +152,7 @@ test('notification scores have useful sustained output and headroom when alerts 
 
 test('amount filters suppress hidden-trade alerts in USDT and BTC without replay on filter changes', async ({ page }) => {
   const worker = await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker').first();
   await ticker.locator('.ticker-audio').click();
   await expect(ticker.locator('.ticker-audio')).toHaveAttribute('aria-pressed', 'true');

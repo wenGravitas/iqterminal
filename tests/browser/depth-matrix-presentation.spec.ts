@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test, type Page } from '@playwright/test';
 
 async function setup(page: Page) {
@@ -42,7 +43,7 @@ async function setup(page: Page) {
     Object.defineProperty(window,'Worker',{value:MatrixWorker,configurable:true,writable:true});
   });
   await page.goto('/?fixture=1');
-  await page.getByRole('button',{name:'Depth Matrix',exact:true}).click();
+  await addWidget(page, 'Depth Matrix');
   await expect(page.locator('.depth-matrix-price-row')).toHaveCount(160);
 }
 const panelState = (page:Page) => page.evaluate(() => {
@@ -95,7 +96,7 @@ test('reference source is persisted, stable, explicit when removed and never fal
   await page.evaluate(() => {const s=window as any;s.__matrixOverrides['binance-perpetual']={mid:'81700',state:'live'};s.__matrixRefresh();});
   await expect(matrix.locator('.depth-matrix-price-row[data-current=true]')).toHaveText('81,700');
   await expect(matrix.getByRole('button',{name:'CENTER',exact:true})).toBeEnabled();
-  await expect.poll(() => page.evaluate(() => {const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);return (Object.values(saved.layout.panels) as any[]).find(p=>p.contentComponent==='depth-matrix').params.referenceSourceId;})).toBe('binance-perpetual');
+  await expect.poll(() => page.evaluate(() => {const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);return (Object.values(saved.layout.panels) as any[]).find(p=>p.contentComponent==='depth-matrix').params.referenceSourceId;})).toBe('binance-perpetual');
   await page.reload();
   await page.locator('.depth-matrix-panel').getByRole('button',{name:'Depth Matrix settings'}).click();
   await expect(page.getByLabel('Reference midpoint source',{exact:true})).toHaveValue('binance-perpetual');
@@ -104,17 +105,17 @@ test('reference source is persisted, stable, explicit when removed and never fal
   await expect(status).toContainText('Choose reference');
   await expect(matrix.getByRole('button',{name:'CENTER',exact:true})).toBeDisabled();
   await expect.poll(() => page.evaluate(() => {
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return (Object.values(saved.layout.panels) as any[]).find(p=>p.contentComponent==='depth-matrix').params.referenceSourceId;
   })).toBeNull();
   await page.reload();
   await expect(status).toContainText('Choose reference');
   // Simulate a saved legacy layout: migration follows its order once.
   await page.evaluate(() => {
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     const panel=(Object.values(saved.layout.panels) as any[]).find(p=>p.contentComponent==='depth-matrix');
     panel.params.sources=['binance-perpetual','binance-spot'];delete panel.params.referenceSourceId;
-    localStorage.setItem('basis.layout.v1',JSON.stringify(saved));
+    localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1',JSON.stringify(saved));
   });
   await page.reload();
   await matrix.getByRole('button',{name:'Depth Matrix settings'}).click();
@@ -122,7 +123,7 @@ test('reference source is persisted, stable, explicit when removed and never fal
   await matrix.locator('.depth-matrix-source-setting').nth(1).locator('[title="Move column left"]').click();
   await expect(page.getByLabel('Reference midpoint source',{exact:true})).toHaveValue('binance-perpetual');
   await expect.poll(() => page.evaluate(() => {
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return (Object.values(saved.layout.panels) as any[]).find(p=>p.contentComponent==='depth-matrix').params.referenceSourceId;
   })).toBe('binance-perpetual');
   await page.reload();

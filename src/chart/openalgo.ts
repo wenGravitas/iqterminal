@@ -1,3 +1,4 @@
+import { workspacePanelStorage } from '../workspaces/panel-storage';
 import { RectangleDragPreview } from './rectangle-drag-preview';
 import {setVenueLabelIcon,venueLabelIcon,venueIconPath,setLabelCurrencySource,type LabelVenue} from './venue-label';
 import {candleGeometry} from 'openalgo-charts';
@@ -1236,8 +1237,7 @@ export class OpenAlgoCandleChart {
 
 /** A corrupt drawing record must never be silently replaced by an empty save. */
 function safeDrawingStore(): DrawingDocumentStore {
-  let storage: Storage;
-  try { storage = window.localStorage; } catch { return memoryDrawingStore(); }
+  const storage = workspacePanelStorage;
   const read = (key: string): unknown => {
     const raw = storage.getItem(key);
     if (raw === null) return null;

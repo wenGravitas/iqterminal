@@ -131,7 +131,9 @@ export class TradingController {
 
   constructor(options: { workerFactory?: () => Worker; owner?: SigningOwner; fixtureMode?: boolean } = {}) {
     this.fixtureMode = options.fixtureMode === true;
-    this.configValue = restoreTradingConfig(localStorage.getItem(TRADING_SNAPSHOT_KEY));
+    let savedConfig: string | null = null;
+    try { savedConfig = localStorage.getItem(TRADING_SNAPSHOT_KEY); } catch { /* Denied browser storage starts disconnected; never infer an account. */ }
+    this.configValue = restoreTradingConfig(savedConfig);
     this.snapshotValue = EMPTY_SNAPSHOT(this.configValue.network, this.configValue.principal);
     this.attemptsValue = restoreAttempts(this.configValue.network, this.configValue.principal);
     this.owner = options.owner ?? new SigningOwner();

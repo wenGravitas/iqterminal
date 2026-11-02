@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -10,7 +11,7 @@ test('records local chart draw intervals under repeated five-line fixture update
     await route.abort('blockedbyclient');
   });
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Market Comparison', exact: true }).click();
+  await addWidget(page, 'Market Comparison');
   const panel = page.locator('.market-comparison-panel');
   await expect(panel.locator('.market-comparison-status')).toContainText('5/5 connected', { timeout: 15_000 });
   await panel.getByLabel('Comparison window').selectOption('24h');

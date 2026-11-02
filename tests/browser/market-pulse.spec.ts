@@ -1,3 +1,4 @@
+import { addWidget, selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 import { installTradeFixture } from './trade-fixture';
 
@@ -11,7 +12,7 @@ const waitForFixture = async (page: import('@playwright/test').Page) => {
 test('Market Pulse opens accessibly, changes zones in place, persists separately, and formats existing ticker rows', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   const worker = await installTradeFixture(page);
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker').first();
   await page.evaluate(() => {
     const panels = (window as any).__terminal.dock.panels.filter((panel: any) => panel.view.contentComponent === 'candle');
@@ -77,11 +78,11 @@ test('Market Pulse opens accessibly, changes zones in place, persists separately
         drawings: view.engine.drawings.drawings().map((drawing: any) => drawing.id),
       })),
       candleSubscriptions: [...t.feed.current.entries()], tickerSubscriptions: [...t.feed.currentTicker.entries()],
-      layout: localStorage.getItem('basis.layout.v1'),
+      layout: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')),
     };
   });
   await page.waitForTimeout(350);
-  beforeSwitch.layout = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  beforeSwitch.layout = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await utc.click();
   await expect(utc).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#market-pulse-trigger [data-zone-short]')).toHaveText('UTC');
@@ -102,7 +103,7 @@ test('Market Pulse opens accessibly, changes zones in place, persists separately
     }));
     const candleSubscriptions = [...t.feed.current.entries()];
     const tickerSubscriptions = [...t.feed.currentTicker.entries()];
-    return { panels, candleSubscriptions, tickerSubscriptions, layout: localStorage.getItem('basis.layout.v1'), timezone: localStorage.getItem('basis.market-pulse.timezone.v1') };
+    return { panels, candleSubscriptions, tickerSubscriptions, layout: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')), timezone: localStorage.getItem('basis.market-pulse.timezone.v1') };
   });
   expect(afterSwitch.timezone).toBe('UTC');
   expect(afterSwitch.panels.map(panel => panel.bars)).toEqual(beforeSwitch.panels.map(panel => panel.bars));
@@ -117,7 +118,7 @@ test('Market Pulse opens accessibly, changes zones in place, persists separately
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.panels.size)).toBe(3);
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()].map((panel: any) => panel.engine.chart.timezone()))).toEqual(['UTC', 'UTC', 'UTC']);
   await page.evaluate(() => { const t = (window as any).__terminal; for (const panel of [...t.dock.panels]) if (panel.view.contentComponent === 'trade-ticker') t.dock.removePanel(panel); });
-  const layoutBeforeReload = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  const layoutBeforeReload = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await page.waitForTimeout(350); await page.goto('/?fixture=1&fixtureTime=now');
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 3);
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()].map((panel: any) => panel.engine.chart.timezone()))).toEqual(['UTC', 'UTC', 'UTC']);
@@ -165,10 +166,10 @@ test('Market Pulse timeline remains in the viewport in Dark, Ivory, and narrow l
   await expect(popover.locator('.market-pulse-interval[data-phase="active"]')).not.toHaveCount(0);
   await expect(popover.locator('.market-pulse-interval[data-phase="future"]')).not.toHaveCount(0);
   await expect(popover.locator('.market-pulse-interval[data-phase="past"]')).not.toHaveCount(0);
-  await page.locator('#theme').selectOption('dark');
+  await page.evaluate(() => { const picker = document.querySelector<HTMLSelectElement>('#theme')!; picker.value = 'dark'; picker.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.waitForTimeout(120);
   await page.screenshot({ path: 'artifacts/market-pulse-dark-1366x768.png' });
-  await page.locator('#theme').selectOption('light');
+  await page.evaluate(() => { const picker = document.querySelector<HTMLSelectElement>('#theme')!; picker.value = 'light'; picker.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.waitForTimeout(120);
   await page.screenshot({ path: 'artifacts/market-pulse-ivory-1366x768.png' });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -194,7 +195,7 @@ test('Market Pulse timeline remains in the viewport in Dark, Ivory, and narrow l
   });
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().marketPulse.timerRunning)).toBe(true);
   await expect.poll(() => clock.textContent()).not.toBe(frozenClock);
-  await page.locator('#theme').selectOption('dark');
-  await page.locator('#theme').click(); // An outside interaction closes the panel without losing its focus owner.
+  await page.evaluate(() => { const picker = document.querySelector<HTMLSelectElement>('#theme')!; picker.value = 'dark'; picker.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.locator('#application-menu').click(); // An outside interaction closes the panel without losing its focus owner.
   await expect(popover).toBeHidden();
 });

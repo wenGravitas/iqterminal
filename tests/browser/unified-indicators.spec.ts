@@ -94,7 +94,7 @@ test('legacy footprint/heatmap layout migrates idempotently and unknown definiti
   await page.evaluate(() => {
     const layout=(window as any).__terminal.dock.toJSON(), params=Object.values(layout.panels)[0] as any;
     params.params={venue:'binance',market:'perpetual',interval:'1m',type:'footprint',rowPrice:50,footprintUnits:'usdt',heatmap:{enabled:true,opacity:.65},footprint:{opacity:.35}};
-    localStorage.setItem('basis.layout.v1',JSON.stringify({version:2,layout}));
+    localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1',JSON.stringify({version:2,layout}));
   });
   await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   const panel=page.locator('.candle-panel').first(); await expect(panel.locator('.active-indicator')).toHaveCount(2);
@@ -104,7 +104,7 @@ test('legacy footprint/heatmap layout migrates idempotently and unknown definiti
   await page.evaluate(() => {
     const layout=(window as any).__terminal.dock.toJSON(), p=Object.values(layout.panels)[0] as any;
     p.params.indicators.push({instanceId:'unknown-profile',definitionId:'future.profile',settingsVersion:9,visible:true,settings:{anchor:'session'},placement:'attachment',source:{kind:'chart'}});
-    localStorage.setItem('basis.layout.v1',JSON.stringify({version:3,layout}));
+    localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1',JSON.stringify({version:3,layout}));
   });
   await page.reload(); await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
   await expect(panel.locator('[data-definition-id="future.profile"]')).toContainText('settings retained');

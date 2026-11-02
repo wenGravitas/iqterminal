@@ -232,7 +232,7 @@ test('duplicating a composed provider creates a new identity and keeps the consu
   expect(group?.memberIds).toContain(duplicated.input.instanceId);
 
   await expect.poll(() => page.evaluate(id => {
-    const stored = JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null');
+    const stored = ({ version: 8, layout: (window as any).__terminal.workspaces.active.layout });
     const params = stored?.layout?.panels?.[id]?.params;
     return { providers: params?.indicators?.filter((item: any) => item.definitionId === 'script:builtin.volume-histogram').length,
       smaInput: params?.indicators?.find((item: any) => item.definitionId === 'native.composition-sma')?.numericInputs?.source };
@@ -386,12 +386,12 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   await expect.poll(() => readState(page, panelId)).toMatchObject({ composition: { embeddedBands: [{ heightPercent: 25 }] }, source: { scaleMargins: { top: 0.75, bottom: 0.02 } } });
 
   await expect.poll(() => page.evaluate(id => {
-    const stored = JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null');
+    const stored = ({ version: 8, layout: (window as any).__terminal.workspaces.active.layout });
     const params = stored?.layout?.panels?.[id]?.params;
     return params?.composition?.embeddedBands?.[0]?.heightPercent;
   }, panelId)).toBe(25);
   const savedBeforeReload = await page.evaluate(id => {
-    const stored = JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null');
+    const stored = ({ version: 8, layout: (window as any).__terminal.workspaces.active.layout });
     const params = stored?.layout?.panels?.[id]?.params;
     return { indicators: params?.indicators, composition: params?.composition };
   }, panelId);

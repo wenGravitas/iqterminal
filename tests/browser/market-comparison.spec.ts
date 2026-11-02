@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -35,7 +36,7 @@ test('direct Hyperliquid comparison history and stream render, configure, and re
   const requests: string[] = [];
   page.on('request', request => { if (request.url().includes('api.hyperliquid.xyz/info')) requests.push(request.url()); });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Market Comparison', exact: true }).click();
+  await addWidget(page, 'Market Comparison');
   const panel = page.locator('.market-comparison-panel');
   await expect(panel).toHaveCount(1);
   await expect(panel.locator('.market-comparison-legend-item')).toHaveCount(5);
@@ -138,8 +139,8 @@ test('direct Hyperliquid comparison history and stream render, configure, and re
   await dialog.locator('[data-market-selected="xyz:SILVER"]').check();
   await dialog.getByRole('button', { name: 'Apply' }).click();
   await expect(panel.locator('.market-comparison-legend-item')).toHaveCount(6);
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null')?.version)).toBe(6);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null'));
+  await expect.poll(() => page.evaluate(() => JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) ?? 'null')?.version)).toBe(6);
+  const saved = await page.evaluate(() => JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) ?? 'null'));
   expect(Object.values(saved.layout.panels).some((item: any) => item.contentComponent === 'market-comparison'
     && item.params.instruments.some((instrument: any) => instrument.identity.symbol === 'xyz:SILVER'))).toBe(true);
 
@@ -162,7 +163,7 @@ test('staging build keeps comparison requests on the direct Hyperliquid public A
     }
   });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Market Comparison', exact: true }).click();
+  await addWidget(page, 'Market Comparison');
   const panel = page.locator('.market-comparison-panel');
   await expect(panel.locator('.market-comparison-status')).toContainText('5/5 connected', { timeout: 60_000 });
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().marketComparisons[0].sources.filter((source: any) => source.bars > 0).length), { timeout: 60_000 }).toBe(5);

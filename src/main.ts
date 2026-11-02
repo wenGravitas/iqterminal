@@ -1,3 +1,7 @@
+import { WorkspaceManager, browserWorkspaceStorage } from './workspaces/manager';
+import { bindWorkspacePanelStorage } from './workspaces/panel-storage';
+import { TerminalFooter } from './workspaces/footer';
+import { widgetRegistry } from './widgets/registry';
 import { canonicalMarket } from './journal/model';
 import { JournalController } from './journal/controller';
 import { prepareRestore } from './journal/restore';
@@ -20,7 +24,7 @@ import { ScriptLibrary } from './scripts/library';
 import { TabCycleHeaderAction } from './tab-cycler';
 import { CompactChartTab, activateNumberedTab } from './chart-tab';
 import { instrumentKey, type Series } from './feed/protocol';
-import { STORAGE_KEY, PANEL_BUDGET, restoreValue } from './layout';
+import { PANEL_BUDGET } from './layout';
 import { MarketPulseController } from './market-pulse';
 import { ConnectionStatusController } from './connection-status';
 import { DepthMatrixPanel } from './depth-matrix-panel';
@@ -44,7 +48,9 @@ const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
 const journal = JournalController.create(library, async snapshot => {
   if (chartContextCount() >= PANEL_BUDGET) throw new Error(`All ${PANEL_BUDGET} chart slots are in use. Close a chart or comparison before opening saved settings.`);
+  const workspaceId = workspaceManager?.active.id;
   const restored = await prepareRestore(snapshot, library);
+  if (workspaceId !== workspaceManager?.active.id) throw new Error('Workspace changed while preparing the saved chart. Retry in the intended workspace.');
   if (chartContextCount() >= PANEL_BUDGET) throw new Error('A chart slot was filled while preparing settings. Free a slot and retry.');
   const id = `chart-${crypto.randomUUID()}`;
   dock.addPanel({ id, component: 'candle', title: 'Restored settings', params: { ...restored.config, journalRestored: { capturedAt: snapshot.capturedAt } },
@@ -55,11 +61,7 @@ const panels = new Map<string, CandlePanelInstance>();
 const marketComparisons = new Map<string, MarketComparisonPanel>();
 const executionHover = new TickerExecutionHoverCoordinator();
 const root = document.querySelector<HTMLElement>('#workspace')!;
-const add = document.querySelector<HTMLButtonElement>('#add')!;
-const addComparison = document.querySelector<HTMLButtonElement>('#add-market-comparison')!;
-const addDepth = document.querySelector<HTMLButtonElement>('#add-depth-matrix')!;
 const reset = document.querySelector<HTMLButtonElement>('#reset')!;
-const addTrading = document.querySelector<HTMLButtonElement>('#add-hyperliquid-trading')!;
 const tradingStatusButton = document.querySelector<HTMLButtonElement>('#trading-status')!;
 const currencySettings = new CurrencyDisplaySettings(document.querySelector<HTMLButtonElement>('#global-settings')!);
 const appearance = new ThemeController(document.querySelector<HTMLSelectElement>('#theme')!);
@@ -71,12 +73,13 @@ let editor: LazyScriptEditorPanel | undefined;
 let watchPanel:LevelWatchPanel|undefined;let watchSnapshot:WatchSnapshot|undefined;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let restoring = true;
+let workspaceManager: WorkspaceManager | undefined;
 let disposed = false;
 
 function chartContextCount() { return dock.panels.filter(panel => ['candle', 'market-comparison'].includes(panel.view.contentComponent)).length; }
 function depthMatrixCount() { return dock.panels.filter(panel => panel.view.contentComponent === 'depth-matrix').length; }
 const save = () => {
-  if (restoring || disposed) return;
+  if (restoring || workspaceManager?.transitioning || disposed) return;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(flushLayoutSave, 250);
 };
@@ -85,14 +88,7 @@ function flushLayoutSave() {
   if (!saveTimer || restoring || disposed) return;
   clearTimeout(saveTimer);
   saveTimer = undefined;
-  const status = document.querySelector<HTMLElement>('#venue-states')!;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 8, layout: dock.toJSON() }));
-    if (status.textContent === 'Layout storage unavailable') { status.textContent = ''; status.classList.add('connection-status-sr-only'); }
-  } catch {
-    status.textContent = 'Layout storage unavailable';
-    status.classList.remove('connection-status-sr-only');
-  }
+  workspaceManager?.saveCurrent();
 }
 
 function addChart(series: Series = { venue: 'binance', market: 'perpetual', interval: '1m' }) {
@@ -190,10 +186,6 @@ function openEditor(targetChartId: string, attachmentId?: string) {
   save();
 }
 
-function defaults() {
-  dock.clear();
-  addChart({ venue: 'binance', market: 'perpetual', interval: '1m' });
-}
 
 dock = createDockview(root, {
   theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
@@ -251,45 +243,34 @@ dock = createDockview(root, {
   getTabContextMenuItems: () => ['close', 'closeOthers', 'closeAll'],
 });
 
-let restored = false;
-try {
-  const saved = restoreValue(localStorage.getItem(STORAGE_KEY));
-  if (saved) { dock.fromJSON(saved); restored = true; }
-} catch { dock.clear(); }
-if (!restored) defaults();
+workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
+  capture: () => dock.toJSON(),
+  cancelPending: () => { clearTimeout(saveTimer); saveTimer = undefined; },
+  restore: layout => { dock.clear(); editor = undefined; watchPanel = undefined; tradingPanel = undefined; dock.fromJSON(layout); },
+});
+const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
+workspaceManager.start();
 restoring = false;
-add.disabled = chartContextCount() >= PANEL_BUDGET;
-addComparison.disabled = chartContextCount() >= PANEL_BUDGET;
-add.title = add.disabled ? `Maximum ${PANEL_BUDGET} chart contexts` : 'Add a chart to the right of the active group';
-addComparison.title = addComparison.disabled ? `Maximum ${PANEL_BUDGET} chart contexts` : 'Add a dockable Market Comparison';
-
-const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => {
-  save();
-  add.disabled = chartContextCount() >= PANEL_BUDGET;
-  addComparison.disabled = chartContextCount() >= PANEL_BUDGET;
-  addComparison.title = addComparison.disabled ? `Maximum ${PANEL_BUDGET} chart contexts` : 'Add a dockable Market Comparison';
-  addDepth.disabled = depthMatrixCount() >= 8; addDepth.title = addDepth.disabled ? 'Maximum 8 Depth Matrix panels' : 'Add synchronized BTC depth columns';
-  const tickerAdd = document.querySelector<HTMLButtonElement>('#add-ticker')!; tickerAdd.disabled = tickers.size >= 8; tickerAdd.title = tickerAdd.disabled ? 'Maximum 8 tickers' : 'Add a dockable Trade Ticker';
-  add.title = add.disabled ? `Maximum ${PANEL_BUDGET} chart contexts` : 'Add a chart to the right of the active group';
-})];
+const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => save())];
 const abort = new AbortController();
 window.addEventListener('keydown', event => { if (!marketPulse.isOpen() && !connectionStatus.isOpen()) activateNumberedTab(dock, event); }, { signal: abort.signal, capture: true });
-document.querySelector('#level-watch')!.addEventListener('click',()=>openWatches(),{signal:abort.signal});
 window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as CustomEvent).detail),{signal:abort.signal});
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
-document.querySelector('#add-liquidations')!.addEventListener('click',()=>addLiquidationTicker(),{signal:abort.signal});
-document.querySelector('#add-ticker')!.addEventListener('click', () => addTicker(), { signal: abort.signal });
-addDepth.addEventListener('click', () => addDepthMatrix(), { signal: abort.signal });
-addTrading.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
 tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
-addComparison.addEventListener('click', () => addMarketComparison(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Local chart journal and backups'; journalButton.addEventListener('click', () => journal.open(undefined, dock.activePanel && panels.get(dock.activePanel.id) ? canonicalMarket(panels.get(dock.activePanel.id)!.series as import('./feed/protocol').CanonicalSeries) : undefined)); document.querySelector('#commands')?.append(journalButton);
-add.addEventListener('click', () => addChart(), { signal: abort.signal });
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
-reset.addEventListener('click', () => { defaults(); save(); }, { signal: abort.signal });
+reset.addEventListener('click', () => { if (confirm('Reset Current Workspace? Its widget layout will be replaced with a starting chart. Other workspaces are unchanged.')) { try { workspaceManager!.reset(); } catch { /* The manager exposes its recovery error in the footer. */ } } }, { signal: abort.signal });
 window.addEventListener('online', () => feed.send({ type: 'online', online: true }), { signal: abort.signal });
 window.addEventListener('offline', () => feed.send({ type: 'online', online: false }), { signal: abort.signal });
+
+const registry = widgetRegistry({ chart: addChart, comparison: addMarketComparison, ticker: addTicker, liquidations: addLiquidationTicker, depth: addDepthMatrix,
+ trading: addHyperliquidTrading, positions: () => addHyperliquidTradingWidget('positions'), orders: () => addHyperliquidTradingWidget('open-orders'),
+ orderHistory: () => addHyperliquidTradingWidget('order-history'), tradeHistory: () => addHyperliquidTradingWidget('trade-history'), watches: openWatches,
+ editor: () => { const existing = dock.getPanel('script-editor'); if (existing) { existing.api.setActive(); return; } const panel = dock.activePanel && panels.get(dock.activePanel.id) || panels.values().next().value; if (panel) openEditor([...panels].find(([,value]) => value === panel)![0]); },
+ count: component => dock.panels.filter(panel => panel.view.contentComponent === component).length, has: id => Boolean(dock.getPanel(id)),
+});
+const footer = new TerminalFooter(workspaceManager, registry, diagnosticsEnabled ? () => ({ workspace: workspaceManager!.active.id, panels: dock.panels.length, feeds: feed.protocolDiagnostics() }) : undefined);
 
 let tradingStatusInitialized = false;
 const previousTradingAttempts = new Map<string, string>();
@@ -298,6 +279,7 @@ const releaseTradingStatus = trading.subscribe(state => {
   const feed = state.snapshot.feedState.toUpperCase();
   const signing = state.vault.unlocked && state.owner.owned ? 'SIGNING' : state.owner.otherOwner ? 'OTHER TAB' : 'LOCKED';
   tradingStatusButton.textContent = state.config.principal ? `HL · ${network} · ${feed} · ${signing}` : 'HL · disconnected';
+  tradingStatusButton.dataset.compact = state.config.principal ? `${network === 'MAINNET' ? 'HL' : 'HL T'} · ${feed} · ${signing}` : 'HL · off';
   tradingStatusButton.dataset.state = !state.config.principal ? 'disconnected' : state.snapshot.feedState;
   tradingStatusButton.title = state.snapshot.error ?? (state.config.principal ? `${network} · ${state.config.principal} · ${signing} · Open Hyperliquid BTC trading` : 'Select a Hyperliquid principal in the trading panel');
   if (tradingStatusInitialized) for (const attempt of state.attempts) {
@@ -326,7 +308,7 @@ if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
     dock, dispose, addChart, addMarketComparison, addTicker, addLiquidationTicker, addHyperliquidTrading, openWatches, tickers, notifications, openEditor, feed, panels, marketComparisons, library, fixture, trading,
-    marketPulse, connectionStatus, journal,
+    marketPulse, connectionStatus, journal, workspaces: workspaceManager, widgetRegistry: registry,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), marketComparisons: [...marketComparisons.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, feedProtocol: feed.protocolDiagnostics(), frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; feed.resetProtocolDiagnostics(); for (const panel of panels.values()) panel.resetCompositionDiagnostics(); },
   };
@@ -343,12 +325,14 @@ function dispose() {
   clearTimeout(saveTimer);
   clearInterval(timer);
   abort.abort();
+  footer.dispose();
   appearance.dispose(); currencySettings.dispose();
   connectionStatus.dispose();
   releaseTradingStatus();
   marketPulse.dispose();
   listeners.forEach(listener => listener.dispose());
   dock.dispose();
+  releaseWorkspaceStorage();
   scheduler.dispose(); notifications.dispose();
   trading.dispose();
   releaseWatches?.();feed.dispose();

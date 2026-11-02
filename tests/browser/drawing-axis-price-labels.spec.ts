@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test } from '@playwright/test';
 
 test('horizontal drawing price labels render as colored tags in the price axis', async ({ page }) => {
@@ -40,7 +41,7 @@ test('horizontal drawing price labels render as colored tags in the price axis',
   });
 
   await page.goto('/?fixture=1&fixtureTime=now');
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars ?? 0)).toBeGreaterThan(0);
   const tags = await page.evaluate(() => {
     const view = (window as any).__terminal.panels.values().next().value;

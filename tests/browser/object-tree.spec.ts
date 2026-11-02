@@ -1,3 +1,4 @@
+import { savedPanelRecord } from './footer-actions';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 
@@ -81,7 +82,7 @@ test('folder sidebar pins choose icons, toggle nested contents in one undo step 
       { type: 'drawing', drawingId: drawings[0] },
       { type: 'folder', id: 'nested', name: 'Nested', children: [{ type: 'drawing', drawingId: drawings[1] }] },
     ] }, { type: 'drawing', drawingId: drawings[2] }];
-    localStorage.setItem(`iqterminal:object-tree:v1:${encodeURIComponent(id)}:binance%3Aperpetual:BTCUSDT`, JSON.stringify({ version: 1, revision: 1, entries }));
+    (window as any).__terminal.workspaces.setItem(`iqterminal:object-tree:v1:${encodeURIComponent(id)}:binance%3Aperpetual:BTCUSDT`, JSON.stringify({ version: 1, revision: 1, entries }));
     return drawings;
   }, panelId);
   await page.reload();
@@ -366,7 +367,7 @@ test('per-chart Object Tree resizes, nests by drag, and groups native visibility
   await expect(restoredTree.locator('.chart-object-folder-name').filter({ hasText: 'Intraday' })).toBeVisible();
   await expect(restoredTree.locator('.chart-object-name').filter({ hasText: 'Opening sweep' })).toBeVisible();
   const treeKey = `iqterminal:object-tree:v1:${encodeURIComponent(panelId)}:${encodeURIComponent('binance:perpetual')}:${encodeURIComponent('BTCUSDT')}`;
-  const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? 'null'), treeKey);
+  const saved = await page.evaluate(key => JSON.parse((window as any).__terminal.workspaces.active.panelState[key] ?? 'null'), treeKey);
   expect(saved).toMatchObject({ version: 1, entries: expect.any(Array) });
   const storedNested = saved.entries.find((entry: any) => entry.type === 'folder' && entry.name === 'Plans')?.children.find((entry: any) => entry.type === 'folder' && entry.name === 'Intraday');
   expect(storedNested?.children).toHaveLength(3);
@@ -396,7 +397,7 @@ test('Object Tree handles hundreds of folders through delegated row actions', as
   if (!panelId) throw new Error('Candle panel id is missing');
   const key = `iqterminal:object-tree:v1:${encodeURIComponent(panelId)}:${encodeURIComponent('binance:perpetual')}:${encodeURIComponent('BTCUSDT')}`;
   const entries = Array.from({ length: 250 }, (_, index) => ({ type: 'folder', id: `folder-${index}`, name: `Folder ${index}`, children: [] }));
-  await page.evaluate(({ key, entries }) => localStorage.setItem(key, JSON.stringify({ version: 1, revision: 1, entries })), { key, entries });
+  await page.evaluate(({ key, entries }) => (window as any).__terminal.workspaces.setItem(key, JSON.stringify({ version: 1, revision: 1, entries })), { key, entries });
   await page.reload();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const tree = page.locator(`[data-panel-id="${panelId}"] .chart-object-tree`);
@@ -445,15 +446,15 @@ test('invalid object-tree and sidebar records stay untouched and report session-
   const invalidTree = '{"version":88,"revision":0,"entries":[]}';
   const invalidPreferences = '{broken sidebar settings';
   await page.evaluate(({ treeKey, preferencesKey, invalidTree, invalidPreferences }) => {
-    localStorage.setItem(treeKey, invalidTree);
-    localStorage.setItem(preferencesKey, invalidPreferences);
+    (window as any).__terminal.workspaces.setItem(treeKey, invalidTree);
+    (window as any).__terminal.workspaces.setItem(preferencesKey, invalidPreferences);
   }, { treeKey, preferencesKey, invalidTree, invalidPreferences });
   await page.reload();
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const restored = page.locator(`[data-panel-id="${panelId}"]`);
   await expect(restored.locator('.chart-objects-panel')).toHaveAttribute('data-storage', 'degraded');
   await expect(restored.locator('.chart-object-tree-status')).toContainText('session memory');
-  expect(await page.evaluate(({ treeKey, preferencesKey }) => ({ tree: localStorage.getItem(treeKey), preferences: localStorage.getItem(preferencesKey) }), { treeKey, preferencesKey })).toEqual({ tree: invalidTree, preferences: invalidPreferences });
+  expect(await page.evaluate(({ treeKey, preferencesKey }) => ({ tree: (window as any).__terminal.workspaces.active.panelState[treeKey], preferences: (window as any).__terminal.workspaces.active.panelState[preferencesKey] }), { treeKey, preferencesKey })).toEqual({ tree: invalidTree, preferences: invalidPreferences });
   await expect(restored.locator('.chart-objects-panel')).toHaveAttribute('data-collapsed', 'true');
   await expect(restored.locator('.chart-objects-panel')).toBeHidden();
 });

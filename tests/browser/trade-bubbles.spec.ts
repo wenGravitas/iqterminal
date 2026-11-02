@@ -1,3 +1,4 @@
+import { addWidget } from './footer-actions';
 import { expect, test, type Page } from '@playwright/test';
 import { addIndicator, setFootprint } from './indicator-actions';
 import { installDepthFixture } from './depth-fixture';
@@ -93,7 +94,7 @@ test('Trade Bubbles shares native order-flow charts and keeps collecting through
     feed.subscribeTicker = () => () => {};
     feed.updateTicker = () => {};
   });
-  await page.getByRole('button', { name: 'Trade Ticker', exact: true }).click();
+  await addWidget(page, 'Trade Ticker');
   const ticker = page.locator('.trade-ticker'); await expect(ticker).toBeVisible();
   const tickerId = await page.evaluate(() => [...(window as any).__terminal.tickers.keys()][0]);
   await ticker.getByRole('button', { name: 'Pause', exact: true }).click();

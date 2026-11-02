@@ -1,0 +1,51 @@
+{
+  "environment": "Local Linux x86_64, Chromium/SwiftShader; explicit synthetic fixtures and mocked trading worker; no genuine live venue/account or FPS claim",
+  "unit": {
+    "command": "pnpm test",
+    "passed": 933,
+    "skipped": 1,
+    "passedFiles": 117
+  },
+  "typecheck": "passed",
+  "build": "pnpm build passed; diagnostics build passed; existing large-bundle advisory",
+  "browser": {
+    "distinctPassed": 57,
+    "finalAcceptancePassed": 20,
+    "workspaceUIChecks": 12,
+    "notes": [
+      "First 45-case regression run: 41 passed; four stale fixture/menu/bar-count test assumptions corrected and each rerun passed.",
+      "Final focused acceptance run: 20 passed. Enhanced mocked unlocked-account continuity check rerun: passed.",
+      "Entire Playwright suite was not run."
+    ],
+    "files": [
+      "workspaces.spec.ts",
+      "workspace-defaults.spec.ts",
+      "drawing-tools.spec.ts",
+      "object-tree.spec.ts",
+      "floating-drawing-toolbar.spec.ts",
+      "journal.spec.ts",
+      "journal-restore.spec.ts",
+      "connection-status.spec.ts",
+      "market-pulse.spec.ts",
+      "composition-cvd.spec.ts",
+      "composition-release1.spec.ts",
+      "rectangle-preview.spec.ts",
+      "hyperliquid-trading.spec.ts"
+    ]
+  },
+  "resources": "artifacts/workspaces-resources.json",
+  "screenshots": [
+    "artifacts/workspaces-application-dark.png",
+    "artifacts/workspaces-application-light.png",
+    "artifacts/workspaces-dark-1366.png",
+    "artifacts/workspaces-dark-390.png",
+    "artifacts/workspaces-light-1366.png",
+    "artifacts/workspaces-light-390.png",
+    "artifacts/workspaces-menu-dark.png",
+    "artifacts/workspaces-menu-light.png",
+    "artifacts/workspaces-widgets-dark.png",
+    "artifacts/workspaces-widgets-light.png"
+  ],
+  "persistence": "Version 1 atomic local workspace registry with owned panel sidecars; untouched legacy recovery originals; protected recovery/session-only warnings",
+  "deployment": "none"
+}

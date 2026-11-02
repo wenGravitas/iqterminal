@@ -964,3 +964,50 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 
 .journal-context-menu{position:fixed;z-index:1100;display:flex;flex-direction:column;gap:1px;width:244px;max-width:calc(100vw - 8px);padding:4px;background:var(--chrome);color:var(--text);border:1px solid var(--divider)}
 .journal-context-menu[hidden]{display:none}
+
+/* Workspace navigation and operational footer share the terminal's native palette. */
+#commands{overflow:visible;gap:5px;position:relative}
+.footer-navigation{display:flex;align-items:center;gap:4px;min-width:0;flex:0 1 auto;overflow:hidden}
+.footer-navigation .brand{padding:0 5px;font-size:10px;flex:none}
+#workspace-switcher{display:flex;align-items:center;gap:5px;min-width:80px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-color:var(--divider);flex:0 1 auto}
+.workspace-pins{display:flex;align-items:center;gap:2px;max-width:210px;min-width:0;overflow-x:auto;scrollbar-width:none;flex:0 1 auto}
+.workspace-pins button{width:25px;min-width:25px;padding:3px;display:grid;place-items:center;border:1px solid var(--divider)}
+.workspace-pins button[aria-current=true],.workspace-activate[aria-current=true]{background:var(--hover);border-color:var(--focus)}
+.workspace-pins svg,#workspace-switcher svg,.workspace-activate svg,.workspace-icon-grid svg,.widget-option svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linejoin:miter}
+.footer-operations{display:flex;align-items:center;gap:4px;flex:none;margin-left:auto;min-width:0}
+#commands #footer-status-group{position:static;margin:0;padding:0;gap:4px}
+#commands #venue-states{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden;flex:none}
+#commands #add-widget{flex:none;border-color:var(--divider)}
+#application-menu{width:26px;padding:0;font-size:16px}
+#commands #notifications{max-width:116px;overflow:hidden;text-overflow:ellipsis}
+#commands .trading-status{max-width:240px;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+.workspace-session-warning{color:var(--down);font-size:10px;flex:none}
+.workspace-session-warning[hidden]{display:none}
+.terminal-menu{position:fixed;z-index:1800;display:flex;flex-direction:column;gap:6px;width:min(350px,calc(100vw - 8px));max-height:calc(100vh - 48px);padding:7px;border:1px solid var(--divider);background:var(--chrome);color:var(--text);overflow:auto;box-shadow:0 5px 15px var(--shadow);font-size:11px}
+.terminal-menu[hidden]{display:none}
+.terminal-menu>header{font-weight:600;padding:2px 0 5px;border-bottom:1px solid var(--border-soft)}
+.terminal-menu input:not([type=checkbox]),.terminal-menu select{width:100%;height:26px;min-width:0;color:var(--text);background:var(--input);border:1px solid var(--divider);font:inherit;padding:4px}
+.terminal-menu label{display:flex;flex-direction:column;gap:5px}.terminal-menu form{display:flex;flex-direction:column;gap:6px}
+.terminal-menu label:has(input[type=checkbox]){flex-direction:row;align-items:center}
+.terminal-menu>button,.terminal-menu>a{text-align:left;flex:none;min-height:25px;color:var(--text)}
+.terminal-menu a{padding:5px;text-decoration:none}.terminal-menu a:hover{background:var(--hover)}
+.workspace-menu-tools{display:flex;gap:3px;flex-wrap:wrap}.workspace-menu-tools button{font-size:10px;padding:0 5px}
+.workspace-storage-status{margin:0;color:var(--muted);white-space:pre-wrap;line-height:1.4}.workspace-storage-status:empty{display:none}
+.workspace-list{display:flex;flex-direction:column;gap:3px;max-height:45vh;overflow:auto}
+.workspace-row{display:flex;gap:3px;align-items:center}.workspace-row>button{flex:none;padding:0 5px}
+.workspace-row .workspace-activate{display:flex;gap:6px;align-items:center;flex:1;min-width:0;text-align:left;border:1px solid transparent;overflow:hidden;text-overflow:ellipsis}
+.workspace-icon-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}.workspace-icon-grid button{display:grid;place-items:center;padding:2px}
+.workspace-icon-grid [aria-pressed=true]{border-color:var(--focus)}
+.widget-list{overflow:auto;max-height:58vh}.widget-list h3{font-size:10px;color:var(--muted);margin:9px 0 4px}
+.widget-option{display:flex;align-items:center;gap:8px;width:100%;height:auto;min-height:41px;text-align:left;padding:5px;margin-bottom:2px}
+.widget-option span{display:flex;flex-direction:column;gap:3px;min-width:0}.widget-option strong{font-size:11px;font-weight:500}.widget-option small{font-size:10px;color:var(--muted);white-space:normal;line-height:1.3}
+.terminal-menu pre{font-size:10px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+@media(max-width:1100px){.workspace-pins{max-width:110px}#workspace-switcher{max-width:170px}#commands .trading-status{max-width:190px}}
+@media(max-width:800px){.workspace-pins{max-width:54px}.footer-navigation .brand{display:none}#workspace-switcher{max-width:130px}#commands .trading-status{max-width:155px}#commands #notifications{width:28px;font-size:0}#commands #notifications span{display:none}.market-pulse-trigger-state{max-width:65px;overflow:hidden}}
+@media(max-width:620px){#commands{height:auto;min-height:34px;flex-wrap:wrap;padding:3px 4px}.footer-navigation{flex:1;max-width:calc(100% - 65px)}#workspace-switcher{max-width:200px}.workspace-pins{max-width:130px}.footer-operations{flex:1 0 100%;justify-content:flex-end}#commands .trading-status{margin-right:auto;max-width:200px}.workspace-session-warning{font-size:9px}.terminal-menu{max-height:calc(100vh - 80px)}}
+
+#application-menu svg,#notifications svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.2;flex:none}#notifications{display:flex;align-items:center;gap:4px}
+@media(max-width:800px){#commands #trading-status{font-size:0;min-width:125px;max-width:155px}#commands #trading-status:after{content:attr(data-compact);font-size:10px}}
+@media(max-width:620px){#commands #market-pulse-trigger{max-width:150px}#commands .market-pulse-zone-chip,#commands .market-pulse-chevron{display:none}#commands .market-pulse-trigger-state [data-active]{display:inline-block;max-width:44px;overflow:hidden;text-overflow:ellipsis}}
+
+.workspace-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

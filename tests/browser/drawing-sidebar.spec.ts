@@ -1,8 +1,9 @@
+import { selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 
 test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow chart pane', async ({ page }) => {
   await page.goto('/?fixture=1&fixtureTime=now');
-  await page.locator('#theme').selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
 
   const panel = page.locator('.candle-panel').first();

@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import {test,expect,type Page}from '@playwright/test';
 import {addIndicator}from './indicator-actions';
 import {compactCvd}from '../../src/chart/cvd-model';
@@ -168,12 +169,12 @@ test('CVD pane reuses sources, separates visibility and membership, persists nam
   await expect(controls.locator('.cvd-legend')).toContainText('USDT');
   expect((await state(page)).settings.colors.total).toBeUndefined(); // untouched total stays theme-adaptive
   for(const theme of ['dark','light']as const){
-    await page.getByLabel('Theme',{exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(()=>pane.evaluate(e=>getComputedStyle(e).getPropertyValue('--chart').trim())).toBe(theme==='dark'?'#090909':'#f6f4ee');
     await panel.screenshot({path:`/tmp/cvd-${theme}.png`});
   }
   await expect.poll(()=>page.evaluate(()=>{
-    const saved=JSON.parse(localStorage.getItem('basis.layout.v1')!);return(Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.multi-venue-cvd')?.settings.anchor;
+    const saved=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);return(Object.values(saved.layout.panels)as any[]).find(p=>p.contentComponent==='candle').params.indicators.find((i:any)=>i.definitionId==='native.multi-venue-cvd')?.settings.anchor;
   })).toBe('weekly');
   await page.reload();await expect.poll(async()=>(await state(page))?.settings.anchor).toBe('weekly');
   expect((await state(page)).settings.groups[0].name).toBe('My flow basket');

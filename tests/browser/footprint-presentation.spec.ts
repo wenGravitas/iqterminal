@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { compactVol } from 'openalgo-charts/profile';
 import { addIndicator, expectHeatmapLiveQuiet, setFootprint, setPriceLevel, setUnits, footprintSettings } from './indicator-actions';
 import { test, expect, type Page, type Worker } from '@playwright/test';
@@ -379,7 +380,7 @@ test('footprint quantity labels remain readable over low-contrast red and green 
   await page.waitForTimeout(150);
   await panel.locator('.chart-stage').screenshot({ path: 'artifacts/footprint-text-contrast-dark-1366x768.png' });
 
-  await page.locator('#theme').selectOption('light');
+  await selectTheme(page, 'light');
   await page.evaluate(() => {
     const view = [...(window as any).__terminal.panels.values()][0] as any;
     view.engine.setFootprintOpacity(.85);
@@ -395,7 +396,7 @@ test('dense synthetic footprint stays crisp at DPR 1 and 2', async ({ page, brow
     await target.setViewportSize({ width: 1440, height: 768 });
     await target.emulateMedia({ colorScheme: 'dark' });
     await installDepthFixture(target);
-    await target.locator('#theme').selectOption('dark');
+    await selectTheme(target, 'dark');
     const panel = target.locator('.candle-panel').first();
     // Give the footprint its normal full-width chart surface so all twelve
     // bars can show representative BTC quantities without shrinking the font.

@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test, type BrowserContext, type Route } from '@playwright/test';
 import { addIndicator, setFootprint } from './indicator-actions';
 
@@ -290,7 +291,7 @@ test('staging worker history warms delta flips, accepts corrections, and streams
   const settings = panel.getByRole('dialog', { name: 'Footprint Totals settings', exact: true });
   await settings.getByLabel('Highlight highest value in each row', { exact: true }).check();
   await settings.getByRole('button', { name: 'Apply', exact: true }).click();
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   const livePoint = await page.evaluate(time => {
     const p = [...(window as any).__terminal.panels.values()][0] as any, engine = p.engine;
     const pane = engine.footprintTotalsPaneIndex('native.footprint-totals'), plot = engine.chart.plotRect(pane);

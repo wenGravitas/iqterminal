@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { test, expect, type Page } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
@@ -40,7 +41,7 @@ async function installResizeTrace(page: Page) {
 test('keeps 5m Footprint and Order Walls painted across gestures and container resize', async ({ page }) => {
   await installResizeTrace(page);
   await installDepthFixture(page);
-  await page.locator('#theme').selectOption('dark');
+  await selectTheme(page, 'dark');
   const panel = page.locator('.candle-panel').first();
   await panel.getByLabel('Timeframe', { exact: true }).selectOption('5m');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].bars)).toBe(5000);

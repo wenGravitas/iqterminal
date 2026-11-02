@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { test, expect } from '@playwright/test';
 
 test('floating drawing toolbar pins by drag, preserves styles, moves, reorders and restores per chart', async ({ page }) => {
@@ -30,7 +31,7 @@ test('floating drawing toolbar pins by drag, preserves styles, moves, reorders a
   await expect(bar).toBeHidden(); await toggle.click(); await expect(bar).toBeVisible();
   await expect(bar.locator('[data-floating-tool]')).toHaveCount(2);
   await expect(bar.getByText('Drag drawing tools here',{exact:true})).toBeVisible();
-  await page.getByLabel('Theme',{exact:true}).selectOption('dark');
+  await selectTheme(page, 'dark');
   await bar.screenshot({path:'/tmp/floating-toolbar-empty-dark.png'});
   await expect(bar.getByRole('button', { name: 'Pointer', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(second.getByRole('toolbar', { name: 'Floating drawing toolbar' })).toBeHidden();
@@ -65,7 +66,7 @@ test('floating drawing toolbar pins by drag, preserves styles, moves, reorders a
   expect((await state()).drawings[0]).toMatchObject({ tool: 'horizontal-line', style: { color: '#f0b56e', lineWidth: 3, lineStyle: 'dashed' } });
   await bar.getByRole('button', { name: 'Erase', exact: true }).click(); expect((await state()).erasing).toBe(true);
   await bar.getByRole('button', { name: 'Pointer', exact: true }).click(); expect((await state()).erasing).toBe(false); expect((await state()).drawings).toHaveLength(1);
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark'); await page.screenshot({ path: '/tmp/floating-toolbar-dark.png' });
+  await selectTheme(page, 'dark'); await page.screenshot({ path: '/tmp/floating-toolbar-dark.png' });
   const saved = (await state()).config;
   await toggle.click(); await expect(bar).toBeHidden(); await toggle.click(); expect((await state()).config.tools).toEqual(saved.tools);
   await page.reload(); await expect(bar).toBeVisible(); expect((await state()).config).toEqual(saved);
@@ -82,7 +83,7 @@ test('floating drawing toolbar pins by drag, preserves styles, moves, reorders a
   expect((await state()).config.tools).toEqual(['rectangle', 'horizontal-line']);
   await bar.locator('[data-floating-tool=rectangle]').click({ modifiers: ['Alt'] });
   expect((await state()).config.tools).toEqual(['horizontal-line']);
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.setViewportSize({ width: 900, height: 900 });
   await expect.poll(async () => { const box = (await bar.boundingBox())!, host = (await panel.locator('.chart-stage').boundingBox())!; return box.x >= host.x && box.y >= host.y && box.x + box.width <= host.x + host.width && box.y + box.height <= host.y + host.height; }).toBe(true);
   const bounds = (await bar.boundingBox())!, chart = (await panel.locator('.chart-stage').boundingBox())!;

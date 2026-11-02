@@ -1,3 +1,4 @@
+import { addWidget, selectTheme } from './footer-actions';
 import { expect, test } from '@playwright/test';
 
 test('Depth Matrix keeps its current rows while a replacement viewport batch is delayed', async ({ page }) => {
@@ -30,7 +31,7 @@ test('Depth Matrix keeps its current rows while a replacement viewport batch is 
   });
 
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel'), scroll = matrix.locator('.depth-matrix-scroll');
   await expect(matrix.locator('.depth-matrix-column-head small')).toHaveText(['FIXTURE', 'FIXTURE']);
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__initialDepthMatrixViewport))).toBe(true);
@@ -70,7 +71,7 @@ test('Depth Matrix keeps its current rows while a replacement viewport batch is 
 
 test('Depth Matrix Center and manual ranges survive tab resubscription without paging away', async ({ page }) => {
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel'), scroll = matrix.locator('.depth-matrix-scroll');
   await expect(matrix.locator('.depth-matrix-price-row')).toHaveCount(160);
   const state = () => page.evaluate(() => {
@@ -119,7 +120,7 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel');
   await expect(matrix).toBeVisible();
   await expect(matrix.locator('.depth-matrix-column-head')).toHaveCount(2);
@@ -187,12 +188,12 @@ test('Depth Matrix restores ordered sources and settings and scrolls a narrow fu
   await scroll.evaluate(element => { element.scrollLeft = element.scrollWidth; element.scrollTop = 0; });
   await expect.poll(() => scroll.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await page.waitForTimeout(350);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? 'null'));
-  expect(saved.version).toBe(6);
+  const saved = await page.evaluate(() => JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) ?? 'null'));
+  expect(saved.version).toBe(8);
   const params = Object.values(saved.layout.panels).find((panel: any) => panel.contentComponent === 'depth-matrix') as any;
   expect(params.params).toMatchObject({ sources: ['binance-perpetual', 'binance-spot'], bucketWidth: '5000', columnWidth: 150, scale: 'shared', wallMode: 'off' });
   params.params.sources = ['binance-perpetual', 'binance-spot', 'bybit-spot', 'bybit-perpetual', 'hyperliquid-perpetual'];
-  await page.evaluate(value => localStorage.setItem('basis.layout.v1', JSON.stringify(value)), saved);
+  await page.evaluate(value => {localStorage.removeItem('iqterminal:workspaces:v1');localStorage.setItem('basis.layout.v1', JSON.stringify(value));}, saved);
 
   await page.reload();
   const restored = page.locator('.depth-matrix-panel');
@@ -249,7 +250,7 @@ test('Depth Matrix marks unobserved far-side rows as unknown while keeping known
     };
   });
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel');
   await expect(matrix.locator('.depth-matrix-column-head small')).toHaveText(['FIXTURE', 'FIXTURE']);
   const scroll = matrix.locator('.depth-matrix-scroll');
@@ -313,7 +314,7 @@ test('Depth Matrix keeps partial measured labels legible without coverage marker
   });
   await page.setViewportSize({ width: 1180, height: 760 });
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel');
   await expect(matrix.locator('.depth-matrix-column-head small')).toHaveText(['FIXTURE', 'FIXTURE']);
   const rowHeight = await matrix.evaluate(element => Number.parseFloat(getComputedStyle(element).getPropertyValue('--depth-matrix-row-height')));
@@ -355,7 +356,7 @@ test('Depth Matrix keeps partial measured labels legible without coverage marker
   };
 
   for (const theme of ['dark', 'light'] as const) {
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim()))
       .toBe(theme === 'light' ? '#f6f4ee' : '#090909');
     const bid = await readPartialLabel('83300');
@@ -408,7 +409,7 @@ test('Depth Matrix tracks the rounded reference mid beside readable mixed venue 
   });
   await page.setViewportSize({ width: 1180, height: 760 });
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel'), axis = matrix.locator('.depth-matrix-price-axis');
   const current = axis.locator('.depth-matrix-price-row[data-current="true"]');
   await expect(current).toHaveText('83,500');
@@ -422,7 +423,7 @@ test('Depth Matrix tracks the rounded reference mid beside readable mixed venue 
   });
   expect(mixedBandCenters).toEqual([17,17]);
   for (const theme of ['dark','light'] as const) {
-    await page.getByLabel('Theme', {exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme === 'dark' ? '#090909' : '#f6f4ee');
     await matrix.screenshot({path: `/tmp/depth-matrix-mixed-labels-${theme}-dpr1.png`});
   }
@@ -430,7 +431,7 @@ test('Depth Matrix tracks the rounded reference mid beside readable mixed venue 
   await matrix.getByLabel('Venue column width').evaluate(element => { const input=element as HTMLInputElement; input.value='65'; input.dispatchEvent(new Event('input',{bubbles:true})); });
   await matrix.getByRole('button', {name:'Depth Matrix settings'}).click();
   for (const theme of ['dark','light'] as const) {
-    await page.getByLabel('Theme', {exact:true}).selectOption(theme);
+    await selectTheme(page, theme);
     await expect.poll(() => matrix.evaluate(element => getComputedStyle(element).getPropertyValue('--chart').trim())).toBe(theme === 'dark' ? '#090909' : '#f6f4ee');
     await matrix.screenshot({path: `/tmp/depth-matrix-mixed-labels-${theme}-65.png`});
   }
@@ -446,7 +447,7 @@ test('Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, s
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel');
   const scroll = matrix.locator('.depth-matrix-scroll');
   const canvas = matrix.locator('.depth-matrix-book').first();
@@ -474,10 +475,10 @@ test('Depth Matrix keeps visible rows painted through themes, DPR 2, resizing, s
   expect(dimensions.dpr).toBe(2);
   expect(dimensions.width).toBeGreaterThanOrEqual(dimensions.cssWidth * 2);
 
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await expect.poll(async () => { const colors = await visibleColors(); return colors.bid > 10 && colors.ask > 10; }).toBe(true);
   await page.screenshot({ path: '/tmp/depth-matrix-fixture-light-dpr2.png' });
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect.poll(async () => { const colors = await visibleColors(); return colors.bid > 10 && colors.ask > 10; }).toBe(true);
 
   const rowHeight = await matrix.evaluate(element => Number.parseFloat(getComputedStyle(element).getPropertyValue('--depth-matrix-row-height')));
@@ -531,7 +532,7 @@ test('Depth Matrix shows an explanation when no synchronized rows are available'
     Object.defineProperty(window, 'Worker', { configurable: true, writable: true, value: EmptyMatrixWorker });
   });
   await page.goto('/?fixture=1');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const message = page.locator('.depth-matrix-empty-state');
   await expect(message).toBeVisible();
   await expect(message).toContainText('Depth stream disconnected');

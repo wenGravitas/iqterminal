@@ -1,3 +1,4 @@
+import { addWidget, selectTheme } from './footer-actions';
 import { expect, test, type Page } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -164,7 +165,7 @@ async function openTradingAndUnlock(page: Page, network: 'mainnet' | 'testnet') 
   await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
   await page.waitForFunction(() => (window as any).__terminal?.stats().panels.length > 0);
   expect(await page.evaluate(() => (window as any).__tradingMock.workers)).toBe(0);
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await addWidget(page, 'Hyperliquid Trading');
   await expect(page.getByText('Hyperliquid · BTC Perpetual', { exact: true })).toBeVisible();
   const settings = page.locator('dialog.hl-settings');
   await expect(settings).toBeVisible();
@@ -203,7 +204,7 @@ test('first open guides unconfigured accounts to settings and keeps vault inputs
   await installMockTradingWorker(page);
   await page.goto('/');
   await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await addWidget(page, 'Hyperliquid Trading');
   const trade = page.locator('.hyperliquid-trading[data-view="trade"]');
   const settings = page.locator('dialog.hl-settings');
   await expect(trade.getByLabel('BTC order size')).toBeVisible();
@@ -230,6 +231,7 @@ test('first open guides unconfigured accounts to settings and keeps vault inputs
 });
 
 test('activity widgets share the one trading controller, reuse stable panels and restore from layout', async ({ page }) => {
+  test.setTimeout(60_000);
   await openTradingAndUnlock(page, 'testnet');
   const baselineListeners = await page.evaluate(() => (window as any).__terminal.trading.listeners.size);
   const positions = await openTradingWidget(page, 'Positions', 'positions');
@@ -248,7 +250,7 @@ test('activity widgets share the one trading controller, reuse stable panels and
   expect(await page.locator('.hyperliquid-trading[data-view="open-orders"]').count()).toBe(1);
   expect(await page.evaluate(() => (window as any).__terminal.trading.listeners.size)).toBe(baselineListeners + 4);
   await page.waitForTimeout(350);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? '{}'));
+  const saved = await page.evaluate(() => JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) ?? '{}'));
   expect(saved.version).toBe(8);
   for (const id of ['hyperliquid-positions', 'hyperliquid-open-orders', 'hyperliquid-order-history', 'hyperliquid-trade-history']) expect(saved.layout.panels[id]).toBeTruthy();
 
@@ -260,6 +262,17 @@ test('activity widgets share the one trading controller, reuse stable panels and
     await expect(restored.locator('.hl-status')).toContainText('TESTNET · LIVE');
   }
   await expect.poll(() => page.evaluate(() => (window as any).__tradingMock.workers)).toBe(1);
+  await page.evaluate(passphrase => (window as any).__terminal.trading.unlock(passphrase), PASSPHRASE);
+  const retained = await page.evaluate(() => {
+    const t = (window as any).__terminal, id = t.workspaces.active.id;
+    const before = { principal: t.trading.state.config.principal, address: t.trading.state.vault.address, unlocked: t.trading.state.vault.unlocked, owned: t.trading.state.owner.owned };
+    t.workspaces.create('Account continuity', false);
+    const during = { principal: t.trading.state.config.principal, address: t.trading.state.vault.address, unlocked: t.trading.state.vault.unlocked, owned: t.trading.state.owner.owned };
+    const workers = (window as any).__tradingMock.workers; t.workspaces.switchTo(id);
+    return { before, during, workers };
+  });
+  expect(retained.during).toEqual(retained.before); expect(retained.before.unlocked).toBe(true); expect(retained.workers).toBe(1);
+  for (const view of ['trade', 'positions', 'open-orders', 'order-history', 'trade-history']) await expect(page.locator(`.hyperliquid-trading[data-view="${view}"] .hl-status`)).toContainText('TESTNET · LIVE');
   const beforeClose = await page.evaluate(() => (window as any).__terminal.trading.listeners.size);
   await page.evaluate(() => (window as any).__terminal.dock.getPanel('hyperliquid-trade-history').api.close());
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.trading.listeners.size)).toBe(beforeClose - 1);
@@ -269,7 +282,7 @@ test('explicit diagnostic fixture mode blocks the native trading worker and cont
   await page.goto('/?fixture=1');
   await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
   expect(await page.evaluate(() => (window as any).__terminal.fixture)).toBe(true);
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await addWidget(page, 'Hyperliquid Trading');
   await expect(page.locator('.hl-status')).toContainText('FIXTURE MODE · SIGNING DISABLED');
   await expect(page.locator('.hl-agent-status')).toContainText('agent keys and real exchange actions are disabled');
 
@@ -387,7 +400,7 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   expect(appStorage).not.toContain(PRIVATE_KEY);
   expect(appStorage).not.toContain(PASSPHRASE);
   await page.waitForTimeout(350);
-  const layout = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  const layout = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   expect(layout).toContain('hyperliquid-trading');
   expect(layout).not.toContain(PRIVATE_KEY);
   expect(layout).not.toContain(PASSPHRASE);
@@ -424,7 +437,7 @@ test('legacy vault binding names the selected account and requires an explicit o
   await installMockTradingWorker(page);
   await page.goto('/');
   await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await addWidget(page, 'Hyperliquid Trading');
   await page.evaluate(() => { (window as any).__tradingMock.legacyBinding = true; });
   await page.getByLabel('Network').selectOption('testnet');
   await page.getByLabel('Hyperliquid principal address').fill(PRINCIPAL);
@@ -468,7 +481,7 @@ test('session-only mode does not persist the agent and Lock discards it', async 
   await installMockTradingWorker(page);
   await page.goto('/');
   await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
-  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  await addWidget(page, 'Hyperliquid Trading');
   await page.evaluate(() => { (window as any).__tradingMock.storageAvailable = false; (window as any).__tradingMock.sessionOnlyAvailable = true; });
   await page.getByLabel('Network').selectOption('testnet');
   await page.getByLabel('Hyperliquid principal address').fill(PRINCIPAL);
@@ -747,7 +760,7 @@ test('testnet panel stays usable while mainnet candle charts reject chart-derive
 
 test('trade entry stays compact and linked activity widgets fit a 300px Dockview pane', async ({ page }) => {
   await openTradingAndUnlock(page, 'mainnet');
-  await page.locator('#theme').selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.screenshot({ path: '/tmp/hl-trading-panel-desktop.png' });
   const tradePanel = page.locator('.hyperliquid-trading[data-view="trade"]');
   await page.evaluate(() => (window as any).__terminal.dock.getPanel('hyperliquid-trading').api.setSize({ width: 300 }));

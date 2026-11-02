@@ -1,0 +1,3 @@
+import { WORKSPACE_ICONS,validIcon } from './model';
+export function workspaceGlyph(icon:string):HTMLElement|SVGSVGElement {if(!Object.hasOwn(WORKSPACE_ICONS,icon)){const span=document.createElement('span');span.textContent=validIcon(icon)?icon:'W';span.setAttribute('aria-hidden','true');return span;}const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 18 18');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',WORKSPACE_ICONS[icon as keyof typeof WORKSPACE_ICONS]);svg.append(path);return svg;}
+export const ICON_CHOICES=[...Object.keys(WORKSPACE_ICONS),...'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'];

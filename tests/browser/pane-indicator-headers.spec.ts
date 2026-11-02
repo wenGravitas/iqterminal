@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint } from './indicator-actions';
@@ -78,13 +79,13 @@ test('pane indicators use one local header while overlays stay in the main list'
   await expectPaneHeaderBounds(page);
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/three-native-panes.png' });
   const themePicker = page.getByRole('combobox', { name: 'Theme', exact: true });
-  await themePicker.selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/desktop-dark.png' });
-  await themePicker.selectOption('light');
+  await selectTheme(page, 'light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/desktop-light.png' });
-  await themePicker.selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   const positioningSubscriptions = await page.evaluate(() => (window as any).__terminal.feed.currentNetPositioning.size);
   expect(positioningSubscriptions).toBe(1);
@@ -157,10 +158,10 @@ test('pane indicators use one local header while overlays stay in the main list'
   })).toBe(true);
   await expectPaneHeaderBounds(page);
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/narrow-dark.png' });
-  await themePicker.selectOption('light');
+  await selectTheme(page, 'light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/narrow-light.png' });
-  await themePicker.selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.setViewportSize({ width: 1260, height: 1080 });
   const longsIndex = mapping.find((item: any) => item.id === 'native.net-longs-estimated')!.pane;
   const totalsIndex = mapping.find((item: any) => item.id === 'native.footprint-totals')!.pane;

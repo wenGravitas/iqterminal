@@ -171,7 +171,7 @@ test('native SMA output chains through the chart registry without an engine sour
   await edit.getByLabel('Indicator output').selectOption(replacement.outputId!);
   await expect(edit.getByLabel('Use the selected output scale')).toBeVisible();
   await edit.getByLabel('Use the selected output scale').check();
-  const savedBeforeVisibleReject = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  const savedBeforeVisibleReject = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await edit.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(edit).toBeVisible();
   await expect(edit.locator('[role="status"]')).toContainText(/cannot change unit.*depend/i);
@@ -179,7 +179,7 @@ test('native SMA output chains through the chart registry without an engine sour
     const current = (window as any).__terminal.panels.get(id);
     const first = current.selection.indicators.find((item: any) => item.instanceId === firstId);
     const consumer = current.outputRegistry.diagnostics().consumers.find((item: any) => item.instanceId === secondId);
-    return { source: first.numericInputs.source, stored: localStorage.getItem('basis.layout.v1'), storageUnchanged: localStorage.getItem('basis.layout.v1') === savedBefore,
+    return { source: first.numericInputs.source, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')), storageUnchanged: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) === savedBefore,
       output: current.outputRegistry.get(`output:${firstId}:p0`), consumer };
   }, { id: panelId, firstId, secondId, savedBefore: savedBeforeVisibleReject });
   expect(visibleReject.source).toEqual(replacement.firstRef);
@@ -208,7 +208,7 @@ test('native SMA output chains through the chart registry without an engine sour
   // The normal Dockview layout save is debounced by 250 ms after a visibility
   // change. Take the persistence baseline after that independent edit settles.
   await page.waitForTimeout(300);
-  const savedBeforeHiddenReject = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  const savedBeforeHiddenReject = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   const hiddenApply = await page.evaluate(({ id, firstId, secondId, savedBefore }) => {
     const current = (window as any).__terminal.panels.get(id);
     const second = current.selection.indicators.find((item: any) => item.instanceId === secondId);
@@ -216,7 +216,7 @@ test('native SMA output chains through the chart registry without an engine sour
     return { firstRef: first.numericInputs.source, secondRef: second.numericInputs.source,
       output: current.outputRegistry.get(`output:${firstId}:p0`), outputRevision: current.outputRegistry.get(`output:${firstId}:p0`)?.revision,
       registered: current.outputRegistry.diagnostics().consumers.some((item: any) => item.instanceId === secondId),
-      storageUnchanged: localStorage.getItem('basis.layout.v1') === savedBefore };
+      storageUnchanged: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) === savedBefore };
   }, { id: panelId, firstId, secondId, savedBefore: savedBeforeHiddenReject });
   expect(hiddenApply).toMatchObject({ firstRef: replacement.firstRef, secondRef: secondSavedRef, registered: false, storageUnchanged: true,
     output: { unit: 'BTC', available: true } });
@@ -249,7 +249,7 @@ test('native SMA output chains through the chart registry without an engine sour
     const current = (window as any).__terminal.panels.get(id);
     const first = current.selection.indicators.find((item: any) => item.instanceId === firstId);
     const second = current.selection.indicators.find((item: any) => item.instanceId === secondId);
-    return { source: first.numericInputs.source, storageUnchanged: localStorage.getItem('basis.layout.v1') === savedBefore,
+    return { source: first.numericInputs.source, storageUnchanged: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) === savedBefore,
       saveCalls: current.__r2SaveCalls, output: current.outputRegistry.get(`output:${firstId}:p0`), outputRevision: current.outputRegistry.get(`output:${firstId}:p0`)?.revision,
       consumer: current.outputRegistry.diagnostics().consumers.find((item: any) => item.instanceId === secondId),
       secondInput: second.numericInputs.source };

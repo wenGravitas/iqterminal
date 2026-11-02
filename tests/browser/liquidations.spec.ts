@@ -1,24 +1,25 @@
+import { addWidget, selectTheme } from './footer-actions';
 import {test,expect}from '@playwright/test';
 import {addIndicator,chooseChartMarket}from './indicator-actions';
 const state=(page:any)=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].liquidationsView?.diagnostics());
 async function setup(page:any){await page.goto('/?fixture=1&fixtureTime=now');await expect.poll(()=>page.evaluate(()=>(window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);const close=page.getByRole('button',{name:/^Close /});if(await close.count()>1)await close.nth(1).click();const panel=page.locator('.candle-panel').first();const tree=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});if(await tree.isVisible())await tree.click();return panel;}
 test('liquidation ticker, stacked native pane, marker settings and workspace persist',async({page})=>{
  test.setTimeout(120000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:1920,height:1080});const panel=await setup(page);
- await page.getByRole('button',{name:'Liquidations',exact:true}).click();const ticker=page.locator('.liquidation-ticker');await expect(ticker).toBeVisible();await expect.poll(()=>ticker.locator('[data-event-id]').count()).toBeGreaterThan(0);await expect(ticker.locator('.ticker-status')).toContainText('Binance sampled');await expect(ticker.locator('.liquidation-summary')).toContainText('15m');
+ await addWidget(page, 'Liquidations');const ticker=page.locator('.liquidation-ticker');await expect(ticker).toBeVisible();await expect.poll(()=>ticker.locator('[data-event-id]').count()).toBeGreaterThan(0);await expect(ticker.locator('.ticker-status')).toContainText('Binance sampled');await expect(ticker.locator('.liquidation-summary')).toContainText('15m');
  await addIndicator(panel,'Liquidations');await expect(panel.locator('[data-liquidations=true]')).toBeVisible();await expect.poll(async()=>(await state(page))?.painted).toBeGreaterThan(0);
  expect((await state(page)).batch.bars.some((b:any)=>b.longs.bybit+b.longs.binance>0)).toBe(true);expect((await state(page)).batch.bars.some((b:any)=>b.shorts.bybit+b.shorts.binance>0)).toBe(true);
  await panel.getByRole('button',{name:'Liquidations settings',exact:true}).click();const dialog=panel.getByRole('dialog',{name:'Liquidations settings',exact:true});await dialog.getByLabel('Show liquidations on price chart',{exact:true}).check();await dialog.getByLabel('Minimum marker notional (USDT)',{exact:true}).fill('0');await dialog.getByRole('button',{name:'Apply',exact:true}).click();await expect.poll(async()=>(await state(page)).markers).toBeGreaterThan(0);expect((await state(page)).markers).toBeLessThanOrEqual(80);
- for(const theme of ['dark','light']as const){await page.getByLabel('Theme',{exact:true}).selectOption(theme);await page.screenshot({path:`/tmp/liquidations-${theme}.png`});}
+ for(const theme of ['dark','light']as const){await selectTheme(page, theme);await page.screenshot({path:`/tmp/liquidations-${theme}.png`});}
  await ticker.getByRole('button',{name:'Pause liquidation tape',exact:true}).click();await expect(ticker.getByRole('button',{name:'Resume liquidation tape',exact:true})).toBeVisible();await ticker.getByRole('button',{name:'Resume liquidation tape',exact:true}).click();
  await ticker.getByLabel('Liquidation side',{exact:true}).selectOption('LONG');await expect.poll(async()=>ticker.locator('[data-event-id]').evaluateAll(rows=>rows.every(r=>r.textContent?.includes('LONG')))).toBe(true);
  await ticker.getByRole('button',{name:'Liquidation Ticker settings',exact:true}).click();const settings=ticker.getByRole('dialog',{name:'Liquidation Ticker settings',exact:true});await settings.getByLabel('Minimum displayed liquidation size',{exact:true}).fill('100');await settings.getByLabel('Show quantity',{exact:true}).uncheck();await settings.getByRole('button',{name:'Apply',exact:true}).click();
- await expect.poll(()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('basis.layout.v1')!);return(Object.values(s.layout.panels)as any[]).find(p=>p.contentComponent==='liquidation-ticker')?.params.minimum;})).toBe(100);
+ await expect.poll(()=>page.evaluate(()=>{const s=JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);return(Object.values(s.layout.panels)as any[]).find(p=>p.contentComponent==='liquidation-ticker')?.params.minimum;})).toBe(100);
  await panel.getByRole('button',{name:'Hide Liquidations',exact:true}).click();await expect(panel.locator('[data-liquidations=true]')).toHaveCount(0);await expect(ticker.locator('[data-event-id]').first()).toBeVisible();await panel.getByRole('button',{name:'Show Liquidations',exact:true}).click();await expect.poll(async()=>(await state(page))?.painted).toBeGreaterThan(0);
  await page.reload();await expect(page.locator('.liquidation-ticker')).toBeVisible();await expect.poll(async()=>(await state(page))?.settings.markers).toBe(true);
  await page.setViewportSize({width:720,height:860});await page.screenshot({path:'/tmp/liquidations-narrow.png'});expect(errors).toEqual([]);
 });
 test('liquidation subscriptions share ingestion and replay never generates stale notifications',async({page})=>{
- test.setTimeout(90000);const panel=await setup(page);await addIndicator(panel,'Liquidations');await expect.poll(async()=>(await state(page))?.painted).toBeGreaterThan(0);await page.getByRole('button',{name:'Liquidations',exact:true}).click();await page.getByRole('button',{name:'Liquidations',exact:true}).click();await expect(page.locator('.liquidation-ticker')).toHaveCount(2);
+ test.setTimeout(90000);const panel=await setup(page);await addIndicator(panel,'Liquidations');await expect.poll(async()=>(await state(page))?.painted).toBeGreaterThan(0);await addWidget(page, 'Liquidations');await addWidget(page, 'Liquidations');await expect(page.locator('.liquidation-ticker')).toHaveCount(2);
  await page.evaluate(()=>(window as any).__terminal.feed.send({type:'diagnostics'}));
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.feed.diagnostics.liquidations?.clients)).toBe(3);expect(await page.evaluate(()=>(window as any).__terminal.feed.diagnostics.liquidations.sockets)).toBe(0);
  const before=await page.evaluate(()=>(window as any).__terminal.notifications.gate.delivered);
@@ -30,7 +31,7 @@ test('liquidation subscriptions share ingestion and replay never generates stale
 test('fresh worker burst alerts, continuation and pause stay bounded', async ({ page }) => {
   test.setTimeout(90_000);
   const panel = await setup(page);
-  await page.getByRole('button', { name: 'Liquidations', exact: true }).click();
+  await addWidget(page, 'Liquidations');
   const ticker = page.locator('.liquidation-ticker');
   await expect.poll(() => ticker.locator('[data-event-id]').count()).toBeGreaterThan(0);
   await ticker.getByRole('button', { name: 'Liquidation Ticker settings', exact: true }).click();
@@ -110,7 +111,7 @@ test('explicit deterministic burst presentation fixture covers both sides and co
   page.on('pageerror', error => errors.push(error.message));
   await page.setViewportSize({ width: 1366, height: 768 });
   const panel = await setup(page);
-  await page.getByRole('button', { name: 'Liquidations', exact: true }).click();
+  await addWidget(page, 'Liquidations');
   const ticker = page.locator('.liquidation-ticker');
   await expect.poll(() => ticker.locator('[data-event-id]').count()).toBeGreaterThan(0);
   const panelId = await panel.getAttribute('data-panel-id');
@@ -265,7 +266,7 @@ test('explicit deterministic burst presentation fixture covers both sides and co
   await expect.poll(() => ticker.locator('.liquidation-summary').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length,
   )).toBe(1);
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   const activeLongQuality = ticker.locator('.liquidation-active-bursts .liquidation-burst-card[data-side=LONG] .liquidation-burst-quality');
   await activeLongQuality.focus();
@@ -298,7 +299,7 @@ test('explicit deterministic burst presentation fixture covers both sides and co
 
   const capture = async (width: number, height: number, theme: 'dark' | 'light', dockTarget = 320) => {
     await page.setViewportSize({ width, height });
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    await selectTheme(page, theme);
     await page.evaluate(target => {
       const panel = (window as any).__terminal.dock.panels.find((item: any) => item.view.contentComponent === 'liquidation-ticker');
       panel.group.api.setSize({ width: target });
@@ -329,7 +330,7 @@ test('explicit deterministic burst presentation fixture covers both sides and co
   await expect(ticker.locator('.liquidation-active-bursts')).toBeHidden();
   await expect(ticker.locator('.liquidation-completed-row')).toHaveCount(0);
   expect(await page.evaluate(() => {
-    const saved = JSON.parse(localStorage.getItem('basis.layout.v1')!);
+    const saved = JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
     return (Object.values(saved.layout.panels) as any[]).find(item => item.contentComponent === 'liquidation-ticker')?.params.showBursts;
   })).toBe(false);
   await page.reload();
@@ -386,7 +387,7 @@ test('liquidation bar tooltip matches positioning cards with side-specific venue
     expect(await card.evaluate((el: HTMLElement) => el.scrollWidth <= el.clientWidth)).toBe(true);
   };
   for (const theme of ['dark', 'light'] as const) {
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    await selectTheme(page, theme);
     await hover('LONG');
     await expect(card.locator('.positioning-tooltip-heading')).toContainText('USDT');
     await page.screenshot({ path: `/tmp/liquidations-tooltip-${theme}.png` });
@@ -439,7 +440,7 @@ test('liquidation venue toggles filter the pane, survive reload, and stay access
     return { sameEngine: p.engine === (window as any).__liquidationVenueEngine, range: p.engine.chart.timeScale.visibleRange() };
   });
   expect(after.sameEngine).toBe(true); expect(after.range).toEqual(before);
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.screenshot({ path: '/tmp/liquidations-venues-dark.png' });
   await page.reload();
   await expect.poll(async () => (await state(page))?.settings.venues).toEqual(['bybit']);
@@ -451,7 +452,7 @@ test('liquidation venue toggles filter the pane, survive reload, and stay access
   await expect(bybit).toBeVisible(); await expect(binance).toBeVisible();
   const stage = (await panel.locator('.chart-stage').boundingBox())!, bounds = (await legend.boundingBox())!;
   expect(bounds.x).toBeGreaterThanOrEqual(stage.x); expect(bounds.x + bounds.width).toBeLessThanOrEqual(stage.x + stage.width);
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await page.screenshot({ path: '/tmp/liquidations-venues-compact.png' });
   await binance.focus(); await binance.press('Enter');
   await expect(binance).toHaveAttribute('aria-pressed', 'true');
@@ -555,7 +556,7 @@ test('liquidation coverage gaps stop at now across forming bars, pan, resize and
 
   const capture = async (width: number, height: number, theme: 'dark' | 'light') => {
     await page.setViewportSize({ width, height });
-    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    await selectTheme(page, theme);
     await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
     if (width !== 1366) { await page.waitForTimeout(220); await installFixture('append'); }
     paint = await verifyCoveragePaint();

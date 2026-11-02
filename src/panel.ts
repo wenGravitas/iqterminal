@@ -1,3 +1,4 @@
+import { workspacePanelStorage } from './workspaces/panel-storage';
 import { currentTheme } from './theme';
 import { boundedBrushPoints, installEverydayPresets } from './chart/everyday-drawings';
 import { JournalChartBridge } from './journal/chart-bridge';
@@ -1633,7 +1634,7 @@ export class CandlePanel implements IContentRenderer {
     const key = objectTreeSidebarStorageKey(this.params.api.id);
     this.objectTreeSidebarWarning = '';
     try {
-      const raw = window.localStorage.getItem(key);
+      const raw = workspacePanelStorage.getItem(key);
       this.objectTreeSidebarPreferences = raw === null
         ? createObjectTreeSidebarPreferences()
         : parseIQObjectTreeSidebarPreferences(raw);
@@ -1655,7 +1656,7 @@ export class CandlePanel implements IContentRenderer {
 
   private saveObjectTreeSidebarPreferences() {
     try {
-      window.localStorage.setItem(objectTreeSidebarStorageKey(this.params.api.id), JSON.stringify(this.objectTreeSidebarPreferences));
+      workspacePanelStorage.setItem(objectTreeSidebarStorageKey(this.params.api.id), JSON.stringify(this.objectTreeSidebarPreferences));
       this.objectTreeSidebarWarning = '';
     } catch (error) {
       this.objectTreeSidebarWarning = `Sidebar settings are session-only (${errorText(error)}).`;
@@ -1718,7 +1719,7 @@ export class CandlePanel implements IContentRenderer {
     this.renamingDrawingId = undefined;
     this.collapsedTreeFolders.clear();
     try {
-      this.objectTreeRepository = new IQObjectTreeRepository(createLocalStorageObjectTreeStorage(window.localStorage), key);
+      this.objectTreeRepository = new IQObjectTreeRepository(createLocalStorageObjectTreeStorage(workspacePanelStorage), key);
       this.objectTreeCatalog = this.objectTreeRepository.load();
     } catch (error) {
       this.objectTreeStorageWarning = `Saved object tree is preserved; using session memory (${errorText(error)}).`;

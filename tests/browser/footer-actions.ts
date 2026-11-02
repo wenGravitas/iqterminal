@@ -1,0 +1,7 @@
+import type { Page } from '@playwright/test';
+export async function selectTheme(page:Page,value:string){const picker=page.getByLabel('Theme',{exact:true});const opened=!(await picker.isVisible());if(opened)await page.getByRole('button',{name:'Application menu',exact:true}).click();await picker.selectOption(value);if(opened)await page.keyboard.press('Escape');}
+export async function addWidget(page:Page,label:string){await page.getByRole('button',{name:'Add Widget',exact:true}).click();await page.getByRole('dialog',{name:'Add Widget',exact:true}).getByRole('button',{name:`Add ${label}`,exact:true}).click();}
+export async function resetCurrentWorkspace(page:Page){await page.getByRole('button',{name:'Application menu',exact:true}).click();page.once('dialog',dialog=>dialog.accept());await page.getByRole('button',{name:'Reset Current Workspace',exact:true}).click();}
+export async function openGlobalSettings(page:Page){await page.getByRole('button',{name:'Application menu',exact:true}).click();await page.locator('#global-settings').click();}
+/** Serializable browser callback; inspect the durable active record, not its live session copy. */
+export function savedPanelRecord(key:string):string|null {const raw=localStorage.getItem('iqterminal:workspaces:v1');if(!raw)return localStorage.getItem(key);const registry=JSON.parse(raw);return registry.workspaces.find((w:any)=>w.id===registry.activeId)?.panelState[key]??null;}

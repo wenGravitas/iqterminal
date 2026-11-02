@@ -1,3 +1,4 @@
+import { addWidget, selectTheme } from './footer-actions';
 import { expect, test, type Locator } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -36,7 +37,7 @@ async function routeHyperliquid(page: import('@playwright/test').Page) {
 }
 
 async function addComparison(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: 'Market Comparison', exact: true }).click();
+  await addWidget(page, 'Market Comparison');
   const panel = page.locator('.market-comparison-panel').last();
   await expect(panel.locator('.market-comparison-status')).toContainText('5/5 connected', { timeout: 15_000 });
   return panel;
@@ -182,7 +183,7 @@ test('compact mode keeps live instrument labels with direction icons and restore
   await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);
   await page.screenshot({ path: 'artifacts/market-comparison-compact.png' });
   await expect.poll(() => page.evaluate(() => {
-    const saved = JSON.parse(localStorage.getItem('basis.layout.v1') ?? '{}');
+    const saved = JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) ?? '{}');
     return Object.values(saved.layout?.panels ?? {}).some((item: any) => item.contentComponent === 'market-comparison' && item.params.compact === true);
   })).toBe(true);
   await page.reload();
@@ -267,7 +268,7 @@ test('comparison controls rebase the full selected window and persist colors, vi
   await expect(panel.locator('.market-comparison-right-label')).toHaveCount(4);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().marketComparisons[0].settings.instruments.find((item: any) => item.identity.symbol === 'xyz:GOLD').color)).toBe('#123abc');
 
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await expect.poll(() => page.locator('html').getAttribute('data-theme')).toBe('light');
   await page.locator('#market-pulse-trigger').click();
   await page.locator('[data-timezone="UTC"]').click();

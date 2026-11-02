@@ -1,3 +1,4 @@
+import { selectTheme } from './footer-actions';
 import { expect, test, type Page, type Locator } from '@playwright/test';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
 import { writeFile } from 'node:fs/promises';
@@ -9,7 +10,7 @@ async function zone(page: Page, panel: Locator) { const count=await page.evaluat
 async function pngArtifact(page:Page,entry:any,path:string){const bytes=await page.evaluate(async(id)=>{const r=(window as any).__terminal.journal.repository,c=await r.capture(id),a=await r.asset(c.image);return [...new Uint8Array(await a.blob.arrayBuffer())];},entry.captureId);await writeFile(path,new Uint8Array(bytes));}
 
 test('quick capture, immutable snapshot, optional reasoning, markers, reload, restore and backup',async({page})=>{
-  test.setTimeout(90000);const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));const panel=await setup(page);await page.getByLabel('Theme',{exact:true}).selectOption('dark');await zone(page,panel);await addIndicator(panel,'Multi-Venue CVD');
+  test.setTimeout(90000);const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));const panel=await setup(page);await selectTheme(page, 'dark');await zone(page,panel);await addIndicator(panel,'Multi-Venue CVD');
   const before=await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0];(window as any).__journalEngine=p.engine;return {frame:p.chartFrame.getBoundingClientRect().height,docs:p.engine.drawings.toJSON(),config:structuredClone(p.selection)};});
   await panel.getByRole('button',{name:'Quick journal capture',exact:true}).click();await expect.poll(async()=>(await entries(page)).length).toBe(1);
   const entry=(await entries(page))[0];expect(entry.market.venue).toBe('binance');expect(entry.market.market).toBe('perpetual');

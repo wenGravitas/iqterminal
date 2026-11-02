@@ -1,8 +1,9 @@
+import { addWidget, openGlobalSettings, selectTheme } from './footer-actions';
 import { test, expect, type Page } from '@playwright/test';
 import { addIndicator } from './indicator-actions';
 
 async function globalCurrency(page: Page, enabled: boolean, currency = 'quote') {
-  await page.getByRole('button', { name: 'Global settings', exact: true }).click();
+  await openGlobalSettings(page);
   const dialog = page.getByRole('dialog', { name: 'Global settings', exact: true });
   await dialog.getByLabel('Override indicator currencies').setChecked(enabled);
   await dialog.getByLabel('Default display currency').selectOption(currency);
@@ -19,12 +20,12 @@ test('global quote override locks currency controls, preserves local choices and
   await addIndicator(panel, 'Footprint');
   await addIndicator(panel, 'Order-book Heatmap');
   await addIndicator(panel, 'Footprint Totals');
-  await page.getByRole('button', { name: 'Depth Matrix', exact: true }).click();
+  await addWidget(page, 'Depth Matrix');
   const matrix = page.locator('.depth-matrix-panel');
   await matrix.getByRole('button', { name: 'Depth Matrix settings' }).click();
   await matrix.getByLabel('Liquidity display unit').selectOption('usdt');
   await globalCurrency(page, true);
-  await page.getByLabel('Theme', { exact: true }).selectOption('dark');
+  await selectTheme(page, 'dark');
   await expect(matrix.getByLabel('Liquidity display unit')).toBeDisabled();
   await expect(matrix.getByLabel('Liquidity display unit')).toHaveValue('usdt');
   await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
@@ -59,7 +60,7 @@ test('global quote override locks currency controls, preserves local choices and
   await matrix.getByRole('button', { name: 'Depth Matrix settings' }).click();
   await expect(matrix.getByLabel('Liquidity display unit')).toBeEnabled();
   await expect(matrix.getByLabel('Liquidity display unit')).toHaveValue('usdt');
-  await page.getByLabel('Theme', { exact: true }).selectOption('light');
+  await selectTheme(page, 'light');
   await globalCurrency(page, true);
   await panel.getByRole('button', { name: 'Footprint settings', exact: true }).click();
   await page.setViewportSize({ width: 720, height: 900 });

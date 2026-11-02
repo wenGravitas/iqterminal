@@ -48,7 +48,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
     panel.params.api.updateParameters(panel.selection); panel.save();
   }, { id: panelId, firstId, staleRef: staleContext });
   await page.waitForTimeout(300);
-  let savedBefore = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  let savedBefore = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   const row = panel.locator(`.active-indicator[data-definition-id="native.composition-sma"][data-instance-id="${firstId}"]`);
   await row.locator('button[data-indicator-action="settings"]').click();
   let dialog = page.getByRole('dialog', { name: 'Add moving average', exact: true });
@@ -65,7 +65,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
   await expect(dialog.locator('[role="status"]')).toContainText(/saved output is unavailable/i);
   let state = await page.evaluate(({ id, firstId }) => {
     const panel = (window as any).__terminal.panels.get(id), instance = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { ref: instance.numericInputs.source, settings: instance.settings, stored: localStorage.getItem('basis.layout.v1') };
+    return { ref: instance.numericInputs.source, settings: instance.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) };
   }, { id: panelId, firstId });
   expect(state.ref).toEqual(staleContext);
   expect(state.settings.length).toBe(20);
@@ -93,7 +93,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
     panel.params.api.updateParameters(panel.selection); panel.save();
   }, { id: panelId, firstId, staleRef: staleSchema });
   await page.waitForTimeout(300);
-  savedBefore = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  savedBefore = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await row.locator('button[data-indicator-action="settings"]').click();
   dialog = page.getByRole('dialog', { name: 'Add moving average', exact: true });
   output = dialog.getByLabel('Indicator output');
@@ -107,7 +107,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
   await expect(dialog.locator('[role="status"]')).toContainText(/saved output is unavailable/i);
   state = await page.evaluate(({ id, firstId }) => {
     const panel = (window as any).__terminal.panels.get(id), instance = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { ref: instance.numericInputs.source, settings: instance.settings, stored: localStorage.getItem('basis.layout.v1') };
+    return { ref: instance.numericInputs.source, settings: instance.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) };
   }, { id: panelId, firstId });
   expect(state.ref).toEqual(staleSchema);
   expect(state.settings.length).toBe(21);
@@ -133,7 +133,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
     panel.params.api.updateParameters(panel.selection); panel.save();
   }, { id: panelId, firstId });
   await page.waitForTimeout(300);
-  savedBefore = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  savedBefore = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await row.locator('button[data-indicator-action="settings"]').click();
   dialog = page.getByRole('dialog', { name: 'Add moving average', exact: true });
   output = dialog.getByLabel('Indicator output');
@@ -146,7 +146,7 @@ test('same-ID stale references stay unavailable until explicit selection and App
   await expect(dialog).toBeVisible();
   const absentBeforeRebind = await page.evaluate(({ id, firstId }) => {
     const panel = (window as any).__terminal.panels.get(id), instance = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { hasInputs: Boolean(instance.numericInputs), settings: instance.settings, stored: localStorage.getItem('basis.layout.v1') };
+    return { hasInputs: Boolean(instance.numericInputs), settings: instance.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) };
   }, { id: panelId, firstId });
   expect(absentBeforeRebind).toEqual({ hasInputs: false, settings: { length: 22, color: expect.any(String) }, stored: savedBefore });
   await output.selectOption(source.output);
@@ -168,14 +168,14 @@ test('same-ID stale references stay unavailable until explicit selection and App
   }, { id: panelId, outputId: source.output });
   const driftBefore = await page.evaluate(({ id, firstId }) => {
     const panel = (window as any).__terminal.panels.get(id), instance = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { ref: instance.numericInputs.source, settings: instance.settings, stored: localStorage.getItem('basis.layout.v1') };
+    return { ref: instance.numericInputs.source, settings: instance.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) };
   }, { id: panelId, firstId });
   await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('[role="status"]')).toContainText(/changed while these settings were open/i);
   const driftAfter = await page.evaluate(({ id, firstId }) => {
     const panel = (window as any).__terminal.panels.get(id), instance = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { ref: instance.numericInputs.source, settings: instance.settings, stored: localStorage.getItem('basis.layout.v1') };
+    return { ref: instance.numericInputs.source, settings: instance.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')) };
   }, { id: panelId, firstId });
   expect(driftAfter).toEqual(driftBefore);
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -229,14 +229,14 @@ test('a missing SMA input blocks unsafe dependent replacement then recovers with
     disabled: (option as HTMLOptionElement).disabled }));
   expect(unavailable).toEqual({ value: missingRef.outputId, disabled: true });
   await sourceSelect.selectOption(source.output);
-  const savedBefore = await page.evaluate(() => localStorage.getItem('basis.layout.v1'));
+  const savedBefore = await page.evaluate(() => ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')));
   await dialog.getByLabel('Length').fill('24');
   await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('[role="status"]')).toContainText(/saved studies depend on its missing output/i);
   const blocked = await page.evaluate(({ id, firstId, missingRef }) => {
     const panel = (window as any).__terminal.panels.get(id), first = panel.selection.indicators.find((item: any) => item.instanceId === firstId);
-    return { ref: first.numericInputs.source, settings: first.settings, stored: localStorage.getItem('basis.layout.v1'),
+    return { ref: first.numericInputs.source, settings: first.settings, stored: ((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1')),
       output: panel.outputRegistry.get(`output:${firstId}:p0`) };
   }, { id: panelId, firstId, missingRef });
   expect(blocked).toMatchObject({ ref: missingRef, settings: { length: 20 }, stored: savedBefore });

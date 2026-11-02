@@ -109,3 +109,7 @@ Use the sidebar’s **floating toolbar** icon to show a movable drawing bar. It 
 ### Order Walls — Top Levels Release 1
 
 New instances default to observed Top 8 bids and asks with stable native price resolution. Existing saved instances retain Threshold Walls; choose **Detection mode → Top Levels** to switch them. See the [calculation, settings, coverage limits, measured Pi results and Release 2 boundary](docs/order-walls-top-levels-release1.md), including separate fixture and genuine live Spot 5m captures. This release reuses the existing depth pipeline and adds no collector or database schema.
+
+## Multiple workspaces
+
+Use the footer workspace selector to create, search, duplicate, rename, pin or switch independent layouts. **+ Add** is the categorized widget picker; the application menu holds appearance, global settings and **Reset Current Workspace**. Trading, notifications, shared feeds, script/template libraries and Journal remain global. Existing layouts and drawing/tree sidecars migrate into a versioned local workspace registry while retaining legacy recovery records. See [Workspaces Release 1](docs/workspaces-release1.md) for persistence, recovery, shortcuts and limits.

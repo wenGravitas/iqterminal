@@ -1,0 +1,10 @@
+{
+  "environment": "Local Chromium SwiftShader, explicit fixtures; no live venue/account or frame-rate claim",
+  "switches": 12,
+  "synchronousSwitchMs": 934.3000000007451,
+  "disposedEngines": 12,
+  "outgoingEngines": 12,
+  "activePanels": 2,
+  "verifiedCandleSubscriptions": 2,
+  "globalServicesRetained": true
+}
