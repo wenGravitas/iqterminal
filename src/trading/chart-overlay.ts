@@ -261,6 +261,7 @@ export class HyperliquidTradingChartOverlay {
   }
 
   private contextMenu(event: ContextMenuEvent) {
+    if (event.target.kind === 'drawing') return;
     if (!this.overlayAvailable() || event.paneIndex !== this.chart.primaryPaneIndex() || event.price === null) return;
     event.preventDefault(); this.openNewDraft(String(event.price));
   }

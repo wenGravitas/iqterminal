@@ -1,6 +1,23 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
+
+async function expectReservedLabelGutter(panel: Locator) {
+  const bounds = await panel.evaluate(element => {
+    const gutter = element.querySelector('.market-comparison-labels')!.getBoundingClientRect();
+    const host = element.querySelector('.market-comparison-canvas-host')!.getBoundingClientRect();
+    return { width: gutter.width, hostRight: host.right, gutterLeft: gutter.left, gutterRight: gutter.right,
+      canvasRight: [...element.querySelectorAll('.market-comparison-canvas-host canvas')].map(canvas => canvas.getBoundingClientRect().right),
+      labels: [...element.querySelectorAll('.market-comparison-right-label')].map(label => ({ left: label.getBoundingClientRect().left, right: label.getBoundingClientRect().right })) };
+  });
+  expect(bounds.width).toBe(80);
+  expect(bounds.hostRight).toBeLessThanOrEqual(bounds.gutterLeft);
+  for (const right of bounds.canvasRight) expect(right).toBeLessThanOrEqual(bounds.gutterLeft);
+  for (const label of bounds.labels) {
+    expect(label.left).toBeGreaterThanOrEqual(bounds.gutterLeft);
+    expect(label.right).toBeLessThanOrEqual(bounds.gutterRight);
+  }
+}
 
 async function routeHyperliquid(page: import('@playwright/test').Page) {
   const apiRequests: any[] = [];
@@ -41,13 +58,88 @@ test('explicit development comparison fixtures render without reaching the publi
   const transport = await routeHyperliquid(page);
   await page.goto('/?fixture=1');
   const panel = await addComparison(page);
+  const latest = panel.locator('.market-comparison-follow');
+  await expect(latest).toHaveText('');
+  await expect(latest).toHaveAttribute('title', 'Following the newest shared candle · click to pause');
+  expect(await latest.locator('svg').innerHTML()).toBe(await page.locator('.candle-panel .chart-latest-button svg').first().innerHTML());
+  expect(await latest.evaluate(button => button.getBoundingClientRect().width)).toBe(25);
   await expect(panel.locator('.market-comparison-legend-item')).toHaveCount(5);
   await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().marketComparisons[0].sources.filter((source: any) => source.bars > 0).length)).toBe(5);
   await expect.poll(() => workerComparisonStats(page)).toMatchObject({ transport: 'fixture', subscriptions: 1, activeIdentities: 5, socket: 'connected' });
   expect(transport.apiRequests).toEqual([]);
   expect(transport.websocketConnections).toBe(0);
   await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);
+  const labelBounds = await panel.locator('.market-comparison-right-label').evaluateAll(labels => labels.map(label => {
+    const rect = label.getBoundingClientRect(), style = getComputedStyle(label);
+    const text = document.createRange(); text.selectNodeContents(label);
+    return { width: rect.width, textWidth: text.getBoundingClientRect().width,
+      padding: parseFloat(style.paddingLeft) + parseFloat(style.paddingRight), right: rect.right };
+  }));
+  for (const bounds of labelBounds) expect(Math.abs(bounds.width - bounds.textWidth - bounds.padding)).toBeLessThan(1);
+  expect(Math.max(...labelBounds.map(bounds => bounds.right)) - Math.min(...labelBounds.map(bounds => bounds.right))).toBeLessThan(1);
+  await expectReservedLabelGutter(panel);
+  await page.screenshot({ path: 'artifacts/comparison-label-bounds.png' });
   await expect(panel.locator('.market-comparison-message')).toBeHidden();
+});
+
+test('pan and zoom keep comparison data live without resetting the adjusted view', async ({ page }) => {
+  await routeHyperliquid(page);
+  await page.goto('/?fixture=1');
+  const panel = await addComparison(page);
+  const range = () => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].chartHost.chart.getVisibleLogicalRange());
+  const original = await range();
+  const box = await panel.locator('.market-comparison-canvas-host').boundingBox();
+  if (!box) throw new Error('Comparison chart is not laid out');
+  await page.mouse.move(box.x + box.width * .45, box.y + box.height * .5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * .65, box.y + box.height * .5, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(range).not.toEqual(original);
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
+  const panned = await range();
+  await page.mouse.wheel(0, -200);
+  await expect.poll(async () => { const value = await range(); return value.to - value.from; }).toBeLessThan(panned.to - panned.from);
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
+  await expectReservedLabelGutter(panel);
+  const gutter = await panel.locator('.market-comparison-labels').boundingBox();
+  if (!gutter) throw new Error('Missing label gutter');
+  const beforeGutterWheel = await range();
+  await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + gutter.height / 2);
+  await page.mouse.wheel(0, 200);
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  expect(await range()).toEqual(beforeGutterWheel);
+
+  // Exercise both a forming-candle revision and a new candle through the feed handler.
+  const update = await page.evaluate(() => {
+    const instance = [...(window as any).__terminal.marketComparisons.values()][0];
+    const before = instance.captureViewport();
+    const source = instance.sources.get('BTC'), previous = source.candles.at(-1);
+    const instrument = instance.config.instruments.find((item: any) => item.identity.symbol === 'BTC');
+    const revised = { ...previous, c: previous.c * 1.001, revision: previous.revision + 1 };
+    instance.onFeedEvent({ type: 'comparison-patch', ids: ['gesture-check'], identity: instrument.identity,
+      candles: [revised], status: source.status });
+    const revisionClose = instance.primarySeries.getData().at(-1).close;
+    const added = { ...revised, t: revised.t + 60_000, c: revised.c * 1.001 };
+    instance.onFeedEvent({ type: 'comparison-patch', ids: ['gesture-check'], identity: instrument.identity,
+      candles: [added], status: source.status });
+    return { before, after: instance.captureViewport(), revised: revised.c, revisionClose,
+      latest: instance.primarySeries.getData().at(-1).close, added: added.c, follow: instance.config.follow };
+  });
+  expect(update.follow).toBe('live');
+  expect(update.revisionClose).toBe(update.revised);
+  expect(update.latest).toBe(update.added);
+  expect(update.after.from).toBeCloseTo(update.before.from, 4);
+  expect(update.after.to).toBeCloseTo(update.before.to, 4);
+  await expect.poll(() => workerComparisonStats(page)).toMatchObject({ subscriptions: 1, activeIdentities: 5, socket: 'connected' });
+
+  await panel.locator('.market-comparison-follow').click();
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].viewportAdjusted)).toBe(false);
+  // Explicit pause remains available separately from chart navigation.
+  await panel.locator('.market-comparison-follow').click();
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'paused');
+  await panel.locator('.market-comparison-follow').click();
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
 });
 
 test('comparison controls rebase the full selected window and persist colors, visibility, theme, and timezone', async ({ page }) => {
@@ -77,6 +169,7 @@ test('comparison controls rebase the full selected window and persist colors, vi
   expect(fullDayView.panelWidth).toBeLessThanOrEqual(245);
   expect(fullDayView.plotWidth).toBeGreaterThanOrEqual(144);
   expect(fullDayView.visibleDataBars, `24h/1m view was clamped at compact width: ${JSON.stringify(fullDayView)}`).toBeGreaterThanOrEqual(1_440);
+  await expectReservedLabelGutter(panel);
 
   await page.evaluate(() => {
     const instance = [...(window as any).__terminal.marketComparisons.values()][0], symbol = 'xyz:CL';

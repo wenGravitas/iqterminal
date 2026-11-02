@@ -25,7 +25,7 @@ import { DEFAULT_DEPTH_MATRIX_SETTINGS } from './feed/depth-matrix';
 import { MarketComparisonPanel } from './market-comparison/panel';
 import { defaultMarketComparisonConfig } from './market-comparison/model';
 import { TradingController } from './trading/controller';
-import { TradingPanel } from './trading/panel';
+import { TradingPanel, type TradingPanelView } from './trading/panel';
 import { TRADING_PANEL_ID } from './trading/model';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
@@ -75,7 +75,7 @@ function flushLayoutSave() {
   saveTimer = undefined;
   const status = document.querySelector<HTMLElement>('#venue-states')!;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 7, layout: dock.toJSON() }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 8, layout: dock.toJSON() }));
     if (status.textContent === 'Layout storage unavailable') { status.textContent = ''; status.classList.add('connection-status-sr-only'); }
   } catch {
     status.textContent = 'Layout storage unavailable';
@@ -138,6 +138,29 @@ function addHyperliquidTrading() {
   save();
 }
 
+const tradingWidgetSpecs: Record<Exclude<TradingPanelView, 'trade'>, { id: string; title: string }> = {
+  positions: { id: 'hyperliquid-positions', title: 'Positions · HL BTC' },
+  'open-orders': { id: 'hyperliquid-open-orders', title: 'Open Orders · HL BTC' },
+  'order-history': { id: 'hyperliquid-order-history', title: 'Order History · local' },
+  'trade-history': { id: 'hyperliquid-trade-history', title: 'Trade History · recent fills' },
+};
+
+function addHyperliquidTradingWidget(view: Exclude<TradingPanelView, 'trade'>) {
+  const spec = tradingWidgetSpecs[view];
+  const existing = dock.getPanel(spec.id);
+  if (existing) { existing.api.setActive(); return; }
+  dock.addPanel({ id: spec.id, component: `hyperliquid-trading-${view}`, title: spec.title, params: {},
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined,
+    initialWidth: Math.min(420, Math.max(300, Math.round(root.clientWidth / 3))), minimumWidth: 280, minimumHeight: 180 });
+  save();
+}
+
+let tradingPanel: TradingPanel | undefined;
+function openTradingSettings() {
+  addHyperliquidTrading();
+  tradingPanel?.openSettings();
+}
+
 function openWatches(bounds?:{lower:number;upper:number}){const existing=dock.getPanel('level-watch');if(existing)existing.api.setActive();else dock.addPanel({id:'level-watch',component:'level-watch',title:'Level Watch',params:{},position:dock.activePanel?{referencePanel:dock.activePanel,direction:'right'}:undefined,minimumWidth:280,minimumHeight:180});if(bounds)watchPanel?.openDraft(bounds);save();}
 function focusWatch(w:LevelWatch){const panel=[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual');if(panel)panel.focusWatch(w);else {addChart();queueMicrotask(()=>[...panels.values()].find(p=>instrumentKey(p.diagnostics().series)==='binance:perpetual')?.focusWatch(w));}}
 function openEditor(targetChartId: string, attachmentId?: string) {
@@ -177,7 +200,18 @@ dock = createDockview(root, {
     if(options.name==='liquidation-ticker')return new LiquidationTickerPanel(feed,scheduler,notifications,save,focusLiquidation);
     if(options.name==='level-watch'){watchPanel=new LevelWatchPanel(feed,save,focusWatch);return watchPanel;}
     if(options.name==='depth-matrix') return new DepthMatrixPanel(feed,save);
-    if(options.name==='hyperliquid-trading') return new TradingPanel(trading);
+    if (options.name === 'hyperliquid-trading' || options.name.startsWith('hyperliquid-trading-')) {
+      const view = options.name === 'hyperliquid-trading' ? 'trade' : options.name.slice('hyperliquid-trading-'.length) as TradingPanelView;
+      if (!(view in { trade: true, positions: true, 'open-orders': true, 'order-history': true, 'trade-history': true })) throw new Error('Unknown trading widget type');
+      const panel = new TradingPanel(trading, {
+        view,
+        openWidget: widget => addHyperliquidTradingWidget(widget),
+        openTrade: () => addHyperliquidTrading(),
+        openSettings: () => openTradingSettings(),
+      });
+      if (view === 'trade') tradingPanel = panel;
+      return panel;
+    }
     if (options.name === 'trade-ticker') return new TradeTickerPanel(feed,scheduler,notifications,save,(id,panel)=>{if(panel)tickers.set(id,panel);else tickers.delete(id);},(sourceId,execution)=>executionHover.publish(sourceId,execution),execution=>executionHover.addExecutionRay(execution));
     if (options.name === 'candle') {
       return new CandlePanel(feed, scheduler, library, save, (id, panel) => {

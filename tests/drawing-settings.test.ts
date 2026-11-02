@@ -46,10 +46,10 @@ describe('native drawing settings capture', () => {
 
     const fib = captureDrawingSettings(drawing('fib-retracement'), undefined, darkPalette);
     expect(fib['style.levels']).toEqual([
-      { ratio: 0, color: '#787b86' }, { ratio: 0.236, color: '#f23645' }, { ratio: 0.382, color: '#ff9800' },
-      { ratio: 0.5, color: '#4caf50' }, { ratio: 0.618, color: '#089981' }, { ratio: 0.786, color: '#00bcd4' }, { ratio: 1, color: '#787b86' },
+      { ratio: 0, color: '#787b86' }, { ratio: 0.236, color: '#ac6267' }, { ratio: 0.382, color: '#ad8557' },
+      { ratio: 0.5, color: '#718d72' }, { ratio: 0.618, color: '#578b80' }, { ratio: 0.786, color: '#57939b' }, { ratio: 1, color: '#787b86' },
     ]);
-    expect(fib).toMatchObject({ 'style.fill': true, 'style.showLabels': true, 'style.fillOpacity': 0.06, 'text.fontSize': 11 });
+    expect(fib).toMatchObject({ 'style.lineWidth': 1, 'style.fill': true, 'style.showLabels': true, 'style.fillOpacity': 0.06, 'text.fontSize': 11 });
     expect(fib['style.fillColor']).toBeUndefined();
     expect(fib['text.color']).toBeUndefined();
 

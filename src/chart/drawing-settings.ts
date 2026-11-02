@@ -3,6 +3,7 @@ import {
   getDrawingTool, readDrawingSettings, type Drawing, type DrawingPatch, type SettingsSchema,
 } from 'openalgo-charts/draw';
 import { DEFAULT_THEME, type ChartTheme } from 'openalgo-charts';
+import { IQ_FIB_DEFAULT_STYLE } from './drawing-fibonacci';
 
 export const IQ_DRAWING_META_VERSION = 1;
 
@@ -23,7 +24,11 @@ type SettingsPalette = Pick<ChartTheme, 'lineColor' | 'background' | 'upColor' |
 /** Native tool fields plus the app's history-aware timeframe and label fields. */
 export function iqDrawingSettingsSchema(tool: string): SettingsSchema {
   const native = drawingSettingsSchema(tool);
-  return composeSettings([native.fields, INTERVAL_FIELDS, iqMetadataFields], { textIsContent: native.textIsContent });
+  const fibFields = tool === 'fib-retracement' ? [{
+    path: 'props.showGoldenZone', label: 'Golden zone (61.8–65%)', kind: 'boolean' as const,
+    group: 'levels' as const, defaultValue: false,
+  }] : [];
+  return composeSettings([native.fields, fibFields, INTERVAL_FIELDS, iqMetadataFields], { textIsContent: native.textIsContent });
 }
 
 /** Host-authored metadata is kept in props and included in native history snapshots. */
@@ -72,7 +77,7 @@ export function captureDrawingSettings(
   const tool = getDrawingTool(drawing.tool);
   for (const field of schema.fields) {
     if (values[field.path] !== undefined) continue;
-    const value = effectiveDefault(drawing, field.path, tool?.defaultStyle, tool?.defaultText, theme);
+    const value = effectiveDefault(drawing, field.path, drawing.tool === 'fib-retracement' ? IQ_FIB_DEFAULT_STYLE : tool?.defaultStyle, tool?.defaultText, theme);
     if (value !== undefined) values[field.path] = cloneSettingValue(value);
   }
   return values;

@@ -166,6 +166,8 @@ async function openTradingAndUnlock(page: Page, network: 'mainnet' | 'testnet') 
   expect(await page.evaluate(() => (window as any).__tradingMock.workers)).toBe(0);
   await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
   await expect(page.getByText('Hyperliquid · BTC Perpetual', { exact: true })).toBeVisible();
+  const settings = page.locator('dialog.hl-settings');
+  await expect(settings).toBeVisible();
   expect(await page.evaluate(() => (window as any).__tradingMock.workers)).toBe(0);
   await page.getByLabel('Network').selectOption(network);
   await page.getByLabel('Hyperliquid principal address').fill(PRINCIPAL);
@@ -179,7 +181,89 @@ async function openTradingAndUnlock(page: Page, network: 'mainnet' | 'testnet') 
   await page.getByLabel('Agent vault passphrase').fill(PASSPHRASE);
   await page.getByRole('button', { name: 'Unlock', exact: true }).click();
   await expect(page.locator('.hl-agent-status')).toContainText('Agent authorized by principal');
+  await settings.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(settings).toBeHidden();
 }
+
+async function openTradingSettings(page: Page) {
+  const dialog = page.locator('dialog.hl-settings');
+  if (!(await dialog.isVisible())) await page.locator('.hyperliquid-trading[data-view="trade"]').getByRole('button', { name: 'Trading settings', exact: true }).click();
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
+async function openTradingWidget(page: Page, label: string, view: 'positions' | 'open-orders' | 'order-history' | 'trade-history') {
+  await page.locator('.hyperliquid-trading[data-view="trade"]').getByRole('button', { name: label, exact: true }).click();
+  const widget = page.locator(`.hyperliquid-trading[data-view="${view}"]`);
+  await expect(widget).toBeVisible();
+  return widget;
+}
+
+test('first open guides unconfigured accounts to settings and keeps vault inputs gated there', async ({ page }) => {
+  await installMockTradingWorker(page);
+  await page.goto('/');
+  await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
+  await page.getByRole('button', { name: 'Trading · HL BTC', exact: true }).click();
+  const trade = page.locator('.hyperliquid-trading[data-view="trade"]');
+  const settings = page.locator('dialog.hl-settings');
+  await expect(trade.getByLabel('BTC order size')).toBeVisible();
+  await expect(settings).toBeVisible();
+  await expect(settings.getByRole('heading', { name: 'Trading settings', exact: true })).toBeVisible();
+  await expect(settings.getByLabel('Network')).toBeVisible();
+  await expect(settings.getByLabel('Agent private key to import')).toBeVisible();
+  await expect(trade.locator('.hl-scroll-body').getByLabel('Network')).toHaveCount(0);
+  await expect(trade.locator('.hl-scroll-body').getByLabel('Agent private key to import')).toHaveCount(0);
+  expect(await page.evaluate(() => (window as any).__tradingMock.workers)).toBe(0);
+
+  await settings.getByRole('button', { name: 'Close', exact: true }).click();
+  const trigger = trade.getByRole('button', { name: 'Trading settings', exact: true });
+  await trigger.click();
+  const passphrase = settings.getByLabel('Agent vault passphrase');
+  const privateKey = settings.getByLabel('Agent private key to import');
+  await passphrase.fill(PASSPHRASE);
+  await privateKey.fill(PRIVATE_KEY);
+  await privateKey.press('Escape');
+  await expect(settings).toBeHidden();
+  await expect(passphrase).toHaveValue('');
+  await expect(privateKey).toHaveValue('');
+  expect(await page.evaluate(() => document.activeElement?.getAttribute('aria-label'))).toBe('Trading settings');
+});
+
+test('activity widgets share the one trading controller, reuse stable panels and restore from layout', async ({ page }) => {
+  await openTradingAndUnlock(page, 'testnet');
+  const baselineListeners = await page.evaluate(() => (window as any).__terminal.trading.listeners.size);
+  const positions = await openTradingWidget(page, 'Positions', 'positions');
+  const orders = await openTradingWidget(page, 'Open orders', 'open-orders');
+  const attempts = await openTradingWidget(page, 'Order history', 'order-history');
+  const fills = await openTradingWidget(page, 'Trade history', 'trade-history');
+  await expect(positions.locator('.hl-account-values')).toBeVisible();
+  await expect(orders).toContainText('OPEN ORDERS');
+  await expect(attempts).toContainText('LOCAL ORDER ATTEMPTS');
+  await expect(fills).toContainText('RECENT FILLS');
+  for (const widget of [positions, orders, attempts, fills]) await expect(widget.locator('.hl-status')).toContainText('TESTNET · LIVE');
+  expect(await page.evaluate(() => (window as any).__tradingMock.workers)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__terminal.trading.listeners.size)).toBe(baselineListeners + 4);
+
+  await openTradingWidget(page, 'Open orders', 'open-orders');
+  expect(await page.locator('.hyperliquid-trading[data-view="open-orders"]').count()).toBe(1);
+  expect(await page.evaluate(() => (window as any).__terminal.trading.listeners.size)).toBe(baselineListeners + 4);
+  await page.waitForTimeout(350);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('basis.layout.v1') ?? '{}'));
+  expect(saved.version).toBe(8);
+  for (const id of ['hyperliquid-positions', 'hyperliquid-open-orders', 'hyperliquid-order-history', 'hyperliquid-trade-history']) expect(saved.layout.panels[id]).toBeTruthy();
+
+  await page.reload();
+  await page.waitForFunction(() => document.documentElement.dataset.appState === 'ready');
+  for (const view of ['trade', 'positions', 'open-orders', 'order-history', 'trade-history']) {
+    const restored = page.locator(`.hyperliquid-trading[data-view="${view}"]`);
+    await expect(restored).toBeVisible();
+    await expect(restored.locator('.hl-status')).toContainText('TESTNET · LIVE');
+  }
+  await expect.poll(() => page.evaluate(() => (window as any).__tradingMock.workers)).toBe(1);
+  const beforeClose = await page.evaluate(() => (window as any).__terminal.trading.listeners.size);
+  await page.evaluate(() => (window as any).__terminal.dock.getPanel('hyperliquid-trade-history').api.close());
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal.trading.listeners.size)).toBe(beforeClose - 1);
+});
 
 test('explicit diagnostic fixture mode blocks the native trading worker and controller from signing or execution', async ({ page }) => {
   await page.goto('/?fixture=1');
@@ -242,6 +326,45 @@ test('explicit diagnostic fixture mode blocks the native trading worker and cont
   await expect(page.getByRole('button', { name: 'Import agent', exact: true })).toBeDisabled();
 });
 
+test('order type tabs and side radios support roving keyboard selection', async ({ page }) => {
+  await openTradingAndUnlock(page, 'testnet');
+  const trade = page.locator('.hyperliquid-trading[data-view="trade"]');
+  const tabs = trade.getByRole('tablist', { name: 'Order type' });
+  const market = tabs.getByRole('tab', { name: 'Market', exact: true });
+  const limit = tabs.getByRole('tab', { name: 'Limit', exact: true });
+  const pro = tabs.getByRole('tab', { name: 'Pro', exact: true });
+  await expect(limit).toHaveAttribute('aria-selected', 'true');
+  await expect(limit).toHaveAttribute('tabindex', '0');
+  await expect(trade.getByLabel('Pro order type')).toBeHidden();
+
+  await limit.focus(); await limit.press('ArrowRight');
+  await expect(pro).toHaveAttribute('aria-selected', 'true');
+  await expect(pro).toHaveAttribute('tabindex', '0');
+  await expect(trade.getByLabel('Pro order type')).toBeVisible();
+  await pro.press('ArrowRight');
+  await expect(market).toHaveAttribute('aria-selected', 'true');
+  await market.press('Home');
+  await expect(market).toHaveAttribute('aria-selected', 'true');
+  await market.press('End');
+  await expect(pro).toHaveAttribute('aria-selected', 'true');
+  await pro.press('ArrowLeft');
+  await expect(limit).toHaveAttribute('aria-selected', 'true');
+  await expect(trade.getByLabel('Pro order type')).toBeHidden();
+
+  const sideGroup = trade.getByRole('radiogroup', { name: 'Order side' });
+  const buy = sideGroup.getByRole('radio', { name: 'Buy / Long', exact: true });
+  const sell = sideGroup.getByRole('radio', { name: 'Sell / Short', exact: true });
+  await expect(buy).toHaveAttribute('aria-checked', 'true');
+  await buy.focus(); await buy.press('ArrowRight');
+  await expect(sell).toHaveAttribute('aria-checked', 'true');
+  await sell.press('ArrowDown');
+  await expect(buy).toHaveAttribute('aria-checked', 'true');
+  await buy.press('End');
+  await expect(sell).toHaveAttribute('aria-checked', 'true');
+  await sell.press('Home');
+  await expect(buy).toHaveAttribute('aria-checked', 'true');
+});
+
 test('manual order confirmation is guarded on mainnet and account/key metadata survive reload without secrets', async ({ page }) => {
   await openTradingAndUnlock(page, 'mainnet');
   await page.getByLabel('BTC order size').fill('0.001');
@@ -255,7 +378,8 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   await dialog.getByLabel('Type MAINNET to confirm a mainnet action').fill('MAINNET');
   await expect(confirm).toBeEnabled();
   await confirm.click();
-  await expect(page.locator('.hl-attempt')).toContainText('RESTING');
+  const history = await openTradingWidget(page, 'Order history', 'order-history');
+  await expect(history.locator('.hl-attempt')).toContainText('RESTING');
   const submitted = await page.evaluate(() => (window as any).__tradingMock.submitted);
   expect(submitted).toHaveLength(1);
   expect(submitted[0]).toMatchObject({ type: 'submit-order', intent: { side: 'buy', size: '0.001', price: '84000', tif: 'Gtc' } });
@@ -268,11 +392,12 @@ test('manual order confirmation is guarded on mainnet and account/key metadata s
   expect(layout).not.toContain(PRIVATE_KEY);
   expect(layout).not.toContain(PASSPHRASE);
   await page.reload();
-  await expect(page.locator('.hyperliquid-trading')).toBeVisible();
+  await expect(page.locator('.hyperliquid-trading[data-view="trade"]')).toBeVisible();
   await expect(page.getByText('Hyperliquid · BTC Perpetual', { exact: true })).toBeVisible();
+  await openTradingSettings(page);
   await expect(page.getByLabel('Hyperliquid principal address')).toHaveValue(PRINCIPAL);
   await expect(page.locator('.hl-agent-status')).toContainText('Agent locked · key remains encrypted at rest');
-  await expect(page.locator('.hl-status')).toContainText('MAINNET · LIVE');
+  await expect(page.locator('.hyperliquid-trading[data-view="trade"] .hl-status')).toContainText('MAINNET · LIVE');
   const restoredStorage = await page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('basis.')).map(([, value]) => value).join('\n'));
   expect(restoredStorage).not.toContain(PRIVATE_KEY);
   expect(restoredStorage).not.toContain(PASSPHRASE);
@@ -366,6 +491,7 @@ test('session-only mode does not persist the agent and Lock discards it', async 
 
 test('inactivity timeout persists; Disconnect retains identity and Forget Device removes it', async ({ page }) => {
   await openTradingAndUnlock(page, 'testnet');
+  await openTradingSettings(page);
   const timeout = page.getByLabel('Agent inactivity timeout in minutes');
   await timeout.fill('37');
   await timeout.press('Tab');
@@ -397,12 +523,13 @@ test('position close presets confirm exact reduce-only IOC size and preserve pro
     ];
     (window as any).__tradingMock.setOrderPrice((window as any).__tradingMock.orderPrice);
   });
-  const positions = page.locator('.hl-position');
+  const positionsPanel = await openTradingWidget(page, 'Positions', 'positions');
+  const positions = positionsPanel.locator('.hl-position');
   await expect(positions).toContainText('LONG · 0.02 BTC');
   const close25 = positions.getByRole('button', { name: 'Close 25%', exact: true });
   await expect(close25).toBeEnabled();
   await close25.click();
-  const dialog = page.locator('dialog.hl-confirm');
+  const dialog = positionsPanel.locator('dialog.hl-confirm');
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('MAINNET · account');
   await expect(dialog).toContainText('close 25% of LONG 0.02 BTC');
@@ -420,8 +547,9 @@ test('position close presets confirm exact reduce-only IOC size and preserve pro
   });
   await expect(positions).toContainText('LONG · 0.015 BTC');
   expect(await page.evaluate(() => (window as any).__tradingMock.canceled)).toHaveLength(0);
-  await expect(page.locator('.hl-order-row').filter({ hasText: 'TAKE PROFIT' })).toBeVisible();
-  await expect(page.locator('.hl-order-row').filter({ hasText: 'STOP LOSS' })).toBeVisible();
+  const openOrders = await openTradingWidget(page, 'Open orders', 'open-orders');
+  await expect(openOrders.locator('.hl-order-row').filter({ hasText: 'TAKE PROFIT' })).toBeVisible();
+  await expect(openOrders.locator('.hl-order-row').filter({ hasText: 'STOP LOSS' })).toBeVisible();
 });
 
 test('full position close offers a second confirmation for only the remaining protective orders after flat reconciliation', async ({ page }) => {
@@ -433,26 +561,27 @@ test('full position close offers a second confirmation for only the remaining pr
     ];
     (window as any).__tradingMock.setOrderPrice((window as any).__tradingMock.orderPrice);
   });
-  const positions = page.locator('.hl-position');
+  const positionsPanel = await openTradingWidget(page, 'Positions', 'positions');
+  const positions = positionsPanel.locator('.hl-position');
   const closeAll = positions.getByRole('button', { name: 'Close 100%', exact: true });
   await expect(closeAll).toBeEnabled();
   await closeAll.click();
-  const dialog = page.locator('dialog.hl-confirm');
+  const dialog = positionsPanel.locator('dialog.hl-confirm');
   await expect(dialog).toContainText('close 100% of LONG 0.02 BTC');
   await expect(dialog).toContainText('reduce-only SELL 0.02 BTC protected IOC');
   await dialog.getByLabel('Type MAINNET to confirm a mainnet action').fill('MAINNET');
   await dialog.getByRole('button', { name: 'Confirm action', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__tradingMock.submitted.length)).toBe(1);
-  await expect(page.locator('dialog.hl-confirm')).toContainText('the authoritative BTC snapshot is flat');
-  await expect(page.locator('dialog.hl-confirm')).toContainText('#72 takeProfit');
-  await expect(page.locator('dialog.hl-confirm')).toContainText('#73 stopLoss');
+  await expect(dialog).toContainText('the authoritative BTC snapshot is flat');
+  await expect(dialog).toContainText('#72 takeProfit');
+  await expect(dialog).toContainText('#73 stopLoss');
   expect(await page.evaluate(() => (window as any).__tradingMock.canceled.length)).toBe(0);
-  const cancelDialog = page.locator('dialog.hl-confirm');
+  const cancelDialog = positionsPanel.locator('dialog.hl-confirm');
   await cancelDialog.getByLabel('Type MAINNET to confirm a mainnet action').fill('MAINNET');
   await cancelDialog.getByRole('button', { name: 'Confirm action', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__tradingMock.canceled.length)).toBe(2);
   expect(await page.evaluate(() => (window as any).__tradingMock.canceled.map((request: any) => request.orderId))).toEqual([72, 73]);
-  await expect(page.locator('.hl-message')).toContainText('cancellation of 2 protective order(s) is reflected');
+  await expect(positionsPanel.locator('.hl-message')).toContainText('cancellation of 2 protective order(s) is reflected');
 });
 
 test('chart context drafts and draggable trade lines stay outside the drawing inventory until confirmed', async ({ page }) => {
@@ -474,6 +603,22 @@ test('chart context drafts and draggable trade lines stay outside the drawing in
   await expect(chartPanel.getByRole('button', { name: 'Trade lines · on', exact: true })).toHaveAttribute('aria-pressed', 'true');
   const drawingsAfter = await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.drawings().length, panelId);
   expect(drawingsAfter).toBe(drawingsBefore);
+
+  // A drawing owns its right-click even while the trade-line overlay is enabled.
+  const drawingPoint = await chartPanel.evaluate(panel => {
+    const engine = (window as any).__terminal.panels.get((panel as HTMLElement).dataset.panelId!).engine;
+    const chart = engine.chart, plot = chart.plotRect(0);
+    const price = chart.panes()[0].readoutScale().yToPrice(plot.height * .25);
+    engine.drawings.add({ tool: 'horizontal-line', paneIndex: 0,
+      points: [{ time: chart.dataLayer.indexToTime(chart.dataLayer.length - 1), price }] });
+    return { x: plot.left + plot.width * .1, y: chart.priceToCoordinate(price, 0) };
+  });
+  await chartPanel.locator('.chart-stage').click({ button: 'right', position: drawingPoint });
+  const drawingMenu = page.getByRole('menu', { name: 'Drawing actions', exact: true });
+  await expect(drawingMenu).toBeVisible();
+  await expect(chartPanel.locator('.hl-chart-draft')).toBeHidden();
+  await drawingMenu.getByRole('menuitem', { name: 'Delete', exact: true }).click();
+  expect(await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.drawings().length, panelId)).toBe(drawingsBefore);
 
   const coordinates = await chartPanel.evaluate((panel, price) => {
     const id = (panel as HTMLElement).dataset.panelId!;
@@ -600,12 +745,19 @@ test('testnet panel stays usable while mainnet candle charts reject chart-derive
   expect(await page.evaluate(() => (window as any).__tradingMock.submitted.length)).toBe(0);
 });
 
-test('trading panel controls and order rows remain reachable in a 300px Dockview pane without horizontal overflow', async ({ page }) => {
+test('trade entry stays compact and linked activity widgets fit a 300px Dockview pane', async ({ page }) => {
   await openTradingAndUnlock(page, 'mainnet');
-  const panel = page.locator('.hyperliquid-trading');
+  await page.locator('#theme').selectOption('dark');
+  await page.screenshot({ path: '/tmp/hl-trading-panel-desktop.png' });
+  const tradePanel = page.locator('.hyperliquid-trading[data-view="trade"]');
   await page.evaluate(() => (window as any).__terminal.dock.getPanel('hyperliquid-trading').api.setSize({ width: 300 }));
-  await expect.poll(() => panel.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(290);
-  await expect.poll(() => panel.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(310);
+  await expect.poll(() => tradePanel.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(290);
+  await expect.poll(() => tradePanel.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(310);
+  await expect(tradePanel.getByLabel('BTC order size')).toBeVisible();
+  await expect(tradePanel.getByRole('button', { name: 'Open orders', exact: true })).toBeVisible();
+  await expect(tradePanel.locator('.hl-scroll-body').getByLabel('Network')).toHaveCount(0);
+  await expect(tradePanel.locator('.hl-scroll-body').getByLabel('Agent vault passphrase')).toHaveCount(0);
+  await expect(tradePanel.locator('.hl-scroll-body .hl-order-row,.hl-scroll-body .hl-position,.hl-scroll-body .hl-agent')).toHaveCount(0);
   await page.evaluate(() => {
     const mock = (window as any).__tradingMock;
     mock.extraOrders = Array.from({ length: 8 }, (_, index) => ({
@@ -614,12 +766,16 @@ test('trading panel controls and order rows remain reachable in a 300px Dockview
     }));
     mock.setOrderPrice(mock.orderPrice);
   });
-  await expect(panel.locator('.hl-order-row')).toHaveCount(9);
+  const ordersPanel = await openTradingWidget(page, 'Open orders', 'open-orders');
+  await page.evaluate(() => (window as any).__terminal.dock.getPanel('hyperliquid-open-orders').api.setSize({ width: 300 }));
+  await expect.poll(() => ordersPanel.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(290);
+  await expect.poll(() => ordersPanel.evaluate(element => element.getBoundingClientRect().width)).toBeLessThanOrEqual(310);
+  await expect(ordersPanel.locator('.hl-order-row')).toHaveCount(9);
   const geometry = await page.evaluate(() => {
-    const root = document.documentElement, pane = document.querySelector<HTMLElement>('.hyperliquid-trading')!, body = pane.querySelector<HTMLElement>('.hl-scroll-body')!;
+    const root = document.documentElement, pane = document.querySelector<HTMLElement>('.hyperliquid-trading[data-view="open-orders"]')!, body = pane.querySelector<HTMLElement>('.hl-scroll-body')!;
     const editor = pane.querySelector<HTMLElement>('.hl-order-row .hl-order-edit')!;
     const paneRect = pane.getBoundingClientRect();
-    const controlBounds = [...pane.querySelectorAll<HTMLElement>('.hl-identity input,.hl-identity select,.hl-identity button,.hl-leverage-form input,.hl-leverage-form select,.hl-leverage-form button,.hl-order-form input,.hl-order-form select,.hl-order-form button,.hl-vault-fields input,.hl-vault-actions button,.hl-order-row .hl-order-edit input,.hl-order-row .hl-order-edit button')].map(control => {
+    const controlBounds = [...pane.querySelectorAll<HTMLElement>('.hl-order-row .hl-order-edit input,.hl-order-row .hl-order-edit button')].map(control => {
       const rect = control.getBoundingClientRect();
       return { left: rect.left, right: rect.right, width: rect.width };
     });
@@ -641,39 +797,35 @@ test('trading panel controls and order rows remain reachable in a 300px Dockview
   expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewportWidth);
   expect(geometry.bodyScrollWidth).toBeLessThanOrEqual(geometry.bodyClientWidth + 1);
   expect(geometry.orderEditScrollWidth).toBeLessThanOrEqual(geometry.orderEditClientWidth + 1);
-  expect(geometry.bodyScrollHeight).toBeGreaterThan(geometry.bodyClientHeight);
+  expect(geometry.bodyScrollHeight).toBeLessThanOrEqual(geometry.bodyClientHeight + 1);
   expect(geometry.controlsInsidePane).toBe(true);
 
-  await expect(panel.getByLabel('Network')).toBeVisible();
-  await expect(panel.getByLabel('Hyperliquid principal address')).toBeVisible();
-  await expect(panel.getByRole('button', { name: 'Connect', exact: true })).toBeVisible();
-  await expect(panel.getByRole('button', { name: 'Disconnect', exact: true })).toBeVisible();
-  await panel.locator('.hl-scroll-body').evaluate(element => { element.scrollTop = 0; });
+  await ordersPanel.locator('.hl-scroll-body').evaluate(element => { element.scrollTop = 0; });
   await page.screenshot({ path: '/tmp/hl-trading-panel-300-top.png' });
 
-  await panel.getByLabel('BTC order size').fill('0.001');
-  await panel.getByLabel('BTC order limit price').fill('84000');
-  const review = panel.getByRole('button', { name: 'Review order', exact: true });
+  const settings = await openTradingSettings(page);
+  await expect(settings.getByLabel('Network')).toBeVisible();
+  await expect(settings.getByLabel('Hyperliquid principal address')).toBeVisible();
+  await expect(settings.getByRole('button', { name: 'Disconnect', exact: true })).toBeVisible();
+  await page.screenshot({ path: '/tmp/hl-trading-settings.png' });
+  await settings.getByRole('button', { name: 'Close', exact: true }).click();
+
+  await tradePanel.getByLabel('BTC order size').fill('0.001');
+  await tradePanel.getByLabel('BTC order limit price').fill('84000');
+  const review = tradePanel.getByRole('button', { name: 'Review order', exact: true });
   await review.scrollIntoViewIfNeeded();
   await review.click();
-  const confirm = page.locator('dialog.hl-confirm');
+  const confirm = tradePanel.locator('dialog.hl-confirm');
   await expect(confirm).toBeVisible();
   await expect(confirm.getByRole('button', { name: 'Confirm action', exact: true })).toBeDisabled();
   await confirm.getByRole('button', { name: 'Back', exact: true }).click();
 
-  const closePosition = panel.locator('.hl-position-close-button').first();
-  await closePosition.scrollIntoViewIfNeeded();
-  await expect(closePosition).toBeEnabled();
-  const vaultPassphrase = panel.getByLabel('Agent vault passphrase');
-  await vaultPassphrase.scrollIntoViewIfNeeded();
-  await expect(vaultPassphrase).toBeVisible();
-  const orderRow = panel.locator('.hl-order-row[data-order-id="87"]');
+  const orderRow = ordersPanel.locator('.hl-order-row[data-order-id="87"]');
   await orderRow.scrollIntoViewIfNeeded();
   await expect(orderRow.getByRole('button', { name: 'Modify', exact: true })).toBeEnabled();
   await expect(orderRow.getByRole('button', { name: 'Cancel', exact: true })).toBeEnabled();
-  const scrollState = await panel.locator('.hl-scroll-body').evaluate(element => ({ top: element.scrollTop, max: element.scrollHeight - element.clientHeight }));
-  expect(scrollState.top).toBeGreaterThan(0);
-  expect(scrollState.max).toBeGreaterThan(0);
+  await expect(orderRow.getByRole('button', { name: 'Modify', exact: true })).toBeVisible();
+  await expect(orderRow.getByRole('button', { name: 'Cancel', exact: true })).toBeVisible();
   await page.screenshot({ path: '/tmp/hl-trading-panel-300-orders.png' });
 });
 

@@ -34,8 +34,171 @@ async function renameFolder(page: Page, node: Locator, name: string) {
   const input = node.locator('input[data-tree-edit="folder"]');
   await input.fill(name);
   await input.press('Enter');
-  await expect(node.locator('.chart-object-folder-name')).toHaveText(name);
+  await expect(node.locator(':scope > .chart-object-folder-row .chart-object-folder-name')).toHaveText(name);
 }
+
+test('Object Tree row actions use icons with state-aware tooltips', async ({ page }) => {
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  const panel = page.locator('.candle-panel').first();
+  await placeLine(page, panel, 0);
+  const row = panel.locator('.chart-object-row.kind-drawing').first();
+  const titles = ['Hide object', 'Lock object', 'Duplicate drawing', 'Open object settings', 'Remove object', 'More drawing actions'];
+  for (const title of titles) {
+    const button = row.getByRole('button', { name: title, exact: true });
+    await expect(button).toHaveAttribute('title', title);
+    await expect(button.locator('svg[aria-hidden="true"]')).toHaveCount(1);
+    await expect(button).toHaveText('');
+  }
+  await row.getByRole('button', { name: 'Hide object', exact: true }).click();
+  await expect(row.getByRole('button', { name: 'Show object', exact: true })).toHaveAttribute('title', 'Show object');
+  await expect(row.locator('[data-object-action="visible"]')).toHaveAttribute('data-icon', 'hiddenEye');
+  await row.getByRole('button', { name: 'Show object', exact: true }).click();
+  await row.getByRole('button', { name: 'Lock object', exact: true }).click();
+  await expect(row.getByRole('button', { name: 'Unlock object', exact: true })).toHaveAttribute('title', 'Unlock object');
+  await expect(row.locator('[data-object-action="lock"]')).toHaveAttribute('data-icon', 'lock');
+  await row.getByRole('button', { name: 'Unlock object', exact: true }).click();
+  await row.getByRole('button', { name: 'More drawing actions', exact: true }).click();
+  const menu = page.locator('body > .chart-object-tree-menu');
+  await expect(menu).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(row.locator('[data-object-action="more"] svg')).toHaveCount(1);
+  await row.screenshot({ path: 'artifacts/object-tree-row-icons.png' });
+});
+
+test('folder sidebar pins choose icons, toggle nested contents in one undo step and persist', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  let panel = page.locator('.candle-panel').first();
+  const panelId = await panel.getAttribute('data-panel-id');
+  if (!panelId) throw new Error('Missing chart panel');
+  for (let index = 0; index < 3; index++) await placeLine(page, panel, index);
+  const drawingIds = await page.evaluate(id => {
+    const drawings = (window as any).__terminal.panels.get(id).engine.drawings.drawings().map((item: any) => item.id);
+    const entries = [{ type: 'folder', id: 'levels', name: 'Levels', children: [
+      { type: 'drawing', drawingId: drawings[0] },
+      { type: 'folder', id: 'nested', name: 'Nested', children: [{ type: 'drawing', drawingId: drawings[1] }] },
+    ] }, { type: 'drawing', drawingId: drawings[2] }];
+    localStorage.setItem(`iqterminal:object-tree:v1:${encodeURIComponent(id)}:binance%3Aperpetual:BTCUSDT`, JSON.stringify({ version: 1, revision: 1, entries }));
+    return drawings;
+  }, panelId);
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  panel = page.locator(`[data-panel-id="${panelId}"]`);
+  const folder = panel.locator('[role="treeitem"][data-tree-id="levels"]');
+  const nested = panel.locator('[role="treeitem"][data-tree-id="nested"]');
+  const picker = page.getByRole('dialog', { name: 'Folder sidebar icon', exact: true });
+  const sidebar = panel.locator('.chart-sidebar');
+  await folder.getByRole('button', { name: 'Show Levels in sidebar', exact: true }).click();
+  await expect(picker).toBeVisible();
+  await expect(picker.getByRole('group', { name: 'Drawing icons', exact: true }).getByRole('button')).toHaveCount(95);
+  await expect(picker.getByRole('group', { name: 'Letters', exact: true }).getByRole('button')).toHaveCount(26);
+  await expect(picker.getByRole('group', { name: 'Numbers', exact: true }).getByRole('button')).toHaveCount(10);
+  await page.screenshot({ path: 'artifacts/folder-sidebar-picker.png' });
+  await picker.getByRole('button', { name: 'A', exact: true }).click();
+  await expect(picker).toBeHidden();
+  const parentToggle = sidebar.locator('[data-sidebar-folder="levels"]');
+  await expect(parentToggle).toHaveText('A');
+  await expect(parentToggle).toHaveAttribute('title', 'Levels');
+  await nested.getByRole('button', { name: 'Show Nested in sidebar', exact: true }).click();
+  await picker.getByRole('button', { name: 'fib retracement', exact: true }).click();
+  const nestedToggle = sidebar.locator('[data-sidebar-folder="nested"]');
+  await expect(nestedToggle.locator('svg')).toHaveCount(1);
+  await expect(sidebar.getByRole('button')).toHaveCount(3);
+  await panel.locator('.chart-objects-toggle').click();
+  await expect(panel.locator('.chart-objects-panel')).toBeHidden();
+  const visibility = () => page.evaluate(({ id, ids }) => {
+    const draw = (window as any).__terminal.panels.get(id).engine.drawings;
+    return ids.map((drawingId: string) => draw.get(drawingId).visible !== false);
+  }, { id: panelId, ids: drawingIds });
+  await parentToggle.click();
+  expect(await visibility()).toEqual([false, false, true]);
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Undo', exact: true }).click();
+  expect(await visibility()).toEqual([true, true, true]);
+  await parentToggle.click();
+  await nestedToggle.click();
+  expect(await visibility()).toEqual([false, true, true]);
+  await expect(parentToggle).toHaveAttribute('data-visibility-state', 'mixed');
+  await parentToggle.click();
+  expect(await visibility()).toEqual([true, true, true]);
+  await parentToggle.click({ button: 'right' });
+  await picker.getByRole('button', { name: '9', exact: true }).click();
+  await expect(parentToggle).toHaveText('9');
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  await expect(parentToggle).toHaveText('9');
+  await expect(nestedToggle.locator('svg')).toHaveCount(1);
+  await panel.locator('.chart-objects-toggle').click();
+  await renameFolder(page, folder, 'Support');
+  await expect(parentToggle).toHaveAttribute('title', 'Support');
+  await folder.getByRole('button', { name: 'Hide Support from sidebar', exact: true }).click();
+  await expect(parentToggle).toHaveCount(0);
+  await folder.getByRole('button', { name: 'Show Support in sidebar', exact: true }).click();
+  await expect(picker.getByRole('button', { name: '9', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('Escape');
+  await expect(picker).toBeHidden();
+  await expect(parentToggle).toHaveText('9');
+  await folder.getByRole('button', { name: 'Choose sidebar icon for Support', exact: true }).click();
+  await panel.locator('.chart-stage').click({ position: { x: 80, y: 100 } });
+  await expect(picker).toBeHidden();
+  await expect(page.locator('.candle-panel').nth(1).locator('.chart-sidebar [data-sidebar-folder]')).toHaveCount(0);
+  await page.screenshot({ path: 'artifacts/folder-sidebar-pins.png' });
+  await folder.locator(':scope > .chart-object-folder-row [data-tree-action="menu"]').click();
+  await page.getByRole('menuitem', { name: 'Delete folder (keep contents)', exact: true }).click();
+  await expect(parentToggle).toHaveCount(0);
+  await expect(nestedToggle).toBeVisible();
+  expect(await visibility()).toEqual([true, true, true]);
+});
+
+test('chart drawing context menu opens settings, clones and deletes with undo', async ({ page }) => {
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
+  const panel = page.locator('.candle-panel').first();
+  const panelId = await panel.getAttribute('data-panel-id');
+  await placeLine(page, panel, 0);
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Select drawings', exact: true }).click();
+  const point = await page.evaluate(id => {
+    const engine = (window as any).__terminal.panels.get(id).engine;
+    const drawing = engine.drawings.drawings()[0];
+    const plot = engine.chart.plotRect(0);
+    return { x: plot.left + plot.width * .65, y: engine.chart.priceToCoordinate(drawing.points[0].price, 0) };
+  }, panelId);
+  const count = () => page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.drawings().length, panelId);
+  const menu = page.getByRole('menu', { name: 'Drawing actions', exact: true });
+  const open = async () => {
+    await panel.locator('.chart-stage').click({ button: 'right', position: point });
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings']);
+  };
+  await open();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(panel.locator('.chart-stage')).toBeFocused();
+  await open();
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Select drawings', exact: true }).click();
+  await expect(menu).toBeHidden();
+  await open();
+  await menu.getByRole('menuitem', { name: 'Settings', exact: true }).click();
+  const settings = panel.getByRole('dialog', { name: 'Drawing settings', exact: true });
+  await expect(settings).toBeVisible();
+  await expect(menu).toBeHidden();
+  await settings.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await open();
+  await page.screenshot({ path: 'artifacts/chart-drawing-context-menu.png' });
+  await menu.getByRole('menuitem', { name: 'Clone', exact: true }).click();
+  await expect.poll(count).toBe(2);
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(count).toBe(1);
+  await open();
+  await menu.getByRole('menuitem', { name: 'Delete', exact: true }).click();
+  await expect.poll(count).toBe(0);
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(count).toBe(1);
+  await panel.locator('.chart-stage').click({ button: 'right', position: { x: point.x, y: point.y + 80 } });
+  await expect(menu).toBeHidden();
+});
 
 test('per-chart Object Tree resizes, nests by drag, and groups native visibility in one undo step', async ({ page }) => {
   test.setTimeout(60_000);
@@ -241,6 +404,26 @@ test('Object Tree handles hundreds of folders through delegated row actions', as
   const lastFolder = tree.locator('[role="treeitem"][data-tree-id="folder-249"]');
   await lastFolder.locator('[data-tree-action="menu"]').click();
   const menu = page.locator('body > .chart-object-tree-menu');
+  await expect(menu).toBeVisible();
+  // Real pointer events must dismiss even where chart controls stop bubbling.
+  await panel.locator('.chart-stage').click({ position: { x: 80, y: 100 } });
+  await expect(menu).toBeHidden();
+  await lastFolder.locator('[data-tree-action="menu"]').click();
+  await expect(menu).toBeVisible();
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Select drawings', exact: true }).click();
+  await expect(menu).toBeHidden();
+  await lastFolder.locator('[data-tree-action="menu"]').click();
+  await expect(menu).toBeVisible();
+  await page.locator('.candle-panel').nth(1).locator('.chart-stage').click({ position: { x: 250, y: 100 } });
+  await expect(menu).toBeHidden();
+  await lastFolder.locator('[data-tree-action="menu"]').click();
+  await expect(menu).toBeVisible();
+  // Escape still dismisses after keyboard focus leaves the menu.
+  await panel.locator('.drawing-sidebar').getByRole('button', { name: 'Select drawings', exact: true }).focus();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(lastFolder).toBeFocused();
+  await lastFolder.locator('[data-tree-action="menu"]').click();
   await expect(menu).toBeVisible();
   await menu.getByRole('menuitem', { name: 'Rename', exact: true }).click();
   const rename = lastFolder.locator('input[data-tree-edit="folder"]');

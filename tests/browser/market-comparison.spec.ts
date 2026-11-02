@@ -111,8 +111,8 @@ test('direct Hyperliquid comparison history and stream render, configure, and re
     baselineLabel: document.querySelector('.market-comparison-baseline')?.textContent }));
   expect(afterPan.baseline).toBeLessThan(beforePan.baseline);
   expect(afterPan.baselineLabel).not.toBe(beforePan.baselineLabel);
-  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'paused');
-  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].config.follow)).toBe('paused');
+  await expect(panel.locator('.market-comparison-follow')).toHaveAttribute('data-state', 'live');
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.marketComparisons.values()][0].config.follow)).toBe('live');
   await expect(panel.locator('.market-comparison-right-label')).toHaveCount(5);
   await expectRightLabelsMatchLegend(page);
   await panel.locator('.market-comparison-follow').click();

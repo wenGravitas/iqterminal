@@ -51,7 +51,7 @@ import { heatmapSettings, heatmapKey, type HeatmapSettings, type HeatmapStatus }
 import { DEFAULT_ORDER_WALLS_SETTINGS, orderWallMarket, orderWallsSettings, resolveAutoOrderWallPriceWidth, type OrderWallHit, type OrderWallStatus, type OrderWallsSettings } from './feed/order-walls';
 import { OrderWallsControls } from './order-walls-controls';
 import { duration } from './feed/protocol';
-import type { Bar, ChartObjectSnapshot, CrosshairMoveEvent, IndicatorApi, PriceScale } from 'openalgo-charts';
+import type { Bar, ChartObjectSnapshot, ContextMenuEvent, CrosshairMoveEvent, IndicatorApi, PriceScale } from 'openalgo-charts';
 import { coerceSettingValue, drawingSettingsSchema, keyToDrawingAction, matchDrawingShortcut, registeredDrawingTools, type Drawing, type DrawingEvent, type DrawingInput, type DrawingPatch, type MagnetMode, type SettingsField, type SettingsSchema } from 'openalgo-charts/draw';
 import type { FootprintCellStyle, FootprintDisplayMode, FootprintHover } from 'openalgo-charts/profile';
 import type { IDockviewPanelProps, IContentRenderer } from 'dockview-core';
@@ -62,6 +62,7 @@ import { executionMatchesSeries } from './ticker/hover';
 import { executionRayLabel } from './ticker/execution-drawing';
 import { canonicalFootprintRowPrice, canonicalSeries, FOOTPRINT_DEFAULT_ROW_PRICE, FOOTPRINT_MAX_ROW_PRICE, footprintTicksForPrice, instrumentKey, instrumentOf, instrumentLabel, instruments, intervals, chartIntervals, legacyFootprintRowTicks, marketOf, seriesForInstrument, supportsDepth, supportsScriptDepth, validFootprintRowPrice, tpoSourceKey, type CanonicalSeries, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Interval, type Status, type TpoStatus } from './feed/protocol';
 import { OpenAlgoCandleChart } from './chart/openalgo';
+import { FolderIconPicker, folderSidebarGlyph } from './chart/folder-icon-picker';
 import type { Scheduler } from './chart/scheduler';
 import type { FootprintUnits } from './chart/footprint-units';
 import { getDisplayTimezone, TIMEZONE_EVENT } from './timezone';
@@ -79,6 +80,7 @@ import {
   parseIQObjectTreeSidebarPreferences, reconcileObjectTree, renameObjectTreeFolder, reorderObjectTreeEntry,
   locateObjectTreeEntry, moveObjectTreeEntry, objectTreeFolderDepth, OBJECT_TREE_DEFAULT_WIDTH, OBJECT_TREE_MAX_WIDTH, OBJECT_TREE_MIN_WIDTH, OBJECT_TREE_MAX_DEPTH, renameObjectTreeDrawing,
   type IQObjectTreeCatalog, type IQObjectTreeSidebarPreferences, type ObjectTreeEntry,
+  setObjectTreeFolderSidebar,
 } from './chart/object-tree';
 
 const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range']);
@@ -121,6 +123,9 @@ const DRAWING_ICON_MARKUP: Record<string, string> = {
   hiddenEye: '<path d="M3 3 17 17M7.6 5.8A8.6 8.6 0 0 1 10 5.5c5.3 0 8 4.5 8 4.5a13 13 0 0 1-2.2 2.7M5.6 6.8C3.3 8.1 2 10 2 10s2.7 4.5 8 4.5c.8 0 1.5-.1 2.2-.3"/><path d="M8.6 8.6a2 2 0 0 0 2.8 2.8"/>',
   lock: '<rect x="4" y="8" width="12" height="9"/><path d="M6.5 8V5.5a3.5 3.5 0 0 1 7 0V8"/>',
   unlock: '<rect x="4" y="8" width="12" height="9"/><path d="M6.5 8V5.5a3.5 3.5 0 0 1 6.7-1.4"/>',
+  duplicate: '<path d="M7 7h10v10H7zM4 13H3V3h10v1"/>',
+  trash: '<path d="M3 5h14M7 5V3h6v2M5 5l1 12h8l1-12M8 8v6M12 8v6"/>',
+  'sidebar-pin': '<rect x="3" y="3" width="14" height="14"/><path d="M12 3v14M14 7h1M14 10h1M14 13h1"/>',
   more: '<circle cx="4" cy="10" r=".8"/><circle cx="10" cy="10" r=".8"/><circle cx="16" cy="10" r=".8"/>',
 };
 
@@ -284,6 +289,10 @@ export class CandlePanel implements IContentRenderer {
   private floatingDrawingToolbar?: FloatingDrawingToolbar;
   private floatingDrawingToggle = document.createElement('button');
   private drawingSidebar = document.createElement('aside');
+  private chartSidebar = document.createElement('aside');
+  private chartSidebarToolbar = document.createElement('div');
+  private folderSidebarButtons = new Map<string, HTMLButtonElement>();
+  private folderIconPicker = new FolderIconPicker();
   private drawingSidebarToolbar = document.createElement('div');
   private drawingSidebarMenuLayer = document.createElement('div');
   private objectsPanel = document.createElement('aside');
@@ -310,6 +319,7 @@ export class CandlePanel implements IContentRenderer {
   private objectTreeScope = '';
   private objectTreeFocusedKey = '';
   private objectTreeMenuTarget?: { kind: 'folder' | 'drawing'; id: string };
+  private objectMenuFromChart = false;
   private renamingFolderId?: string;
   private renamingDrawingId?: string;
   private emptyObjectsMessage = document.createElement('p');
@@ -536,6 +546,13 @@ export class CandlePanel implements IContentRenderer {
     this.chartWorkspace.className = 'chart-workspace';
     this.drawingSidebar.className = 'drawing-sidebar';
     this.drawingSidebar.setAttribute('aria-label', 'Drawing tools and actions');
+    this.chartSidebar.className = 'chart-sidebar';
+    this.chartSidebar.setAttribute('aria-label', 'Chart sidebar');
+    this.chartSidebarToolbar.className = 'chart-sidebar-toolbar';
+    this.chartSidebarToolbar.setAttribute('role', 'group');
+    this.chartSidebarToolbar.setAttribute('aria-label', 'Chart panels');
+    this.chartSidebarToolbar.setAttribute('aria-orientation', 'vertical');
+    this.chartSidebar.append(this.chartSidebarToolbar);
     this.drawingSidebarToolbar.className = 'drawing-sidebar-toolbar';
     this.drawingSidebarToolbar.setAttribute('role', 'group');
     this.drawingSidebarToolbar.setAttribute('aria-label', 'Drawings');
@@ -659,7 +676,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsPanel.append(objectTreeHeader, this.objectsRows, this.objectsTreeResize, this.objectsTreeMenu);
     this.buildDialogs();
     this.buildDrawingDialogs();
-    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.drawingSidebarMenuLayer);
+    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.chartSidebar, this.drawingSidebarMenuLayer);
     this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.vwapControls.dialog, this.tpoControls.dialog, this.orderWallsControls.dialog, this.compositionControls.dialog, this.placementControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
@@ -763,7 +780,8 @@ export class CandlePanel implements IContentRenderer {
     this.drawRedo.setAttribute('aria-keyshortcuts', 'Control+Shift+Z Meta+Shift+Z');
     this.drawEraser.setAttribute('aria-pressed', 'false');
     this.objectsToggle.setAttribute('aria-pressed', 'false');
-    this.drawingSidebarToolbar.append(this.drawUndo, this.drawRedo, this.drawEraser, this.floatingDrawingToggle, this.drawSettings, this.drawTemplates, this.objectsToggle, this.drawPlacementState);
+    this.drawingSidebarToolbar.append(this.drawUndo, this.drawRedo, this.drawEraser, this.floatingDrawingToggle, this.drawSettings, this.drawTemplates, this.drawPlacementState);
+    this.chartSidebarToolbar.append(this.objectsToggle);
     this.drawingSidebar.append(this.drawingSidebarToolbar);
   }
 
@@ -807,6 +825,29 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     this.objectsTreeMenu.addEventListener('click', event => this.objectTreeMenuClick(event), options);
     this.objectsTreeMenu.addEventListener('keydown', event => this.objectTreeMenuKeydown(event), options);
+    this.chartSidebarToolbar.addEventListener('click', event => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('[data-sidebar-folder]');
+      if (button) this.setFolderVisibility(button.dataset.sidebarFolder!, this.folderVisibilityState(button.dataset.sidebarFolder!) !== 'all');
+    }, options);
+    this.chartSidebarToolbar.addEventListener('contextmenu', event => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('[data-sidebar-folder]');
+      if (!button) return;
+      event.preventDefault(); event.stopPropagation(); this.chooseFolderSidebarIcon(button.dataset.sidebarFolder!, button);
+    }, options);
+    // Chart and sidebar controls can stop bubbling pointer/key events.
+    document.addEventListener('pointerdown', event => {
+      if (!this.objectsTreeMenu.hidden && !this.objectsTreeMenu.contains(event.target as Node)) {
+        this.objectsTreeMenu.hidden = true;
+      }
+    }, { ...options, capture: true });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !this.objectsTreeMenu.hidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.objectsTreeMenu.hidden = true;
+        this.restoreObjectMenuFocus();
+      }
+    }, { ...options, capture: true });
     this.objectsTreeResize.addEventListener('pointerdown', event => this.objectTreeResizeStart(event), options);
     this.objectsTreeResize.addEventListener('keydown', event => this.objectTreeResizeKeydown(event), options);
     this.marketButton.addEventListener('click', () => this.marketPicker.open([instrumentKey(this.selection)], { multiple: false, capability: 'candles', apply: ids => { this.instrument.value = ids[0]; this.select(); } }), options);
@@ -921,6 +962,7 @@ export class CandlePanel implements IContentRenderer {
     }, options);
     this.paneIndicatorLayer.addEventListener('contextmenu', event => this.indicatorContextMenu(event), options);
     this.toolbar.addEventListener('scroll', () => this.updateToolbarOverflowCue(), { ...options, passive: true });
+    this.toolbar.addEventListener('click', event => { this.paneHeaderAction(event); }, options);
     this.toolbarCue.addEventListener('click', () => this.scrollToolbar(), options);
     window.addEventListener('resize', () => this.updateToolbarOverflowCue(), options);
     this.toolbarResizeObserver = new ResizeObserver(() => this.updateToolbarOverflowCue());
@@ -945,7 +987,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine?.setWheelMode(this.selection.wheelMode);
       this.params.api.updateParameters(this.selection); this.save();
     }, options);
-    if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);}
+    if(import.meta.env.VITE_DATA_MODE==='staging'){const watch=this.watchButton=document.createElement('button');watch.textContent='Watch level';watch.title='Select two zone boundaries for Binance BTCUSDT USD-M perpetual';watch.addEventListener('click',()=>this.beginWatchZone(bounds=>window.dispatchEvent(new CustomEvent('iqterminal-watch-zone',{detail:bounds}))),options);this.toolbar.append(watch);this.toolbarResizeObserver?.observe(watch);}
     this.engine = new OpenAlgoCandleChart(this.chart, this.scheduler, 'canvas2d', params.api.id, this.selection);
     if (this.tradingController) this.tradingChartOverlay = new HyperliquidTradingChartOverlay(this.engine.chart, this.chart, this.tradingController);
     this.syncTradingOverlay();
@@ -962,6 +1004,7 @@ export class CandlePanel implements IContentRenderer {
     this.loadObjectTreeForSelection();
     this.subscriptions.push({ dispose: this.engine.objects.subscribe(() => this.renderDrawingObjects()) });
     this.subscriptions.push(
+      { dispose: this.engine.chart.on('contextmenu', event => this.drawingContextMenu(event)) },
       { dispose: this.engine.chart.on('draw:tool', () => this.syncDrawingActions()) },
       { dispose: this.engine.chart.on('draw:add', payload => {
         const event = payload as DrawingEvent;
@@ -1436,7 +1479,7 @@ export class CandlePanel implements IContentRenderer {
     const menu = flyout.getBoundingClientRect();
     const top = Math.max(4, Math.min(anchor.top - workspace.top - 3, workspace.height - menu.height - 4));
     flyout.style.top = `${top}px`;
-    flyout.style.left = `${Math.min(this.drawingSidebar.offsetWidth + 3, Math.max(4, workspace.width - menu.width - 4))}px`;
+    flyout.style.left = `${Math.min(this.drawingSidebar.offsetWidth + 2, Math.max(4, workspace.width - menu.width - 4))}px`;
     requestAnimationFrame(() => flyout.querySelector<HTMLButtonElement>('.drawing-sidebar-flyout-tool')?.focus());
   }
 
@@ -1637,6 +1680,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private loadObjectTreeForSelection() {
+    this.folderIconPicker.close();
     const key = objectTreeStorageKey(this.params.api.id, instrumentKey(this.selection), instrumentOf(this.selection).native);
     if (key === this.objectTreeScope && this.objectTreeRepository) return;
     this.objectTreeScope = key;
@@ -1745,6 +1789,7 @@ export class CandlePanel implements IContentRenderer {
       this.persistObjectTree();
     }
     this.renderObjectTree(drawings);
+    this.renderFolderSidebar();
     this.renderObjectInventory(inventory);
     this.updateObjectTreeStatus();
   }
@@ -1825,7 +1870,11 @@ export class CandlePanel implements IContentRenderer {
         name.dataset.treeAction = 'toggle-folder';
         const more = this.objectTreeControl('Folder actions', 'more', 'chart-object-tree-more');
         more.dataset.treeAction = 'menu';
-        row.append(expand, visible, name, more);
+        const pin = this.objectTreeControl('Show in sidebar', 'sidebar-pin', 'chart-object-folder-pin');
+        pin.dataset.treeAction = 'sidebar-pin';
+        const chooseIcon = this.objectTreeControl('Choose sidebar icon', 'folder', 'chart-object-folder-sidebar-icon');
+        chooseIcon.dataset.treeAction = 'sidebar-icon';
+        row.append(expand, visible, name, pin, chooseIcon, more);
         const children = document.createElement('div'); children.className = 'chart-object-children'; children.setAttribute('role', 'group');
         node.append(row, children);
         this.treeRows.set(key, row);
@@ -1876,6 +1925,17 @@ export class CandlePanel implements IContentRenderer {
     const visible = row.querySelector<HTMLButtonElement>('[data-tree-action="folder-visibility"]')!;
     let name = row.querySelector<HTMLButtonElement>('.chart-object-folder-name');
     const more = row.querySelector<HTMLButtonElement>('[data-tree-action="menu"]')!;
+    const pin = row.querySelector<HTMLButtonElement>('[data-tree-action="sidebar-pin"]')!;
+    const chooseIcon = row.querySelector<HTMLButtonElement>('[data-tree-action="sidebar-icon"]')!;
+    row.dataset.sidebarPinned = String(entry.showInSidebar === true);
+    pin.title = entry.showInSidebar ? `Hide ${entry.name} from sidebar` : `Show ${entry.name} in sidebar`;
+    pin.setAttribute('aria-label', pin.title); pin.setAttribute('aria-pressed', String(entry.showInSidebar === true));
+    chooseIcon.hidden = !entry.showInSidebar;
+    chooseIcon.title = `Choose sidebar icon for ${entry.name}`; chooseIcon.setAttribute('aria-label', chooseIcon.title);
+    if (chooseIcon.dataset.icon !== entry.sidebarIcon) {
+      chooseIcon.replaceChildren(folderSidebarGlyph(entry.sidebarIcon ?? 'drawing:horizontal-line'));
+      chooseIcon.dataset.icon = entry.sidebarIcon;
+    }
     const children = node.querySelector<HTMLDivElement>('.chart-object-children')!;
     const collapsed = this.collapsedTreeFolders.has(entry.id);
     const state = this.folderVisibilityState(entry.id);
@@ -1923,6 +1983,51 @@ export class CandlePanel implements IContentRenderer {
     button.type = 'button'; button.className = className; button.title = label; button.setAttribute('aria-label', label);
     button.append(drawingSidebarIcon(icon));
     return button;
+  }
+
+  private updateFolderSidebar(folderId: string, show: boolean, icon?: string) {
+    const next = setObjectTreeFolderSidebar(this.objectTreeCatalog, folderId, show, icon);
+    if (!next) return;
+    this.objectTreeCatalog = next; this.persistObjectTree(); this.renderDrawingObjects();
+  }
+
+  private chooseFolderSidebarIcon(folderId: string, anchor: HTMLElement) {
+    const folder = findObjectTreeEntry(this.objectTreeCatalog.entries, 'folder', folderId);
+    if (folder?.type !== 'folder') return;
+    this.folderIconPicker.open(anchor, folder.sidebarIcon ?? 'drawing:horizontal-line', icon => {
+      this.updateFolderSidebar(folderId, true, icon);
+    });
+  }
+
+  private renderFolderSidebar() {
+    const buttons: HTMLButtonElement[] = [];
+    const activeIds = new Set<string>();
+    const visit = (entries: readonly ObjectTreeEntry[]) => {
+      for (const folder of entries) {
+        if (folder.type !== 'folder') continue;
+        if (folder.showInSidebar) {
+          activeIds.add(folder.id);
+          let button = this.folderSidebarButtons.get(folder.id);
+          if (!button) {
+            button = this.sidebarButton('', '', 'folder', 'chart-folder-toggle');
+            button.dataset.sidebarFolder = folder.id; this.folderSidebarButtons.set(folder.id, button);
+          }
+          const icon = folder.sidebarIcon ?? 'drawing:horizontal-line';
+          if (button.dataset.icon !== icon) { button.replaceChildren(folderSidebarGlyph(icon)); button.dataset.icon = icon; }
+          const state = this.folderVisibilityState(folder.id);
+          button.title = folder.name;
+          button.setAttribute('aria-label', `Toggle ${folder.name} visibility`);
+          button.setAttribute('aria-pressed', String(state === 'all'));
+          button.setAttribute('aria-description', state === 'all' ? 'Hide all folder drawings' : 'Show all folder drawings');
+          button.dataset.visibilityState = state;
+          buttons.push(button);
+        }
+        visit(folder.children);
+      }
+    };
+    visit(this.objectTreeCatalog.entries);
+    for (const [id, button] of this.folderSidebarButtons) if (!activeIds.has(id)) { button.remove(); this.folderSidebarButtons.delete(id); }
+    reconcileElementChildren(this.chartSidebarToolbar, [this.objectsToggle, ...buttons]);
   }
 
   private folderVisibilityState(folderId: string): 'all' | 'none' | 'mixed' {
@@ -2009,6 +2114,14 @@ export class CandlePanel implements IContentRenderer {
       this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
     } else if (action === 'folder-visibility' && id) {
       this.setFolderVisibility(id, this.folderVisibilityState(id) !== 'all');
+    } else if (action === 'sidebar-pin' && id) {
+      this.folderIconPicker.close();
+      const folder = findObjectTreeEntry(this.objectTreeCatalog.entries, 'folder', id);
+      if (folder?.type !== 'folder') return;
+      this.updateFolderSidebar(id, !folder.showInSidebar);
+      if (!folder.showInSidebar) this.chooseFolderSidebarIcon(id, button);
+    } else if (action === 'sidebar-icon' && id) {
+      this.chooseFolderSidebarIcon(id, button);
     } else if (action === 'menu' && id) {
       this.openObjectTreeMenu('folder', id, (event as MouseEvent).clientX, (event as MouseEvent).clientY);
     }
@@ -2036,7 +2149,26 @@ export class CandlePanel implements IContentRenderer {
     this.openObjectTreeMenu(node.dataset.treeKind as 'folder' | 'drawing', node.dataset.treeId, event.clientX, event.clientY);
   }
 
-  private openObjectTreeMenu(kind: 'folder' | 'drawing', id: string, clientX = 0, clientY = 0) {
+  private drawingContextMenu(event: ContextMenuEvent) {
+    if (event.target.kind !== 'drawing' || !this.engine) return;
+    const drawing = this.engine.drawings.drawings().find(item => event.target.id === item.id
+      || event.target.id === `draw:${item.id}` || event.target.id?.startsWith(`draw:${item.id}#`));
+    if (!drawing) return;
+    event.preventDefault();
+    this.params.api.setActive();
+    const rect = this.chart.getBoundingClientRect();
+    this.openObjectTreeMenu('drawing', drawing.id, rect.left + event.point.x, rect.top + event.point.y, true);
+  }
+
+  private restoreObjectMenuFocus() {
+    if (this.objectMenuFromChart) this.chart.focus();
+    else this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
+  }
+
+  private openObjectTreeMenu(kind: 'folder' | 'drawing', id: string, clientX = 0, clientY = 0, fromChart = false) {
+    this.objectMenuFromChart = fromChart;
+    this.objectsTreeMenu.setAttribute('aria-label', fromChart ? 'Drawing actions' : 'Object Tree actions');
+    this.objectTreeFocusedKey = `${kind}:${id}`;
     this.objectTreeMenuTarget = { kind, id };
     this.objectsTreeMenu.replaceChildren();
     const add = (label: string, action: string, options: { parentId?: string | null; disabled?: boolean } = {}) => {
@@ -2052,16 +2184,22 @@ export class CandlePanel implements IContentRenderer {
     if (kind === 'drawing') {
       const object = this.engine?.objects.list().find(item => item.kind === 'drawing' && item.sourceId === id);
       if (!object) return;
-      add('Select', 'select');
-      if (object.capabilities.visibility) add(object.visible ? 'Hide' : 'Show', 'visible');
-      if (object.capabilities.lock) add(object.locked ? 'Unlock' : 'Lock', 'lock');
-      add('Rename', 'rename');
-      if ((targetEntry as Extract<ObjectTreeEntry, { type: 'drawing' }>).name !== undefined) add('Use drawing tool name', 'reset-name');
-      if (object.kind === 'drawing' || object.capabilities.settings) add('Settings', 'settings');
-      add('Duplicate', 'duplicate');
-      add('Move up', 'move-up'); add('Move down', 'move-down');
-      if (object.capabilities.remove) add('Delete', 'remove');
-      this.addMoveToFolderMenuItems(add, kind, id);
+      if (fromChart) {
+        if (object.capabilities.remove) add('Delete', 'remove');
+        add('Clone', 'duplicate');
+        add('Settings', 'settings');
+      } else {
+        add('Select', 'select');
+        if (object.capabilities.visibility) add(object.visible ? 'Hide' : 'Show', 'visible');
+        if (object.capabilities.lock) add(object.locked ? 'Unlock' : 'Lock', 'lock');
+        add('Rename', 'rename');
+        if ((targetEntry as Extract<ObjectTreeEntry, { type: 'drawing' }>).name !== undefined) add('Use drawing tool name', 'reset-name');
+        if (object.kind === 'drawing' || object.capabilities.settings) add('Settings', 'settings');
+        add('Duplicate', 'duplicate');
+        add('Move up', 'move-up'); add('Move down', 'move-down');
+        if (object.capabilities.remove) add('Delete', 'remove');
+        this.addMoveToFolderMenuItems(add, kind, id);
+      }
     } else {
       const folder = targetEntry as Extract<ObjectTreeEntry, { type: 'folder' }>;
       add('Rename', 'rename');
@@ -2125,7 +2263,7 @@ export class CandlePanel implements IContentRenderer {
       if (action === 'remove') this.objectTreeFocusedKey = '';
     }
     this.objectsTreeMenu.hidden = true;
-    if (action !== 'rename' && action !== 'new-subfolder') this.objectTreeNode(this.objectTreeFocusedKey)?.focus();
+    if (action !== 'rename' && action !== 'new-subfolder' && action !== 'settings') this.restoreObjectMenuFocus();
   }
 
   private objectTreeMenuKeydown(event: KeyboardEvent) {
@@ -2134,7 +2272,7 @@ export class CandlePanel implements IContentRenderer {
     const current = items.indexOf(document.activeElement as HTMLButtonElement);
     if (event.key === 'Escape') {
       event.preventDefault(); this.objectsTreeMenu.hidden = true;
-      this.objectTreeNode(this.objectTreeFocusedKey)?.focus(); return;
+      this.restoreObjectMenuFocus(); return;
     }
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
@@ -2297,17 +2435,20 @@ export class CandlePanel implements IContentRenderer {
     if (object.hiddenOnInterval) name.dataset.hiddenOnInterval = 'true';
     else delete name.dataset.hiddenOnInterval;
 
-    const actions: Array<{ label: string; action: string; title: string }> = [];
-    if (object.capabilities.visibility) actions.push({ label: object.visible ? 'Hide' : 'Show', action: 'visible', title: object.visible ? 'Hide object' : 'Show object' });
-    if (object.capabilities.lock) actions.push({ label: object.locked ? 'Unlock' : 'Lock', action: 'lock', title: object.locked ? 'Unlock object' : 'Lock object' });
-    if (object.kind === 'drawing') actions.push({ label: 'Duplicate', action: 'duplicate', title: 'Duplicate drawing' });
-    if (object.kind === 'drawing' || object.capabilities.settings) actions.push({ label: 'Style', action: 'settings', title: 'Open object settings' });
-    if (object.capabilities.remove) actions.push({ label: '×', action: 'remove', title: 'Remove object' });
-    if (object.kind === 'drawing') actions.push({ label: '', action: 'more', title: 'More drawing actions' });
-    const actionButtons = actions.map(({ label, action, title }) => {
+    const actions: Array<{ icon: string; action: string; title: string }> = [];
+    if (object.capabilities.visibility) actions.push({ icon: object.visible ? 'eye' : 'hiddenEye', action: 'visible', title: object.visible ? 'Hide object' : 'Show object' });
+    if (object.capabilities.lock) actions.push({ icon: object.locked ? 'lock' : 'unlock', action: 'lock', title: object.locked ? 'Unlock object' : 'Lock object' });
+    if (object.kind === 'drawing') actions.push({ icon: 'duplicate', action: 'duplicate', title: 'Duplicate drawing' });
+    if (object.kind === 'drawing' || object.capabilities.settings) actions.push({ icon: 'settings', action: 'settings', title: 'Open object settings' });
+    if (object.capabilities.remove) actions.push({ icon: 'trash', action: 'remove', title: 'Remove object' });
+    if (object.kind === 'drawing') actions.push({ icon: 'more', action: 'more', title: 'More drawing actions' });
+    const actionButtons = actions.map(({ icon, action, title }) => {
       let button = [...row!.querySelectorAll<HTMLButtonElement>('button[data-object-action]')].find(candidate => candidate.dataset.objectAction === action);
-      if (!button) button = this.objectActionButton(label, action, object.id, title);
-      if (button.textContent !== label) button.textContent = label;
+      if (!button) button = this.objectActionButton(icon, action, object.id, title);
+      if (button.dataset.icon !== icon) {
+        button.replaceChildren(drawingSidebarIcon(icon));
+        button.dataset.icon = icon;
+      }
       if (button.title !== title) button.title = title;
       if (button.getAttribute('aria-label') !== title) button.setAttribute('aria-label', title);
       button.dataset.objectId = object.id;
@@ -2329,10 +2470,9 @@ export class CandlePanel implements IContentRenderer {
     this.objectsPanel.dataset.focused = String(this.params?.api.isFocused ?? false);
   }
 
-  private objectActionButton(label: string, action: string, id: string, title: string) {
+  private objectActionButton(icon: string, action: string, id: string, title: string) {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'chart-object-action';
-    if (action === 'more') button.append(drawingSidebarIcon('more'));
-    else button.textContent = label;
+    button.append(drawingSidebarIcon(icon)); button.dataset.icon = icon;
     button.title = title; button.setAttribute('aria-label', title); button.dataset.objectAction = action; button.dataset.objectId = id;
     button.addEventListener('click', event => {
       event.stopPropagation();
@@ -4167,6 +4307,7 @@ export class CandlePanel implements IContentRenderer {
     if (!pane) return null;
     const chartRect = this.chart.getBoundingClientRect(), paneRect = pane.getBoundingClientRect();
     const paneLeft = paneRect.left - chartRect.left, paneRight = paneRect.right - chartRect.left;
+    const headerRight = Math.max(chartRect.width, paneRight), headerRightPadding = 4;
     const collapsed = chart.paneCollapsed(paneIndex);
     const nativeChrome = rows.some(row => {
       const definition = row.dataset.definitionId;
@@ -4181,17 +4322,18 @@ export class CandlePanel implements IContentRenderer {
       // real header. Cover the chart's own first-study legend row with this
       // single native DOM header so its name and actions remain usable there.
       const contentLeft = plot ? plot.left : paneLeft + 4;
-      const contentRight = plot ? plot.left + plot.width : paneRight - 80;
+      const contentRight = headerRight - headerRightPadding;
       const contentWidth = Math.max(0, contentRight - contentLeft);
       if (contentWidth < 120) return null;
       const rowWidth = Math.max(0, contentWidth - 84);
-      return { left: paneLeft, top: paneRect.top - chartRect.top, width: paneRect.width, paddingLeft: contentLeft - paneLeft,
-        paddingRight: paneRight - contentRight, rowWidth, height: Math.min(30, Math.max(22, paneRect.height)), nativeChrome, inlineNativeControls, reservedControls: false };
+      return { left: paneLeft, top: paneRect.top - chartRect.top, width: headerRight - paneLeft, paddingLeft: contentLeft - paneLeft,
+        paddingRight: headerRightPadding, rowWidth, height: Math.min(30, Math.max(22, paneRect.height)), nativeChrome, inlineNativeControls, reservedControls: false };
     }
     if (!plot || plot.width < 120 || plot.height < 36) return null;
-    const rowWidth = Math.max(0, plot.width - 84);
-    return { left: paneLeft, top: plot.top, width: paneRect.width, paddingLeft: plot.left - paneLeft,
-      paddingRight: paneRight - (plot.left + plot.width), rowWidth, height: 30, nativeChrome, inlineNativeControls, reservedControls: false };
+    const contentLeft = plot.left, contentRight = headerRight - headerRightPadding;
+    const rowWidth = Math.max(0, contentRight - contentLeft - 84);
+    return { left: paneLeft, top: plot.top, width: headerRight - paneLeft, paddingLeft: contentLeft - paneLeft,
+      paddingRight: headerRightPadding, rowWidth, height: 30, nativeChrome, inlineNativeControls, reservedControls: false };
   }
 
   private setNativePaneControlsHost(paneIndex: number, home: HTMLElement | null) {
@@ -4401,8 +4543,8 @@ export class CandlePanel implements IContentRenderer {
   private syncPaneLayoutControls() {
     const chart = this.engine?.chart;
     const panes = chart?.panes() ?? [];
-    if (!chart || panes.length < 2) {
-      if (chart && this.primaryPaneCollapsed) this.setPrimaryPaneCollapsed(false);
+    if (!chart || panes.length === 0) {
+      if (chart) this.primaryPaneCollapsed = false;
       this.primaryPaneCollapsedHeader.hidden = true;
       this.chart.classList.remove('primary-pane-collapsed');
       if (chart) {
@@ -4411,7 +4553,15 @@ export class CandlePanel implements IContentRenderer {
       }
       for (const host of this.paneControlHosts.values()) host.element.remove();
       this.paneControlHosts.clear();
+      this.updateToolbarOverflowCue();
       return;
+    }
+    if (panes.length < 2) {
+      if (this.primaryPaneCollapsed) this.setPrimaryPaneCollapsed(false);
+      this.primaryPaneCollapsedHeader.hidden = true;
+      this.chart.classList.remove('primary-pane-collapsed');
+      const primaryPane = chart.panes()[chart.primaryPaneIndex()];
+      if (primaryPane) primaryPane.element.style.visibility = '';
     }
     const primaryPaneIndex = chart.primaryPaneIndex();
     const maximizedPane = chart.maximizedPane();
@@ -4447,6 +4597,7 @@ export class CandlePanel implements IContentRenderer {
       if (!view) {
         const element = document.createElement('div'); element.className = 'pane-layout-controls';
         element.dataset.paneIndex = String(paneIndex);
+        element.setAttribute('role', 'group');
         const buttons = new Map<string, HTMLButtonElement>();
         for (const action of ['move-up', 'move-down', 'collapse', 'maximize']) {
           const button = document.createElement('button'); button.type = 'button'; button.dataset.paneAction = action;
@@ -4457,6 +4608,7 @@ export class CandlePanel implements IContentRenderer {
       view.element.dataset.paneIndex = String(paneIndex);
       const isPrimary = paneIndex === primaryPaneIndex;
       const prefix = isPrimary ? 'main pane' : `pane ${paneIndex + 1}`;
+      view.element.setAttribute('aria-label', `${isPrimary ? 'Main chart' : `Pane ${paneIndex + 1}`} controls`);
       const collapsed = chart.paneCollapsed(paneIndex) || isPrimary && this.primaryPaneCollapsed;
       const maximized = maximizedPane === paneIndex;
       const otherOpenPanes = panes.reduce((count, _, index) => count + (index !== primaryPaneIndex && !chart.paneCollapsed(index) ? 1 : 0), 0);
@@ -4465,7 +4617,7 @@ export class CandlePanel implements IContentRenderer {
         'move-down': { label: `Move ${prefix} down`, icon: 'pane-down', disabled: paneIndex === panes.length - 1, title: 'Move pane down' },
         collapse: { label: collapsed ? `Expand ${prefix}` : `Collapse ${prefix} to header only`, icon: collapsed ? 'pane-expand' : 'pane-collapse',
           disabled: !collapsed && (isPrimary ? otherOpenPanes === 0 : this.primaryPaneCollapsed && otherOpenPanes <= 1) },
-        maximize: { label: maximized ? 'Restore all panes' : `Maximize ${prefix}`, icon: maximized ? 'pane-restore' : 'pane-maximize', disabled: false },
+        maximize: { label: maximized ? 'Restore all panes' : `Maximize ${prefix}`, icon: maximized ? 'pane-restore' : 'pane-maximize', disabled: !maximized && panes.length < 2 },
       };
       for (const [action, button] of view.buttons) {
         const state = labels[action]!;
@@ -4488,6 +4640,18 @@ export class CandlePanel implements IContentRenderer {
       const shouldHideControls = !paneVisible || !(hasPlotBounds || paneCollapsed && hasPaneBounds);
       const sharedOrderFlowHeader = paneIndex === this.orderFlowPaneIndex && Boolean(this.orderFlowPaneView) && paneVisible;
       const indicatorHeader = this.paneIndicatorHosts.get(paneIndex);
+      if (isPrimary) {
+        this.orderFlowPaneView?.restorePaneControls(view.element);
+        view.element.classList.remove('pane-layout-controls-inline');
+        view.element.classList.add('pane-layout-controls-toolbar');
+        view.element.style.removeProperty('left'); view.element.style.removeProperty('top'); view.element.style.removeProperty('width');
+        const toolbarAnchor = this.watchButton ?? this.metadata;
+        const afterAnchor = toolbarAnchor.nextElementSibling;
+        if (view.element.parentElement !== this.toolbar || afterAnchor !== view.element) this.toolbar.insertBefore(view.element, afterAnchor);
+        view.element.hidden = shouldHideControls;
+        return;
+      }
+      view.element.classList.remove('pane-layout-controls-toolbar');
       if (sharedOrderFlowHeader) {
         this.orderFlowPaneView!.setPaneControlHost(view.element, view.buttons.values());
         view.element.hidden = true;
@@ -4513,6 +4677,7 @@ export class CandlePanel implements IContentRenderer {
       view.element.style.left = `${Math.max(plot?.left ?? 0, right - controlWidth - 4)}px`;
       view.element.style.top = `${top + 2}px`;
     });
+    this.updateToolbarOverflowCue();
   }
 
   private dailyVwapCoverage() {
@@ -4581,7 +4746,7 @@ export class CandlePanel implements IContentRenderer {
     this.syncPaneLayoutControls();
     this.syncPaneLoadingStates();
     this.paneIndicatorLayer.hidden = ![...this.paneIndicatorHosts.values()].some(host => !host.hidden)
-      && ![...this.paneControlHosts.values()].some(view => !view.element.hidden)
+      && ![...this.paneControlHosts.values()].some(view => !view.element.hidden && !view.element.classList.contains('pane-layout-controls-toolbar'))
       && this.primaryPaneCollapsedHeader.hidden;
     this.activeSummary.textContent = `Indicators (${mainRows.length})`;
     const errorText = this.activeIndicators.dataset.error;
@@ -5580,6 +5745,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsTreeMenu.hidden = true;
     this.floatingDrawingToolbar?.dispose();
     this.objectsTreeMenu.remove();
+    this.folderIconPicker.dispose(); this.folderSidebarButtons.clear();
     this.objectsPanel.remove();
     for (const host of this.paneIndicatorHosts.values()) host.remove(); this.paneIndicatorHosts.clear();
     for (const host of this.paneControlHosts.values()) host.element.remove(); this.paneControlHosts.clear();

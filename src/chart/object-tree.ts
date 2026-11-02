@@ -1,3 +1,5 @@
+import { isFolderSidebarIcon } from './folder-sidebar-icons';
+
 export const IQ_OBJECT_TREE_VERSION = 1 as const;
 export const IQ_OBJECT_TREE_STORAGE_PREFIX = 'iqterminal:object-tree:v1';
 export const IQ_OBJECT_TREE_SIDEBAR_PREFIX = 'iqterminal:object-tree-sidebar:v1';
@@ -18,6 +20,8 @@ export interface ObjectTreeFolderEntry {
   id: string;
   name: string;
   children: ObjectTreeEntry[];
+  showInSidebar?: boolean;
+  sidebarIcon?: string;
 }
 
 export type ObjectTreeEntry = ObjectTreeDrawingEntry | ObjectTreeFolderEntry;
@@ -99,7 +103,12 @@ export function parseIQObjectTreeCatalog(input: unknown): IQObjectTreeCatalog {
     if (folderIds.has(id)) throw new IQObjectTreeError('Folder ids must be unique');
     folderIds.add(id);
     if (!Array.isArray(entry.children)) throw new IQObjectTreeError('Folder contents are invalid');
-    return { type: 'folder', id, name: folderName(entry.name), children: parseEntries(entry.children, depth + 1) };
+    if (entry.showInSidebar !== undefined && typeof entry.showInSidebar !== 'boolean') throw new IQObjectTreeError('Folder sidebar visibility is invalid');
+    if (entry.sidebarIcon !== undefined && !isFolderSidebarIcon(entry.sidebarIcon)) throw new IQObjectTreeError('Folder sidebar icon is invalid');
+    return { type: 'folder', id, name: folderName(entry.name), children: parseEntries(entry.children, depth + 1),
+      ...(entry.showInSidebar === undefined ? {} : { showInSidebar: entry.showInSidebar }),
+      ...(entry.sidebarIcon === undefined ? {} : { sidebarIcon: entry.sidebarIcon as string }),
+    };
   });
 
   return {
@@ -347,6 +356,21 @@ export function renameObjectTreeFolder(catalog: IQObjectTreeCatalog, id: string,
     return { ...entry, children: rename(entry.children) };
   });
   const entries = rename(catalog.entries);
+  return changed ? { ...catalog, entries } : null;
+}
+
+export function setObjectTreeFolderSidebar(catalog: IQObjectTreeCatalog, id: string, show: boolean, icon?: string): IQObjectTreeCatalog | null {
+  if (icon !== undefined && !isFolderSidebarIcon(icon)) throw new IQObjectTreeError('Folder sidebar icon is invalid');
+  let changed = false;
+  const update = (entries: readonly ObjectTreeEntry[]): ObjectTreeEntry[] => entries.map(entry => {
+    if (entry.type !== 'folder') return entry;
+    if (entry.id === id) {
+      changed = true;
+      return { ...entry, showInSidebar: show, sidebarIcon: icon ?? entry.sidebarIcon ?? 'drawing:horizontal-line' };
+    }
+    return { ...entry, children: update(entry.children) };
+  });
+  const entries = update(catalog.entries);
   return changed ? { ...catalog, entries } : null;
 }
 

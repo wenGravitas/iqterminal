@@ -638,6 +638,16 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
 
 test('every exposed native drawing tool completes its required anchors', async ({ page }) => {
   test.setTimeout(90_000);
+  await page.addInitScript(() => {
+    const native = CanvasRenderingContext2D.prototype.fillText;
+    CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
+      if (String(text).includes('%')) {
+        const labels = ((window as any).__fibCaptions ??= []) as string[];
+        if (!labels.includes(String(text))) labels.push(String(text));
+      }
+      return Reflect.apply(native, this, [text, ...args]);
+    };
+  });
   await page.goto('/?fixture=1&fixtureTime=now');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const panel = page.locator('.candle-panel').first();
@@ -715,8 +725,32 @@ test('every exposed native drawing tool completes its required anchors', async (
   await expect(fibSettings.locator('[data-setting-path="style.fillOpacity"]')).toHaveValue('0.06');
   const fibLevels = JSON.parse(await fibSettings.locator('[data-setting-path="style.levels"]').inputValue());
   expect(fibLevels).toHaveLength(7);
-  expect(fibLevels).toContainEqual({ ratio: 0.618, color: '#089981' });
+  expect(fibLevels).toContainEqual({ ratio: 0.618, color: '#578b80' });
+  await expect(fibSettings.locator('[data-setting-path="style.lineWidth"]')).toHaveValue('1');
+  await expect(fibSettings.getByLabel('Golden zone (61.8–65%)', { exact: true })).not.toBeChecked();
+  await expect.poll(() => page.evaluate(() => (window as any).__fibCaptions ?? [])).toContain('61.80%');
+  expect(await page.evaluate(() => (window as any).__fibCaptions.filter((text: string) => text.startsWith('61.80%')))).toEqual(['61.80%']);
+  await fibSettings.getByLabel('Golden zone (61.8–65%)', { exact: true }).check();
+  await fibSettings.getByRole('button', { name: 'Apply', exact: true }).click();
+  expect((await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'fib-retracement')?.props?.showGoldenZone).toBe(true);
+  await objectAction(panel.locator(`[data-object-id="${nativeIds['fib-retracement']}"]`), 'settings').click();
+  await expect(fibSettings.getByLabel('Golden zone (61.8–65%)', { exact: true })).toBeChecked();
   await fibSettings.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.undo(), panelId);
+  expect((await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'fib-retracement')?.props?.showGoldenZone).not.toBe(true);
+  await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.redo(), panelId);
+  expect((await drawingState(page, panel)).drawings.find(drawing => drawing.tool === 'fib-retracement')?.props?.showGoldenZone).toBe(true);
+  const hiddenForCapture = await page.evaluate(id => {
+    const draw = (window as any).__terminal.panels.get(id).engine.drawings;
+    const ids = draw.drawings().filter((item: TestDrawing) => item.tool !== 'fib-retracement' && item.visible !== false).map((item: TestDrawing) => item.id);
+    for (const drawingId of ids) draw.update(drawingId, { visible: false });
+    return ids;
+  }, panelId);
+  await page.screenshot({ path: 'artifacts/fibonacci-labels.png' });
+  await page.evaluate(({ id, ids }) => {
+    const draw = (window as any).__terminal.panels.get(id).engine.drawings;
+    for (const drawingId of ids) draw.update(drawingId, { visible: true });
+  }, { id: panelId, ids: hiddenForCapture });
   await objectAction(panel.locator(`[data-object-id="${nativeIds.text}"]`), 'settings').click();
   const textSettings = panel.getByRole('dialog', { name: 'Drawing settings' });
   await expect(textSettings.locator('[data-setting-path="text.value"]')).toHaveValue('Text');

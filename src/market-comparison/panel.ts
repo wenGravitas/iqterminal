@@ -10,6 +10,7 @@ import {
 } from '../feed/comparison';
 import { CHART_THEMES, currentTheme, THEME_EVENT } from '../theme';
 import { getDisplayTimezone, TIMEZONE_EVENT } from '../timezone';
+import { indicatorIcon } from '../indicators/icons';
 import {
   comparisonRequest, defaultMarketComparisonConfig, marketComparisonConfig,
   MARKET_COMPARISON_COLORS, setMarketComparisonColor, setMarketComparisonInterval,
@@ -93,6 +94,7 @@ export class MarketComparisonPanel implements IContentRenderer {
   private feedGeneration = 0;
   private disposed = false;
   private applyingViewport = false;
+  private viewportAdjusted = false;
   private lastFollowTime = -Infinity;
   private initialViewSet = false;
   private pendingWindowHistory = false;
@@ -132,7 +134,8 @@ export class MarketComparisonPanel implements IContentRenderer {
     for (const [value, label] of [['1h', '1H'], ['4h', '4H'], ['24h', '24H']]) this.windowSelect.add(new Option(label, value));
     this.intervalSelect.setAttribute('aria-label', 'Candle interval');
     for (const [value, label] of [['1m', '1M'], ['5m', '5M'], ['15m', '15M']]) this.intervalSelect.add(new Option(label, value));
-    this.followButton.type = 'button'; this.followButton.className = 'market-comparison-follow';
+    this.followButton.type = 'button'; this.followButton.className = 'market-comparison-follow chart-latest-button';
+    this.followButton.append(indicatorIcon('latest'));
     this.retryButton.type = 'button'; this.retryButton.textContent = 'RETRY'; this.retryButton.title = 'Retry direct Hyperliquid history and stream'; this.retryButton.hidden = true;
     this.baselineLabel.className = 'market-comparison-baseline'; this.baselineLabel.setAttribute('aria-live', 'polite');
     this.toolbar.append(this.marketsButton, this.windowSelect, this.intervalSelect, this.followButton, this.retryButton, this.baselineLabel);
@@ -158,6 +161,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     params.api.setTitle('Market Comparison');
     this.chartHost = new ScheduledComparisonChart(this.chartSurface, this.scheduler, () => this.renderRightLabels());
     this.primarySeries = this.chartHost.chart.addSeries('line', { style: { color: MARKET_COMPARISON_COLORS.BTC, precision: 2, priceLineVisible: false, lastValueVisible: false, title: 'BTC' } });
+    this.syncPriceAxisSpace();
     this.controller = comparisonController(this.chartHost.chart, { mode: 'percentage', baseline: 'common' });
     this.controller.setBaseline('common');
     this.listeners.push(...[
@@ -165,8 +169,9 @@ export class MarketComparisonPanel implements IContentRenderer {
       this.chartHost.chart.on('pan', () => this.onViewportChange()),
       this.chartHost.chart.on('zoom', () => this.onViewportChange()),
       this.chartHost.chart.on('resize', () => {
+        this.syncPriceAxisSpace();
         const source = this.currentPrimary ? this.sources.get(this.currentPrimary) : undefined;
-        if (this.config.follow === 'live' && this.initialViewSet && !this.pendingWindowHistory && source?.status.historyPending !== true) this.followWindow(true);
+        if (this.config.follow === 'live' && !this.viewportAdjusted && this.initialViewSet && !this.pendingWindowHistory && source?.status.historyPending !== true) this.followWindow(true);
         this.chartHost?.invalidate();
       }),
     ].map(dispose => ({ dispose })));
@@ -183,7 +188,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     this.marketsButton.addEventListener('click', () => this.openMarketDialog(), options);
     this.windowSelect.addEventListener('change', () => this.applyConfig({ ...this.config, window: this.windowSelect.value as MarketComparisonConfig['window'] }), options);
     this.intervalSelect.addEventListener('change', () => this.changeInterval(this.intervalSelect.value as MarketComparisonConfig['interval']), options);
-    this.followButton.addEventListener('click', () => this.setFollow(this.config.follow !== 'live'), options);
+    this.followButton.addEventListener('click', () => this.setFollow(this.viewportAdjusted || this.config.follow !== 'live'), options);
     this.retryButton.addEventListener('click', () => this.feed.retryComparison(this.params.api.id), options);
     this.marketDialog.addEventListener('click', event => {
       if (event.target === this.marketDialog) this.marketDialog.close();
@@ -297,6 +302,7 @@ export class MarketComparisonPanel implements IContentRenderer {
     this.config = next;
     const resetLiveWindow = next.follow === 'live' && (forceFeed || next.window !== previousWindow);
     if (resetLiveWindow) {
+      this.viewportAdjusted = false;
       this.initialViewSet = false; this.lastFollowTime = -Infinity;
       this.pendingWindowHistory = next.window !== previousWindow;
     }
@@ -311,9 +317,11 @@ export class MarketComparisonPanel implements IContentRenderer {
     this.marketsButton.textContent = `Markets · ${selected}`;
     this.marketsButton.title = this.config.instruments.map(item => comparisonMarket(item.identity.symbol)?.symbol).join(' · ');
     const live = this.config.follow === 'live';
-    this.followButton.textContent = live ? 'LIVE' : 'PAUSED';
+    this.followButton.setAttribute('aria-label', live && !this.viewportAdjusted ? 'Pause following latest candles' : 'Return to latest candles');
     this.followButton.setAttribute('aria-pressed', String(live));
-    this.followButton.title = live ? 'Following the newest shared candle · click to pause' : 'Viewport is paused · click to return to the live window';
+    this.followButton.title = live
+      ? this.viewportAdjusted ? 'Live data · adjusted view · click to return to the live window' : 'Following the newest shared candle · click to pause'
+      : 'Viewport is paused · click to return to the live window';
     this.followButton.dataset.state = live ? 'live' : 'paused';
   }
 
@@ -356,6 +364,20 @@ export class MarketComparisonPanel implements IContentRenderer {
     }).filter((item): item is NonNullable<typeof item> => item !== null);
   }
 
+  private syncPriceAxisSpace() {
+    const chart = this.chartHost?.chart;
+    if (!chart) return;
+    // Preserve at least 144 px of plot at the minimum widget width. The gutter
+    // still quotes every market's percentage when the duplicate axis is hidden.
+    const side = this.chartSurface.clientWidth < 226 ? 'hidden' : 'right';
+    const pane = chart.primaryPaneIndex();
+    if (chart.priceAxisPlacement(pane, 'right')?.side === side) return;
+    const applying = this.applyingViewport;
+    this.applyingViewport = true;
+    try { chart.setPriceAxisPlacement(pane, 'right', side); }
+    finally { this.applyingViewport = applying; }
+  }
+
   private syncChartData() {
     if (!this.chartHost || !this.controller || !this.primarySeries) return;
     const usable = this.usableVisible();
@@ -386,7 +408,7 @@ export class MarketComparisonPanel implements IContentRenderer {
         style: { color: item.configured.color, precision: 2, priceLineVisible: false, lastValueVisible: false, title: item.market.shortLabel } }));
     }
     this.controller.setBaseline('common');
-    if (this.config.follow === 'live' && nextPrimary) {
+    if (this.config.follow === 'live' && !this.viewportAdjusted && nextPrimary) {
       const latest = usable[0]!.source.candles.at(-1)?.t ?? -Infinity;
       if (!this.pendingWindowHistory && usable[0]!.source.status.historyPending !== true
         && (!this.initialViewSet || latest > this.lastFollowTime)) this.followWindow(!this.initialViewSet);
@@ -448,7 +470,8 @@ export class MarketComparisonPanel implements IContentRenderer {
   }
 
   private setFollow(live: boolean) {
-    if (this.config.follow === (live ? 'live' : 'paused')) return;
+    if (this.config.follow === (live ? 'live' : 'paused') && !this.viewportAdjusted) return;
+    this.viewportAdjusted = false;
     this.config = { ...this.config, follow: live ? 'live' : 'paused' };
     this.params.api.updateParameters(this.config); this.save(); this.syncControls();
     if (live) this.followWindow(true);
@@ -599,8 +622,9 @@ export class MarketComparisonPanel implements IContentRenderer {
     for (const candidate of candidates) {
       const label = document.createElement('span'); label.className = 'market-comparison-right-label';
       label.style.color = candidate.color; label.style.top = `${candidate.y - labelHeight / 2}px`;
-      label.style.left = `${Math.max(plot.left, plot.left + plot.width - 99)}px`;
-      label.style.width = '98px'; label.title = `${candidate.label} · ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}% from ${new Date(baselineTime * 1000).toISOString()}`;
+      label.style.right = '1px';
+      label.style.maxWidth = `${Math.max(1, this.labelLayer.clientWidth - 2)}px`;
+      label.title = `${candidate.label} · ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}% from ${new Date(baselineTime * 1000).toISOString()}`;
       label.textContent = `${candidate.label} ${candidate.percent >= 0 ? '+' : ''}${candidate.percent.toFixed(2)}%`;
       fragment.append(label);
     }
@@ -647,8 +671,8 @@ export class MarketComparisonPanel implements IContentRenderer {
 
   private onViewportGesture() {
     if (this.applyingViewport || this.config.follow !== 'live') return;
-    this.config = { ...this.config, follow: 'paused' };
-    this.params.api.updateParameters(this.config); this.save(); this.syncControls();
+    this.viewportAdjusted = true;
+    this.syncControls();
   }
 
   private onViewportChange() {

@@ -4,9 +4,26 @@ import {
   findObjectTreeEntry, IQObjectTreeRepository, locateObjectTreeEntry, moveObjectTreeEntry, objectTreeFolderDepth,
   objectTreeDrawingIds, objectTreeFolderDrawingIds, objectTreeFolderVisibilityState, objectTreeStorageKey, parseIQObjectTreeCatalog, reconcileObjectTree,
   renameObjectTreeDrawing, renameObjectTreeFolder, reorderObjectTreeEntry, type IQObjectTreeCatalog, type IQObjectTreeStorage, type ObjectTreeEntry,
+  setObjectTreeFolderSidebar,
 } from '../src/chart/object-tree';
 
 describe('per-chart object tree catalog', () => {
+  it('round-trips optional folder sidebar pins and icons without changing legacy folders', () => {
+    const legacy = createObjectTreeFolder(createEmptyObjectTree(), null, 'plans', 'Plans')!;
+    expect(parseIQObjectTreeCatalog(legacy)).toEqual(legacy);
+    for (const icon of ['A', 'Z', '0', '9', 'drawing:fib-retracement', 'drawing:arrow-right']) {
+      const pinned = setObjectTreeFolderSidebar(legacy, 'plans', true, icon)!;
+      const restored = parseIQObjectTreeCatalog(JSON.stringify(pinned));
+      expect(restored.entries[0]).toMatchObject({ showInSidebar: true, sidebarIcon: icon });
+      const renamed = renameObjectTreeFolder(restored, 'plans', 'Renamed')!;
+      expect(renamed.entries[0]).toMatchObject({ showInSidebar: true, sidebarIcon: icon });
+      expect(setObjectTreeFolderSidebar(renamed, 'plans', false)?.entries[0]).toMatchObject({ showInSidebar: false, sidebarIcon: icon });
+    }
+    expect(() => setObjectTreeFolderSidebar(legacy, 'plans', true, '<script>')).toThrow(/icon/);
+    const invalid = { ...legacy, entries: [{ ...legacy.entries[0], showInSidebar: 'yes' }] };
+    expect(() => parseIQObjectTreeCatalog(invalid)).toThrow(/visibility/);
+    expect(() => parseIQObjectTreeCatalog({ ...legacy, entries: [{ ...legacy.entries[0], sidebarIcon: 'drawing:unknown' }] })).toThrow(/icon/);
+  });
   it('scopes metadata by panel, venue/market and symbol but not timeframe', () => {
     const one = objectTreeStorageKey('panel a', 'binance:perpetual', 'BTCUSDT');
     expect(one).toContain(encodeURIComponent('panel a'));

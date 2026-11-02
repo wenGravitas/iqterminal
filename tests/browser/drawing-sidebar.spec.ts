@@ -2,16 +2,29 @@ import { test, expect } from '@playwright/test';
 
 test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow chart pane', async ({ page }) => {
   await page.goto('/?fixture=1&fixtureTime=now');
+  await page.locator('#theme').selectOption('dark');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
 
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
   const sidebar = panel.locator('.drawing-sidebar');
+  const rightSidebar = panel.getByRole('complementary', { name: 'Chart sidebar', exact: true });
+  await expect(rightSidebar.getByRole('button')).toHaveCount(1);
+  await expect(sidebar.locator('.chart-objects-toggle')).toHaveCount(0);
+  const objectToggle = rightSidebar.locator('.chart-objects-toggle');
+  await expect(objectToggle).toHaveAccessibleName('Close Object Tree');
+  await objectToggle.click();
+  await expect(panel.locator('.chart-objects-panel')).toBeHidden();
+  await expect(rightSidebar).toBeVisible();
+  await expect(objectToggle).toHaveAccessibleName('Open Object Tree');
+  await objectToggle.click();
+  await expect(panel.locator('.chart-objects-panel')).toBeVisible();
   const linesTrigger = sidebar.getByRole('button', { name: 'Open Lines tools', exact: true });
   const lineFlyout = panel.locator('.drawing-sidebar-flyout[data-drawing-group="lines"]');
   const textTrigger = sidebar.getByRole('button', { name: 'Open Text tools', exact: true });
   const textFlyout = panel.locator('.drawing-sidebar-flyout[data-drawing-group="text"]');
+  await page.screenshot({ path: '/tmp/drawing-sidebar-refinement.png' });
 
   expect(await sidebar.locator('.drawing-sidebar-group[data-drawing-group="positions"]').evaluate(group => group.nextElementSibling?.matches('.drawing-sidebar-group[data-drawing-group="text"]'))).toBe(true);
   expect(await panel.locator('.drawing-sidebar-direct-tool')).toHaveCount(0);
@@ -70,23 +83,60 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
     const rail = panel.querySelector<HTMLElement>('.drawing-sidebar')!;
     const chart = panel.querySelector<HTMLElement>('.chart-stage')!;
     const objectTree = panel.querySelector<HTMLElement>('.chart-objects-panel')!;
+    const rightRail = panel.querySelector<HTMLElement>('.chart-sidebar')!;
     const workspaceBox = workspace.getBoundingClientRect();
     const railBox = rail.getBoundingClientRect();
     const chartBox = chart.getBoundingClientRect();
+    const select = rail.querySelector<HTMLElement>('.drawing-sidebar-select')!;
+    const selectIcon = select.querySelector<SVGElement>('svg')!;
+    const primary = rail.querySelector<HTMLElement>('.drawing-sidebar-group[data-drawing-group="lines"] .drawing-sidebar-primary')!;
+    const primaryIcon = primary.querySelector<SVGElement>('svg')!;
+    const trigger = rail.querySelector<HTMLElement>('.drawing-sidebar-group[data-drawing-group="lines"] .drawing-sidebar-menu-toggle')!;
+    const box = (element: Element) => element.getBoundingClientRect();
+    const centerX = (rect: DOMRect) => rect.left + rect.width / 2;
+    const centerY = (rect: DOMRect) => rect.top + rect.height / 2;
+    const selectBox = box(select), selectIconBox = box(selectIcon), primaryBox = box(primary), primaryIconBox = box(primaryIcon), triggerBox = box(trigger);
+    const groupBox = box(primary.parentElement!);
     return {
       paneWidth: workspaceBox.width,
       railWidth: railBox.width,
+      rightRailWidth: rightRail.getBoundingClientRect().width,
+      rightRailInset: workspaceBox.right - rightRail.getBoundingClientRect().right,
+      rightRailAfterTree: rightRail.getBoundingClientRect().left >= objectTree.getBoundingClientRect().right,
       chartWidth: chartBox.width,
       objectTreeWidth: objectTree.getBoundingClientRect().width,
       railHorizontalOverflow: rail.scrollWidth > rail.clientWidth,
+      selectIconOffsetX: Math.abs(centerX(selectBox) - centerX(selectIconBox)),
+      selectIconOffsetY: Math.abs(centerY(selectBox) - centerY(selectIconBox)),
+      primaryIconOffsetX: Math.abs(centerX(primaryBox) - centerX(primaryIconBox)),
+      primaryIconOffsetY: Math.abs(centerY(primaryBox) - centerY(primaryIconBox)),
+      iconColumnOffset: Math.abs(centerX(selectIconBox) - centerX(primaryIconBox)),
+      primaryTriggerGap: triggerBox.left - primaryBox.right,
+      groupWidth: groupBox.width,
+      groupHeight: groupBox.height,
+      primaryHeight: primaryBox.height,
+      triggerWidth: triggerBox.width,
     };
   }, panelId);
   expect(layout.paneWidth).toBeGreaterThan(500);
   expect(layout.paneWidth).toBeLessThan(700);
-  expect(layout.railWidth).toBeGreaterThan(0);
+  expect(layout.railWidth).toBe(35);
+  expect(layout.rightRailWidth).toBe(layout.railWidth);
+  expect(layout.rightRailInset).toBe(4);
+  expect(layout.rightRailAfterTree).toBe(true);
   expect(layout.objectTreeWidth).toBe(280);
-  expect(layout.chartWidth).toBeGreaterThan(320);
+  expect(layout.chartWidth).toBeGreaterThan(280);
   expect(layout.railHorizontalOverflow).toBe(false);
+  expect(layout.iconColumnOffset).toBeLessThan(1);
+  expect(layout.selectIconOffsetX).toBeLessThan(1);
+  expect(layout.selectIconOffsetY).toBeLessThan(1);
+  expect(layout.primaryIconOffsetX).toBeLessThan(1);
+  expect(layout.primaryIconOffsetY).toBeLessThan(1);
+  expect(layout.primaryTriggerGap).toBe(0);
+  expect(layout.groupWidth).toBe(28);
+  expect(layout.groupHeight).toBe(28);
+  expect(layout.primaryHeight).toBe(28);
+  expect(layout.triggerWidth).toBe(8);
 
   await linesTrigger.click();
   const flyoutBox = await lineFlyout.boundingBox();
@@ -94,6 +144,7 @@ test('drawing sidebar groups tools, cycles anchor snapping, and fits a narrow ch
   expect(flyoutBox).not.toBeNull();
   expect(workspaceBox).not.toBeNull();
   if (!flyoutBox || !workspaceBox) throw new Error('Drawing flyout geometry is unavailable');
+  expect(flyoutBox.x - workspaceBox.x).toBe(37);
   expect(flyoutBox.x + flyoutBox.width).toBeLessThanOrEqual(workspaceBox.x + workspaceBox.width + 1);
   expect(flyoutBox.y + flyoutBox.height).toBeLessThanOrEqual(workspaceBox.y + workspaceBox.height + 1);
 

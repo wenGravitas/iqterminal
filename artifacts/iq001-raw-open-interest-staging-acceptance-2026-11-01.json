@@ -1,0 +1,235 @@
+{
+  "task": "IQ-001",
+  "checkedAtUtc": "2026-11-01T14:14:53Z",
+  "status": "blocked",
+  "blocker": "The authorized staging gateway does not include the raw-open-interest handler. The PR remains an unmerged draft; deployment was not authorized or performed.",
+  "sourceIdentities": {
+    "frontendMain": "52fc12d640259497a09ed0f967edba7431c60bac",
+    "serverPr": {
+      "repository": "wenGravitas/iqterminal-server",
+      "number": 1,
+      "state": "OPEN",
+      "draft": true,
+      "head": "6bb5dc20074c62622edd5499fb57f3cdeb8c4202",
+      "main": "26337e4e618fce1c2ad1da0f38754837a7f55a4d"
+    },
+    "stagingCheckout": {
+      "path": "/opt/iqterminal",
+      "branch": "main",
+      "commit": "26337e4e618fce1c2ad1da0f38754837a7f55a4d",
+      "worktree": "clean"
+    },
+    "gateway": {
+      "container": "iqterminal-history-api",
+      "service": "app",
+      "imageTag": "iqterminal-liquidations:20261027-r1",
+      "imageId": "sha256:27240a2cf8045235fea419c784f6c434f63ee84aab53a49d2264d258f72ddc70",
+      "createdUtc": "2026-10-27T12:08:17.990633888Z",
+      "ociSourceRevisionLabel": null,
+      "labelsAvailable": "Docker Compose identity only; no source revision label"
+    },
+    "collector": {
+      "container": "iqterminal-server",
+      "service": "collector",
+      "imageTag": "iqterminal-history:local",
+      "imageId": "sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a",
+      "createdUtc": "2026-10-25T10:58:07.090470435Z"
+    }
+  },
+  "stagingRoute": {
+    "path": "/market-data/v1/raw-open-interest",
+    "method": "GET",
+    "market": "perpetual",
+    "fromMs": 1793528092719,
+    "toMs": 1793542492719,
+    "rangeMs": 14400000,
+    "serverDate": "Sun, 01 Nov 2026 14:14:53 GMT",
+    "responses": [
+      {
+        "venues": [
+          "binance"
+        ],
+        "status": 400,
+        "body": {
+          "error": "Unknown endpoint"
+        }
+      },
+      {
+        "venues": [
+          "hyperliquid"
+        ],
+        "status": 400,
+        "body": {
+          "error": "Unknown endpoint"
+        }
+      },
+      {
+        "venues": [
+          "binance",
+          "hyperliquid",
+          "bybit"
+        ],
+        "status": 400,
+        "body": {
+          "error": "Unknown endpoint"
+        }
+      }
+    ],
+    "health": {
+      "status": 200,
+      "serverDate": "Sun, 01 Nov 2026 14:14:53 GMT",
+      "binanceOiLastObservedAtMs": 1793542480601,
+      "hyperliquidOiLastObservedAtMs": 1793542480609,
+      "binanceFeedState": "live",
+      "hyperliquidFeedState": "live",
+      "pendingIntervals": 0,
+      "interpretation": "Existing collector health is live and fresh; it does not establish that the raw-OI HTTP handler is deployed."
+    },
+    "venuesOmittedProbe": {
+      "status": "not run",
+      "reason": "The route handler is absent in staging. The explicit Binance-only, Hyperliquid-only and three-venue requests returned 400 Unknown endpoint, so defaulting with venues omitted cannot be established yet."
+    },
+    "emptyHistoryProbe": {
+      "status": "not run",
+      "reason": "The route handler is absent. The next runbook includes a bounded one-hour Bybit-only request to verify empty observations with explicit unavailable/unverified metadata."
+    },
+    "staleStateProbe": {
+      "status": "not run",
+      "reason": "The route handler is absent. Existing health showed fresh feeds; a natural stale state was not observed and must not be simulated with injected data."
+    }
+  },
+  "clickhouse": {
+    "table": "iqterminal.positioning_oi",
+    "engineRead": "FINAL",
+    "rangeMs": 14400000,
+    "queriedAtMs": 1793542444315,
+    "groups": [
+      {
+        "venue": "binance",
+        "market": "perpetual",
+        "nativeSymbol": "BTCUSDT",
+        "rows": 479,
+        "lastSourceTimeMs": 1793542412015,
+        "lastObservedAtMs": 1793542420587,
+        "gapRows": 0
+      },
+      {
+        "venue": "hyperliquid",
+        "market": "perpetual",
+        "nativeSymbol": "BTC",
+        "rows": 438,
+        "lastSourceTimeMs": 1793542420327,
+        "lastObservedAtMs": 1793542420602,
+        "gapRows": 11
+      }
+    ],
+    "bybitRows": 0,
+    "latestSamples": [
+      {
+        "venue": "binance",
+        "market": "perpetual",
+        "nativeSymbol": "BTCUSDT",
+        "sourceTimeMs": 1793542445739,
+        "observedAtMs": 1793542450599,
+        "epoch": 1793540537569,
+        "valueDecimal": "97138.933",
+        "units": "BTC",
+        "source": "binance:fapi/v1/openInterest",
+        "sourceTimeQuality": "exchange-event",
+        "quality": "valid",
+        "gapBefore": 0
+      },
+      {
+        "venue": "hyperliquid",
+        "market": "perpetual",
+        "nativeSymbol": "BTC",
+        "sourceTimeMs": 1793542450332,
+        "observedAtMs": 1793542450674,
+        "epoch": 1793542330930,
+        "valueDecimal": "40626.36576",
+        "units": "BTC",
+        "source": "hyperliquid:info/metaAndAssetCtxs",
+        "sourceTimeQuality": "collector-sampled",
+        "quality": "valid",
+        "gapBefore": 0
+      }
+    ],
+    "limitation": "This is actual read-only database evidence, not raw endpoint response validation. The missing handler prevents checking venue metadata, response timestamp mapping, stale/empty endpoint states, or explicit Bybit unavailability."
+  },
+  "browser": {
+    "mode": "staging",
+    "baseUrl": "http://127.0.0.1:5173/",
+    "clientCommit": "52fc12d640259497a09ed0f967edba7431c60bac",
+    "runtime": {
+      "node": "22.19.0",
+      "playwright": "@playwright/test 1.64.0",
+      "chromium": "155.0.8059.79"
+    },
+    "context": "Fresh browser context using tests/browser/workspace-state.ts for a two-chart layout only; no fixture URL and no injected data.",
+    "charts": [
+      {
+        "venue": "binance",
+        "market": "perpetual",
+        "candlesLoaded": 1000,
+        "historyStatus": 200
+      },
+      {
+        "venue": "hyperliquid",
+        "market": "perpetual",
+        "candlesLoaded": 1001,
+        "historyStatus": 200
+      }
+    ],
+    "pageErrors": 0,
+    "openInterest": {
+      "defaultVenueRequestObserved": true,
+      "status": 400,
+      "body": {
+        "error": "Unknown endpoint"
+      },
+      "sourceControlVisible": true,
+      "sourceControlPointerAttempt": "Blocked: the chart canvas intercepted the click.",
+      "sourceSelectionVerified": false
+    },
+    "multipleOpenInterestPanesVerified": false,
+    "estimatedPositioningVerified": false,
+    "cuaInventory": "No app or browser surfaces; iab provider unavailable."
+  },
+  "reusedDeterministicEvidence": {
+    "serverCommit": "6bb5dc20074c62622edd5499fb57f3cdeb8c4202",
+    "typecheck": "passed",
+    "build": "passed; seven configured bundles",
+    "repositoryTests": "109 passed",
+    "frontendContractCommit": "52fc12d640259497a09ed0f967edba7431c60bac",
+    "note": "Head unchanged; these gates were not rerun."
+  },
+  "readOnlyCommandsForNextAuthorizedStagingRun": {
+    "versionPreflight": [
+      "gh pr view 1 --repo wenGravitas/iqterminal-server --json state,isDraft,headRefOid,baseRefName",
+      "git ls-remote https://github.com/wenGravitas/iqterminal-server.git refs/heads/main refs/pull/1/head",
+      "ssh staging 'git -C /opt/iqterminal rev-parse HEAD && git -C /opt/iqterminal status --short --branch'",
+      "ssh staging 'docker compose -f /opt/iqterminal/compose.yaml ps'",
+      "ssh staging 'docker inspect iqterminal-history-api --format=\"{{.Config.Image}}|{{.Image}}|{{.Created}}\"'"
+    ],
+    "rawOpenInterestRouteProbe": "node --input-type=module <<'EOF'\nconst to=Date.now(), from=to-4*60*60*1000;\nconst sets=[\n  {name:'binance-only',venues:'binance'},\n  {name:'hyperliquid-only',venues:'hyperliquid'},\n  {name:'explicit-default',venues:'binance,hyperliquid,bybit'},\n  {name:'omitted-venues-default',venues:null}\n];\nfor (const item of sets) {\n  const url=new URL('http://127.0.0.1:5173/market-data/v1/raw-open-interest');\n  const params=new URLSearchParams({from:String(from),to:String(to),market:'perpetual'});\n  if(item.venues!==null) params.set('venues',item.venues);\n  url.search=params;\n  const response=await fetch(url), body=await response.json();\n  const rows=body.observations??[];\n  const sample=rows.filter((_,i)=>i<2||i>=rows.length-2).map(row=>({venue:row.venue,nativeSymbol:row.nativeSymbol,sourceTimeMs:row.sourceTimeMs,observedAtMs:row.observedAtMs,epoch:row.epoch,valueDecimal:row.valueDecimal,units:row.units,source:row.source,sourceTimeQuality:row.sourceTimeQuality,quality:row.quality,gapBefore:row.gapBefore}));\n  console.log(JSON.stringify({name:item.name,url:url.toString(),status:response.status,returnedVenues:body.venues,from:body.from,to:body.to,truncated:body.truncated,invalidRows:body.invalidRows,observationCount:rows.length,bybitVerification:body.unitVerification?.bybit,bybitFeed:body.feeds?.bybit,bybitObservationCount:rows.filter(row=>row.venue==='bybit').length,sample,error:body.error}));\n}\nEOF",
+    "boundedPositioningRowsQuery": "ssh staging 'docker compose -f /opt/iqterminal/compose.yaml exec -T clickhouse clickhouse-client --query \"SELECT toUnixTimestamp64Milli(now64(3)) AS queriedAtMs,venue,market,nativeSymbol,sourceTimeMs,observedAtMs,epoch,toString(value) AS valueDecimal,units,source,sourceTimeQuality,quality,gapBefore FROM iqterminal.positioning_oi FINAL WHERE sourceTimeMs >= toUInt64(toUnixTimestamp64Milli(now64(3))-14400000) AND sourceTimeMs < toUnixTimestamp64Milli(now64(3)) ORDER BY sourceTimeMs DESC,venue LIMIT 2001 FORMAT JSONEachRow\"'",
+    "acceptanceConditions": [
+      "Require the remote deployment to identify server PR head 6bb5dc20074c62622edd5499fb57f3cdeb8c4202 or a specifically reviewed later commit before accepting route results; do not accept main 26337e4e618fce1c2ad1da0f38754837a7f55a4d or the old 20261027-r1 image as PR evidence.",
+      "Verify the response preserves the requested from/to and exact venue set. Compare returned sourceTimeMs, observedAtMs, epoch, decimal value, units, source, timestamp quality, quality and gapBefore against the bounded FINAL query.",
+      "For the default venue set, require explicit unavailable/unverified Bybit metadata and zero fabricated Bybit observations; absence of a response or a dropped venue is not acceptance.",
+      "Check stale flags against the 75000 ms threshold and empty-history state only from actual staging observations; do not age or inject fixture records. If no genuine stale or empty state occurs, record it as unobserved.",
+      "In a fresh no-fixture staging browser, attach Open Interest to both charts, exercise venue selection, verify the shared poller, and confirm the existing Net Longs/Net Shorts recorder path still works.",
+      "Run the explicit default venue request and a second request with the venues parameter omitted; require the latter to preserve the default venue set rather than silently drop Bybit.",
+      "Use the one-hour Bybit-only request as a bounded genuine empty-history case. Require zero observations plus explicit unavailable/unverified Bybit metadata.",
+      "For stale state, compare each response feed lastObservedAt age with the 75000 ms threshold and the returned stale flag. Do not alter timestamps or insert fixtures; if no natural stale source occurs, record it as unobserved."
+    ],
+    "bybitOnlyEmptyHistoryProbe": "node --input-type=module <<'EOF'\nconst to=Date.now(), from=to-60*60*1000;\nconst url=new URL('http://127.0.0.1:5173/market-data/v1/raw-open-interest');\nurl.search=new URLSearchParams({from:String(from),to:String(to),venues:'bybit',market:'perpetual'});\nconst response=await fetch(url), body=await response.json(), rows=body.observations??[];\nconsole.log(JSON.stringify({url:url.toString(),status:response.status,returnedVenues:body.venues,from:body.from,to:body.to,observationCount:rows.length,bybitVerification:body.unitVerification?.bybit,bybitFeed:body.feeds?.bybit,error:body.error}));\nEOF",
+    "staleStateCheck": "node --input-type=module <<'EOF'\nconst to=Date.now(), from=to-4*60*60*1000;\nconst url=new URL('http://127.0.0.1:5173/market-data/v1/raw-open-interest');\nurl.search=new URLSearchParams({from:String(from),to:String(to),venues:'binance,hyperliquid,bybit',market:'perpetual'});\nconst response=await fetch(url), body=await response.json();\nconst feedAges=Object.fromEntries(Object.entries(body.feeds??{}).map(([venue,feed])=>{const ageMs=Number.isSafeInteger(feed.lastObservedAt)?to-feed.lastObservedAt:null;return [venue,{state:feed.state,lastObservedAt:feed.lastObservedAt,ageMs,expectedIntervalMs:feed.expectedIntervalMs,stale:feed.stale,staleByAge:ageMs===null?null:ageMs>75000,unitVerification:feed.unitVerification}]}));\nconst healthResponse=await fetch('http://127.0.0.1:5173/market-data/v1/health'),health=await healthResponse.json();\nconsole.log(JSON.stringify({rawStatus:response.status,asOfMs:body.asOfMs,feedAges,healthStatus:healthResponse.status,healthOi:health.oi,healthPositioningFeeds:health.netPositioning?.feeds,error:body.error}));\nEOF"
+  },
+  "actionsNotPerformed": [
+    "merge",
+    "deploy",
+    "signed exchange action",
+    "fixture injection"
+  ]
+}

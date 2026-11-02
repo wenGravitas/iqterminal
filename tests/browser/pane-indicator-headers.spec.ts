@@ -12,11 +12,14 @@ async function expectPaneHeaderBounds(page: import('@playwright/test').Page, exp
       const rect = host.getBoundingClientRect();
       const rowList = (host.querySelector('.pane-indicator-rows') as HTMLElement | null)?.getBoundingClientRect();
       const title = (host.querySelector('.active-indicator-copy > span') as HTMLElement | null)?.getBoundingClientRect();
+      const paneActions = host.querySelector<HTMLElement>('.pane-layout-controls-inline')?.getBoundingClientRect();
+      const edgePadding = Number.parseFloat(getComputedStyle(host).paddingRight) + 1;
       if (!paneRect || !rowList || !title) return false;
       const contentLeft = plot ? stage.left + plot.left + 1 : paneRect.left + 5;
       const titleLeft = plot ? stage.left + plot.left + 4 : paneRect.left + 8;
-      return Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - paneRect.right) < 2
-        && Math.abs(rowList.left - contentLeft) < 2 && Math.abs(title.left - titleLeft) < 2;
+      return Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - stage.right) < 2
+        && Math.abs(rowList.left - contentLeft) < 2 && Math.abs(title.left - titleLeft) < 2
+        && (!paneActions || Math.abs(paneActions.right - (stage.right - edgePadding)) < 2);
     });
   }, expectedHosts)).toBe(true);
 }
@@ -114,13 +117,22 @@ test('pane indicators use one local header while overlays stay in the main list'
       const chartRect = p.element.querySelector('.chart-stage').getBoundingClientRect();
       const rowList = host.querySelector<HTMLElement>('.pane-indicator-rows')?.getBoundingClientRect();
       const title = host.querySelector<HTMLElement>('.active-indicator-copy > span')?.getBoundingClientRect();
-      return Boolean(plot && rowList && title && Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - paneRect.right) < 2
+      const paneActions = host.querySelector<HTMLElement>('.pane-layout-controls-inline')?.getBoundingClientRect();
+      const edgePadding = Number.parseFloat(getComputedStyle(host as HTMLElement).paddingRight) + 1;
+      return Boolean(plot && rowList && title && Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - chartRect.right) < 2
         && Math.abs(rect.top - (chartRect.top + plot.top)) < 2
         && Math.abs(rowList.left - (chartRect.left + plot.left + 1)) < 2
-        && Math.abs(title.left - (chartRect.left + plot.left + 4)) < 2);
+        && Math.abs(title.left - (chartRect.left + plot.left + 4)) < 2
+        && (!paneActions || Math.abs(paneActions.right - (chartRect.right - edgePadding)) < 2));
     });
     const controlsFit = [...p.element.querySelectorAll('.pane-layout-controls:not([hidden])')].every((host: HTMLElement) => {
-      const stage = host.closest('.chart-stage')!.getBoundingClientRect(), rect = host.getBoundingClientRect();
+      const rect = host.getBoundingClientRect();
+      if (host.classList.contains('pane-layout-controls-toolbar')) {
+        const toolbar = host.closest('.chart-toolbar')?.getBoundingClientRect();
+        return Boolean(toolbar && rect.width === 82 && rect.height === 23 && rect.top >= toolbar.top && rect.bottom <= toolbar.bottom);
+      }
+      const stage = host.closest('.chart-stage')?.getBoundingClientRect();
+      if (!stage) return false;
       return rect.left >= stage.left && rect.right <= stage.right && rect.top >= stage.top && rect.bottom <= stage.bottom;
     });
     return p.engine === before.engine && p.engine.chart === before.chart && p.diagnostics().netPositioning.request === before.request
@@ -287,6 +299,77 @@ test('pane indicators use one local header while overlays stay in the main list'
   await panel.getByRole('button', { name: 'Restore all panes', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
   await expectPaneHeaderBounds(page, 2);
+});
+
+test('narrow indicator headers span the price scale and main pane controls follow Watch level', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.route('**/market-data/v1/net-positioning*', async route => {
+    const url = new URL(route.request().url()), venues = (url.searchParams.get('venues') ?? 'binance').split(',');
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      version: 1, method: url.searchParams.get('method') ?? 'price-oi', market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC', venues,
+      from: Number(url.searchParams.get('from') ?? 0), to: Number(url.searchParams.get('to') ?? Date.now()),
+      unitVerification: {}, feeds: {}, intervals: [], truncated: false, pendingIntervals: 0, history: 'explicit layout fixture', semantics: 'layout only',
+    }) });
+  });
+  await installDepthFixture(page);
+  await page.evaluate(() => { const terminal = (window as any).__terminal; for (const panel of [...terminal.dock.panels].slice(1)) panel.api.close(); });
+  await expect(page.locator('.candle-panel')).toHaveCount(1);
+  const panel = page.locator('.candle-panel').first();
+  const closeObjects = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
+  if (await closeObjects.isVisible()) await closeObjects.click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.panes().length)).toBe(1);
+  const watch = panel.getByRole('button', { name: 'Watch level', exact: true });
+  const mainControls = panel.locator('.chart-toolbar .pane-layout-controls-toolbar');
+  await expect(watch).toBeVisible();
+  await expect(watch).toBeInViewport();
+  await expect(mainControls).toHaveCount(1);
+  await expect(mainControls).toBeVisible();
+  await expect(mainControls).toBeInViewport();
+  await expect.poll(() => watch.evaluate(element => element.nextElementSibling?.classList.contains('pane-layout-controls-toolbar'))).toBe(true);
+  await expect(mainControls.getByRole('button', { name: 'Move main pane up', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Move main pane down', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Collapse main pane to header only', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Maximize main pane', exact: true })).toBeDisabled();
+  await page.setViewportSize({ width: 500, height: 860 });
+  await addIndicator(panel, 'Net Longs — Estimated');
+  await addIndicator(panel, 'Open Interest');
+  await expectPaneHeaderBounds(page, 2);
+
+  const stageWidth = await panel.locator('.chart-stage').evaluate(element => element.getBoundingClientRect().width);
+  expect(stageWidth).toBeGreaterThanOrEqual(300);
+  expect(stageWidth).toBeLessThanOrEqual(500);
+  await expect.poll(() => watch.evaluate(element => element.nextElementSibling?.classList.contains('pane-layout-controls-toolbar'))).toBe(true);
+  await expect(mainControls).toHaveCount(1);
+  await expect(mainControls.getByRole('button', { name: 'Move main pane down', exact: true })).toBeEnabled();
+  await mainControls.getByRole('button', { name: 'Move main pane down', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex())).toBe(1);
+  await expect.poll(() => mainControls.getAttribute('data-pane-index')).toBe('1');
+  await mainControls.getByRole('button', { name: 'Move main pane up', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex())).toBe(0);
+  await mainControls.getByRole('button', { name: 'Maximize main pane', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(0);
+  await mainControls.getByRole('button', { name: 'Restore all panes', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
+
+  await mainControls.getByRole('button', { name: 'Collapse main pane to header only', exact: true }).click();
+  await expect(panel.getByRole('button', { name: 'Expand main pane', exact: true })).toBeVisible();
+  await panel.getByRole('button', { name: 'Expand main pane', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].primaryPaneCollapsed)).toBe(false);
+  await expectPaneHeaderBounds(page, 2);
+
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]')
+    .getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true }).click();
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.raw-open-interest"]')
+    .getByRole('button', { name: 'Remove Open Interest', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.panes().length)).toBe(1);
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await expect(mainControls).toBeVisible();
+  await expect(mainControls).toBeInViewport();
+  await expect(watch).toBeInViewport();
+  await expect(mainControls.getByRole('button', { name: 'Move main pane up', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Move main pane down', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Collapse main pane to header only', exact: true })).toBeDisabled();
+  await expect(mainControls.getByRole('button', { name: 'Maximize main pane', exact: true })).toBeDisabled();
 });
 
 test('Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order', async ({ page }) => {
