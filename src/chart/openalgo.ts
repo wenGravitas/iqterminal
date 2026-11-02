@@ -1,3 +1,4 @@
+import { RectangleDragPreview } from './rectangle-drag-preview';
 import {setVenueLabelIcon,venueLabelIcon,venueIconPath,setLabelCurrencySource,type LabelVenue} from './venue-label';
 import {candleGeometry} from 'openalgo-charts';
 import { CandleElapsedTimer } from './candle-elapsed-timer';
@@ -128,6 +129,7 @@ export class OpenAlgoCandleChart {
   private venueIconLoads:HTMLImageElement[]=[];
   private readonly inputAbort = new AbortController();
   private readonly drawingAxisLabels: DrawingAxisPriceLabels[] = [];
+  private readonly rectangleDragPreview: RectangleDragPreview;
   private readonly drawingPreviews = new Map<string, Drawing>();
   private readonly drawingSubscriptions: (() => void)[] = [];
   private visibleCallbacks = new Map<() => void, () => void>();
@@ -250,6 +252,7 @@ export class OpenAlgoCandleChart {
     if (!drawingToolsRegistered) { registerBuiltinDrawingTools(); drawingToolsRegistered = true; }
     registerIQDrawingLabelRenderers();
     this.drawings = new DrawingController(this.chart, { magnet: 'weak' });
+    this.rectangleDragPreview = new RectangleDragPreview(this.chart, this.drawings, container);
     this.syncDrawingAxisLabels();
     this.drawingSubscriptions.push(
       this.chart.on('draw:preview', payload => {
@@ -1151,7 +1154,7 @@ export class OpenAlgoCandleChart {
   onFootprintViewport?: (from:number,to:number,analysis:FootprintAnalysisDemand)=>void;
   onHeatmapViewport?: (viewport:import('../feed/staging-heatmap').HeatmapViewport)=>void;
   captureJournalImage() {
-    if (this.drawingPreviews.size) throw new Error('Finish or cancel the current drawing before capture.');
+    if (this.drawingPreviews.size || this.rectangleDragPreview.active) throw new Error('Finish or cancel the current drawing before capture.');
     // The installed engine listens to pointerleave on its public container. Clear
     // cursor/hover ink, then consume this chart's queued paint before copying it.
     this.container.dispatchEvent(new PointerEvent('pointerleave'));
@@ -1208,6 +1211,7 @@ export class OpenAlgoCandleChart {
     this.drawingPreviews.clear();
     this.objects.destroy();
     this.scopedDrawings.destroy();
+    this.rectangleDragPreview.dispose();
     this.drawings.destroy();
     for (const id of [...this.netPositioningPanes.keys()]) this.removeNetPositioningPane(id);
     this.removeFootprintSurface();
