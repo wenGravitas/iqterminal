@@ -1,3 +1,11 @@
+import { currentTheme } from './theme';
+import { boundedBrushPoints, installEverydayPresets } from './chart/everyday-drawings';
+import { JournalChartBridge } from './journal/chart-bridge';
+import type { JournalController } from './journal/controller';
+import { JOURNAL_INDICATOR_ID } from './journal/indicator';
+import { snapshotLayers } from './journal/coverage';
+import { restoreChart, showRestoredNotice } from './journal/restore-chart';
+import type { RestoredChart } from './journal/restore';
 import { IndicatorValueGrid } from './chart/indicator-value-grid';
 import {venueBadge,venueIconPath} from './chart/venue-label';
 import {candleValueArea,positioningRangeLabel,type PositioningRange} from './chart/positioning-range';
@@ -84,9 +92,9 @@ import {
   setObjectTreeFolderSidebar,
 } from './chart/object-tree';
 
-const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range']);
+const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range', 'arrow', 'path', 'brush']);
 const DRAWING_TOOL_GROUPS = [
-  { id: 'lines', label: 'Lines', tools: ['trend-line', 'horizontal-line', 'horizontal-ray'], defaultTool: 'trend-line' },
+  { id: 'lines', label: 'Lines', tools: ['trend-line', 'horizontal-line', 'horizontal-ray', 'arrow', 'path', 'brush'], defaultTool: 'trend-line' },
   { id: 'shapes', label: 'Shapes and Fibonacci', tools: ['rectangle', 'fib-retracement'], defaultTool: 'rectangle' },
   { id: 'positions', label: 'Position tools', tools: ['long-position', 'short-position', 'date-range', 'price-range'], defaultTool: 'long-position' },
   { id: 'text', label: 'Text Tools', tools: ['text', 'callout'], defaultTool: 'text' },
@@ -97,6 +105,9 @@ const DRAWING_ICON_MARKUP: Record<string, string> = {
   'trend-line': '<path d="M3 15 14 4m-6 0h6v6"/>',
   'horizontal-line': '<path d="M2.5 10h13"/>',
   'horizontal-ray': '<path d="M2.5 10h13m-4-4 4 4-4 4"/>',
+  arrow: '<path d="M3 16 16 3M8 3h8v8"/>',
+  path: '<path d="M2 15 6 8 10 12 17 3M12 3h5v5"/>',
+  brush: '<path d="M2 14c5-13 2 8 8-2s8 1 7-8"/>',
   rectangle: '<rect x="3" y="4" width="12" height="10"/>',
   'fib-retracement': '<path d="M4 3v13m0-12h11M4 7h8M4 11h11M4 15h8"/>',
   text: '<path d="M3 4h14M10 4v12m-3 0h6"/>',
@@ -286,6 +297,8 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsStatus?: OrderWallStatus;
   private toolbarWrap = document.createElement('div');
   private tradingOverlayButton = document.createElement('button');
+  private journalBridge?: JournalChartBridge;
+  private chartFrame = document.createElement('div');
   private chartWorkspace = document.createElement('div');
   private floatingDrawingToolbar?: FloatingDrawingToolbar;
   private floatingDrawingToggle = document.createElement('button');
@@ -539,6 +552,7 @@ export class CandlePanel implements IContentRenderer {
     private notifications: Notifications,
     private tickerTierSources: () => TradeTickerTierSource[] = () => [],
     private tradingController?: TradingController,
+    private journal?: JournalController,
   ) {
     this.element.className = 'candle-panel';
     this.indicatorTitleHints = new IndicatorTitleHints();
@@ -546,6 +560,7 @@ export class CandlePanel implements IContentRenderer {
     this.toolbarWrap.className = 'chart-toolbar-wrap';
     this.toolbar.className = 'chart-toolbar';
     this.chartWorkspace.className = 'chart-workspace';
+    this.chartFrame.className = 'journal-chart-frame';
     this.drawingSidebar.className = 'drawing-sidebar';
     this.drawingSidebar.setAttribute('aria-label', 'Drawing tools and actions');
     this.chartSidebar.className = 'chart-sidebar';
@@ -678,7 +693,8 @@ export class CandlePanel implements IContentRenderer {
     this.objectsPanel.append(objectTreeHeader, this.objectsRows, this.objectsTreeResize, this.objectsTreeMenu);
     this.buildDialogs();
     this.buildDrawingDialogs();
-    this.chartWorkspace.append(this.drawingSidebar, this.chart, this.objectsPanel, this.chartSidebar, this.drawingSidebarMenuLayer);
+    this.chartFrame.append(this.chart);
+    this.chartWorkspace.append(this.drawingSidebar, this.chartFrame, this.objectsPanel, this.chartSidebar, this.drawingSidebarMenuLayer);
     this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.vwapControls.dialog, this.tpoControls.dialog, this.orderWallsControls.dialog, this.compositionControls.dialog, this.placementControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
@@ -941,6 +957,7 @@ export class CandlePanel implements IContentRenderer {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-template-action]');
       if (!button) return;
       if (button.dataset.dialogAction === 'close-drawing-templates') this.templatesDialog.close();
+      else if (button.dataset.dialogAction === 'everyday-presets' && this.templateRepository) { const result = installEverydayPresets(this.templateRepository); this.templateCatalog = result.catalog; this.renderDrawingTemplates(); this.setTemplateStatus(`${result.added} presets added. Existing templates and defaults were preserved.`); }
       else if (button.dataset.dialogAction === 'save-drawing-template') void this.saveDrawingTemplate();
       else if (button.dataset.templateAction) void this.templateAction(button.dataset.templateAction, button.dataset.templateId ?? '');
     }, options);
@@ -1145,10 +1162,18 @@ export class CandlePanel implements IContentRenderer {
       this.chart.dataset.focused = String(isFocused);
       if (isFocused) this.updateObjectsSummary();
     }));
+    if (this.journal) this.journalBridge = new JournalChartBridge(this.journal, {
+      id: params.api.id, frame: this.chartFrame, chartRoot: this.chart, toolbar: this.toolbar, engine: this.engine!, scheduler: this.scheduler,
+      config: () => this.selection, snapshotInput: () => this.journalSnapshotInput(), currentMarketTime: () => this.status.state === 'loading' ? null : this.candles.at(-1)?.t ?? null,
+      captureImage: () => { this.cvdView?.draw(); this.openInterestView?.draw(); this.orderFlowPaneView?.draw(); return this.engine!.captureJournalImage(); },
+      enableMarkers: () => { if (!this.dead && !this.selection.indicators.some(instance => instance.definitionId === JOURNAL_INDICATOR_ID)) this.addNativeIndicator(JOURNAL_INDICATOR_ID); },
+      changeSettings: settings => { const instance = this.selection.indicators.find(item => item.definitionId === JOURNAL_INDICATOR_ID); if (instance) this.changeIndicator(instance.instanceId, { settings }); }, visible: () => this.visible, active: () => this.params.api.isActive,
+    });
+    if ('journalRestored' in this.selection) showRestoredNotice(this.chartFooter, ['These settings were restored from a local journal capture. Current history and indicator results may differ. Open the original journal screenshot for the visual record.']);
     this.register(params.api.id, this);
     this.subscribe();
     queueMicrotask(() => {
-      if (!this.dead) this.params.api.setTitle(`${instrumentLabel(this.selection)} · ${this.selection.interval}`);
+      if (!this.dead) this.params.api.setTitle(`${'journalRestored' in this.selection ? 'Restored settings · ' : ''}${instrumentLabel(this.selection)} · ${this.selection.interval}`);
     });
     this.visibility();
     this.timer = setInterval(() => {
@@ -1306,7 +1331,7 @@ export class CandlePanel implements IContentRenderer {
     saveRow.append(nameLabel, this.templatesName, includeLabel, this.dialogButton('Save', 'save-drawing-template', true));
     this.templatesList.className = 'drawing-template-list';
     this.templatesStatus.className = 'dialog-status'; this.templatesStatus.setAttribute('role', 'status');
-    const templateFooter = document.createElement('footer'); templateFooter.append(this.dialogButton('Done', 'close-drawing-templates'));
+    const templateFooter = document.createElement('footer'); templateFooter.append(this.dialogButton('Add everyday presets', 'everyday-presets'), this.dialogButton('Done', 'close-drawing-templates'));
     this.templatesDialog.append(templateHeader, saveRow, this.templatesList, this.templatesStatus, templateFooter);
   }
 
@@ -1527,6 +1552,7 @@ export class CandlePanel implements IContentRenderer {
     if (iqMetadata && typeof iqMetadata === 'object' && (iqMetadata as Record<string, unknown>).version === IQ_DRAWING_META_VERSION) return;
     const defaultId = this.templateCatalog?.defaults.find(item => item.tool === live.tool)?.templateId;
     const defaults = this.templateCatalog?.templates.find(item => item.id === defaultId);
+    if (live.tool === 'brush' && live.points.length > 512) draw.update(live.id, { points: boundedBrushPoints(live.points) }, { force: true });
     const initial = initialDrawingMetadata(live, this.selection.interval);
     const initialProps = initial.props ?? {};
     const patch = defaults ? this.drawingTemplatePatch(live, defaults, this.selection.interval) : initial;
@@ -2196,6 +2222,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private drawingContextMenu(event: ContextMenuEvent) {
+    this.journalBridge?.setContextAnchor(event);
     if (event.target.kind !== 'drawing' || !this.engine) return;
     const drawing = this.engine.drawings.drawings().find(item => event.target.id === item.id
       || event.target.id === `draw:${item.id}` || event.target.id?.startsWith(`draw:${item.id}#`));
@@ -2257,6 +2284,7 @@ export class CandlePanel implements IContentRenderer {
       this.addMoveToFolderMenuItems(add, kind, id);
       if (!folder.children.length) add('Folder is empty', 'noop', { disabled: true });
     }
+    if (fromChart) this.journalBridge?.appendContextActions(this.objectsTreeMenu);
     const rect = this.objectsPanel.getBoundingClientRect();
     const width = 244, height = Math.min(this.objectsTreeMenu.childElementCount * 27 + 8, window.innerHeight - 12);
     const x = clientX || rect.left + 10, y = clientY || rect.top + 34;
@@ -2889,7 +2917,8 @@ export class CandlePanel implements IContentRenderer {
     this.chart.setAttribute('aria-label', `${instrumentLabel(this.selection)} ${this.selection.type === 'footprint' ? 'Footprint' : 'candlestick'} chart`);
     this.metadata.dataset.mode = this.selection.type;
     if (this.selection.type === 'footprint') this.updateFootprintMetadata(); else this.updateInstrumentMetadata();
-    this.renderActiveIndicators(); this.updateToolbarOverflowCue();
+    // Saved linked indicators need the chart output registry before their rows render.
+    if (this.outputRegistry) this.renderActiveIndicators(); this.updateToolbarOverflowCue();
   }
 
   private updateToolbarOverflowCue() {
@@ -4057,6 +4086,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private openIndicatorSettings(instance: IndicatorInstance) {
+    if (instance.definitionId === JOURNAL_INDICATOR_ID) { this.journalBridge?.openSettings(instance.settings); return; }
     if (instance.settingsVersion !== (nativeDefinition(instance.definitionId)?.settingsVersion ?? 1)) return;
     if (instance.definitionId === COMPOSITION_SMA_ID) { this.openCompositionSma(undefined, instance); return; }
     if (instance.definitionId === TRADE_BUBBLES_ID) { this.tradeBubblesView?.openSettings(); return; }
@@ -4855,6 +4885,7 @@ export class CandlePanel implements IContentRenderer {
     this.reconcileIndicatorChildren(this.activeRows, this.indicatorErrorRow ? [...mainRows, this.indicatorErrorRow] : mainRows);
     for (const [id, view] of this.indicatorRowViews) if (!activeIds.has(id)) { view.element.remove(); this.indicatorRowViews.delete(id); }
     this.renderDrawingObjects();
+    this.journalBridge?.configure();
   }
 
   private async openPicker() {
@@ -5579,6 +5610,7 @@ export class CandlePanel implements IContentRenderer {
     const nextVisible = this.params.api.isVisible;
     if (this.visible && !nextVisible) this.engine?.capturePendingView();
     this.visible = nextVisible;
+    this.journalBridge?.configure();
     if (!this.visible) { this.cancelIndicatorTooltip(); this.indicatorTitleHints.clear(); }
     this.studyHost?.setVisible(this.visible);
     this.orderFlowPaneView?.setVisible(this.visible);
@@ -5768,6 +5800,26 @@ export class CandlePanel implements IContentRenderer {
     if (this.candles.length > 5_000) this.candles.splice(0, this.candles.length - 5_000);
   }
 
+  private journalSnapshotInput() {
+    if (!this.engine) throw new Error('Chart is not ready');
+    const layers = snapshotLayers(this.selection, this.candles, this.diagnostics());
+    return { display: { timezone: getDisplayTimezone(), theme: currentTheme(), currency: getCurrencyPreference() }, candleState: { count: this.candles.length, firstTime: this.candles[0]?.t ?? null, last: this.candles.at(-1) ?? null }, config: this.selection, chart: this.engine.chart, drawings: this.engine.drawings, objectTree: this.objectTreeCatalog,
+      paneForInstance: (id: string) => { const instance = this.selection.indicators.find(item => item.instanceId === id); return instance ? this.indicatorPaneIndex(instance) : -1; },
+      layers, dataAsOf: layers[0]?.dataAsOf ?? null };
+  }
+
+  applyJournalRestore(restored: RestoredChart) {
+    if (!this.engine) return Promise.reject(new Error('Restored chart is not ready'));
+    return restoreChart({ chart: this.engine.chart, signal: this.abort.signal, alive: () => !this.dead,
+      paneForInstance: id => { const instance = this.selection.indicators.find(item => item.instanceId === id); return instance ? this.indicatorPaneIndex(instance) : -1; },
+      setDrawings: document => this.engine!.drawings.fromJSON(document),
+      sourceStyle: style => this.engine!.series.applyOptions(style),
+      sourceScale: id => this.engine!.chart.setSeriesPriceScale(this.engine!.series, id),
+      setObjectTree: catalog => { this.objectTreeCatalog = catalog; this.persistObjectTree(); this.renderDrawingObjects(); },
+      report: warnings => { this.params.api.setTitle(`Restored settings · ${instrumentLabel(this.selection)} · ${this.selection.interval}`); showRestoredNotice(this.chartFooter, warnings); this.save(); },
+    }, restored);
+  }
+
   diagnostics() {
     const range = this.engine?.visibleRange();
     const bar = this.engine?.latestCandle();
@@ -5840,6 +5892,7 @@ export class CandlePanel implements IContentRenderer {
     for (const release of this.indicatorHintRootReleases.values()) release(); this.indicatorHintRootReleases.clear();
     this.indicatorTitleHints.dispose(); this.indicatorTooltipDwell.dispose();
     this.dead = true;
+    this.journalBridge?.dispose();
     this.objectsTreeMenu.hidden = true;
     this.floatingDrawingToolbar?.dispose();
     this.objectsTreeMenu.remove();

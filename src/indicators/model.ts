@@ -1,3 +1,4 @@
+import { JOURNAL_DEFINITION } from '../journal/indicator';
 import { LIQUIDATIONS_ID, liquidationSettings } from '../liquidations/settings';
 import { CVD_ID,cvdSettings } from '../feed/cvd';
 import { DAILY_VWAP_ID, DEFAULT_DAILY_VWAP, dailyVwapSettings } from './daily-vwap';
@@ -91,6 +92,7 @@ export interface IndicatorInstance {
 }
 export const DEFAULT_FOOTPRINT_VIEW = { displayMode: 'bidask' as const, cellStyle: 'ladder' as const, statsPosition: 'bottom' as const, opacity: .85, showCandle: true, showPoc: true, showValueArea: true, showDiagonalImbalances: true, stackedImbalances: false, imbalanceRatio: 3 as const, imbalanceThreshold: .01 };
 export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
+  JOURNAL_DEFINITION,
   {id:LIQUIDATIONS_ID,name:'Liquidations',description:'Actual reported long/short liquidations · Bybit bankruptcy prices / sampled Binance',category:'Order Flow',implementation:'builtin',settingsVersion:1,defaults:{...liquidationSettings(undefined)},settingsSchema:[],placements:['pane'],dataRequirements:['actual-liquidation-reports'],sourceBinding:'chart',multiplicity:'single',capabilities:{editScript:false,duplicate:false}},
   {id:CVD_ID,name:'Multi-Venue CVD',description:'Executed aggressor-side cumulative volume delta · historical/live · Spot and Perpetual',category:'Order Flow',implementation:'builtin',
    settingsVersion:1,defaults:{...cvdSettings(undefined)},settingsSchema:[{key:'anchor',label:'Reset mode',kind:'select',defaultValue:'daily'},{key:'units',label:'Quantity unit',kind:'select',defaultValue:'btc'}],

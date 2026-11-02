@@ -1,0 +1,77 @@
+{
+  "environment": "Local Linux x86_64, Chromium 155, SwiftShader; explicit synthetic/recorded fixtures; no live connectivity or Pi frame-rate certification",
+  "unit": {
+    "command": "pnpm test",
+    "passed": 921,
+    "skipped": 1,
+    "passedFiles": 115
+  },
+  "browser": {
+    "distinctPassed": 39,
+    "journalChecks": 10,
+    "note": "38-case regression run had 36 passes; two remaining cases passed after fixture timestamp and crowded-layout test corrections. The additional saved Volume/SMA restore check passed. Journal checks rerun after final capture/repository/UI changes.",
+    "files": [
+      "composition-cvd.spec.ts",
+      "composition-release1.spec.ts",
+      "drawing-tools.spec.ts",
+      "drawing-sidebar.spec.ts",
+      "floating-drawing-toolbar.spec.ts",
+      "object-tree.spec.ts",
+      "workspace-defaults.spec.ts",
+      "journal.spec.ts",
+      "journal-restore.spec.ts"
+    ]
+  },
+  "typecheck": "passed",
+  "builds": {
+    "diagnostics": "VITE_DATA_MODE=staging VITE_DIAGNOSTICS=1 pnpm build passed",
+    "normal": "pnpm build passed",
+    "warning": "Existing bundle size advisory above 500 kB remains."
+  },
+  "images": [
+    {
+      "file": "artifacts/journal-candle-cvd.png",
+      "width": 1286,
+      "height": 674,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-editor.png",
+      "width": 1366,
+      "height": 768,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-everyday-drawings.png",
+      "width": 1366,
+      "height": 768,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-footprint-heatmap-dpr1.png",
+      "width": 1286,
+      "height": 831,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-footprint-heatmap-dpr2.png",
+      "width": 2572,
+      "height": 1662,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-marker-benchmark.png",
+      "width": 1366,
+      "height": 768,
+      "visuallyInspected": true
+    },
+    {
+      "file": "artifacts/journal-restored-linked.png",
+      "width": 1366,
+      "height": 768,
+      "visuallyInspected": true
+    }
+  ],
+  "markerBenchmark": "artifacts/journal-marker-benchmark.json",
+  "deployment": "none; local commits only"
+}

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 
+// Fixed fixture timestamps keep sleep/wake history checks stable across wall-clock minute boundaries.
 test.use({ storageState: { cookies: [], origins: [] } });
 
 async function readState(page: import('@playwright/test').Page, panelId: string, keepHandles = false) {
@@ -181,7 +182,7 @@ async function movePair(page: import('@playwright/test').Page, panel: import('@p
 test('duplicating a composed provider creates a new identity and keeps the consumer bound to its original output', async ({ page }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.goto('/?fixture=1&fixtureTime=now');
+  await page.goto('/?fixture=1');
   await expect(page.locator('.brand')).toContainText('FIXTURE');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const panel = page.locator('.candle-panel').first();
@@ -262,7 +263,7 @@ test('Volume output SMA composes, moves, persists a bounded band and releases cl
   const bandCoordinates: ReturnType<typeof bandCoordinateCapture>[] = [];
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.addInitScript(() => localStorage.setItem('basis.theme.v1', 'dark'));
-  await page.goto('/?fixture=1&fixtureTime=now');
+  await page.goto('/?fixture=1');
   await expect(page.locator('.brand')).toContainText('FIXTURE');
   await expect.poll(() => page.evaluate(() => (window as any).__terminal?.stats().panels[0]?.bars)).toBe(5000);
   const panel = page.locator('.candle-panel').first();

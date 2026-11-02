@@ -170,7 +170,7 @@ test('chart drawing context menu opens settings, clones and deletes with undo', 
   const open = async () => {
     await panel.locator('.chart-stage').click({ button: 'right', position: point });
     await expect(menu).toBeVisible();
-    await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings']);
+    await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings', 'Quick journal capture', 'Capture and annotate', 'Open journal']);
   };
   await open();
   await page.keyboard.press('Escape');

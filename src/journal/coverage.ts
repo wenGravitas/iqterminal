@@ -1,0 +1,14 @@
+import { duration, instrumentKey, type Candle, type CanonicalSeries } from '../feed/protocol';
+import type { LayerCoverage } from './model';
+const ms = (value: unknown) => typeof value === 'number' && Number.isFinite(value) && value >= 1_230_768_000_000 ? value : null;
+/** Read only published provenance. Unknown coverage stays unknown; no candle-derived order flow. */
+export function snapshotLayers(series: CanonicalSeries, candles: readonly Candle[], diagnostics: any): LayerCoverage[] {
+  const first = candles[0], last = candles.at(-1), source = instrumentKey(series), result: LayerCoverage[] = [{ layer: 'candles', source, dataAsOf: ms(diagnostics.status?.lastUpdate), from: first?.t ?? null, to: last ? last.t + duration[series.interval] : null,
+    quality: diagnostics.status?.state ?? 'unavailable', gaps: [], detail: last ? `${candles.length} retained bars; last bar ${last.closed ? 'closed' : 'forming / partial'}, open ${new Date(last.t).toISOString()}. dataAsOf is the local receipt time of the latest chart update, not a preserved execution cutoff.` : 'No candle coverage available.' }];
+  const footprint = diagnostics.footprint?.status;
+  if (series && (diagnostics.series?.type === 'footprint' || diagnostics.footprintTotals?.length)) result.push({ layer: 'executions / footprint', source, dataAsOf: ms(footprint?.eventTime ?? footprint?.lastTradeAt), from: ms(footprint?.retentionStart ?? footprint?.firstTradeAt), to: ms(footprint?.lastTradeAt), quality: footprint?.coverage ?? 'unknown', gaps: [], detail: 'Final cells are not ordered execution playback. No execution history was pinned.' });
+  for (const cvd of diagnostics.cvd?.sources ?? []) result.push({ layer: 'cvd', source: cvd.source, dataAsOf: ms(cvd.asOf), from: ms(cvd.coverage?.from), to: ms(cvd.coverage?.to), quality: cvd.status ?? 'unknown', gaps: (cvd.coverage?.gaps ?? []).filter((gap: any) => ms(gap.from) && ms(gap.to)).map((gap: any) => ({ from: gap.from, to: gap.to })), detail: cvd.message ?? 'Bounded signed-flow projection; history not preserved.' });
+  for (const [key, layer] of [['heatmap', 'resting order book'], ['orderWalls', 'order walls'], ['tpo', 'TPO']] as const) { const state = diagnostics[key]?.status; if (!state) continue; result.push({ layer, source, dataAsOf: ms(state.lastUpdate ?? state.coverageTo), from: ms(state.coverageFrom ?? state.collectionStart ?? state.collectionStartedAt), to: ms(state.coverageTo ?? state.lastUpdate), quality: state.state ?? 'unknown', gaps: [], detail: state.message ?? 'No retained replay window was created.' }); }
+  if (diagnostics.openInterest) result.push({ layer: 'open interest', source: 'selected verified perpetual venues', dataAsOf: null, from: null, to: null, quality: diagnostics.openInterest.quality ?? 'unknown', gaps: [], detail: 'Capture preserves settings and visible image, not a replay-pinned raw observation history.' });
+  return result;
+}

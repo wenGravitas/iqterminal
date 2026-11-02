@@ -1,3 +1,6 @@
+import { canonicalMarket } from './journal/model';
+import { JournalController } from './journal/controller';
+import { prepareRestore } from './journal/restore';
 import { LiquidationTickerPanel } from './liquidations/panel';
 import { CurrencyDisplaySettings } from './currency-display';
 import { LevelWatchPanel } from './level-watch/panel';
@@ -39,6 +42,15 @@ const notifications = new Notifications();
 const trading = new TradingController({ fixtureMode: fixture });
 const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
+const journal = JournalController.create(library, async snapshot => {
+  if (chartContextCount() >= PANEL_BUDGET) throw new Error(`All ${PANEL_BUDGET} chart slots are in use. Close a chart or comparison before opening saved settings.`);
+  const restored = await prepareRestore(snapshot, library);
+  if (chartContextCount() >= PANEL_BUDGET) throw new Error('A chart slot was filled while preparing settings. Free a slot and retry.');
+  const id = `chart-${crypto.randomUUID()}`;
+  dock.addPanel({ id, component: 'candle', title: 'Restored settings', params: { ...restored.config, journalRestored: { capturedAt: snapshot.capturedAt } },
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, minimumWidth: 220, minimumHeight: 140 });
+  save(); const panel = panels.get(id); if (!panel) throw new Error('The new chart could not be created'); return panel.applyJournalRestore(restored);
+});
 const panels = new Map<string, CandlePanelInstance>();
 const marketComparisons = new Map<string, MarketComparisonPanel>();
 const executionHover = new TickerExecutionHoverCoordinator();
@@ -219,7 +231,7 @@ dock = createDockview(root, {
         else {executionHover.registerChart(id,null);panels.delete(id);}
         editor?.refreshTargets();
       }, openEditor, id => executionHover.refreshChart(id), notifications,
-      () => [...tickers.values()].map(panel => panel.tierSnapshot()), trading);
+      () => [...tickers.values()].map(panel => panel.tierSnapshot()), trading, journal);
     }
     if (options.name === 'script-editor') {
       editor = new LazyScriptEditorPanel(library, () => [...panels].map(([id, panel]) => ({ id, panel })), save);
@@ -272,6 +284,7 @@ addTrading.addEventListener('click', () => addHyperliquidTrading(), { signal: ab
 tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
 addComparison.addEventListener('click', () => addMarketComparison(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
+const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Local chart journal and backups'; journalButton.addEventListener('click', () => journal.open(undefined, dock.activePanel && panels.get(dock.activePanel.id) ? canonicalMarket(panels.get(dock.activePanel.id)!.series as import('./feed/protocol').CanonicalSeries) : undefined)); document.querySelector('#commands')?.append(journalButton);
 add.addEventListener('click', () => addChart(), { signal: abort.signal });
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
 reset.addEventListener('click', () => { defaults(); save(); }, { signal: abort.signal });
@@ -313,7 +326,7 @@ if (diagnosticsEnabled) {
   try { perf = new PerformanceObserver(list => { for (const entry of list.getEntries()) longTasks.push(entry.duration); }); perf.observe({ entryTypes: ['longtask'] }); } catch { /* long-task API is optional */ }
   const debug = {
     dock, dispose, addChart, addMarketComparison, addTicker, addLiquidationTicker, addHyperliquidTrading, openWatches, tickers, notifications, openEditor, feed, panels, marketComparisons, library, fixture, trading,
-    marketPulse, connectionStatus,
+    marketPulse, connectionStatus, journal,
     stats: () => ({ panels: [...panels.values()].map(panel => panel.diagnostics()), marketComparisons: [...marketComparisons.values()].map(panel => panel.diagnostics()), feed: feed.diagnostics, feedProtocol: feed.protocolDiagnostics(), frameIntervals: scheduler.intervals, longTasks, domPanels: document.querySelectorAll('.candle-panel').length, marketPulse: marketPulse.diagnostics() }),
     resetMetrics: () => { scheduler.intervals.length = 0; longTasks.length = 0; feed.resetProtocolDiagnostics(); for (const panel of panels.values()) panel.resetCompositionDiagnostics(); },
   };
@@ -322,6 +335,7 @@ if (diagnosticsEnabled) {
 
 function dispose() {
   if (disposed) return;
+  journal.dispose();
   // HMR also tears down the app, without necessarily firing pagehide first.
   // Flush while Dockview still owns the user's panels and parameters.
   flushLayoutSave();

@@ -1,0 +1,5 @@
+import type { IndicatorDefinition } from '../indicators/model';
+export const JOURNAL_INDICATOR_ID = 'native.chart-journal';
+export interface JournalMarkerSettings { clusterDistance: number; previews: boolean }
+export function journalMarkerSettings(raw: unknown): JournalMarkerSettings { const v = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {}; return { clusterDistance: typeof v.clusterDistance === 'number' && Number.isFinite(v.clusterDistance) ? Math.max(12, Math.min(64, Math.round(v.clusterDistance))) : 24, previews: v.previews !== false }; }
+export const JOURNAL_DEFINITION: IndicatorDefinition = { id: JOURNAL_INDICATOR_ID, name: 'Journal', description: 'Local journal observations for this exact instrument, across timeframes. Removing markers never deletes entries.', category: 'Analysis', implementation: 'builtin', settingsVersion: 1, defaults: { ...journalMarkerSettings(undefined) }, settingsSchema: [], placements: ['attachment'], dataRequirements: ['local-journal'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } };

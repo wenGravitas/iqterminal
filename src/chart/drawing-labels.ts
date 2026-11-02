@@ -1,3 +1,4 @@
+import { extendedRectanglePoints } from './everyday-drawings';
 import {compactVenueText,venueLabelIcon,amountCaption,labelCurrency,type LabelVenue,type LabelAmount} from './venue-label';
 import { drawFibRetracement, IQ_FIB_DEFAULT_STYLE } from './drawing-fibonacci';
 import { measureDrawingDistance } from './drawing-measure-hit';
@@ -25,11 +26,12 @@ export function registerIQDrawingLabelRenderers() {
             { path: 'text.value', label: 'Text on ray', kind: 'text' as const, group: 'text' as const },
           ],
         }
-      : tool.settings;
+      : id === 'rectangle' ? { ...tool.settings, fields: [...(tool.settings?.fields ?? []), { path: 'style.extendRight', label: 'Extend zone right', kind: 'boolean' as const, group: 'line' as const, defaultValue: false }] } : tool.settings;
     const draw: WrappedDraw = context => {
       if (id === 'price-range' || id === 'date-range') { nativeDraw(context); return; }
       if (id === 'fib-retracement') { drawFibRetracement(context, nativeDraw); return; }
       if(id==='rectangle'){
+        if (context.style.extendRight === true) context = { ...context, pts: extendedRectanglePoints(context.pts, context.rc.plotWidth * context.rc.dpr) };
         if(context.drawing.props?.positioningRange){nativeDraw({...context,drawing:{...context.drawing,text:{...context.drawing.text,value:''}}});const xs=context.pts.map(p=>p.x);if(Math.max(...xs)>=0&&Math.min(...xs)<=context.rc.plotWidth*context.rc.dpr)drawIQLabel(context,id);}
         else nativeDraw(context);return;
       }
@@ -43,6 +45,7 @@ export function registerIQDrawingLabelRenderers() {
     };
     Object.defineProperty(draw, wrappedDraw, { value: true });
     registerDrawingTool({ ...tool, ...(id === 'fib-retracement' ? { defaultStyle: IQ_FIB_DEFAULT_STYLE } : {}),
+      ...(id === 'rectangle' ? { distance: (x: number, y: number, context: Parameters<DrawingTool['distance']>[2]) => tool.distance(x, y, context.drawing.style?.extendRight === true ? { ...context, pts: extendedRectanglePoints(context.pts, context.rc.plotWidth) } : context) } : {}),
       ...(id === 'price-range' || id === 'date-range' ? { distance: (x: number, y: number, context: Parameters<typeof measureDrawingDistance>[3]) => measureDrawingDistance(id, x, y, context) } : {}), settings, draw });
   }
 }

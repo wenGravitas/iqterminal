@@ -1150,6 +1150,15 @@ export class OpenAlgoCandleChart {
 
   onFootprintViewport?: (from:number,to:number,analysis:FootprintAnalysisDemand)=>void;
   onHeatmapViewport?: (viewport:import('../feed/staging-heatmap').HeatmapViewport)=>void;
+  captureJournalImage() {
+    if (this.drawingPreviews.size) throw new Error('Finish or cancel the current drawing before capture.');
+    // The installed engine listens to pointerleave on its public container. Clear
+    // cursor/hover ink, then consume this chart's queued paint before copying it.
+    this.container.dispatchEvent(new PointerEvent('pointerleave'));
+    this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Full));
+    this.scheduler.invalidate(this); this.scheduler.flush(this);
+    return this.chart.takeScreenshot();
+  }
   draw() {
     if (!this.visible || document.hidden || this.disposed) return;
     this.applyFootprintAnalysisSummaries();

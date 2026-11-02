@@ -1,0 +1,12 @@
+import { describe, expect, it } from 'vitest';
+import { registerBuiltinDrawingTools, getDrawingTool } from 'openalgo-charts/draw';
+import { registerIQDrawingLabelRenderers } from '../src/chart/drawing-labels';
+import { iqDrawingSettingsSchema } from '../src/chart/drawing-settings';
+import { boundedBrushPoints, extendedRectanglePoints, installEverydayPresets } from '../src/chart/everyday-drawings';
+import { IQDrawingTemplateRepository, createMemoryDrawingTemplateStorage } from '../src/chart/drawing-templates';
+registerBuiltinDrawingTools();registerIQDrawingLabelRenderers();
+describe('everyday native drawings',()=>{
+  it('uses installed arrow, path and native freehand contracts',()=>{expect(getDrawingTool('arrow').points).toBe(2);expect(getDrawingTool('path').points).toBe(0);expect(getDrawingTool('brush').freehand).toBe(true);expect(iqDrawingSettingsSchema('rectangle').fields.map(field=>field.path)).toEqual(expect.arrayContaining(['style.fill','style.fillColor','style.fillOpacity','style.lineWidth','style.extendRight']));});
+  it('bounds brush anchors without replacing time/price with screen pixels',()=>{const points=Array.from({length:5000},(_,i)=>({time:1800000000+i/100,price:100+Math.sin(i/20),pressure:.5}));const bounded=boundedBrushPoints(points);expect(bounded).toHaveLength(512);expect(bounded[0]).toEqual(points[0]);expect(bounded.at(-1)).toEqual(points.at(-1));expect(points).toHaveLength(5000);expect(bounded.every(point=>points.some(original=>original.time===point.time&&original.price===point.price))).toBe(true);});
+  it('extends only rendered geometry and installs presets without overwriting authored defaults',()=>{const points=[{x:100,y:20},{x:20,y:50}];expect(extendedRectanglePoints(points,300)).toEqual([{x:300,y:20},{x:20,y:50}]);expect(points[0]!.x).toBe(100);let id=0;const repo=new IQDrawingTemplateRepository(createMemoryDrawingTemplateStorage(),()=>1800000000000,()=>`template-${++id}`);const original=repo.saveTemplate('Yellow outlined zone','rectangle',{nativeValues:{'style.color':'#ffffff'},label:{present:false,value:''},textColorExplicit:false,analysisInterval:null,visibility:{visible:true,intervals:null}});repo.setDefault?.('rectangle',original.templates[0]!.id);const before=repo.load();expect(installEverydayPresets(repo).added).toBe(4);expect(installEverydayPresets(repo).added).toBe(0);expect(repo.load().templates.find(t=>t.name==='Yellow outlined zone')?.nativeValues['style.color']).toBe('#ffffff');expect(repo.load().defaults).toEqual(before.defaults);});
+});

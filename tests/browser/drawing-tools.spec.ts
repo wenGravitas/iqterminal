@@ -112,6 +112,9 @@ async function drawingStorageKey(page: Page, panel: Locator) {
 }
 
 async function placeHorizontalLine(page: Page, panel: Locator, offset = 0) {
+  await expect.poll(() => panel.evaluate(element => { const view = [...(window as any).__terminal.panels.values()].find((p: any) => p.element === element); return view?.engine.barCount; })).toBe(5000);
+  const narrow = await panel.evaluate(element => { const view = [...(window as any).__terminal.panels.values()].find((p: any) => p.element === element); return view.engine.chart.plotRect(0).width < 160; });
+  const close = panel.locator('.chart-object-tree-collapse'), restoreTree = narrow && await close.isVisible(); if (restoreTree) await close.click();
   await selectDrawingTool(panel, 'horizontal-line');
   const id = await panel.getAttribute('data-panel-id');
   if (!id) throw new Error('Candle panel id is missing');
@@ -127,6 +130,7 @@ async function placeHorizontalLine(page: Page, panel: Locator, offset = 0) {
   expect(await page.evaluate(key => localStorage.getItem(key), storageKey)).toBe(beforePreview);
   await stage.click({ position: { x: point.x + offset, y: point.y + offset } });
   await expect.poll(async () => (await drawingState(page, panel)).drawings.length).toBeGreaterThan(0);
+  if (restoreTree) await panel.locator('.chart-objects-toggle').click();
 }
 
 test('native drawing placement, IQ settings, templates and instrument scope use one-step history', async ({ page }) => {
@@ -143,7 +147,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   const panelId = await panel.getAttribute('data-panel-id');
   if (!panelId) throw new Error('Candle panel id is missing');
   const exposedTools = await panel.locator('[data-drawing-tool]').evaluateAll(buttons => [...new Set(buttons.map(button => (button as HTMLElement).dataset.drawingTool))].filter(Boolean).sort());
-  expect(exposedTools).toEqual(['callout', 'date-range', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'price-range', 'rectangle', 'short-position', 'text', 'trend-line']);
+  expect(exposedTools).toEqual(['arrow', 'brush', 'callout', 'date-range', 'fib-retracement', 'horizontal-line', 'horizontal-ray', 'long-position', 'path', 'price-range', 'rectangle', 'short-position', 'text', 'trend-line']);
 
   await placeHorizontalLine(page, panel);
   let state = await drawingState(page, panel);
@@ -205,7 +209,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
     const action = view.drawingObjectAction.bind(view);
     view.drawingObjectAction = (event: Event) => {
       const clicked = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-object-action]');
-      if (clicked?.dataset.objectAction === 'visible' && clicked.textContent === 'Show') (window as any).__showActionCount++;
+      if (clicked?.dataset.objectAction === 'visible' && clicked.getAttribute('aria-label') === 'Show object') (window as any).__showActionCount++;
       return action(event);
     };
     (window as any).__showButton = button;
@@ -556,6 +560,7 @@ test('native drawing placement, IQ settings, templates and instrument scope use 
   await placeHorizontalLine(page, secondPerp, 21);
   await expect.poll(async () => (await drawingState(page, secondPerp)).drawings.length).toBe(1);
   expect((await drawingState(page, panel)).drawings).toHaveLength(3);
+  if (await secondObjectsPanel.isHidden()) await secondPerp.locator('.chart-objects-toggle').click();
   const secondDrawingRow = secondObjectsPanel.locator('.chart-object-row.kind-drawing').last();
   const secondDrawingObjectId = await secondDrawingRow.getAttribute('data-object-id');
   expect(secondDrawingObjectId).toBeTruthy();
@@ -1293,7 +1298,7 @@ for (const dpr of [1, 2]) test.describe(`collapsed measure picking at DPR ${dpr}
       await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.drawings.select(null), panelId);
       await panel.locator('.chart-stage').click({ button: 'right', position: { x: target.x, y: target.y } });
       await expect(menu).toBeVisible();
-      await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings']);
+      await expect(menu.getByRole('menuitem')).toHaveText(['Delete', 'Clone', 'Settings', 'Quick journal capture', 'Capture and annotate', 'Open journal']);
       await menu.getByRole('menuitem', { name: 'Settings', exact: true }).click();
       const settings = panel.getByRole('dialog', { name: 'Drawing settings', exact: true });
       await expect(settings.locator('.drawing-settings-title')).toHaveText(`${target.tool} settings`);
