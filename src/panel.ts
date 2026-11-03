@@ -642,7 +642,10 @@ export class CandlePanel implements IContentRenderer {
     this.vwapControls = new DailyVwapControls((id, settings) => this.changeIndicator(id, { settings: { ...settings } }), this.abort.signal);
     this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
     this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
-    this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
+    this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), () => {
+      const instance = this.nativeIndicator(ORDER_WALLS_ID);
+      return Boolean(instance?.visible && orderWallsSettings(instance.settings).mode === 'top-levels' && this.engine?.fitOrderWalls());
+    }, () => this.retryOrderWallsHistory(), this.abort.signal);
     this.compositionControls = new CompositionControls((output, settings, instanceId, changeScale) => this.addCompositionSma(output, settings, instanceId, changeScale));
     this.placementControls = new CompositionPlacementControls((instanceId, targetId, together, heightPercent, lowerBand) =>
       this.compositionPlacement.move(instanceId, targetId, together, heightPercent, lowerBand));
@@ -4789,6 +4792,9 @@ export class CandlePanel implements IContentRenderer {
 
   private indicatorWarning(instance: IndicatorInstance, unavailable: boolean, study?: import('./scripts/host').StudyView) {
     if (unavailable) return 'Unavailable in this chart.';
+    if (instance.definitionId === ORDER_WALLS_ID && !supportsDepth(this.selection)) {
+      return 'Unavailable on this market. Order Walls supports Binance BTCUSDT spot and USD-M perpetual.';
+    }
     if (instance.definitionId === COMPOSITION_SMA_ID) {
       const ref = instance.numericInputs?.source;
       if (!ref || !this.outputRegistry.resolve(ref).available) return 'Input unavailable. Choose another input in Settings.';
@@ -5260,8 +5266,26 @@ export class CandlePanel implements IContentRenderer {
       return;
     }
 
+    if (!this.visible || !instance.visible) {
+      const hadSource = Boolean(this.orderWallsSubscriptionKey || this.releaseOrderWalls);
+      this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+      if (hadSource) this.orderWallsGeneration++;
+      this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsControls.setStatus(this.orderWallsStatus);
+      return;
+    }
+
     this.orderWallsControls.setStatus(this.orderWallsStatus);
     this.updateOrderWallsViewport();
+  }
+
+  private retryOrderWallsHistory() {
+    const instance = this.nativeIndicator(ORDER_WALLS_ID), archive = this.orderWallsStatus?.archive;
+    const market = this.selection.market === 'spot' ? 'spot' : 'perpetual';
+    if (this.dead || this.abort.signal.aborted || !this.visible || !instance?.visible || this.selection.venue !== 'binance'
+      || orderWallsSettings(instance.settings).mode !== 'top-levels' || !archive || archive.market !== market
+      || archive.requestComplete !== false || archive.resumeAfter === undefined) return;
+    this.feed.retryOrderWallsHistory(this.params.api.id);
   }
 
   private updateOrderWallsViewport(from?: number, to?: number, low?: number, high?: number, height?: number) {
@@ -5623,6 +5647,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine.visible = this.visible;
       if (this.visible) this.scheduler.invalidate(this.engine);
     }
+    this.syncOrderWalls();
     this.syncNetPositioning();
     this.syncTpo();
     if (this.visible) {

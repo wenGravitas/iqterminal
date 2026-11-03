@@ -1,5 +1,6 @@
 import {
   DEFAULT_ORDER_WALLS_SETTINGS,
+  orderWallMarket,
   orderWallValueAt,
   orderWallValuePointAt,
   orderWallsSettings,
@@ -20,19 +21,27 @@ export class OrderWallsControls {
   private current: OrderWallsSettings = { ...DEFAULT_ORDER_WALLS_SETTINGS };
   private status?: OrderWallStatus;
   private supported = false;
+  private currentMarket?: 'spot' | 'perpetual';
   private sourceLabel = 'Binance BTCUSDT';
   private noticeAllowed = false;
   private topFields: HTMLElement[] = [];
   private thresholdFields: HTMLElement[] = [];
   private relativeFields: HTMLElement[] = [];
   private absoluteFields: HTMLElement[] = [];
+  private fitButton?: HTMLButtonElement;
+  private resumeHistoryButton = document.createElement('button');
 
-  constructor(private changed: (settings: OrderWallsSettings) => void, signal: AbortSignal) {
+  constructor(private changed: (settings: OrderWallsSettings) => void, private fitWalls: () => boolean,
+    private retryHistory: () => void, signal: AbortSignal) {
     this.dialog.className = 'indicator-settings order-walls-settings';
     this.dialog.setAttribute('aria-label', 'Order Walls settings');
     this.notice.className = 'order-walls-notice';
     this.notice.setAttribute('role', 'status');
     this.notice.setAttribute('aria-live', 'polite');
+    this.resumeHistoryButton.type = 'button';
+    this.resumeHistoryButton.className = 'order-walls-history-retry';
+    this.resumeHistoryButton.textContent = 'Resume history';
+    this.resumeHistoryButton.setAttribute('aria-label', 'Resume Order Walls history');
 
     const header = document.createElement('header');
     const title = document.createElement('h2'); title.textContent = 'Order Walls';
@@ -77,12 +86,19 @@ export class OrderWallsControls {
     const hint = document.createElement('p'); hint.className = 'dialog-status';
     hint.textContent = 'Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.';
     const footer = document.createElement('footer');
+    const fit = this.fitButton = document.createElement('button'); fit.type = 'button'; fit.textContent = 'Fit Walls';
+    fit.title = 'Adjust the vertical price scale once to the selected Top Levels in the loaded interval.';
+    fit.addEventListener('click', () => { this.fitWalls(); }, { signal });
     const apply = document.createElement('button'); apply.type = 'submit'; apply.className = 'primary'; apply.textContent = 'Apply';
-    footer.append(apply);
+    footer.append(fit, apply);
     this.form.className = 'indicator-settings-form';
     this.form.append(header, this.fields, hint, footer); this.dialog.append(this.form);
 
     const options = { signal };
+    this.resumeHistoryButton.addEventListener('click', event => {
+      event.stopPropagation();
+      this.retryHistory();
+    }, options);
     close.addEventListener('click', () => this.dialog.close(), options);
     this.dialog.addEventListener('click', event => { if (event.target === this.dialog) this.dialog.close(); }, options);
     method.addEventListener('change', () => this.updateMethodFields(), options);
@@ -130,6 +146,7 @@ export class OrderWallsControls {
 
   sync(settings: OrderWallsSettings, supported: boolean, attached = true, visible = true, series?: Series) {
     this.current = orderWallsSettings(settings); this.supported = supported;
+    this.currentMarket = series ? orderWallMarket(series) === 'binance-spot' ? 'spot' : 'perpetual' : undefined;
     if(series)this.sourceLabel=instrumentLabel(series);
     this.noticeAllowed = attached && visible;
     this.renderStatus();
@@ -139,6 +156,7 @@ export class OrderWallsControls {
 
   private renderStatus() {
     let message = '';
+    let canResumeHistory = false;
     if (!this.supported) {
       this.notice.dataset.state = 'unavailable';
       message = 'Order-book data unavailable for this market. Use Binance BTCUSDT.';
@@ -147,7 +165,27 @@ export class OrderWallsControls {
     } else {
       const status = this.status, replayPending = status.replay && status.replay.through < status.replay.to;
       this.notice.dataset.state = status.state;
-      if (replayPending) message = status.provisional
+      if (status.archive) {
+        const archive = status.archive;
+        canResumeHistory = this.noticeAllowed && this.supported && this.current.mode === 'top-levels'
+          && archive.market === this.currentMarket && archive.state === 'partial'
+          && archive.requestComplete === false && archive.resumeAfter !== undefined;
+        const live = status.state === 'live' ? `Live · confirmed ${archiveTime(status.lastConfirmedAt)}`
+          : status.state === 'stale' ? `Live stale · last confirmed ${archiveTime(status.lastConfirmedAt)}`
+          : status.state === 'gap' ? 'Live has a continuity gap' : `Live ${status.state}`;
+        const exactness = archive.exact ? 'exact profile' : archive.state === 'unavailable' || archive.profileStatus === 'unavailable'
+          ? 'profile unavailable' : 'checking profile';
+        const backend = archive.profileStatus && archive.profileStatus !== 'ready' ? ` · backend ${archive.profileStatus}` : '';
+        const line1 = `${live} · history ${archive.state}${backend} · ${exactness} · Top ${archive.requestedTopN}/side · ±${archive.requestedBandPercent}%`;
+        const availableFrom = archive.availableFrom ?? archive.from;
+        const confirmedTo = archive.confirmedTo ?? status.lastConfirmedAt;
+        const historyRange = `${archiveTime(availableFrom)}–${archiveTime(confirmedTo)}`;
+        const band = observedBandCoverage(status, archive.midpoint, archive.requestedBandPercent);
+        const gaps = archive.gaps.length ? ` · ${archive.gaps.length} gap${archive.gaps.length === 1 ? '' : 's'}` : '';
+        const detail = `History ${historyRange} UTC · observed band ${band}${gaps}`;
+        const reason = archive.reason ?? status.message;
+        message = `${line1}\n${detail}${reason && (archive.state === 'partial' || archive.state === 'unavailable') ? ` · ${reason}` : ''}`;
+      } else if (replayPending) message = status.provisional
         ? 'Loading earlier order history. Current order sizes are still updating.' : 'Loading earlier order history…';
       else if (status.state === 'loading') message = 'Waiting for order-book data…';
       else if (status.state === 'stale') message = 'Updates paused.';
@@ -156,8 +194,11 @@ export class OrderWallsControls {
       else if (status.valueHistoryLimited || status.episodeHistoryLimited) message = 'Some earlier order history is unavailable.';
       else if (status.provisional) message = 'Order sizes are still updating.';
     }
-    this.notice.textContent = message; this.notice.title = message;
+    this.notice.replaceChildren(document.createTextNode(message));
+    if (canResumeHistory) this.notice.append(this.resumeHistoryButton);
+    this.notice.title = message;
     this.notice.hidden = !this.noticeAllowed || !message;
+    if (this.fitButton) this.fitButton.disabled = !this.noticeAllowed || !this.supported || this.current.mode !== 'top-levels' || this.status?.state !== 'live';
   }
 
   open(settings: OrderWallsSettings) {
@@ -173,6 +214,8 @@ export class OrderWallsControls {
 
   private updateMethodFields() {
     const top=(this.inputs.get('mode') as HTMLSelectElement).value==='top-levels';
+    const fit=this.form.querySelector<HTMLButtonElement>('footer button[type=button]');
+    if(fit){fit.hidden=!top||!this.supported;fit.disabled=!this.noticeAllowed||!this.supported||!top||this.status?.state!=='live';}
     for(const field of this.topFields){field.hidden=!top;field.querySelector<HTMLInputElement|HTMLSelectElement>('input,select')!.disabled=!top;}
     for(const field of this.thresholdFields){field.hidden=top;field.querySelector<HTMLInputElement|HTMLSelectElement>('input,select')!.disabled=top;}
     const aggregation=this.inputs.get('aggregation') as HTMLSelectElement;
@@ -225,4 +268,23 @@ function ageText(ms: number) {
   if (ms < 60_000) return `${Math.floor(ms / 1000)} s`;
   if (ms < 3_600_000) return `${Math.floor(ms / 60_000)} min`;
   return `${Math.floor(ms / 3_600_000)} h`;
+}
+
+function archiveTime(value?: number | null) {
+  if (!Number.isFinite(value) || !value) return 'pending';
+  return new Date(value!).toISOString().slice(5, 16).replace('T', ' ');
+}
+
+function observedBandCoverage(status: OrderWallStatus, rawMidpoint?: string | null, bandPercent = 0) {
+  const midpoint = Number(rawMidpoint), scope = status.bookScope;
+  if (!(midpoint > 0) || !scope || !(bandPercent > 0)) return 'unknown';
+  const side = (complete: boolean, edge: number | undefined, available: number) => {
+    if (complete) return '100%';
+    if (!Number.isFinite(edge)) return 'unknown';
+    const covered = Math.max(0, Math.min(100, (available / (midpoint * bandPercent / 100)) * 100));
+    return `${covered.toFixed(0)}%`;
+  };
+  const bids = side(scope.bidComplete, scope.bidFloor, midpoint - (scope.bidFloor ?? midpoint));
+  const asks = side(scope.askComplete, scope.askCeiling, (scope.askCeiling ?? midpoint) - midpoint);
+  return `bid ${bids}, ask ${asks}`;
 }

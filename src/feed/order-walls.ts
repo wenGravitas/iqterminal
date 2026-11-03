@@ -6,6 +6,10 @@ export const ORDER_WALL_MAX_LEVELS_PER_SIDE = 5_000;
 export const ORDER_WALL_MAX_SEGMENTS = 20_000;
 export const ORDER_WALL_MAX_VALUE_RUNS = 50_000;
 export const ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT = 2_048;
+/** Larger, independent budgets for durable multi-hour Binance Top Levels archives. */
+export const ORDER_WALL_ARCHIVE_MAX_SEGMENTS = 100_000;
+export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS = 1_000_000;
+export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT = 100_000;
 
 export type OrderWallAggregation = 'auto' | 'native' | 10 | 25 | 50 | 100 | 250;
 export type OrderWallColorMode = 'heat' | 'bid-ask';
@@ -139,13 +143,52 @@ export interface OrderWallStatus {
   valueHistoryLimited?: boolean;
   episodeHistoryLimited?: boolean;
   replay?: { from: number; to: number; through: number };
+  /** Fixed-profile archive progress is independent of current live depth. */
+  archive?: OrderWallArchiveStatus;
+}
+export interface OrderWallArchiveStatus {
+  profileId: string;
+  state: 'loading' | 'building' | 'backfilling' | 'complete' | 'partial' | 'unavailable';
+  /** False while transport paging is incomplete, independently of source coverage gaps. */
+  requestComplete?: boolean;
+  /** True only when the entire requested interval is confirmed without source gaps. */
+  rangeComplete?: boolean;
+  /** Fixed-watermark cursor to resume after a transport interruption. */
+  resumeAfter?: number;
+  /** Backend profile catch-up is independent of the requested interval's coverage state. */
+  profileStatus?: 'building' | 'backfilling' | 'ready' | 'unavailable';
+  from: number;
+  to: number;
+  market?: 'spot' | 'perpetual';
+  feed?: string;
+  aggregation?: string;
+  profileVersion?: number;
+  algorithmVersion?: number;
+  schemaVersion?: number;
+  midpoint?: string | null;
+  availableFrom?: number;
+  confirmedTo?: number;
+  loadedThrough?: number;
+  gaps: Array<{ from: number; to: number; reason: string }>;
+  gapsTruncated?: boolean;
+  requestedBandPercent: number;
+  profileBandPercent: number;
+  requestedTopN: number;
+  exact: boolean;
+  reason?: string;
 }
 export interface OrderWallSegment {
   id: string;
+  /** Stable selected-candidate identity from the versioned server profile. */
+  archiveEntryId?: string;
+  /** True only while this candidate is in the current live selected set; never inferred from end:null. */
+  currentSelection?: boolean;
   /** Depth-book generation that bounds continuity for this segment. */
   epoch: string | number;
   side: 'bid' | 'ask';
   price: number;
+  /** Original exchange decimal string when supplied by the durable archive. */
+  priceExact?: string;
   start: number;
   end: number | null;
   peakUsd: number;
@@ -164,7 +207,11 @@ export interface OrderWallSegment {
   endKnown: boolean;
   censoredReason?: string;
 }
-export interface OrderWallValuePoint { at: number; usd: number; percentile: number | null; rank?: number | null; quantity?: number }
+export interface OrderWallValuePoint {
+  at: number; usd: number; percentile: number | null; rank?: number | null; quantity?: number;
+  /** Exact source decimals survive adapter/render-number conversion. */
+  quantityExact?: string; notionalExact?: string;
+}
 export interface OrderWallHit {
   segment: OrderWallSegment;
   at: number;

@@ -138,8 +138,10 @@ export class DirectOrderWallsService {
   }
 
   private publish(sub: Subscription, kind: 'snapshot'|'patch', data: unknown[], status: OrderWallStatus) {
+    const current = status.state === 'live';
     const payload = kind === 'patch' ? (data as Array<{ id:string; segment:import('./order-walls').OrderWallSegment|null; valuePoints?:import('./order-walls').OrderWallValuePoint[] }>).map(patch => patch.segment
-      ? { ...patch, segment: { ...patch.segment, valueRuns: [] } } : patch) : data;
+      ? { ...patch, segment: { ...patch.segment, currentSelection: current && patch.segment.end === null, valueRuns: [] } } : patch)
+      : (data as import('./order-walls').OrderWallSegment[]).map(segment => ({ ...segment, currentSelection: current && segment.end === null }));
     this.emit({ type: 'order-wall-batch', ids: [sub.id], key: sub.key, generation: 0, batchId: ++sub.batch,
       kind, ...(kind === 'snapshot' ? { segments: payload } : { patches: payload }), status } as Event);
   }

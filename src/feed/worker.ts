@@ -16,6 +16,7 @@ import { BinanceHeatmapService } from './heatmap-service';
 import { BinanceDepthService } from './depth-service';
 import { DirectOrderWallsService } from './direct-order-walls';
 import { StagingOrderWallsService } from './staging-order-walls';
+import { OrderWallsArchiveService } from './order-walls-archive-service';
 import { StagingNetPositioningService } from './staging-net-positioning';
 import { StagingRawOpenInterestService } from './staging-raw-open-interest';
 import { TickerService } from './ticker-service';
@@ -26,6 +27,7 @@ import { StagingFeedService, stagingMarket } from './staging-service';
 import { heatmapKey } from './heatmap-model';
 import { fixtureBars } from './fixtures';
 import { duration, marketOf, type Command, type Event, type Series } from './protocol';
+import type { OrderWallRequest } from './order-walls';
 import { MINUTE_MS, type TpoMinute } from '../indicators/tpo-engine';
 const scope=self as unknown as DedicatedWorkerGlobalScope;
 let fixture=false;
@@ -83,10 +85,62 @@ const staging = stagingMode ? new StagingFeedService(e => scope.postMessage(e)) 
 const stagingHeatmap = stagingMode ? new StagingHeatmapService(e=>scope.postMessage(e)) : undefined;
 const directOrderWalls = new DirectOrderWallsService(depth, emitDirect);
 const stagingOrderWalls = stagingHeatmap ? new StagingOrderWallsService(stagingHeatmap, e=>scope.postMessage(e)) : undefined;
+const archivedOrderWalls = new OrderWallsArchiveService(e=>scope.postMessage(e));
+const orderWallRoutes = new Map<string, 'archive' | 'staging' | 'direct'>();
+const orderWallRequests = new Map<string, OrderWallRequest>();
 const stagingDepthMatrix = stagingHeatmap ? new StagingDepthMatrixService(stagingHeatmap, e=>scope.postMessage(e)) : undefined;
 const depthMatrixFixtures = new DepthMatrixFixtureService(e=>scope.postMessage(e));
 const stagingNetPositioning = new StagingNetPositioningService(e => scope.postMessage(e), stagingMode);
 const stagingRawOpenInterest = new StagingRawOpenInterestService(e => scope.postMessage(e), stagingMode);
+
+function archiveOrderWallsEnabled(request: OrderWallRequest) {
+  return stagingMode && !fixture && request.settings.mode === 'top-levels';
+}
+
+function stopOrderWalls(id: string) {
+  const route = orderWallRoutes.get(id);
+  if (route === 'archive') archivedOrderWalls.unsubscribe(id);
+  else if (route === 'staging') stagingOrderWalls?.command({ type: 'order-wall-unsubscribe', id });
+  else if (route === 'direct') directOrderWalls.command({ type: 'order-wall-unsubscribe', id });
+  orderWallRoutes.delete(id); orderWallRequests.delete(id);
+}
+
+function startOrderWalls(id: string, request: OrderWallRequest) {
+  const route = archiveOrderWallsEnabled(request) ? 'archive' : stagingMode && !fixture ? 'staging' : 'direct';
+  orderWallRequests.set(id, request); orderWallRoutes.set(id, route);
+  const command = { type: 'order-wall-subscribe' as const, id, request };
+  if (route === 'archive') archivedOrderWalls.command(command);
+  else if (route === 'staging') stagingOrderWalls?.command(command);
+  else directOrderWalls.command(command);
+}
+
+function handleOrderWallCommand(command: Extract<Command, { type: 'order-wall-subscribe' | 'order-wall-unsubscribe' | 'order-wall-settings' | 'order-wall-viewport' | 'order-wall-retry' }>) {
+  if (command.type === 'order-wall-retry') {
+    if (orderWallRoutes.get(command.id) === 'archive') archivedOrderWalls.retry(command.id);
+    return;
+  }
+  if (command.type === 'order-wall-subscribe') { stopOrderWalls(command.id); startOrderWalls(command.id, command.request); return; }
+  if (command.type === 'order-wall-unsubscribe') { stopOrderWalls(command.id); return; }
+  const previous = orderWallRequests.get(command.id);
+  if (!previous) return;
+  if (command.type === 'order-wall-settings') {
+    const next = { ...previous, settings: command.settings };
+    if (archiveOrderWallsEnabled(next) !== (orderWallRoutes.get(command.id) === 'archive')) {
+      stopOrderWalls(command.id); startOrderWalls(command.id, next); return;
+    }
+    orderWallRequests.set(command.id, next);
+    if (orderWallRoutes.get(command.id) === 'archive') archivedOrderWalls.command(command);
+    else if (orderWallRoutes.get(command.id) === 'staging') stagingOrderWalls?.command(command);
+    else directOrderWalls.command(command);
+    return;
+  }
+  const next = { ...previous, from: command.from, to: command.to, followLive: command.to >= Date.now() - 60_000,
+    ...(command.autoPriceWidth !== undefined ? { autoPriceWidth: command.autoPriceWidth } : {}) };
+  orderWallRequests.set(command.id, next);
+  if (orderWallRoutes.get(command.id) === 'archive') archivedOrderWalls.command(command);
+  else if (orderWallRoutes.get(command.id) === 'staging') stagingOrderWalls?.command(command);
+  else directOrderWalls.command(command);
+}
 const stagingClients = new Set<string>();
 const watchTransport=new LevelWatchTransport(message=>scope.postMessage(message),()=>stagingMode&&!fixture);
 let burst:ReturnType<typeof setInterval>|undefined;let revision=1;let received=0;
@@ -149,9 +203,8 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
         state:'unavailable',message:fixture?'Depth Matrix does not generate fixture order books.':'Depth Matrix requires the synchronized staging collectors.',rows:[],bestBid:null,bestAsk:null,mid:null,quantityUnit:'BTC',notionalUnit:'USDT',lastAt:0,ageMs:null,cursor:0,epoch:null})),emittedAt:Date.now()});
     return;
   }
-  if(c.type==='order-wall-subscribe'||c.type==='order-wall-unsubscribe'||c.type==='order-wall-settings'||c.type==='order-wall-viewport'){
-    if(stagingOrderWalls&&!fixture)stagingOrderWalls.command(c);
-    else directOrderWalls.command(c);
+  if(c.type==='order-wall-subscribe'||c.type==='order-wall-unsubscribe'||c.type==='order-wall-settings'||c.type==='order-wall-viewport'||c.type==='order-wall-retry'){
+    handleOrderWallCommand(c);
     return;
   }
   if (staging && !fixture) {
@@ -193,6 +246,6 @@ scope.onmessage=(event:MessageEvent<Command>)=>{
   if(c.type==='footprint-retry'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='footprint-ack'){footprint.command(c);spotFootprint.command(c);return;}
   if(c.type==='online'){depth.setOnline(c.online);footprint.setOnline(c.online);spotFootprint.setOnline(c.online);}
-  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
+  if(c.type==='diagnostics'){scope.postMessage({type:'diagnostics',data:{...service.diagnostics(),comparison:comparison.diagnostics(),cvd:cvd.diagnostics(),liquidations:liquidations.diagnostics(),tpo:tpoService.diagnostics(),staging:staging?.diagnostics(),depth:depth.diagnostics(),heatmap:stagingMode&&!fixture?stagingHeatmap?.diagnostics():heatmap.diagnostics(),orderWalls:stagingMode&&!fixture?stagingOrderWalls?.diagnostics():directOrderWalls.diagnostics(),orderWallsArchive:archivedOrderWalls.diagnostics(),depthMatrix:fixture?depthMatrixFixtures.diagnostics():stagingDepthMatrix?.diagnostics(),netPositioning:stagingNetPositioning.diagnostics(),rawOpenInterest:stagingRawOpenInterest.diagnostics(),footprint:footprint.diagnostics(),spotFootprint:spotFootprint.diagnostics(),tickers:tickers.diagnostics(),tradeBubbles:tradeBubbles.diagnostics(),effortResult:efforts.diagnostics(),fixture,networkSockets:fixture?0:service.diagnostics().sockets,syntheticMessages:received}});return;}
   service.command(c);
 };
