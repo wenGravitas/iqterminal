@@ -1,4 +1,5 @@
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
+import { ORDER_WALL_ARCHIVE_MAX_SEGMENTS } from '../feed/order-walls';
 import { orderWallValuePointAt, type OrderWallHit, type OrderWallPatch, type OrderWallSegment, type OrderWallsSettings, type OrderWallStatus } from '../feed/order-walls';
 
 const TOP_HEAT={bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8b99eb','#e9c15b','#ff8766']};
@@ -25,7 +26,9 @@ export class OrderWallsPrimitive implements IPrimitive {
   private transformKey='';
   private dirty=new Set<string>();
   private tailDirty=new Map<string,number>();
-  private closedOrder=new Map<string,boolean>();
+  private closedDirectOrder=new Map<string,boolean>();
+  private closedArchiveOrder=new Map<string,boolean>();
+  private archiveEpisodeHistoryLimited=false;
   private sizes=new Map<string,number>();
   private reference={min:0,max:0};
   private referenceDirty=true;
@@ -37,26 +40,28 @@ export class OrderWallsPrimitive implements IPrimitive {
   zOrder(){return 'normal' as const;}
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
-  detached(){this.closedOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.timeAtX=undefined;this.stats.bytes=0;}
+  detached(){this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.timeAtX=undefined;this.stats.bytes=0;}
   setSettings(settings:OrderWallsSettings){this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
   setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
   setStatus(status:OrderWallStatus){
-    const prior=this.status.lastConfirmedAt;this.status={...status};
+    const prior=this.status.lastConfirmedAt;this.status=this.effectiveStatus(status);
     if(prior!==status.lastConfirmedAt)for(const[id,segment]of this.segments)if(segment.end===null)this.markTail(id,Math.max(0,segment.valueRuns.length-1));
     this.host?.requestUpdate();
   }
   setSnapshot(segments:OrderWallSegment[],status:OrderWallStatus){
-    this.status={...status};this.closedOrder.clear();this.sizes.clear();this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();
+    this.status={...status};this.archiveEpisodeHistoryLimited=status.episodeHistoryLimited===true;
+    this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();
     for(const segment of segments)if(validSegment(segment)&&!this.beforeRetention(segment))this.segments.set(segment.id,segment);
-    for(const segment of [...this.segments.values()].filter(s=>s.end!==null).sort((a,b)=>a.end!-b.end!))this.closedOrder.set(segment.id,true);
-    this.trimHistory();
+    for(const segment of [...this.segments.values()].filter(s=>s.end!==null).sort((a,b)=>a.end!-b.end!))this.rememberClosed(segment);
+    this.trimHistory();this.status=this.effectiveStatus(status);
     this.dirty=new Set(this.segments.keys());this.version++;this.transformKey='';this.measureBytes();this.host?.requestUpdate();
   }
   patch(patches:OrderWallPatch[],status:OrderWallStatus){
     this.status={...status};
     for(const patch of patches){
       if(!patch.segment||!validSegment(patch.segment)||this.beforeRetention(patch.segment)){
-        this.dirty.add(patch.id);this.tailDirty.delete(patch.id);this.segments.delete(patch.id);this.closedOrder.delete(patch.id);continue;
+        this.dirty.add(patch.id);this.tailDirty.delete(patch.id);this.segments.delete(patch.id);
+        this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);continue;
       }
       const previous=this.segments.get(patch.id),next=patch.segment;
       this.segments.set(patch.id,next);
@@ -65,10 +70,24 @@ export class OrderWallsPrimitive implements IPrimitive {
       if(!previous||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.tailDirty.delete(patch.id);}
       else this.markTail(patch.id,Math.max(0,previous.valueRuns.length-1));
     }
-    for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next&&!this.closedOrder.has(patch.id))this.closedOrder.set(patch.id,true);this.measureOne(patch.id);}
-    this.trimHistory();this.referenceDirty=true;this.host?.requestUpdate();
+    for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next)this.rememberClosed(next);
+      else {this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);}this.measureOne(patch.id);}
+    this.trimHistory();this.status=this.effectiveStatus(status);this.referenceDirty=true;this.host?.requestUpdate();
   }
-  private trimHistory(){while(this.closedOrder.size>this.settings.historyEpisodes){const id=this.closedOrder.keys().next().value!;this.closedOrder.delete(id);this.segments.delete(id);this.dirty.add(id);this.measureOne(id);}}
+  private rememberClosed(segment:OrderWallSegment){
+    if(isArchiveSegment(segment))this.closedArchiveOrder.set(segment.id,true);
+    else this.closedDirectOrder.set(segment.id,true);
+  }
+  private trimHistory(){
+    while(this.closedDirectOrder.size>this.settings.historyEpisodes){const id=this.closedDirectOrder.keys().next().value!;
+      this.closedDirectOrder.delete(id);this.segments.delete(id);this.dirty.add(id);this.measureOne(id);}
+    while(this.closedArchiveOrder.size>ORDER_WALL_ARCHIVE_MAX_SEGMENTS){const id=this.closedArchiveOrder.keys().next().value!;
+      this.closedArchiveOrder.delete(id);this.segments.delete(id);this.dirty.add(id);this.measureOne(id);this.archiveEpisodeHistoryLimited=true;}
+  }
+  private effectiveStatus(status:OrderWallStatus):OrderWallStatus{
+    return this.archiveEpisodeHistoryLimited?{...status,episodeHistoryLimited:true,
+      ...(status.coverage?{coverage:{...status.coverage,complete:false,partial:true}}:{})}:status;
+  }
   private beforeRetention(segment:OrderWallSegment){return this.status.retentionStart!==undefined&&(segment.end??this.status.lastConfirmedAt??segment.start)<=this.status.retentionStart;}
   private width(){return this.settings.aggregation==='native'?this.status.tickSize??.1:this.settings.aggregation==='auto'?this.status.resolvedPriceWidth??this.status.tickSize??.1:this.settings.aggregation;}
   private markTail(id:string,index:number){if(this.dirty.has(id))return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
@@ -147,7 +166,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     // Strongest labels win crowded rows; guides stay aligned with actual wall prices.
     const lines=[...active.values()].map(line=>({line,segment:this.segments.get(line.segment.id)!})).sort((a,b)=>(b.segment.valueRuns.at(-1)?.usd??0)-(a.segment.valueRuns.at(-1)?.usd??0));
     for(const {line,segment} of lines){
-      const value=orderWallValuePointAt(segment,Math.min(line.to,this.status.lastConfirmedAt??line.to));
+      const value=orderWallValuePointAt(segment,Math.min(line.to,this.segmentTo(segment)));
       if(!value||!Number.isFinite(value.usd)||line.y<8||line.y>rc.plotHeight-8)continue;
       const color=this.lineStyle({...line,usd:value.usd,percentile:value.percentile}).color;
       ctx.strokeStyle=color;ctx.globalAlpha=this.settings.opacity*.28;ctx.lineWidth=dpr;ctx.setLineDash([2*dpr,4*dpr]);
@@ -181,8 +200,15 @@ export class OrderWallsPrimitive implements IPrimitive {
       const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,rc);
       if(line){this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
     }
-    if(segment.valueRuns.length){for(let i=0;i<segment.valueRuns.length;i++)this.projectIndex(segment,i,rc);return;}
-    const to=segment.end??this.status.lastConfirmedAt??segment.start;
+    if(segment.valueRuns.length){
+      const range=rc.timeScale.visibleRange();
+      const visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
+      const first=Math.max(0,lowerBoundRun(segment.valueRuns,visibleFrom)-1);
+      const afterLast=Math.min(segment.valueRuns.length,Math.max(first+1,upperBoundRun(segment.valueRuns,visibleTo)));
+      for(let index=first;index<afterLast;index++)this.projectIndex(segment,index,rc);
+      return;
+    }
+    const to=this.segmentTo(segment);
     const line=this.project(segment,0,segment.start,to,null,rc);
     if(line){this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
   }
@@ -196,9 +222,19 @@ export class OrderWallsPrimitive implements IPrimitive {
   private removeDrawables(id:string){for(const key of this.drawableKeys.get(id)??[])this.drawable.delete(key);this.drawableKeys.delete(id);}
   private projectIndex(segment:OrderWallSegment,index:number,rc:PrimitiveRenderContext){
     const value=segment.valueRuns[index];if(!value)return;
-    const next=segment.valueRuns[index+1],from=value.at,to=next?.at??segment.end??this.status.lastConfirmedAt??from;
+    const next=segment.valueRuns[index+1],from=value.at,to=Math.min(next?.at??this.segmentTo(segment),this.segmentTo(segment));
     const line=this.project(segment,index,from,to,value.percentile,rc);if(!line)return;
     this.drawable.set(line.key,line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
+  }
+  private segmentTo(segment:OrderWallSegment){
+    if(segment.end!==null)return segment.end;
+    if(segment.currentSelection===true)return this.status.lastConfirmedAt??segment.start;
+    if(segment.archiveEntryId){
+      const segmentConfirmed=segment.start+Math.max(0,segment.durationMs);
+      const archiveConfirmed=this.status.archive?.loadedThrough;
+      return Math.max(segment.start,Math.min(segmentConfirmed,archiveConfirmed??segmentConfirmed));
+    }
+    return this.status.lastConfirmedAt??segment.start;
   }
   private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,rc:PrimitiveRenderContext):WallDrawable|null{
     if(!this.settings.showHistory&&segment.end!==null||segment.durationMs<this.settings.minDurationMs)return null;
@@ -233,6 +269,30 @@ export class OrderWallsPrimitive implements IPrimitive {
   diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,retainedSegments:this.segments.size,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
+}
+
+/** Vertical fit bounds for the currently active Top Levels selections. */
+export function orderWallsFitRange(segments: readonly OrderWallSegment[], tickSize = 0.01, hasCurrentLiveSelection = false) {
+  if (!hasCurrentLiveSelection) return null;
+  const prices = segments.filter(segment => segment.currentSelection === true && segment.end === null && segment.detectionMode === 'top-levels'
+    && Number.isFinite(segment.price) && segment.price > 0).map(segment => segment.price);
+  if (!prices.length) return null;
+  const low = Math.min(...prices), high = Math.max(...prices);
+  const padding = Math.max((high - low) * 0.08, ((high + low) / 2) * 0.001, (Number.isFinite(tickSize) && tickSize > 0 ? tickSize : 0.01) * 4);
+  return { min: Math.max(Number.MIN_VALUE, low - padding), max: high + padding };
+}
+
+function isArchiveSegment(segment:OrderWallSegment){return typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
+
+function lowerBoundRun(runs:OrderWallSegment['valueRuns'],at:number){
+  let low=0,high=runs.length;
+  while(low<high){const mid=(low+high)>>>1;if(runs[mid]!.at<at)low=mid+1;else high=mid;}
+  return low;
+}
+function upperBoundRun(runs:OrderWallSegment['valueRuns'],at:number){
+  let low=0,high=runs.length;
+  while(low<high){const mid=(low+high)>>>1;if(runs[mid]!.at<=at)low=mid+1;else high=mid;}
+  return low;
 }
 
 function validSegment(value:OrderWallSegment){return !!value&&typeof value.id==='string'

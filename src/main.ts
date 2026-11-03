@@ -2,8 +2,9 @@ import { WorkspaceManager, browserWorkspaceStorage } from './workspaces/manager'
 import { bindWorkspacePanelStorage } from './workspaces/panel-storage';
 import { TerminalFooter } from './workspaces/footer';
 import { widgetRegistry } from './widgets/registry';
-import { canonicalMarket } from './journal/model';
-import { JournalController } from './journal/controller';
+import { JournalController, type JournalOpenOptions } from './journal/controller';
+import { GlobalJournalPanel } from './journal/panel';
+import type { ChartSnapshot } from './journal/model';
 import { prepareRestore } from './journal/restore';
 import { LiquidationTickerPanel } from './liquidations/panel';
 import { CurrencyDisplaySettings } from './currency-display';
@@ -46,18 +47,9 @@ const notifications = new Notifications();
 const trading = new TradingController({ fixtureMode: fixture });
 const tickers = new Map<string,TradeTickerPanel>();
 const library = new ScriptLibrary();
-const journal = JournalController.create(library, async snapshot => {
-  if (chartContextCount() >= PANEL_BUDGET) throw new Error(`All ${PANEL_BUDGET} chart slots are in use. Close a chart or comparison before opening saved settings.`);
-  const workspaceId = workspaceManager?.active.id;
-  const restored = await prepareRestore(snapshot, library);
-  if (workspaceId !== workspaceManager?.active.id) throw new Error('Workspace changed while preparing the saved chart. Retry in the intended workspace.');
-  if (chartContextCount() >= PANEL_BUDGET) throw new Error('A chart slot was filled while preparing settings. Free a slot and retry.');
-  const id = `chart-${crypto.randomUUID()}`;
-  dock.addPanel({ id, component: 'candle', title: 'Restored settings', params: { ...restored.config, journalRestored: { capturedAt: snapshot.capturedAt } },
-    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, minimumWidth: 220, minimumHeight: 140 });
-  save(); const panel = panels.get(id); if (!panel) throw new Error('The new chart could not be created'); return panel.applyJournalRestore(restored);
-});
+const journal = JournalController.create(library);
 const panels = new Map<string, CandlePanelInstance>();
+const journalPanels = new Map<string, GlobalJournalPanel>();
 const marketComparisons = new Map<string, MarketComparisonPanel>();
 const executionHover = new TickerExecutionHoverCoordinator();
 const root = document.querySelector<HTMLElement>('#workspace')!;
@@ -186,6 +178,37 @@ function openEditor(targetChartId: string, attachmentId?: string) {
   save();
 }
 
+async function restoreJournalSnapshot(snapshot: ChartSnapshot) {
+  if (chartContextCount() >= PANEL_BUDGET) throw new Error(`All ${PANEL_BUDGET} chart slots are in use. Close a chart or comparison before opening saved settings.`);
+  const workspaceId = workspaceManager?.active.id;
+  const restored = await prepareRestore(snapshot, library);
+  if (workspaceId !== workspaceManager?.active.id) throw new Error('Workspace changed while preparing the saved chart. Retry in the intended workspace.');
+  if (chartContextCount() >= PANEL_BUDGET) throw new Error('A chart slot was filled while preparing settings. Free a slot and retry.');
+  const id = `chart-${crypto.randomUUID()}`;
+  dock.addPanel({ id, component: 'candle', title: 'Restored settings', params: { ...restored.config, journalRestored: { capturedAt: snapshot.capturedAt } },
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: 'right' } : undefined, minimumWidth: 220, minimumHeight: 140 });
+  save();
+  const panel = panels.get(id);
+  if (!panel) throw new Error('The new chart could not be created');
+  return panel.applyJournalRestore(restored);
+}
+
+function openJournal(options?: JournalOpenOptions) {
+  const id = 'global-journal', existing = dock.getPanel(id);
+  if (existing) {
+    existing.api.setActive();
+    queueMicrotask(() => journalPanels.get(id)?.open(options));
+    return;
+  }
+  const narrowWorkspace = root.clientWidth < 640;
+  dock.addPanel({ id, component: 'global-journal', title: 'Journal', params: {},
+    position: dock.activePanel ? { referencePanel: dock.activePanel, direction: narrowWorkspace ? 'below' : 'right' } : undefined,
+    ...(narrowWorkspace ? { initialHeight: Math.max(300, Math.round(root.clientHeight * .6)) } : { initialWidth: Math.max(360, Math.round(root.clientWidth * .38)) }),
+    minimumWidth: 300, minimumHeight: 220 });
+  save();
+  queueMicrotask(() => journalPanels.get(id)?.open(options));
+}
+
 
 dock = createDockview(root, {
   theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
@@ -198,6 +221,15 @@ dock = createDockview(root, {
   createTabComponent: () => new CompactChartTab(),
   createPrefixHeaderActionComponent: group => new TabCycleHeaderAction(group),
   createComponent: options => {
+    if (options.name === 'global-journal') {
+      const panel = new GlobalJournalPanel(journal.repository, { restore: restoreJournalSnapshot, onPublished: entry => journal.published(entry) });
+      journalPanels.set(options.id, panel);
+      return {
+        element: panel.element,
+        init: panel.init.bind(panel),
+        dispose: () => { if (journalPanels.get(options.id) === panel) journalPanels.delete(options.id); panel.dispose(); },
+      };
+    }
     if (options.name === 'market-comparison') return new MarketComparisonPanel(feed, scheduler, save, (id, panel) => {
       if (panel) marketComparisons.set(id, panel); else marketComparisons.delete(id);
     });
@@ -250,6 +282,7 @@ workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
 workspaceManager.start();
+ journal.setOpenJournal(openJournal);
 restoring = false;
 const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => save())];
 const abort = new AbortController();
@@ -258,7 +291,7 @@ window.addEventListener('iqterminal-watch-zone',event=>openWatches((event as Cus
 const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.subscribeWatches((snapshot,error)=>{if(snapshot){watchSnapshot=snapshot;for(const panel of panels.values())panel.setWatchZones(error?snapshot.watches.map(w=>({...w,quality:'stale'})):snapshot.watches);if(!error&&!document.hidden)for(const e of snapshot.events??[]){if(e.kind!=='confirmed'||!e.value.fresh||Date.now()-e.at>3000)continue;void feed.watchRequest<{claimed:boolean}>('/claim',{eventId:e.id}).then(result=>{if(result.claimed)notifications.deliver({eventId:String(e.id),ruleId:'level-watch:'+e.watchId,owner:'level-watch',timeMs:e.at,fresh:true,title:`${e.value.encounter?.definition.name??'Level Watch'} — reclaim confirmed`,text:e.value.reason??'Experimental rule gates met',sound:'chime',volume:.5,toast:true});}).catch(()=>{});}}}):undefined;
 tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
-const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Local chart journal and backups'; journalButton.addEventListener('click', () => journal.open(undefined, dock.activePanel && panels.get(dock.activePanel.id) ? canonicalMarket(panels.get(dock.activePanel.id)!.series as import('./feed/protocol').CanonicalSeries) : undefined)); document.querySelector('#commands')?.append(journalButton);
+const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Open the daily trading journal'; journalButton.addEventListener('click', () => journal.open()); document.querySelector('#commands')?.append(journalButton);
 window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
 reset.addEventListener('click', () => { if (confirm('Reset Current Workspace? Its widget layout will be replaced with a starting chart. Other workspaces are unchanged.')) { try { workspaceManager!.reset(); } catch { /* The manager exposes its recovery error in the footer. */ } } }, { signal: abort.signal });
 window.addEventListener('online', () => feed.send({ type: 'online', online: true }), { signal: abort.signal });
@@ -268,6 +301,7 @@ const registry = widgetRegistry({ chart: addChart, comparison: addMarketComparis
  trading: addHyperliquidTrading, positions: () => addHyperliquidTradingWidget('positions'), orders: () => addHyperliquidTradingWidget('open-orders'),
  orderHistory: () => addHyperliquidTradingWidget('order-history'), tradeHistory: () => addHyperliquidTradingWidget('trade-history'), watches: openWatches,
  editor: () => { const existing = dock.getPanel('script-editor'); if (existing) { existing.api.setActive(); return; } const panel = dock.activePanel && panels.get(dock.activePanel.id) || panels.values().next().value; if (panel) openEditor([...panels].find(([,value]) => value === panel)![0]); },
+ journal: () => journal.open(),
  count: component => dock.panels.filter(panel => panel.view.contentComponent === component).length, has: id => Boolean(dock.getPanel(id)),
 });
 const footer = new TerminalFooter(workspaceManager, registry, diagnosticsEnabled ? () => ({ workspace: workspaceManager!.active.id, panels: dock.panels.length, feeds: feed.protocolDiagnostics() }) : undefined);

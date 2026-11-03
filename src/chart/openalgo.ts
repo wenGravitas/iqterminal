@@ -15,12 +15,13 @@ import type {LevelWatch} from '../level-watch/types';
 import { AxisGrid } from './axis-grid';
 import { OrderBookHeatmap } from './orderbook-heatmap';
 import type { HeatmapSettings, LiquidityBucket } from '../feed/heatmap-model';
-import { OrderWallsPrimitive } from './order-walls';
+import { OrderWallsPrimitive, orderWallsFitRange } from './order-walls';
 import { NetPositioningPane, netPositioningSourceColors } from './net-positioning';
 import type { NetPositioningLabels } from './net-positioning';
-import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningSide, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
+import type { NetPositioningCandle, NetPositioningFeedStatus, NetPositioningMethod, NetPositioningUnitVerification, NetPositioningVenue } from '../feed/net-positioning';
 import { ExecutionHoverRay } from './execution-hover-ray';
-import { ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
+import { ORDER_WALL_ARCHIVE_MAX_SEGMENTS, ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS, ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT,
+  ORDER_WALL_MAX_SEGMENTS, ORDER_WALL_MAX_VALUE_RUNS, ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT } from '../feed/order-walls';
 import type { OrderWallHit, OrderWallPatch, OrderWallSegment, OrderWallsSettings, OrderWallStatus } from '../feed/order-walls';
 import {
   createChart,
@@ -89,6 +90,7 @@ function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
 
 interface ViewAnchor { fromTime: number; toTime: number; fromOffset: number; toOffset: number }
 let drawingToolsRegistered = false;
+function isArchiveOrderWall(segment:OrderWallSegment){return typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
 
 /** Owns the chart engine while routing its frames through the shared visible-panel scheduler. */
 export class OpenAlgoCandleChart {
@@ -109,7 +111,14 @@ export class OpenAlgoCandleChart {
   private orderWallValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
   private orderWallValueQueueStart = 0;
   private orderWallValueCount = 0;
+  private orderWallDirectValueCount = 0;
+  private orderWallArchiveValueQueue: Array<{ id: string; point: OrderWallSegment['valueRuns'][number] }> = [];
+  private orderWallArchiveValueQueueStart = 0;
+  private orderWallArchiveValueCount = 0;
+  private orderWallDirectSegmentCount = 0;
+  private orderWallArchiveSegmentCount = 0;
   private orderWallValuesLimited = false;
+  private orderWallEpisodesLimited = false;
   private orderWallStatus: OrderWallStatus = { state: 'loading' };
   readonly chart: OpenAlgoChart;
   readonly drawings: DrawingController;
@@ -170,6 +179,15 @@ export class OpenAlgoCandleChart {
   executionHoverDiagnostics(){return this.executionHoverRay.diagnostics();}
   watchPriceAt(x:number,y:number){const paneIndex=this.chart.primaryPaneIndex(),plot=this.chart.plotRect(paneIndex);if(!plot||x<plot.left||x>plot.left+plot.width||y<plot.top||y>plot.top+plot.height)return null;return Math.round(this.chart.panes()[paneIndex]!.yToPrice(y-plot.top)*10)/10;}
   focusWatch(lower:number,upper:number){const scale=this.chart.panes()[this.chart.primaryPaneIndex()]!.readoutScale();this.chart.setAutoScale(false);scale.setPriceRange({min:lower,max:upper});this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));}
+  fitOrderWalls(){
+    const range=orderWallsFitRange([...this.orderWallSegments.values()],this.orderWallStatus.tickSize??.01,this.orderWallStatus.state==='live');
+    if(!range)return false;
+    const pane=this.chart.panes()[this.chart.primaryPaneIndex()];if(!pane)return false;
+    pane.readoutScale().setAutoScale(false);
+    pane.readoutScale().setPriceRange(range);
+    this.chart.invalidate(mask=>mask.invalidateGlobal(InvalidationLevel.Full));
+    return true;
+  }
   private readonly footprintRefresh = () => this.refreshVisibleFootprint();
   private readonly reducedMotion = (() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)'); } catch { return { matches: false }; } })();
   private readonly footprintActivity = new FootprintActivity(() => this.footprint?.options() ?? this.footprintOptions, () => this.reducedMotion.matches);
@@ -342,7 +360,8 @@ export class OpenAlgoCandleChart {
     this.footprint?.setOptions(this.footprintOptions);
     this.syncFootprintTotalsPresentation();
     for (const [id, view] of this.netPositioningPanes) {
-      view.primitive.setThemeColors(netPositioningSourceColors(name, view.primitive.diagnostics().side));
+      view.primitive.setThemeColors(netPositioningSourceColors(name, 'longs'), 'longs');
+      view.primitive.setThemeColors(netPositioningSourceColors(name, 'shorts'), 'shorts');
       this.syncNetPositioningLegend(id, view.primitive.diagnostics().venues);
     }
   }
@@ -361,7 +380,9 @@ export class OpenAlgoCandleChart {
   heatmapAt(x: number, y: number) { return this.heatmap?.hoverAt(x, y) ?? null; }
   heatmapDiagnostics() { return this.heatmap ? { ...this.heatmap.diagnostics(), mounted: true } : { mounted: false }; }
 
-  addNetPositioningPane(id: string, side: NetPositioningSide, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number, display: import('./net-positioning-layout').NetPositioningDisplay = 'stacked', labels: NetPositioningLabels = 'auto', colors?: Partial<Record<NetPositioningVenue, string>>) {
+  addNetPositioningPane(id: string, method: NetPositioningMethod, venues: readonly NetPositioningVenue[], intervalMs: number,
+    display: import('./net-positioning-layout').NetPositioningDisplay = 'stacked', labels: NetPositioningLabels = 'auto',
+    colors?: Partial<Record<NetPositioningVenue, string>>, showLongs = true, showShorts = true, reverseOrder = false) {
     let view = this.netPositioningPanes.get(id);
     if (!view) {
       if (!this.netPositioningViewportSubscriptions.length) {
@@ -369,18 +390,15 @@ export class OpenAlgoCandleChart {
         this.netPositioningViewportSubscriptions.push(this.chart.on('pan', sync), this.chart.on('zoom', sync), this.chart.on('resize', sync), this.chart.on('paneResized', sync), this.chart.on('data:update', sync));
       }
       const paneIndex = this.chart.panes().length;
-      const primitive = new NetPositioningPane(id, side,(x,spacing,dpr)=>{
+      const primitive = new NetPositioningPane(id,(x,spacing,dpr)=>{
         if(this.mode==='footprint'){const width=footprintColumn(this.footprintOptions,spacing).column;return {left:x-width/2,width};}
         const g=candleGeometry(x,spacing,dpr);return {left:g.bodyX/dpr,width:g.bodyW/dpr};
       });
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setOptions({ minMove: 0, minPrecision: 6 });
       primitive.setPriceScale(series.priceScale());
-      series.priceScale().setPriceFormatter(value => {
-        const amount = primitive.displayCurrency === 'usdt'
-          ? value.toLocaleString('en-US', { notation: 'compact', maximumFractionDigits: 2 })
-          : value.toLocaleString('en-US', { maximumFractionDigits: Math.abs(value) >= 1 ? 4 : 8 });
-        return `${amount} ${primitive.displayCurrencyLabel}`;
+      series.priceScale().setPriceFormatter(_value => {
+        return '';
       });
       series.setData([]);
       this.chart.addPrimitive(primitive, paneIndex);
@@ -390,8 +408,9 @@ export class OpenAlgoCandleChart {
     }
     const currency = effectiveCurrency('btc'), currencyChanged = view.primitive.displayCurrency !== currency;
     view.primitive.setCurrency(currency);
-    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), side));
-    view.primitive.setSettings(side, method, venues, intervalMs, display, labels);
+    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), 'longs'), 'longs');
+    view.primitive.setThemeColors(netPositioningSourceColors(currentTheme(), 'shorts'), 'shorts');
+    view.primitive.setSettings(method, venues, intervalMs, display, labels, showLongs, showShorts, reverseOrder);
     view.primitive.setColorOverrides(colors);
     if (currencyChanged) {
       view.series.priceScale().setAutoScale(true);
@@ -419,7 +438,7 @@ export class OpenAlgoCandleChart {
       element.className = 'net-positioning-legend'; element.setAttribute('role', 'group');
       // Venue controls must not start the chart's pointer-captured pan gesture.
       for (const type of ['pointerdown', 'mousedown'] as const) element.addEventListener(type, event => event.stopPropagation(), { signal: abort.signal });
-      element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
+      element.setAttribute('aria-label', 'Net Longs & Shorts sources');
       for (const venue of ['binance', 'hyperliquid', 'bybit'] as const) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'net-positioning-source';
         button.dataset.source = venue;
@@ -438,7 +457,7 @@ export class OpenAlgoCandleChart {
       this.container.append(element);
       legend = { element, abort, venuesKey }; this.netPositioningLegends.set(id, legend);
     }
-    legend.element.setAttribute('aria-label', `${view.primitive.diagnostics().side === 'longs' ? 'Net Longs' : 'Net Shorts'} sources`);
+    legend.element.setAttribute('aria-label', 'Net Longs & Shorts sources');
     legend.element.dataset.instanceId = id;
     for (const button of legend.element.querySelectorAll<HTMLButtonElement>('.net-positioning-source')) {
       const venue = button.dataset.source as NetPositioningVenue;
@@ -696,16 +715,26 @@ export class OpenAlgoCandleChart {
   patchTpo(sessions: TpoSession[], naked: TpoNakedLevel[], asOf = 0) { this.tpoProfile?.patch(sessions, naked, asOf); }
   tpoDiagnostics() { return this.tpoProfile?.diagnostics() ?? { mounted: false }; }
   setOrderWallSnapshot(segments: OrderWallSegment[], status?: OrderWallStatus) {
-    this.orderWallValuesLimited = segments.some(s=>s.valueRunsTruncated);
+    const archives = segments.filter(isArchiveOrderWall), direct = segments.filter(segment => !isArchiveOrderWall(segment));
+    const keepArchive = new Set(archives.slice(-ORDER_WALL_ARCHIVE_MAX_SEGMENTS).map(segment => segment.id));
+    const keepDirect = new Set(direct.slice(-ORDER_WALL_MAX_SEGMENTS).map(segment => segment.id));
+    this.orderWallEpisodesLimited = status?.episodeHistoryLimited === true
+      || archives.length > ORDER_WALL_ARCHIVE_MAX_SEGMENTS || direct.length > ORDER_WALL_MAX_SEGMENTS;
+    this.orderWallValuesLimited = status?.valueHistoryLimited === true || segments.some(segment => segment.valueRunsTruncated);
     this.orderWallSegments.clear();
-    for (const segment of segments.slice(-ORDER_WALL_MAX_SEGMENTS)) this.orderWallSegments.set(segment.id, segment);
+    for (const segment of segments) if (isArchiveOrderWall(segment) ? keepArchive.has(segment.id) : keepDirect.has(segment.id)) {
+      this.orderWallSegments.set(segment.id, segment);
+    }
+    this.orderWallArchiveSegmentCount = [...this.orderWallSegments.values()].filter(isArchiveOrderWall).length;
+    this.orderWallDirectSegmentCount = this.orderWallSegments.size - this.orderWallArchiveSegmentCount;
     this.rebuildOrderWallValueQueue();
     this.orderWallStatus = this.effectiveOrderWallStatus(status ?? { state: 'loading' });
     this.orderWalls?.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
     return this.orderWallStatus;
   }
   patchOrderWalls(patches: OrderWallPatch[], status: OrderWallStatus) {
-    this.orderWallStatus = status;
+    this.orderWallValuesLimited ||= status.valueHistoryLimited === true;
+    this.orderWallEpisodesLimited ||= status.episodeHistoryLimited === true;
     const applied: OrderWallPatch[] = [];
     for (const patch of patches) {
       if (!patch.segment) { this.dropOrderWallSegment(patch.id); applied.push(patch); }
@@ -713,70 +742,136 @@ export class OpenAlgoCandleChart {
         const previous = this.orderWallSegments.get(patch.id);
         const incoming = patch.segment.valueRuns ?? [];
         const fullRuns = patch.replaceValueRuns === true || incoming.length > 0 && (!previous || incoming.length > previous.valueRuns.length);
-        if(patch.segment.valueRunsTruncated)this.orderWallValuesLimited=true;
-        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) : [...(previous?.valueRuns ?? [])] };
-        if (previous && fullRuns) this.orderWallValueCount = Math.max(0, this.orderWallValueCount - previous.valueRuns.length);
+        const archived = isArchiveOrderWall(patch.segment);
+        const maxRuns = archived ? ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT : ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT;
+        if (patch.segment.valueRunsTruncated) this.orderWallValuesLimited = true;
+        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-maxRuns) : [...(previous?.valueRuns ?? [])] };
+        if (fullRuns && incoming.length > segment.valueRuns.length) { segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; }
+        if (previous && fullRuns) this.adjustOrderWallValueCount(isArchiveOrderWall(previous), -previous.valueRuns.length);
+        if (!previous) {
+          if (archived) this.orderWallArchiveSegmentCount++;
+          else this.orderWallDirectSegmentCount++;
+        }
         if (fullRuns) {
-          if (segment.valueRuns.length < incoming.length) { segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; }
-          for (const point of segment.valueRuns) { this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++; }
+          for (const point of segment.valueRuns) this.enqueueOrderWallValue(segment.id, point, archived);
         } else for (const point of patch.valuePoints ?? []) this.appendOrderWallValue(segment, point);
-        this.orderWallSegments.delete(patch.id);
         this.orderWallSegments.set(patch.id, segment);
         applied.push({ ...patch, segment });
       }
     }
-    while (this.orderWallSegments.size > ORDER_WALL_MAX_SEGMENTS) this.dropOrderWallSegment(this.orderWallSegments.keys().next().value!);
+    this.trimOrderWallSegments();
     this.trimOrderWallValues();
     this.orderWallStatus = this.effectiveOrderWallStatus(status);
     this.orderWalls?.patch(applied, this.orderWallStatus);
     return this.orderWallStatus;
   }
   private effectiveOrderWallStatus(status:OrderWallStatus):OrderWallStatus {
-    return this.orderWallValuesLimited ? {...status,valueHistoryLimited:true,...(status.coverage?{coverage:{...status.coverage,complete:false,partial:true}}:{})} : status;
+    return this.orderWallValuesLimited || this.orderWallEpisodesLimited ? {
+      ...status,
+      ...(this.orderWallValuesLimited ? { valueHistoryLimited: true } : {}),
+      ...(this.orderWallEpisodesLimited ? { episodeHistoryLimited: true } : {}),
+      ...(status.coverage ? { coverage: { ...status.coverage, complete: false, partial: true } } : {}),
+    } : status;
   }
   setOrderWallStatus(status?: OrderWallStatus) { this.orderWallStatus = this.effectiveOrderWallStatus(status ?? { state: 'loading' }); this.orderWalls?.setStatus(this.orderWallStatus); }
   orderWallAt(x: number, y: number): OrderWallHit | null { return this.orderWalls?.orderWallAt(x, y) ?? null; }
   orderWallsDiagnostics() { return { ...(this.orderWalls?.diagnostics() ?? {}), mounted: Boolean(this.orderWalls),
-    retainedSegments: this.orderWallSegments.size, valueRuns: this.orderWallValueCount, valueHistoryLimited: this.orderWallStatus.valueHistoryLimited === true }; }
+    retainedSegments: this.orderWallSegments.size, archiveSegments: this.orderWallArchiveSegmentCount,
+    directSegments: this.orderWallDirectSegmentCount, valueRuns: this.orderWallValueCount,
+    archiveValueRuns: this.orderWallArchiveValueCount, directValueRuns: this.orderWallDirectValueCount,
+    valueHistoryLimited: this.orderWallStatus.valueHistoryLimited === true,
+    episodeHistoryLimited: this.orderWallStatus.episodeHistoryLimited === true }; }
 
   private dropOrderWallSegment(id: string) {
     const segment=this.orderWallSegments.get(id);
-    if(segment)this.orderWallValueCount=Math.max(0,this.orderWallValueCount-segment.valueRuns.length);
+    if(segment){
+      const archived=isArchiveOrderWall(segment);
+      if(archived)this.orderWallArchiveSegmentCount=Math.max(0,this.orderWallArchiveSegmentCount-1);
+      else this.orderWallDirectSegmentCount=Math.max(0,this.orderWallDirectSegmentCount-1);
+      this.adjustOrderWallValueCount(archived,-segment.valueRuns.length);
+    }
     this.orderWallSegments.delete(id);
   }
 
   private rebuildOrderWallValueQueue() {
-    const entries = [...this.orderWallSegments.values()].flatMap(segment => segment.valueRuns.map(point => ({ id: segment.id, point })));
-    entries.sort((a,b)=>a.point.at-b.point.at);
-    this.orderWallValueQueue = entries; this.orderWallValueQueueStart = 0; this.orderWallValueCount = entries.length;
+    const direct: Array<{id:string;point:OrderWallSegment['valueRuns'][number]}> = [];
+    const archive: Array<{id:string;point:OrderWallSegment['valueRuns'][number]}> = [];
+    for (const segment of this.orderWallSegments.values()) {
+      const archived=isArchiveOrderWall(segment),maxRuns=archived?ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT:ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT;
+      if(segment.valueRuns.length>maxRuns){segment.valueRuns.splice(0,segment.valueRuns.length-maxRuns);segment.valueRunsTruncated=true;this.orderWallValuesLimited=true;}
+      const entries=archived?archive:direct;
+      for(const point of segment.valueRuns)entries.push({id:segment.id,point});
+    }
+    direct.sort((a,b)=>a.point.at-b.point.at);archive.sort((a,b)=>a.point.at-b.point.at);
+    this.orderWallValueQueue=direct;this.orderWallValueQueueStart=0;this.orderWallDirectValueCount=direct.length;
+    this.orderWallArchiveValueQueue=archive;this.orderWallArchiveValueQueueStart=0;this.orderWallArchiveValueCount=archive.length;
+    this.orderWallValueCount=direct.length+archive.length;
     this.trimOrderWallValues();
   }
   private appendOrderWallValue(segment: OrderWallSegment, point: OrderWallSegment['valueRuns'][number]) {
     const runs = segment.valueRuns, last = runs.at(-1);
+    const archived=isArchiveOrderWall(segment);
     if (last?.at === point.at) {
       if (last.usd === point.usd && last.percentile === point.percentile && last.rank === point.rank && last.quantity === point.quantity) return;
       runs[runs.length - 1] = point;
-      this.orderWallValueQueue.push({ id: segment.id, point });
+      this.enqueueOrderWallValue(segment.id,point,archived,false);
     } else if (!last || last.at < point.at) {
-      runs.push(point); this.orderWallValueQueue.push({ id: segment.id, point }); this.orderWallValueCount++;
+      runs.push(point); this.enqueueOrderWallValue(segment.id,point,archived,true);
     }
-    while (runs.length > ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT) { runs.shift(); segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; this.orderWallValueCount--; }
+    const maxRuns=archived?ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT:ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT;
+    while (runs.length > maxRuns) { runs.shift(); segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; this.adjustOrderWallValueCount(archived,-1); }
   }
   private trimOrderWallValues() {
-    while (this.orderWallValueCount > ORDER_WALL_MAX_VALUE_RUNS) {
-      const oldest = this.orderWallValueQueue[this.orderWallValueQueueStart++];
-      if (!oldest) break;
-      const segment = this.orderWallSegments.get(oldest.id);
-      if (segment?.valueRuns[0] === oldest.point) { segment.valueRuns.shift(); segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; this.orderWallValueCount--; }
+    this.trimOrderWallValueQueue(false);
+    this.trimOrderWallValueQueue(true);
+  }
+  private trimOrderWallValueQueue(archived:boolean){
+    const queue=archived?this.orderWallArchiveValueQueue:this.orderWallValueQueue;
+    let start=archived?this.orderWallArchiveValueQueueStart:this.orderWallValueQueueStart;
+    const limit=archived?ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS:ORDER_WALL_MAX_VALUE_RUNS;
+    const count=()=>archived?this.orderWallArchiveValueCount:this.orderWallDirectValueCount;
+    while(count()>limit&&start<queue.length){
+      const oldest=queue[start++];if(!oldest)break;const segment=this.orderWallSegments.get(oldest.id);
+      if(segment?.valueRuns[0]===oldest.point&&isArchiveOrderWall(segment)===archived){
+        segment.valueRuns.shift();segment.valueRunsTruncated=true;this.orderWallValuesLimited=true;this.adjustOrderWallValueCount(archived,-1);
+      }
     }
-    if (this.orderWallValueQueueStart > 4_096 && this.orderWallValueQueueStart * 2 > this.orderWallValueQueue.length) {
-      this.orderWallValueQueue = this.orderWallValueQueue.slice(this.orderWallValueQueueStart); this.orderWallValueQueueStart = 0;
+    if(start>4_096&&start*2>queue.length){
+      const compact=queue.slice(start);if(archived){this.orderWallArchiveValueQueue=compact;this.orderWallArchiveValueQueueStart=0;}
+      else{this.orderWallValueQueue=compact;this.orderWallValueQueueStart=0;}
+    }else if(archived)this.orderWallArchiveValueQueueStart=start;else this.orderWallValueQueueStart=start;
+    if(queue.length>(limit*2)){
+      const compact:Array<{id:string;point:OrderWallSegment['valueRuns'][number]}>=[];
+      for(const segment of this.orderWallSegments.values())if(isArchiveOrderWall(segment)===archived)
+        for(const point of segment.valueRuns)compact.push({id:segment.id,point});
+      compact.sort((a,b)=>a.point.at-b.point.at);
+      if(archived){this.orderWallArchiveValueQueue=compact;this.orderWallArchiveValueQueueStart=0;}
+      else{this.orderWallValueQueue=compact;this.orderWallValueQueueStart=0;}
     }
-    if(this.orderWallValueQueue.length>ORDER_WALL_MAX_VALUE_RUNS*2){
-      const entries=[...this.orderWallSegments.values()].flatMap(segment=>segment.valueRuns.map(point=>({id:segment.id,point}))).sort((a,b)=>a.point.at-b.point.at);
-      this.orderWallValueQueue=entries;this.orderWallValueQueueStart=0;this.orderWallValueCount=entries.length;
-      while(this.orderWallValueCount>ORDER_WALL_MAX_VALUE_RUNS){const oldest=this.orderWallValueQueue[this.orderWallValueQueueStart++]!;const segment=this.orderWallSegments.get(oldest.id);if(segment?.valueRuns[0]===oldest.point){segment.valueRuns.shift();segment.valueRunsTruncated=true;this.orderWallValuesLimited=true;this.orderWallValueCount--;}}
+    this.orderWallValueCount=this.orderWallArchiveValueCount+this.orderWallDirectValueCount;
+  }
+  private enqueueOrderWallValue(id:string,point:OrderWallSegment['valueRuns'][number],archived:boolean,count=true){
+    if(archived)this.orderWallArchiveValueQueue.push({id,point});else this.orderWallValueQueue.push({id,point});
+    if(count)this.adjustOrderWallValueCount(archived,1);
+  }
+  private adjustOrderWallValueCount(archived:boolean,delta:number){
+    if(archived)this.orderWallArchiveValueCount=Math.max(0,this.orderWallArchiveValueCount+delta);
+    else this.orderWallDirectValueCount=Math.max(0,this.orderWallDirectValueCount+delta);
+    this.orderWallValueCount=this.orderWallArchiveValueCount+this.orderWallDirectValueCount;
+  }
+  private trimOrderWallSegments(){
+    while(this.orderWallDirectSegmentCount>ORDER_WALL_MAX_SEGMENTS){
+      const id=this.oldestSegmentId(false);if(!id)break;this.dropOrderWallSegment(id);this.orderWallEpisodesLimited=true;
     }
+    while(this.orderWallArchiveSegmentCount>ORDER_WALL_ARCHIVE_MAX_SEGMENTS){
+      const id=this.oldestSegmentId(true);if(!id)break;this.dropOrderWallSegment(id);this.orderWallEpisodesLimited=true;
+    }
+  }
+  private oldestSegmentId(archived:boolean){
+    let fallback:string|undefined;
+    for(const [id,segment] of this.orderWallSegments){if(isArchiveOrderWall(segment)!==archived)continue;
+      fallback??=id;if(segment.end!==null)return id;}
+    return fallback;
   }
 
   private handleWheel(event: WheelEvent, container: HTMLElement) {

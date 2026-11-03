@@ -202,6 +202,14 @@ function makeChartHarness(): any {
     orderWallValueQueue: [],
     orderWallValueQueueStart: 0,
     orderWallValueCount: 0,
+    orderWallDirectValueCount: 0,
+    orderWallArchiveValueQueue: [],
+    orderWallArchiveValueQueueStart: 0,
+    orderWallArchiveValueCount: 0,
+    orderWallDirectSegmentCount: 0,
+    orderWallArchiveSegmentCount: 0,
+    orderWallValuesLimited: false,
+    orderWallEpisodesLimited: false,
     orderWallStatus: { state: 'loading' },
   });
   return chart;

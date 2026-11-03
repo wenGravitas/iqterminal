@@ -1,7 +1,7 @@
 import { canonicalSeries, instrumentOf, type CanonicalSeries } from '../feed/protocol';
 
-export const JOURNAL_VERSION = 1 as const;
-export const JOURNAL_LIMITS = { entriesPerImport: 1000, archiveBytes: 100 * 1024 * 1024, assetBytes: 20 * 1024 * 1024, snapshotBytes: 8 * 1024 * 1024, note: 32000, tags: 24, revisions: 200, query: 500 } as const;
+export const JOURNAL_VERSION = 2 as const;
+export const JOURNAL_LIMITS = { entriesPerImport: 1000, archiveBytes: 100 * 1024 * 1024, entryBytes: 32 * 1024 * 1024, assetBytes: 20 * 1024 * 1024, snapshotBytes: 8 * 1024 * 1024, note: 32000, tags: 24, revisions: 200, query: 500, attachments: 64, relatedEntries: 200, kind: 64 } as const;
 export interface JournalMarket { venue: string; market: string; symbol: string; aggregation?: { version: number; members: unknown[] } }
 export interface LayerCoverage { layer: string; source: string; dataAsOf: number | null; from: number | null; to: number | null; quality: string; gaps: { from: number; to: number }[]; detail?: string }
 export interface ReplayManifest { version: 1; market: JournalMarket; requestedRange: { from: number; to: number } | null; captureCutoff: number | null; warmup: 'unknown'; warmupRequirements?: { instanceId: string; bars: number }[]; streams: LayerCoverage[]; retention: 'unpreserved'; playback: 'not-implemented'; screenshot: boolean; chartState: true }
@@ -15,13 +15,30 @@ export interface ChartSnapshot {
   display?: { timezone: string; theme: string; currency: unknown };
   candleState?: { count: number; firstTime: number | null; last: unknown };
 }
-export interface ChartCapture { version: 1; id: string; capturedAt: number; snapshot: ChartSnapshot; replay: ReplayManifest; image: string | null; thumbnail: string | null; imageStatus: 'complete' | 'partial' | 'note-only'; imageWarnings: string[] }
+export interface ChartCapture { version: 1; id: string; capturedAt: number; /** Market-time anchor; optional only for preserved R1 capture helpers. */ marketTime?: number; snapshot: ChartSnapshot; replay: ReplayManifest; image: string | null; thumbnail: string | null; imageStatus: 'complete' | 'partial' | 'note-only'; imageWarnings: string[] }
 export interface JournalReasoning { thesis: string; confirmation: string; invalidation: string; plannedAction: string }
 export interface NoteRevision { at: number; kind: 'original' | 'edit' | 'reflection'; title: string; note: string; tags: string[]; reasoning: JournalReasoning }
-export interface JournalEntry { version: 1; id: string; captureId: string; market: JournalMarket; instrument: string; marketTime: number; createdAt: number; capturedAt: number; annotation: 'current' | 'historical'; updatedAt: number; title: string; note: string; tags: string[]; reasoning: JournalReasoning; revisions: NoteRevision[] }
-export interface JournalAsset { id: string; blob: Blob; sha256: string; bytes: number; mime: 'image/png' }
+export type JournalImageMime = 'image/png' | 'image/jpeg' | 'image/webp';
+export interface JournalAsset { id: string; blob: Blob; sha256: string; bytes: number; mime: JournalImageMime }
+export interface JournalAttachment { id: string; kind: 'image' | 'chart-capture'; assetId: string; thumbnailAssetId?: string; alt?: string; caption?: string; chartCapture?: ChartCapture }
+export interface JournalRevision {
+  at: number; kind: 'original' | 'edit'; entryAt: number; title?: string; bodyMarkdown: string; tags: string[];
+  entryKind: string; attachments: JournalAttachment[]; relatedEntryIds: string[];
+}
+export interface JournalEntry {
+  version: 2; id: string; entryAt: number; createdAt: number; updatedAt: number; title?: string; bodyMarkdown: string;
+  tags: string[]; kind: string; attachments: JournalAttachment[]; relatedEntryIds: string[]; revisions: JournalRevision[];
+}
+export interface JournalDraft {
+  version: 2; id: string; entryAt: number; createdAt: number; updatedAt: number; title?: string; bodyMarkdown: string;
+  tags: string[]; kind: string; attachments: JournalAttachment[]; relatedEntryIds: string[];
+  editingEntryId?: string; expectedUpdatedAt?: number;
+}
+/** Compatibility shape for existing capture/restore call sites while their UI is adapted to v2 attachments. */
 export interface JournalBundle { entry: JournalEntry; capture: ChartCapture; assets: JournalAsset[] }
-export interface JournalQuery { instrument?: string; from?: number; to?: number; createdBefore?: number; before?: { time: number; id: string }; text?: string; tag?: string; limit?: number }
+export interface JournalQuery { from?: number; to?: number; before?: { entryAt: number; id: string }; order?: 'newest' | 'oldest'; text?: string; tag?: string; kind?: string; instrument?: string; limit?: number }
+export interface JournalChartLinkQuery { instrument: string; from: number; to: number; limit?: number }
+export interface JournalChartLink { entry: JournalEntry; attachment: JournalAttachment }
 export const emptyReasoning = (): JournalReasoning => ({ thesis: '', confirmation: '', invalidation: '', plannedAction: '' });
 export function canonicalMarket(series: CanonicalSeries): JournalMarket { return { venue: series.venue, market: series.market, symbol: instrumentOf(series).native }; }
 export function marketIdentity(market: JournalMarket) { return JSON.stringify([market.venue, market.market, market.symbol, market.aggregation ?? null]); }
@@ -31,22 +48,70 @@ function object(value: unknown): Record<string, any> { if (!value || typeof valu
 export function utcMs(value: unknown): number { if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 1_230_768_000_000 || value > 8_640_000_000_000_000) throw Error('Journal timestamps must be UTC epoch milliseconds'); return value; }
 function text(value: unknown, maximum: number = JOURNAL_LIMITS.note): string { if (typeof value !== 'string' || value.length > maximum) throw Error('Invalid or oversized journal text'); return value; }
 function id(value: unknown) { const result = text(value, 180); if (!result || /[\u0000-\u001f]/.test(result)) throw Error('Invalid journal identity'); return result; }
-function version(value: Record<string, any>) { if (value.version !== 1) throw Error('Unsupported journal schema; original record preserved'); }
+function version(value: Record<string, any>, expected = 1) { if (value.version !== expected) throw Error('Unsupported journal schema; original record preserved'); }
+function assertFields(value: Record<string, unknown>, allowed: readonly string[]) { const unexpected = Object.keys(value).find(key => !allowed.includes(key)); if (unexpected) throw Error(`Unexpected journal field: ${unexpected}`); }
 export function validateMarket(value: unknown): JournalMarket { const m = object(value); const result: JournalMarket = { venue: id(m.venue), market: id(m.market), symbol: id(m.symbol) }; if (m.aggregation !== undefined) { const a = object(m.aggregation); if (a.version !== 1 || !Array.isArray(a.members) || a.members.length > 32 || JSON.stringify(a).length > 16000) throw Error('Unsupported aggregation definition'); result.aggregation = immutableCopy(a) as JournalMarket['aggregation']; } return result; }
-function reasoning(value: unknown): JournalReasoning { const r = object(value); return { thesis: text(r.thesis), confirmation: text(r.confirmation), invalidation: text(r.invalidation), plannedAction: text(r.plannedAction) }; }
 function tags(value: unknown): string[] { if (!Array.isArray(value) || value.length > JOURNAL_LIMITS.tags) throw Error('Too many journal tags'); return [...new Set(value.map(v => text(v, 64).trim()).filter(Boolean))]; }
 export function validateEntry(value: unknown): JournalEntry {
-  const e = object(value); version(e); if (JSON.stringify(e).length > 2 * 1024 * 1024) throw Error('Note history exceeds 2 MB; export this entry and start a follow-up entry'); const market = validateMarket(e.market); if (!['current', 'historical'].includes(e.annotation)) throw Error('Invalid observation annotation');
-  if (!Array.isArray(e.revisions) || !e.revisions.length || e.revisions.length > JOURNAL_LIMITS.revisions) throw Error('Invalid note revision history');
-  const revisions = e.revisions.map((raw: unknown) => { const r = object(raw); if (!['original', 'edit', 'reflection'].includes(r.kind)) throw Error('Invalid revision kind'); return { at: utcMs(r.at), kind: r.kind, title: text(r.title, 240), note: text(r.note), tags: tags(r.tags), reasoning: reasoning(r.reasoning) }; });
-  const result: JournalEntry = { version: 1, id: id(e.id), captureId: id(e.captureId), market, instrument: marketIdentity(market), marketTime: utcMs(e.marketTime), createdAt: utcMs(e.createdAt), capturedAt: utcMs(e.capturedAt), annotation: e.annotation === 'historical' ? 'historical' : 'current', updatedAt: utcMs(e.updatedAt), title: text(e.title, 240), note: text(e.note), tags: tags(e.tags), reasoning: reasoning(e.reasoning), revisions };
-  if (result.updatedAt < result.createdAt || revisions[0].kind !== 'original' || revisions[0].at !== result.createdAt || revisions.some((r: NoteRevision, i: number) => r.at < result.createdAt || r.at > result.updatedAt || i && r.at < revisions[i - 1].at)) throw Error('Inconsistent journal timestamps');
+  const e = object(value); version(e, JOURNAL_VERSION); assertFields(e, ['version', 'id', 'entryAt', 'createdAt', 'updatedAt', 'title', 'bodyMarkdown', 'tags', 'kind', 'attachments', 'relatedEntryIds', 'revisions']);
+  const fields = documentFields(e);
+  if (!Array.isArray(e.revisions) || !e.revisions.length || e.revisions.length > JOURNAL_LIMITS.revisions) throw Error('Invalid journal revision history');
+  const revisions: JournalRevision[] = e.revisions.map((raw: unknown) => {
+    const r = object(raw); assertFields(r, ['at', 'kind', 'entryAt', 'title', 'bodyMarkdown', 'tags', 'entryKind', 'attachments', 'relatedEntryIds']); if (r.kind !== 'original' && r.kind !== 'edit') throw Error('Invalid revision kind');
+    const payload = editableFields(r);
+    return { at: utcMs(r.at), kind: r.kind, entryAt: payload.entryAt, title: payload.title, bodyMarkdown: payload.bodyMarkdown, tags: payload.tags, entryKind: payload.kind, attachments: payload.attachments, relatedEntryIds: payload.relatedEntryIds };
+  });
+  if (JSON.stringify({ ...fields, revisions }).length > JOURNAL_LIMITS.entryBytes) throw Error('Journal entry history exceeds its storage limit');
+  if (revisions[0]!.kind !== 'original' || revisions[0]!.at !== fields.createdAt || revisions.at(-1)!.at !== fields.updatedAt || revisions.some((r, i) => r.at < fields.createdAt || r.at > fields.updatedAt || (i > 0 && r.at < revisions[i - 1]!.at))) throw Error('Inconsistent journal revision timestamps');
+  const latest = revisions.at(-1)!;
+  if (JSON.stringify({ entryAt: latest.entryAt, title: latest.title, bodyMarkdown: latest.bodyMarkdown, tags: latest.tags, kind: latest.entryKind, attachments: latest.attachments, relatedEntryIds: latest.relatedEntryIds })
+    !== JSON.stringify({ entryAt: fields.entryAt, title: fields.title, bodyMarkdown: fields.bodyMarkdown, tags: fields.tags, kind: fields.kind, attachments: fields.attachments, relatedEntryIds: fields.relatedEntryIds })) throw Error('Latest revision does not match the journal entry');
+  return immutableCopy({ version: JOURNAL_VERSION, ...fields, revisions });
+}
+function optionalText(value: unknown, maximum: number) { return value === undefined ? undefined : text(value, maximum); }
+function validateAttachment(value: unknown): JournalAttachment {
+  const a = object(value), kind = a.kind;
+  assertFields(a, ['id', 'kind', 'assetId', 'thumbnailAssetId', 'alt', 'caption', 'chartCapture']);
+  if (kind !== 'image' && kind !== 'chart-capture') throw Error('Invalid journal attachment kind');
+  const result: JournalAttachment = { id: id(a.id), kind, assetId: id(a.assetId) };
+  if (a.thumbnailAssetId !== undefined) result.thumbnailAssetId = id(a.thumbnailAssetId);
+  if (a.alt !== undefined) result.alt = text(a.alt, 1000);
+  if (a.caption !== undefined) result.caption = text(a.caption, 4000);
+  if (a.chartCapture !== undefined) result.chartCapture = validateCapture(a.chartCapture);
+  if (kind === 'chart-capture' && (!result.chartCapture || result.chartCapture.marketTime === undefined)) throw Error('Chart attachments require an immutable capture and market-time anchor');
+  if (result.chartCapture && (result.chartCapture.image !== result.assetId || (result.chartCapture.thumbnail ?? undefined) !== result.thumbnailAssetId)) throw Error('Chart attachment assets must match its immutable capture');
+  if (kind === 'image' && result.chartCapture) throw Error('Image attachments cannot carry chart state');
+  return immutableCopy(result);
+}
+function documentFields(value: unknown) {
+  const d = object(value); version(d, JOURNAL_VERSION); assertSafeJson(d);
+  const createdAt = utcMs(d.createdAt), updatedAt = utcMs(d.updatedAt);
+  if (updatedAt < createdAt) throw Error('Journal update time cannot precede creation');
+  return { id: id(d.id), ...editableFields(d), createdAt, updatedAt };
+}
+function editableFields(value: Record<string, any>) {
+  if (!Array.isArray(value.attachments) || value.attachments.length > JOURNAL_LIMITS.attachments) throw Error('Too many journal attachments');
+  const attachments = value.attachments.map(validateAttachment);
+  if (new Set(attachments.map(a => a.id)).size !== attachments.length) throw Error('Duplicate attachment id');
+  if (!Array.isArray(value.relatedEntryIds) || value.relatedEntryIds.length > JOURNAL_LIMITS.relatedEntries) throw Error('Too many related journal entries');
+  const relatedEntryIds = [...new Set(value.relatedEntryIds.map(id))];
+  const kind = text(value.entryKind ?? value.kind, JOURNAL_LIMITS.kind).trim(); if (!kind) throw Error('Journal entry kind is required');
+  return { entryAt: utcMs(value.entryAt), title: optionalText(value.title, 240), bodyMarkdown: text(value.bodyMarkdown), tags: tags(value.tags), kind, attachments, relatedEntryIds };
+}
+export function validateDraft(value: unknown): JournalDraft {
+  const d = object(value); version(d, JOURNAL_VERSION); assertFields(d, ['version', 'id', 'entryAt', 'createdAt', 'updatedAt', 'title', 'bodyMarkdown', 'tags', 'kind', 'attachments', 'relatedEntryIds', 'editingEntryId', 'expectedUpdatedAt']);
+  const values = documentFields(d), result: JournalDraft = { version: JOURNAL_VERSION, ...values };
+  if (d.editingEntryId !== undefined) result.editingEntryId = id(d.editingEntryId);
+  if (d.expectedUpdatedAt !== undefined) result.expectedUpdatedAt = utcMs(d.expectedUpdatedAt);
+  if ((result.editingEntryId === undefined) !== (result.expectedUpdatedAt === undefined)) throw Error('An edit draft requires its entry id and expected update time');
+  if (result.editingEntryId === result.id) throw Error('A draft cannot edit itself');
+  if (JSON.stringify(result).length > JOURNAL_LIMITS.snapshotBytes * 2) throw Error('Journal draft exceeds its storage limit');
   return immutableCopy(result);
 }
 export function validateCapture(value: unknown): ChartCapture {
   assertSafeJson(value);
   const c = object(value); version(c); const s = object(c.snapshot); version(s); const replay = object(c.replay); version(replay);
-  utcMs(c.capturedAt); if (s.capturedAt !== c.capturedAt || JSON.stringify(s).length > JOURNAL_LIMITS.snapshotBytes) throw Error('Invalid chart snapshot');
+  utcMs(c.capturedAt); if (c.marketTime !== undefined) utcMs(c.marketTime); if (s.capturedAt !== c.capturedAt || JSON.stringify(s).length > JOURNAL_LIMITS.snapshotBytes) throw Error('Invalid chart snapshot');
   const market = validateMarket(s.market); if (marketIdentity(validateMarket(replay.market)) !== marketIdentity(market) || replay.playback !== 'not-implemented' || replay.retention !== 'unpreserved' || replay.chartState !== true) throw Error('Unsupported replay claim');
   for (const key of ['config', 'nativeState', 'drawings', 'objectTree']) object(s[key]);
   if (!s.config || !['candle', 'footprint'].includes(s.config.type) || !Array.isArray(s.config.indicators) || s.config.indicators.length > 24) throw Error('Unsupported chart presentation');
@@ -64,10 +129,19 @@ export function validateCapture(value: unknown): ChartCapture {
   text(s.app, 160); text(s.engine, 160); s.warnings.forEach((warning: unknown) => text(warning, 1000));
   if (c.imageStatus === 'complete' && c.imageWarnings.length) throw Error('Partial screenshot cannot claim completeness');
   if (replay.screenshot !== Boolean(c.image)) throw Error('Inconsistent screenshot claim');
-  return immutableCopy({ version: 1, id: id(c.id), capturedAt: c.capturedAt, snapshot: s as ChartSnapshot, replay: replay as ReplayManifest, image: c.image === null ? null : id(c.image), thumbnail: c.thumbnail === null ? null : id(c.thumbnail), imageStatus: c.imageStatus, imageWarnings: c.imageWarnings.map((v: unknown) => text(v, 500)) });
+  return immutableCopy({ version: 1, id: id(c.id), capturedAt: c.capturedAt, ...(c.marketTime === undefined ? {} : { marketTime: c.marketTime }), snapshot: s as ChartSnapshot, replay: replay as ReplayManifest, image: c.image === null ? null : id(c.image), thumbnail: c.thumbnail === null ? null : id(c.thumbnail), imageStatus: c.imageStatus, imageWarnings: c.imageWarnings.map((v: unknown) => text(v, 500)) });
 }
-export function createEntry(capture: ChartCapture, marketTime: number, now = capture.capturedAt, annotation: 'current' | 'historical' = 'current'): JournalEntry { const r = { at: now, kind: 'original' as const, title: '', note: '', tags: [], reasoning: emptyReasoning() }; return validateEntry({ version: 1, id: crypto.randomUUID(), captureId: capture.id, market: capture.snapshot.market, marketTime, createdAt: now, capturedAt: capture.capturedAt, annotation, updatedAt: now, ...r, revisions: [r] }); }
-export function reviseEntry(entry: JournalEntry, patch: Pick<JournalEntry, 'title' | 'note' | 'tags' | 'reasoning'>, kind: 'edit' | 'reflection' = 'edit', now = Date.now()): JournalEntry { const at = Math.max(now, entry.updatedAt); return validateEntry({ ...entry, ...patch, updatedAt: at, revisions: [...entry.revisions, { ...patch, at, kind }] }); }
+export function createEntry(capture: ChartCapture, entryAt: number, now = capture.capturedAt, _annotation: 'current' | 'historical' = 'current'): JournalEntry {
+  const cleanCapture = validateCapture({ ...capture, marketTime: entryAt });
+  const attachments: JournalAttachment[] = cleanCapture.image ? [{ id: cleanCapture.id, kind: 'chart-capture', assetId: cleanCapture.image, ...(cleanCapture.thumbnail ? { thumbnailAssetId: cleanCapture.thumbnail } : {}), chartCapture: cleanCapture }] : [];
+  const initial: JournalRevision = { at: now, kind: 'original', entryAt, title: '', bodyMarkdown: '', tags: [], entryKind: 'note', attachments, relatedEntryIds: [] };
+  return validateEntry({ version: JOURNAL_VERSION, id: crypto.randomUUID(), entryAt, createdAt: now, updatedAt: now, title: '', bodyMarkdown: '', tags: [], kind: 'note', attachments, relatedEntryIds: [], revisions: [initial] });
+}
+export function reviseEntry(entry: JournalEntry, patch: Pick<JournalEntry, 'title' | 'bodyMarkdown' | 'tags'> & Partial<Pick<JournalEntry, 'entryAt' | 'kind' | 'attachments' | 'relatedEntryIds'>>, now = Date.now()): JournalEntry {
+  const at = Math.max(now, entry.updatedAt), next = { ...entry, ...patch, updatedAt: at };
+  const revision: JournalRevision = { at, kind: 'edit', entryAt: next.entryAt, title: next.title, bodyMarkdown: next.bodyMarkdown, tags: next.tags, entryKind: next.kind, attachments: next.attachments, relatedEntryIds: next.relatedEntryIds };
+  return validateEntry({ ...next, revisions: [...entry.revisions, revision] });
+}
 
 const credentialKey = /^(?:api[_-]?key|access[_-]?token|authorization|password|private[_-]?key|mnemonic|seed(?:phrase)?|wallet|secret|sessionToken|cookie)$/i;
 export function credentialSource(source: string) { return /(?:api[_-]?key|secret|private[_-]?key|mnemonic|seed[_-]?phrase)\s*[:=]\s*['"`][^'"`]{8,}/i.test(source); }

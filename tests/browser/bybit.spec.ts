@@ -26,7 +26,7 @@ test('Bybit ticker selections, execution labels, CVD membership and persistence'
  await page.screenshot({path:'/tmp/bybit-ticker-cvd.png'});expect(errors).toEqual([]);
  await page.reload();await expect(page.locator('[data-cvd=true]')).toContainText('BY[P] BTCUSDT');
 });
-test('Bybit net longs and shorts use the third independent venue and retain recorded data',async({page})=>{
+test('combined net positioning uses the third venue and retains recorded data',async({page})=>{
  test.setTimeout(90000);const requests:string[]=[],errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const now=Math.floor(Date.now()/60000)*60000;
  await page.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url());
@@ -39,16 +39,22 @@ test('Bybit net longs and shorts use the third independent venue and retain reco
  });
  await page.goto('/');const chart=page.locator('.candle-panel').first();await expect.poll(()=>page.evaluate(()=>(window as any).__terminal?.stats().panels[0]?.bars)).toBeGreaterThan(0);
  const close=chart.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});if(await close.isVisible())await close.click();
- for(const side of ['Longs','Shorts']){
-  await addIndicator(chart,`Net ${side} — Estimated`);const sources=chart.getByRole('group',{name:`Net ${side} sources`,exact:true});
-  const bybit=sources.getByRole('button',{name:'Show Bybit BTCUSDT Perpetual',exact:true});await expect(bybit).toHaveAttribute('aria-pressed','false');await bybit.click();await expect(bybit).toHaveAttribute('aria-pressed','true');
-  await sources.locator('[data-source="hyperliquid"]').click();
- }
- await expect.poll(()=>requests.some(v=>v.split(',').sort().join(',')==='binance,bybit,hyperliquid')).toBe(true);
- await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes.every((p:any)=>p.venues.includes('bybit')&&p.candleCount>0))).toBe(true);
+ await addIndicator(chart,'Net Longs & Shorts');
+ const sources=chart.getByRole('group',{name:'Net Longs & Shorts sources',exact:true});
+ for(const venue of ['binance','hyperliquid','bybit']){const button=sources.locator(`[data-source="${venue}"]`);if(await button.getAttribute('aria-pressed')!=='true')await button.click();}
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.values().next().value.engine.netPositioningDiagnostics()[0]?.venues.slice().sort())).toEqual(['binance','bybit','hyperliquid']);
+ await expect.poll(()=>requests.some(v=>v.split(',').includes('bybit'))).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes.length)).toBe(1);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.venues.includes('bybit')&& (window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.candleCount>0)).toBe(true);
  await page.screenshot({path:'/tmp/bybit-net-positioning.png'});expect(errors).toEqual([]);
  await page.setViewportSize({width:720,height:860});
- for(const side of ['Longs','Shorts'])await expect.poll(()=>chart.getByRole('group',{name:`Net ${side} sources`,exact:true}).evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+ await expect(sources).toBeVisible();
+ const paneIndex=await page.evaluate(()=>(window as any).__terminal.panels.values().next().value.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated'));
+ const rowList=chart.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"] .pane-indicator-rows`);
+ await rowList.evaluate(e=>{e.scrollLeft=e.scrollWidth;});await sources.evaluate(e=>{e.scrollLeft=e.scrollWidth;});
+ const narrowBybit=sources.locator('[data-source="bybit"]');await expect(narrowBybit).toBeInViewport();
+ await narrowBybit.click();await expect(narrowBybit).toHaveAttribute('aria-pressed','false');
+ await narrowBybit.click();await expect(narrowBybit).toHaveAttribute('aria-pressed','true');
  await page.screenshot({path:'/tmp/bybit-net-positioning-narrow.png'});
- await page.reload();await expect(chart.getByRole('group',{name:'Net Longs sources',exact:true}).locator('[data-source="bybit"]')).toHaveAttribute('aria-pressed','true');
+ await page.reload();await expect(chart.getByRole('group',{name:'Net Longs & Shorts sources',exact:true}).locator('[data-source="bybit"]')).toHaveAttribute('aria-pressed','true');
 });

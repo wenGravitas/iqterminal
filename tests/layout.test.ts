@@ -50,4 +50,21 @@ describe('layout persistence', () => {
     (parameterized.panels as Record<string, any>)['hyperliquid-positions'].params = { principal: '0xnot-layout-data' };
     expect(restoreValue(JSON.stringify({ version: 8, layout: parameterized }))).toBeNull();
   });
+
+  it('restores one global journal widget without consuming a chart context slot', () => {
+    const chartParams = { venue: 'binance', market: 'perpetual', interval: '1m', type: 'candle', studies: [] };
+    const panels: Record<string, any> = Object.fromEntries(Array.from({ length: 8 }, (_, index) => {
+      const id = `chart-${index + 1}`;
+      return [id, { id, contentComponent: 'candle', tabComponent: 'compact-chart', title: 'Candles', params: chartParams }];
+    }));
+    panels['global-journal'] = { id: 'global-journal', contentComponent: 'global-journal', title: 'Journal', params: {} };
+    const layout = { grid: {}, panels };
+    expect(restoreValue(JSON.stringify({ version: 9, layout }))).toEqual(layout);
+    const invalid = structuredClone(layout);
+    invalid.panels['global-journal-2'] = { ...invalid.panels['global-journal'], id: 'global-journal-2' };
+    expect(restoreValue(JSON.stringify({ version: 9, layout: invalid }))).toBeNull();
+    const parameterized = structuredClone(layout);
+    parameterized.panels['global-journal'].params = { draft: 'not layout data' };
+    expect(restoreValue(JSON.stringify({ version: 9, layout: parameterized }))).toBeNull();
+  });
 });

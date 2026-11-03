@@ -44,7 +44,7 @@ import { indicatorIcon } from './indicators/icons';
 import { indicatorInfoText } from './indicators/info';
 import { applyCompositionPlotPresentation, compositionPaneId, compositionPlotId, compositionScaleId, compositionSmaDiagnostics, resetCompositionSmaMetrics, visibleRangeMaximum, DEFAULT_EMBEDDED_BAND_HEIGHT_PERCENT, MAX_COMPOSITION_PLOTS, migrateComposition, numericOutputContextId, numericOutputId, numericOutputRef, numericOutputScaleId, numericOutputSchemaId, PRICE_PANE_ID, reconcileCompositionPaneMembership, removeCompositionMember, validateComposition, type CompositionPlotRecord, type CompositionScaleRecord, type IndicatorCompositionState, type NumericOutputDescriptor, type NumericOutputRef, type NumericUnit } from './scripts/composition';
 import { ChartNumericOutputRegistry, registerChartNumericOutputRegistry, registerManagedNumericOutputBinding, type ChartNumericOutput } from './scripts/output-registry';
-import { COMPOSITION_SMA_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, DEFAULT_FOOTPRINT_TOTALS_SETTINGS, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, footprintTotalsSettings, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings, type FootprintTotalsSettings } from './indicators/model';
+import { COMPOSITION_SMA_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, ORDER_WALLS_ID, TPO_ID, NET_POSITIONING_ID, NET_LONGS_ID, NET_SHORTS_ID, NET_POSITIONING_IDS, INDICATOR_CONFIG_VERSION, DEFAULT_FOOTPRINT_VIEW, DEFAULT_FOOTPRINT_TOTALS_SETTINGS, NATIVE_DEFINITIONS, IndicatorLifecycle, migrateIndicators, nativeInstance, nativeDefinition, scriptDefinition, footprintTotalsSettings, netPositioningSettings, studyPins, withStudyPins, type IndicatorInstance, type NetPositioningSettings, type FootprintTotalsSettings } from './indicators/model';
 import { CompositionControls } from './indicators/composition-controls';
 import { CompositionPlacementControls } from './indicators/composition-placement-controls';
 import { ManagedCompositionPlacementController } from './indicators/composition-placement-controller';
@@ -219,7 +219,8 @@ export function config(value: unknown, restorePlotPresentation = false): PanelCo
   const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const legacy = legacyConfig(source);
   const indicators = migrateIndicators(source, { ...legacy, type: source.type === 'footprint' ? 'footprint' : 'candle' });
-  const paneOrder = Array.isArray(source.paneOrder) ? [...new Set(source.paneOrder.filter((id): id is string => typeof id === 'string' && id.length <= 160))].slice(0, 64) : [];
+  const paneOrder = Array.isArray(source.paneOrder) ? [...new Set(source.paneOrder.filter((id): id is string => typeof id === 'string' && id.length <= 160)
+    .map(id => id === NET_LONGS_ID || id === NET_SHORTS_ID ? NET_POSITIONING_ID : id))].slice(0, 64) : [];
   let composition = migrateComposition(source.composition, indicators, paneOrder);
   const presentedIndicators = restorePlotPresentation ? applyCompositionPlotPresentation(indicators, composition) : indicators;
   if (restorePlotPresentation) composition = reconcileCompositionPaneMembership(composition, presentedIndicators);
@@ -642,7 +643,10 @@ export class CandlePanel implements IContentRenderer {
     this.vwapControls = new DailyVwapControls((id, settings) => this.changeIndicator(id, { settings: { ...settings } }), this.abort.signal);
     this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
     this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
-    this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), this.abort.signal);
+    this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), () => {
+      const instance = this.nativeIndicator(ORDER_WALLS_ID);
+      return Boolean(instance?.visible && orderWallsSettings(instance.settings).mode === 'top-levels' && this.engine?.fitOrderWalls());
+    }, () => this.retryOrderWallsHistory(), this.abort.signal);
     this.compositionControls = new CompositionControls((output, settings, instanceId, changeScale) => this.addCompositionSma(output, settings, instanceId, changeScale));
     this.placementControls = new CompositionPlacementControls((instanceId, targetId, together, heightPercent, lowerBand) =>
       this.compositionPlacement.move(instanceId, targetId, together, heightPercent, lowerBand));
@@ -3988,8 +3992,8 @@ export class CandlePanel implements IContentRenderer {
 
     for (const instance of active) {
       const settings = netPositioningSettings(instance.settings);
-      const side = instance.definitionId === NET_LONGS_ID ? 'longs' : 'shorts';
-      engine.addNetPositioningPane(instance.instanceId, side, settings.method, settings.venues, intervalMs, settings.display, settings.labels, settings.colors);
+      engine.addNetPositioningPane(instance.instanceId, settings.method, settings.venues, intervalMs, settings.display, settings.labels,
+        settings.colors, settings.showLongs, settings.showShorts, settings.reverseOrder);
       const history = this.netPositioningHistories.get(settings.method)!;
       const payload = history.metadata();
       engine.setNetPositioningSnapshot(instance.instanceId, history.snapshot(), payload?.feeds ?? {}, payload?.unitVerification ?? {}, payload?.pendingIntervals ?? 0, this.netPositioningErrors.get(settings.method) ?? '');
@@ -4060,7 +4064,7 @@ export class CandlePanel implements IContentRenderer {
     if (!existing) {
       const settings = definitionId === OPEN_INTEREST_ID ? { ...openInterestSettings(undefined) }
         : NET_POSITIONING_IDS.includes(definitionId as typeof NET_POSITIONING_IDS[number])
-        ? { method: 'price-oi' as const, venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const], display: 'stacked' as const, labels: 'auto' as const }
+        ? netPositioningSettings({ venues: [this.selection.venue === 'hyperliquid' ? 'hyperliquid' as const : 'binance' as const] })
         : definitionId === EFFORT_RESULT_ID ? effortRecord(DEFAULT_EFFORT)
         : definitionId === LIQUIDATIONS_ID ? {...liquidationSettings(undefined)}
         : definitionId === CVD_ID ? { ...cvdSettings(undefined) }
@@ -4789,6 +4793,9 @@ export class CandlePanel implements IContentRenderer {
 
   private indicatorWarning(instance: IndicatorInstance, unavailable: boolean, study?: import('./scripts/host').StudyView) {
     if (unavailable) return 'Unavailable in this chart.';
+    if (instance.definitionId === ORDER_WALLS_ID && !supportsDepth(this.selection)) {
+      return 'Unavailable on this market. Order Walls supports Binance BTCUSDT spot and USD-M perpetual.';
+    }
     if (instance.definitionId === COMPOSITION_SMA_ID) {
       const ref = instance.numericInputs?.source;
       if (!ref || !this.outputRegistry.resolve(ref).available) return 'Input unavailable. Choose another input in Settings.';
@@ -5260,8 +5267,26 @@ export class CandlePanel implements IContentRenderer {
       return;
     }
 
+    if (!this.visible || !instance.visible) {
+      const hadSource = Boolean(this.orderWallsSubscriptionKey || this.releaseOrderWalls);
+      this.releaseOrderWalls?.(); this.releaseOrderWalls = undefined;
+      if (hadSource) this.orderWallsGeneration++;
+      this.orderWallsSubscriptionKey = ''; this.orderWallsSettingsKey = ''; this.orderWallsViewportKey = '';
+      this.orderWallsControls.setStatus(this.orderWallsStatus);
+      return;
+    }
+
     this.orderWallsControls.setStatus(this.orderWallsStatus);
     this.updateOrderWallsViewport();
+  }
+
+  private retryOrderWallsHistory() {
+    const instance = this.nativeIndicator(ORDER_WALLS_ID), archive = this.orderWallsStatus?.archive;
+    const market = this.selection.market === 'spot' ? 'spot' : 'perpetual';
+    if (this.dead || this.abort.signal.aborted || !this.visible || !instance?.visible || this.selection.venue !== 'binance'
+      || orderWallsSettings(instance.settings).mode !== 'top-levels' || !archive || archive.market !== market
+      || archive.requestComplete !== false || archive.resumeAfter === undefined) return;
+    this.feed.retryOrderWallsHistory(this.params.api.id);
   }
 
   private updateOrderWallsViewport(from?: number, to?: number, low?: number, high?: number, height?: number) {
@@ -5623,6 +5648,7 @@ export class CandlePanel implements IContentRenderer {
       this.engine.visible = this.visible;
       if (this.visible) this.scheduler.invalidate(this.engine);
     }
+    this.syncOrderWalls();
     this.syncNetPositioning();
     this.syncTpo();
     if (this.visible) {

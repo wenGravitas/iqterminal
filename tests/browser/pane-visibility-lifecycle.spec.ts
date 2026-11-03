@@ -14,7 +14,7 @@ type PaneSnapshot = {
   stableHistory: boolean;
 };
 
-test('visible native indicator panes are removed and restored without orphan panes', async ({ page }) => {
+test('combined positioning and native indicator panes restore without orphan panes', async ({ page }) => {
   test.setTimeout(90_000);
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -45,8 +45,7 @@ test('visible native indicator panes are removed and restored without orphan pan
   await setFootprint(panel, true);
 
   const definitions = [
-    { name: 'Net Longs — Estimated', id: 'native.net-longs-estimated' },
-    { name: 'Net Shorts — Estimated', id: 'native.net-shorts-estimated' },
+    { name: 'Net Longs & Shorts', id: 'native.net-longs-shorts-estimated' },
     { name: 'Footprint Totals', id: 'native.footprint-totals' },
   ];
   for (const indicator of definitions) await addIndicator(panel, indicator.name);
@@ -63,7 +62,7 @@ test('visible native indicator panes are removed and restored without orphan pan
       [...host.querySelectorAll<HTMLElement>('.active-indicator')].map(row => ({ id: row.dataset.definitionId!, paneIndex: Number(host.dataset.paneIndex) })))
       .sort((a, b) => a.paneIndex - b.paneIndex);
     const settings = p.selection.indicators
-      .filter((indicator: any) => ['native.net-longs-estimated', 'native.net-shorts-estimated', 'native.footprint-totals'].includes(indicator.definitionId))
+      .filter((indicator: any) => ['native.net-longs-shorts-estimated', 'native.footprint-totals'].includes(indicator.definitionId))
       .map((indicator: any) => ({ definitionId: indicator.definitionId, settings: structuredClone(indicator.settings) }))
       .sort((a: any, b: any) => a.definitionId.localeCompare(b.definitionId));
     const refs = (window as any).__paneVisibilityRefs;
@@ -81,45 +80,42 @@ test('visible native indicator panes are removed and restored without orphan pan
     };
   });
 
-  await expect.poll(async () => (await snapshot()).owners.length).toBe(3);
+  await expect.poll(async () => (await snapshot()).owners.length).toBe(2);
   const baseline = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     const chart = p.engine.chart;
     const histories = p.netPositioningHistories;
     (window as any).__paneVisibilityRefs = { engine: p.engine, chart, histories, historyRows: [...histories.entries()] };
-    return { paneCount: chart.panes().length - 3, seriesCount: chart.panes().reduce((count: number, pane: any) => count + pane.series().length, 0) - 3 };
+    return { paneCount: chart.panes().length - 2, seriesCount: chart.panes().reduce((count: number, pane: any) => count + pane.series().length, 0) - 2 };
   });
   expect(baseline.paneCount).toBe(1);
   const afterAdd = await snapshot();
-  expect(afterAdd.paneCount).toBe(baseline.paneCount + 3);
-  expect(afterAdd.seriesCount).toBe(baseline.seriesCount + 3);
+  expect(afterAdd.paneCount).toBe(baseline.paneCount + 2);
+  expect(afterAdd.seriesCount).toBe(baseline.seriesCount + 2);
   expect(afterAdd.owners.map(view => view.id)).toEqual(expect.arrayContaining(definitions.map(item => item.id)));
   expect(afterAdd.netSubscriptions).toBe(1);
   const initialSettings = afterAdd.settings;
 
   await setFootprint(panel, false);
-  await expect.poll(async () => (await snapshot()).owners.map(view => view.id)).toEqual([
-    'native.net-longs-estimated', 'native.net-shorts-estimated',
-  ]);
+  await expect.poll(async () => (await snapshot()).owners.map(view => view.id)).toEqual(['native.net-longs-shorts-estimated']);
   const candleMode = await snapshot();
-  expect(candleMode.paneCount).toBe(baseline.paneCount + 2);
-  expect(candleMode.owners.map(owner => owner.paneSeriesCount)).toEqual([1, 1]);
+  expect(candleMode.paneCount).toBe(baseline.paneCount + 1);
+  expect(candleMode.owners.map(owner => owner.paneSeriesCount)).toEqual([1]);
   expect(candleMode.settings).toEqual(initialSettings);
   expect(candleMode.netSubscriptions).toBe(1);
   expect(candleMode.stableIdentity).toBe(true);
   expect(candleMode.stableHistory).toBe(true);
   await expect(panel.locator('.active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(0);
   await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(0);
-  await expect(panel.locator('.chart-objects-panel').getByRole('button', { name: 'Footprint Totals', exact: true })).toHaveCount(0);
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
   await expect(panel.locator('.indicator-picker [data-add-native="native.footprint-totals"]')).toHaveCount(0);
   await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
 
   await setFootprint(panel, true);
-  await expect.poll(async () => (await snapshot()).owners.length).toBe(3);
+  await expect.poll(async () => (await snapshot()).owners.length).toBe(2);
   const footprintMode = await snapshot();
-  expect(footprintMode.paneCount).toBe(baseline.paneCount + 3);
-  expect(footprintMode.seriesCount).toBe(baseline.seriesCount + 3);
+  expect(footprintMode.paneCount).toBe(baseline.paneCount + 2);
+  expect(footprintMode.seriesCount).toBe(baseline.seriesCount + 2);
   expect(footprintMode.settings).toEqual(initialSettings);
   expect(footprintMode.netSubscriptions).toBe(1);
   expect(footprintMode.stableIdentity).toBe(true);
@@ -128,30 +124,31 @@ test('visible native indicator panes are removed and restored without orphan pan
   await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
   await expect(panel.locator('.chart-objects-panel').getByRole('button', { name: 'Footprint Totals', exact: true })).toHaveCount(1);
 
-  const rows = panel.locator('.pane-indicator-host > .active-indicator');
+  const rows = panel.locator('.pane-indicator-host .pane-indicator-rows > .active-indicator');
   for (const indicator of definitions) {
     for (let cycle = 0; cycle < 3; cycle++) {
       await panel.locator(`.pane-indicator-host .active-indicator[data-definition-id="${indicator.id}"]`)
         .getByRole('button', { name: `Hide ${indicator.name}`, exact: true }).click();
-      const visible = 2;
+      const visible = 1;
       await expect(rows).toHaveCount(visible);
       await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + visible);
       const hidden = await snapshot();
       expect(hidden.seriesCount).toBe(baseline.seriesCount + visible);
       expect(hidden.owners.map(view => view.id)).not.toContain(indicator.id);
-      expect(hidden.legends).toBe(hidden.owners.filter(view => view.id.includes('net-')).length);
+      expect(hidden.legends).toBe(hidden.owners.filter(view => view.id === 'native.net-longs-shorts-estimated').length);
+      expect(hidden.netSubscriptions).toBe(indicator.id === 'native.net-longs-shorts-estimated' ? 0 : 1);
       expect(hidden.stableIdentity).toBe(true);
       expect(hidden.stableHistory).toBe(true);
 
       await panel.locator(`.active-indicator-rows .active-indicator[data-definition-id="${indicator.id}"]`)
         .getByRole('button', { name: `Show ${indicator.name}`, exact: true }).click();
-      await expect(rows).toHaveCount(3);
-      await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + 3);
+      await expect(rows).toHaveCount(2);
+      await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + 2);
       const shown = await snapshot();
-      expect(shown.seriesCount).toBe(baseline.seriesCount + 3);
+      expect(shown.seriesCount).toBe(baseline.seriesCount + 2);
       expect(shown.owners.map(view => view.id)).toEqual(expect.arrayContaining(definitions.map(item => item.id)));
       expect(shown.headerRows.map(row => row.id)).toEqual(expect.arrayContaining(definitions.map(item => item.id)));
-      expect(shown.owners.map(view => view.paneIndex).sort()).toEqual([1, 2, 3]);
+      expect(shown.owners.map(view => view.paneIndex).sort()).toEqual([1, 2]);
       expect(shown.netSubscriptions).toBe(1);
       expect(shown.settings).toEqual(initialSettings);
       expect(shown.stableIdentity).toBe(true);
@@ -159,41 +156,24 @@ test('visible native indicator panes are removed and restored without orphan pan
     }
   }
 
-  // Remove the middle pane and restore it while the other two keep their owners.
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')
-    .getByRole('button', { name: 'Remove Net Shorts — Estimated', exact: true }).click();
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')
+    .getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true }).click();
+  await expect(rows).toHaveCount(1);
+  await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + 1);
+  const positioningRemoved = await snapshot();
+  expect(positioningRemoved.owners.map(view => view.id)).toEqual(['native.footprint-totals']);
+  expect(positioningRemoved.netSubscriptions).toBe(0);
+  await addIndicator(panel, 'Net Longs & Shorts');
   await expect(rows).toHaveCount(2);
   await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + 2);
-  let middleRemoved = await snapshot();
-  expect(middleRemoved.owners.map(view => view.paneIndex)).toEqual([1, 2]);
-  expect(middleRemoved.seriesCount).toBe(baseline.seriesCount + 2);
-  await addIndicator(panel, 'Net Shorts — Estimated');
-  await expect(rows).toHaveCount(3);
-  await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount + 3);
-  const middleRestored = await snapshot();
-  expect(middleRestored.owners.map(view => view.paneIndex).sort()).toEqual([1, 2, 3]);
-  expect(middleRestored.seriesCount).toBe(baseline.seriesCount + 3);
-  expect(middleRestored.stableIdentity).toBe(true);
-  expect(middleRestored.stableHistory).toBe(true);
+  const positioningRestored = await snapshot();
+  expect(positioningRestored.owners.map(view => view.id)).toContain('native.net-longs-shorts-estimated');
+  expect(positioningRestored.netSubscriptions).toBe(1);
+  expect(positioningRestored.stableIdentity).toBe(true);
+  expect(positioningRestored.stableHistory).toBe(true);
 
-  // One side keeps the single shared subscription alive; hiding the last releases it.
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]')
-    .getByRole('button', { name: 'Hide Net Longs — Estimated', exact: true }).click();
-  await expect.poll(async () => (await snapshot()).netSubscriptions).toBe(1);
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')
-    .getByRole('button', { name: 'Hide Net Shorts — Estimated', exact: true }).click();
-  await expect.poll(async () => (await snapshot()).netSubscriptions).toBe(0);
-  const onlyTotals = await snapshot();
-  expect(onlyTotals.paneCount).toBe(baseline.paneCount + 1);
-  expect(onlyTotals.seriesCount).toBe(baseline.seriesCount + 1);
-  expect(onlyTotals.owners).toHaveLength(1);
-  expect(onlyTotals.owners[0].id).toBe('native.footprint-totals');
-
-  await panel.locator('.active-indicator-rows .active-indicator[data-definition-id="native.net-longs-estimated"]')
-    .getByRole('button', { name: 'Show Net Longs — Estimated', exact: true }).click();
-  await expect.poll(async () => (await snapshot()).netSubscriptions).toBe(1);
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]')
-    .getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true }).click();
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')
+    .getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true }).click();
   await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')
     .getByRole('button', { name: 'Hide Footprint Totals', exact: true }).click();
   await expect.poll(async () => (await snapshot()).paneCount).toBe(baseline.paneCount);

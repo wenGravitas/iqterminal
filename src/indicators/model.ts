@@ -7,7 +7,7 @@ import { MARKET_CONDITIONS_ID, DEFAULT_CONDITIONS, conditionsSettings } from '..
 import { validStudyPins, type StudyPin, type ScriptInputView } from '../scripts/host';
 import type { ScriptRecord } from '../scripts/library';
 import { DEFAULT_ORDER_WALLS_SETTINGS, ORDER_WALLS_ID, orderWallsSettings } from '../feed/order-walls';
-import type { NetPositioningMethod, NetPositioningVenue } from '../feed/net-positioning';
+import type { NetPositioningMethod, NetPositioningSide, NetPositioningVenue } from '../feed/net-positioning';
 import type { NetPositioningDisplay } from '../chart/net-positioning-layout';
 import { DEFAULT_TPO_INDICATOR_SETTINGS, tpoIndicatorSettings } from './tpo-settings';
 import { TRADE_BUBBLES_ID, TRADE_BUBBLE_DEFAULT_SETTINGS, tradeBubbleSettings } from '../trade-bubbles/model';
@@ -51,13 +51,24 @@ export function footprintTotalsSettings(value: unknown): FootprintTotalsSettings
   };
 }
 export const HEATMAP_ID = 'native.orderbook-heatmap';
+export const NET_POSITIONING_ID = 'native.net-longs-shorts-estimated';
 export const NET_LONGS_ID = 'native.net-longs-estimated';
 export const NET_SHORTS_ID = 'native.net-shorts-estimated';
-export const NET_POSITIONING_IDS = [NET_LONGS_ID, NET_SHORTS_ID] as const;
+export const NET_POSITIONING_IDS = [NET_POSITIONING_ID] as const;
+export const LEGACY_NET_POSITIONING_IDS = [NET_LONGS_ID, NET_SHORTS_ID] as const;
 export const NET_POSITIONING_HELP = 'Estimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.';
 export type NetPositioningLabels = 'auto' | 'hover' | 'off';
-export interface NetPositioningSettings { method: NetPositioningMethod; venues: NetPositioningVenue[]; display: NetPositioningDisplay; labels: NetPositioningLabels; colors?: Partial<Record<NetPositioningVenue, string>> }
-export function netPositioningSettings(value: unknown): NetPositioningSettings {
+export interface NetPositioningBaseSettings {
+  method: NetPositioningMethod; venues: NetPositioningVenue[]; display: NetPositioningDisplay; labels: NetPositioningLabels;
+  colors?: Partial<Record<NetPositioningVenue, string>>;
+}
+export interface LegacyNetPositioningSnapshot extends NetPositioningBaseSettings { visible: boolean }
+export interface NetPositioningSettings extends NetPositioningBaseSettings, Record<string, unknown> {
+  showLongs: boolean; showShorts: boolean; reverseOrder: boolean;
+  /** Original per-side settings kept when a saved pair had conflicting shared options. */
+  legacyPreserved?: Partial<Record<NetPositioningSide, LegacyNetPositioningSnapshot>>;
+}
+function netPositioningBaseSettings(value: unknown): NetPositioningBaseSettings {
   const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
   const method = raw.method === 'aggressor-flow-oi' ? 'aggressor-flow-oi' : 'price-oi';
   const input = Array.isArray(raw.venues) ? raw.venues : ['binance'];
@@ -69,6 +80,20 @@ export function netPositioningSettings(value: unknown): NetPositioningSettings {
     return typeof value === 'string' && /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i.test(value) ? [[venue, value]] : [];
   })) as Partial<Record<NetPositioningVenue, string>>;
   return { method, venues: [...venues], display: raw.display === 'grouped' ? 'grouped' : 'stacked', labels: raw.labels === 'hover' || raw.labels === 'off' ? raw.labels : 'auto', ...(Object.keys(colors).length ? { colors } : {}) };
+}
+export function netPositioningSettings(value: unknown): NetPositioningSettings {
+  const raw = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+  const base = netPositioningBaseSettings(raw);
+  const preserved = raw.legacyPreserved && typeof raw.legacyPreserved === 'object' && !Array.isArray(raw.legacyPreserved)
+    ? raw.legacyPreserved as Record<string, unknown> : {};
+  const legacyPreserved = Object.fromEntries((['longs', 'shorts'] as const).flatMap(side => {
+    const item = preserved[side];
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return [];
+    const saved = item as Record<string, unknown>;
+    return [[side, { ...netPositioningBaseSettings(saved), visible: saved.visible !== false }]];
+  })) as NetPositioningSettings['legacyPreserved'];
+  return { ...base, showLongs: raw.showLongs !== false, showShorts: raw.showShorts !== false, reverseOrder: raw.reverseOrder === true,
+    ...(legacyPreserved && Object.keys(legacyPreserved).length ? { legacyPreserved } : {}) };
 }
 export type Placement = 'price-presentation' | 'overlay' | 'pane' | 'attachment';
 export interface SettingField { key: string; label: string; kind: string; defaultValue: unknown }
@@ -165,17 +190,14 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'initialBalanceMinutes', label: 'Initial balance (minutes)', kind: 'number', defaultValue: 60 },
       { key: 'nakedDays', label: 'Naked level history (days)', kind: 'number', defaultValue: 90 }],
     placements: ['overlay'], dataRequirements: ['1-minute-candle-history'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
-  { id: NET_LONGS_ID, name: 'Net Longs — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
-    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [
+  { id: NET_POSITIONING_ID, name: 'Net Longs & Shorts', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto', showLongs: true, showShorts: true, reverseOrder: false }, settingsSchema: [
       { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
       { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
-      { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' }],
-    placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
-  { id: NET_SHORTS_ID, name: 'Net Shorts — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
-    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [
-      { key: 'method', label: 'Estimation inputs', kind: 'select', defaultValue: 'price-oi' },
-      { key: 'display', label: 'Display', kind: 'select', defaultValue: 'stacked' },
-      { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' }],
+      { key: 'labels', label: 'Value labels', kind: 'select', defaultValue: 'auto' },
+      { key: 'showLongs', label: 'Show Longs', kind: 'boolean', defaultValue: true },
+      { key: 'showShorts', label: 'Show Shorts', kind: 'boolean', defaultValue: true },
+      { key: 'reverseOrder', label: 'Reverse order', kind: 'boolean', defaultValue: false }],
     placements: ['pane'], dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
   { id: COMPOSITION_SMA_ID, name: 'SMA', description: 'Full-window simple moving average of a declared numeric indicator output', category: 'Volume', implementation: 'builtin',
     settingsVersion: 1, defaults: { length: 20, color: '#63c7b2' }, settingsSchema: [
@@ -183,6 +205,14 @@ export const NATIVE_DEFINITIONS: readonly IndicatorDefinition[] = [
       { key: 'length', label: 'Length', kind: 'number', defaultValue: 20 },
       { key: 'color', label: 'Line colour', kind: 'color', defaultValue: '#63c7b2' }],
     placements: ['overlay', 'pane'], dataRequirements: ['indicator-output:chart-candles-v1'], sourceBinding: 'chart', multiplicity: 'multiple', capabilities: { editScript: false, duplicate: true } },
+];
+const LEGACY_NET_POSITIONING_DEFINITIONS: readonly IndicatorDefinition[] = [
+  { id: NET_LONGS_ID, name: 'Net Longs — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [], placements: ['pane'],
+    dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
+  { id: NET_SHORTS_ID, name: 'Net Shorts — Estimated', description: NET_POSITIONING_HELP, category: 'Order Flow', implementation: 'builtin',
+    settingsVersion: 1, defaults: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'auto' }, settingsSchema: [], placements: ['pane'],
+    dataRequirements: ['recorded-open-interest-intervals'], sourceBinding: 'chart', multiplicity: 'single', capabilities: { editScript: false, duplicate: false } },
 ];
 export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptInputView[] = []): IndicatorDefinition {
   const revision = record.revisions.find(r => r.id === record.currentRevision);
@@ -193,7 +223,7 @@ export function scriptDefinition(record: ScriptRecord, inputs: readonly ScriptIn
     placements: ['overlay', 'pane'], dataRequirements: depth ? ['candles', 'depth-series'] : ['candles'], sourceBinding: 'chart',
     multiplicity: 'multiple', capabilities: { editScript: true, duplicate: true } };
 }
-export function nativeDefinition(id: string) { return NATIVE_DEFINITIONS.find(d => d.id === id); }
+export function nativeDefinition(id: string) { return NATIVE_DEFINITIONS.find(d => d.id === id) ?? LEGACY_NET_POSITIONING_DEFINITIONS.find(d => d.id === id); }
 export function scriptInstance(pin: StudyPin): IndicatorInstance {
   const { attachmentId, settings, visible, paneId, numericInputs, plotScaleIds, ...script } = pin;
   return { instanceId: attachmentId, definitionId: `script:${pin.scriptId}`, settingsVersion: 1, visible, source: { kind: 'chart' }, placement: pin.placement ?? 'overlay', settings,
@@ -206,7 +236,7 @@ export function studyPins(instances: readonly IndicatorInstance[]): StudyPin[] {
     ...(i.plotScaleIds ? { plotScaleIds: validatePlotScaleIds(i.plotScaleIds) } : {}) })));
 }
 export function nativeInstance(id: string, settings: Record<string, unknown>, visible = true, options: { instanceId?: string; placement?: Placement; paneId?: string; numericInputs?: unknown; plotScaleIds?: unknown } = {}): IndicatorInstance {
-  const placement = options.placement ?? (id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === OPEN_INTEREST_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay');
+  const placement = options.placement ?? (id === FOOTPRINT_ID ? 'price-presentation' : id === LIQUIDATIONS_ID || id === CVD_ID || id === OPEN_INTEREST_ID || id === FOOTPRINT_TOTALS_ID || id === MARKET_CONDITIONS_ID || NET_POSITIONING_IDS.includes(id as typeof NET_POSITIONING_IDS[number]) || LEGACY_NET_POSITIONING_IDS.includes(id as typeof LEGACY_NET_POSITIONING_IDS[number]) ? 'pane' : 'overlay');
   return { instanceId: options.instanceId ?? (id === COMPOSITION_SMA_ID ? `sma-${crypto.randomUUID()}` : id), definitionId: id, settingsVersion: 1, visible, source: { kind: 'chart' }, placement, settings,
     ...(options.paneId ? { paneId: options.paneId } : {}),
     ...(options.numericInputs ? { numericInputs: validateNumericInputs(options.numericInputs) } : {}),
@@ -255,13 +285,64 @@ export function validateInstances(value: unknown): IndicatorInstance[] {
     if (copy.definitionId === DAILY_VWAP_ID && copy.settingsVersion === 1) copy.settings = { ...dailyVwapSettings(copy.settings) };
     if (copy.definitionId === TPO_ID && copy.settingsVersion === 1) copy.settings = { ...tpoIndicatorSettings(copy.settings) };
     if (NET_POSITIONING_IDS.includes(copy.definitionId as typeof NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningSettings(copy.settings) };
+    else if (LEGACY_NET_POSITIONING_IDS.includes(copy.definitionId as typeof LEGACY_NET_POSITIONING_IDS[number]) && copy.settingsVersion === 1) copy.settings = { ...netPositioningBaseSettings(copy.settings) };
     if (raw.definitionId.startsWith('script:')) {
       const pin = studyPins([{ ...copy, source: { kind: 'chart' }, settingsVersion: 1 }])[0];
       if (pin) copy = { ...scriptInstance(pin), settingsVersion: raw.settingsVersion, placement: copy.placement, source: copy.source, ...(typeof copy.priceGrid === 'boolean' ? { priceGrid: copy.priceGrid } : {}) };
     }
     ids.add(copy.instanceId); if (definition?.multiplicity === 'single') singletons.add(definition.id); result.push(copy);
   }
-  return result;
+  return mergeLegacyNetPositioning(result);
+}
+
+function mergeLegacyNetPositioning(instances: IndicatorInstance[]): IndicatorInstance[] {
+  const legacy = instances.filter(instance => LEGACY_NET_POSITIONING_IDS.includes(instance.definitionId as typeof LEGACY_NET_POSITIONING_IDS[number])
+    && instance.settingsVersion === 1 && instance.source.kind === 'chart');
+  if (!legacy.length) return instances;
+  const longs = legacy.find(instance => instance.definitionId === NET_LONGS_ID);
+  const shorts = legacy.find(instance => instance.definitionId === NET_SHORTS_ID);
+  const existing = instances.find(instance => instance.definitionId === NET_POSITIONING_ID && instance.settingsVersion === 1);
+  const snapshots = {
+    ...(longs ? { longs: { ...netPositioningBaseSettings(longs.settings), visible: longs.visible } } : {}),
+    ...(shorts ? { shorts: { ...netPositioningBaseSettings(shorts.settings), visible: shorts.visible } } : {}),
+  } satisfies Partial<Record<NetPositioningSide, LegacyNetPositioningSnapshot>>;
+  const remaining = instances.filter(instance => !legacy.includes(instance));
+
+  if (existing) {
+    const settings = netPositioningSettings(existing.settings);
+    const merged = { ...settings, legacyPreserved: { ...settings.legacyPreserved, ...snapshots } };
+    return remaining.map(instance => instance === existing ? { ...existing, settings: netPositioningSettings(merged) } : instance);
+  }
+
+  const longsSettings = longs ? netPositioningBaseSettings(longs.settings) : null;
+  const shortsSettings = shorts ? netPositioningBaseSettings(shorts.settings) : null;
+  const preferred = longsSettings ?? shortsSettings ?? netPositioningBaseSettings(undefined);
+  const venues = (['binance', 'hyperliquid', 'bybit'] as const).filter(venue =>
+    Boolean(longsSettings?.venues.includes(venue) || shortsSettings?.venues.includes(venue)));
+  const sharedConflict = Boolean(longsSettings && shortsSettings && JSON.stringify(longsSettings) !== JSON.stringify(shortsSettings));
+  const settings = netPositioningSettings({
+    ...preferred,
+    venues,
+    colors: { ...shortsSettings?.colors, ...longsSettings?.colors },
+    showLongs: Boolean(longs?.visible),
+    showShorts: Boolean(shorts?.visible),
+    reverseOrder: false,
+    ...(sharedConflict ? { legacyPreserved: snapshots } : {}),
+  });
+  const firstLegacy = Math.min(...legacy.map(instance => instances.indexOf(instance)));
+  const combined: IndicatorInstance = {
+    instanceId: NET_POSITIONING_ID,
+    definitionId: NET_POSITIONING_ID,
+    settingsVersion: 1,
+    visible: Boolean(longs?.visible || shorts?.visible),
+    source: { kind: 'chart' },
+    placement: 'pane',
+    settings,
+    ...((longs?.priceGrid !== undefined || shorts?.priceGrid !== undefined) ? { priceGrid: longs?.priceGrid ?? shorts?.priceGrid } : {}),
+  };
+  const insertion = instances.slice(0, firstLegacy).filter(instance => !legacy.includes(instance));
+  const tail = instances.slice(firstLegacy + 1).filter(instance => !legacy.includes(instance));
+  return [...insertion, combined, ...tail.filter(instance => remaining.includes(instance))];
 }
 export function migrateIndicators(source: Record<string, unknown>, legacy: {
   type: string; rowPrice: number; footprintUnits: string; footprint: unknown; heatmap: { enabled: boolean }; studies: StudyPin[];

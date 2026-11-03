@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, setFootprint } from './indicator-actions';
 
-async function expectPaneHeaderBounds(page: import('@playwright/test').Page, expectedHosts = 3) {
+async function expectPaneHeaderBounds(page: import('@playwright/test').Page, expectedHosts = 2) {
   await expect.poll(() => page.evaluate(expected => {
     const p = [...(window as any).__terminal.panels.values()][0], stage = p.element.querySelector('.chart-stage').getBoundingClientRect();
     const hosts = [...p.element.querySelectorAll('.pane-indicator-host')] as HTMLElement[];
@@ -31,7 +31,7 @@ test('pane indicators use one local header while overlays stay in the main list'
     const original = CanvasRenderingContext2D.prototype.fillText;
     (window as any).__paneHeaderCanvasText = [];
     CanvasRenderingContext2D.prototype.fillText = function (text: string, ...args: any[]) {
-      if (/Net Longs — Estimated|Net Shorts — Estimated|Footprint Totals/.test(text)) (window as any).__paneHeaderCanvasText.push(text);
+      if (/Net Longs & Shorts|Footprint Totals/.test(text)) (window as any).__paneHeaderCanvasText.push(text);
       return Reflect.apply(original, this, [text, ...args]);
     };
   });
@@ -52,15 +52,14 @@ test('pane indicators use one local header while overlays stay in the main list'
   // Keep sidebar width independent of the pane-header geometry under test.
   const closeObjects=panel.locator('.chart-objects-panel').getByRole('button',{name:'Close Object Tree',exact:true});
   if(await closeObjects.isVisible())await closeObjects.click();
-  await addIndicator(panel, 'Net Longs — Estimated');
-  await addIndicator(panel, 'Net Shorts — Estimated');
+  await addIndicator(panel, 'Net Longs & Shorts');
   await setFootprint(panel, true);
   await addIndicator(panel, 'Footprint Totals');
   await addIndicator(panel, 'Order-book Heatmap');
 
   const paneRows = panel.locator('.pane-indicator-host .pane-indicator-rows > .active-indicator');
-  const ids = ['native.net-longs-estimated', 'native.net-shorts-estimated', 'native.footprint-totals'];
-  await expect(paneRows).toHaveCount(3);
+  const ids = ['native.net-longs-shorts-estimated', 'native.footprint-totals'];
+  await expect(paneRows).toHaveCount(2);
   await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"] .active-indicator-copy span'))
     .toHaveAttribute('title', 'Footprint Totals');
   await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.orderbook-heatmap"]')).toHaveCount(1);
@@ -68,16 +67,15 @@ test('pane indicators use one local header while overlays stay in the main list'
     const p = [...(window as any).__terminal.panels.values()][0];
     return [...document.querySelectorAll('.candle-panel .pane-indicator-host')].flatMap(host =>
       [...host.querySelectorAll<HTMLElement>('.active-indicator')].map(row => ({ id: row.dataset.definitionId, pane: Number((host as HTMLElement).dataset.paneIndex),
-        expectedPane: row.dataset.definitionId === 'native.net-longs-estimated' ? p.engine.netPositioningPaneIndex('native.net-longs-estimated')
-          : row.dataset.definitionId === 'native.net-shorts-estimated' ? p.engine.netPositioningPaneIndex('native.net-shorts-estimated')
-            : p.engine.footprintTotalsPaneIndex('native.footprint-totals'),
+        expectedPane: row.dataset.definitionId === 'native.net-longs-shorts-estimated' ? p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated')
+          : p.engine.footprintTotalsPaneIndex('native.footprint-totals'),
         plot: p.engine.chart.plotRect(Number((host as HTMLElement).dataset.paneIndex)) })));
   });
   expect(mapping.map((item: any) => item.id).sort()).toEqual([...ids].sort());
   for (const item of mapping as any[]) { expect(item.pane).toBeGreaterThan(0); expect(item.pane).toBe(item.expectedPane); }
   expect(mapping.every((item: any) => item.plot && item.plot.width >= 150 && item.plot.height >= 36)).toBe(true);
   await expectPaneHeaderBounds(page);
-  await page.screenshot({ path: 'artifacts/pane-indicator-headers/three-native-panes.png' });
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/two-native-panes.png' });
   const themePicker = page.getByRole('combobox', { name: 'Theme', exact: true });
   await selectTheme(page, 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -138,7 +136,7 @@ test('pane indicators use one local header while overlays stay in the main list'
     });
     return p.engine === before.engine && p.engine.chart === before.chart && p.diagnostics().netPositioning.request === before.request
       && (window as any).__terminal.feed.currentNetPositioning.size === before.subscribers
-      && before.rows.every((row: Element) => row.isConnected) && hosts.length === 3 && aligned
+      && before.rows.every((row: Element) => row.isConnected) && hosts.length === 2 && aligned
       && controlsFit && groupsFit && actionStripsAligned
       && Math.min(...hosts.map(host => p.engine.chart.plotRect(Number((host as HTMLElement).dataset.paneIndex)).width)) >= 150;
   })).toBe(true);
@@ -151,7 +149,7 @@ test('pane indicators use one local header while overlays stay in the main list'
       actions: host.querySelector<HTMLElement>('.active-indicator-actions')?.getBoundingClientRect(),
     }));
     const actionLefts = headers.map(item => item.actions?.left);
-    return hosts.length === 3 && headers.every(({ header, actions }) => actions
+    return hosts.length === 2 && headers.every(({ header, actions }) => actions
       && actions.left >= header.left && actions.right <= header.right && actions.top >= header.top && actions.bottom <= header.bottom)
       && actionLefts.every((left): left is number => typeof left === 'number')
       && Math.max(...actionLefts as number[]) - Math.min(...actionLefts as number[]) <= 1;
@@ -163,21 +161,21 @@ test('pane indicators use one local header while overlays stay in the main list'
   await page.screenshot({ path: 'artifacts/pane-indicator-headers/narrow-light.png' });
   await selectTheme(page, 'dark');
   await page.setViewportSize({ width: 1260, height: 1080 });
-  const longsIndex = mapping.find((item: any) => item.id === 'native.net-longs-estimated')!.pane;
+  const positioningIndex = mapping.find((item: any) => item.id === 'native.net-longs-shorts-estimated')!.pane;
   const totalsIndex = mapping.find((item: any) => item.id === 'native.footprint-totals')!.pane;
-  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), longsIndex);
+  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), positioningIndex);
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
     return p.engine.chart.maximizedPane() !== null
       && document.querySelectorAll('.candle-panel .pane-indicator-host').length === 1
-      && ['native.net-shorts-estimated', 'native.footprint-totals'].every(id => document.querySelector(`.active-indicator-rows > .active-indicator[data-definition-id="${id}"]`));
+      && document.querySelector('.active-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') !== null;
   })).toBe(true);
   await expectPaneHeaderBounds(page, 1);
-  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), longsIndex);
-  await expect(paneRows).toHaveCount(3);
+  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), positioningIndex);
+  await expect(paneRows).toHaveCount(2);
   await expectPaneHeaderBounds(page);
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, true), totalsIndex);
-  await expect.poll(() => page.evaluate(() => document.querySelectorAll('.candle-panel .pane-indicator-host').length === 3
+  await expect.poll(() => page.evaluate(() => document.querySelectorAll('.candle-panel .pane-indicator-host').length === 2
     && document.querySelector('.pane-indicator-host[data-collapsed="true"] .pane-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') !== null
     && document.querySelector('.active-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') === null)).toBe(true);
   await expectPaneHeaderBounds(page);
@@ -195,7 +193,7 @@ test('pane indicators use one local header while overlays stay in the main list'
   await expect(page.locator(`#${tooltipId}`)).toContainText('selected volume figures');
   await page.keyboard.press('Escape');
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, false), totalsIndex);
-  await expect(paneRows).toHaveCount(3);
+  await expect(paneRows).toHaveCount(2);
   await page.setViewportSize({ width: 2560, height: 1080 });
 
   await panel.getByRole('button', { name: 'Footprint Totals settings', exact: true }).click();
@@ -203,15 +201,12 @@ test('pane indicators use one local header while overlays stay in the main list'
   await expect(settings).toBeVisible();
   await settings.getByRole('button', { name: 'Close', exact: true }).click();
 
-  const longs = panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]');
-  await longs.getByRole('button', { name: 'Hide Net Longs — Estimated', exact: true }).click();
-  await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.net-longs-estimated"]')).toHaveCount(1);
-  await panel.locator('.active-indicator[data-definition-id="native.net-longs-estimated"]')
-    .getByRole('button', { name: 'Show Net Longs — Estimated', exact: true }).click();
-  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]')).toHaveCount(1);
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')
-    .getByRole('button', { name: 'Remove Net Shorts — Estimated', exact: true }).click();
-  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-shorts-estimated"]')).toHaveCount(0);
+  const positioning = panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]');
+  await positioning.getByRole('button', { name: 'Hide Net Longs & Shorts', exact: true }).click();
+  await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')).toHaveCount(1);
+  await panel.locator('.active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')
+    .getByRole('button', { name: 'Show Net Longs & Shorts', exact: true }).click();
+  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')).toHaveCount(1);
   await expectPaneHeaderBounds(page, 2);
   await expect.poll(() => page.evaluate(() => (window as any).__paneHeaderCanvasText.length)).toBe(0);
 
@@ -235,21 +230,21 @@ test('pane indicators use one local header while overlays stay in the main list'
   })).toBe(true);
 
   const secondaryMove = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart, index = p.engine.netPositioningPaneIndex('native.net-longs-estimated');
+    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart, index = p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated');
     return { index, direction: index < chart.panes().length - 1 ? 1 : -1 };
   });
   const secondaryMoveLabel = (index: number, direction: number) => `Move pane ${index + 1} ${direction > 0 ? 'down' : 'up'}`;
   await panel.getByRole('button', { name: secondaryMoveLabel(secondaryMove.index, secondaryMove.direction), exact: true }).click();
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
-    return p.engine.netPositioningPaneIndex('native.net-longs-estimated');
+    return p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated');
   })).toBe(secondaryMove.index + secondaryMove.direction);
   await expectPaneHeaderBounds(page, 2);
   const movedSecondaryIndex = secondaryMove.index + secondaryMove.direction;
   await panel.getByRole('button', { name: secondaryMoveLabel(movedSecondaryIndex, -secondaryMove.direction), exact: true }).click();
   await expect.poll(() => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
-    return p.engine.netPositioningPaneIndex('native.net-longs-estimated');
+    return p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated');
   })).toBe(secondaryMove.index);
   await expectPaneHeaderBounds(page, 2);
   const secondaryControls = panel.locator(`.pane-layout-controls[data-pane-index="${secondaryMove.index}"]`);
@@ -300,6 +295,10 @@ test('pane indicators use one local header while overlays stay in the main list'
   await panel.getByRole('button', { name: 'Restore all panes', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
   await expectPaneHeaderBounds(page, 2);
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')
+    .getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true }).click();
+  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')).toHaveCount(0);
+  await expectPaneHeaderBounds(page, 1);
 });
 
 test('narrow indicator headers span the price scale and main pane controls follow Watch level', async ({ page }) => {
@@ -332,7 +331,7 @@ test('narrow indicator headers span the price scale and main pane controls follo
   await expect(mainControls.getByRole('button', { name: 'Collapse main pane to header only', exact: true })).toBeDisabled();
   await expect(mainControls.getByRole('button', { name: 'Maximize main pane', exact: true })).toBeDisabled();
   await page.setViewportSize({ width: 500, height: 860 });
-  await addIndicator(panel, 'Net Longs — Estimated');
+  await addIndicator(panel, 'Net Longs & Shorts');
   await addIndicator(panel, 'Open Interest');
   await expectPaneHeaderBounds(page, 2);
 
@@ -358,8 +357,8 @@ test('narrow indicator headers span the price scale and main pane controls follo
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].primaryPaneCollapsed)).toBe(false);
   await expectPaneHeaderBounds(page, 2);
 
-  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]')
-    .getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true }).click();
+  await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')
+    .getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true }).click();
   await panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.raw-open-interest"]')
     .getByRole('button', { name: 'Remove Open Interest', exact: true }).click();
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.panes().length)).toBe(1);
@@ -373,7 +372,7 @@ test('narrow indicator headers span the price scale and main pane controls follo
   await expect(mainControls.getByRole('button', { name: 'Maximize main pane', exact: true })).toBeDisabled();
 });
 
-test('Net Longs stays above Net Shorts after an immediate refresh when added in the opposite order', async ({ page }) => {
+test('combined positioning pane order persists after an immediate refresh', async ({ page }) => {
   test.setTimeout(90_000);
   await page.route('**/market-data/v1/net-positioning*', async route => {
     const url = new URL(route.request().url()), venues = (url.searchParams.get('venues') ?? 'binance').split(',');
@@ -385,18 +384,17 @@ test('Net Longs stays above Net Shorts after an immediate refresh when added in 
   const panel = page.locator('.candle-panel').first();
   await setFootprint(panel, true);
   await addIndicator(panel, 'Footprint Totals');
-  await addIndicator(panel, 'Net Shorts — Estimated');
-  await addIndicator(panel, 'Net Longs — Estimated');
+  await addIndicator(panel, 'Net Longs & Shorts');
   const indexes = () => page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
-    return { longs: p.engine.netPositioningPaneIndex('native.net-longs-estimated'), shorts: p.engine.netPositioningPaneIndex('native.net-shorts-estimated'), saved: p.selection.paneOrder };
+    return { positioning: p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated'), totals: p.engine.footprintTotalsPaneIndex('native.footprint-totals'), saved: p.selection.paneOrder };
   });
   const before = await indexes();
-  expect(before.longs).toBeGreaterThan(before.shorts);
-  await panel.getByRole('button', { name: `Move pane ${before.longs + 1} up`, exact: true }).click();
+  expect(before.positioning).toBeGreaterThan(before.totals);
+  await panel.getByRole('button', { name: `Move pane ${before.positioning + 1} up`, exact: true }).click();
   // No storage wait: a real refresh must flush the pending workspace save.
   await page.reload();
-  await expect.poll(async () => { const order = await indexes(); return order.longs >= 0 && order.shorts >= 0 && order.longs < order.shorts; }).toBe(true);
+  await expect.poll(async () => { const order = await indexes(); return order.positioning >= 0 && order.totals >= 0 && order.positioning < order.totals; }).toBe(true);
   await page.reload();
-  await expect.poll(async () => { const order = await indexes(); return order.longs >= 0 && order.shorts >= 0 && order.longs < order.shorts; }).toBe(true);
+  await expect.poll(async () => { const order = await indexes(); return order.positioning >= 0 && order.totals >= 0 && order.positioning < order.totals; }).toBe(true);
 });

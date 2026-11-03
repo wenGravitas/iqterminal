@@ -1,0 +1,124 @@
+{
+  "capturedAtUtc": "2026-11-03T08:27Z",
+  "purpose": "Bounded replay of the Perp 30-hour page whose request followed the last successful browser page before signal timeout.",
+  "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+  "market": "perpetual",
+  "range": {
+    "from": 1793584800000,
+    "to": 1793694013557,
+    "watermark": 18635305,
+    "previousAfter": 17757109,
+    "failedAfter": 17759969,
+    "limit": 256
+  },
+  "cursorDerivation": {
+    "route": "remote API gateway loopback at 127.0.0.1:18780",
+    "status": 200,
+    "headerMs": 474.0,
+    "totalMs": 476.1,
+    "compressedBytes": 25106,
+    "decodedBytes": 390812,
+    "serverTiming": "legacy;dur=472.38",
+    "page": {
+      "after": 17757109,
+      "nextAfter": 17759969,
+      "hasMore": true,
+      "lastAt": 1793604984873,
+      "observations": 256
+    },
+    "profileStatus": "backfilling"
+  },
+  "failedPageReplay": [
+    {
+      "route": "remote API gateway loopback at 127.0.0.1:18780",
+      "status": 200,
+      "headerMs": 355.8,
+      "bodyMs": 0.1,
+      "totalMs": 358.5,
+      "compressedBytes": 19446,
+      "decodedBytes": 312460,
+      "contentEncoding": "gzip",
+      "contentLength": "19446",
+      "vary": "Accept-Encoding",
+      "serverTiming": "legacy;dur=354.20",
+      "page": {
+        "after": 17759969,
+        "nextAfter": 17763250,
+        "hasMore": true,
+        "lastAt": 1793605318417,
+        "observations": 256
+      },
+      "profileStatus": "backfilling"
+    },
+    {
+      "route": "local SSH forward 127.0.0.1:18780",
+      "status": 200,
+      "headerMs": 1035.7,
+      "bodyMs": 0.3,
+      "totalMs": 1043.5,
+      "compressedBytes": 19446,
+      "decodedBytes": 312460,
+      "contentEncoding": "gzip",
+      "contentLength": "19446",
+      "vary": "Accept-Encoding",
+      "serverTiming": "legacy;dur=312.58",
+      "page": {
+        "after": 17759969,
+        "nextAfter": 17763250,
+        "hasMore": true,
+        "lastAt": 1793605318417,
+        "observations": 256
+      },
+      "profileStatus": "backfilling"
+    },
+    {
+      "route": "local Vite proxy 127.0.0.1:5173/market-data",
+      "status": 200,
+      "headerMs": 1322.1,
+      "bodyMs": 0.1,
+      "totalMs": 1326.5,
+      "compressedBytes": 19446,
+      "decodedBytes": 312460,
+      "contentEncoding": "gzip",
+      "contentLength": "19446",
+      "vary": "Accept-Encoding",
+      "serverTiming": "legacy;dur=310.13",
+      "page": {
+        "after": 17759969,
+        "nextAfter": 17763250,
+        "hasMore": true,
+        "lastAt": 1793605318417,
+        "observations": 256
+      },
+      "profileStatus": "backfilling"
+    }
+  ],
+  "healthBeforeReplay": {
+    "remoteCollectorCheckAtUtc": "2026-11-03T08:26:28Z",
+    "perpetual": {
+      "collector": "live",
+      "depth": "live",
+      "epoch": 1793689727906,
+      "cursor": 18638994,
+      "at": 1793694388223,
+      "depthOverflows": 0,
+      "queue": 4
+    },
+    "spot": {
+      "collector": "live",
+      "depth": "live",
+      "epoch": 1793675095009,
+      "cursor": 14575756,
+      "at": 1793694388246,
+      "depthOverflows": 0,
+      "queue": 4
+    },
+    "historyMaterializer": {
+      "backlog": 0,
+      "paused": false,
+      "error": "",
+      "pinnedCatchUpLag": 0
+    }
+  },
+  "interpretation": "The exact page after 17759969 succeeded through remote loopback, the local SSH forward, and Vite. Its decoded page was identical by cursor, watermark, next cursor, observation count, and byte count. Server-Timing legacy duration was about 310-354 ms, while total client timings were 359 ms remote, 1.044 s forwarded, and 1.327 s through Vite. This bounded replay did not reproduce the prior signal timeout; the timeout appears transient or on a later request and is not explained by global backfilling alone."
+}

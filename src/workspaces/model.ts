@@ -8,7 +8,7 @@ export interface Workspace { id:string; name:string; icon:WorkspaceIcon; pinned:
 export interface WorkspaceRegistry { version:1; revision:number; activeId:string; workspaces:Workspace[] }
 export function validIcon(value:unknown): value is string { return typeof value==='string' && (Object.hasOwn(WORKSPACE_ICONS,value)||/^[A-Z0-9]$/.test(value)); }
 export function workspaceName(value:string) { const name=value.trim(); if(!name||name.length>80||/[\u0000-\u001f]/.test(name))throw Error('Use a workspace name between 1 and 80 characters.');return name; }
-export function validatedLayout(layout:unknown) { const result=restoreValue(JSON.stringify({version:8,layout}));if(!result)throw Error('Workspace layout is invalid or exceeds widget limits. Saved data was preserved.');return structuredClone(result); }
+export function validatedLayout(layout:unknown) { const result=restoreValue(JSON.stringify({version:9,layout}));if(!result)throw Error('Workspace layout is invalid or exceeds widget limits. Saved data was preserved.');return structuredClone(result); }
 export function panelStorageId(key:string):string|null { const match=/^iqterminal:(?:drawings|object-tree:v1|object-tree-sidebar:v1):([^:]+)(?::|$)/.exec(key);if(!match)return null;try {const id=decodeURIComponent(match[1]!);return /^chart-[a-z0-9-]+$/i.test(id)?id:null;}catch{return null;} }
 export function parseRegistry(raw:string):WorkspaceRegistry {
   if(raw.length>16_000_000)throw Error('Workspace registry exceeds its size limit.');const value=JSON.parse(raw);if(value?.version!==1||!Array.isArray(value.workspaces)||!value.workspaces.length||value.workspaces.length>WORKSPACE_LIMIT||!Number.isSafeInteger(value.revision)||value.revision<0)throw Error('Unsupported or corrupt workspace registry.');

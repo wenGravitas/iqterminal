@@ -1,7 +1,7 @@
 import type { IndicatorInstance } from './model';
 import {
   COMPOSITION_SMA_ID, FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID,
-  NET_LONGS_ID, NET_SHORTS_ID, ORDER_WALLS_ID,
+  NET_LONGS_ID, NET_POSITIONING_ID, NET_SHORTS_ID, ORDER_WALLS_ID,
   TPO_ID,
 } from './model';
 import { CVD_ID } from '../feed/cvd';
@@ -33,6 +33,9 @@ export function indicatorInfoText(instance: Pick<IndicatorInstance, 'definitionI
       break;
     case NET_SHORTS_ID:
       explanation = 'Estimates changes in short positions from market data. These are estimates, not actual position counts.';
+      break;
+    case NET_POSITIONING_ID:
+      explanation = 'Shows estimated changes in long and short positions in one pane. The sides use separate signed scales; estimates do not reveal actual position counts or whether activity opened or closed risk.';
       break;
     case OPEN_INTEREST_ID:
       explanation = 'Tracks the size of open futures positions at selected exchanges, in BTC. It does not separate longs from shorts.';

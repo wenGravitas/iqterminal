@@ -2,8 +2,8 @@
   "environment": "local Chromium SwiftShader; explicit synthetic IndexedDB fixture; no live connectivity or frame-rate claim",
   "browserName": "chromium",
   "count": 10001,
-  "writeMs": 1624.8999999985099,
-  "queryMs": 26,
+  "writeMs": 2970.89999999851,
+  "queryMs": 210.60000000149012,
   "rangeRows": 122,
   "viewport": {
     "width": 1366,
@@ -13,23 +13,23 @@
   "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
   "before": {
     "queries": 2,
-    "draws": 5,
-    "entries": 372,
-    "clusters": 26,
+    "draws": 4,
+    "links": 1,
+    "clusters": 1,
     "capped": false
   },
   "after": {
     "queries": 2,
     "draws": 5,
-    "entries": 372,
-    "clusters": 26,
+    "links": 210,
+    "clusters": 15,
     "capped": false
   },
   "zoomedOut": {
     "queries": 3,
     "draws": 7,
-    "entries": 500,
-    "clusters": 17,
+    "links": 500,
+    "clusters": 15,
     "capped": true
   }
 }

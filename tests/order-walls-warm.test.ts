@@ -157,7 +157,10 @@ function routeMarketApis(perpetual: FakeDepthApi, spot: FakeDepthApi): typeof fe
 function makeChartHarness(): any {
   const chart = Object.create(OpenAlgoCandleChart.prototype) as any;
   Object.assign(chart, { orderWalls: null, orderWallSegments: new Map<string, OrderWallSegment>(), orderWallValueQueue: [],
-    orderWallValueQueueStart: 0, orderWallValueCount: 0, orderWallStatus: { state: 'loading' } });
+    orderWallValueQueueStart: 0, orderWallValueCount: 0, orderWallDirectValueCount: 0,
+    orderWallArchiveValueQueue: [], orderWallArchiveValueQueueStart: 0, orderWallArchiveValueCount: 0,
+    orderWallDirectSegmentCount: 0, orderWallArchiveSegmentCount: 0,
+    orderWallValuesLimited: false, orderWallEpisodesLimited: false, orderWallStatus: { state: 'loading' } });
   return chart;
 }
 

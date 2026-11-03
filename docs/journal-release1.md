@@ -1,4 +1,6 @@
-# Chart journal — Release 1
+# Chart journal — Release 1 (superseded)
+
+> Release 2 in [journal-release2.md](journal-release2.md) replaces the chart-first aside with a dockable daily Markdown journal. Opening the v2 IndexedDB database performs one targeted, versioned reset of the old R1 `entries`, `captures`, and `assets` stores; exported R1 files remain outside the browser and are not imported by R2. Other IQTerminal storage is unaffected.
 
 IQTerminal's journal is local to this browser profile and origin. It captures a visual record and immutable chart settings, with optional reasoning and later reflections. It does not preserve market history for replay. No new market connections, server journal API, collector retention changes, provider AI calls, broker imports or execution actions are involved.
 

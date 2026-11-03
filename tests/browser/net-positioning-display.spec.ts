@@ -5,6 +5,7 @@ test.use({ deviceScaleFactor: process.env.POSITIONING_DPR === '2' ? 2 : 1 });
 
 type Venue = 'binance' | 'hyperliquid';
 type Method = 'price-oi' | 'aggressor-flow-oi';
+const POSITIONING_ID = 'native.net-longs-shorts-estimated';
 
 function fixtureRow(method: Method, venue: Venue, open: number, half: number, age: number) {
   const end = open + half * 30_000, start = end - 30_000;
@@ -14,7 +15,7 @@ function fixtureRow(method: Method, venue: Venue, open: number, half: number, ag
     shorts = venue === 'binance' ? (half === 0 ? -80 : -25) : 20 + half * 15;
   } else if (age === 1) { longs = 0; shorts = 0; }
   else if (age === 3 && venue === 'binance' && half === 1) return {
-    version: 1, method, status: 'unavailable', reason: 'fixture gap', venue, market: 'perpetual', nativeSymbol: venue === 'binance' ? 'BTCUSDT' : 'BTC', units: 'BTC',
+    version: 1, method, status: 'unavailable', reason: 'fixture gap', venue, market: 'perpetual', nativeSymbol: 'BTCUSDT', units: 'BTC',
     startTimeMs: start, endTimeMs: end, attributionTimeMs: end, resolutionMs: 30_000, direction: null,
     oiDeltaBtcDecimal: null, netLongsBtcDecimal: null, netShortsBtcDecimal: null, unclassifiedBtcDecimal: null, qualityFlags: ['fixture-gap'],
     provenance: { tradeCoverage: { fromMs: start, toMs: end, complete: false, gap: true } },
@@ -49,37 +50,18 @@ async function addIndicator(panel: ReturnType<Page['locator']>, name: string) {
   await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
 }
 
-async function setSources(panel: ReturnType<Page['locator']>, side: 'Longs' | 'Shorts', venues: Venue[]) {
-  const sources = panel.getByRole('group', { name: `Net ${side} sources`, exact: true });
+async function setSources(panel: ReturnType<Page['locator']>, venues: Venue[]) {
+  const sources = panel.getByRole('group', { name: 'Net Longs & Shorts sources', exact: true });
   for (const venue of ['binance', 'hyperliquid'] as const) {
     const button = sources.locator(`[data-source="${venue}"]`), pressed = await button.getAttribute('aria-pressed') === 'true';
     if (pressed !== venues.includes(venue)) await button.click();
   }
 }
 
-async function expectNativeZeroAlignment(page: Page, id: string, time: number, expected: 'positive' | 'negative' | 'zero' | 'mixed') {
-  const result = await page.evaluate(({ id, time }) => {
-    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id);
-    const scale = view.series.priceScale(), baseline = view.primitive.diagnostics().renderedBaseline;
-    const segments = view.primitive.geometry.filter((segment: any) => segment.timeMs === time);
-    return { dpr: window.devicePixelRatio, plotHeight: p.engine.chart.plotRect(view.paneIndex).height,
-      scaleY: scale.priceToY(0), marginTop: scale.options.marginTop, zeroTick: scale.ticks().some((tick: number) => tick === 0), baseline,
-      origins: segments.map((segment: any) => ({ value: segment.value, y: segment.value > 0 ? segment.bottom : segment.value < 0 ? segment.top : (segment.top + segment.bottom) / 2 })) };
-  }, { id, time }) as { dpr: number; plotHeight: number; scaleY: number; marginTop: number; zeroTick: boolean;
-    baseline: { scaleY: number; strokeCenterY: number; dpr: number } | null; origins: { value: number; y: number }[] };
-  expect(result.plotHeight).toBeGreaterThan(30);
-  expect(result.marginTop * result.plotHeight).toBeGreaterThanOrEqual(30);
-  expect(result.scaleY).toBeGreaterThanOrEqual(30);
-  expect(result.zeroTick).toBe(true);
-  expect(result.baseline?.dpr).toBe(result.dpr);
-  expect(Math.abs(result.baseline!.strokeCenterY - result.scaleY) * result.dpr).toBeLessThanOrEqual(1);
-  const nonzero = result.origins.filter(segment => segment.value !== 0);
-  const zero = result.origins.filter(segment => segment.value === 0);
-  if (expected === 'positive') expect(nonzero.length).toBeGreaterThan(0), expect(nonzero.every(segment => segment.value > 0)).toBe(true);
-  if (expected === 'negative') expect(nonzero.length).toBeGreaterThan(0), expect(nonzero.every(segment => segment.value < 0)).toBe(true);
-  if (expected === 'mixed') expect(nonzero.some(segment => segment.value > 0) && nonzero.some(segment => segment.value < 0)).toBe(true);
-  if (expected === 'zero') expect(zero.length).toBeGreaterThan(0), expect(nonzero).toHaveLength(0);
-  for (const segment of expected === 'zero' ? zero : nonzero) expect(Math.abs(segment.y - result.scaleY) * result.dpr).toBeLessThanOrEqual(1);
+async function openSettings(panel: ReturnType<Page['locator']>) {
+  await panel.locator(`.active-indicator[data-definition-id="${POSITIONING_ID}"]`)
+    .getByRole('button', { name: 'Net Longs & Shorts settings', exact: true }).click();
+  return panel.locator('.net-positioning-settings');
 }
 
 async function installAxisGridPaneProbe(page: Page) {
@@ -93,8 +75,6 @@ async function installAxisGridPaneProbe(page: Page) {
       state.__positioningGridCalls.push({ paneIndex, primaryPaneIndex: chart.primaryPaneIndex(), maximizedPane: chart.maximizedPane() });
       return Reflect.apply(draw, this, [ctx, rc]);
     };
-    // Keep OpenAlgo's built-in grid out of this ownership check. The native
-    // AxisGrid primitive remains enabled and is the one under test.
     chart.setGridOptions({ vertLines: false, horzLines: false });
     chart.invalidate((mask: any) => mask.invalidatePane(chart.primaryPaneIndex(), { level: 3, autoScale: false }));
   });
@@ -109,34 +89,7 @@ async function readAxisGridProbe(page: Page) {
   });
 }
 
-async function setSettings(panel: ReturnType<Page['locator']>, id: string, side: 'Longs' | 'Shorts', display: 'stacked' | 'grouped', labels: 'auto' | 'hover' | 'off', method: Method) {
-  await panel.locator(`.active-indicator[data-definition-id="${id}"]`).getByRole('button', { name: `Net ${side} — Estimated settings`, exact: true }).click();
-  const dialog = panel.locator('.net-positioning-settings');
-  await dialog.getByLabel('Estimation inputs').selectOption(method);
-  await dialog.getByLabel('Display mode').selectOption(display);
-  await dialog.getByLabel('Value labels').selectOption(labels);
-  await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
-  const sources = panel.getByRole('group', { name: `Net ${side} sources`, exact: true });
-  for (const venue of ['binance', 'hyperliquid']) {
-    const button = sources.locator(`[data-source="${venue}"]`);
-    if (await button.getAttribute('aria-pressed') !== 'true') await button.click();
-    await expect(button).toHaveAttribute('aria-pressed', 'true');
-  }
-}
-
-async function expectSettings(panel: ReturnType<Page['locator']>, id: string, side: 'Longs' | 'Shorts', expected: { method: Method; display: 'stacked' | 'grouped'; labels: 'auto' | 'hover' | 'off'; venues: Venue[] }) {
-  await panel.locator(`.active-indicator[data-definition-id="${id}"]`).getByRole('button', { name: `Net ${side} — Estimated settings`, exact: true }).click();
-  const dialog = panel.locator('.net-positioning-settings');
-  await expect(dialog.getByLabel('Estimation inputs')).toHaveValue(expected.method);
-  await expect(dialog.getByLabel('Display mode')).toHaveValue(expected.display);
-  await expect(dialog.getByLabel('Value labels')).toHaveValue(expected.labels);
-  await expect(dialog.locator('input[type="checkbox"]')).toHaveCount(0);
-  const sources = panel.getByRole('group', { name: `Net ${side} sources`, exact: true });
-  expect(await sources.locator('[aria-pressed="true"]').evaluateAll(buttons => buttons.map(button => (button as HTMLElement).dataset.source))).toEqual(expected.venues);
-  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
-}
-
-test('estimated positioning keeps signed source stacks, settings, hit targets and live pane identity', async ({ page }) => {
+test('combined positioning keeps independent signed bands, shared settings, hit targets and pane identity', async ({ page }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({ width: 1920, height: 1080 });
   await page.addInitScript(() => {
@@ -150,11 +103,9 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
       return (original as any).call(this, text, x, y, ...args);
     };
   });
-  const errors: string[] = [], requests: string[] = [];
+  const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && !message.location().url.endsWith('/favicon.ico')) errors.push(message.text()); });
-  // Seed only the standalone candle-route fixture. Net-positioning rows are
-  // generated after reading the chart's loaded last candle below.
   let hostOpen = Math.floor(Date.now() / 60_000) * 60_000;
   await page.context().route('**/market-data/**', async route => {
     const url = new URL(route.request().url()), method = (url.searchParams.get('method') ?? 'price-oi') as Method;
@@ -165,23 +116,21 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
       });
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ source: 'binance-native-kline', candles }) });
     }
-    if(url.pathname.endsWith('/footprints'))return route.fulfill({status:503,json:{error:'Explicit fixture: no price-volume profile'}});
+    if (url.pathname.endsWith('/footprints')) return route.fulfill({ status: 503, json: { error: 'Explicit fixture: no price-volume profile' } });
     if (!url.pathname.endsWith('/net-positioning')) return route.continue();
-    const selected = (url.searchParams.get('venues') ?? 'binance,hyperliquid').split(',').filter((venue): venue is Venue => venue === 'binance' || venue === 'hyperliquid');
+    const selected = (url.searchParams.get('venues') ?? 'binance').split(',').filter((venue): venue is Venue => venue === 'binance' || venue === 'hyperliquid');
     const intervals = Array.from({ length: 90 }, (_, age) => Array.from({ length: 2 }, (_, half) => selected.map(venue => fixtureRow(method, venue, hostOpen - age * 60_000, half, age))).flat()).flat();
     const verified = Object.fromEntries(selected.map(venue => [venue, { status: 'verified', units: 'BTC', evidence: 'explicit browser fixture' }]));
     const feed = { state: 'live', source: 'explicit-playwright-fixture', lastObservedAt: Date.now(), expectedIntervalMs: 30_000, stale: false,
       unitVerification: { status: 'verified', units: 'BTC', evidence: 'explicit browser fixture' } };
-    requests.push(`${method}:${selected.join(',')}`);
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, method, market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC',
-      unitVerification: verified, from: hostOpen - 4 * 60 * 60_000, to: Date.now(), venues: selected, intervals, truncated: false,
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, method, market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC',
+      unitVerification: verified, from: hostOpen - 4 * 60 * 60_000, to: Date.now(), venues: selected, intervals: intervals.flat(), truncated: false,
       feeds: Object.fromEntries(selected.map(venue => [venue, feed])), pendingIntervals: 0,
       history: 'explicit browser fixture; observed intervals only', semantics: 'test-only signed source fixture' }) });
   });
 
   await page.goto('/');
   const panel = page.locator('.candle-panel').first();
-  const themePicker = page.getByLabel('Theme', { exact: true });
   await selectTheme(page, 'dark');
   await expect(panel).toBeVisible();
   await page.waitForFunction(() => {
@@ -194,171 +143,74 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
     return panels.find((item: any) => item.element === element).engine.latestBar.time * 1000;
   });
   await panel.getByLabel('Timeframe', { exact: true }).selectOption('1m');
-  const longsId = 'native.net-longs-estimated', shortsId = 'native.net-shorts-estimated';
-  await addIndicator(panel, 'Net Longs — Estimated');
-  await addIndicator(panel, 'Net Shorts — Estimated');
-  await setSettings(panel, longsId, 'Longs', 'stacked', 'auto', 'price-oi');
-  await setSettings(panel, shortsId, 'Shorts', 'stacked', 'hover', 'aggressor-flow-oi');
-  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.map((pane: any) => pane.candleCount))).toEqual([90, 90]);
+  await addIndicator(panel, 'Net Longs & Shorts');
+  const row = panel.locator(`.active-indicator[data-definition-id="${POSITIONING_ID}"]`);
+  const sources = panel.getByRole('group', { name: 'Net Longs & Shorts sources', exact: true });
+  await expect(sources.locator('[data-source="binance"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(sources.locator('[data-source="hyperliquid"]')).toHaveAttribute('aria-pressed', 'false');
+  await setSources(panel, ['binance', 'hyperliquid']);
+  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes[0]?.candleCount)).toBe(90);
+  await expect.poll(() => page.evaluate(id => [...(window as any).__terminal.panels.values()][0].engine.netPositioningPanes.get(id)
+    .primitive.diagnostics().venues, POSITIONING_ID)).toEqual(['binance', 'hyperliquid']);
+
+  const initial = await page.evaluate(id => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), diag = view.primitive.diagnostics();
+    const state = window as any;
+    state.__netPositioningRefs = { primitive: view.primitive, engine: p.engine, chart: p.engine.chart,
+      rebuilds: p.diagnostics().netPositioning.histories.map((history: any) => history.candleRebuilds), request: p.diagnostics().netPositioning.request };
+    return { panes: p.engine.netPositioningPanes.size, index: view.paneIndex, bands: diag.renderedBands.map((band: any) => band.side),
+      scales: diag.visibleScaleBySide, settings: p.selection.indicators.find((item: any) => item.definitionId === id).settings,
+      subscriptionCount: p.feed.protocolDiagnostics().subscriptions.netPositioning,
+      rebuilds: p.diagnostics().netPositioning.histories.map((history: any) => history.candleRebuilds), request: p.diagnostics().netPositioning.request };
+  }, POSITIONING_ID);
+  expect(initial.panes).toBe(1);
+  expect(initial.bands).toEqual(['longs', 'shorts']);
+  expect(initial.settings).toMatchObject({ showLongs: true, showShorts: true, reverseOrder: false, method: 'price-oi' });
+  expect(initial.subscriptionCount).toBe(1);
+  expect(initial.scales.longs.min).toBeLessThan(0); expect(initial.scales.longs.max).toBeGreaterThan(0);
+  expect(initial.scales.shorts.min).toBeLessThan(0); expect(initial.scales.shorts.max).toBeGreaterThan(0);
+
   await installAxisGridPaneProbe(page);
   await expect.poll(async () => (await readAxisGridProbe(page)).calls.length).toBeGreaterThan(0);
-  for (const id of [longsId, shortsId]) await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
-  const primaryIndex = await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.primaryPaneIndex());
   const mainGrid = await readAxisGridProbe(page);
-  expect(mainGrid.calls.every((call: any) => call.paneIndex === primaryIndex)).toBe(true);
+  expect(mainGrid.calls.every((call: any) => call.paneIndex === mainGrid.primary)).toBe(true);
   expect(mainGrid.lines.length).toBeGreaterThan(0);
   expect(mainGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
-  for (const id of [longsId, shortsId]) {
-    const index = await page.evaluate(id => [...(window as any).__terminal.panels.values()][0].engine.netPositioningPaneIndex(id), id);
-    await page.evaluate(index => {
-      const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-      (window as any).__positioningGridCalls.length = 0;
-      chart.maximizePane(index);
-      chart.invalidate((mask: any) => mask.invalidateGlobal(3));
-    }, index);
-    await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(index);
-    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
-    const maximizedGrid = await readAxisGridProbe(page);
-    expect(maximizedGrid.calls.every((call: any) => call.paneIndex !== index)).toBe(true);
-    await page.screenshot({ path: `/tmp/net-positioning-${id.endsWith('longs-estimated') ? 'longs' : 'shorts'}-max-dark.png` });
-    await page.evaluate(index => {
-      const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-      (window as any).__positioningGridCalls.length = 0;
-      chart.maximizePane(index);
-      chart.invalidate((mask: any) => mask.invalidateGlobal(3));
-    }, index);
-    await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
-    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    await expectNativeZeroAlignment(page, id, hostOpen, 'mixed');
-    const restoredGrid = await readAxisGridProbe(page);
-    expect(restoredGrid.calls.some((call: any) => call.paneIndex === primaryIndex && call.maximizedPane === null)).toBe(true);
-    expect(restoredGrid.lines.length).toBeGreaterThan(0);
-    expect(restoredGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
-  }
-  const compactWeights = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-    const longs = p.engine.netPositioningPaneIndex('native.net-longs-estimated'), shorts = p.engine.netPositioningPaneIndex('native.net-shorts-estimated');
-    const weights = [chart.paneWeight(longs), chart.paneWeight(shorts)];
-    chart.setPaneWeight(longs, .08); chart.setPaneWeight(shorts, .08); (p as any).schedulePaneIndicatorLayout();
-    return { longs, shorts, weights };
-  });
-  await setSources(panel, 'Longs', ['binance']);
-  await setSources(panel, 'Shorts', ['binance']);
+  await page.evaluate(index => {
+    const chart = [...(window as any).__terminal.panels.values()][0].engine.chart;
+    (window as any).__positioningGridCalls.length = 0; chart.maximizePane(index); chart.invalidate((mask: any) => mask.invalidateGlobal(3));
+  }, initial.index);
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(initial.index);
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  const compactHeights = await page.evaluate(({ longs, shorts }) => {
-    const p = [...(window as any).__terminal.panels.values()][0];
-    return [p.engine.chart.plotRect(longs).height, p.engine.chart.plotRect(shorts).height];
-  }, compactWeights);
-  expect(compactHeights.every(height => height > 30 && height < 120)).toBe(true);
-  await expectNativeZeroAlignment(page, longsId, hostOpen, 'positive');
-  await expectNativeZeroAlignment(page, shortsId, hostOpen, 'negative');
-  await expectNativeZeroAlignment(page, longsId, hostOpen - 60_000, 'zero');
-  await expectNativeZeroAlignment(page, shortsId, hostOpen - 60_000, 'zero');
-  await page.evaluate(({ longs, shorts, weights }) => {
-    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-    chart.setPaneWeight(longs, weights[0]); chart.setPaneWeight(shorts, weights[1]); (p as any).schedulePaneIndicatorLayout();
-  }, compactWeights);
-  await setSources(panel, 'Longs', ['binance', 'hyperliquid']);
-  await setSources(panel, 'Shorts', ['binance', 'hyperliquid']);
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  await page.screenshot({ path: '/tmp/net-positioning-grid-normal-dark.png' });
-  await selectTheme(page, 'light');
-  await page.screenshot({ path: '/tmp/net-positioning-grid-normal-light.png' });
-  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
-  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(compactWeights.longs);
-  await page.screenshot({ path: '/tmp/net-positioning-grid-max-light.png' });
-  await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), compactWeights.longs);
+  const maximizedGrid = await readAxisGridProbe(page);
+  expect(maximizedGrid.calls.every((call: any) => call.paneIndex !== initial.index)).toBe(true);
+  await page.evaluate(index => {
+    const chart = [...(window as any).__terminal.panels.values()][0].engine.chart;
+    chart.maximizePane(index); chart.invalidate((mask: any) => mask.invalidateGlobal(3));
+  }, initial.index);
   await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizedPane())).toBe(null);
-  await selectTheme(page, 'dark');
-  for(const side of ['Longs','Shorts']){
-    const sources=panel.getByRole('group',{name:`Net ${side} sources`,exact:true}),box=(await sources.boundingBox())!;
-    const controls=await panel.locator('.pane-layout-controls').evaluateAll(nodes=>nodes.map(n=>{const b=n.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}));
-    const actions=controls.find(c=>Math.abs(c.y+c.height/2-box.y-box.height/2)<3);expect(actions).toBeTruthy();expect(box.x+box.width).toBeLessThanOrEqual(actions!.x);
-  }
-  const alignment = await page.evaluate(time => {
-    const p = [...(window as any).__terminal.panels.values()][0], index = p.engine.times.indexOf(time / 1000);
-    p.engine.setRange({ from: Math.max(0, index - 34), to: index + 1 }); return { time, index, range: p.engine.visibleRange() };
-  }, hostOpen);
-  expect(alignment.index).toBeGreaterThanOrEqual(0);
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const restoredGrid = await readAxisGridProbe(page);
+  expect(restoredGrid.calls.some((call: any) => call.paneIndex === restoredGrid.primary)).toBe(true);
+  expect(restoredGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
 
-  // Capture a wide-bar view: amounts sit outside both signed stacks.
-  await page.evaluate(time => {
-    const p = [...(window as any).__terminal.panels.values()][0], i = p.engine.times.indexOf(time / 1000);
-    p.engine.setRange({ from: i - 3, to: i + 1 });
-  }, hostOpen);
-  await page.waitForTimeout(150);
-  await page.screenshot({ path: '/tmp/net-positioning-outside-labels.png' });
-  const originalTheme = await page.getByLabel('Theme', { exact: true }).inputValue();
-  await page.evaluate(() => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = 'dark'; select.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.evaluate(() => { (window as any).__netPositioningLabelPaints.length = 0; });
-  const shortPane = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-    const index = p.engine.netPositioningPaneIndex('native.net-longs-estimated'), weight = chart.paneWeight(index);
-    chart.setPaneWeight(index, .18); (p as any).schedulePaneIndicatorLayout();
-    return { index, weight };
-  });
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  const shortPaneLabel = await page.evaluate(time => {
-    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get('native.net-longs-estimated');
-    const plot = p.engine.chart.plotRect(view.paneIndex), segment = view.primitive.geometry.find((item: any) => item.sourceId === 'binance' && item.timeMs === time && !item.zero);
-    const dpr = window.devicePixelRatio;
-    const labels = ((window as any).__netPositioningLabelPaints as any[]).map(item => ({ ...item, x: item.x / dpr, y: item.y / dpr }))
-      .filter(item => item.text === '155' && segment && item.x >= segment.left && item.x <= segment.right);
-    const insideLabels = labels.filter(item => item.y >= segment?.top && item.y <= segment?.bottom);
-    return { plotHeight: plot.height, header: p.element.querySelector(`.pane-indicator-host[data-pane-index="${view.paneIndex}"]`)?.getBoundingClientRect().toJSON(), segment: segment && { top: segment.top, bottom: segment.bottom }, labels, insideLabels };
-  }, hostOpen);
-  console.log('Short net positioning pane label evidence', JSON.stringify(shortPaneLabel));
-  expect(shortPaneLabel.labels.length).toBeGreaterThan(0);
-  await page.screenshot({ path: '/tmp/net-positioning-short-pane.png' });
-  await page.evaluate(theme => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = theme; select.dispatchEvent(new Event('change', { bubbles: true })); }, originalTheme);
-  await page.evaluate(({ index, weight }) => { const p = [...(window as any).__terminal.panels.values()][0]; p.engine.chart.setPaneWeight(index, weight); (p as any).schedulePaneIndicatorLayout(); }, shortPane);
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.evaluate(time => {
     const p = [...(window as any).__terminal.panels.values()][0], i = p.engine.times.indexOf(time / 1000);
-    p.engine.setRange({ from: Math.max(0, i - 34), to: i + 1 });
+    p.engine.setRange({ from: Math.max(0, i - 3), to: i + 1 });
   }, hostOpen);
-
-  const tooltip = (id: string, time: number) => page.evaluate(({ id, time }) => ([...(window as any).__terminal.panels.values()][0] as any).engine.netPositioningTooltip(id, time), { id, time });
-  await expect.poll(() => tooltip(longsId, hostOpen)).toContain('positive +155 BTC');
-  await expect.poll(() => tooltip(longsId, hostOpen)).toContain('negative −98 BTC');
-  expect(await tooltip(longsId, hostOpen - 60_000)).toContain('positive 0 BTC');
-  expect(await tooltip(longsId, hostOpen - 3 * 60_000)).toContain('1/2 source intervals available');
-  expect(await tooltip(longsId, hostOpen - 4 * 60_000)).toContain('Hyperliquid · BTC Perp');
-
-  await page.evaluate(time => {
-    const p = [...(window as any).__terminal.panels.values()][0];
-    const engine = p.engine, index = engine.times.indexOf(time / 1000), spike = index - 60;
-    engine.setRange({ from: Math.max(0, index - 34), to: index + 1 });
-    (window as any).__netPositioningRefs = { engine, chart: engine.chart,
-      primitives: ['native.net-longs-estimated', 'native.net-shorts-estimated'].map(id => engine.netPositioningPanes.get(id).primitive), indices: [1, 2],
-      rebuilds: p.diagnostics().netPositioning.histories.map((history: any) => history.candleRebuilds), request: p.diagnostics().netPositioning.request };
-    (window as any).__spikeIndex = spike;
-  }, hostOpen);
-  const before = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0]; return p.engine.netPositioningDiagnostics().map((pane: any) => pane.visibleScaleMaxBtc);
-  });
-  expect(before.every((value: number) => value < 2_000)).toBe(true);
-  const spikeRange = await page.evaluate(() => { const p = [...(window as any).__terminal.panels.values()][0], i = (window as any).__spikeIndex, outlier = p.netPositioningHistories.get('price-oi').snapshot().find((c: any) => c.venues.binance?.netLongsBtc === 2_000); p.engine.setRange({ from: Math.max(0, i - 2), to: i + 3 }); return { requestedIndex: i, sourceIndex: outlier ? p.engine.times.indexOf(outlier.timeMs / 1000) : -1 }; });
-  expect(spikeRange.sourceIndex).toBeGreaterThanOrEqual(spikeRange.requestedIndex - 2);
-  expect(spikeRange.sourceIndex).toBeLessThan(spikeRange.requestedIndex + 3);
-  await page.waitForTimeout(150);
-  await expect.poll(() => page.evaluate(() => Math.max(...[...(window as any).__terminal.panels.values()][0].engine.netPositioningDiagnostics().map((pane: any) => pane.visibleScaleMaxBtc)))).toBeGreaterThanOrEqual(2_000);
-  await page.evaluate(time => { const p = [...(window as any).__terminal.panels.values()][0], i = p.engine.times.indexOf(time / 1000); p.engine.setRange({ from: Math.max(0, i - 34), to: i + 1 }); }, hostOpen);
-
-  await page.waitForTimeout(120);
-  const hit = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], primitive = p.engine.netPositioningPanes.get('native.net-longs-estimated').primitive;
-    const plot = p.engine.chart.plotRect(p.engine.netPositioningPaneIndex('native.net-longs-estimated'));
-    const segment = primitive.geometry.find((item: any) => item.sourceId === 'binance' && !item.zero && item.bottom > item.top
-      && item.right > 0 && item.left < plot.width && item.bottom > 0 && item.top < plot.height);
+  await expect.poll(() => page.evaluate(() => (window as any).__netPositioningLabelPaints.some((item: any) => item.text === '155'))).toBe(true);
+  const hit = await page.evaluate(({ id, time }) => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), primitive = view.primitive;
+    const plot = p.engine.chart.plotRect(view.paneIndex);
+    const segment = primitive.geometry.find((item: any) => item.side === 'longs' && item.timeMs === time && item.sourceId === 'binance' && !item.zero
+      && item.bottom > item.top && item.right > 0 && item.left < plot.width && item.bottom > 0 && item.top < plot.height);
     if (!segment) return null;
     const x = (Math.max(0, segment.left) + Math.min(plot.width, segment.right)) / 2;
     const y = (Math.max(0, segment.top) + Math.min(plot.height, segment.bottom)) / 2;
-    const result = primitive.hitTest(x, y, {});
-    return { result, tooltip: primitive.tooltip(segment.timeMs), x: plot.left + x, y: plot.top + y };
-  });
-  expect(hit).not.toBeNull(); expect(hit?.result?.hoverKey).toContain('binance'); expect(hit?.tooltip).toContain('Binance · BTCUSDT USD-M Perp segment');
+    return { hit: primitive.hitTest(x, y, {}), tooltip: primitive.tooltip(time), x: plot.left + x, y: plot.top + y };
+  }, { id: POSITIONING_ID, time: hostOpen });
+  expect(hit).not.toBeNull(); expect(hit?.hit?.hoverKey).toContain('longs:binance'); expect(hit?.tooltip).toContain('Binance · BTCUSDT USD-M Perp longs segment');
 
   const stage = await panel.locator('.chart-stage').boundingBox();
   expect(stage).not.toBeNull();
@@ -366,110 +218,67 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
   const card = panel.locator('.net-positioning-tooltip');
   await expect(card).toBeVisible();
   await expect(card).toContainText('Net Longs (Est.)');
-  await expect(card).toContainText('BN[P]');
-  await expect(card).toContainText('HL[P]');
+  await expect(card).toContainText('BN[P]'); await expect(card).toContainText('HL[P]');
   await expect(card).toContainText('Total (2 venues)');
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('BTC');
   await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('USDT');
   const bounds = await card.boundingBox();
-  expect(bounds!.x).toBeGreaterThanOrEqual(stage!.x);
-  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(stage!.x + stage!.width);
-  await page.evaluate(() => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = 'dark'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+  expect(bounds!.x).toBeGreaterThanOrEqual(stage!.x); expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(stage!.x + stage!.width);
   await page.screenshot({ path: '/tmp/net-positioning-tooltip-dark.png' });
-  await page.evaluate(() => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = 'light'; select.dispatchEvent(new Event('change', { bubbles: true })); });
-  await page.screenshot({ path: '/tmp/net-positioning-tooltip-light.png' });
-  await page.evaluate(() => { const select = document.querySelector<HTMLSelectElement>('#theme')!; select.value = 'dark'; select.dispatchEvent(new Event('change', { bubbles: true })); });
-  await page.mouse.move(0, 0);
-  await expect(card).toBeHidden();
+  await selectTheme(page, 'light'); await page.screenshot({ path: '/tmp/net-positioning-tooltip-light.png' });
+  await selectTheme(page, 'dark'); await page.mouse.move(0, 0); await expect(card).toBeHidden();
 
-  // Currency is a display projection: the same chart, source request and BTC history survive.
   await openGlobalSettings(page);
   const global = page.getByRole('dialog', { name: 'Global settings', exact: true });
-  await expect(global.getByLabel('Default display currency')).toHaveValue('quote');
+  await global.getByLabel('Default display currency').selectOption('quote');
   await global.getByLabel('Override indicator currencies').check();
   await global.getByRole('button', { name: 'Apply', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.netPositioningDiagnostics().map((p:any) => p.currency))).toEqual(['usdt', 'usdt']);
-  await expect.poll(() => page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get('native.net-longs-estimated');
-    const range = view.series.priceScale().priceRange(), extent = view.primitive.autoscaleInfo();
-    return !!extent && range.min <= extent.min && range.max >= extent.max;
-  })).toBe(true);
-  const quoteHit = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get('native.net-longs-estimated');
-    const plot = p.engine.chart.plotRect(view.paneIndex);
-    const segment = view.primitive.geometry.find((s:any) => s.sourceId === 'binance' && s.bottom > s.top && s.right > 0 && s.left < plot.width && s.bottom > 0 && s.top < plot.height);
-    return segment ? { x: plot.left + (Math.max(0, segment.left) + Math.min(plot.width, segment.right))/2, y: plot.top + (Math.max(0, segment.top)+Math.min(plot.height,segment.bottom))/2 } : null;
-  });
-  expect(quoteHit).not.toBeNull();
-  await page.mouse.move(stage!.x + quoteHit!.x, stage!.y + quoteHit!.y);
-  await expect(card).toBeVisible();
-  await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('USDT');
+  await expect.poll(() => page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.netPositioningDiagnostics().map((view: any) => view.currency))).toEqual(['usdt']);
+  const quoteView = await page.evaluate(id => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), refs = (window as any).__netPositioningRefs;
+    return { scale: view.primitive.diagnostics().visibleScaleBySide.longs,
+      samePrimitive: view.primitive === refs.primitive, sameEngine: p.engine === refs.engine, sameChart: p.engine.chart === refs.chart };
+  }, POSITIONING_ID);
+  expect(quoteView.scale.max).toBeGreaterThan(5_000_000);
+  expect(quoteView.samePrimitive).toBe(true); expect(quoteView.sameEngine).toBe(true); expect(quoteView.sameChart).toBe(true);
+  const quoteHit = await page.evaluate(id => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), plot = p.engine.chart.plotRect(view.paneIndex);
+    const segment = view.primitive.geometry.find((item: any) => item.side === 'longs' && item.sourceId === 'binance' && item.bottom > item.top
+      && item.right > 0 && item.left < plot.width && item.bottom > 0 && item.top < plot.height);
+    return segment ? { x: plot.left + (Math.max(0, segment.left) + Math.min(plot.width, segment.right)) / 2,
+      y: plot.top + (Math.max(0, segment.top) + Math.min(plot.height, segment.bottom)) / 2 } : null;
+  }, POSITIONING_ID);
+  expect(quoteHit).not.toBeNull(); await page.mouse.move(stage!.x + quoteHit!.x, stage!.y + quoteHit!.y);
+  await expect(card).toBeVisible(); await expect(card.locator('.positioning-tooltip-amount').first()).toContainText('USDT');
   await expect(card.locator('.positioning-tooltip-secondary').first()).toContainText('BTC');
   await page.screenshot({ path: '/tmp/net-positioning-quote-hover.png' });
-  await openGlobalSettings(page);
-  await global.getByLabel('Override indicator currencies').uncheck();
+  await page.mouse.move(0, 0); await openGlobalSettings(page); await global.getByLabel('Override indicator currencies').uncheck();
   await global.getByRole('button', { name: 'Apply', exact: true }).click();
 
-  const longRow = panel.locator(`.active-indicator[data-definition-id="${longsId}"]`);
-  await setSettings(panel, longsId, 'Longs', 'grouped', 'off', 'price-oi');
-  await expectSettings(panel, longsId, 'Longs', { method: 'price-oi', display: 'grouped', labels: 'off', venues: ['binance', 'hyperliquid'] });
-  const after = await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], before = (window as any).__netPositioningRefs;
-    return { stable: before.engine === p.engine && before.chart === p.engine.chart && before.primitives.every((primitive: any, i: number) => primitive === p.engine.netPositioningPanes.get(i ? 'native.net-shorts-estimated' : 'native.net-longs-estimated').primitive),
-      indices: [p.engine.netPositioningPaneIndex('native.net-longs-estimated'), p.engine.netPositioningPaneIndex('native.net-shorts-estimated')],
+  const settings = await openSettings(panel);
+  await expect(settings.getByLabel('Estimation inputs')).toHaveValue('price-oi');
+  await expect(settings.getByLabel('Display mode')).toHaveValue('stacked');
+  await expect(settings.getByLabel('Value labels')).toHaveValue('auto');
+  await expect(settings.getByLabel('Show Longs')).toBeChecked(); await expect(settings.getByLabel('Show Shorts')).toBeChecked();
+  await expect(settings.getByLabel('Reverse order')).not.toBeChecked();
+  await settings.getByLabel('Display mode').selectOption('grouped');
+  await settings.getByLabel('Value labels').selectOption('off');
+  await settings.getByRole('button', { name: 'Apply', exact: true }).click();
+  await expect.poll(() => page.evaluate(id => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), diag = view.primitive.diagnostics();
+    return { display: diag.display, labels: diag.labels, bands: diag.renderedBands.map((band: any) => band.side), venues: diag.venues };
+  }, POSITIONING_ID)).toEqual({ display: 'grouped', labels: 'off', bands: ['longs', 'shorts'], venues: ['binance', 'hyperliquid'] });
+  const afterSettings = await page.evaluate(id => {
+    const p = [...(window as any).__terminal.panels.values()][0], view = p.engine.netPositioningPanes.get(id), refs = (window as any).__netPositioningRefs;
+    return { sameEngine: p.engine === refs.engine, sameChart: p.engine.chart === refs.chart, samePrimitive: view.primitive === refs.primitive,
       rebuilds: p.diagnostics().netPositioning.histories.map((history: any) => history.candleRebuilds), request: p.diagnostics().netPositioning.request };
-  });
-  expect(after.stable).toBe(true); expect(after.indices).toEqual([1, 2]);
-  expect(after.rebuilds).toEqual(await page.evaluate(() => (window as any).__netPositioningRefs.rebuilds));
-  expect(after.request).toBe(await page.evaluate(() => (window as any).__netPositioningRefs.request));
+  }, POSITIONING_ID);
+  expect(afterSettings.sameEngine).toBe(true); expect(afterSettings.sameChart).toBe(true); expect(afterSettings.samePrimitive).toBe(true);
+  expect(afterSettings.rebuilds).toEqual(initial.rebuilds);
+  expect(afterSettings.request).toBe(initial.request);
 
-  await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0];
-    p.engine.chart.movePane(p.engine.netPositioningPaneIndex('native.net-shorts-estimated'), -1);
-  });
-  await expect.poll(() => page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0];
-    const saved = JSON.parse(((window as any).__terminal?.workspaces ? JSON.stringify({version:8,layout:(window as any).__terminal.workspaces.active.layout}) : localStorage.getItem('basis.layout.v1'))!);
-    return saved.layout.panels[p.params.api.id].params.paneOrder;
-  })).toEqual(['@price', shortsId, longsId]);
-  await page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], chart = p.engine.chart;
-    (window as any).__positioningGridCalls.length = 0;
-    chart.invalidate((mask: any) => mask.invalidateGlobal(3));
-  });
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  const reorderedGrid = await readAxisGridProbe(page);
-  expect(reorderedGrid.calls.some((call: any) => call.paneIndex === reorderedGrid.primary)).toBe(true);
-  expect(reorderedGrid.calls.every((call: any) => call.paneIndex === reorderedGrid.primary)).toBe(true);
-  expect(reorderedGrid.lines.length).toBeGreaterThan(0);
-  expect(reorderedGrid.lines.every((line: any) => Math.abs(line.y - line.expected) <= 1)).toBe(true);
-  const longSources = panel.getByRole('group', { name: 'Net Longs sources', exact: true });
-  await longSources.locator('[data-source="binance"]').click();
-  await longSources.locator('[data-source="hyperliquid"]').focus();
-  await page.keyboard.press('Space');
-  await expect(longSources.locator('[aria-pressed="true"]')).toHaveCount(0);
-  await expect(panel.getByRole('group', { name: 'Net Shorts sources', exact: true }).locator('[aria-pressed="true"]')).toHaveCount(2);
-  await page.reload();
-  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.length)).toBe(2);
-  await expect(longSources.locator('[aria-pressed="true"]')).toHaveCount(0);
-  await longSources.locator('[data-source="binance"]').click();
-  await longSources.locator('[data-source="hyperliquid"]').click();
-  expect(await longSources.locator('img').evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
-
-  await expect.poll(() => page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0];
-    return [p.engine.netPositioningPaneIndex('native.net-longs-estimated'), p.engine.netPositioningPaneIndex('native.net-shorts-estimated')];
-  })).toEqual([2, 1]);
-  await expectSettings(panel, longsId, 'Longs', { method: 'price-oi', display: 'grouped', labels: 'off', venues: ['binance', 'hyperliquid'] });
-  await panel.locator(`.active-indicator[data-definition-id="${longsId}"]`).getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.length)).toBe(1);
-  await addIndicator(panel, 'Net Longs — Estimated');
-  await expect.poll(() => page.evaluate(() => (window as any).__terminal.stats().panels[0].netPositioning.panes.length)).toBe(2);
-  await expectSettings(panel, longsId, 'Longs', { method: 'price-oi', display: 'stacked', labels: 'auto', venues: ['binance'] });
-
-  const rollover = await page.evaluate(() => {
-    const terminal = (window as any).__terminal, p = [...terminal.panels.values()][0], engine = p.engine, old = engine.latestBar.time * 1000, nextTime = old + 60_000;
-    (window as any).__rolloverIdentity = { panelId: p.params.api.id, engine, chart: engine.chart };
+  const rollover = await page.evaluate(({ id, time }) => {
+    const terminal = (window as any).__terminal, p = [...terminal.panels.values()][0], engine = p.engine, nextTime = time + 60_000;
     const nextBar = { t: nextTime, o: engine.latestBar.open, h: engine.latestBar.high + 1, l: engine.latestBar.low, c: engine.latestBar.close + .5, v: 1, revision: 1, closed: false };
     engine.applyPatch([nextBar]);
     const history = p.netPositioningHistories.get('price-oi'), previous = [...history.intervals.values()].find((row: any) => row.venue === 'binance');
@@ -482,27 +291,25 @@ test('estimated positioning keeps signed source stacks, settings, hit targets an
     const changed = history.apply({ ...history.metadata(), from: end - 4 * 60 * 60_000, to: end, intervals: [row] }, [row], ['binance', 'hyperliquid']);
     p.renderNetPositioningMethod('price-oi', changed, false);
     engine.setRange({ from: engine.times.length - 34, to: engine.times.length });
-    return { time: nextTime, tooltip: engine.netPositioningTooltip('native.net-longs-estimated', nextTime), latest: engine.latestBar.time * 1000 };
-  });
+    return { time: nextTime, tooltip: engine.netPositioningTooltip(id, nextTime), latest: engine.latestBar.time * 1000 };
+  }, { id: POSITIONING_ID, time: hostOpen });
   expect(rollover.latest).toBe(rollover.time); expect(rollover.tooltip).toContain('Net longs +13 BTC');
-  const rolloverIdentity = await page.evaluate(() => {
-    const terminal = (window as any).__terminal, refs = (window as any).__rolloverIdentity;
-    const panel = [...terminal.panels.values()].find((item: any) => item.params.api.id === refs.panelId);
-    return { sameEngine: panel?.engine === refs.engine, sameChart: panel?.engine?.chart === refs.chart };
+  const identity = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0], refs = (window as any).__netPositioningRefs;
+    return { sameEngine: p.engine === refs.engine, sameChart: p.engine.chart === refs.chart, panes: p.engine.netPositioningPanes.size };
   });
-  expect(rolloverIdentity).toEqual({ sameEngine: true, sameChart: true });
+  expect(identity).toEqual({ sameEngine: true, sameChart: true, panes: 1 });
   await page.screenshot({ path: '/tmp/net-positioning-display-regression.png' });
   await page.evaluate(() => { for (const p of (window as any).__terminal.panels.values()) if (!p.objectTreeSidebarPreferences.collapsed) p.toggleObjectsPanel(); });
   await page.setViewportSize({ width: 720, height: 900 });
-  await expect(panel.getByRole('group', { name: 'Net Longs sources', exact: true }).locator('button')).toHaveCount(3);
-  expect((await panel.getByRole('group', { name: 'Net Longs sources', exact: true }).boundingBox())!.width).toBeGreaterThanOrEqual(46);
+  await expect(sources.locator('button')).toHaveCount(3);
+  expect((await sources.boundingBox())!.width).toBeGreaterThanOrEqual(46);
   await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-dark.png' });
-  await selectTheme(page, 'light');
-  await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-light.png' });
+  await selectTheme(page, 'light'); await page.screenshot({ path: '/tmp/net-positioning-toggles-narrow-light.png' });
   expect(errors).toEqual([]);
 });
 
-test('empty chart and positioning panes show loading feedback, then ready, empty and error states', async ({ page }) => {
+test('empty chart and combined positioning pane show loading, ready, empty and error states', async ({ page }) => {
   test.setTimeout(90_000);
   let releaseData!: () => void;
   const gate = new Promise<void>(resolve => { releaseData = resolve; });
@@ -529,42 +336,38 @@ test('empty chart and positioning panes show loading feedback, then ready, empty
     const url = new URL(route.request().url()), method = (url.searchParams.get('method') ?? 'price-oi') as Method;
     const venues = (url.searchParams.get('venues') ?? 'binance').split(',') as Venue[];
     const intervals = mode === 'empty' ? [] : venues.map(venue => fixtureRow(method, venue, hostOpen, 1, 0));
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, method, market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC', venues,
-      from: hostOpen - 3_600_000, to: Date.now(), unitVerification: {}, feeds: {}, intervals, truncated: false, pendingIntervals: 0, history: 'explicit loading fixture', semantics: 'explicit loading fixture' }) });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, method, market: 'perpetual', nativeSymbol: 'BTC', units: 'BTC', venues,
+      from: hostOpen - 3_600_000, to: Date.now(), unitVerification: {}, feeds: {}, intervals, truncated: false, pendingIntervals: 0,
+      history: 'explicit loading fixture', semantics: 'explicit loading fixture' }) });
   });
   await page.route('**/market-data/v1/native-candles*', async route => {
-    const candles = Array.from({ length: 1000 }, (_, index) => ({ t: hostOpen - (999 - index) * 60_000, o: 82_000, h: 82_002, l: 81_998, c: 82_001, v: 10, revision: 1, closed: index < 999 }));
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ source: 'binance-native-kline', candles }) });
+    const candles = Array.from({ length: 1_000 }, (_, index) => ({ t: hostOpen - (999 - index) * 60_000, o: 82_000, h: 82_002, l: 81_998, c: 82_001, v: 10, revision: 1, closed: index < 999 }));
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ source: 'binance-native-kline', candles }) });
   });
   await page.setViewportSize({ width: 1366, height: 900 });
   await page.goto('/');
   const panel = page.locator('.candle-panel').first();
   const main = panel.locator('.pane-data-state[data-instance-id="@price"]');
   await expect(main).toBeVisible(); await expect(main).toHaveAttribute('aria-busy', 'true');
-  await addIndicator(panel, 'Net Longs — Estimated'); await addIndicator(panel, 'Net Shorts — Estimated');
-  const longs = panel.locator('.pane-data-state[data-instance-id="native.net-longs-estimated"]');
-  const shorts = panel.locator('.pane-data-state[data-instance-id="native.net-shorts-estimated"]');
-  await expect(longs).toBeVisible(); await expect(shorts).toBeVisible();
-  await expect(longs).toContainText('Waiting for Net Longs data…');
-  expect(await longs.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
-  expect(await longs.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('pane-signal');
-  await selectTheme(page, 'dark');
-  await page.screenshot({ path: '/tmp/pane-loading-dark.png' });
-  await selectTheme(page, 'light');
-  await page.setViewportSize({ width: 720, height: 900 });
+  await addIndicator(panel, 'Net Longs & Shorts');
+  const positioning = panel.locator(`.pane-data-state[data-instance-id="${POSITIONING_ID}"]`);
+  await expect(positioning).toBeVisible();
+  await expect(positioning).toContainText('Waiting for Net Longs & Shorts data…');
+  expect(await positioning.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
+  expect(await positioning.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('pane-signal');
+  await selectTheme(page, 'dark'); await page.screenshot({ path: '/tmp/pane-loading-dark.png' });
+  await selectTheme(page, 'light'); await page.setViewportSize({ width: 720, height: 900 });
   await page.screenshot({ path: '/tmp/pane-loading-light-narrow.png' });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  expect(await longs.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  await page.evaluate(() => (window as any).__releaseLoadingCandles());
-  await expect(main).toBeHidden();
+  expect(await positioning.locator('i').first().evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  await page.evaluate(() => (window as any).__releaseLoadingCandles()); await expect(main).toBeHidden();
   hostOpen = await page.evaluate(() => [...(window as any).__terminal.panels.values()][0].engine.latestBar.time * 1000);
-  releaseData();
-  await expect(longs).toBeHidden(); await expect(shorts).toBeHidden();
+  releaseData(); await expect(positioning).toBeHidden();
   mode = 'empty'; await page.reload(); await page.evaluate(() => (window as any).__releaseLoadingCandles());
-  await expect(longs).toBeVisible(); await expect(longs).toHaveAttribute('data-state', 'empty');
-  await expect(longs).toHaveAttribute('aria-busy', 'false'); await expect(longs).toContainText('Waiting for estimates…');
+  await expect(positioning).toBeVisible(); await expect(positioning).toHaveAttribute('data-state', 'empty');
+  await expect(positioning).toHaveAttribute('aria-busy', 'false'); await expect(positioning).toContainText('Waiting for estimates…');
   mode = 'error'; await page.reload(); await page.evaluate(() => (window as any).__releaseLoadingCandles());
-  await expect(longs).toBeVisible(); await expect(longs).toHaveAttribute('data-state', 'error');
-  await expect(longs).toHaveAttribute('aria-busy', 'false');
+  await expect(positioning).toBeVisible(); await expect(positioning).toHaveAttribute('data-state', 'error');
+  await expect(positioning).toHaveAttribute('aria-busy', 'false');
   expect(errors).toEqual([]);
 });

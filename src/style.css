@@ -382,8 +382,9 @@ dialog.ticker-settings{width:min(780px,calc(100vw - 24px))}.ticker-scope{height:
 .order-walls-settings .indicator-setting-field[hidden]{display:none}
 .order-walls-advanced{display:flex;flex-direction:column;gap:8px;padding:0 11px 9px}
 .order-walls-advanced>summary{color:var(--muted);font-size:10px;cursor:pointer}
-.order-walls-notice{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:9px}
+.order-walls-notice{min-width:0;overflow-wrap:anywhere;white-space:pre-line;color:var(--muted);font-size:9px}
 .chart-footer .order-walls-notice{line-height:12px}
+.order-walls-history-retry{height:19px;margin-left:5px;padding:1px 5px;font:inherit;vertical-align:middle}
 .panel-status[hidden],.cvd-status[hidden],.open-interest-status[hidden],.order-flow-status[hidden],.chart-footer[hidden]{display:none!important}
 .order-walls-notice[hidden]{display:none}
 .order-walls-notice[data-state=live]{color:var(--up)}

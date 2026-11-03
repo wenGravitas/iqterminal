@@ -69,11 +69,11 @@ export async function encodeFrame(frame: FrozenFrame): Promise<{ image: Blob; th
 export async function capturedBundle(snapshot: ChartSnapshot, frame: FrozenFrame, marketTime: number, captureId: string, entryId: string): Promise<JournalBundle> {
   const encoded = await encodeFrame(frame), imageId = `${captureId}:image`, thumbnailId = `${captureId}:thumbnail`;
   const assets = await Promise.all([imageAsset(imageId, encoded.image), imageAsset(thumbnailId, encoded.thumbnail)]);
-  const capture = captureRecord(snapshot, captureId, imageId, thumbnailId, encoded.warnings);
+  const capture = captureRecord(snapshot, captureId, imageId, thumbnailId, encoded.warnings, marketTime);
   return { entry: { ...createEntry(capture, marketTime), id: entryId }, capture, assets };
 }
-export function captureRecord(snapshot: ChartSnapshot, id: string, image: string | null, thumbnail: string | null, warnings: string[]): ChartCapture {
-  return immutableCopy({ version: 1, id, capturedAt: snapshot.capturedAt, snapshot, image, thumbnail, imageStatus: image ? warnings.length ? 'partial' : 'complete' : 'note-only', imageWarnings: warnings,
+export function captureRecord(snapshot: ChartSnapshot, id: string, image: string | null, thumbnail: string | null, warnings: string[], marketTime = snapshot.capturedAt): ChartCapture {
+  return immutableCopy({ version: 1, id, marketTime, capturedAt: snapshot.capturedAt, snapshot, image, thumbnail, imageStatus: image ? warnings.length ? 'partial' : 'complete' : 'note-only', imageWarnings: warnings,
     replay: { version: 1, market: snapshot.market, requestedRange: snapshot.visibleRange, captureCutoff: snapshot.dataAsOf, warmup: 'unknown', warmupRequirements: Array.isArray(snapshot.config.indicators) ? (snapshot.config.indicators as any[]).filter(instance => instance.definitionId === 'native.composition-sma').map(instance => ({ instanceId: instance.instanceId, bars: Number(instance.settings.length) || 20 })) : [], streams: snapshot.layers, retention: 'unpreserved', playback: 'not-implemented', screenshot: Boolean(image), chartState: true } });
 }
 

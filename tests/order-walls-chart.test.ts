@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PrimitiveRenderContext } from 'openalgo-charts';
 import { DEFAULT_ORDER_WALLS_SETTINGS, resolveAutoOrderWallPriceWidth, type OrderWallSegment } from '../src/feed/order-walls';
-import { OrderWallsPrimitive } from '../src/chart/order-walls';
+import { OrderWallsPrimitive, orderWallsFitRange } from '../src/chart/order-walls';
 
 const LEGACY_ORDER_WALLS_SETTINGS={...DEFAULT_ORDER_WALLS_SETTINGS,mode:'threshold' as const,aggregation:'auto' as const,thicknessPx:2};
 const base = 1_704_067_200_000;
@@ -150,6 +150,47 @@ describe('Order Walls chart hit testing', () => {
     ]);
   });
 
+  it('keeps durable archive history outside the direct-history episode setting', () => {
+    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true, historyEpisodes: 16 }, 60_000);
+    const archived = (index: number, archive = true): OrderWallSegment => ({
+      id: `${archive ? 'archive' : 'direct'}-${index}`, ...(archive ? { archiveEntryId: `candidate-${index}` } : {}),
+      epoch: 1, side: 'bid', price: 100, start: base + index * 1_000, end: base + index * 1_000 + 500,
+      peakUsd: 10_000, meanUsd: 10_000, durationMs: 500, percentile: null,
+      scopePartial: true, startKnown: true, detectionMode: 'top-levels', rank: 1,
+      valueRuns: [], valueRunsTruncated: false, endReason: 'rank-exit', endKnown: true,
+    });
+    const walls = Array.from({ length: 2_100 }, (_, index) => archived(index));
+    primitive.setSnapshot(walls, { state: 'live', lastConfirmedAt: base + 2_100_000 });
+    expect(primitive.diagnostics().retainedSegments).toBe(2_100);
+
+    primitive.setSnapshot(Array.from({ length: 20 }, (_, index) => archived(index, false)), {
+      state: 'live', lastConfirmedAt: base + 2_100_000,
+    });
+    expect(primitive.diagnostics().retainedSegments).toBe(16);
+  });
+
+  it('projects only visible archive value runs while keeping raw exact values available for hover', () => {
+    const primitive = new OrderWallsPrimitive({ ...DEFAULT_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
+    const valueRuns = Array.from({ length: 100_000 }, (_, index) => ({
+      at: base + index * 100, usd: 100_000 + index, percentile: null, rank: 1,
+      quantity: 1 + index / 100_000, quantityExact: `1.${String(index).padStart(8, '0')}`,
+      notionalExact: String(100_000 + index),
+    }));
+    const segment: OrderWallSegment = {
+      id: 'archive-long-value-run', archiveEntryId: 'archive-candidate', epoch: 1, side: 'bid', price: 100,
+      start: base, end: base + valueRuns.length * 100, peakUsd: 199_999, meanUsd: 150_000,
+      durationMs: valueRuns.length * 100, percentile: null, scopePartial: true, startKnown: true,
+      detectionMode: 'top-levels', rank: 1, valueRuns, valueRunsTruncated: false, endReason: 'rank-exit', endKnown: true,
+    };
+    primitive.setSnapshot([segment], { state: 'live', lastConfirmedAt: segment.end! });
+    primitive.draw(canvas(), context({ from: 1, to: 1.02 }));
+
+    expect(primitive.diagnostics().retainedSegments).toBe(1);
+    expect(primitive.diagnostics().retainedDrawables).toBeLessThan(20);
+    expect(segment.valueRuns).toHaveLength(100_000);
+    expect(primitive.orderWallAt(50.5, 100)?.segment.valueRuns[603]?.notionalExact).toBe('100603');
+  });
+
   it('coalesces bid/ask runs per episode without changing side colors or zoomed hover time', () => {
     const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true, colorMode: 'bid-ask' }, 60_000);
     const segment = (id: string, side: 'bid' | 'ask'): OrderWallSegment => ({
@@ -201,6 +242,26 @@ describe('Order Walls chart hit testing', () => {
     primitive.draw(canvas(), context());
     expect(settings.aggregation).toBe('auto');
     expect(primitive.orderWallAt(100, 100)?.priceHigh).toBe(200);
+  });
+});
+
+describe('Order Walls fit range', () => {
+  it('fits only active Top Levels and adds padding around the selected prices', () => {
+    const segment = (id: string, price: number, end: number | null, mode: 'top-levels' | 'threshold' = 'top-levels'): OrderWallSegment => ({
+      id, epoch: 1, side: 'bid', price, start: base, end, peakUsd: 1, meanUsd: 1, durationMs: 1,
+      percentile: 99, scopePartial: false, startKnown: true, detectionMode: mode, currentSelection: end === null && mode === 'top-levels',
+      valueRuns: [], valueRunsTruncated: false, endReason: end === null ? null : 'rank-exit', endKnown: end !== null,
+    });
+    const active = [
+      segment('active-low', 100, null), segment('active-high', 110, null),
+      { ...segment('historical-open', 80, null), currentSelection: false },
+      segment('closed', 90, base + 1000), segment('threshold', 1000, null, 'threshold'),
+    ];
+    const range = orderWallsFitRange(active, 0.01, true);
+    expect(range).toEqual({ min: 99.2, max: 110.8 });
+    expect(orderWallsFitRange(active, 0.01, false)).toBeNull();
+    expect(orderWallsFitRange([segment('closed-only', 100, base + 1000)], 0.01, true)).toBeNull();
+    expect(orderWallsFitRange([{ ...segment('historical-open', 100, null), currentSelection: false }], 0.01, true)).toBeNull();
   });
 });
 

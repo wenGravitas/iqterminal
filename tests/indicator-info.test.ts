@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { indicatorInfoText } from '../src/indicators/info';
-import { COMPOSITION_SMA_ID, NET_LONGS_ID, NET_SHORTS_ID } from '../src/indicators/model';
+import { COMPOSITION_SMA_ID, NET_LONGS_ID, NET_POSITIONING_ID, NET_SHORTS_ID } from '../src/indicators/model';
 import { CVD_ID } from '../src/feed/cvd';
 import { LIQUIDATIONS_ID } from '../src/liquidations/settings';
 import { OPEN_INTEREST_ID } from '../src/indicators/open-interest-data';
@@ -22,6 +22,8 @@ describe('indicator info copy', () => {
     for (const id of [NET_LONGS_ID, NET_SHORTS_ID]) {
       expect(indicatorInfoText(instance(id))).toContain('not actual position counts');
     }
+    expect(indicatorInfoText(instance(NET_POSITIONING_ID))).toContain('one pane');
+    expect(indicatorInfoText(instance(NET_POSITIONING_ID))).toContain('separate signed scales');
   });
 
   it('explains open interest without confusing it with a long/short estimate', () => {

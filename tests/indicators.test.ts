@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { config } from '../src/panel';
-import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, NET_LONGS_ID, NET_SHORTS_ID, IndicatorLifecycle, footprintTotalsSettings, nativeInstance, netPositioningSettings, studyPins, withStudyPins, validateInstances } from '../src/indicators/model';
+import { FOOTPRINT_ID, FOOTPRINT_TOTALS_ID, HEATMAP_ID, NET_LONGS_ID, NET_POSITIONING_ID, NET_SHORTS_ID, IndicatorLifecycle, footprintTotalsSettings, nativeInstance, netPositioningSettings, studyPins, withStudyPins, validateInstances } from '../src/indicators/model';
 import { ORDER_WALLS_ID, DEFAULT_ORDER_WALLS_SETTINGS } from '../src/feed/order-walls';
 import { ScriptStudyHost, type StudyPin } from '../src/scripts/host';
 const pin: StudyPin = { attachmentId: 'ema20', scriptId: 'builtin.ema', revisionId: 'a'.repeat(64), title: 'EMA', description: 'Average', settings: { length: 20 }, visible: true };
@@ -73,21 +73,28 @@ describe('unified indicator configuration', () => {
     const duplicate = { ...walls, instanceId: 'another-wall-instance' };
     expect(validateInstances([walls, duplicate])).toHaveLength(1);
   });
-  it('migrates Net Positioning to stacked Auto labels and preserves saved grouped display choices', () => {
+  it('merges saved Net Longs and Shorts into one pane and preserves conflicting side settings', () => {
     expect(netPositioningSettings({ venues: [] }).venues).toEqual([]);
     expect(netPositioningSettings({}).venues).toEqual(['binance']);
     expect(netPositioningSettings({ method: 'price-oi', venues: ['hyperliquid'] })).toEqual({
-      method: 'price-oi', venues: ['hyperliquid'], display: 'stacked', labels: 'auto',
+      method: 'price-oi', venues: ['hyperliquid'], display: 'stacked', labels: 'auto', showLongs: true, showShorts: true, reverseOrder: false,
     });
     const saved = config({ ...legacy, indicators: [
       nativeInstance(NET_LONGS_ID, { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover', colors: { binance: '#123456', hyperliquid: '#abcdef' } }),
       nativeInstance(NET_SHORTS_ID, { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'off' }),
     ] });
-    expect(saved.indicators.map(instance => netPositioningSettings(instance.settings))).toEqual([
-      { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover', colors: { binance: '#123456', hyperliquid: '#abcdef' } },
-      { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'off' },
-    ]);
+    expect(saved.indicators).toHaveLength(1);
+    expect(saved.indicators[0]).toMatchObject({ definitionId: NET_POSITIONING_ID, instanceId: NET_POSITIONING_ID, placement: 'pane', visible: true,
+      settings: { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover',
+        showLongs: true, showShorts: true, reverseOrder: false, colors: { binance: '#123456', hyperliquid: '#abcdef' },
+        legacyPreserved: { longs: { method: 'aggressor-flow-oi', venues: ['binance', 'hyperliquid'], display: 'grouped', labels: 'hover', visible: true },
+          shorts: { method: 'price-oi', venues: ['binance'], display: 'stacked', labels: 'off', visible: true } } } });
     expect(config(JSON.parse(JSON.stringify(saved))).indicators).toEqual(saved.indicators);
+    const onlyLong = config({ ...legacy, indicators: [nativeInstance(NET_LONGS_ID, { venues: ['hyperliquid'] }, false)] });
+    expect(onlyLong.indicators[0]).toMatchObject({ definitionId: NET_POSITIONING_ID, visible: false,
+      settings: { venues: ['hyperliquid'], showLongs: false, showShorts: false, reverseOrder: false } });
+    const fresh = config({ ...legacy, indicators: [nativeInstance(NET_POSITIONING_ID, { venues: ['hyperliquid'] })] });
+    expect(netPositioningSettings(fresh.indicators[0]!.settings)).toMatchObject({ showLongs: true, showShorts: true, reverseOrder: false });
   });
 });
 describe('indicator lifecycle', () => {

@@ -30,17 +30,17 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   const panel = page.locator('.candle-panel').first();
   const closeObjects = panel.locator('.chart-objects-panel').getByRole('button', { name: 'Close Object Tree', exact: true });
   if (await closeObjects.isVisible()) await closeObjects.click();
-  await addIndicator(panel, 'Net Longs — Estimated');
+  await addIndicator(panel, 'Net Longs & Shorts');
 
-  const row = panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-estimated"]');
+  const row = panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]');
   await expect(row).toBeVisible();
   const paneIndex = await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0];
-    return p.engine.netPositioningPaneIndex('native.net-longs-estimated');
+    return p.engine.netPositioningPaneIndex('native.net-longs-shorts-estimated');
   });
   const controls = panel.locator(`.pane-layout-controls[data-pane-index="${paneIndex}"]`);
   await expect(controls.getByRole('button', { name: `Collapse pane ${paneIndex + 1} to header only`, exact: true })).toBeVisible();
-  const sourceLegend = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"] .net-positioning-legend[aria-label="Net Longs sources"]`);
+  const sourceLegend = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"] .net-positioning-legend[aria-label="Net Longs & Shorts sources"]`);
   await expect(sourceLegend).toBeVisible();
   await expect(sourceLegend.locator('.net-positioning-source')).toHaveCount(3);
   const rowList = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"] .pane-indicator-rows`);
@@ -57,29 +57,29 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   const before = await page.evaluate(() => {
     const terminal = (window as any).__terminal, p = [...terminal.panels.values()][0];
     return { request: p.diagnostics().netPositioning.request, subscribers: terminal.feed.currentNetPositioning.size,
-      settings: JSON.stringify(p.selection.indicators.find((item: any) => item.definitionId === 'native.net-longs-estimated')?.settings) };
+      settings: JSON.stringify(p.selection.indicators.find((item: any) => item.definitionId === 'native.net-longs-shorts-estimated')?.settings) };
   });
 
   await controls.getByRole('button', { name: `Collapse pane ${paneIndex + 1} to header only`, exact: true }).click();
   const folded = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"][data-collapsed="true"]`);
-  const foldedRow = folded.locator('.active-indicator[data-definition-id="native.net-longs-estimated"]');
+  const foldedRow = folded.locator('.active-indicator[data-definition-id="native.net-longs-shorts-estimated"]');
   await expect(foldedRow).toBeVisible();
-  await expect(foldedRow.getByRole('button', { name: 'About Net Longs — Estimated', exact: true })).toBeVisible();
-  await expect(foldedRow.getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true })).toBeVisible();
+  await expect(foldedRow.getByRole('button', { name: 'About Net Longs & Shorts', exact: true })).toBeVisible();
+  await expect(foldedRow.getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true })).toBeVisible();
   await expect(folded.locator('.pane-layout-controls-inline').getByRole('button', { name: `Expand pane ${paneIndex + 1}`, exact: true })).toBeVisible();
-  await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.net-longs-estimated"]')).toHaveCount(0);
+  await expect(panel.locator('.active-indicator-rows > .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]')).toHaveCount(0);
   await expect(folded.locator('.active-indicator')).toHaveCount(1);
 
-  const info = foldedRow.getByRole('button', { name: 'About Net Longs — Estimated', exact: true });
+  const info = foldedRow.getByRole('button', { name: 'About Net Longs & Shorts', exact: true });
   await info.click();
   const tooltip = await tooltipForInfoButton(page, info);
   await expect(tooltip).toBeVisible();
-  await expect(tooltip).toContainText('estimates, not actual position counts');
+  await expect(tooltip).toContainText('estimates do not reveal actual position counts');
   await expect(info).toHaveAttribute('aria-expanded', 'true');
   const after = await page.evaluate(() => {
     const terminal = (window as any).__terminal, p = [...terminal.panels.values()][0];
     return { request: p.diagnostics().netPositioning.request, subscribers: terminal.feed.currentNetPositioning.size,
-      settings: JSON.stringify(p.selection.indicators.find((item: any) => item.definitionId === 'native.net-longs-estimated')?.settings) };
+      settings: JSON.stringify(p.selection.indicators.find((item: any) => item.definitionId === 'native.net-longs-shorts-estimated')?.settings) };
   });
   expect(after).toEqual(before);
   await page.keyboard.press('Escape');
@@ -89,7 +89,7 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   await info.hover();
   const hoveredTooltip = await tooltipForInfoButton(page, info);
   await expect(hoveredTooltip).toBeVisible();
-  await expect(hoveredTooltip).toContainText('estimates, not actual position counts');
+  await expect(hoveredTooltip).toContainText('estimates do not reveal actual position counts');
   await page.mouse.move(0, 0);
   await expect(hoveredTooltip).toBeHidden();
 
@@ -116,8 +116,8 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   await page.screenshot({ path: 'artifacts/indicator-info-collapsed-1366-dark.png' });
 
   await folded.locator('.pane-layout-controls-inline').getByRole('button', { name: `Expand pane ${paneIndex + 1}`, exact: true }).click();
-  const expandedRow = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"][data-collapsed="false"] .active-indicator[data-definition-id="native.net-longs-estimated"]`);
-  const expandedInfo = expandedRow.getByRole('button', { name: 'About Net Longs — Estimated', exact: true });
+  const expandedRow = panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"][data-collapsed="false"] .active-indicator[data-definition-id="native.net-longs-shorts-estimated"]`);
+  const expandedInfo = expandedRow.getByRole('button', { name: 'About Net Longs & Shorts', exact: true });
   await expect(expandedRow).toBeVisible();
   await expect(panel.locator(`.pane-indicator-layer > .pane-layout-controls[data-pane-index="${paneIndex}"]`)).toHaveCount(0);
   await expect(panel.locator(`.pane-indicator-host[data-pane-index="${paneIndex}"] > .pane-layout-controls`)).toHaveCount(1);
@@ -135,7 +135,7 @@ test('collapsed pane keeps one name and actions row, and its info control is fee
   await expandedInfo.click();
   const deleteTooltip = await tooltipForInfoButton(page, expandedInfo);
   await expect(deleteTooltip).toBeVisible();
-  await expandedRow.getByRole('button', { name: 'Remove Net Longs — Estimated', exact: true }).click();
+  await expandedRow.getByRole('button', { name: 'Remove Net Longs & Shorts', exact: true }).click();
   await expect(expandedRow).toHaveCount(0);
   await expect(deleteTooltip).toBeHidden();
 });

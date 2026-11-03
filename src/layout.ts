@@ -10,11 +10,12 @@ function emptyPlainObject(value:unknown):boolean{
 }
 export function restoreValue(raw:string|null):SerializedDockview|null {
   if(!raw||raw.length>100000)return null;
-  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
+  try {const saved=JSON.parse(raw);if(![1,2,3,4,5,6,7,8,9].includes(saved.version)||!saved.layout||typeof saved.layout!=='object')return null;const l=saved.layout as SerializedDockview;
     if(!l.panels||typeof l.panels!=='object'||Array.isArray(l.panels)||!l.grid||Object.keys(l.panels).length>PANEL_BUDGET+31)return null;
     if(l.floatingGroups?.length||l.popoutGroups?.length)return null;
-    let charts=0, comparisons=0, editors=0, tickers=0, watches=0, depthMatrices=0, liquidations=0, trading=0, tradingWidgets=0;
+    let charts=0, comparisons=0, editors=0, tickers=0, watches=0, depthMatrices=0, liquidations=0, trading=0, tradingWidgets=0, journals=0;
     for(const [id,p] of Object.entries(l.panels)){
+      if(id==='global-journal'&&p.contentComponent==='global-journal'&&(p.params===undefined||emptyPlainObject(p.params))){journals++;continue;}
       if(p.contentComponent==='candle'&&/^chart-[a-z0-9-]+$/i.test(id)&&validSeries(p.params)&&['candle','footprint'].includes((p.params as {type?:string})?.type ?? '')){charts++;continue;}
       if(saved.version>=6&&/^market-comparison-[a-z0-9-]+$/i.test(id)&&p.contentComponent==='market-comparison'&&validMarketComparisonConfig(p.params)){comparisons++;continue;}
       if(saved.version>=7&&id==='hyperliquid-trading'&&p.contentComponent==='hyperliquid-trading'&&(p.params===undefined||emptyPlainObject(p.params))){trading++;continue;}
@@ -34,7 +35,7 @@ export function restoreValue(raw:string|null):SerializedDockview|null {
       if(saved.version>=2&&id==='script-editor'&&p.contentComponent==='script-editor'){editors++;continue;}
       return null;
     }
-    if(charts+comparisons>PANEL_BUDGET||editors>1||tickers>8||watches>1||depthMatrices>8||liquidations>8||trading>1||tradingWidgets>4)return null;
+    if(charts+comparisons>PANEL_BUDGET||editors>1||tickers>8||watches>1||depthMatrices>8||liquidations>8||trading>1||tradingWidgets>4||journals>1)return null;
     return l;
   }catch{return null;}
 }

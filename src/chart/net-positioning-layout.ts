@@ -1,5 +1,26 @@
 export type NetPositioningDisplay = 'stacked' | 'grouped';
 export type NetPositioningQuality = 'complete' | 'partial' | 'unavailable' | 'missing';
+export type NetPositioningBandSide = 'longs' | 'shorts';
+
+export interface NetPositioningBand { side: NetPositioningBandSide; top: number; bottom: number; baseline: number }
+
+/** Split the available pane height between visible sides in their configured order. */
+export function netPositioningBands(plotHeight: number, showLongs: boolean, showShorts: boolean, reverseOrder = false,
+  contentTop = 34, bottomPadding = 4): NetPositioningBand[] {
+  const sides: NetPositioningBandSide[] = [
+    ...(showLongs ? ['longs' as const] : []),
+    ...(showShorts ? ['shorts' as const] : []),
+  ];
+  if (reverseOrder) sides.reverse();
+  if (!sides.length || !Number.isFinite(plotHeight)) return [];
+  const top = Math.max(0, Math.min(plotHeight, contentTop));
+  const bottom = Math.max(top, plotHeight - Math.max(0, bottomPadding));
+  const height = (bottom - top) / sides.length;
+  return sides.map((side, index) => {
+    const bandTop = top + index * height, bandBottom = index === sides.length - 1 ? bottom : top + (index + 1) * height;
+    return { side, top: bandTop, bottom: bandBottom, baseline: (bandTop + bandBottom) / 2 };
+  });
+}
 
 export interface NetPositioningSourceValue {
   /** Stable source identity, independent of its display order or label. */

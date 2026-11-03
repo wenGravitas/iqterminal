@@ -11,13 +11,14 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   const panel = page.locator(`.candle-panel[data-panel-id="${panelId}"]`);
   await page.evaluate(() => {
     const feed = (window as any).__terminal.feed;
-    const calls: { subscribe: unknown[]; settings: unknown[]; viewport: unknown[] } = (window as any).__orderWallsUiCalls = { subscribe: [], settings: [], viewport: [] };
+    const calls: { subscribe: unknown[]; unsubscribe: unknown[]; settings: unknown[]; viewport: unknown[] } = (window as any).__orderWallsUiCalls = { subscribe: [], unsubscribe: [], settings: [], viewport: [] };
     const subscribe = feed.subscribeOrderWalls.bind(feed);
     const update = feed.updateOrderWalls.bind(feed);
     const viewport = feed.updateOrderWallsViewport.bind(feed);
     feed.subscribeOrderWalls = (id: string, request: unknown, callback: unknown) => {
       calls.subscribe.push({ id, request });
-      return subscribe(id, request, callback);
+      const release = subscribe(id, request, callback);
+      return () => { calls.unsubscribe.push(id); release(); };
     };
     feed.updateOrderWalls = (id: string, settings: unknown) => {
       calls.settings.push({ id, settings });
@@ -56,8 +57,10 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
 
   await panel.getByRole('button', { name: 'Hide Order Walls', exact: true }).click();
   await expect(panel.locator('.order-walls-notice')).toBeHidden();
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.unsubscribe.length)).toBe(1);
   expect(await page.evaluate(() => (window as any).__terminal.stats().panels[0].orderWalls.mounted)).toBe(false);
   await panel.getByRole('button', { name: 'Show Order Walls', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
   expect(await page.evaluate(() => (window as any).__terminal.stats().panels[0].orderWalls.mounted)).toBe(true);
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.active-indicator[data-definition-id="native.orderbook-heatmap"]')).toHaveCount(1);
@@ -75,10 +78,10 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(1);
 
   await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
-  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(3);
   await chooseChartMarket(panel, 'Hyperliquid · BTC Perp');
   await expect(panel.locator('.active-indicator[data-definition-id="native.order-walls"]')).toContainText('Unavailable');
-  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
+  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(3);
 
   await page.reload();
   await page.waitForFunction(() => (window as any).__terminal?.panels.size === 2);
@@ -90,6 +93,84 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(restored.walls.settings).toMatchObject({ method: 'absolute', thresholdUsd: 725000, aggregation: 50, colorMode: 'bid-ask', thicknessPx: 3, opacity: .7, showHistory: false, showPriceLines: true });
   await expect(panel.locator('.active-indicator[data-definition-id="native.order-walls"]')).toContainText('Unavailable');
   expect(errors).toEqual([]);
+});
+
+test('Order Walls exposes a scoped history resume action only while the visible Top Levels archive is incomplete', async ({ page }) => {
+  await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first();
+  const panelId = await panel.getAttribute('data-panel-id');
+  await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
+  await page.evaluate(() => {
+    const feed = (window as any).__terminal.feed;
+    (window as any).__orderWallsRetryUi = { ids: [], callback: undefined };
+    feed.subscribeOrderWalls = (id: string, _request: unknown, callback: unknown) => {
+      (window as any).__orderWallsRetryUi.callback = callback;
+      (window as any).__orderWallsRetryUi.panelId = id;
+      return () => {};
+    };
+    feed.retryOrderWallsHistory = (id: string) => {
+      const ui = (window as any).__orderWallsRetryUi; ui.ids.push(id);
+      ui.callback({ kind: 'patch', patches: [], status: { state: 'live', lastConfirmedAt: Date.now(), message: 'Resuming the validated Order Walls history prefix.',
+        archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'loading', requestComplete: false, rangeComplete: false,
+          from: Date.now() - 3_600_000, to: Date.now(), gaps: [], requestedBandPercent: 10, profileBandPercent: 10,
+          requestedTopN: 8, exact: true } } });
+    };
+  });
+  await addIndicator(panel, 'Order Walls');
+  await expect.poll(() => page.evaluate(() => Boolean((window as any).__orderWallsRetryUi.callback))).toBe(true);
+  await page.evaluate(() => (window as any).__orderWallsRetryUi.callback({ kind: 'patch', patches: [], status: {
+    state: 'live', lastConfirmedAt: Date.now(), message: 'History request incomplete; validated prefix retained and can be resumed.',
+    archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'partial', requestComplete: false, resumeAfter: 321,
+      from: Date.now() - 3_600_000, to: Date.now(), gaps: [], requestedBandPercent: 10, profileBandPercent: 10,
+      requestedTopN: 8, exact: true },
+  } }));
+
+  const resume = panel.getByRole('button', { name: 'Resume Order Walls history', exact: true });
+  await expect(resume).toBeVisible();
+  await resume.click();
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsRetryUi.ids)).toEqual([panelId]);
+  await expect(resume).toHaveCount(0);
+  await expect(panel.locator('.order-walls-notice')).toContainText('history loading');
+
+  await panel.getByRole('button', { name: 'Hide Order Walls', exact: true }).click();
+  await expect(panel.locator('.order-walls-notice')).toBeHidden();
+  await expect(resume).toHaveCount(0);
+});
+
+test('Order Walls releases its current/history consumer while a Dockview panel is hidden and on destroy', async ({ page }) => {
+  await installDepthFixture(page);
+  const panel = page.locator('.candle-panel').first(), panelId = await panel.getAttribute('data-panel-id');
+  await page.evaluate(() => {
+    const feed = (window as any).__terminal.feed;
+    const calls = (window as any).__orderWallsVisibilityCalls = { subscribe: 0, unsubscribe: 0 };
+    const subscribe = feed.subscribeOrderWalls.bind(feed);
+    feed.subscribeOrderWalls = (id: string, request: unknown, callback: unknown) => {
+      calls.subscribe++;
+      const release = subscribe(id, request, callback);
+      return () => { calls.unsubscribe++; release(); };
+    };
+  });
+  await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
+  await addIndicator(panel, 'Order Walls');
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsVisibilityCalls.subscribe)).toBe(1);
+
+  await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id);
+    Object.defineProperty(p.params.api, 'isVisible', { configurable: true, value: false });
+    p.visibility();
+  }, panelId);
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsVisibilityCalls.unsubscribe)).toBe(1);
+
+  await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id);
+    Object.defineProperty(p.params.api, 'isVisible', { configurable: true, value: true });
+    p.visibility(); p.visibility();
+  }, panelId);
+  await expect.poll(() => page.evaluate(() => (window as any).__orderWallsVisibilityCalls.subscribe)).toBe(2);
+  expect(await page.evaluate(() => (window as any).__orderWallsVisibilityCalls.subscribe)).toBe(2);
+
+  await page.evaluate(id => (window as any).__terminal.panels.get(id).dispose(), panelId);
+  expect(await page.evaluate(() => (window as any).__orderWallsVisibilityCalls.unsubscribe)).toBe(2);
 });
 
 test('wall tooltip uses the historical hit value and labels unknown bounds', async ({ page }) => {
@@ -127,6 +208,75 @@ test('wall tooltip uses the historical hit value and labels unknown bounds', asy
   expect(text.knownExit).not.toContain('Censored at');
   expect(text.truncated).toContain('Historical notional unavailable · earlier value history was evicted');
   await expect(panel.locator('.heatmap-readout')).toHaveText(text.tooltip);
+});
+
+test('Fit Walls changes only the primary vertical scale and keeps it manual through the next candle update', async ({ page }) => {
+  await page.goto('/?fixture=1&fixtureTime=now');
+  await page.waitForFunction(() => (window as any).__terminal?.stats().panels.every((p: any) => p.bars >= 1000));
+  const panel = page.locator('.candle-panel').first(), panelId = await panel.getAttribute('data-panel-id');
+  await page.evaluate(() => {
+    (window as any).__terminal.feed.subscribeOrderWalls = () => () => {};
+  });
+  await addIndicator(panel, 'Order Walls');
+  await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), last = p.candles.at(-1), start = last.t;
+    const old = { id: 'past-only', epoch: 1, side: 'bid', price: last.c * .9, start: start - 3600000, end: null,
+      peakUsd: 500000, meanUsd: 500000, durationMs: 0, percentile: null, scopePartial: true, startKnown: false,
+      detectionMode: 'top-levels', currentSelection: false, rank: 1, valueRuns: [{ at: start - 3600000, usd: 500000, percentile: null, rank: 1, quantity: 1 }],
+      valueRunsTruncated: false, endReason: null, endKnown: false };
+    p.engine.setOrderWallSnapshot([old], { state: 'loading', tickSize: 0.01, lastConfirmedAt: start - 3600000,
+      archive: { profileId: 'fixture', state: 'complete', from: start - 3600000, to: start - 1, gaps: [], requestedBandPercent: 10, profileBandPercent: 10, requestedTopN: 8, exact: true } });
+    p.orderWallsControls.setStatus({ state: 'loading', lastConfirmedAt: start - 3600000,
+      archive: { profileId: 'fixture', state: 'complete', from: start - 3600000, to: start - 1, gaps: [], requestedBandPercent: 10, profileBandPercent: 10, requestedTopN: 8, exact: true } });
+  }, panelId);
+
+  await panel.getByRole('button', { name: 'Order Walls settings', exact: true }).click();
+  const settings = panel.locator('dialog.order-walls-settings');
+  await expect(settings.getByRole('button', { name: 'Fit Walls', exact: true })).toBeDisabled();
+  await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), last = p.candles.at(-1), start = last.t;
+    const low = last.c * 1.001, high = last.c * 1.01;
+    const segment = (wallId: string, price: number, side: 'bid' | 'ask') => ({
+      id: wallId, archiveEntryId: wallId, epoch: 1, side, price, priceExact: String(price), start, end: null,
+      peakUsd: 500000, meanUsd: 500000, durationMs: 0, percentile: null, scopePartial: true, startKnown: false,
+      detectionMode: 'top-levels', currentSelection: true, rank: 1, valueRuns: [{ at: start, usd: 500000, percentile: null, rank: 1, quantity: 1 }],
+      valueRunsTruncated: false, endReason: null, endKnown: false,
+    });
+    p.engine.setOrderWallSnapshot([segment('fit-bid', low, 'bid'), segment('fit-ask', high, 'ask')], {
+      state: 'live', tickSize: 0.01, lastConfirmedAt: start,
+    });
+    p.orderWallsControls.setStatus({ state: 'live', tickSize: 0.01, lastConfirmedAt: start });
+  }, panelId);
+
+  await expect(settings.getByRole('button', { name: 'Fit Walls', exact: true })).toBeVisible();
+  const before = await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), chart = p.engine.chart;
+    return { time: p.engine.visibleTimeRange(), price: chart.panes()[chart.primaryPaneIndex()].readoutScale().priceRange() };
+  }, panelId);
+  await settings.getByRole('button', { name: 'Fit Walls', exact: true }).click();
+  const fitted = await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), chart = p.engine.chart;
+    return { time: p.engine.visibleTimeRange(), price: chart.panes()[chart.primaryPaneIndex()].readoutScale().priceRange() };
+  }, panelId);
+  expect(fitted.time).toEqual(before.time);
+  const candidates = await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id);
+    return p.engine.orderWallSegments ? [...p.engine.orderWallSegments.values()].map((segment: any) => segment.price) : [];
+  }, panelId);
+  expect(candidates.length).toBeGreaterThanOrEqual(2);
+  expect(fitted.price.min).toBeLessThan(Math.min(...candidates));
+  expect(fitted.price.max).toBeGreaterThan(Math.max(...candidates));
+
+  await page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), next = p.candles.map((c: any) => ({ ...c })), last = next.at(-1);
+    last.c += 75; last.h = Math.max(last.h, last.c); last.revision++;
+    p.engine.setSnapshot(next);
+  }, panelId);
+  await expect.poll(() => page.evaluate(id => {
+    const p = (window as any).__terminal.panels.get(id), chart = p.engine.chart;
+    return chart.panes()[chart.primaryPaneIndex()].readoutScale().priceRange();
+  }, panelId)).toEqual(fitted.price);
+  expect(await page.evaluate(id => (window as any).__terminal.panels.get(id).engine.visibleTimeRange(), panelId)).toEqual(before.time);
 });
 
 test('Order Walls distinguishes pending replay from an empty finished history',async({page})=>{

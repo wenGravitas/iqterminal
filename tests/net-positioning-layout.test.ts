@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PriceScale } from 'openalgo-charts';
-import { groupedSourceSlot, layoutNetPositioningSources, roundDprBoundary } from '../src/chart/net-positioning-layout';
+import { groupedSourceSlot, layoutNetPositioningSources, netPositioningBands, roundDprBoundary } from '../src/chart/net-positioning-layout';
 import { NetPositioningPane, netPositioningSourceColors, netPositioningTextColor } from '../src/chart/net-positioning';
 import type { NetPositioningCandle, NetVenueCandle } from '../src/feed/net-positioning';
 
@@ -21,15 +21,28 @@ describe('net positioning display layout', () => {
     expect(netPositioningTextColor(light.binance, '#f6f4ee')).toBe('#f5f5f5');
     expect(netPositioningTextColor(light.hyperliquid, '#f6f4ee')).toBe('#111111');
     expect(dark.binance).not.toBe(dark.hyperliquid);
-    const longs = new NetPositioningPane('net-longs', 'longs'), shorts = new NetPositioningPane('net-shorts', 'shorts');
-    longs.setThemeColors(dark);
-    shorts.setThemeColors(netPositioningSourceColors('dark', 'shorts'));
-    expect(shorts.sourceColor('binance')).toBe('#ad5858');
-    expect(shorts.sourceColor('hyperliquid')).toBe('#d98a8a');
+    const longs = new NetPositioningPane('net-longs'), shorts = new NetPositioningPane('net-shorts');
+    longs.setThemeColors(dark, 'longs');
+    shorts.setThemeColors(netPositioningSourceColors('dark', 'shorts'), 'shorts');
+    expect(shorts.sourceColor('binance', 'shorts')).toBe('#ad5858');
+    expect(shorts.sourceColor('hyperliquid', 'shorts')).toBe('#d98a8a');
     longs.setColorOverrides({ binance: '#abc' });
-    longs.setThemeColors(light);
-    expect(longs.sourceColor('binance')).toBe('#abc');
-    expect(longs.sourceColor('hyperliquid')).toBe(light.hyperliquid);
+    longs.setThemeColors(light, 'longs');
+    expect(longs.sourceColor('binance', 'longs')).toBe('#abc');
+    expect(longs.sourceColor('hyperliquid', 'longs')).toBe(light.hyperliquid);
+  });
+
+  it('places Longs above Shorts by default, reverses their order, and expands a visible side to the full pane', () => {
+    const normal = netPositioningBands(230, true, true);
+    expect(normal.map(band => band.side)).toEqual(['longs', 'shorts']);
+    expect(normal[0]!.bottom).toBe(normal[1]!.top);
+    expect(normal[0]!.baseline).toBeLessThan(normal[1]!.baseline);
+    const reversed = netPositioningBands(230, true, true, true);
+    expect(reversed.map(band => band.side)).toEqual(['shorts', 'longs']);
+    const onlyLongs = netPositioningBands(230, true, false);
+    expect(onlyLongs).toHaveLength(1);
+    expect(onlyLongs[0]!.bottom).toBeGreaterThan(normal[0]!.bottom);
+    expect(netPositioningBands(230, false, false)).toEqual([]);
   });
 
   it('stacks three or more signed sources independently around zero and preserves quality states', () => {
@@ -104,9 +117,9 @@ describe('net positioning display layout', () => {
     ]);
   });
 
-  it('autoscale follows only the visible interval and changes extents for stacked versus grouped display', () => {
-    const pane = new NetPositioningPane('net-longs', 'longs');
-    pane.setSettings('longs', 'price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked');
+  it('keeps independent signed scale extents for each side over the visible interval', () => {
+    const pane = new NetPositioningPane('net-combined');
+    pane.setSettings('price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked');
     pane.setHostSnapshot([{ t: 0, closed: true }, { t: 60_000, closed: true }]);
     const candles: NetPositioningCandle[] = [
       { timeMs: 0, venues: { binance: venueValue('binance', 1), hyperliquid: venueValue('hyperliquid', 2) } },
@@ -114,18 +127,19 @@ describe('net positioning display layout', () => {
     ];
     pane.setSnapshot(candles);
     pane.setVisibleRange(0, 1);
-    expect(pane.autoscaleInfo()).toMatchObject({ min: 0, max: 3.6 });
+    expect(pane.diagnostics().visibleScaleBySide.longs).toMatchObject({ min: 0, max: 3 });
+    expect(pane.diagnostics().visibleScaleBySide.shorts).toMatchObject({ min: 0, max: 3 });
     pane.setVisibleRange(1, 2);
-    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-6.8, 10);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(12.8, 10);
-    pane.setSettings('longs', 'price-oi', ['binance', 'hyperliquid'], 60_000, 'grouped');
-    expect(pane.autoscaleInfo()?.min).toBeCloseTo(-5.96, 10);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(11.96, 10);
+    expect(pane.diagnostics().visibleScaleBySide.longs).toMatchObject({ min: -4, max: 10 });
+    expect(pane.diagnostics().visibleScaleBySide.shorts).toMatchObject({ min: -4, max: 10 });
+    pane.setSettings('price-oi', ['binance', 'hyperliquid'], 60_000, 'grouped');
+    expect(pane.diagnostics().visibleScaleBySide.longs).toMatchObject({ min: -4, max: 10 });
+    expect(pane.diagnostics().visibleScaleBySide.shorts).toMatchObject({ min: -4, max: 10 });
   });
 
   it.each([1, 2])('keeps zero ticks and signed bar origins on the assigned autoscale at compact heights and DPR %s', dpr => {
-    const pane = new NetPositioningPane('compact-negative', 'shorts');
-    pane.setSettings('shorts', 'price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked', 'off');
+    const pane = new NetPositioningPane('compact-negative');
+    pane.setSettings('price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked', 'off', false, true);
     pane.setHostSnapshot([{ t: 0, closed: true }]);
     pane.setSnapshot([{ timeMs: 0, venues: { binance: venueValue('binance', -7), hyperliquid: venueValue('hyperliquid', 0) } }]);
     pane.setVisibleRange(0, 1);
@@ -136,10 +150,8 @@ describe('net positioning display layout', () => {
     scale.autoscale(range.min, range.max);
     pane.setPriceScale(scale);
     pane.afterAutoscale();
-    const scaleZero = scale.priceToY(0);
     expect(scale.autoScale).toBe(true);
     expect(scale.options.marginTop * scale.height).toBeGreaterThanOrEqual(38);
-    expect(scaleZero).toBeGreaterThanOrEqual(38);
 
     const strokes: number[] = [], rectangles: { x: number; y: number; width: number; height: number }[] = [];
     const pathY: number[] = [];
@@ -152,8 +164,8 @@ describe('net positioning display layout', () => {
     } as unknown as CanvasRenderingContext2D;
     pane.draw(ctx, { dpr, plotWidth: 220, plotHeight: 70, timeScale: { visibleRange: () => ({ from: 0, to: 1 }), barSpacing: 80, indexToX: () => 100 }, priceScale: scale, theme: { axisText: '#aaa', background: '#090909' } } as any);
 
-    const baseline = pane.diagnostics().renderedBaseline!;
-    expect(Math.abs(baseline.strokeCenterY - scaleZero) * dpr).toBeLessThanOrEqual(1);
+    const scaleZero = pane.diagnostics().renderedBands[0]!.baseline;
+    expect(scaleZero).toBeGreaterThanOrEqual(38);
     expect(strokes.some(y => Math.abs(y / dpr - scaleZero) * dpr <= 1)).toBe(true);
     const segments = (pane as any).geometry as { value: number; top: number; bottom: number; zero: boolean }[];
     const negative = segments.find(segment => segment.value < 0)!;
@@ -165,7 +177,7 @@ describe('net positioning display layout', () => {
   });
 
   it('does not change a manually held positioning range or margins', () => {
-    const pane = new NetPositioningPane('manual-positioning', 'shorts');
+    const pane = new NetPositioningPane('manual-positioning');
     const scale = new PriceScale();
     scale.setHeight(70);
     scale.setPriceRange({ min: -12, max: 0 });
@@ -178,9 +190,9 @@ describe('net positioning display layout', () => {
     expect(scale.options.marginTop).toBe(.1);
   });
 
-  it('moves its autoscale window to the new live right edge after the host appends a candle', () => {
-    const pane = new NetPositioningPane('net-longs', 'longs');
-    pane.setSettings('longs', 'price-oi', ['binance'], 60_000, 'stacked');
+  it('moves each side scale window to the live right edge after the host appends a candle', () => {
+    const pane = new NetPositioningPane('net-combined');
+    pane.setSettings('price-oi', ['binance'], 60_000, 'stacked');
     pane.setHostSnapshot([{ t: 0, closed: true }, { t: 60_000, closed: true }, { t: 120_000, closed: false }]);
     pane.setSnapshot([
       { timeMs: 0, venues: { binance: venueValue('binance', 100) } },
@@ -188,19 +200,19 @@ describe('net positioning display layout', () => {
       { timeMs: 120_000, venues: { binance: venueValue('binance', 2) } },
     ]);
     pane.setVisibleRange(0, 3);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(114, 10);
+    expect(pane.diagnostics().visibleScaleBySide.longs.max).toBe(100);
 
     pane.patchHostCandles([{ t: 180_000, o: 1, h: 1, l: 1, c: 1, v: 0, closed: false, revision: 1 }]);
     pane.patch([{ timeMs: 180_000, venues: { binance: venueValue('binance', 4) } }]);
     pane.setVisibleRange(1, 4);
-    expect(pane.autoscaleInfo()?.max).toBeCloseTo(4.56, 10);
+    expect(pane.diagnostics().visibleScaleBySide.longs.max).toBe(4);
   });
 });
 
 it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s', dpr => {
   for (const side of ['longs', 'shorts'] as const) {
-    const pane = new NetPositioningPane(`outside-${side}`, side);
-    pane.setSettings(side, 'price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked', 'auto');
+    const pane = new NetPositioningPane(`outside-${side}`);
+    pane.setSettings('price-oi', ['binance', 'hyperliquid'], 60_000, 'stacked', 'auto', side === 'longs', side === 'shorts');
     pane.setHostSnapshot([{ t: 0, closed: true }, { t: 60_000, closed: true }]);
     pane.setSnapshot([
       { timeMs: 0, venues: { binance: venueValue('binance', 100), hyperliquid: venueValue('hyperliquid', 200) } },
@@ -217,8 +229,9 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
     const positive = amounts.filter(p => p.x < 150 * dpr), negative = amounts.filter(p => p.x > 150 * dpr);
     expect(positive).toHaveLength(2); expect(negative).toHaveLength(2);
     // The assigned native scale maps the positive and negative stack ends to y=60 and y=240.
-    for (const p of positive) expect(p.y + 2 * dpr).toBeLessThan(60 * dpr);
-    for (const p of negative) expect(p.y - 7 * dpr).toBeGreaterThan(240 * dpr);
+    const baseline = pane.diagnostics().renderedBands[0]!.baseline * dpr;
+    for (const p of positive) expect(p.y).toBeLessThan(baseline);
+    for (const p of negative) expect(p.y).toBeGreaterThan(baseline);
     expect(Math.abs(positive[0].y - positive[1].y)).toBeGreaterThanOrEqual(11 * dpr);
     expect(Math.abs(negative[0].y - negative[1].y)).toBeGreaterThanOrEqual(11 * dpr);
   }
@@ -226,8 +239,8 @@ it.each([1, 2])('places signed amount glyphs outside complete stacks at DPR %s',
 
 it.each([1, 2])('keeps narrow three-digit labels visible at clipped pane edges without overlaps at DPR %s', dpr => {
   for (const side of ['longs', 'shorts'] as const) {
-    const pane = new NetPositioningPane(`narrow-${side}`, side);
-    pane.setSettings(side, 'price-oi', ['binance'], 60_000, 'stacked', 'auto');
+    const pane = new NetPositioningPane(`narrow-${side}`);
+    pane.setSettings('price-oi', ['binance'], 60_000, 'stacked', 'auto', side === 'longs', side === 'shorts');
     pane.setHostSnapshot([{ t: 0, closed: true }, { t: 60_000, closed: true }]);
     pane.setSnapshot([
       { timeMs: 0, venues: { binance: venueValue('binance', 123) } },
@@ -239,19 +252,20 @@ it.each([1, 2])('keeps narrow three-digit labels visible at clipped pane edges w
       measureText: () => ({ width: 26 * dpr, actualBoundingBoxAscent: 9 * dpr, actualBoundingBoxDescent: 3 * dpr }),
       fillText(this: { fillStyle: string }, text: string, x: number, y: number) { if (/^\d+$/.test(text)) labels.push({ text, x, y, color: this.fillStyle }); },
     } as unknown as CanvasRenderingContext2D;
-    pane.draw(ctx, { dpr, plotWidth: 180, plotHeight: 70, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 32, indexToX: (i: number) => 50 + i * 32 },
+    pane.draw(ctx, { dpr, plotWidth: 180, plotHeight: 150, timeScale: { visibleRange: () => ({ from: 0, to: 2 }), barSpacing: 32, indexToX: (i: number) => 50 + i * 32 },
       priceScale: { priceToY: (value: number) => 35 - value * .2 }, theme: { axisText: '#aaa', background: '#090909' } } as any);
     expect(labels.map(label => label.text).sort()).toEqual(['123', '456']);
     expect(labels.every(label => label.x >= 0 && label.x <= 180 * dpr)).toBe(true);
-    expect(labels.every(label => label.y - 9 * dpr >= 30 * dpr && label.y + 3 * dpr <= 68 * dpr)).toBe(true);
+    const band = pane.diagnostics().renderedBands[0]!;
+    expect(labels.every(label => label.y - 9 * dpr >= (band.top + 15) * dpr && label.y + 3 * dpr <= (band.bottom - 2) * dpr)).toBe(true);
     expect(Math.abs(labels[0]!.x - labels[1]!.x)).toBeGreaterThanOrEqual(32 * dpr);
     expect(labels.every(label => label.color !== '#090909')).toBe(true);
   }
 });
 
 it.each([1,2])('uses the host column geometry without a 64px cap at DPR %s',dpr=>{
- const pane=new NetPositioningPane('width','shorts',(x,spacing)=>({left:x-spacing*.76/2,width:spacing*.76}));
- pane.setSettings('shorts','price-oi',['binance'],60000,'stacked','off');pane.setHostSnapshot([{t:0,closed:true}]);pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',10)}}]);
+ const pane=new NetPositioningPane('width',(x,spacing)=>({left:x-spacing*.76/2,width:spacing*.76}));
+ pane.setSettings('price-oi',['binance'],60000,'stacked','off',false,true);pane.setHostSnapshot([{t:0,closed:true}]);pane.setSnapshot([{timeMs:0,venues:{binance:venueValue('binance',10)}}]);
  const ctx:any={save(){},restore(){},beginPath(){},rect(){},clip(){},moveTo(){},lineTo(){},stroke(){},fillRect(){},strokeRect(){},fillText(){},measureText(){return {width:0};}};
  for(const spacing of [80,160,300]){
   pane.draw(ctx,{dpr,plotWidth:500,plotHeight:300,timeScale:{visibleRange:()=>({from:0,to:1}),barSpacing:spacing,indexToX:()=>250},priceScale:{priceToY:(v:number)=>200-v},theme:{}} as any);

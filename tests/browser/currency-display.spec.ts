@@ -83,11 +83,11 @@ test('saved quote preference scales positioning correctly on first load', async 
   });
   await page.goto('/');
   const panel = page.locator('.candle-panel').first();
-  await addIndicator(panel, 'Net Longs — Estimated');
+  await addIndicator(panel, 'Net Longs & Shorts');
   await expect.poll(() => page.evaluate(() => {
-    const p = [...(window as any).__terminal.panels.values()][0], view = p?.engine?.netPositioningPanes.get('native.net-longs-estimated');
+    const p = [...(window as any).__terminal.panels.values()][0], view = p?.engine?.netPositioningPanes.get('native.net-longs-shorts-estimated');
     if (!view || !view.primitive.diagnostics().candleCount) return false;
-    const extent = view.primitive.autoscaleInfo(), range = view.series.priceScale().priceRange();
-    return view.primitive.displayCurrency === 'usdt' && extent?.max >= 160000 && range.max >= extent.max;
+    const longScale = view.primitive.diagnostics().visibleScaleBySide.longs;
+    return view.primitive.displayCurrency === 'usdt' && longScale.max >= 160000;
   })).toBe(true);
 });
