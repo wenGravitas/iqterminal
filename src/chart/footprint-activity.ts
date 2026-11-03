@@ -2,6 +2,7 @@ import { footprintColumn } from './terminal-footprint';
 import type { IPrimitive, PrimitiveRenderContext } from 'openalgo-charts';
 import type { FootprintOptions } from 'openalgo-charts/profile';
 import type { FootprintBar } from '../feed/protocol';
+import { isLightChartBackground } from '../theme';
 
 const DURATION_MS = 360;
 const MAX_PULSES = 64;
@@ -65,7 +66,7 @@ export class FootprintActivity implements IPrimitive {
       if (x + cellWidth < 0 || x >= rc.plotWidth || y + rowHeight <= 0 || y >= height) continue;
       this.needsFrame = true;
       const strength = Math.pow(1 - Math.max(0, elapsed) / DURATION_MS, 1.3);
-      const color = rc.theme?.background === '#f6f4ee' ? pulse.side === 'bid' ? rc.theme.downColor : rc.theme.upColor
+      const color = isLightChartBackground(rc.theme?.background ?? '') ? pulse.side === 'bid' ? rc.theme.downColor : rc.theme.upColor
         : pulse.side === 'bid' ? '#f0aaa4' : '#b4e8b9';
       ctx.fillStyle = color; ctx.globalAlpha = .16 * strength;
       ctx.fillRect(x * dpr, y * dpr, cellWidth * dpr, rowHeight * dpr);

@@ -13,7 +13,7 @@ import type {WatchSnapshot,LevelWatch} from './level-watch/types';
 import './vendor/dockview-8.4.1.css';
 import { createDockview, type DockviewApi } from 'dockview-core';
 import './style.css';
-import { ThemeController, THEME_EVENT, currentTheme } from './theme';
+import { ThemeController, THEME_EVENT, dockviewColorScheme } from './theme';
 import { Notifications } from './notifications';
 import { TradeTickerPanel } from './ticker/panel';
 import { TickerExecutionHoverCoordinator } from './ticker/hover';
@@ -211,7 +211,7 @@ function openJournal(options?: JournalOpenOptions) {
 
 
 dock = createDockview(root, {
-  theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' },
+  theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: dockviewColorScheme(), gap: 4, dndTabIndicator: 'line' },
   disableFloatingGroups: true,
   // Avoid native drag-image capture stalls on Linux Chromium. Dockview keeps
   // tab/group docking and hit testing on its supported pointer backend.
@@ -292,7 +292,7 @@ const releaseWatches=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?feed.s
 tradingStatusButton.addEventListener('click', () => addHyperliquidTrading(), { signal: abort.signal });
 document.querySelector('#notifications')!.addEventListener('click', () => notifications.open(), { signal: abort.signal });
 const journalButton = document.createElement('button'); journalButton.id = 'open-journal'; journalButton.textContent = 'Journal'; journalButton.title = 'Open the daily trading journal'; journalButton.addEventListener('click', () => journal.open()); document.querySelector('#commands')?.append(journalButton);
-window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: currentTheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
+window.addEventListener(THEME_EVENT, () => dock.updateOptions({ theme: { name: 'basis', className: 'dockview-theme-basis', colorScheme: dockviewColorScheme(), gap: 4, dndTabIndicator: 'line' } }), { signal: abort.signal });
 reset.addEventListener('click', () => { if (confirm('Reset Current Workspace? Its widget layout will be replaced with a starting chart. Other workspaces are unchanged.')) { try { workspaceManager!.reset(); } catch { /* The manager exposes its recovery error in the footer. */ } } }, { signal: abort.signal });
 window.addEventListener('online', () => feed.send({ type: 'online', online: true }), { signal: abort.signal });
 window.addEventListener('offline', () => feed.send({ type: 'online', online: false }), { signal: abort.signal });

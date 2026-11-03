@@ -13,10 +13,12 @@ const MAX_HOST_BARS = 5_000;
 export function netPositioningVenueSlot(venue: NetPositioningVenue) { return VENUE_ORDER.indexOf(venue); }
 
 export type NetPositioningLabels = 'auto' | 'hover' | 'off';
-export type NetPositioningTheme = 'dark' | 'light';
+export type NetPositioningTheme = 'dark' | 'light' | 'terminal' | 'ios';
 export type NetPositioningSourceColors = Record<NetPositioningVenue, string>;
 export const NET_POSITIONING_SOURCE_PALETTES: Record<NetPositioningTheme, Record<NetPositioningSide, NetPositioningSourceColors>> = {
   dark: { longs: { binance: '#58a65c', hyperliquid: '#85c98b', bybit: '#b1d677' }, shorts: { binance: '#ad5858', hyperliquid: '#d98a8a', bybit: '#d9a376' } },
+  terminal: { longs: { binance: '#38d984', hyperliquid: '#79eaa4', bybit: '#a8e7b8' }, shorts: { binance: '#ff687a', hyperliquid: '#ff98a4', bybit: '#ffc183' } },
+  ios: { longs: { binance: '#248a3d', hyperliquid: '#30a450', bybit: '#55985f' }, shorts: { binance: '#d70015', hyperliquid: '#e64654', bybit: '#a82437' } },
   light: { longs: { binance: '#167260', hyperliquid: '#44853e', bybit: '#626e20' }, shorts: { binance: '#b54436', hyperliquid: '#963b4e', bybit: '#93551f' } },
 };
 export function netPositioningSourceColors(theme: NetPositioningTheme, side: NetPositioningSide = 'longs'): NetPositioningSourceColors {

@@ -1,4 +1,4 @@
-import { currentTheme, THEME_EVENT } from '../theme';
+import { currentTheme, isLightTheme, THEME_EVENT } from '../theme';
 import type { IContentRenderer, IDockviewPanelProps } from 'dockview-core';
 import type { FeedClient } from '../feed/client';
 import type { Scheduler } from '../chart/scheduler';
@@ -305,7 +305,7 @@ export class LiquidationTickerPanel implements IContentRenderer {
     if (this.dead || !this.visible) return;
     const batch = this.currentBatch = this.frozen ?? this.latest;
     if (!batch) { this.status.textContent = 'Loading recorded liquidation reports…'; return; }
-    const light = currentTheme() === 'light';
+    const light = isLightTheme(currentTheme());
     this.renderSummary(batch, light);
     this.renderStatus(batch);
     this.renderPinnedBursts(batch, light);
@@ -527,7 +527,7 @@ export class LiquidationTickerPanel implements IContentRenderer {
 
   private limitPulses() { while (this.pulsed.size > 8192) this.pulsed.delete(this.pulsed.values().next().value!); }
 
-  private syncBurstHover(light = currentTheme() === 'light') {
+  private syncBurstHover(light = isLightTheme(currentTheme())) {
     const id = this.focusBurstId ?? this.pointerBurstId, batch = this.currentBatch;
     if (!id || !batch || this.dead || !this.visible || !this.settings.showBursts || (!this.focusBurstId && this.hoverPointerType === 'touch')) { this.tooltipDwell.clear(); this.hoverCard.hidden = true; return; }
     const render = () => {

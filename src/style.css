@@ -1011,4 +1011,49 @@ dialog.hl-confirm{width:min(380px,calc(100vw - 20px));max-height:80vh;overflow:a
 @media(max-width:800px){#commands #trading-status{font-size:0;min-width:125px;max-width:155px}#commands #trading-status:after{content:attr(data-compact);font-size:10px}}
 @media(max-width:620px){#commands #market-pulse-trigger{max-width:150px}#commands .market-pulse-zone-chip,#commands .market-pulse-chevron{display:none}#commands .market-pulse-trigger-state [data-active]{display:inline-block;max-width:44px;overflow:hidden;text-overflow:ellipsis}}
 
+/* Dark Terminal keeps the shared layout but uses a black, high-contrast TUI palette and denser chrome. */
+:root[data-theme=terminal]{--background:#000000;--chart:#000000;--chrome:#080808;--control:#111414;--hover:#1a2020;--input:#030404;--divider:#292f30;--border-soft:#171c1d;--text:#e0e8e9;--muted:#9aa7a9;--up:#38d984;--down:#ff687a;--warning:#f2c46b;--accent:#5ce1d3;--focus:#72eee0;--scrollbar:#3d494b;--sash:#596769;--drag:#5ce1d326;--overlay:#000000ed;--icon-hover:#202727;--primary-border:#3b494b;--primary:#101617;--backdrop:#000c;--shadow:#000e;color-scheme:dark}
+:root[data-theme=terminal] .dockview-theme-basis{--dv-tabs-and-actions-container-height:23px;--dv-sash-size:3px;--dv-border-radius:0px;--dv-tab-border-radius:0px;--dv-sash-border-radius:0px;--dv-dropdown-border-radius:0px;--dv-tab-group-chip-border-radius:0px}
+:root[data-theme=terminal] .dockview-theme-basis .dv-tabs-and-actions-container{font-size:10px}
+:root[data-theme=terminal] .dockview-theme-basis .dv-tab{padding:0 4px}
+:root[data-theme=terminal] .chart-toolbar{height:29px;min-height:29px;gap:4px;padding:2px 5px}
+:root[data-theme=terminal] .chart-toolbar select,:root[data-theme=terminal] .chart-toolbar button{height:21px;padding-left:5px;padding-right:5px}
+:root[data-theme=terminal] .candle-panel .chart-stage{margin:3px 2px 0}
+:root[data-theme=terminal] .journal-chart-frame>.chart-stage{margin:3px 2px 0 0}
+:root[data-theme=terminal] #commands{height:30px;min-height:30px;gap:3px;padding:2px 4px}
+:root[data-theme=terminal] #commands button,:root[data-theme=terminal] #commands select{height:22px;padding-left:5px;padding-right:5px}
+:root[data-theme=terminal] #commands .footer-navigation,:root[data-theme=terminal] #commands .footer-operations{gap:3px}
+:root[data-theme=terminal] #commands .workspace-pins button{width:22px;min-width:22px}
+:root[data-theme=terminal] #commands button,:root[data-theme=terminal] #commands select,:root[data-theme=terminal] .chart-toolbar button,:root[data-theme=terminal] .chart-toolbar select{border-color:var(--border-soft)}
+:root[data-theme=terminal] #commands button:hover,:root[data-theme=terminal] #commands select:hover,:root[data-theme=terminal] .chart-toolbar button:hover,:root[data-theme=terminal] .chart-toolbar select:hover{border-color:var(--divider)}
+:root[data-theme=terminal] #market-pulse-trigger [data-session-indicator],:root[data-theme=terminal] .market-pulse-state-dot,:root[data-theme=terminal] .cvd-hover-dot,:root[data-theme=terminal] #connection-status-trigger [data-connection-dot],:root[data-theme=terminal] .connection-status-summary::before{border-radius:0}
+@media(max-width:620px){:root[data-theme=terminal] #commands{height:auto;min-height:30px}}
+
 .workspace-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Light is the Apple-inspired system-surface theme; Ivory remains the legacy warm palette. */
+:root[data-theme=ios]{--background:#f2f2f7;--chart:#ffffff;--chrome:#f2f2f7;--control:#ffffff;--hover:#e5e5ea;--input:#ffffff;--divider:#d1d1d6;--border-soft:#e5e5ea;--text:#1c1c1e;--muted:#636366;--up:#248a3d;--down:#d70015;--warning:#9a6700;--accent:#007aff;--focus:#007aff;--scrollbar:#c7c7cc;--sash:#aeaeb2;--drag:#007aff24;--overlay:#ffffffed;--icon-hover:#e5e5ea;--primary-border:#0066cc;--primary:#0066cc;--backdrop:#1c1c1e40;--shadow:#1c1c1e24;--ios-font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color-scheme:light;font:12px var(--ios-font);font-variant-numeric:tabular-nums}
+:root[data-theme=ios] button,:root[data-theme=ios] select{border-radius:8px;border-color:var(--divider)}
+:root[data-theme=ios] button:hover,:root[data-theme=ios] select:hover{border-color:#b8b8be}
+:root[data-theme=ios] button.primary,:root[data-theme=ios] .primary,:root[data-theme=ios] button[type=submit]{border-color:var(--primary-border);background:var(--primary);color:#ffffff}
+:root[data-theme=ios] button.primary:hover,:root[data-theme=ios] .primary:hover,:root[data-theme=ios] button[type=submit]:hover{border-color:#0055b3;background:#0055b3}
+:root[data-theme=ios] button:focus-visible,:root[data-theme=ios] select:focus-visible,:root[data-theme=ios] input:focus-visible,:root[data-theme=ios] textarea:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+:root[data-theme=ios] .dockview-theme-basis{--dv-tabs-and-actions-container-height:28px;--dv-sash-size:5px;--dv-border-radius:8px;--dv-tab-border-radius:7px;--dv-sash-border-radius:6px;--dv-dropdown-border-radius:10px;--dv-tab-group-chip-border-radius:8px}
+:root[data-theme=ios] .dockview-theme-basis .dv-tabs-and-actions-container{font-family:var(--ios-font);font-size:12px}
+:root[data-theme=ios] .dockview-theme-basis .dv-tab{padding:0 8px;border-radius:7px}
+:root[data-theme=ios] .dockview-theme-basis .dv-groupview{border-radius:8px}
+:root[data-theme=ios] .dockview-theme-basis .dv-content-container{background:var(--chart)}
+:root[data-theme=ios] #commands{background:var(--background);font-family:var(--ios-font)}
+:root[data-theme=ios] #commands button,:root[data-theme=ios] #commands select{height:26px;padding-left:9px;padding-right:9px}
+:root[data-theme=ios] #commands .workspace-pins button{width:26px;min-width:26px;padding:3px}
+:root[data-theme=ios] .chart-toolbar{font-family:var(--ios-font);height:32px;min-height:32px;padding:3px 8px}
+:root[data-theme=ios] .chart-toolbar button,:root[data-theme=ios] .chart-toolbar select{height:25px;padding-left:8px;padding-right:8px}
+:root[data-theme=ios] .chart-stage{margin:4px 3px 0}
+:root[data-theme=ios] .terminal-menu,:root[data-theme=ios] .market-pulse-popover,:root[data-theme=ios] .connection-status-popover,:root[data-theme=ios] .chart-object-tree-menu,:root[data-theme=ios] .folder-icon-picker,:root[data-theme=ios] .journal-panel{font-family:var(--ios-font);border-radius:14px;box-shadow:0 8px 30px var(--shadow)}
+:root[data-theme=ios] .terminal-menu,:root[data-theme=ios] .market-pulse-popover,:root[data-theme=ios] .connection-status-popover{padding:12px;border-color:var(--divider);background:var(--overlay)}
+:root[data-theme=ios] dialog{font-family:var(--ios-font);border-radius:16px;box-shadow:0 12px 36px var(--shadow)}
+:root[data-theme=ios] .chart-toolbar,:root[data-theme=ios] .dockview-theme-basis,:root[data-theme=ios] .terminal-menu,:root[data-theme=ios] dialog,:root[data-theme=ios] #market-pulse-trigger,:root[data-theme=ios] .market-pulse-popover,:root[data-theme=ios] .connection-status-popover,:root[data-theme=ios] .journal-panel,:root[data-theme=ios] .chart-objects-panel,:root[data-theme=ios] .script-editor-panel,:root[data-theme=ios] .trade-ticker,:root[data-theme=ios] .market-comparison-panel,:root[data-theme=ios] .hyperliquid-trading,:root[data-theme=ios] .level-watch-panel{font-family:var(--ios-font)}
+:root[data-theme=ios] .script-editor-panel .script-source{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+:root[data-theme=ios] .chart-object-tree-menu-item,:root[data-theme=ios] .chart-object-folder-name{font-family:var(--ios-font)}
+:root[data-theme=ios] .journal-panel input,:root[data-theme=ios] .journal-panel textarea,:root[data-theme=ios] .script-editor-panel input:not([type=checkbox]),:root[data-theme=ios] .script-editor-panel textarea,:root[data-theme=ios] .script-editor-panel select{border-radius:8px}
+:root[data-theme=ios] .chart-stage .gpu,:root[data-theme=ios] .chart-stage .overlay{border-radius:0}

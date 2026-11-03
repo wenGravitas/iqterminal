@@ -13,9 +13,11 @@ function venueValue(venue: 'binance' | 'hyperliquid', longs: number): NetVenueCa
 
 describe('net positioning display layout', () => {
   it('uses green longs and red shorts across themes while retaining saved overrides', () => {
-    const dark = netPositioningSourceColors('dark'), light = netPositioningSourceColors('light');
+    const dark = netPositioningSourceColors('dark'), light = netPositioningSourceColors('light'), terminal = netPositioningSourceColors('terminal'), ios = netPositioningSourceColors('ios');
     expect(dark).toEqual({ binance: '#58a65c', hyperliquid: '#85c98b', bybit: '#b1d677' });
     expect(light).toEqual({ binance: '#167260', hyperliquid: '#44853e', bybit: '#626e20' });
+    expect(terminal).toEqual({ binance: '#38d984', hyperliquid: '#79eaa4', bybit: '#a8e7b8' });
+    expect(ios).toEqual({ binance: '#248a3d', hyperliquid: '#30a450', bybit: '#55985f' });
     expect(netPositioningTextColor(dark.binance, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(dark.hyperliquid, '#090909')).toBe('#111111');
     expect(netPositioningTextColor(light.binance, '#f6f4ee')).toBe('#f5f5f5');

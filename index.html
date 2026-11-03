@@ -8,6 +8,8 @@
     <style>
       :root{--startup-bg:#080808;--startup-text:#c7c7c7;--startup-muted:#858585;--startup-line:#292929;--startup-accent:#92c5cc;color-scheme:dark}
       :root[data-theme=light]{--startup-bg:#f6f4ee;--startup-text:#202934;--startup-muted:#485667;--startup-line:#b7bcb5;--startup-accent:#006a73;color-scheme:light}
+      :root[data-theme=ios]{--startup-bg:#f2f2f7;--startup-text:#1c1c1e;--startup-muted:#636366;--startup-line:#d1d1d6;--startup-accent:#007aff;color-scheme:light}
+      :root[data-theme=terminal]{--startup-bg:#000000;--startup-text:#dbe7e9;--startup-muted:#829a9f;--startup-line:#1a3036;--startup-accent:#5ce1d3;color-scheme:dark}
       html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--startup-bg);color:var(--startup-text)}
       body{display:flex;flex-direction:column}
       #app-shell{display:flex;flex:1;flex-direction:column;width:100%;min-width:0;min-height:0;visibility:hidden}
@@ -58,8 +60,10 @@
         <button id="global-settings">Global settings</button>
         <select id="theme" aria-label="Theme">
           <option value="system">System</option>
+          <option value="ios">Light</option>
           <option value="light">Ivory (light)</option>
           <option value="dark">Dark</option>
+          <option value="terminal">Dark Terminal</option>
         </select>
         <span id="venue-states" class="connection-status-sr-only" role="status" aria-live="polite"></span>
         <button id="trading-status" class="trading-status" type="button" aria-label="Hyperliquid trading status" title="Open Hyperliquid BTC trading panel" data-state="disconnected">HL · disconnected</button>

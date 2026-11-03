@@ -16,6 +16,7 @@ import {deliverLiquidationAlerts,liquidationText}from './presentation';
 import type {LiquidationBatch}from './protocol';
 import {renderLiquidationTooltip}from './tooltip';
 import {TooltipDwell}from '../tooltip-dwell';
+import {currentTheme,isLightTheme}from '../theme';
 export class LiquidationsView implements Drawable {
  visible=true;private dead=false;private settings=liquidationSettings(undefined);private pane:HTMLElement;private anchor:SeriesApi;private histogram:LiquidationHistogram;private markers=new LiquidationMarkers();private batch?:LiquidationBatch;
  private legend=document.createElement('div');private status=document.createElement('div');private tooltip=document.createElement('div');private tooltipHost:HTMLElement;private controls:LiquidationControls;private venueButtons=new Map<'bybit'|'binance',HTMLButtonElement>();private release?:()=>void;private listeners:(()=>void)[]=[];private timer?:ReturnType<typeof setTimeout>;private hostKey='';private owner=`liquidations-pane-${crypto.randomUUID()}`;private tooltipDwell=new TooltipDwell();private abort=new AbortController();private hoverPointerType?:string;private pointerDown=false;private blockedUntilMove=false;
@@ -50,7 +51,7 @@ export class LiquidationsView implements Drawable {
   const time=Math.floor(e.time*1000/duration[this.series.interval])*duration[this.series.interval],bar=this.batch.bars.find(b=>b.time===time);if(!bar){this.cancelTooltip();return;}
   const plot=this.chart.plotRect(this.paneIndex());if(!plot){this.cancelTooltip();return;}
   const side=e.point.y-plot.top>=this.anchor.priceScale().priceToY(0)?'LONG':'SHORT';
-  const show=()=>{if(this.dead||!this.visible)return;renderLiquidationTooltip(this.tooltip,{bar,side,venues:this.settings.venues,units:this.settings.units,intervalMs:duration[this.series.interval],quality:this.quality(),light:this.chart.theme().background==='#f6f4ee'});this.tooltip.hidden=false;this.placeTooltip(e.point!.x,e.point!.y);};
+  const show=()=>{if(this.dead||!this.visible)return;renderLiquidationTooltip(this.tooltip,{bar,side,venues:this.settings.venues,units:this.settings.units,intervalMs:duration[this.series.interval],quality:this.quality(),light:isLightTheme(currentTheme())});this.tooltip.hidden=false;this.placeTooltip(e.point!.x,e.point!.y);};
   const ready=this.tooltipDwell.request(`liquidation-bar:${bar.time}:${side}`,show);this.tooltip.hidden=!ready;if(ready)show();
  }
  private cancelTooltip(){this.tooltipDwell.clear();this.tooltip.hidden=true;}

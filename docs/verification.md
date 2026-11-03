@@ -179,6 +179,10 @@ Ordinary main bundle is **891.87 kB / 233.58 kB gzip**, versus the preceding **8
 
 [Final focused browser results](../artifacts/browser-themes-focused-results.json); [original Dark screenshot](../artifacts/theme-dark-1366x768.png); [Ivory screenshot](../artifacts/theme-light-1366x768.png); [Dark editor](../artifacts/theme-dark-editor-720x860.png); [Ivory editor](../artifacts/theme-light-editor-720x860.png).
 
+### Light theme
+
+The new **Light** option is stored as `ios`, separately from the warm OpenAlgo **Ivory** palette stored as `light`. It adapts Apple's [Color](https://developer.apple.com/design/human-interface-guidelines/color) and [Typography](https://developer.apple.com/design/human-interface-guidelines/typography) guidance to semantic CSS tokens. Existing System behavior is unchanged: it removes the saved override and follows device appearance, with Dark as the fallback. The focused unit command `pnpm exec vitest run tests/theme.test.ts tests/net-positioning-layout.test.ts` passed **22 tests**; `pnpm typecheck`, `VITE_DIAGNOSTICS=1 pnpm build` and `env -u VITE_DIAGNOSTICS pnpm build` passed. `pnpm exec playwright test tests/browser/theme.spec.ts` passed **4/4 Chromium checks** using explicit diagnostic fixtures, covering saved/device/fallback selection, storage/media failures, cross-tab synchronization, and chart/footprint/heatmap/editor restyling. [Light desktop](../artifacts/theme-ios-1366x768.png), [appearance menu](../artifacts/theme-ios-appearance-menu-1366x768.png), [narrow editor](../artifacts/theme-ios-editor-720x860.png) and [mobile-width layout](../artifacts/theme-ios-mobile-390x720.png).
+
 
 ### Axis-bound grid and chart settings
 
@@ -370,3 +374,7 @@ Production typecheck/build and all **171 unit tests across 27 files** pass. All 
 ### Ticker background volume bars
 
 Typecheck/production build and all **176 unit tests across 28 files** pass. All **6 ticker Chromium fixture scenarios** pass. Added assertions cover shared buy/sell linear widths, filter-independent scaling, expiry/UTC timestamp boundaries, BTC/notional units, unknown sides, paused scale/time, bounded tape, configuration validation and persisted off/window/opacity. Browser checks exercise actual gradients, settings errors/apply, single shared socket and reload. Desktop Dark and narrow Ivory captures: `artifacts/ticker-volume-bars-1366x768.png` and `artifacts/ticker-volume-bars-720x860.png`. No new live exchange or native Pi/GPU performance measurement was taken for this presentation-only change; existing Vite bundle warning remains.
+
+### Dark Terminal appearance
+
+Dark Terminal adds a pure black chart/workspace palette, higher-contrast text, restrained cyan focus accents, brighter green/red market colors and tighter square chrome. The focused unit run `pnpm exec vitest run tests/theme.test.ts tests/net-positioning-layout.test.ts` passed **22 tests**. `VITE_DIAGNOSTICS=1 pnpm build` and `pnpm exec playwright test tests/browser/theme.spec.ts` passed the **4** preference, cross-tab, chart-restyle and compact-footer browser scenarios using explicit fixture mode. The browser checks include the original Dark and Ivory palettes, saved Dark Terminal startup, Dockview dark scheme, preserved chart state and 390px layout. Final ordinary `pnpm build` also passes. Captures: [Dark Terminal desktop](../artifacts/theme-terminal-1366x768.png), [narrow layout](../artifacts/theme-terminal-mobile-390x720.png) and [editor](../artifacts/theme-terminal-editor-720x860.png).

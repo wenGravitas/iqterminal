@@ -1,11 +1,18 @@
 import { darkTheme, lightTheme, type ChartTheme } from 'openalgo-charts';
 
-export type ThemeName = 'light' | 'dark';
+export type ThemeName = 'light' | 'dark' | 'terminal' | 'ios';
 export const THEME_STORAGE_KEY = 'basis.theme.v1';
 export const THEME_EVENT = 'basis-theme-change';
-export function savedTheme(value: unknown): ThemeName | null { return value === 'light' || value === 'dark' ? value : null; }
+export function savedTheme(value: unknown): ThemeName | null { return value === 'light' || value === 'dark' || value === 'terminal' || value === 'ios' ? value : null; }
 export function resolveTheme(saved: unknown, prefersLight = false): ThemeName { return savedTheme(saved) ?? (prefersLight ? 'light' : 'dark'); }
-export function currentTheme(): ThemeName { return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'; }
+export function isLightTheme(name: unknown): boolean { return name === 'light' || name === 'ios'; }
+export function isLightChartBackground(background: string): boolean { return background === '#f6f4ee' || background === '#ffffff'; }
+export function currentTheme(): ThemeName {
+  const value = document.documentElement.dataset.theme;
+  return value === 'light' || value === 'terminal' || value === 'ios' ? value : 'dark';
+}
+/** Dockview accepts only its built-in light/dark scheme names. Terminal uses its dark scheme and our custom theme class. */
+export function dockviewColorScheme(): 'light' | 'dark' { return isLightTheme(currentTheme()) ? 'light' : 'dark'; }
 
 // Ivory palette values adapted from OpenAlgo's Apache-2.0 market-profile demo themes.js.
 // https://marketcalls.github.io/openalgo-charts/demos/market-profile/themes.js
@@ -16,6 +23,16 @@ export const CHART_THEMES: Record<ThemeName, ChartTheme> = {
     crosshairLabelBackground: '#202020', upColor: '#58a65c', downColor: '#ad5858',
     wickUpColor: '#58a65c', wickDownColor: '#ad5858', lastPriceUp: '#58a65c',
     lastPriceDown: '#ad5858', lastPriceText: '#c7c7c7' },
+  terminal: { ...darkTheme, background: '#000000', grid: '#1b2021', axisText: '#a5b1b3',
+    axisLine: '#2a3031', paneSeparator: '#2a3031', crosshair: '#d0d9da',
+    crosshairLabelBackground: '#151a1b', upColor: '#38d984', downColor: '#ff687a',
+    wickUpColor: '#38d984', wickDownColor: '#ff687a', lastPriceUp: '#38d984',
+    lastPriceDown: '#ff687a', lastPriceText: '#e8f2f3', axisFontSize: 10 },
+  ios: { ...lightTheme, background: '#ffffff', grid: '#e5e5ea', axisText: '#636366',
+    axisLine: '#d1d1d6', paneSeparator: '#d1d1d6', crosshair: '#8e8e93',
+    crosshairLabelBackground: '#1c1c1e', upColor: '#248a3d', downColor: '#d70015',
+    wickUpColor: '#248a3d', wickDownColor: '#d70015', lastPriceUp: '#248a3d',
+    lastPriceDown: '#d70015', lastPriceText: '#ffffff', axisFontSize: 10 },
   light: { ...lightTheme, background: '#f6f4ee', grid: '#e9e5dc', axisText: '#485567',
     axisLine: '#c8c7bf', paneSeparator: '#c8c7bf', crosshair: '#87929b',
     crosshairLabelBackground: '#47596b', upColor: '#167260', wickUpColor: '#167260',
@@ -53,8 +70,8 @@ export class ThemeController {
   private apply() {
     const name = resolveTheme(this.saved, this.media?.matches);
     document.documentElement.dataset.theme = name;
-    document.documentElement.style.colorScheme = name;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', name === 'light' ? '#f6f4ee' : '#080808');
+    document.documentElement.style.colorScheme = isLightTheme(name) ? 'light' : 'dark';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', name === 'ios' ? '#f2f2f7' : name === 'light' ? '#f6f4ee' : name === 'terminal' ? '#000000' : '#080808');
     this.select.title = this.storageAvailable ? 'Theme: saved choice, otherwise device preference; Dark fallback' : 'Theme storage unavailable; this choice applies for this session';
     window.dispatchEvent(new CustomEvent<ThemeName>(THEME_EVENT, { detail: name }));
   }
