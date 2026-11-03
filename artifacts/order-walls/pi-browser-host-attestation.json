@@ -1,0 +1,36 @@
+{
+  "capturedAtUtc": "2026-11-03T10:28:59.992Z",
+  "host": {
+    "hostname": "pi",
+    "architecture": "aarch64",
+    "kernelRelease": "6.12.109+rpt-rpi-v8",
+    "deviceTreeModel": "Raspberry Pi 5 Model B Rev 1.0"
+  },
+  "runtime": {
+    "node": "v22.19.0",
+    "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)"
+  },
+  "browserProfile": {
+    "headless": true,
+    "webgl": "SwiftShader software rendering",
+    "launchArgs": [
+      "--enable-webgl",
+      "--use-angle=swiftshader",
+      "--enable-unsafe-swiftshader"
+    ]
+  },
+  "linkedReport": {
+    "path": "artifacts/order-walls/perpetual-30h-live-chart-report.json",
+    "sha256": "82297346b04d015688b5fb719f4ca67f6e70f94bcd0a103d6c9934699fe5bb22",
+    "market": "perpetual",
+    "visibleSpanHours": 30.5,
+    "archivePages": 348,
+    "archiveSegments": 32677,
+    "archiveValueRuns": 98541,
+    "heapDeltaBytes": 265329695,
+    "p95RenderSubmissionMs": 65.79999999888241,
+    "maxRenderSubmissionMs": 294.90000000037253
+  },
+  "measurementLimit": "Render submission timing only; not measured FPS or interactive hardware-GPU performance.",
+  "privacy": "Contains no IP addresses, MAC addresses, or credentials."
+}
