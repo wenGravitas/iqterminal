@@ -3,9 +3,10 @@ export interface HistoryRequestTrace {
  queueMs:number;headerMs?:number;transferMs?:number;decodeMs?:number;encodedBytes?:number;decodedBytes?:number;
  requestId?:string;serverTiming?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;slots?:number;state?:string;error?:string;
 }
+const sessionId=crypto.randomUUID();
 let sequence=0;
 const traces:HistoryRequestTrace[]=[];
-export const historyViewId=()=>`view-${++sequence}`;
+export const historyViewId=()=>`view-${sessionId}-${++sequence}`;
 export function historyRequestTraces(){return traces.map(trace=>({...trace}));}
 /** All phase durations use this worker's monotonic clock. Server durations are separate. */
 export async function tracedHistoryJson(request:typeof fetch,url:string,signal:AbortSignal,id:string,eligibleAt:number){

@@ -1035,9 +1035,11 @@ export class OpenAlgoCandleChart {
 
   applyPatch(candles: Candle[]) {
     if (this.disposed || !candles.length) return;
-    let trim = false;
+    const footprintView=this.mode==='footprint'?this.captureView():null;
+    let axisChanged=false,trim = false;
     for (const candle of candles) {
       const bar = toBar(candle);
+      if(footprintView&&this.chart.dataLayer.timeToIndex(bar.time)===undefined)axisChanged=true;
       const at = lowerBound(this.candleTimes, bar.time);
       const isKnown = this.candleTimes[at] === bar.time;
       const source = bar.time < (this.candleTimes.at(-1) ?? -Infinity) ? 'history' : 'live';
@@ -1062,6 +1064,7 @@ export class OpenAlgoCandleChart {
         this.latestTime = this.latestBar?.time ?? -Infinity;
       }
     }
+    if(footprintView&&(axisChanged||trim))this.restoreView(footprintView);
     this.dailyVwap?.setData(this.dailyVwapInterval < 86400 ? this.series.getData() : [], this.dailyVwapInterval);
   }
 
@@ -1150,7 +1153,7 @@ export class OpenAlgoCandleChart {
     if (!range || !this.chart.dataLayer.length) return null;
     const fromTime=this.chart.dataLayer.indexToTimeFloat(range.from);
     const toTime=this.chart.dataLayer.indexToTimeFloat(range.to);
-    if(!Number.isFinite(fromTime)||!Number.isFinite(toTime))return null;
+    if(!Number.isFinite(fromTime)||!Number.isFinite(toTime)||fromTime>=toTime)return null;
     return {fromTime,toTime};
   }
 

@@ -5186,7 +5186,7 @@ export class CandlePanel implements IContentRenderer {
         this.updateStatus();
       } else if (event.type === 'snapshot') {
         this.candles = event.candles.length > 5_000 ? event.candles.slice(-5_000) : [...event.candles];
-        this.engine?.setSnapshot(event.candles, !this.resetViewOnSnapshot);
+        this.engine?.setSnapshot(event.candles, !this.resetViewOnSnapshot || (this.selection.type === 'footprint' && this.footprintHasInitialView));
         this.studyHost?.setSnapshot(this.candles); this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.schedulePaneIndicatorLayout();
         if (this.resetViewOnSnapshot && this.selection.type === 'candle') this.engine?.resetView();

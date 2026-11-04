@@ -9,7 +9,7 @@ function harness(initial:number[]){
  const e=Object.create(OpenAlgoCandleChart.prototype) as any;e.chart={dataLayer,getVisibleLogicalRange:()=>range,setVisibleLogicalRange:(next:any)=>range=next};
  return {e,set:(next:number[])=>times=next};
 }
-test('a single current point cannot claim an absolute saved view was restored',()=>{const {e}=harness([base+16*hour]);expect(e.restoreHistoryTimeRange({from:(base+11*hour)*1000,to:(base+19*hour)*1000})).toBe(false);});
+test('a single current point cannot claim an absolute saved view was restored',()=>{const {e}=harness([base+16*hour]);expect(e.restoreHistoryTimeRange({from:(base+11*hour)*1000,to:(base+19*hour)*1000})).toBe(false);expect(e.captureView()).toBeNull();});
 test('absolute past and future whitespace survive sparse-to-dense history insertion',()=>{
  const {e,set}=harness([base+11*hour,base+15*hour,base+16*hour]);
  const wanted={from:(base+10*hour)*1000,to:(base+19*hour)*1000};
