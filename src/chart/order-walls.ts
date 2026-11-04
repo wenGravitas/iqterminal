@@ -68,7 +68,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       const shifted=Boolean(previous&&(previous.valueRunsTruncated!==next.valueRunsTruncated||
         (previous.valueRuns[0]&&next.valueRuns[0]&&previous.valueRuns[0].at!==next.valueRuns[0].at)));
       if(!previous||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.tailDirty.delete(patch.id);}
-      else this.markTail(patch.id,Math.max(0,previous.valueRuns.length-1));
+      else this.markTail(patch.id,Math.max(0,next.valueRuns.length-(patch.valuePoints?.length??0)-1));
     }
     for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next)this.rememberClosed(next);
       else {this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);}this.measureOne(patch.id);}

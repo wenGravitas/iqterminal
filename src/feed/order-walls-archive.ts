@@ -1,3 +1,5 @@
+import { historyScheduler } from './history-scheduler';
+import { historyViewId } from './history-trace';
 import {
   ORDER_WALL_ARCHIVE_MAX_SEGMENTS,
   ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS,
@@ -362,6 +364,9 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   const fetcher = options.fetcher ?? ((input, init) => fetch(input, init));
   const pageLimit = Math.max(1, Math.min(ORDER_WALL_ARCHIVE_PAGE_LIMIT, Math.floor(options.pageLimit ?? ORDER_WALL_ARCHIVE_PAGE_LIMIT)));
   const signal = options.signal;
+  const viewId = historyViewId();
+  const scheduledFetcher: typeof fetch = (input, init) => historyScheduler.read(String(input), 'order-walls',
+    init?.signal ?? signal ?? new AbortController().signal, upstream => fetcher(input, {...init, signal: upstream, headers: {...init?.headers, 'X-IQ-View-Id': viewId}}));
   const prior = options.resume;
   const projector = prior?.projector ?? options.initialProjector ?? new OrderWallsArchiveProjector(settings, queryFrom, request.to);
   let after = prior?.after ?? request.after ?? 0, watermark: number | undefined = prior?.watermark ?? request.watermark,
@@ -395,9 +400,10 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       limit: String(pageLimit),
     });
     if (watermark !== undefined) params.set('watermark', String(watermark));
+    if (import.meta.env.VITE_HISTORY_TILES === '1') params.set('display', '1');
     const url = `/market-data/v1/order-walls/archive?${params}`;
     let fetched: Awaited<ReturnType<typeof fetchArchivePageWithRetry>>;
-    try { fetched = await fetchArchivePageWithRetry(fetcher, url, after, signal); }
+    try { fetched = await fetchArchivePageWithRetry(scheduledFetcher, url, after, signal); }
     catch (error) {
       if (signal?.aborted) throw abortError();
       if (!(error instanceof OrderWallsArchivePageRequestError)) throw error;
@@ -862,6 +868,8 @@ export class OrderWallsArchiveProjector {
   private epoch = 0;
   private midpoint: string | null = null;
   private patchBuffer = new Map<string, OrderWallPatch>();
+  private emittedValues = new Map<string,{first?:OrderWallValuePoint;last?:OrderWallValuePoint;length:number}>();
+  private emittedRevision = 0;
 
   constructor(private readonly settings: OrderWallsSettings, private readonly from: number, to: number, private readonly segmentNamespace = '') {
     this.to = to;
@@ -1214,11 +1222,16 @@ export class OrderWallsArchiveProjector {
   }
 
   private trim() {
+    if(this.valueRunQueue.length-this.valueRunQueueStart>Math.max(4096,this.totalValueRuns*2+512)){
+      const retained:Array<{id:string;sequence:number}>=[];
+      for(const segment of this.segments.values())for(const point of segment.valueRuns){const sequence=this.valueRunSequences.get(point);if(sequence!==undefined)retained.push({id:segment.id,sequence});}
+      retained.sort((a,b)=>a.sequence-b.sequence);this.valueRunQueue=retained;this.valueRunQueueStart=0;
+    }
     while (this.segments.size > ORDER_WALL_ARCHIVE_MAX_SEGMENTS) {
       let oldest: OrderWallSegment | undefined;
       for (const segment of this.segments.values()) if (segment.end !== null) { oldest = segment; break; }
       if (!oldest) break;
-      this.segments.delete(oldest.id);
+      this.segments.delete(oldest.id); this.emittedValues.delete(oldest.id);
       this.totalValueRuns = Math.max(0, this.totalValueRuns - oldest.valueRuns.length);
       this.patchBuffer.set(oldest.id, { id: oldest.id, segment: null }); this.episodeHistoryLimited = true;
     }
@@ -1231,11 +1244,20 @@ export class OrderWallsArchiveProjector {
   }
 
   private flushPatchBuffer() {
-    const patches = [...this.patchBuffer.values()].map(patch => patch.segment
-      ? { ...patch, segment: cloneSegment(patch.segment) }
-      : patch);
-    this.patchBuffer.clear();
-    return patches;
+    const patches:OrderWallPatch[]=[];
+    for(const patch of this.patchBuffer.values()){
+      const segment=patch.segment;
+      if(!segment){this.emittedValues.delete(patch.id);patches.push({...patch,revision:++this.emittedRevision});continue;}
+      const runs=segment.valueRuns,previous=this.emittedValues.get(patch.id);
+      const append=previous&&previous.first===runs[0]&&runs.length>=previous.length;
+      if(append){
+        const offset=previous.length>0&&runs[previous.length-1]!==previous.last?previous.length-1:previous.length;
+        patches.push({...patch,revision:++this.emittedRevision,segment:{...segment,valueRuns:[]},
+          replaceValueRuns:false,valuePoints:runs.slice(offset).map(point=>({...point}))});
+      }else patches.push({...patch,revision:++this.emittedRevision,segment:cloneSegment(segment),replaceValueRuns:true});
+      this.emittedValues.set(patch.id,{first:runs[0],last:runs.at(-1),length:runs.length});
+    }
+    this.patchBuffer.clear();return patches;
   }
 }
 

@@ -115,7 +115,7 @@ export class OrderWallsArchiveService {
   private readonly historyJobs = new Map<string, SharedHistoryJob>();
   private sequence = 0;
   private disposed = false;
-  readonly stats = { subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
+  readonly stats = { incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
     currentPatches: 0, ringDrops: 0, failures: 0 };
@@ -287,13 +287,20 @@ export class OrderWallsArchiveService {
     const state = group.projector?.selectedState();
     for (const sub of group.subscribers) {
       this.recordCurrentGaps(sub, page);
+      const previousBridge=sub.bridgeProjector;
+      let changed:OrderWallPatch[]=[];
       if (sub.bridgeProjector && exact) {
-        sub.bridgeProjector.applyCurrentPage(remapCurrentPage(page, sub.bridgeEntryIds), group.bootstrap?.head?.at ?? page.head?.at);
+        changed=sub.bridgeProjector.applyCurrentPage(remapCurrentPage(page, sub.bridgeEntryIds), group.bootstrap?.head?.at ?? page.head?.at);
       }
-      else if (state && exact && sub.tailProjector) sub.tailProjector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);
+      else if (state && exact && sub.tailProjector) changed=sub.tailProjector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);
       this.updateCurrentMetadata(sub, page, group);
       this.tryBridge(sub);
-      this.publish(sub, 'patch', this.diff(sub, this.visibleSegments(sub)), this.status(sub));
+      if(sub.bridgeProjector!==previousBridge&&sub.bridgeProjector){
+        this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));
+      }else{
+        const patches=this.markPatches(sub,changed,true);this.stats.incrementalSegments+=patches.length;
+        this.publish(sub,'patch',patches,this.status(sub));
+      }
       this.tryStartPendingViewportHistory(sub);
     }
   }
@@ -515,7 +522,7 @@ export class OrderWallsArchiveService {
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
             archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), requestComplete: false } };
         }
-        this.publish(subscriber, 'patch', this.visibleSegments(subscriber), this.status(subscriber));
+        this.publish(subscriber, 'patch', [], this.status(subscriber));
       }
     });
   }
@@ -530,10 +537,13 @@ export class OrderWallsArchiveService {
     sub.historyStatus = update.status;
     if (update.projector) sub.historyProjector = update.projector;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
-    this.tryBridge(sub);
-    const status = this.status(sub), visible = this.visibleSegments(sub);
-    if (update.kind === 'snapshot') this.publish(sub, 'snapshot', visible, status);
-    else this.publish(sub, 'patch', this.diff(sub, visible), status);
+    const previousBridge=sub.bridgeProjector;this.tryBridge(sub);
+    const status=this.status(sub);
+    if(update.kind==='snapshot')this.publish(sub,'snapshot',this.visibleSegments(sub),status);
+    else if(!sub.bridgeProjector){
+      const patches=this.markPatches(sub,update.patches??[],false);this.stats.incrementalSegments+=patches.length;
+      this.publish(sub,'patch',patches,status);
+    }else this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),status);
   }
 
   private addCurrentPage(group: CurrentGroup, page: OrderWallsArchiveCurrentPage) {
@@ -618,12 +628,18 @@ export class OrderWallsArchiveService {
     else this.publish(sub, 'patch', update.patches ?? [], update.status);
   }
 
+  private markPatches(sub:Subscription,patches:OrderWallPatch[],current:boolean):OrderWallPatch[]{
+    const selected=current&&sub.group?.profileExact===true&&sub.group.currentValid;
+    return patches.map(patch=>patch.segment?{...patch,segment:{...patch.segment,currentSelection:selected&&patch.segment.end===null}}:patch);
+  }
+
   private diff(sub: Subscription, segments: OrderWallSegment[]) {
+    this.stats.fullReconciliations++;this.stats.comparisonVisits+=segments.length;
     const next = new Map(segments.map(segment => [segment.id, segment])), patches: OrderWallPatch[] = [];
     for (const [id, previous] of sub.lastPublished) if (!next.has(id)) patches.push({ id, segment: null });
     for (const [id, segment] of next) {
       const previous = sub.lastPublished.get(id);
-      if (!previous || JSON.stringify(previous) !== JSON.stringify(segment)) patches.push({ id, segment, replaceValueRuns: true });
+      if (!previous || !sameWallSegment(previous,segment)) patches.push({ id, segment, replaceValueRuns: true });
     }
     sub.lastPublished = next; return patches;
   }
@@ -846,4 +862,13 @@ function emptyArchiveStatus(request: OrderWallsArchiveRequest, state: NonNullabl
     aggregation: settings.aggregation === 'native' ? 'native' : `${settings.aggregation}usdt`,
     gaps: [], requestedBandPercent: settings.searchRangePercent, profileBandPercent: settings.searchRangePercent,
     requestedTopN: settings.topLevels, exact: availability.exact, ...(reason ? { reason } : {}) };
+}
+
+/** Exact rare rebase comparison; normal current updates use projector change sets. */
+function sameWallSegment(a:OrderWallSegment,b:OrderWallSegment){
+ const ak=Object.keys(a) as Array<keyof OrderWallSegment>,bk=Object.keys(b);
+ if(ak.length!==bk.length)return false;
+ for(const key of ak){if(key==='valueRuns')continue;if(a[key]!==b[key])return false;}
+ if(a.valueRuns.length!==b.valueRuns.length)return false;
+ return a.valueRuns.every((point,index)=>{const other=b.valueRuns[index]!;return point.at===other.at&&point.usd===other.usd&&point.percentile===other.percentile&&point.rank===other.rank&&point.quantity===other.quantity&&point.quantityExact===other.quantityExact&&point.notionalExact===other.notionalExact;});
 }

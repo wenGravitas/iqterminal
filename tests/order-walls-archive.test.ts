@@ -257,6 +257,24 @@ describe('OrderWallsArchiveProjector', () => {
       largestSegmentRuns: updates.length + 1, episodeHistoryLimited: false, valueHistoryLimited: false });
   });
 
+  it('emits only appended values and leaves a closed historical segment untouched', () => {
+    const projector = new OrderWallsArchiveProjector(request().settings, from, to);
+    const live = candidate({entryId:'live'}), closed = candidate({entryId:'closed',price:'74450.00'});
+    projector.applyPage(page({seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[live,closed],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+      patches:[archivePatch(2,from+2000,{bids:side([],[{entryId:'closed',side:'bid',price:closed.price,at:from+2000,cursor:2,epoch:1,reason:'rank-exit',lastConfirmedAt:from+2000,lastConfirmedCursor:2}])})]}));
+    const before = projector.snapshot().find(segment=>segment.id.includes('closed'))!;
+    const value = {...live,quantity:'3.00000000',notional:'223440.00000000'};
+    const patches = projector.applyPage(page({page:{after:20,nextAfter:21,hasMore:false,lastAt:to,limit:256,sameMillisecondClosed:true},
+      watermark:21,head:{cursor:21,at:to,epoch:1},patches:[archivePatch(21,to,{bids:side([value])})],coverage:coverage({confirmedTo:to})}));
+    expect(patches.some(patch=>patch.id===before.id)).toBe(false);
+    const append=patches.find(patch=>patch.segment?.end===null)!;
+    expect(append.replaceValueRuns).toBe(false);
+    expect(append.segment?.valueRuns).toEqual([]);
+    expect(append.valuePoints).toHaveLength(1);
+    expect(append.valuePoints![0]!.quantityExact).toBe(value.quantity);
+    expect(projector.snapshot().find(segment=>segment.id===before.id)).toBe(before);
+  });
+
   it('uses an archive pre-roll to confirm carry-in across the visible left edge', () => {
     const settings = orderWallsSettings({ ...DEFAULT_ORDER_WALLS_SETTINGS, mode: 'top-levels', minDurationMs: 5_000 });
     const queryFrom = from - 5_000;

@@ -222,7 +222,7 @@ export interface OrderWallHit {
   percentile: number | null;
 }
 /** Patch id is the segment id, including for a null removal. */
-export interface OrderWallPatch { id: string; segment: OrderWallSegment | null; valuePoints?: OrderWallValuePoint[]; replaceValueRuns?: boolean }
+export interface OrderWallPatch { revision?:number; id: string; segment: OrderWallSegment | null; valuePoints?: OrderWallValuePoint[]; replaceValueRuns?: boolean }
 export interface OrderWallBatch {
   kind: 'snapshot' | 'patch';
   segments?: OrderWallSegment[];
