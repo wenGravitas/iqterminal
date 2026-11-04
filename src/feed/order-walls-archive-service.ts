@@ -22,6 +22,7 @@ import {
   type OrderWallsArchiveCurrentPage,
   type OrderWallsArchivePageMetrics,
   type OrderWallsArchiveRequest,
+  type OrderWallsArchiveResult,
   type OrderWallsArchiveResumeState,
   type OrderWallsArchiveUpdate,
 } from './order-walls-archive';
@@ -52,6 +53,7 @@ interface Subscription {
   group?: CurrentGroup;
   historyJob?: SharedHistoryJob;
   historyProjector?: OrderWallsArchiveProjector;
+  cachedHistory?: boolean;
   bridgeProjector?: OrderWallsArchiveProjector;
   /** Current checkpoint ID -> canonical archive entry ID, proved at historyFence. */
   bridgeEntryIds?: Map<string, string>;
@@ -113,6 +115,7 @@ export class OrderWallsArchiveService {
   private readonly groups = new Map<string, CurrentGroup>();
   /** Same fixed profile/range/fence shares one bounded loader and projector. */
   private readonly historyJobs = new Map<string, SharedHistoryJob>();
+  private readonly warmHistory=new Map<string,{result:OrderWallsArchiveResult;bytes:number;timer:ReturnType<typeof setTimeout>}>();
   private sequence = 0;
   private disposed = false;
   readonly stats = { incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
@@ -230,11 +233,13 @@ export class OrderWallsArchiveService {
     for (const sub of [...this.subscriptions.values()]) this.unsubscribe(sub.id);
     for (const group of this.groups.values()) group.poller.stop();
     this.groups.clear(); this.stats.groups = 0;
+    for(const entry of this.warmHistory.values())clearTimeout(entry.timer);this.warmHistory.clear();
   }
 
   diagnostics() {
     return { ...this.stats, subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,
+      warmEntries:this.warmHistory.size,warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: [...this.groups.values()].reduce((sum, group) => sum + group.pages.length, 0),
       ringBytes: [...this.groups.values()].reduce((sum, group) => sum + group.ringBytes, 0),
@@ -458,6 +463,13 @@ export class OrderWallsArchiveService {
       fenceState: sub.historyFenceState ? copySelectedState(sub.historyFenceState) : undefined,
       abort: new AbortController(), subscribers: new Set([sub]), settled: false, initialProjector };
     sub.historyJob = job; this.historyJobs.set(key, job); this.stats.historyRequests++;
+    const cached=this.warmHistory.get(warmHistoryKey(request));
+    if(cached&&cached.result.projector){
+      sub.cachedHistory=true;sub.historyProjector=cached.result.projector;
+      sub.historyStatus={...cached.result.status,archive:{...cached.result.status.archive!,state:'loading',requestComplete:false,
+        reason:'Cached history visible; validating the current revision.'}};
+      this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));
+    }
     this.runHistoryJob(job);
   }
 
@@ -511,6 +523,7 @@ export class OrderWallsArchiveService {
       for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, update);
     }, onPageMetrics: metrics => this.recordHistoryPageMetrics(metrics) }).then(result => {
       job.latest = result; job.resume = result.resume; job.settled = true;
+      this.rememberHistory(job.request,result);
       for (const subscriber of [...job.subscribers]) {
         if (!this.tryStartPendingViewportHistory(subscriber)) this.publishSharedHistoryUpdate(subscriber, job, result);
       }
@@ -536,6 +549,22 @@ export class OrderWallsArchiveService {
     });
   }
 
+  private rememberHistory(request:OrderWallsArchiveRequest,result:OrderWallsArchiveResult){
+    const archive=result.status.archive,projector=result.projector;
+    if(this.disposed||!projector||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume)return;
+    const count=projector.diagnostics(),bytes=count.valueRuns*256+count.retainedSegments*512;
+    if(bytes>16*1024*1024)return;
+    const key=warmHistoryKey(request),old=this.warmHistory.get(key);
+    if(old){clearTimeout(old.timer);this.warmHistory.delete(key);}
+    while(this.warmHistory.size>=2||[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0)+bytes>32*1024*1024){
+      const first=this.warmHistory.keys().next().value;if(first===undefined)break;
+      clearTimeout(this.warmHistory.get(first)!.timer);this.warmHistory.delete(first);
+    }
+    const copy=projector.cloneForLiveTail(request.to);
+    const entry={result:{...result,projector:copy,segments:copy.snapshot()},bytes,timer:setTimeout(()=>this.warmHistory.delete(key),60000)};
+    this.warmHistory.set(key,entry);
+  }
+
   private publishSharedHistorySnapshot(sub: Subscription, update: OrderWallsArchiveUpdate) {
     const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? update.segments ?? [], patches: undefined };
     this.publishSharedHistoryUpdate(sub, sub.historyJob!, replay);
@@ -544,6 +573,16 @@ export class OrderWallsArchiveService {
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
     sub.historyStatus = update.status;
+    if(sub.cachedHistory){
+      const archive=update.status.archive;
+      if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
+        this.publish(sub,'patch',[],this.status(sub));return;
+      }
+      sub.cachedHistory=false;
+      // Replace the cached presentation only after the entire new projection
+      // validates. Intermediate prefixes cannot erase previously visible walls.
+      update={...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
+    }
     if (update.projector) sub.historyProjector = update.projector;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
     const previousBridge=sub.bridgeProjector;this.tryBridge(sub);
@@ -739,6 +778,7 @@ function mergeHistoryCoverage(previous: OrderWallStatus['coverage'], next: Order
 
 type SelectedArchiveState = ReturnType<OrderWallsArchiveProjector['selectedState']>;
 
+function warmHistoryKey(request:OrderWallsArchiveRequest){return historyJobKey({...request,after:0,watermark:undefined,head:undefined});}
 function historyJobKey(request: OrderWallsArchiveRequest) {
   const settings = orderWallsSettings(request.settings);
   return JSON.stringify([request.market, orderWallsArchiveIdentity(request) ?? settings,

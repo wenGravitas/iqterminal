@@ -23,3 +23,27 @@ Focused coverage/lifecycle verification: 28 tests across `prepared-footprints.te
 ## Acceptance ledger
 
 Every proposed latency, concurrency, rollover and repeated-use gate remains **unmeasured** until five comparable samples and requested-versus-rendered coverage are recorded. No shortened range, early completion flag or current-only paint can satisfy a history gate. Headless SwiftShader evidence will be labelled separately from normal Chromium.
+
+## Further implementation and validation
+
+The current footprint bootstrap uses an independently maintained canonical
+execution snapshot/cursor; it never restores prepared closed cells into mutable
+live execution state. Saved absolute ranges survive sparse-to-dense inserts.
+A one-point data layer cannot claim successful saved-view restoration. Main
+thread paint diagnostics record visible footprint times/cell counts after draw;
+loaded worker data alone cannot satisfy the display gate.
+
+Normal wall changes carry stable segment identities, increasing revisions and
+only appended/replaced tail value points. Full comparison is restricted to
+initial history or a bridge rebase. Retention queues compact against actual
+retained data. Narrowing a loading viewport cancels an offscreen initial prefix.
+Wall requests share the existing bounded history scheduler and cancellation.
+
+A warm wall presentation cache retains at most two completed exact projections,
+16 MiB estimated per entry / 32 MiB total, for 60 seconds. Cache copies are
+independent of live mutable projections. A revisit displays the cached content
+with validation pending while issuing a fresh fixed-watermark load. Intermediate
+prefixes and failed validation retain good cached walls; only a completely
+validated replacement replaces them. Disposal releases cache entries/timers.
+The byte estimate deliberately includes object overhead; oversized views remain
+uncached and must report their warm-revisit gate as failed if they cannot meet it.

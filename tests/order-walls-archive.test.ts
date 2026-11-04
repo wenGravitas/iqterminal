@@ -834,6 +834,31 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }finally{service.dispose();}
   });
 
+  it('shows bounded warm history immediately and validates independently without erasing good walls',async()=>{
+    const initial=candidate({entryId:'warm-wall',startedAt:from-100,startCursor:1,startKnown:false});
+    const ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let release!:(value:Response)=>void,calls=0;
+    const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((resolve,reject)=>{release=resolve;init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});
+    const events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      const subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false};
+      service.subscribe('warm-one',subscription);await flush();
+      expect(service.diagnostics().warmEntries).toBe(1);service.unsubscribe('warm-one');
+      service.subscribe('warm-two',subscription);await flush();
+      const cached=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('warm-two')&&event.segments?.length);
+      expect(cached.at(-1)?.status.archive.requestComplete).toBe(false);
+      expect(cached.at(-1)?.segments[0].archiveEntryId).toBe('warm-wall');
+      expect(calls).toBe(2);expect(service.diagnostics()).toMatchObject({historyJobs:1,warmEntries:1});
+      release(new Response(JSON.stringify(ready)));await flush();
+      const final=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('warm-two')).at(-1);
+      expect(final.status.archive.requestComplete).toBe(true);
+      expect(service.diagnostics().warmBytes).toBeLessThanOrEqual(32*1024*1024);
+      service.unsubscribe('warm-two');expect(service.diagnostics()).toMatchObject({historyJobs:0,historyConsumers:0,groups:0});
+    }finally{service.dispose();}
+    expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
+  });
+
   it('cancels a shared history fetch only for its last consumer and on service disposal', async () => {
     let finishShared!: (response: Response) => void, sharedSignal: AbortSignal | undefined;
     const sharedFetcher = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
