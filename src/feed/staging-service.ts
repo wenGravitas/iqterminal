@@ -1,3 +1,4 @@
+import {historyRequestTraces} from './history-trace';
 import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-footprints';
 import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
@@ -6,7 +7,7 @@ import { duration, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, 
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
-interface View {progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+interface View {retryRequested?:boolean;progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 async function readStagingJson(response:Response,label:string){
   const text=await response.text();let data:any;
   try{data=JSON.parse(text);}catch(error){
@@ -95,7 +96,7 @@ export class StagingFeedService {
         if (pending) this.publish(g, pending);
       }
     } else if (c.type === 'retry' || c.type === 'footprint-retry') {
-      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { if (g.rowPrice !== undefined && this.usePrepared && [...g.views.values()].some(v=>v.error)) { for(const [id,v] of g.views){if(!v.error)continue;v.retryAt=0;v.error=undefined;v.loaded=false;void this.loadViewport(g,id);} continue; } g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { if (g.rowPrice !== undefined && this.usePrepared && [...g.views.values()].some(v=>v.error)) { for(const [id,v] of g.views){if(!v.error)continue;v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);} continue; } g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {
@@ -249,10 +250,16 @@ export class StagingFeedService {
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
       const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
       const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
+        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`
         : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
       const data = await readStagingJson(response,'Staging history');
       if (this.groups.get(g.key) !== g || this.dead || !this.online) return;
+      if (g.rowPrice !== undefined && this.usePrepared && data.state && data.state !== 'ready') {
+        g.retryAt = this.now() + 1000;
+        this.status(g, data.state === 'unavailable' ? 'failed' : 'loading', data.error ?? 'Staging · preparing authoritative current execution state');
+        return;
+      }
       if (g.rowPrice === undefined) {
         if (data.source !== 'binance-native-kline' || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
         const previous = new Map(g.candles.map(c => [c.t, c]));
@@ -269,7 +276,7 @@ export class StagingFeedService {
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
         const oldBars = g.bars;
         const bootstrapBars = data.bars as FootprintBar[];
-        g.bars = boundedFootprintHistory([...bootstrapBars, ...g.bars.filter(bar => g.preparedTimes.has(bar.time))]); g.cursor = data.cursor ?? data.watermark; g.from = from;
+        g.bars = boundedFootprintHistory([...bootstrapBars, ...g.bars.filter(bar => g.preparedTimes.has(bar.time))]); g.cursor = data.cursor ?? data.watermark; g.from = data.coverage?.from ?? from;
         g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
         const caughtUp = g.cursor === data.watermark;
         g.appliedExecutionThroughMs = caughtUp ? data.coverage.confirmedTo
@@ -312,6 +319,7 @@ export class StagingFeedService {
     const view = g.views.get(id);
     if (!view || view.busy || !this.online) return;
     view.busy = true; view.abort = new AbortController();
+    const retry = view.retryRequested === true; view.retryRequested = false;
     const requestLiveVersion = g.streamRevision;
     const step = duration[g.series.interval];
     // A flip at the first visible candle needs its predecessor plus N reference
@@ -355,7 +363,7 @@ export class StagingFeedService {
           g.bars = boundedFootprintHistory(candidates, this.visibleTimes(g, candidates));
           const retained = new Set(g.bars.map(bar => bar.time));
           if (view.progress) view.progress = { ...view.progress, capacityLimited: presentationBars.some(bar => !retained.has(bar.time)) };
-          if (view.progress?.capacityLimited) { view.loaded = false; view.error = 'Configured footprint bar/cell budget cannot retain the requested view'; }
+          if (view.progress?.capacityLimited) { view.loaded = false; view.error = 'Configured footprint bar/cell budget cannot retain the requested view'; view.retryAt = Infinity; }
           g.preparedTimes = new Set([...g.preparedTimes].sort((a, b) => Number(retained.has(b)) - Number(retained.has(a)) || b - a).slice(0, FOOTPRINT_MAX_BARS));
           view.loaded = complete && !view.progress?.capacityLimited; if (view.loaded && validated) view.validatedAt = this.now();
           const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading',
@@ -367,7 +375,7 @@ export class StagingFeedService {
             bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
           else if (summariesChanged || wasLoaded !== complete || wasValidated !== (complete && validated)) this.publish(g, { type: 'footprint-status', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
             status, analysisSummaries: [...g.analysisSummaries.values()] });
-        }, marketOf(g.series), analysisFrom);
+        }, marketOf(g.series), analysisFrom, retry);
     } catch (error) {
       if (!view.abort.signal.aborted) {
         view.error = error instanceof Error ? error.message : String(error); view.retryAt = this.now() + 5000;
@@ -479,7 +487,7 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { scheduler:historyScheduler.diagnostics(),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  diagnostics() { return { scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
   dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 

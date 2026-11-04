@@ -1,3 +1,4 @@
+import {historyViewId,tracedHistoryJson} from './history-trace';
 import { historyScheduler } from './history-scheduler';
 import { HistoryTileCache, type TileCache } from './history-tile-cache';
 import { duration, footprintAnalysisSourceKey, type FootprintAnalysisSummary, type FootprintBar, type Interval, type Market } from './protocol';
@@ -14,9 +15,10 @@ export interface PreparedFootprintAnalysisBatch {
 }
 
 export interface PreparedFootprintProgress {
+  viewId?:string;firstUsefulMs?:number;completeMs?:number;
   from: number; to: number; requestedSlots: number; loadedSlots: number; validatedSlots: number;
   capacityLimited?: boolean;
-  slots: Array<{ from: number; to: number; validated: boolean; state: 'loading' | 'building' | 'ready' | 'empty' | 'gapped' | 'unavailable' }>;
+  slots: Array<{ from: number; to: number; validated: boolean; state: 'loading' | 'building' | 'ready' | 'empty' | 'gapped' | 'unavailable' | 'absent' }>;
 }
 
 type PreparedTile = { from: number; revision: number; bar?: FootprintBar | null; coverage?: unknown };
@@ -37,7 +39,10 @@ export class PreparedFootprints {
     publish: (bars: FootprintBar[], complete: boolean, validated: boolean, analysis?: PreparedFootprintAnalysisBatch, progress?: PreparedFootprintProgress) => void,
     market: Market = 'perpetual',
     analysisFrom = from,
+    retry = false,
   ) {
+    const viewId = historyViewId(), startedAt = performance.now();
+    let firstUsefulMs:number|undefined;
     const step = duration[interval];
     const feed = footprintFeed(market);
     const sourceKey = footprintAnalysisSourceKey(market, interval);
@@ -56,19 +61,23 @@ export class PreparedFootprints {
     }
 
     const chunks = [...chunkRange(visibleFrom, visibleTo, 0, step).reverse(), ...chunkRange(summaryFrom, visibleFrom, 1, step)];
+    const retryChunks = new Set<number>();
+    const buildJobs = new Map<number,string>();
     const chunkStates = new Map(chunks.map(chunk => [chunk.from, 'loading']));
     const validatedTimes = new Set<number>();
     const visibleComplete = () => visibleStarts.every(start => validatedTimes.has(start / 1000))
       && chunks.filter(chunk => chunk.priority === 0).every(chunk => chunkStates.get(chunk.from) === 'ready');
-    const progress = (): PreparedFootprintProgress => ({ from: visibleFrom, to: visibleTo, requestedSlots: visibleStarts.length,
+    const progress = (): PreparedFootprintProgress => {
+      if(firstUsefulMs===undefined&&[...visibleTiles.values()].some(tile=>tile.bar))firstUsefulMs=performance.now()-startedAt;
+      return { viewId,firstUsefulMs,completeMs:visibleComplete()?performance.now()-startedAt:undefined,from: visibleFrom, to: visibleTo, requestedSlots: visibleStarts.length,
       loadedSlots: visibleTiles.size, validatedSlots: visibleStarts.filter(at => validatedTimes.has(at / 1000)).length,
       slots: visibleStarts.map(at => {
         const tile = visibleTiles.get(at), validated = validatedTimes.has(at / 1000);
         const chunk = chunks.find(chunk => chunk.priority === 0 && at >= chunk.from && at < chunk.to)!;
-        const state = tile ? tile.bar === null ? 'empty' : (tile.coverage as any)?.complete === false ? 'gapped' : 'ready'
+        const state = tile ? (tile.coverage as any)?.gaps?.some((gap:any)=>gap.reason==='not retained/recorded') ? 'absent' : (tile.coverage as any)?.complete === false ? 'gapped' : tile.bar === null ? 'empty' : 'ready'
           : chunkStates.get(chunk.from) === 'unavailable' ? 'unavailable' : chunkStates.get(chunk.from) === 'building' ? 'building' : 'loading';
         return { from: at, to: at + step, validated, state };
-      }) });
+      }) }; };
     const removedTimes = new Set<number>();
     const cacheSummaries = this.summaryMap(summaryKey);
     for (const [start, tile] of visibleTiles) {
@@ -97,15 +106,14 @@ export class PreparedFootprints {
         }).join(',');
         const params = new URLSearchParams({ from: String(start), to: String(end), interval, rowPrice: String(rowPrice), known });
         if (market === 'spot') params.set('market', 'spot');
+        if (buildJobs.has(start)) params.set('job', buildJobs.get(start)!);
+        if (retry && !retryChunks.has(start)) { params.set('retry','1'); retryChunks.add(start); }
         const url = `/market-data/v2/history/footprints?${params}`;
         let data: any;
         try {
-          data = await historyScheduler.read(url, 'footprint', signal, async shared => {
-            const response = await this.request(url, { signal: AbortSignal.any([shared, AbortSignal.timeout(30_000)]) });
-            const payload = await response.json();
-            if (!response.ok) throw Error(payload.error ?? `Footprint history HTTP ${response.status}`);
-            return payload;
-          }, priority);
+          const eligibleAt = performance.now();
+          data = await historyScheduler.read(url, 'footprint', signal, shared => tracedHistoryJson(this.request,url,
+            AbortSignal.any([shared, AbortSignal.timeout(30_000)]),viewId,eligibleAt), priority);
         } catch (error) {
           if (signal.aborted) throw error;
           if (priority === 1) { analysisFailed = true; return; }
@@ -118,6 +126,7 @@ export class PreparedFootprints {
         }
 
         chunkStates.set(start, data.state);
+        if (retry && data.state === 'building' && data.jobs?.[0]?.id) buildJobs.set(start,data.jobs[0].id);
         const updates: Array<{ key: string; value: PreparedTile }> = [];
         for (const raw of data.tiles as PreparedTile[]) {
           if (!validTileIdentity(raw) || raw.from < start || raw.from >= end || raw.from % step) throw Error('Invalid footprint tile identity');

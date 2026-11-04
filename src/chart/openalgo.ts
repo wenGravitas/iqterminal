@@ -665,6 +665,7 @@ export class OpenAlgoCandleChart {
     const other = otherFootprintTotals(this.footprintBars, this.footprint?.stats().map(row => row.time) ?? [], time, hit.units === 'btc' ? 'usdt' : 'btc');
     return { ...hit, other, coverage: bar.coverage, gapBefore: bar.gapBefore };
   }
+  footprintPaintDiagnostics(){return this.footprint?{...this.footprint.paint,times:[...this.footprint.paint.times]}:null;}
   footprintTotalsDiagnostics() { return [...this.footprintTotalsPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, autoHeight: view.autoHeight, autoWeight: view.autoWeight, manuallyResized: view.manuallyResized, paneHeight: this.chart.panes()[view.paneIndex]?.base.mediaHeight ?? 0, ...view.primitive.diagnostics() })); }
 
   setNetPositioningSnapshot(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
@@ -745,7 +746,7 @@ export class OpenAlgoCandleChart {
         const archived = isArchiveOrderWall(patch.segment);
         const maxRuns = archived ? ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT : ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT;
         if (patch.segment.valueRunsTruncated) this.orderWallValuesLimited = true;
-        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-maxRuns) : [...(previous?.valueRuns ?? [])] };
+        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-maxRuns) : previous?.valueRuns ?? [] };
         if (fullRuns && incoming.length > segment.valueRuns.length) { segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; }
         if (previous && fullRuns) this.adjustOrderWallValueCount(isArchiveOrderWall(previous), -previous.valueRuns.length);
         if (!previous) {
@@ -840,7 +841,7 @@ export class OpenAlgoCandleChart {
       const compact=queue.slice(start);if(archived){this.orderWallArchiveValueQueue=compact;this.orderWallArchiveValueQueueStart=0;}
       else{this.orderWallValueQueue=compact;this.orderWallValueQueueStart=0;}
     }else if(archived)this.orderWallArchiveValueQueueStart=start;else this.orderWallValueQueueStart=start;
-    if(queue.length>(limit*2)){
+    if(queue.length>Math.max(4096,count()*2+512)){
       const compact:Array<{id:string;point:OrderWallSegment['valueRuns'][number]}>=[];
       for(const segment of this.orderWallSegments.values())if(isArchiveOrderWall(segment)===archived)
         for(const point of segment.valueRuns)compact.push({id:segment.id,point});
@@ -1076,6 +1077,12 @@ export class OpenAlgoCandleChart {
 
   setRange(range: { from: number; to: number }) { this.chart.setVisibleLogicalRange(range); }
   visibleRange() { return this.chart.getVisibleLogicalRange(); }
+  restoreHistoryTimeRange(range:{from:number;to:number}) {
+    if(!this.chart.dataLayer.length)return false;
+    const from=this.chart.dataLayer.timeToIndexFloat(range.from/1000),to=this.chart.dataLayer.timeToIndexFloat(range.to/1000);
+    if(!Number.isFinite(from)||!Number.isFinite(to))return false;
+    this.chart.setVisibleLogicalRange({from,to});return true;
+  }
   visibleTimeRange() {
     const range = this.chart.getVisibleLogicalRange();
     if (!range || !this.chart.dataLayer.length) return null;
@@ -1270,11 +1277,9 @@ export class OpenAlgoCandleChart {
         const demands=[...this.footprintTotalsPanes.values()].map(view=>view.primitive.analysisDemand()).filter(demand=>demand.enabled);
         const analysis:FootprintAnalysisDemand=demands.length?{enabled:true,lookback:Math.max(...demands.map(demand=>demand.lookback))}:{enabled:false,lookback:50};
         if (analysis.enabled) {
-          // The dense history request is intentionally capped. Carry the first
-          // candle that the current Totals slice can actually draw so warmup
-          // still starts N+1 slots before an older retained candidate.
-          const candidates = this.footprint?.stats() ?? [];
-          analysis.candidateFrom = candidates[0]?.time !== undefined ? candidates[0].time * 1000 : Math.floor(times.from * 1000);
+          // The eligible viewport defines demand even before any dense bar arrives.
+          // Progressive chunks must not repeatedly cancel/rebase their own warmup.
+          analysis.candidateFrom = Math.floor(times.from * 1000);
         }
         this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000),analysis);
       }

@@ -28,6 +28,7 @@ export function footprintColumn(options: Pick<FootprintOptions, 'cellWidth' | 'w
   return { column, gap, cells: column - gap, annotation };
 }
 export class TerminalFootprint extends Footprint {
+  readonly paint = {at:0,draws:0,ms:0,times:[] as number[],cells:0};
   private style: FootprintOptions;
   private rowSize = 0;
   private longest = 1;
@@ -126,6 +127,7 @@ export class TerminalFootprint extends Footprint {
     super.setBars(bars);
   }
   override draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
+    const paintStarted=performance.now();
     this.dpr = rc.dpr;
     this.valueAreaPath = false;
     this.pendingCellRect = null;
@@ -293,6 +295,12 @@ export class TerminalFootprint extends Footprint {
       this.contexts.set(ctx, proxy);
     }
     super.draw(proxy, rc);
+    const visible=rc.timeScale.visibleRange(),priceRange=rc.priceScale.priceRange();
+    this.paint.times=[];this.paint.cells=0;
+    for(const bar of this.bars){const index=rc.dataLayer.timeToIndex(bar.time);if(index===undefined||index<visible.from-.5||index>visible.to+.5)continue;
+      const cells=bar.cells.filter(cell=>cell.price>=priceRange.min&&cell.price<=priceRange.max).length;
+      if(cells){this.paint.times.push(bar.time);this.paint.cells+=cells;}}
+    this.paint.at=performance.now();this.paint.draws++;this.paint.ms=this.paint.at-paintStarted;
     if (o.statsPosition === 'bar') this.drawBarTotals(ctx, rc);
     if (this.bars.length && o.showCandle) this.drawCandles(ctx, rc);
   }
