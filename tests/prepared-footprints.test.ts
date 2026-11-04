@@ -44,3 +44,37 @@ test('5m lookback warmup covers more than four hours in lower-priority summary-o
  expect(published.at(-1).analysis.summaries.find((summary:any)=>summary.time===analysisFrom/1000)).toMatchObject({revisionSource:'prepared-content-hash',coverageEvidence:{validated:true}});
  expect(cache.values.size).toBe(48); // Full dense tiles are retained only for the four-hour visible request.
 });
+
+test('24h of hourly tiles remains partial until every chunk validates, nearest history first', async () => {
+ const hour=3600000,from=1800000000000,to=from+24*hour,requests:Array<{from:number;to:number}>=[],events:any[]=[];
+ let release!:()=>void; const held=new Promise<void>(resolve=>release=resolve);
+ const request:any=async(url:string)=>{
+  const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from')),end=Number(q.get('to'));
+  requests.push({from:start,to:end}); if(start===from)await held;
+  const tiles=[];for(let at=start;at<end;at+=hour)tiles.push({from:at,revision:1,bar:{time:at/1000},coverage:{from:at,to:at+hour,complete:true,gaps:[]}});
+  return new Response(JSON.stringify({version:1,feed,state:'ready',tiles}));
+ };
+ const client=new PreparedFootprints(request,new Cache());
+ const work=client.load(from,to,'1h',25,new AbortController().signal,(bars,complete,validated,_analysis,progress)=>events.push({bars,complete,validated,progress}));
+ await new Promise(resolve=>setTimeout(resolve,30));
+ expect(requests[0]).toEqual({from:to-4*hour,to});expect(requests.every(r=>r.to-r.from<=4*hour)).toBe(true);
+ expect(events.some(e=>e.bars.length>0)).toBe(true);expect(events.every(e=>!e.complete)).toBe(true);
+ release();await work;
+ expect(events.at(-1).bars).toHaveLength(24);expect(events.at(-1).complete).toBe(true);
+ expect(events.at(-1).progress).toMatchObject({requestedSlots:24,loadedSlots:24,validatedSlots:24});
+});
+
+test('known empty, source gaps and failed sibling chunks retain precise independent coverage',async()=>{
+ const hour=3600000,from=1800000000000,to=from+8*hour,events:any[]=[];
+ const request:any=async(url:string)=>{
+  const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from'));
+  if(start===from)return new Response(JSON.stringify({error:'retryable source read'}),{status:503});
+  return new Response(JSON.stringify({version:1,feed,state:'ready',tiles:Array.from({length:4},(_,i)=>({from:start+i*hour,revision:1,bar:i===0?null:{time:(start+i*hour)/1000},coverage:{from:start+i*hour,to:start+(i+1)*hour,complete:i!==1,gaps:i===1?[{from:start+hour,to:start+hour+1000,reason:'not recorded'}]:[]}}))}));
+ };
+ const client=new PreparedFootprints(request,new Cache());
+ await expect(client.load(from,to,'1h',25,new AbortController().signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('retryable source read');
+ expect(events.at(-1).bars).toHaveLength(3);expect(events.every(e=>!e.complete)).toBe(true);
+ expect(events.at(-1).progress.slots.filter((s:any)=>s.state==='empty')).toHaveLength(1);
+ expect(events.at(-1).progress.slots.filter((s:any)=>s.state==='gapped')).toHaveLength(1);
+ expect(events.at(-1).progress.validatedSlots).toBe(4);
+});

@@ -1,4 +1,4 @@
-import {PreparedFootprints} from './prepared-footprints';
+import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-footprints';
 import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
 import { footprintTicksForPrice } from './protocol';
@@ -6,7 +6,7 @@ import { duration, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, 
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
-interface View {from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+interface View {progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 async function readStagingJson(response:Response,label:string){
   const text=await response.text();let data:any;
   try{data=JSON.parse(text);}catch(error){
@@ -27,6 +27,12 @@ interface Group {
   history?: { next: number; target: number; watermark: number }; historyAbort?: AbortController; historyBusy?: boolean; historyError?: string;
   lastStatus?: FootprintStatus; accumulator?: FootprintAccumulator; cursor?: number; from?: number; ws?: WebSocket; streamAt?: number; lastCoverage?: any; lagMs?: number;
 }
+/** Whitespace is outside the eligible past range; four hours bounds a request, not a view. */
+export function footprintPastViewport(from: number, to: number, now: number, step: number) {
+  const end = Math.min(to, Math.floor(now / step) * step);
+  return { from: Math.max(step, Math.floor(from / step) * step), to: Math.ceil(end / step) * step };
+}
+
 export const stagingMarket = (series: Series) => series.venue === 'binance';
 const NATIVE_CANDLE_HISTORY_TIMEOUT_MS = 60_000;
 const FOOTPRINT_BOOTSTRAP_TIMEOUT_MS = 20_000;
@@ -65,8 +71,7 @@ export class StagingFeedService {
       const key = this.clients.get(c.id), g = key ? this.groups.get(key) : undefined;
       if (!g || g.rowPrice === undefined || !this.usePrepared || !Number.isFinite(c.from) || !Number.isFinite(c.to) || c.from >= c.to) return;
       const step = duration[g.series.interval];
-      const to = Math.min(Math.ceil(c.to / step) * step, Math.floor(this.now() / step) * step);
-      const from = Math.max(step, Math.floor(Math.max(c.from, c.to - 14_400_000) / step) * step);
+      const { from, to } = footprintPastViewport(c.from, c.to, this.now(), step);
       if (from >= to) return;
       const analysisEnabled = c.analysis?.enabled === true;
       const requestedLookback = c.analysis?.lookback;
@@ -81,7 +86,7 @@ export class StagingFeedService {
       old?.abort?.abort();
       g.views.set(c.id, { from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
       this.status(g, g.lastStatus?.state ?? 'loading', 'Staging · loading visible footprints');
-      if (g.accumulator) void this.loadViewport(g, c.id);
+      void this.loadViewport(g, c.id);
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
     else if (c.type === 'footprint-ack') {
       const g = this.groups.get(c.key);
@@ -90,7 +95,7 @@ export class StagingFeedService {
         if (pending) this.publish(g, pending);
       }
     } else if (c.type === 'retry' || c.type === 'footprint-retry') {
-      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { if (g.rowPrice !== undefined && this.usePrepared && [...g.views.values()].some(v=>v.error)) { for(const [id,v] of g.views){if(!v.error)continue;v.retryAt=0;v.error=undefined;v.loaded=false;void this.loadViewport(g,id);} continue; } g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {
@@ -109,7 +114,7 @@ export class StagingFeedService {
       if (g.rowPrice !== undefined) this.expireLivePreviews(g);
       if (g.ws && g.streamAt && this.now() - g.streamAt > 15000) { g.ws.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · stream heartbeat expired; replay pending'); }
       if (!g.ws && this.online && this.now() >= g.retryAt) { if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
-      if(this.online&&this.usePrepared&&g.accumulator)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=g.retryAt)void this.loadViewport(g,id);
+      if(this.online&&this.usePrepared)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=(v.retryAt??0))void this.loadViewport(g,id);
       if (this.online && g.history && g.history.next > g.history.target && !g.historyBusy && !g.historyError && g.cursor !== undefined) void this.loadOlder(g);
     }
   }
@@ -263,21 +268,22 @@ export class StagingFeedService {
         const source = footprintSource(marketOf(g.series));
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
         const oldBars = g.bars;
-        g.bars = data.bars; g.cursor = data.cursor ?? data.watermark; g.from = from;
-        g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
+        const bootstrapBars = data.bars as FootprintBar[];
+        g.bars = boundedFootprintHistory([...bootstrapBars, ...g.bars.filter(bar => g.preparedTimes.has(bar.time))]); g.cursor = data.cursor ?? data.watermark; g.from = from;
+        g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
         const caughtUp = g.cursor === data.watermark;
         g.appliedExecutionThroughMs = caughtUp ? data.coverage.confirmedTo
           : Math.max(0, ...g.bars.map(bar => bar.time * 1000));
-        for (const bar of g.bars) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
-        g.bars = g.bars.map(bar => applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true));
+        for (const bar of bootstrapBars) g.quoteAvailable.set(bar.time, hasQuoteProjection(bar));
+        g.bars = g.bars.map(bar => applyQuoteAvailability(bar, g.preparedTimes.has(bar.time) ? hasQuoteProjection(bar) : g.quoteAvailable.get(bar.time) === true));
         const ticks = footprintTicksForPrice(g.rowPrice!, data.tickSize); if (ticks === null) throw new Error('Invalid staging tick size');
-        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(g.bars);
+        g.accumulator = new FootprintAccumulator(g.series.interval, data.tickSize, ticks); g.accumulator.restore(bootstrapBars);
         retainMutableQuoteAvailability(g, g.accumulator.snapshot());
         const analysisSourceKey = footprintAnalysisSourceKey(marketOf(g.series), g.series.interval);
-        for (const bar of g.bars) this.mergeSummary(g, durableFootprintAnalysisSummary(
+        for (const bar of bootstrapBars) if (!g.preparedTimes.has(bar.time)) this.mergeSummary(g, durableFootprintAnalysisSummary(
           applyQuoteAvailability(bar, g.quoteAvailable.get(bar.time) === true), analysisSourceKey, g.series.interval,
           data.coverage, g.appliedExecutionThroughMs ?? 0, caughtUp, this.now(), data.status?.state === 'live'));
-        g.preparedTimes.clear();for(const v of g.views.values()){v.loaded=false;v.validatedAt=undefined;}
+
         g.lastCoverage = data.coverage; g.lastUpdate = Number(data.status?.lastUpdate ?? 0);
         const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
         const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
@@ -304,7 +310,7 @@ export class StagingFeedService {
   }
   private async loadViewport(g: Group, id: string) {
     const view = g.views.get(id);
-    if (!view || view.busy || !g.accumulator) return;
+    if (!view || view.busy || !this.online) return;
     view.busy = true; view.abort = new AbortController();
     const requestLiveVersion = g.streamRevision;
     const step = duration[g.series.interval];
@@ -313,9 +319,11 @@ export class StagingFeedService {
     const analysisFrom = view.analysisEnabled ? Math.max(step, view.candidateFrom - (view.analysisLookback + 1) * step) : view.from;
     try {
       await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, view.abort.signal,
-        (bars, complete, validated, analysis) => {
-          if (view.abort!.signal.aborted || g.views.get(id) !== view || this.groups.get(g.key) !== g || !g.accumulator) return;
+        (bars, complete, validated, analysis, progress) => {
+          if (view.abort!.signal.aborted || g.views.get(id) !== view || this.groups.get(g.key) !== g) return;
           if (!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series)))) throw Error('Invalid historical footprint bars');
+          if (progress) view.progress = progress;
+          view.error = undefined; view.retryAt = 0;
           const beforeBarsKey = barRevisionKey(g.bars);
           const wasLoaded = view.loaded === true;
           const wasValidated = view.validatedAt !== undefined;
@@ -341,15 +349,18 @@ export class StagingFeedService {
           // Prepared projections are independent presentation/analysis data.
           // They must not seed the mutable accumulator's quote anchor.
           const presentationBars = bars.map(bar => applyQuoteAvailability(bar, hasQuoteProjection(bar)));
-          const candidates = [...g.bars.filter(bar => !complete || !validated || bar.time * 1000 < view.from || bar.time * 1000 >= Math.min(view.to, liveStart)),
+          const removed = new Set(progress?.slots.filter(slot => slot.validated && slot.state === 'empty').map(slot => slot.from / 1000) ?? []);
+          const candidates = [...g.bars.filter(bar => !removed.has(bar.time)),
             ...presentationBars.filter(bar => bar.time * 1000 < liveStart)];
           g.bars = boundedFootprintHistory(candidates, this.visibleTimes(g, candidates));
           const retained = new Set(g.bars.map(bar => bar.time));
+          if (view.progress) view.progress = { ...view.progress, capacityLimited: presentationBars.some(bar => !retained.has(bar.time)) };
+          if (view.progress?.capacityLimited) { view.loaded = false; view.error = 'Configured footprint bar/cell budget cannot retain the requested view'; }
           g.preparedTimes = new Set([...g.preparedTimes].sort((a, b) => Number(retained.has(b)) - Number(retained.has(a)) || b - a).slice(0, FOOTPRINT_MAX_BARS));
-          view.loaded = complete; if (complete && validated) view.validatedAt = this.now();
+          view.loaded = complete && !view.progress?.capacityLimited; if (view.loaded && validated) view.validatedAt = this.now();
           const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading',
-            `Staging · ${validated ? 'validated' : 'cached; validating'} visible footprints${complete ? '' : ' · loading history'}`,
-            { coverage: g.lastCoverage, tickSize: .1 });
+            g.lastStatus?.message ?? 'Staging · connecting live executions',
+            { coverage: g.lastCoverage, tickSize: marketOf(g.series) === 'spot' ? .01 : .1 });
           g.lastStatus = status;
           const barsChanged = beforeBarsKey !== barRevisionKey(g.bars);
           if (barsChanged) this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
@@ -359,8 +370,8 @@ export class StagingFeedService {
         }, marketOf(g.series), analysisFrom);
     } catch (error) {
       if (!view.abort.signal.aborted) {
-        g.historyError = error instanceof Error ? error.message : String(error); g.retryAt = this.now() + 2000;
-        this.status(g, 'stale', `Staging visible footprints · ${g.historyError}`);
+        view.error = error instanceof Error ? error.message : String(error); view.retryAt = this.now() + 5000;
+        this.status(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message ?? 'Staging · connecting live executions');
       }
     } finally {
       view.busy = false;
@@ -409,7 +420,12 @@ export class StagingFeedService {
   }
 
   private visibleTimes(g:Group,bars:FootprintBar[]){return new Set(bars.filter(b=>b.time===g.accumulator?.latestTime||[...g.views.values()].some(v=>b.time*1000>=v.from&&b.time*1000<v.to)).map(b=>b.time));}
-  private historyState(g:Group){const views=[...g.views.values()];return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined)};}
+  private historyState(g:Group){
+    const views=[...g.views.values()];
+    return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined),
+      error:views.find(v=>v.error)?.error, ranges:views.map(v=>({from:v.from,to:v.to,progress:v.progress})),
+      capacityLimited: views.some(v=>v.progress?.capacityLimited===true)};
+  }
   private historyMessage(g: Group, message: string) {
     return message + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
   }

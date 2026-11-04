@@ -157,7 +157,7 @@ export interface FootprintAnalysisSummary {
   coverageEvidence: FootprintCoverageEvidence;
 }
 export interface FootprintStatus extends Status {
-  history?: {ready:boolean;validated:boolean;views:number};
+  history?: {ready:boolean;validated:boolean;views:number;error?:string;capacityLimited?:boolean;ranges?:Array<{from:number;to:number;progress?:import('./prepared-footprints').PreparedFootprintProgress}>};
   transport?: { cursor: number; backendSentAtMs: number; workerReceivedAtMs: number; workerAppliedAtMs: number };
   tickSize: number | null;
   rowSize: number | null;

@@ -916,7 +916,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
-    this.retry.addEventListener('click', () => this.selection.type === 'footprint' ? this.feed.retryFootprint() : this.feed.retry(params.api.id), options);
+    this.retry.addEventListener('click', () => this.footprintStatus.history?.error || this.selection.type === 'footprint' ? this.feed.retryFootprint() : this.feed.retry(params.api.id), options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
@@ -1038,7 +1038,7 @@ export class CandlePanel implements IContentRenderer {
       { dispose: this.engine.chart.on('drawing:select', () => this.syncDrawingActions()) },
       { dispose: this.engine.chart.on('drawing:change', () => this.syncDrawingActions()) },
     );
-    this.engine.onFootprintViewport=(from,to,analysis)=>{if(this.footprintHasInitialView)this.feed.requestFootprintViewport(this.params.api.id,from,to,analysis);};
+    this.engine.onFootprintViewport=(from,to,analysis)=>{this.feed.requestFootprintViewport(this.params.api.id,from,to,analysis);};
     this.engine.onHeatmapViewport = viewport => {
       if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
       if (this.nativeIndicator(HEATMAP_ID) && supportsDepth(this.selection)) this.feed.requestHeatmapViewport(this.params.api.id, viewport);
@@ -5426,6 +5426,9 @@ export class CandlePanel implements IContentRenderer {
       if (event.type === 'footprint-snapshot' || event.type === 'footprint-patch') { this.updateStatus(); this.syncPaneLoadingStates(); this.refreshPositioningRange(); }
       if (previousState !== this.footprintStatus.state) this.renderActiveIndicators();
     });
+    const step = duration[selection.interval], now = Date.now(), to = Math.floor(now / step) * step;
+    this.feed.requestFootprintViewport(this.params.api.id, to - Math.max(4 * 3600000, Math.min(24 * 3600000, 24 * step)), to,
+      { enabled: false, lookback: 50 });
     this.updateStatus();
   }
 
@@ -5790,12 +5793,18 @@ export class CandlePanel implements IContentRenderer {
     const quoteHint = getCurrencyPreference().enabled
       ? 'USDT notional unavailable · switch Global settings to Base (BTC)'
       : 'USDT notional unavailable · select BTC';
-    const text = status.state === 'failed' ? 'Data unavailable' : status.state === 'stale' ? 'Updates paused'
-      : quoteUnavailable ? quoteHint : '';
+    const history = this.footprintDataWanted() ? this.footprintStatus.history : undefined;
+    const progress = history?.ranges?.flatMap(range => range.progress ? [range.progress] : []);
+    const rangeText = history?.ranges?.map(range => `${new Date(range.from).toISOString().slice(5,16).replace('T',' ')}–${new Date(range.to).toISOString().slice(11,16)} UTC`).join(', ');
+    const historyText = history?.error ? `History incomplete · ${history.error}` : history?.capacityLimited ? 'History capacity limited'
+      : history?.views ? `History ${history.validated ? 'validated' : history.ready ? 'cached; validating' : 'loading'}${progress?.length ? ` · ${progress.reduce((n,p)=>n+p.validatedSlots,0)}/${progress.reduce((n,p)=>n+p.requestedSlots,0)} slots` : ''}${rangeText ? ` · ${rangeText}` : ''}` : '';
+    const liveText = status.state === 'failed' ? 'Live data unavailable' : status.state === 'stale' ? 'Live updates paused'
+      : status.state === 'loading' ? 'Connecting live data…' : quoteUnavailable ? quoteHint : '';
+    const text = [liveText, historyText].filter(Boolean).join(' · ');
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
     this.statusNode.dataset.quoteAvailability = quoteUnavailable ? 'unavailable' : 'available';
-    const showRetry = status.state === 'failed' || status.state === 'stale';
+    const showRetry = status.state === 'failed' || status.state === 'stale' || Boolean(history?.error);
     if (this.statusText.parentElement !== this.statusNode || (this.retry.parentElement === this.statusNode) !== showRetry) {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }

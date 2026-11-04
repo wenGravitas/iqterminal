@@ -13,6 +13,12 @@ export interface PreparedFootprintAnalysisBatch {
   removedTimes: number[];
 }
 
+export interface PreparedFootprintProgress {
+  from: number; to: number; requestedSlots: number; loadedSlots: number; validatedSlots: number;
+  capacityLimited?: boolean;
+  slots: Array<{ from: number; to: number; validated: boolean; state: 'loading' | 'building' | 'ready' | 'empty' | 'gapped' | 'unavailable' }>;
+}
+
 type PreparedTile = { from: number; revision: number; bar?: FootprintBar | null; coverage?: unknown };
 const MAX_SUMMARY_SOURCES = 8;
 
@@ -28,7 +34,7 @@ export class PreparedFootprints {
     interval: Interval,
     rowPrice: number,
     signal: AbortSignal,
-    publish: (bars: FootprintBar[], complete: boolean, validated: boolean, analysis?: PreparedFootprintAnalysisBatch) => void,
+    publish: (bars: FootprintBar[], complete: boolean, validated: boolean, analysis?: PreparedFootprintAnalysisBatch, progress?: PreparedFootprintProgress) => void,
     market: Market = 'perpetual',
     analysisFrom = from,
   ) {
@@ -49,7 +55,20 @@ export class PreparedFootprints {
       if (tile && validTileIdentity(tile, start)) visibleTiles.set(start, tile);
     }
 
+    const chunks = [...chunkRange(visibleFrom, visibleTo, 0, step).reverse(), ...chunkRange(summaryFrom, visibleFrom, 1, step)];
+    const chunkStates = new Map(chunks.map(chunk => [chunk.from, 'loading']));
     const validatedTimes = new Set<number>();
+    const visibleComplete = () => visibleStarts.every(start => validatedTimes.has(start / 1000))
+      && chunks.filter(chunk => chunk.priority === 0).every(chunk => chunkStates.get(chunk.from) === 'ready');
+    const progress = (): PreparedFootprintProgress => ({ from: visibleFrom, to: visibleTo, requestedSlots: visibleStarts.length,
+      loadedSlots: visibleTiles.size, validatedSlots: visibleStarts.filter(at => validatedTimes.has(at / 1000)).length,
+      slots: visibleStarts.map(at => {
+        const tile = visibleTiles.get(at), validated = validatedTimes.has(at / 1000);
+        const chunk = chunks.find(chunk => chunk.priority === 0 && at >= chunk.from && at < chunk.to)!;
+        const state = tile ? tile.bar === null ? 'empty' : (tile.coverage as any)?.complete === false ? 'gapped' : 'ready'
+          : chunkStates.get(chunk.from) === 'unavailable' ? 'unavailable' : chunkStates.get(chunk.from) === 'building' ? 'building' : 'loading';
+        return { from: at, to: at + step, validated, state };
+      }) });
     const removedTimes = new Set<number>();
     const cacheSummaries = this.summaryMap(summaryKey);
     for (const [start, tile] of visibleTiles) {
@@ -60,14 +79,14 @@ export class PreparedFootprints {
     }
     this.trimSummaries(summaryKey, summaryFrom, visibleTo);
     if (!signal.aborted && (visibleTiles.size || cacheSummaries.size)) {
-      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
     }
 
     for (;;) {
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
       let visiblePending = false, analysisPending = false, analysisFailed = false;
-      const chunks = [...chunkRange(visibleFrom, visibleTo, 0, step), ...chunkRange(summaryFrom, visibleFrom, 1, step)];
-      for (const { from: start, to: end, priority } of chunks) {
+      const runChunk = async ({ from: start, to: end, priority }: typeof chunks[number]) => {
+        if (chunkStates.get(start) === 'ready') return;
         const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         const known = chunkStarts.flatMap(at => {
           const visible = visibleTiles.get(at);
@@ -89,16 +108,16 @@ export class PreparedFootprints {
           }, priority);
         } catch (error) {
           if (signal.aborted) throw error;
-          if (priority === 1) { analysisFailed = true; break; }
+          if (priority === 1) { analysisFailed = true; return; }
           throw error;
         }
         if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-        if (data.state === 'unavailable' || data.version !== 1 || data.feed !== feed || !Array.isArray(data.tiles) || data.tiles.length > 300) {
-          if (priority === 1) { analysisFailed = true; break; }
-          if (data.state === 'unavailable') throw Error('Historical footprint build unavailable; inspect staging materializer backlog');
+        if (data.version !== 1 || data.feed !== feed || !Array.isArray(data.tiles) || data.tiles.length > 300) {
+          if (priority === 1) { analysisFailed = true; return; }
           throw Error('Invalid prepared footprints');
         }
 
+        chunkStates.set(start, data.state);
         const updates: Array<{ key: string; value: PreparedTile }> = [];
         for (const raw of data.tiles as PreparedTile[]) {
           if (!validTileIdentity(raw) || raw.from < start || raw.from >= end || raw.from % step) throw Error('Invalid footprint tile identity');
@@ -142,16 +161,27 @@ export class PreparedFootprints {
         this.trimSummaries(summaryKey, summaryFrom, visibleTo);
         if (priority === 0) visiblePending ||= data.state === 'building';
         else analysisPending ||= data.state === 'building';
-        if (!signal.aborted) publish(this.visibleBars(visibleTiles), !visiblePending, true,
-          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+        if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
+          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
+        if (priority === 0 && data.state === 'unavailable') throw Error(data.error ?? 'Historical footprint build unavailable; Retry available');
+        if (data.state === 'ready' && chunkStarts.some(at => !validatedTimes.has(at / 1000))) throw Error('Prepared footprint response omitted requested slots');
+      };
+      // Shared admission keeps two chunks on wire at most, across all charts.
+      // Await all visible chunks so an early failure cannot suppress useful siblings.
+      const visibleResults = await Promise.allSettled(chunks.filter(chunk => chunk.priority === 0).map(runChunk));
+      const failed = visibleResults.find(result => result.status === 'rejected');
+      if (failed?.status === 'rejected') throw failed.reason;
+      for (const chunk of chunks.filter(chunk => chunk.priority === 1)) {
+        await runChunk(chunk);
+        if (analysisFailed) break;
       }
 
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-      if (!signal.aborted) publish(this.visibleBars(visibleTiles), !visiblePending, true,
-        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+      if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
+        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
       // Strength warmup is optional. A failed or still-building older chunk
       // leaves the visible tiles ready and lets the strength show unavailable.
-      if (analysisFailed || analysisPending || !visiblePending) return;
+      if (!visiblePending) return;
       await new Promise<void>((resolve, reject) => {
         const timer = setTimeout(done, 1000);
         function done() { signal.removeEventListener('abort', cancel); resolve(); }

@@ -159,7 +159,7 @@ test('analysis warmup is opt-in and its failure leaves healthy visible staging d
    if(value.includes('/v2/history/footprints')){
      const query=new URL(value,'http://localhost').searchParams;
      if(Number(query.get('from'))<4_020_000)return new Response(JSON.stringify({error:'optional warmup unavailable'}),{status:503});
-     return new Response(JSON.stringify({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:[]}));
+     return new Response(JSON.stringify({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:[{from:Number(query.get('from')),revision:1,bar:null,coverage:{from:Number(query.get('from')),to:Number(query.get('to')),complete:true,gaps:[]}}]}));
    }
    return new Response(JSON.stringify(initial));
  });
@@ -207,9 +207,9 @@ test('analysis warmup starts N+1 bars before the oldest rendered candidate beyon
    service.command({type:'footprint-viewport',id:'a',from:requestedFrom,to:requestedTo,analysis:{enabled:true,lookback:50,candidateFrom}});
    await vi.advanceTimersByTimeAsync(1);
    const view=[...(service as any).groups.values()][0].views.get('a');
-   expect(view.from).toBe(epoch+26*3_600_000);
+   expect(view.from).toBe(requestedFrom);
    expect(view.candidateFrom).toBe(candidateFrom);
-   expect(captured?.[0]).toBe(view.from); // Dense cells keep the four-hour cap.
+   expect(captured?.[0]).toBe(view.from); // The viewport spans bounded four-hour requests, not a four-hour total cap.
    expect(captured?.[1]).toBe(requestedTo);
    expect(captured?.[7]).toBe(candidateFrom-51*step); // Summary-only context covers the rendered old candidate.
  }finally{service.dispose();}
@@ -229,3 +229,53 @@ test('unrelated live ticks do not block a prepared correction to an unchanged cl
  }finally{service.dispose();}
 });
 test('visible historical bars outrank a full offscreen live cache',()=>{const older=Array.from({length:48},(_,i)=>({...bar,time:(i+1)*60,cells:[...bar.cells]})),recent=Array.from({length:300},(_,i)=>({...bar,time:(i+1000)*60,cells:[...bar.cells]}));const kept=boundedFootprintHistory([...recent,...older],new Set([...older.map(b=>b.time),recent.at(-1)!.time]));expect(kept).toHaveLength(300);expect(older.every(b=>kept.some(k=>k.time===b.time))).toBe(true);expect(kept.at(-1)?.time).toBe(recent.at(-1)?.time);});
+
+test('future whitespace does not consume visible hourly history or impose a four-hour view cap',async()=>{
+ const {footprintPastViewport}=await import('../src/feed/staging-service');
+ const hour=3600000,day=Date.UTC(2026,10,4),now=day+16*hour+19*60000;
+ for(const endHour of [16,19,30])expect(footprintPastViewport(day+11*hour,day+endHour*hour,now,hour)).toEqual({from:day+11*hour,to:day+16*hour});
+ expect(footprintPastViewport(day-8*hour,day+19*hour,now,hour)).toEqual({from:day-8*hour,to:day+16*hour});
+ expect(footprintPastViewport(day+3*hour,day+7*hour,now,hour)).toEqual({from:day+3*hour,to:day+7*hour});
+});
+
+test('prepared hourly history renders before a delayed live bootstrap and remains separate on restore',async()=>{
+ vi.useFakeTimers();vi.stubEnv('VITE_HISTORY_TILES','1');
+ const hour=3600000,day=Date.UTC(2026,10,4),now=day+16*hour+19*60000,events:Event[]=[],sockets:Socket[]=[];
+ let finishBootstrap!:(response:Response)=>void;
+ const request:any=async(url:string)=>{
+  if(!url.includes('/v2/history/footprints'))return new Promise<Response>(resolve=>finishBootstrap=resolve);
+  const q=new URL(url,'http://localhost').searchParams,from=Number(q.get('from')),to=Number(q.get('to'));
+  return new Response(JSON.stringify({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(to-from)/hour},(_,i)=>{
+   const at=from+i*hour;return {from:at,revision:100+i,bar:{...bar,time:at/1000,rowSize:25},coverage:{from:at,to:at+hour,complete:true,gaps:[]}};
+  })}));
+ };
+ let service:StagingFeedService|undefined;
+ service=new StagingFeedService(event=>{events.push(event);if(event.type.startsWith('footprint-'))queueMicrotask(()=>service?.command({type:'footprint-ack',key:(event as any).key,generation:(event as any).generation,batchId:(event as any).batchId}));},request,()=>now,()=>{const socket=new Socket();sockets.push(socket);return socket as any;});
+ try {
+  service.command({type:'footprint-subscribe',id:'delayed',series:{...series,interval:'1h'},rowPrice:25});
+  service.command({type:'footprint-viewport',id:'delayed',from:day+11*hour,to:day+19*hour});
+  await vi.advanceTimersByTimeAsync(1);
+  const g=[...(service as any).groups.values()][0];
+  expect(g.accumulator).toBeUndefined();expect(g.bars.map((b:any)=>b.time)).toEqual([11,12,13,14,15].map(h=>(day+h*hour)/1000));
+  expect(events.some((e:any)=>e.type==='footprint-snapshot'&&e.bars.length===5)).toBe(true);
+  const initial={...response(),bars:[{...bar,time:(day+16*hour)/1000,rowSize:25}],coverage:{...response().coverage,confirmedFrom:day,confirmedTo:now,from:day+16*hour,to:now,gaps:[]},status:{state:'live',lastUpdate:now}};
+  finishBootstrap(new Response(JSON.stringify(initial)));await vi.advanceTimersByTimeAsync(1);
+  expect(g.bars).toHaveLength(6);expect(g.accumulator.snapshot()).toHaveLength(1);
+  expect([...g.analysisSummaries.values()].filter((s:any)=>s.coverageEvidence.provenance==='prepared-tile')).toHaveLength(5);
+  expect(g.lastStatus.history).toMatchObject({ready:true,validated:true});
+ } finally {service.dispose();}
+});
+
+test('history retry clears its error without replacing healthy sockets or acknowledged live cursor',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();
+ const g=[...(service as any).groups.values()][0],socket=g.ws,cursor=g.cursor;
+ let fail=true;
+ (service as any).prepared={load:async(...args:any[])=>{if(fail)throw Error('Historical worker temporarily unavailable');args[5]([],true,true);},dispose(){}};
+ try{
+  service.command({type:'footprint-viewport',id:'a',from:60000,to:120000});await vi.advanceTimersByTimeAsync(0);
+  expect(g.lastStatus.state).toBe('live');expect(g.lastStatus.history.error).toContain('temporarily unavailable');expect(g.bars).toHaveLength(1);
+  fail=false;service.command({type:'footprint-retry'});await vi.advanceTimersByTimeAsync(0);
+  expect(g.lastStatus.history.error).toBeUndefined();expect(g.lastStatus.history.ready).toBe(true);
+  expect(g.ws).toBe(socket);expect(g.cursor).toBe(cursor);expect(sockets).toHaveLength(1);expect(socket.closed).toBe(false);
+ }finally{service.dispose();}
+});
