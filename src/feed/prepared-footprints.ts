@@ -151,6 +151,11 @@ export class PreparedFootprints {
             }
             validatedTimes.add(raw.from / 1000);
           } else {
+            if(oldVisible?.revision===raw.revision&&oldVisible.bar===null){
+              const tile={...oldVisible,coverage:raw.coverage??oldVisible.coverage};
+              visibleTiles.set(raw.from,tile);cacheSummaries.delete(raw.from/1000);
+              removedTimes.add(raw.from/1000);validatedTimes.add(raw.from/1000);continue;
+            }
             const old = oldSummary?.revision === raw.revision ? oldSummary
               : oldVisible?.revision === raw.revision && oldVisible.bar ? summaryForTile(oldVisible, sourceKey, interval, true, market) : undefined;
             if (!old) throw Error('Missing validated footprint tile');

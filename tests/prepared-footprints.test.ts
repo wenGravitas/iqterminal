@@ -78,3 +78,13 @@ test('known empty, source gaps and failed sibling chunks retain precise independ
  expect(events.at(-1).progress.slots.filter((s:any)=>s.state==='gapped')).toHaveLength(1);
  expect(events.at(-1).progress.validatedSlots).toBe(4);
 });
+
+
+test('warm revision validation preserves a known-empty covered slot without requiring a bar summary',async()=>{
+ const cache=new Cache(),events:any[]=[];let warm=false;
+ const request:any=async()=>new Response(JSON.stringify({version:1,feed,state:'ready',tiles:[{from:900000,revision:1,...(warm?{}:{bar:null,coverage:{from:900000,to:1200000,complete:true,gaps:[]}})}]}));
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(900000,1200000,'5m',25,signal,()=>{});warm=true;
+ await client.load(900000,1200000,'5m',25,signal,(bars,complete,validated,_analysis,progress)=>events.push({bars,complete,validated,progress}));
+ expect(events.at(-1)).toMatchObject({bars:[],complete:true,validated:true,progress:{validatedSlots:1,slots:[{state:'empty',validated:true}]}});
+});
