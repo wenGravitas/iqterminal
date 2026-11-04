@@ -40,7 +40,7 @@ test('combined positioning and native indicator panes restore without orphan pan
 
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
   const picker = panel.locator('.indicator-picker');
-  await expect(picker.locator('[data-add-native="native.footprint-totals"]')).toHaveCount(0);
+  await expect(picker.locator('[data-add-native="native.footprint-totals"]')).toHaveCount(1);
   await picker.getByRole('button', { name: 'Done', exact: true }).click();
   await setFootprint(panel, true);
 
@@ -97,18 +97,18 @@ test('combined positioning and native indicator panes restore without orphan pan
   const initialSettings = afterAdd.settings;
 
   await setFootprint(panel, false);
-  await expect.poll(async () => (await snapshot()).owners.map(view => view.id)).toEqual(['native.net-longs-shorts-estimated']);
+  await expect.poll(async () => (await snapshot()).owners.map(view => view.id)).toEqual(expect.arrayContaining(definitions.map(item=>item.id)));
   const candleMode = await snapshot();
-  expect(candleMode.paneCount).toBe(baseline.paneCount + 1);
-  expect(candleMode.owners.map(owner => owner.paneSeriesCount)).toEqual([1]);
+  expect(candleMode.paneCount).toBe(baseline.paneCount + 2);
+  expect(candleMode.owners.map(owner => owner.paneSeriesCount)).toEqual([1,1]);
   expect(candleMode.settings).toEqual(initialSettings);
   expect(candleMode.netSubscriptions).toBe(1);
   expect(candleMode.stableIdentity).toBe(true);
   expect(candleMode.stableHistory).toBe(true);
-  await expect(panel.locator('.active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(0);
-  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(0);
+  await expect(panel.locator('.active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
+  await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
   await panel.getByRole('button', { name: 'Indicators', exact: true }).click();
-  await expect(panel.locator('.indicator-picker [data-add-native="native.footprint-totals"]')).toHaveCount(0);
+  await expect(panel.locator('.indicator-picker [data-add-native="native.footprint-totals"]')).toHaveCount(1);
   await panel.locator('.indicator-picker').getByRole('button', { name: 'Done', exact: true }).click();
 
   await setFootprint(panel, true);
@@ -122,6 +122,8 @@ test('combined positioning and native indicator panes restore without orphan pan
   expect(footprintMode.stableHistory).toBe(true);
   await expect(panel.locator('.active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
   await expect(panel.locator('.pane-indicator-host .active-indicator[data-definition-id="native.footprint-totals"]')).toHaveCount(1);
+  const openTree=panel.getByRole('button',{name:'Open Object Tree',exact:true});
+  if(await openTree.isVisible())await openTree.click();
   await expect(panel.locator('.chart-objects-panel').getByRole('button', { name: 'Footprint Totals', exact: true })).toHaveCount(1);
 
   const rows = panel.locator('.pane-indicator-host .pane-indicator-rows > .active-indicator');

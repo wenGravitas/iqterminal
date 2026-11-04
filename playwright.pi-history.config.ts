@@ -1,2 +1,2 @@
 import {defineConfig} from '@playwright/test';
-export default defineConfig({testDir:'tests/browser',testMatch:'footprint-history-lifecycle.spec.ts',workers:1,timeout:45000,use:{baseURL:'http://127.0.0.1:4181',viewport:{width:1600,height:1000},launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},reporter:'list'});
+export default defineConfig({testDir:'tests/browser',testMatch:['footprint-history-lifecycle.spec.ts','pane-visibility-lifecycle.spec.ts'],workers:1,timeout:45000,use:{baseURL:'http://127.0.0.1:4181',viewport:{width:1600,height:1000},launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},reporter:'list'});
