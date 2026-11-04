@@ -164,7 +164,16 @@ export class OrderWallsArchiveService {
     const nextViewport = { from, to, followLive: followLive ?? to >= this.now() - 60_000 };
     const previousViewport = sub.viewport;
     sub.viewport = nextViewport;
-    if (from >= sub.request.from && to <= sub.request.to) { sub.pendingViewport = undefined; return; }
+    if (from >= sub.request.from && to <= sub.request.to) {
+      // The initial native-candle range can be much wider than a restored/panned
+      // view. Do not replay hours of offscreen prefixes before useful content.
+      const loading=sub.historyJob&&!sub.historyJob.settled;
+      const beforeVisible=(sub.historyStatus?.archive?.loadedThrough??sub.request.from)<from;
+      if(loading&&beforeVisible&&to-from<(sub.request.to-sub.request.from)*.75){
+        this.subscribe(id,{...sub.request,...nextViewport});return;
+      }
+      sub.pendingViewport = undefined; return;
+    }
     if (canCoalesceLiveViewport(previousViewport, nextViewport)) {
       sub.pendingViewport = nextViewport;
       if (sub.historyJob?.settled) this.tryStartPendingViewportHistory(sub);

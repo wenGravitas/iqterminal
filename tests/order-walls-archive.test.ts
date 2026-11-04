@@ -820,6 +820,20 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }
   });
 
+  it('cancels an offscreen initial prefix when a much narrower visible viewport arrives',async()=>{
+    const signals:AbortSignal[]=[];
+    const fetcher:any=(_url:unknown,init:any)=>{signals.push(init.signal);return new Promise((_resolve,reject)=>{init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});};
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to);
+    try{
+      service.subscribe('visible-priority',{market:'binance-spot',from,to:to+10000000,settings:request().settings,followLive:false});
+      for(let i=0;i<40;i++)await Promise.resolve();
+      service.updateViewport('visible-priority',from+(to-from)/2,to,false);
+      for(let i=0;i<40;i++)await Promise.resolve();
+      expect(signals[0]?.aborted).toBe(true);
+      expect(service.diagnostics().historyRequests).toBe(2);
+    }finally{service.dispose();}
+  });
+
   it('cancels a shared history fetch only for its last consumer and on service disposal', async () => {
     let finishShared!: (response: Response) => void, sharedSignal: AbortSignal | undefined;
     const sharedFetcher = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {
