@@ -284,7 +284,6 @@ export class StagingFeedService {
       } else {
         const source = footprintSource(marketOf(g.series));
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
-        const oldBars = g.bars;
         const bootstrapBars = data.bars as FootprintBar[];
         g.bars = boundedFootprintHistory([...bootstrapBars, ...g.bars.filter(bar => g.preparedTimes.has(bar.time))]); g.cursor = data.cursor ?? data.watermark; g.from = data.coverage?.from ?? from;
         g.liveSummaryVersions.clear(); g.quoteAvailable.clear();
@@ -305,11 +304,11 @@ export class StagingFeedService {
         const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
         const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
         g.lastStatus = status;
-        const snapshot = !oldBars.length || oldBars[0]?.time !== g.bars[0]?.time;
-        const previous = new Map(oldBars.map(b => [b.time, b]));
-        const changed = snapshot ? g.bars : g.bars.filter(b => JSON.stringify(previous.get(b.time)) !== JSON.stringify(b));
-        this.publish(g, { type: snapshot ? 'footprint-snapshot' : 'footprint-patch', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
-          bars: changed, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
+        // Authoritative bootstrap replaces the presentation atomically, including
+        // retained prepared bars. A live append would auto-follow and move a
+        // restored range even when this first forming bar is contiguous.
+        this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
+          bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
       }
       g.failures = 0; g.retryAt = 0; this.connect(g);
       if (g.rowPrice !== undefined && !this.usePrepared) {

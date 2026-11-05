@@ -59,10 +59,10 @@ test('a late native candle snapshot cannot move a restored 24h footprint range',
  await page.screenshot({path:'artifacts/pi-history-r1/late-native-24h-footprint.png'});
 });
 
-test('a delayed current bootstrap cannot expand a restored past footprint range',async({page,context})=>{
- const now=Date.now(),current=Math.floor(now/HOUR)*HOUR,end=current-24*HOUR,from=end-24*HOUR;
+for(const future of [false,true])test(future?'a delayed current bootstrap retains five closed bars and future whitespace':'a delayed current bootstrap cannot expand a restored past footprint range',async({page,context})=>{
+ const now=Date.now(),current=Math.floor(now/HOUR)*HOUR,end=current-(future?0:24)*HOUR,from=end-(future?5:24)*HOUR,to=future?current+3*HOUR:end;
  let releaseCurrent!:()=>void;const gate=new Promise<void>(resolve=>releaseCurrent=resolve);
- await context.addInitScript(({from,to})=>{const id='chart-delayed-current',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,historyViewport:{from,to},studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));},{from,to:end});
+ await context.addInitScript(({from,to})=>{const id='chart-delayed-current',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,historyViewport:{from,to},studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));},{from,to});
  await context.routeWebSocket('**/market-data/v1/stream',socket=>socket.onMessage(()=>{}));
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
@@ -72,10 +72,10 @@ test('a delayed current bootstrap cannot expand a restored past footprint range'
   return json({version:1,cursor:0,watches:[],events:[]});
  });
  await page.goto('/');
- await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-delayed-current');return p?.engine.footprintPaintDiagnostics()?.times.length??0;})).toBe(24);
+ await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-delayed-current');return p?.engine.footprintPaintDiagnostics()?.times.length??0;})).toBe(future?5:24);
  const view=()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-current').engine.visibleTimeRange());
- expect(await view()).toEqual({from:from/1000,to:end/1000});releaseCurrent();
+ expect(await view()).toEqual({from:from/1000,to:to/1000});releaseCurrent();
  await expect.poll(()=>page.evaluate(current=>(window as any).__terminal.panels.get('chart-delayed-current').footprintBars.some((bar:any)=>bar.time===current/1000),current)).toBe(true);
- expect(await view()).toEqual({from:from/1000,to:end/1000});
- await page.screenshot({path:'artifacts/pi-history-r1/late-current-24h-footprint.png'});
+ expect(await view()).toEqual({from:from/1000,to:to/1000});
+ await page.screenshot({path:`artifacts/pi-history-r1/late-current-${future?'future-whitespace':'24h'}-footprint.png`});
 });
