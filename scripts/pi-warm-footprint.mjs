@@ -7,7 +7,7 @@ const params={venue:'binance',market:'perpetual',interval:'1h',type:'footprint',
 const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Warm footprint',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
 const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
 try{for(let run=1;run<=Number(process.env.IQ_BENCH_SAMPLES??5);run++){
- const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage();await routeTestBrowser();let error,coldReady=false,measurement;
+ const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.theme.v1',value:'dark'},{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage();await routeTestBrowser();let error,coldReady=false,measurement;
  try{
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});
   await page.waitForFunction(({id,range})=>{const p=window.__terminal?.panels.get(id),paint=p?.engine.footprintPaintDiagnostics();return p?.footprintStatus.history?.validated&&paint&&Array.from({length:24},(_,i)=>range.from/1000+i*3600).every(t=>paint.times.includes(t));},{id,range},{timeout:12000});coldReady=true;

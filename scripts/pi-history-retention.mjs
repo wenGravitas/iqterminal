@@ -4,6 +4,7 @@ import {routeTestBrowser} from './test-browser-workspace.mjs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',end=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end;
 const output=`${dir}/${process.env.IQ_BENCH_LABEL??'retention-cycles'}.jsonl`;writeFileSync(output,'');
 const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']}),context=await browser.newContext({viewport:{width:1920,height:1080}}),page=await context.newPage();await routeTestBrowser();
+await page.addInitScript(()=>localStorage.setItem('basis.theme.v1','dark'));
 const root=await browser.newBrowserCDPSession();let sequence=0;
 async function targetCommand(sessionId,method){const id=++sequence;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{root.off('Target.receivedMessageFromTarget',receive);reject(Error('Worker CDP observation expired'));},5000);function receive(event){if(event.sessionId!==sessionId)return;const message=JSON.parse(event.message);if(message.id!==id)return;clearTimeout(timer);root.off('Target.receivedMessageFromTarget',receive);message.error?reject(Error(message.error.message)):resolve(message.result);}
  root.on('Target.receivedMessageFromTarget',receive);root.send('Target.sendMessageToTarget',{sessionId,message:JSON.stringify({id,method})}).catch(error=>{clearTimeout(timer);root.off('Target.receivedMessageFromTarget',receive);reject(error);});});}

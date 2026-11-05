@@ -13,7 +13,7 @@ try{for(const scenario of ['current-only','concurrent-history'])for(let run=1;ru
   try{const response=await fetch(`${base}/market-data/v1/order-walls/archive?${params}`,{signal:AbortSignal.timeout(15000)});custom={status:response.status,body:await response.json()};}catch(error){custom={error:String(error)};}
  }
  const id='chart-current-probe',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Current probe',params:{venue:'binance',market:'perpetual',interval:'5m',type:'candle',studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
- const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),failures=[];await routeTestBrowser();
+ const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.theme.v1',value:'dark'},{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),failures=[];await routeTestBrowser();
  context.on('requestfailed',r=>{if(r.url().includes('/market-data/'))failures.push({url:r.url(),error:r.failure()?.errorText});});
  const derivedBefore=await context.request.get(`${base}/market-data/v2/history/health`).then(r=>r.json()).catch(error=>({error:String(error)}));
  const sourceBefore=await context.request.get(`${base}/market-data/v1/health`).then(r=>r.json()).catch(error=>({error:String(error)}));
