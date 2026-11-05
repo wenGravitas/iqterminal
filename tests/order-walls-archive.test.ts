@@ -823,6 +823,31 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }
   });
 
+  it('uses the latest visible range when it arrives before the current bootstrap',async()=>{
+    let release!:(value:Response)=>void;
+    const urls:string[]=[],signals:AbortSignal[]=[];
+    const current={version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),
+      watermark:20,head:{cursor:20,at:to-1,epoch:1,valid:true,midpoint:'78016.00',bookScope:{bidComplete:true,askComplete:true}},
+      state:{bids:[candidate()],asks:[]},
+      page:{after:0,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',
+      coverage:{availableFrom:from-1000,confirmedTo:to-1,status:'complete',gaps:[]}};
+    const fetcher:any=(url:unknown,init:any)=>{urls.push(String(url));signals.push(init.signal);
+      if(String(url).includes('/current?'))return new Promise(resolve=>{release=resolve;});
+      return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));};
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to);
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('delayed-current',{market:'binance-spot',from:from-10000000,to,settings:request().settings,followLive:true});await flush();
+      service.updateViewport('delayed-current',from,to,false);
+      expect(signals[0].aborted).toBe(false);
+      release(new Response(JSON.stringify(current)));await flush();
+      const history=urls.filter(url=>url.includes('/archive?'));expect(history).toHaveLength(1);
+      expect(new URL(history[0],'http://localhost').searchParams.get('from')).toBe(String(from));
+      expect(new URL(history[0],'http://localhost').searchParams.get('to')).toBe(String(to));
+      expect(urls.filter(url=>url.includes('/current?'))).toHaveLength(1);
+    }finally{service.dispose();}
+  });
+
   it('cancels an offscreen initial prefix when a much narrower visible viewport arrives',async()=>{
     const signals:AbortSignal[]=[];
     const fetcher:any=(_url:unknown,init:any)=>{signals.push(init.signal);return new Promise((_resolve,reject)=>{init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});};
