@@ -33,7 +33,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private reference={min:0,max:0};
   private referenceDirty=true;
   private timeAtX?:(x:number)=>number;
-  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0};
+  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0};
   private durations:number[]=[];
 
   constructor(settings:OrderWallsSettings,intervalMs:number){this.settings={...settings};this.intervalMs=intervalMs;}
@@ -115,6 +115,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       this.reference={min:Number.isFinite(min)?min:0,max};this.referenceDirty=false;
     }
     this.stats.lastReferenceMs=performance.now()-referenceStarted;const paintStarted=performance.now();this.stats.strokes=0;
+    this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
     this.stats.draws++;this.stats.segments=this.segments.size;this.stats.visible=this.drawable.size;
     ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*dpr,rc.plotHeight*dpr);ctx.clip();
     ctx.globalAlpha=this.settings.opacity;ctx.lineWidth=this.settings.thicknessPx*dpr;ctx.lineCap='butt';ctx.setLineDash([]);
@@ -127,6 +128,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       group=undefined;
     };
     for(const line of this.drawable.values()){
+      if(line.segment.currentSelection)this.stats.visibleCurrent++;else if(line.segment.archiveEntryId)this.stats.visibleHistorical++;
       const style=this.lineStyle(line),color=style.color,right=Math.max(line.x+(line.segment.detectionMode==='top-levels'?1/dpr:1),line.right);
       if(group&&group.segmentId===line.segment.id&&group.epoch===line.segment.epoch&&group.side===line.segment.side&&
         group.color===color&&group.thickness===style.thickness&&group.to===line.from&&group.low===line.low&&group.high===line.high&&group.y===line.y&&line.x<=group.right){
