@@ -152,7 +152,7 @@ export class BinanceFootprintService {
   command(command: Extract<import('./protocol').Command, { type: `footprint-${string}` }>) {
     if (command.type === 'footprint-subscribe') this.subscribe(command.id, command.series, command.rowPrice);
     else if (command.type === 'footprint-unsubscribe') this.unsubscribe(command.id);
-    else if (command.type === 'footprint-retry') this.retry();
+    else if (command.type === 'footprint-retry' && (!command.id || this.clients.has(command.id))) this.retry();
     else if (command.type === 'footprint-ack') this.acknowledge(command.key, command.generation, command.batchId);
   }
 

@@ -90,3 +90,11 @@ it('rejects a cancelled metadata response after the last consumer closes and a n
   service.dispose();
   expect(vi.getTimerCount()).toBe(0);
 });
+
+it('ignores a scoped retry belonging to another direct feed',async()=>{
+ const {service,sockets}=setup();service.subscribe('owned',{venue:'binance',market:'perpetual',interval:'1m'},25);await vi.advanceTimersByTimeAsync(0);
+ const first=sockets[0];service.command({type:'footprint-retry',id:'another-market'});await vi.advanceTimersByTimeAsync(0);
+ expect(sockets).toHaveLength(1);expect(first.readyState).not.toBe(3);
+ service.command({type:'footprint-retry',id:'owned'});await vi.advanceTimersByTimeAsync(0);
+ expect(first.readyState).toBe(3);expect(sockets).toHaveLength(2);
+});

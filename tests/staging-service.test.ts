@@ -268,7 +268,7 @@ test('prepared hourly history renders before a delayed live bootstrap and remain
 
 test.each([undefined,'a'])('history retry (%s) retains healthy native/footprint sockets and acknowledged cursors',async(id)=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets,request}=await setup();
- request.mockImplementation(async(input:any)=>new Response(JSON.stringify(String(input).includes('native-candles')?{source:'binance-native-kline',candles:[]}:{...response(),bars:[{...bar,time:900,rowSize:50}]})));
+ request.mockImplementation(async(input?:any)=>new Response(JSON.stringify(String(input).includes('native-candles')?{source:'binance-native-kline',candles:[]}:{...response(),bars:[{...bar,time:900,rowSize:50}]})));
  service.command({type:'subscribe',id:'healthy-native',series});
  service.command({type:'footprint-subscribe',id:'healthy-footprint',series:{...series,interval:'5m'},rowPrice:50});await vi.advanceTimersByTimeAsync(0);
  const healthy=[...(service as any).groups.values()].filter((group:any)=>!group.ids.has('a')).map((group:any)=>({group,socket:group.ws,cursor:group.cursor}));
