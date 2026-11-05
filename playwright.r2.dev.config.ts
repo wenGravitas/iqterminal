@@ -10,7 +10,7 @@ export default defineConfig({
     baseURL,
     storageState: twoChartWorkspaceState(baseURL),
     viewport: { width: 1366, height: 768 },
-    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
+    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
   },
   webServer: { command: 'pnpm dev --host 127.0.0.1 --port 4176', url: baseURL, reuseExistingServer: false },
   reporter: [['list'], ['json', { outputFile: process.env.R2_DEV_RESULTS ?? 'artifacts/browser-results-r2-engine-dev.json' }]],

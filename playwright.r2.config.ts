@@ -10,7 +10,7 @@ export default defineConfig({
     baseURL,
     storageState: twoChartWorkspaceState(baseURL),
     viewport: { width: 1366, height: 768 },
-    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
+    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
   },
   // R2 fixture builds live outside `dist`, so normal builds never switch the
   // default product output into diagnostics mode.

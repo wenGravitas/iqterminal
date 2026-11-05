@@ -10,7 +10,7 @@ export default defineConfig({
     storageState: { cookies: [], origins: [] },
     viewport: { width: 1600, height: 1000 },
     deviceScaleFactor: 2,
-    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
+    launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
   },
   webServer: {
     command: 'VITE_DATA_MODE=staging VITE_DIAGNOSTICS=1 pnpm dev --host 127.0.0.1 --port 4176 --strictPort',

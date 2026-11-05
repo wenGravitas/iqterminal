@@ -18,7 +18,7 @@ export default defineConfig({
     storageState: twoChartWorkspaceState(baseURL),
     viewport: { width: 1920, height: 1080 },
     launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
-      args: ['--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--enable-precise-memory-info'] },
+      args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--enable-precise-memory-info'] },
   },
   reporter: 'list',
 });
