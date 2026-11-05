@@ -8,6 +8,7 @@
     "dev:staging": "VITE_DATA_MODE=staging vite --mode staging --host 127.0.0.1",
     "tunnel:staging": "bash scripts/staging-tunnel.sh",
     "build": "tsc --noEmit && vite build",
+    "build:staging:diagnostics": "VITE_DATA_MODE=staging VITE_HISTORY_TILES=1 VITE_DIAGNOSTICS=1 pnpm build --mode staging",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

@@ -1,0 +1,18 @@
+/** Real staging coverage/screenshots. No fixture data or fake clock. */
+import {chromium} from '@playwright/test';
+import {readFileSync,writeFileSync} from 'node:fs';
+const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',fixed=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end;
+const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles']});
+const rows=[];
+try{for(const scenario of ['five-closed-plus-forming','spot-4h-5m']){
+ const current=Math.floor(Date.now()/3600000)*3600000,spot=scenario.startsWith('spot'),step=spot?300000:3600000,range=spot?{from:fixed-4*3600000,to:fixed}:{from:current-5*3600000,to:current+3*3600000},eligible={from:range.from,to:spot?range.to:current},id='chart-coverage';
+ const params={venue:'binance',market:spot?'spot':'perpetual',interval:spot?'5m':'1h',type:'footprint',rowPrice:25,historyViewport:range,studies:[]};
+ const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Coverage',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
+ const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),requests=[];let error,recovery;
+ page.on('response',r=>{if(r.url().includes('footprint'))requests.push({url:r.url(),status:r.status()});});
+ try{await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});
+ if(process.env.IQ_COVERAGE_RETRY==='1'){await page.waitForFunction(id=>window.__terminal?.panels.get(id)?.footprintStatus?.state==='failed',id,{timeout:12000}).catch(()=>{});const failed=await page.evaluate(id=>{const p=window.__terminal?.panels.get(id);return p?.footprintStatus?.state==='failed'?{state:p.footprintStatus.state,message:p.footprintStatus.message}:null;},id);if(failed){recovery={before:failed,action:'one explicit user-facing Retry market data click'};await page.getByRole('button',{name:'Retry market data',exact:true}).click();}}
+ await page.waitForFunction(({id,eligible,step,current,spot})=>{const p=window.__terminal?.panels.get(id),times=p?.engine.footprintPaintDiagnostics()?.times??[];return p?.footprintStatus?.history?.validated&&Array.from({length:(eligible.to-eligible.from)/step},(_,i)=>eligible.from/1000+i*step/1000).every(t=>times.includes(t))&&(spot||times.includes(current/1000));},{id,eligible,step,current,spot},{timeout:30000});}catch(e){error=String(e);}
+ const measured=await page.evaluate(id=>{const p=window.__terminal?.panels.get(id);return p?{status:p.footprintStatus,paint:p.engine.footprintPaintDiagnostics(),viewport:p.engine.visibleTimeRange(),renderer:p.diagnostics().renderer}:null;},id);
+ await page.screenshot({path:`${dir}/real-${scenario}.png`}).catch(()=>{});rows.push({scenario,build:process.env.IQ_BENCH_BUILD,backend:process.env.IQ_BENCH_BACKEND,requested:range,eligible,expectedClosed:(eligible.to-eligible.from)/step,expectedForming:spot?null:current,measured,requests,error,recovery,scope:'real source coverage; 30s observation is not interactive latency acceptance'});console.log(JSON.stringify({scenario,closed:(eligible.to-eligible.from)/step,painted:measured?.paint?.times?.length,error}));await context.close();
+}}finally{await browser.close();writeFileSync(`${dir}/real-footprint-coverage.json`,JSON.stringify(rows,null,2)+'\n');}
