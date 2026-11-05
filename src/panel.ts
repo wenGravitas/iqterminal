@@ -926,7 +926,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
-    this.retry.addEventListener('click', () => this.footprintDataWanted() && (this.footprintStatus.history?.error || this.selection.type === 'footprint') ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
+    this.retry.addEventListener('click', () => this.footprintDataWanted() && (this.footprintStatus.history?.error || ['failed', 'stale'].includes(this.footprintStatus.state) || this.selection.type === 'footprint') ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
@@ -5824,7 +5824,8 @@ export class CandlePanel implements IContentRenderer {
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
     this.statusNode.dataset.quoteAvailability = quoteUnavailable ? 'unavailable' : 'available';
-    const showRetry = status.state === 'failed' || status.state === 'stale' || Boolean(history?.error);
+    const showRetry = status.state === 'failed' || status.state === 'stale' || Boolean(history?.error)
+      || Boolean(totalsLive && ['failed', 'stale'].includes(this.footprintStatus.state));
     if (this.statusText.parentElement !== this.statusNode || (this.retry.parentElement === this.statusNode) !== showRetry) {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }
