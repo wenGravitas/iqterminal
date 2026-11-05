@@ -282,7 +282,8 @@ workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
   restore: layout => { const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
-const releaseInitial=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,workspaceManager.active.layout,chartConfig):()=>{};
+let releaseInitial=()=>{};
+if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixture){try{releaseInitial=startVisibleChartFeeds(feed,workspaceManager.active.layout,chartConfig);}catch{/* WorkspaceManager retains the authoritative fallback/error path. */}}
 try {
   // Let worker creation and its queued reads begin before synchronous chart DOM.
   if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixture)await new Promise<void>(resolve=>setTimeout(resolve,0));
