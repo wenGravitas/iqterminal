@@ -14,6 +14,34 @@
       "medianMs": 5031.8,
       "maximumMs": 5914.7,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 5000,
@@ -115,6 +143,34 @@
       "medianMs": 5831.7,
       "maximumMs": 7501.7,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 5000,
@@ -216,6 +272,34 @@
       "medianMs": null,
       "maximumMs": null,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 5000,
@@ -356,6 +440,34 @@
       "medianMs": null,
       "maximumMs": null,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 5000,
@@ -495,6 +607,34 @@
       "medianMs": null,
       "maximumMs": null,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 2000,
@@ -596,6 +736,34 @@
       "medianMs": null,
       "maximumMs": null,
       "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7aa7c9aa3da210610e291dcba2262b937e744c5e"
+        }
+      ],
       "gate": "FAIL",
       "limitsMs": {
         "median": 2000,

@@ -6,6 +6,13 @@ const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',end=JSON.parse(
 const output=`${dir}/${process.env.IQ_BENCH_LABEL??'current-concurrency'}.jsonl`;writeFileSync(output,'');
 const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
 let custom;
+async function health(context,path){
+ const start=performance.now();let probe;
+ try{const response=await context.request.get(`${base}/market-data${path}`,{timeout:12000}),text=await response.text();
+  probe={status:response.status(),headers:response.headers(),elapsedMs:performance.now()-start,decodedBytes:Buffer.byteLength(text)};
+  const body=JSON.parse(text);return response.ok()?{...body,_probe:probe}:{error:`Health HTTP ${response.status()}`,body,_probe:probe};
+ }catch(error){return {error:String(error),_probe:probe??{elapsedMs:performance.now()-start}};}
+}
 try{for(const scenario of ['current-only','concurrent-history'])for(let run=1;run<=Number(process.env.IQ_BENCH_SAMPLES??5);run++){
  if(scenario==='concurrent-history'&&!custom){
   const profile='binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1';
@@ -15,8 +22,8 @@ try{for(const scenario of ['current-only','concurrent-history'])for(let run=1;ru
  const id='chart-current-probe',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Current probe',params:{venue:'binance',market:'perpetual',interval:'5m',type:'candle',studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.theme.v1',value:'dark'},{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),failures=[];await routeTestBrowser();
  context.on('requestfailed',r=>{if(r.url().includes('/market-data/'))failures.push({url:r.url(),error:r.failure()?.errorText});});
- const derivedBefore=await context.request.get(`${base}/market-data/v2/history/health`).then(r=>r.json()).catch(error=>({error:String(error)}));
- const sourceBefore=await context.request.get(`${base}/market-data/v1/health`).then(r=>r.json()).catch(error=>({error:String(error)}));
+ const derivedBefore=await health(context,'/v2/history/health');
+ const sourceBefore=await health(context,'/v1/health');
  let error;
  try{
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});await page.waitForFunction(()=>window.__terminal?.panels.has('chart-current-probe'),null,{timeout:15000});
@@ -45,8 +52,8 @@ try{for(const scenario of ['current-only','concurrent-history'])for(let run=1;ru
   const p=window.__probe;if(!p)return null;const now=performance.now(),times=[p.observeStart??p.started,...p.updates.map(e=>e.at),now],gaps=times.slice(1).map((t,i)=>t-times[i]);
   return {...p,now,bootstrapMs:p.firstAt===null?null:p.firstAt-p.started,maxReceiveGapMs:Math.max(...gaps),heap:performance.memory?.usedJSHeapSize,diagnostics:window.__terminal.feed.diagnostics,panels:[...window.__terminal.panels.values()].map(p=>({id:p.params.api.id,footprint:p.diagnostics().footprint,renderer:p.diagnostics().renderer}))};
  }).catch(()=>null);
- const derivedAfter=await context.request.get(`${base}/market-data/v2/history/health`).then(r=>r.json()).catch(error=>({error:String(error)}));
- const sourceAfter=await context.request.get(`${base}/market-data/v1/health`).then(r=>r.json()).catch(e=>({error:String(e)}));
+ const derivedAfter=await health(context,'/v2/history/health');
+ const sourceAfter=await health(context,'/v1/health');
  await page.screenshot({path:`${dir}/${process.env.IQ_BENCH_LABEL??'concurrency'}-${scenario}-${run}.png`}).catch(()=>{});
  await page.evaluate(()=>{window.__probeRelease?.();for(const panel of [...window.__terminal.dock.panels])if(panel.id!=='chart-current-probe')window.__terminal.dock.removePanel(panel);window.__terminal.feed.send({type:'diagnostics'});}).catch(()=>{});await page.waitForTimeout(250);
  const released=await page.evaluate(()=>window.__terminal.feed.diagnostics).catch(()=>null);

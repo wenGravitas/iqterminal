@@ -8,12 +8,14 @@ report=[]
 for name,samples in groups.items():
  field='firstCurrentAt' if name.startswith('current-') else 'completeAt'
  values=[(r.get('paintMarks')or{}).get(field) for r in samples]
- good=all(v is not None for v in values) and len(values)>=5
+ environments=[(r.get('diagnostics')or{}).get('staging',{}).get('config',{}) for r in samples]
+ environmentVerified=all(c.get('dataMode')=='staging' and c.get('historyTiles') is True and c.get('build')==r.get('build') and (r.get('diagnostics')or{}).get('fixture') is False for c,r in zip(environments,samples))
+ good=all(v is not None for v in values) and len(values)>=5 and environmentVerified
  median=statistics.median(values) if good else None
  maximum=max(values) if good else None
  medLimit,maxLimit=(2000,3000) if name.startswith('current-') else (5000,10000)
  first=[(r.get('paintMarks')or{}).get('firstHistoryAt') for r in samples]
- result={'case':name,'samplesMs':values,'medianMs':median,'maximumMs':maximum,'sampleCount':len(samples),'gate':'PASS' if good and median<=medLimit and maximum<=maxLimit else 'FAIL','limitsMs':{'median':medLimit,'maximum':maxLimit},'firstHistoricalPaintMs':first,
+ result={'case':name,'samplesMs':values,'medianMs':median,'maximumMs':maximum,'sampleCount':len(samples),'environmentVerified':environmentVerified,'environments':environments,'gate':'PASS' if good and median<=medLimit and maximum<=maxLimit else 'FAIL','limitsMs':{'median':medLimit,'maximum':maxLimit},'firstHistoricalPaintMs':first,
  'firstHistory3sGate':('PASS' if len(first)>=5 and all(v is not None and v<=3000 for v in first) else 'FAIL') if name.startswith('walls-') else None,
  'builds':sorted(set(r.get('build','unknown') for r in samples)),
  'coverage':[{'run':r['run'],'requested':r['requested'],'viewport':(r.get('last')or{}).get('viewport'),'paintedClosedBars':len([t for t in ((r.get('last')or{}).get('footprint',{}).get('paint')or{}).get('times',[]) if r['requested']['from']/1000<=t<r['requested']['to']/1000]),

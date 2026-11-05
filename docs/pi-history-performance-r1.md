@@ -174,3 +174,90 @@ scoped Retry for that state. Its browser regression fails before the fix and
 passes afterward, checks exactly one explicit current-job retry, retains good
 closed bars, clears the recovered failure, and verifies native candles are not
 reloaded. This is separate from the preceding frozen-build loading samples.
+
+## Recovery validation on backend 34d7939
+
+The client now preserves a Retry queued behind an in-flight ordinary bootstrap
+request; only a request that actually carried `retry=1` can acknowledge that
+intent. The focused regression fails before `6f6b931` and passes afterward.
+Twenty-nine focused client tests and typecheck pass. The full client suite
+subsequently passed **1,020 tests**, with two skipped. The eight headless browser
+lifecycle checks passed before the final in-flight race repair; its separate
+unit and actual-source checks cover that subsequent change.
+
+Backend `34d7939b75e3505726b2f5279c8db27335567a33` passed all **186 tests**,
+typecheck and build in its guarded staging rollout. Collector identities/start
+times were unchanged. Current preparation now uses the reserved current SQL
+lane. Bootstrap readiness requires the requested forming candle and a tail no
+larger than 10,000 execution IDs / 5 seconds of durable source time. An older
+ready snapshot remains internal while the resumable worker catches up; the API
+reports building rather than sending the client through whole-hour raw replay.
+A failed job remains explicitly unavailable until Retry.
+
+The bounded default-readiness probe resumed each failed Spot default once;
+all four configurations were ready after 5.140s. This is a recovery observation,
+not a <=2s prepared-current latency result. On frontend
+`def42d89b009bbfe8747bfb9011879f2ca866635`, the actual-source hourly screenshot
+and `ready-34d7939-footprint-coverage.json` show **five closed bars plus the
+forming bar**, with three future hours preserved. Earlier failures and the
+successful 5m/Spot observations remain in separate raw recovery artifacts.
+
+## Identical pinned route comparison
+
+`pinned-routes-34d7939.jsonl` contains five samples per route for the same
+manifest watermark, continuation cursor, profile and 30h source window. All 15
+financial response hashes match. Raw compressed bodies and headers are retained
+under `pinned-routes-34d7939/`; only mutable `profileStatus` is excluded from the
+financial hash. The batch is about 81,146 compressed / 1,974,445 decoded bytes.
+
+| Route | Every curl total, ms | Median | Maximum |
+|---|---|---:|---:|
+| Staging loopback | 646.004, 878.529, 769.215, 1038.539, 775.785 | 775.785 | 1038.539 |
+| Existing Pi SSH tunnel | 1702.243, 2055.587, 4168.614, 2499.848, 16770.283 | 2499.848 | 16770.283 |
+| Vite production preview proxy | 6858.008, 2947.124, 2186.724, 2065.344, 3574.077 | 2947.124 | 6858.008 |
+
+SSH process overhead and server timing headers are separate fields, not added
+exclusive phases. The requests are sequential route groups rather than a
+randomized causal experiment; changing admission/background conditions remain
+visible in the raw headers. A separate read-only Tailscale path probe measured
+RTTs of 524, 578, 510, 440 and 324ms, with SSH compression disabled. No network
+settings were changed. These results prove a substantial and variable route
+cost; they do not attribute every delay to a specific network component.
+
+## Current continuity under historical load
+
+`concurrency-34d7939.jsonl` retains all five current-only client runs and five
+runs with two historical footprint charts, canceled/panned viewports and a
+newly admitted 3% custom wall profile. Actual worker flags/builds are recorded.
+The pre-existing 2% custom profile was also backfilling during the baseline, so
+this is not a server-idle comparison. The added 3% profile is explicitly
+backfilling and advances in materializer health, rather than being a cache hit.
+
+| Client scenario | Every maximum receive gap over its 10s observation, ms | Median | Maximum |
+|---|---|---:|---:|
+| Current-only | 3174.4, 3616.3, 2549.6, 2125.9, 1418.3 | 2549.6 | 3616.3 |
+| Two history charts + added custom profile | 2905.2, 3826.7, 4622.6, 6364.9, 3013.1 | 3826.7 | 6364.9 |
+
+No current request timeout was recorded. All ten disposals returned historical
+scheduler activity to zero while retaining the intended native current chart.
+Collector execution recoveries stayed at 243, depth reconnects at 155; there
+were zero collector error log entries during the measured interval. One
+baseline health response could not be parsed as JSON; its HTTP status was not
+captured by that probe version, so the cause remains unproven. The probe now
+retains status, headers, bytes and elapsed time for health-read failures.
+
+The continuity gate remains **FAIL / not certified**: confirmation gaps worsened
+under the combined workload, and this evidence does not isolate the cause.
+The after-run server sample shows the perpetual materializer at 44.5% CPU
+against its 0.5-CPU limit, versus ClickHouse at 55.33% CPU in that snapshot.
+This is one resource sample, not a complete per-run CPU profile. Materializer
+health reports several seconds of current-source age while default/custom
+lanes share its process. A controlled comparison with identical background
+profiles and further serving/materializer profiling remain required.
+
+Five warm-footprint attempts are preserved in `warm-34d7939.jsonl`. Three
+completed their cold setup and painted all 24 cached bars after 469.1, 861.2 and
+594.4ms; independent revision validation followed after 1873.5, 3119.8 and
+4517.7ms. Two cold setups exceeded their 12s observation and never established
+a warm precondition. No five-sample warm gate is claimed from those three
+successes. Wall warm-revisit acceptance remains unmeasured.
