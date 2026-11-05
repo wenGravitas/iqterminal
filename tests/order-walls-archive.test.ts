@@ -1236,3 +1236,14 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     expect(status.archive.gapsTruncated).toBeUndefined();
   });
 });
+
+
+it('holds shared history admission until wall response bodies finish',async()=>{
+ const bodies:ReadableStreamDefaultController<Uint8Array>[]=[],aborts=Array.from({length:3},()=>new AbortController());
+ const fetcher:any=async()=>new Response(new ReadableStream<Uint8Array>({start(controller){bodies.push(controller);}}));
+ const work=aborts.map((abort,index)=>loadOrderWallsArchive({request:request({from:from+index*60000,to:to+index*60000}),signal:abort.signal,fetcher}).catch(()=>undefined));
+ try{
+  for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(2);
+  bodies[0]!.close();for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(3);
+ }finally{for(const abort of aborts)abort.abort();for(const body of bodies)try{body.close();}catch{}await Promise.allSettled(work);}
+});

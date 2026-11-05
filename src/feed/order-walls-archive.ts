@@ -365,8 +365,8 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   const pageLimit = Math.max(1, Math.min(ORDER_WALL_ARCHIVE_PAGE_LIMIT, Math.floor(options.pageLimit ?? ORDER_WALL_ARCHIVE_PAGE_LIMIT)));
   const signal = options.signal;
   const viewId = historyViewId();
-  const scheduledFetcher: typeof fetch = (input, init) => historyScheduler.read(String(input), 'order-walls',
-    init?.signal ?? signal ?? new AbortController().signal, upstream => fetcher(input, {...init, signal: upstream, headers: {...init?.headers, 'X-IQ-View-Id': viewId}}));
+  const correlatedFetcher: typeof fetch = (input, init) => fetcher(input, {...init,headers:{...init?.headers,'X-IQ-View-Id':viewId}});
+  const consumerSignal=signal??new AbortController().signal;
   const prior = options.resume;
   const projector = prior?.projector ?? options.initialProjector ?? new OrderWallsArchiveProjector(settings, queryFrom, request.to);
   let after = prior?.after ?? request.after ?? 0, watermark: number | undefined = prior?.watermark ?? request.watermark,
@@ -403,7 +403,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     if (import.meta.env.VITE_HISTORY_TILES === '1') params.set('display', '1');
     const url = `/market-data/v1/order-walls/archive?${params}`;
     let fetched: Awaited<ReturnType<typeof fetchArchivePageWithRetry>>;
-    try { fetched = await fetchArchivePageWithRetry(scheduledFetcher, url, after, signal); }
+    try { fetched = await historyScheduler.read(url,'order-walls',consumerSignal,upstream=>fetchArchivePageWithRetry(correlatedFetcher,url,after,upstream)); }
     catch (error) {
       if (signal?.aborted) throw abortError();
       if (!(error instanceof OrderWallsArchivePageRequestError)) throw error;
