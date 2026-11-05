@@ -821,7 +821,7 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params, true);
-    this.footprintRestoreView = this.selection.historyViewport;
+    this.footprintRestoreView = this.selection.type==='footprint'?this.selection.historyViewport:undefined;
     if (this.tradingController) {
       const release = this.tradingController.subscribe(() => this.syncTradingOverlay(), this.abort.signal);
       this.subscriptions.push({ dispose: release });
@@ -5123,7 +5123,7 @@ export class CandlePanel implements IContentRenderer {
       nextSelection = config({ ...nextSelection, indicators });
     }
     this.selection = nextSelection;
-    this.footprintRestoreView = this.selection.historyViewport;
+    this.footprintRestoreView = this.selection.type==='footprint'?this.selection.historyViewport:undefined;
     this.syncTradingOverlay();
     this.cancelWatchPick?.();this.setWatchZones(this.watchList);
     this.params.api.updateParameters(this.selection);
