@@ -1,3 +1,4 @@
+import {startVisibleChartFeeds} from './feed/restore-bootstrap';
 import { WorkspaceManager, browserWorkspaceStorage } from './workspaces/manager';
 import { bindWorkspacePanelStorage } from './workspaces/panel-storage';
 import { TerminalFooter } from './workspaces/footer';
@@ -19,7 +20,7 @@ import { TradeTickerPanel } from './ticker/panel';
 import { TickerExecutionHoverCoordinator } from './ticker/hover';
 import { FeedClient } from './feed/client';
 import { Scheduler } from './chart/scheduler';
-import { CandlePanel, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
+import { CandlePanel, config as chartConfig, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
 import { LazyScriptEditorPanel } from './scripts/editor-loader';
 import { ScriptLibrary } from './scripts/library';
 import { TabCycleHeaderAction } from './tab-cycler';
@@ -278,7 +279,7 @@ dock = createDockview(root, {
 workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
   capture: () => dock.toJSON(),
   cancelPending: () => { clearTimeout(saveTimer); saveTimer = undefined; },
-  restore: layout => { dock.clear(); editor = undefined; watchPanel = undefined; tradingPanel = undefined; dock.fromJSON(layout); },
+  restore: layout => { const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
 workspaceManager.start();

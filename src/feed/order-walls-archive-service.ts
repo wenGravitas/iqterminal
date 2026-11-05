@@ -28,6 +28,7 @@ import {
 } from './order-walls-archive';
 
 export interface OrderWallsArchiveSubscriptionRequest extends OrderWallsArchiveRequest {
+  currentOnly?:boolean;
   followLive?: boolean;
 }
 
@@ -433,6 +434,7 @@ export class OrderWallsArchiveService {
     requestOverride?: OrderWallsArchiveRequest, initialProjector?: OrderWallsArchiveProjector, carryHistory = false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.archiveStarted) return;
     sub.archiveStarted = true;
+    if(sub.request.currentOnly)return;
     sub.historyFence = fence ? { cursor: fence.cursor, at: fence.at, epoch: fence.epoch } : undefined;
     const fenceState = fence ? sub.group?.projector?.selectedState() : undefined;
     sub.historyFenceState = fence && fenceState && sameProjectorHead(fenceState, fence) ? copySelectedState(fenceState) : undefined;

@@ -99,6 +99,8 @@ export function orderWallMarket(series: Pick<Series, 'venue' | 'market'>): Order
 }
 
 export interface OrderWallRequest {
+  /** Internal startup consumer; current group only, no archive work. */
+  currentOnly?:boolean;
   market: OrderWallMarket;
   from: number;
   to: number;

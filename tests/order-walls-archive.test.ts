@@ -790,8 +790,11 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     const flush = async () => { for (let index = 0; index < 80; index++) await Promise.resolve(); };
     try {
       const subscription = { market: 'binance-spot' as const, from, to, settings: request().settings, followLive: true };
+      service.subscribe('restore-current', {...subscription,currentOnly:true});await flush();
+      expect(fetcher.mock.calls.filter(([url])=>String(url).includes('/archive?'))).toHaveLength(0);
+      expect(fetcher.mock.calls.filter(([url])=>String(url).includes('/current?'))).toHaveLength(1);
       service.subscribe('shared-one', subscription);
-      service.subscribe('shared-two', subscription);
+      service.subscribe('shared-two', subscription);service.unsubscribe('restore-current');
       await flush();
 
       const diagnostics = service.diagnostics();
