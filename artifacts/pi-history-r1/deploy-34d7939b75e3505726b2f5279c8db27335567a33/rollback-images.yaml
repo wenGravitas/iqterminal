@@ -1,0 +1,10 @@
+services:
+  app:
+    image: iqterminal-perf-rollback:34d7939b75e3-app
+    pull_policy: never
+  materializer:
+    image: iqterminal-perf-rollback:34d7939b75e3-materializer
+    pull_policy: never
+  spot-materializer:
+    image: iqterminal-perf-rollback:34d7939b75e3-spot-materializer
+    pull_policy: never

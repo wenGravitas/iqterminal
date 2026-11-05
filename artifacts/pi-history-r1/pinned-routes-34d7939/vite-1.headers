@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+vary: Accept-Encoding
+x-iq-request-id: bb3365cf-6143-4f00-b62d-27e60eb5da99
+x-iq-view-id: vite-1
+content-type: application/json
+cache-control: no-store
+content-length: 81146
+x-iq-db-queries: 8
+x-iq-db-read-rows: 1864682
+x-iq-db-read-bytes: 125848206
+x-iq-decoded-bytes: 1974445
+server-timing: db;dur=943.47, sqlqueue;dur=711.25, dbdecode;dur=7.91, materializer;dur=974.37, legacy;dur=1551.52
+content-encoding: gzip
+date: Thu, 05 Nov 2026 12:55:43 GMT
+connection: keep-alive
+keep-alive: timeout=5
+
