@@ -1,6 +1,7 @@
 export interface HistoryRequestTrace {
  id:string;url:string;eligibleAt:number;wireAt:number;headersAt?:number;receivedAt?:number;decodedAt?:number;
  queueMs:number;headerMs?:number;transferMs?:number;decodeMs?:number;encodedBytes?:number;decodedBytes?:number;
+ jobs?:Array<{id:string;lastQueryId?:string;queuePosition?:number|null;pages?:number;records?:number;category?:string;retryable?:boolean}>;
  requestId?:string;serverTiming?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;slots?:number;state?:string;error?:string;
 }
 const sessionId=crypto.randomUUID();
@@ -22,6 +23,7 @@ export async function tracedHistoryJson(request:typeof fetch,url:string,signal:A
   trace.decodedBytes=new TextEncoder().encode(text).byteLength;
   const result=JSON.parse(text);trace.decodedAt=performance.now();trace.decodeMs=trace.decodedAt-trace.receivedAt;
   trace.slots=result.tiles?.length;trace.state=result.state;
+  if(Array.isArray(result.jobs))trace.jobs=result.jobs.slice(0,32).map((job:any)=>({id:job.id,lastQueryId:job.lastQueryId,queuePosition:job.queuePosition,pages:job.pages,records:job.records,category:job.category,retryable:job.retryable}));
   if(!response.ok)throw Error(result.error??`History HTTP ${response.status}`);
   return result;
  }catch(error){trace.error=error instanceof Error?error.message:String(error);throw error;}

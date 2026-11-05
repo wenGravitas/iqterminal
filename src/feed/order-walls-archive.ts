@@ -252,6 +252,7 @@ export interface OrderWallsArchiveLoadOptions {
 }
 
 export interface OrderWallsArchivePageMetrics {
+  viewId?:string;requestId?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;encodedBytes?:number;
   requestedAfter: number;
   pageAfter: number;
   nextAfter: number;
@@ -507,7 +508,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       eventLoopYieldDelayMs = performance.now() - yieldStartedAt;
       batchPages = 0; batchBytes = 0; batchStartedAt = performance.now();
     }
-    options.onPageMetrics?.({ requestedAfter, pageAfter: page.page.after, nextAfter: page.page.nextAfter,
+    options.onPageMetrics?.({viewId,requestId:response.headers.get('x-iq-request-id')??undefined,dbQueries:Number(response.headers.get('x-iq-db-queries')??0),dbReadRows:Number(response.headers.get('x-iq-db-read-rows')??0),dbReadBytes:Number(response.headers.get('x-iq-db-read-bytes')??0),encodedBytes:Number(response.headers.get('content-length')??0), requestedAfter, pageAfter: page.page.after, nextAfter: page.page.nextAfter,
       patchCount: page.patches.length, responseBytes: pageBytes, responseHeadersMs, responseBodyReadMs,
       jsonParseMs, validationMs, projectorApplyMs, updateCallbackMs, eventLoopYieldDelayMs, attempts });
     if (!page.page.hasMore) return { kind: 'snapshot', segments: projector.snapshot(), status, watermark, head: watermarkHead, cursor: page.page.nextAfter, pages, bytes, projector };

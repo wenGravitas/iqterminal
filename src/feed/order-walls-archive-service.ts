@@ -243,6 +243,7 @@ export class OrderWallsArchiveService {
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: [...this.groups.values()].reduce((sum, group) => sum + group.pages.length, 0),
       ringBytes: [...this.groups.values()].reduce((sum, group) => sum + group.ringBytes, 0),
+      recentHistoryRequests:this.historyPageMetrics.slice(-16),
       historyPageTiming: summarizeArchivePageTimings(this.historyPageMetrics, this.historyPageMetricCount) };
   }
 
