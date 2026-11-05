@@ -129,3 +129,48 @@ the financial response hash across five samples per route. Mutable profile job
 status is excluded from that hash; its full raw response remains available.
 Curl durations and SSH process overhead are separate; no clocks from different
 hosts are subtracted and overlapping phases are not added together.
+
+
+## Latest frozen-build loading samples (5 November)
+
+`nov5-e13-7aa-samples.jsonl` and `nov5-e13-7aa-gates.json` record all 30
+normal Chromium runs: frontend `7aa7c9aa3da210610e291dcba2262b937e744c5e`,
+backend `e13ae472d105fa65b5e7919139a1cead685634fa`, actual Pi / split SSH /
+Vite production preview. All seven prepared closed-history requests were ready
+before loading (`nov5-e13-ready-preflight.json`). Each footprint view painted
+all requested closed bars and retained its requested viewport.
+
+| Scenario | Every navigation-relative sample, ms | Median | Maximum | Result |
+|---|---|---:|---:|---|
+| 4h / 5m / $25 complete | 3923.6, 5031.8, 5914.7, 5142.5, 4496.7 | 5031.8 | 5914.7 | FAIL median <=5s |
+| 24h / 1h / $25 complete | 7501.7, 5764.9, 5332.3, 5831.7, 6849.7 | 5831.7 | 7501.7 | FAIL median <=5s |
+| 30h Spot / 5m walls complete | incomplete, incomplete, incomplete, incomplete, incomplete | not established | >12s observation | FAIL |
+| 30h USD-M / 15m walls complete | incomplete, incomplete, incomplete, incomplete, incomplete | not established | >12s observation | FAIL |
+| Current 5m footprint | unavailable, unavailable, unavailable, unavailable, unavailable | not established | unavailable | FAIL availability; derived current job already failed |
+| Current 15m walls | incomplete, incomplete, 10188.6, 7817.5, incomplete | not established | >12s observation | FAIL |
+
+Current-footprint runs exposed a retained failed current job (`fetch failed`,
+three attempts, last run 11:07:42 UTC). This is explicit recovery/availability
+failure, not five valid already-ready current latency samples. The execution
+collector was live. `nov5-e13-current-job-diagnosis.json` preserves the failed
+cursor/category/progress. A subsequent recovered-current series must be reported
+separately, rather than overwriting these samples or treating a history-only
+paint as current success.
+
+The Pi was in active desktop use. Per-run load/memory/swap/process snapshots
+are in the raw samples; a separate observation reported 81.8 C and firmware
+throttle flags `0x80000`. These environmental differences prevent attributing
+all timing changes to code. User applications, cooling and network were not
+changed. Gates retain their original thresholds and full requested ranges.
+
+Build test clients with `pnpm build:staging:diagnostics`. Vite `--mode staging`
+alone selects proxy configuration but does not set the worker data mode. Before
+measuring, inspect actual worker `dataMode`, history tiles and build diagnostics.
+
+The failed-current investigation also reproduced a missing recovery control:
+ordinary candle charts with Footprint Totals displayed a live-Totals failure but
+had no Retry button while native candles were healthy. `52bdb96` exposes a
+scoped Retry for that state. Its browser regression fails before the fix and
+passes afterward, checks exactly one explicit current-job retry, retains good
+closed bars, clears the recovered failure, and verifies native candles are not
+reloaded. This is separate from the preceding frozen-build loading samples.
