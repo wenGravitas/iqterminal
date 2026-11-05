@@ -261,3 +261,30 @@ completed their cold setup and painted all 24 cached bars after 469.1, 861.2 and
 4517.7ms. Two cold setups exceeded their 12s observation and never established
 a warm precondition. No five-sample warm gate is claimed from those three
 successes. Wall warm-revisit acceptance remains unmeasured.
+
+## Repeated-use evidence and open correctness gate
+
+`retention-native-axis-34d7939.jsonl` contains twelve correctly ranged cycles;
+`retention-36-34d7939.jsonl` extends the same method to 36 cycles in one normal
+headed Chromium context. Every cycle loads actual footprint content and a
+wall prefix with >=200 value runs / >1 minute confirmed, pans, switches market
+and interval, and closes both charts. Every final viewport matches the requested
+30h window. All cycles release panels, worker groups, projectors and active
+historical requests to zero. Page and worker heap samples include natural use
+and a separate diagnostic GC after disposal; no application GC was introduced.
+The last twelve of the 36 cycles span 8,907,392–9,028,788 retained page bytes and
+2,068,700–2,089,524 worker bytes. Raw frame/long-task and retention queue counts
+remain available. This is scoped prefix/disposal evidence, not full 30h retained
+history acceptance. The earlier `retention-34d7939` and interrupted
+`retention-exact-34d7939` probes checked a nonexistent snapshot API and did not
+restore the requested wall range; retain them as exploratory observations only.
+The corrected probe uses the native time axis and asserts the resulting range.
+
+A new financial-correctness audit regression fails on the deployed backend's
+current logic: a higher-ID execution timestamped in the preceding closed candle
+is omitted by the current page time predicate after rollover, and the existing
+prepared candle is not revised. The new test expects two closed executions and
+observes one. This must be repaired before release correctness can be certified.
+See backend `docs/PI-HISTORY-OPEN-CORRECTNESS.md` and the preserved
+`late-closed-revision-before.log`. The earlier 186-test deployment pass remains
+valid for that tested suite, but did not cover this newly identified case.
