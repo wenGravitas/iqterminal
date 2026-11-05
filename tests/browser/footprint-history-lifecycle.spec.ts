@@ -58,3 +58,24 @@ test('a late native candle snapshot cannot move a restored 24h footprint range',
  expect(await view()).toEqual({from:from/1000,to:end/1000});
  await page.screenshot({path:'artifacts/pi-history-r1/late-native-24h-footprint.png'});
 });
+
+test('a delayed current bootstrap cannot expand a restored past footprint range',async({page,context})=>{
+ const now=Date.now(),current=Math.floor(now/HOUR)*HOUR,end=current-24*HOUR,from=end-24*HOUR;
+ let releaseCurrent!:()=>void;const gate=new Promise<void>(resolve=>releaseCurrent=resolve);
+ await context.addInitScript(({from,to})=>{const id='chart-delayed-current',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,historyViewport:{from,to},studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));},{from,to:end});
+ await context.routeWebSocket('**/market-data/v1/stream',socket=>socket.onMessage(()=>{}));
+ await context.route('**/market-data/**',async route=>{
+  const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
+  if(u.pathname.endsWith('/native-candles'))return json({source:'binance-native-kline',candles:[]});
+  if(u.pathname.endsWith('/footprint-current')){await gate;return json({version:1,state:'ready',source:'binance-usdm-aggtrade',market:'perpetual',tickSize:.1,watermark:1,cursor:1,coverage:{from:current,to:now,confirmedFrom:from,confirmedTo:now,gaps:[],complete:true},bars:[executionBar(current,HOUR)],status:{state:'live',lastUpdate:now}});}
+  if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))});}
+  return json({version:1,cursor:0,watches:[],events:[]});
+ });
+ await page.goto('/');
+ await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-delayed-current');return p?.engine.footprintPaintDiagnostics()?.times.length??0;})).toBe(24);
+ const view=()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-current').engine.visibleTimeRange());
+ expect(await view()).toEqual({from:from/1000,to:end/1000});releaseCurrent();
+ await expect.poll(()=>page.evaluate(current=>(window as any).__terminal.panels.get('chart-delayed-current').footprintBars.some((bar:any)=>bar.time===current/1000),current)).toBe(true);
+ expect(await view()).toEqual({from:from/1000,to:end/1000});
+ await page.screenshot({path:'artifacts/pi-history-r1/late-current-24h-footprint.png'});
+});

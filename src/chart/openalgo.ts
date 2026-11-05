@@ -1007,7 +1007,10 @@ export class OpenAlgoCandleChart {
       if (useSeries && indexSeries) {
         const index = lowerBound(this.footprintTimes, footprint.time);
         const known = this.footprintTimes[index] === footprint.time;
-        if(!known&&footprint.time<this.latestTime)remapped=true;
+        // A distant current bootstrap can arrive after closed history. Adding
+        // its point changes extrapolated whitespace into a compressed gap.
+        // Preserve absolute bounds; contiguous rollover keeps normal live-follow.
+        if(!known&&(footprint.time<this.latestTime||footprint.time>this.latestTime+this.candleTimerInterval))remapped=true;
         const bar = toExecutionBar(footprint);
         const source = footprint.time < this.latestTime ? 'history' : 'live';
         indexSeries.update(bar, { source, confirmation: footprint.time < this.latestTime ? 'confirmed' : 'forming' });

@@ -17,3 +17,19 @@ test('absolute past and future whitespace survive sparse-to-dense history insert
  set(Array.from({length:9},(_,i)=>base+(8+i)*hour));e.restoreView(view);
  expect(e.visibleTimeRange()).toEqual({from:wanted.from/1000,to:wanted.to/1000});
 });
+function patchHarness(){
+ const initial=Array.from({length:24},(_,i)=>base+i*hour),h=harness(initial),e=h.e;
+ Object.assign(e,{disposed:false,mode:'footprint',visible:false,candleTimerInterval:hour,footprintTimes:[...initial],footprintBars:initial.map(time=>({time,cells:[]})),latestTime:initial.at(-1),footprintIndexSeries:{update:(bar:any)=>h.set([...e.footprintTimes,bar.time].sort((a:number,b:number)=>a-b))},enqueueFootprintRefresh:()=>{}});
+ return h;
+}
+test('a delayed distant current append cannot expand a saved historical viewport',()=>{
+ const {e}=patchHarness(),wanted={from:base*1000,to:(base+24*hour)*1000};
+ expect(e.restoreHistoryTimeRange(wanted)).toBe(true);
+ e.applyFootprintPatch([{time:base+44*hour,cells:[],open:1,high:1,low:1,close:1}]);
+ expect(e.visibleTimeRange()).toEqual({from:wanted.from/1000,to:wanted.to/1000});
+});
+test('a normal contiguous rollover leaves the chart live-follow policy in control',()=>{
+ const {e}=patchHarness();let restores=0;e.restoreView=()=>restores++;
+ e.applyFootprintPatch([{time:base+24*hour,cells:[],open:1,high:1,low:1,close:1}]);
+ expect(restores).toBe(0);
+});
