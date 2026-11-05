@@ -266,16 +266,21 @@ test('prepared hourly history renders before a delayed live bootstrap and remain
  } finally {service.dispose();}
 });
 
-test('history retry clears its error without replacing healthy sockets or acknowledged live cursor',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();
+test.each([undefined,'a'])('history retry (%s) retains healthy native/footprint sockets and acknowledged cursors',async(id)=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets,request}=await setup();
+ request.mockImplementation(async(input:any)=>new Response(JSON.stringify(String(input).includes('native-candles')?{source:'binance-native-kline',candles:[]}:{...response(),bars:[{...bar,time:900,rowSize:50}]})));
+ service.command({type:'subscribe',id:'healthy-native',series});
+ service.command({type:'footprint-subscribe',id:'healthy-footprint',series:{...series,interval:'5m'},rowPrice:50});await vi.advanceTimersByTimeAsync(0);
+ const healthy=[...(service as any).groups.values()].filter((group:any)=>!group.ids.has('a')).map((group:any)=>({group,socket:group.ws,cursor:group.cursor}));
  const g=[...(service as any).groups.values()][0],socket=g.ws,cursor=g.cursor;
  let fail=true;
  (service as any).prepared={load:async(...args:any[])=>{if(fail)throw Error('Historical worker temporarily unavailable');args[5]([],true,true);},dispose(){}};
  try{
   service.command({type:'footprint-viewport',id:'a',from:60000,to:120000});await vi.advanceTimersByTimeAsync(0);
   expect(g.lastStatus.state).toBe('live');expect(g.lastStatus.history.error).toContain('temporarily unavailable');expect(g.bars).toHaveLength(1);
-  fail=false;service.command({type:'footprint-retry'});await vi.advanceTimersByTimeAsync(0);
+  fail=false;service.command({type:'footprint-retry',...(id?{id}:{})});await vi.advanceTimersByTimeAsync(0);
   expect(g.lastStatus.history.error).toBeUndefined();expect(g.lastStatus.history.ready).toBe(true);
-  expect(g.ws).toBe(socket);expect(g.cursor).toBe(cursor);expect(sockets).toHaveLength(1);expect(socket.closed).toBe(false);
+  expect(g.ws).toBe(socket);expect(g.cursor).toBe(cursor);expect(sockets).toHaveLength(3);expect(sockets.every(socket=>!socket.closed)).toBe(true);
+  for(const item of healthy){expect(item.group.ws).toBe(item.socket);expect(item.group.cursor).toBe(item.cursor);}
  }finally{service.dispose();}
 });

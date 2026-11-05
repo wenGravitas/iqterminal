@@ -92,3 +92,11 @@ it('sends analysis warmup demand on viewport updates without replacing the feed 
   expect(worker.messages.at(-1)).toMatchObject({ type: 'footprint-viewport', id: subscription, analysis: { enabled: false, lookback: 50 } });
   expect(worker.messages.filter(command => command.type === 'footprint-subscribe')).toHaveLength(1);
 });
+
+it('routes a chart history retry to its current token and ignores disposed consumers',()=>{
+ const {client,worker}=setup();const closeOld=client.subscribeFootprint('chart',series,25,()=>{});
+ const previous=token(worker),close=client.subscribeFootprint('chart',series,25,()=>{}),current=token(worker);closeOld();
+ expect(current).not.toBe(previous);client.retryFootprint('chart');
+ expect(worker.messages.at(-1)).toEqual({type:'footprint-retry',id:current});
+ close();const count=worker.messages.length;client.retryFootprint('chart');expect(worker.messages).toHaveLength(count);
+});

@@ -96,7 +96,17 @@ export class StagingFeedService {
         if (pending) this.publish(g, pending);
       }
     } else if (c.type === 'retry' || c.type === 'footprint-retry') {
-      for (const g of this.groups.values()) if (c.type === 'footprint-retry' || g.ids.has(c.id)) { if (g.rowPrice !== undefined && this.usePrepared && [...g.views.values()].some(v=>v.error)) { for(const [id,v] of g.views){if(!v.error)continue;v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);} continue; } g.retryAt = 0; g.failures = 0; g.ws?.close(); g.ws = undefined; if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+      const groups=[...this.groups.values()].filter(g=>c.type==='footprint-retry'
+        ?g.rowPrice!==undefined&&(!c.id||g.ids.has(c.id)):g.ids.has(c.id));
+      const failedViews=(g:Group)=>[...g.views].filter(([id,v])=>v.error&&(c.type!=='footprint-retry'||!c.id||id===c.id));
+      const historyOnly=this.usePrepared&&groups.some(g=>failedViews(g).length>0);
+      for(const g of groups){
+        const failed=this.usePrepared?failedViews(g):[];
+        if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);}continue;}
+        if(historyOnly)continue;
+        g.retryAt=0;g.failures=0;g.ws?.close();g.ws=undefined;
+        if(g.rowPrice!==undefined&&g.cursor!==undefined){this.connect(g);if(g.history)void this.loadOlder(g);}else void this.load(g);
+      }
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {

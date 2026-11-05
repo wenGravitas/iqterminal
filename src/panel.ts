@@ -926,7 +926,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
-    this.retry.addEventListener('click', () => this.footprintStatus.history?.error || this.selection.type === 'footprint' ? this.feed.retryFootprint() : this.feed.retry(params.api.id), options);
+    this.retry.addEventListener('click', () => this.footprintStatus.history?.error || this.selection.type === 'footprint' ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
