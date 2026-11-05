@@ -16,3 +16,5 @@ try{for(const scenario of ['five-closed-plus-forming','current-5m-retry','spot-4
  const measured=await page.evaluate(id=>{const p=window.__terminal?.panels.get(id);return p?{status:p.footprintStatus,paint:p.engine.footprintPaintDiagnostics(),viewport:p.engine.visibleTimeRange(),renderer:p.diagnostics().renderer}:null;},id);
  await page.screenshot({path:`${dir}/${prefix}-${scenario}.png`}).catch(()=>{});rows.push({scenario,build:process.env.IQ_BENCH_BUILD,backend:process.env.IQ_BENCH_BACKEND,requested:range,eligible,expectedClosed:(eligible.to-eligible.from)/step,expectedForming:spot?null:current,measured,requests,error,recovery,scope:'real source coverage; 30s observation is not interactive latency acceptance'});console.log(JSON.stringify({scenario,closed:(eligible.to-eligible.from)/step,painted:measured?.paint?.times?.length,error}));await context.close();
 }}finally{await browser.close();writeFileSync(`${dir}/${prefix}-footprint-coverage.json`,JSON.stringify(rows,null,2)+'\n');}
+
+if(rows.some(row=>row.error))process.exitCode=1;
