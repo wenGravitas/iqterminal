@@ -251,7 +251,8 @@ export class StagingFeedService {
   }
   private async load(g: Group) {
     if (g.busy || !this.online || this.dead || this.now() < g.retryAt) return;
-    g.busy = true; const abort = new AbortController(); g.abort = abort;
+    g.busy = true; const bootstrapRetry = g.bootstrapRetry === true;
+    const abort = new AbortController(); g.abort = abort;
     // A full retained candle history can take about 45s to transfer through the
     // staging tunnel. Keep the short bound for the smaller footprint bootstrap.
     const timeoutMs = g.rowPrice === undefined ? NATIVE_CANDLE_HISTORY_TIMEOUT_MS : FOOTPRINT_BOOTSTRAP_TIMEOUT_MS;
@@ -261,12 +262,14 @@ export class StagingFeedService {
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
       const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
       const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
-        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}${g.bootstrapRetry?'&retry=1':''}`
+        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}${bootstrapRetry?'&retry=1':''}`
         : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
       const data = await readStagingJson(response,'Staging history');
       if (this.groups.get(g.key) !== g || this.dead || !this.online) return;
-      if(g.rowPrice!==undefined&&this.usePrepared)g.bootstrapRetry=false;
+      // Only the request that carried Retry may acknowledge it. A normal poll
+      // already in flight must leave a later explicit Retry queued.
+      if(g.rowPrice!==undefined&&this.usePrepared&&bootstrapRetry)g.bootstrapRetry=false;
       if (g.rowPrice !== undefined && this.usePrepared && data.state && data.state !== 'ready') {
         g.retryAt = this.now() + 1000;
         this.status(g, data.state === 'unavailable' ? 'failed' : 'loading', data.error ?? 'Staging · preparing authoritative current execution state');
