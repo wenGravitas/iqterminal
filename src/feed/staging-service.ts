@@ -22,7 +22,7 @@ interface Group {
   preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
-  bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number;
+  bars: FootprintBar[]; candles: Candle[]; lastUpdate: number; failures: number; retryAt: number; bootstrapRetry?:boolean;
   analysisSummaries: Map<number, FootprintAnalysisSummary>; liveSummaryVersions: Map<number, number>; quoteAvailable: Map<number, boolean>;
   streamRevision: number; appliedExecutionThroughMs: number | null;
   history?: { next: number; target: number; watermark: number }; historyAbort?: AbortController; historyBusy?: boolean; historyError?: string;
@@ -104,6 +104,7 @@ export class StagingFeedService {
         const failed=this.usePrepared?failedViews(g):[];
         if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);}continue;}
         if(historyOnly)continue;
+        if(g.rowPrice!==undefined&&g.cursor===undefined)g.bootstrapRetry=true;
         g.retryAt=0;g.failures=0;g.ws?.close();g.ws=undefined;
         if(g.rowPrice!==undefined&&g.cursor!==undefined){this.connect(g);if(g.history)void this.loadOlder(g);}else void this.load(g);
       }
@@ -260,11 +261,12 @@ export class StagingFeedService {
       const to = this.now(), from = Math.floor((to - 15 * 60000) / duration[g.series.interval]) * duration[g.series.interval];
       const marketQuery = marketOf(g.series) === 'spot' ? '&market=spot' : '';
       const path = g.rowPrice === undefined ? `/v1/native-candles?interval=${g.series.interval}${marketQuery}`
-        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`
+        : this.usePrepared ? `/v2/history/footprint-current?interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}${g.bootstrapRetry?'&retry=1':''}`
         : `/v1/footprints?from=${from}&to=${to}&interval=${g.series.interval}&rowPrice=${g.rowPrice}${marketQuery}`;
       const response = await this.request(`/market-data${path}`, { signal: abort.signal });
       const data = await readStagingJson(response,'Staging history');
       if (this.groups.get(g.key) !== g || this.dead || !this.online) return;
+      if(g.rowPrice!==undefined&&this.usePrepared)g.bootstrapRetry=false;
       if (g.rowPrice !== undefined && this.usePrepared && data.state && data.state !== 'ready') {
         g.retryAt = this.now() + 1000;
         this.status(g, data.state === 'unavailable' ? 'failed' : 'loading', data.error ?? 'Staging · preparing authoritative current execution state');

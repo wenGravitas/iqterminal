@@ -284,3 +284,21 @@ test.each([undefined,'a'])('history retry (%s) retains healthy native/footprint 
   for(const item of healthy){expect(item.group.ws).toBe(item.socket);expect(item.group.cursor).toBe(item.cursor);}
  }finally{service.dispose();}
 });
+
+test('explicit bootstrap retry reaches its failed current job once, then resumes ordinary polling',async()=>{
+ vi.useFakeTimers();vi.stubEnv('VITE_HISTORY_TILES','1');let now=900000,resumed=false;
+ const urls:string[]=[],events:Event[]=[];
+ const request=vi.fn(async(input:RequestInfo|URL)=>{const url=new URL(String(input),'http://localhost');urls.push(url.toString());
+  if(url.searchParams.get('retry')==='1'){resumed=true;return new Response(JSON.stringify({state:'building'}));}
+  return new Response(JSON.stringify(resumed?{...response(),state:'ready'}:{state:'unavailable',error:'Previous current build failed'}));});
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>new Socket() as any);
+ try{
+  service.command({type:'footprint-subscribe',id:'current-retry',series,rowPrice:25});await vi.advanceTimersByTimeAsync(0);
+  now+=1001;await vi.advanceTimersByTimeAsync(1001);expect(urls.every(url=>!new URL(url).searchParams.has('retry'))).toBe(true);
+  service.command({type:'footprint-retry',id:'current-retry'});await vi.advanceTimersByTimeAsync(0);
+  expect(urls.filter(url=>new URL(url).searchParams.get('retry')==='1')).toHaveLength(1);
+  now+=1001;await vi.advanceTimersByTimeAsync(1001);
+  const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('live');expect(group.cursor).toBe(10);
+  expect(new URL(urls.at(-1)!).searchParams.has('retry')).toBe(false);
+ }finally{service.dispose();}
+});
