@@ -282,7 +282,12 @@ workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
   restore: layout => { const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
-workspaceManager.start();
+const releaseInitial=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,workspaceManager.active.layout,chartConfig):()=>{};
+try {
+  // Let worker creation and its queued reads begin before synchronous chart DOM.
+  if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixture)await new Promise<void>(resolve=>setTimeout(resolve,0));
+  workspaceManager.start();
+} finally {releaseInitial();}
  journal.setOpenJournal(openJournal);
 restoring = false;
 const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => save())];
