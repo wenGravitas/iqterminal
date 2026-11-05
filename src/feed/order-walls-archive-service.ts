@@ -241,7 +241,12 @@ export class OrderWallsArchiveService {
   }
 
   diagnostics() {
-    return { ...this.stats, subscriptions: this.subscriptions.size, groups: this.groups.size,
+    const projectors=new Set<OrderWallsArchiveProjector>();
+    for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector,sub.bridgeProjector])if(p)projectors.add(p);
+    for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
+    for(const job of this.historyJobs.values())for(const p of [job.initialProjector,job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
+    for(const entry of this.warmHistory.values())if(entry.result.projector)projectors.add(entry.result.projector);
+    return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,
       warmEntries:this.warmHistory.size,warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
