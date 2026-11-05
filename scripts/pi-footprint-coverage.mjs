@@ -4,9 +4,9 @@ import {readFileSync,writeFileSync} from 'node:fs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',fixed=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end;
 const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles']});
 const rows=[];
-try{for(const scenario of ['five-closed-plus-forming','spot-4h-5m']){
- const current=Math.floor(Date.now()/3600000)*3600000,spot=scenario.startsWith('spot'),step=spot?300000:3600000,range=spot?{from:fixed-4*3600000,to:fixed}:{from:current-5*3600000,to:current+3*3600000},eligible={from:range.from,to:spot?range.to:current},id='chart-coverage';
- const params={venue:'binance',market:spot?'spot':'perpetual',interval:spot?'5m':'1h',type:'footprint',rowPrice:25,historyViewport:range,studies:[]};
+try{for(const scenario of ['five-closed-plus-forming','current-5m-retry','spot-4h-5m']){
+ const spot=scenario.startsWith('spot'),five=spot||scenario==='current-5m-retry',step=five?300000:3600000,current=Math.floor(Date.now()/step)*step,range=spot?{from:fixed-4*3600000,to:fixed}:five?{from:current-47*step,to:current+step}:{from:current-5*3600000,to:current+3*3600000},eligible={from:range.from,to:spot?range.to:current},id='chart-coverage';
+ const params={venue:'binance',market:spot?'spot':'perpetual',interval:five?'5m':'1h',type:'footprint',rowPrice:25,historyViewport:range,studies:[]};
  const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Coverage',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),requests=[];let error,recovery;
  page.on('response',r=>{if(r.url().includes('footprint'))requests.push({url:r.url(),status:r.status()});});
