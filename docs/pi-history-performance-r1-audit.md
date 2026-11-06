@@ -16,10 +16,10 @@ interactive performance. See [the measurement report](pi-history-performance-r1.
 | Small default set through rollover | Both markets, 5m/$25 and 1h/$25 real 11:00 UTC rollover artifact | All four defaults recovered through bounded maintenance on 95017a0, then current/latest-closed version checks passed; boundary publication delay still requires measurement |
 | Reserved current capacity and cancellation through path | Split tunnel/agents, gateway reservation, shared SQL admission tests, runtime interruptible-query cancellation | Ten runs captured, no collector errors; confirmation gaps worsen, gate not certified; controlled matched-background comparison remains |
 | Client CPU bounded and obsolete work cancelled | Scheduler holds body/decode, yield/cancellation and consumer tests | Native history bulk import verified against the old per-bar path on Pi; startup CPU/long tasks and repeated-use resource analysis remain open |
-| Incremental walls, stable identity/runs, bounded queues | Archive service/projector tests and diagnostics; bounded real legacy/display reference | Closed-reference getter regressions and 1,000 hidden updates now pass; actual retained heap/frame plateau and full 30h use remain open |
-| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | V5 exact 30h source validation/discovery and actual client part delivery implemented; all 66 USD-M pages match a fresh real canonical reference. Five ready-server Pi loads fail complete coverage/latency. Automatic fair preparation, disk retention, compaction, Spot 30h and warm validation remain open |
+| Incremental walls, stable identity/runs, bounded queues | Archive service/projector tests and diagnostics; bounded real legacy/display reference | Closed-reference getter regressions and 1,000 hidden updates now pass; actual retained heap/frame plateau remains open; one exact full 30h USD-M browser observation is supplemental |
+| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | V5 exact 30h source validation/discovery and actual client part delivery implemented; all 66 USD-M pages match a fresh real canonical reference. Selected projection preserves all 23,850 walls / 104,112 points in five batches. Latest five Pi loads fail latency/coverage; separate recovered-lane full coverage takes 143.524s. Automatic fair preparation, disk retention, sliding reuse, Spot 30h and warm validation remain open |
 | Avoid repeated metadata and oversized SQL reads | Metadata cache and key-first FINAL query; real read-byte comparisons | Pinned route probe and end-to-end attribution; no schema changes |
-| Exact profiles and incumbent settings | Existing Top Levels/Threshold/Fit/persistence suites | Full frontend 1048 pass / 2 skip and backend 222 pass; remaining real-chart checks; never replace gaps with continuous walls |
+| Exact profiles and incumbent settings | Existing Top Levels/Threshold/Fit/persistence suites | Latest full frontend 1078 pass / 2 skip / 4 failures; scoped nine-check rerun passes, 27 prepared-history checks and ten functional browser checks pass. Backend guarded 243 pass. Never replace gaps with continuous walls |
 | Actual flags/build/routes/viewport and correlated timing | Worker/request diagnostics, raw samples, main-thread paint marks, source/build records | Final build IDs, pinned identical loopback/SSH/Vite samples, evidence index |
 | Five comparable prepared empty-cache loading runs | Older cohorts plus latest five samples each for current, 4h/5m and 24h/1h retained | Latest completed-draw-clock 4h/5m and 24h/1h series fail; current footprint and both 30h wall scenarios fail; all historical footprint slots paint in all ten latest samples |
 | Warm useful display <=1s then independent validation | One exploratory 24h footprint revisit (260.7ms useful, 1,526.2ms validation) | Five comparable footprint samples and actual wall warm-revisit evidence |
@@ -76,3 +76,13 @@ and closed gzip records 3,004,574 bytes; this is stored-file correctness/size
 proof on x64 staging, not a Pi loading gate. Actual gateway/client projection
 transfer remains unimplemented. Serving staging stays 18a68da. Existing failed
 performance gates and all previously open acceptance requirements remain open.
+
+Latest serving/client: 18579d9 / fb11b9c. Capability negotiation fixes the actual
+128 KiB metadata failure and preserves older clients. Latest comparable five-run
+Pi loading series still FAILS: first paint [10594.3,null,null,null,null] ms; complete
+all null. A separate recovered-history-SSH observation proves every requested
+available 30h wall interval/record is imported: 23,850 walls / 104,112 points,
+47 explicit canonical gaps, complete at 143.524s. This is supplemental coverage,
+not a latency pass. Current SSH PID/collector identities were retained during
+recovery of the task-owned history lane. Exact large-packet route diagnostics and
+long render frames identify further work; no broader acceptance is claimed.

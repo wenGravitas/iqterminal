@@ -2,14 +2,25 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
-Current staging serving build is `95017a09f5838a18b1196901aa3b8f249545a6e8`.
-Current measured client build is `fa1764330c30b440bb78a5d603f381f94c6529e7`.
-Backend tests/typecheck/build pass (222 tests). The footprint viewport repair
-has real complete-coverage evidence. The latest prepared 4h/5m and 24h/1h
-latency series fail, as do current display and 30h wall acceptance. Verified wall
-parts now have read-only cached HTTP delivery, but chart discovery/consumption
-and automatic preparation/retention are still open. Later sections retain older
-measurements with their own exact builds; they are not superseding gate passes.
+Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
+Current measured production client is `fb11b9c7bd0cba9864d2ac12d75023ca921687a1`.
+Backend guarded rollout passes 243 tests/typecheck/build; collector IDs/start times
+are unchanged. Frontend full run has 1,078 pass / 2 skip / 4 failures, with all
+nine detector/vault checks passing separately at unchanged limits; 27 prepared
+history checks, typecheck/build and the prior ten functional browser checks pass.
+This is not one all-green frontend full run.
+
+Footprint coverage repairs have complete real-chart evidence, but their latest
+latency gates remain failed. Selected-wall discovery/client delivery now preserve
+all 23,850 walls / 104,112 points / 47 source gaps through five bounded batches.
+The latest five normal Pi loading samples still FAIL: first-history values are
+[10594.3, null, null, null, null] ms and complete values are all null. A separate
+recovered-lane coverage observation completes in 143,524 ms; it is supplemental,
+not acceptance. The requested viewport remains the full 30 hours. Transport stalls
+and long render frames remain material bottlenecks. Automatic fair preparation,
+sliding reuse, derived disk retention, Spot 30h, warm/concurrent and repeated-use
+resource gates remain open. Later sections preserve historical results with their
+own exact builds; none supersedes a failed gate with eventual completion.
 
 ## Baselines and isolation
 
@@ -1246,3 +1257,58 @@ bounds immutable encoding to three jobs, including canceled HTTP consumers.
 The corrected five-run Pi cohort must still be measured; no gate is yet repaired
 by assertion. The diagnostic production build at 02e96dd passed all ten browser
 bootstrap/history/Retry checks before these actual loading runs.
+
+### Deployed capability repair and actual Pi results
+
+Staging `18579d938364e5fd5a9c7631bb19681a043f1b66` passed the guarded rollout's
+243 tests/typecheck/build, index/read-only-mount checks and collector continuity
+checks. Client `fb11b9c7bd0cba9864d2ac12d75023ca921687a1` is the diagnostic production
+build at preview 4181. Actual proxied legacy discovery is 44,969 bytes without
+projection metadata; opt-in discovery is 428,228 bytes and advertises the correct
+selected key. The installed projection survives the serving rollout unchanged.
+
+Five comparable normal headed Pi / empty-browser-cache runs are
+`nov6-wall-selected-cap-v2`. Every environment is staging/history-enabled and
+fixture=false. Requested viewport is 1793696400000..1793804400000 (30h), with the
+canonical padded range 1793695500000..1793805300000. First actual history paint:
+[10594.3, null, null, null, null] ms. Complete validated visible coverage:
+[null, null, null, null, null] at the unchanged 12-second observation. Both wall
+loading gates FAIL. No complete median/maximum or p95 is invented. Earlier
+wrong-port and pre-capability failures stay separate. All traces finalize.
+
+Separate observations never count as latency passes. At 60 seconds, 15,106 walls /
+72,209 points are retained (49 parts); the 180-second pre-recovery observation
+retains 12,472 / 60,106 (41 parts), still incomplete. A one-time raw immutable
+768,116-byte gzip diagnostic has identical SHA
+`61f3355e782c4daaf13575b83442529912dc0186cfa2fc1b284566167aa243b4`:
+staging loopback 7.406 ms, stalled history SSH timeout 30,012.206 ms with no headers.
+The small history-lane health read also times out at 15s; the separate current
+lane responds in 3,910.309 ms. TCP observations show a roughly 1.1-second RTT,
+congestion window three and cumulative retransmission/reordering counters; these
+are not per-run loss percentages.
+
+Only the verified task-owned history SSH child was terminated. Its supervisor
+restored history PID 568801; current PID 424434 remained untouched. The initial
+readiness observation ended before the replacement listener appeared; the same
+replacement was then re-probed rather than restarted again. Recovered history
+health completes in 2,735.057 ms. The identical batch then transfers through SSH
+in 10,731.126 ms and through Vite in 13,821.082 ms with matching hashes. These are
+single diagnostics, not five-sample route gates; differing runs do not establish
+exclusive proxy overhead or permit subtracting unsynchronized host timestamps.
+
+The recovered-lane supplemental browser observation has first history at
+20,301.4 ms and completes validated available coverage at 143,524 ms. Actual chart
+retention is all 23,850 archived walls / 104,112 value points; its viewport exactly
+matches the requested 30h. `requestComplete=true`, loadedThrough=1793805300000;
+`rangeComplete=false` correctly preserves all 47 canonical source gaps. No missing
+book intervals become continuous walls. The full real-chart screenshot is
+`nov6-wall-selected-recovered-coverage-walls-30h-perp-15m-1.png`.
+
+Rendering remains a separate bottleneck: maximum draw is 417 ms in the 60-second
+observation and 1,391.7 ms at full coverage. Existing incremental geometry and
+reference counters show no repeated full reference scan during partial updates,
+but repeated path painting/final snapshots need further work and measured browser
+verification. Historical-only observations disable the current wall group and do
+not certify current/concurrent gates. Source proof/financial equivalence and full
+supplemental coverage pass; every original loading/interaction/repeated-use gate
+still requires its own evidence. Performance acceptance remains incomplete.
