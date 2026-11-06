@@ -65,6 +65,7 @@ export class PreparedFootprints {
     const buildJobs = new Map<number,string>();
     const chunkStates = new Map(chunks.map(chunk => [chunk.from, 'loading']));
     const validatedTimes = new Set<number>();
+    const revisionStates = new Map<number, 'building' | 'unavailable'>();
     const visibleComplete = () => visibleStarts.every(start => validatedTimes.has(start / 1000))
       && chunks.filter(chunk => chunk.priority === 0).every(chunk => chunkStates.get(chunk.from) === 'ready');
     const progress = (): PreparedFootprintProgress => {
@@ -74,8 +75,8 @@ export class PreparedFootprints {
       slots: visibleStarts.map(at => {
         const tile = visibleTiles.get(at), validated = validatedTimes.has(at / 1000);
         const chunk = chunks.find(chunk => chunk.priority === 0 && at >= chunk.from && at < chunk.to)!;
-        const state = tile ? (tile.coverage as any)?.gaps?.some((gap:any)=>gap.reason==='not retained/recorded') ? 'absent' : (tile.coverage as any)?.complete === false ? 'gapped' : tile.bar === null ? 'empty' : 'ready'
-          : chunkStates.get(chunk.from) === 'unavailable' ? 'unavailable' : chunkStates.get(chunk.from) === 'building' ? 'building' : 'loading';
+        const state = revisionStates.get(at) ?? (tile ? (tile.coverage as any)?.gaps?.some((gap:any)=>gap.reason==='not retained/recorded') ? 'absent' : (tile.coverage as any)?.complete === false ? 'gapped' : tile.bar === null ? 'empty' : 'ready'
+          : chunkStates.get(chunk.from) === 'unavailable' ? 'unavailable' : chunkStates.get(chunk.from) === 'building' ? 'building' : 'loading');
         return { from: at, to: at + step, validated, state };
       }) }; };
     const removedTimes = new Set<number>();
@@ -169,6 +170,17 @@ export class PreparedFootprints {
               visibleTiles.set(raw.from, { ...oldVisible, coverage: raw.coverage ?? oldVisible.coverage });
             }
             validatedTimes.add(raw.from / 1000);
+          }
+        }
+        // A prepared tile remains useful while a canonical correction builds,
+        // but its previous content is not current validation or analysis evidence.
+        for (const at of chunkStarts) {
+          revisionStates.delete(at);
+          const pending = Array.isArray(data.revisionRanges) && data.revisionRanges.find((range:any) =>
+            Number.isSafeInteger(range.from) && Number.isSafeInteger(range.to) && range.from < at + step && range.to > at);
+          if (pending || data.revisionState === 'unavailable') {
+            revisionStates.set(at, data.revisionState === 'unavailable' || pending.state === 'unavailable' ? 'unavailable' : 'building');
+            validatedTimes.delete(at / 1000);
           }
         }
         await this.cache.putMany(updates);

@@ -88,3 +88,23 @@ test('warm revision validation preserves a known-empty covered slot without requ
  await client.load(900000,1200000,'5m',25,signal,(bars,complete,validated,_analysis,progress)=>events.push({bars,complete,validated,progress}));
  expect(events.at(-1)).toMatchObject({bars:[],complete:true,validated:true,progress:{validatedSlots:1,slots:[{state:'empty',validated:true}]}});
 });
+
+test('a pending canonical revision retains painted bars but invalidates only affected slots and analysis',async()=>{
+ const from=1800000000000,step=3600000,events:any[]=[];let call=0;
+ const tiles=(revision:number)=>[0,1].map(i=>({from:from+i*step,revision,bar:{time:(from+i*step)/1000,delta:revision,quoteDelta:revision*80000,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}));
+ const client=new PreparedFootprints((async()=>{call++;return new Response(JSON.stringify({version:1,feed,state:call===1?'building':'ready',revisionState:call===1?'pending':'ready',revisionRanges:call===1?[{from,to:from+step,state:'building'}]:[],tiles:tiles(call)}));}) as any,new Cache());
+ await client.load(from,from+2*step,'1h',25,new AbortController().signal,(bars,complete,_validated,analysis,progress)=>events.push({bars,complete,analysis,progress}));
+ const pending=events[0];expect(pending.bars).toHaveLength(2);expect(pending.complete).toBe(false);expect(pending.progress.validatedSlots).toBe(1);
+ expect(pending.progress.slots).toMatchObject([{state:'building',validated:false},{state:'ready',validated:true}]);
+ expect(pending.analysis.summaries.map((s:any)=>s.coverageEvidence.validated)).toEqual([false,true]);
+ expect(events.at(-1)).toMatchObject({complete:true,progress:{validatedSlots:2}});expect(events.at(-1).bars.map((b:any)=>b.delta)).toEqual([2,2]);
+});
+
+test('failed canonical revision retains cached good bars with unavailable unvalidated coverage',async()=>{
+ const from=1800000000000,step=3600000,cache=new Cache();let failed=false;const events:any[]=[];
+ const request:any=async()=>new Response(JSON.stringify({version:1,feed,state:failed?'unavailable':'ready',revisionState:failed?'unavailable':'ready',revisionRanges:failed?[{from,to:from+step,state:'unavailable'}]:[],error:failed?'repair source unavailable':undefined,tiles:[{from,revision:1,bar:{time:from/1000},coverage:{from,to:from+step,complete:true,gaps:[]}}]}));
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(from,from+step,'1h',25,signal,()=>{});failed=true;
+ await expect(client.load(from,from+step,'1h',25,signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('repair source unavailable');
+ expect(events.at(-1)).toMatchObject({bars:[{time:from/1000,revision:1}],complete:false,progress:{loadedSlots:1,validatedSlots:0,slots:[{state:'unavailable',validated:false}]}});
+});

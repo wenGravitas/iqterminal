@@ -288,3 +288,24 @@ observes one. This must be repaired before release correctness can be certified.
 See backend `docs/PI-HISTORY-OPEN-CORRECTNESS.md` and the preserved
 `late-closed-revision-before.log`. The earlier 186-test deployment pass remains
 valid for that tested suite, but did not cover this newly identified case.
+
+### Pending canonical revisions and index prerequisite — 6 November
+
+The client now retains previously painted tiles during a canonical correction,
+marks only the affected slots building/unavailable, and removes their validated
+analysis evidence until a ready revision replaces them. Failed revision reads
+keep good bars. Focused tests cover pending → ready replacement and failed
+revision retention. The full frontend suite passed 1,022 tests with two skipped
+across 124 files; typecheck passed. This is deterministic correctness evidence,
+not a Pi loading or live-connectivity gate.
+
+The staging additive execution-ID index prerequisite completed using backend
+`f519c44`, without replacing the still-running `34d7939` serving build. The raw
+installation transcript is `execution-id-index-f519c44-install.log`; indexed
+1,000-ID tail SQL read 9,339 rows/681,747 bytes for USD-M and 13,124 rows/958,052
+bytes for Spot. Collector IDs, starts, recovery/reconnect counters and zero
+overflow counters were unchanged across that operation. SQL time is distinct
+from client latency. The backend rollout now checks this prerequisite before
+starting ID-tail workers. The revision repair still needs inactive-configuration
+and legacy-payload freshness validation before deployment and real-chart checks.
+All previously failed acceptance gates remain failed/incomplete.
