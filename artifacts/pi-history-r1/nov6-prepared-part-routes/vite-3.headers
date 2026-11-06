@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+vary: Accept-Encoding
+x-iq-request-id: 272408b9-fc66-454c-82b3-f452f2ce66cd
+x-iq-view-id: vite-3
+content-type: application/json
+cache-control: private, max-age=31536000, immutable
+etag: "338f1a3c190d6f34a78766c0928eed7cd2a083a48d5dfce4b4612f3a6d56f38d"
+x-iq-decoded-bytes: 954631
+x-iq-source-revision: bcc9dedfaa7f064e0f99704cbc53d14319b0ab1d02d03e11ef13614c874cad4e
+x-iq-chunk-key: 0c59755f82338c16d9b012e1fd0e6214c521e39be58f809bc48def30b9112cbc
+x-iq-db-queries: 0
+x-iq-db-read-rows: 0
+x-iq-db-read-bytes: 0
+content-encoding: gzip
+content-length: 36820
+server-timing: preparedread;dur=4.11, db;dur=0
+date: Fri, 06 Nov 2026 14:00:36 GMT
+connection: keep-alive
+keep-alive: timeout=60
+

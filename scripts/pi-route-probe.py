@@ -28,17 +28,29 @@ def read(route,base,path,name):
  d.update(url=url,wireBytes=len(wire),decodedBytes=len(decoded),backend=backend)
  if d['exit'] or d['metrics']['http_code']!=200: raise RuntimeError(json.dumps(d))
  body=json.loads(decoded);canonical={k:v for k,v in body.items() if k!='profileStatus'}
- d['financialBodyHash']=hashlib.sha256(json.dumps(canonical,sort_keys=True,separators=(',',':')).encode()).hexdigest();return d,body
-end=json.loads((root/'windows.json').read_text())['end'];params=dict(profile='binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',market='spot',**{'from':end-30*3600000,'to':end,'after':0,'limit':512,'display':1})
-path='/v1/order-walls/archive?'+urllib.parse.urlencode(params)
-manifest,body=read('pi-ssh','http://127.0.0.1:18780',path,'manifest');(raw/'manifest.json').write_text(json.dumps(dict(request=manifest,body=body),indent=2)+'\n')
-assert body.get('displayVersion')==1 and body.get('snapshot'),body.keys()
-params.update(watermark=body['watermark'],after=body['page']['nextAfter'],limit=4096)
-path='/v1/order-walls/archive?'+urllib.parse.urlencode(params);expected=None
+ d['decodedBodyHash']=hashlib.sha256(decoded).hexdigest();d['financialBodyHash']=hashlib.sha256(json.dumps(canonical,sort_keys=True,separators=(',',':')).encode()).hexdigest();return d,body
+prepared=os.environ.get('IQ_ROUTE_WALL_MANIFEST')
+if prepared:
+ manifest=json.loads(Path(prepared).read_text());manifest=manifest.get('manifest',manifest)
+ assert manifest['version']==5 and manifest['complete'] is True
+ index=int(os.environ.get('IQ_ROUTE_WALL_PART','0'));part=manifest['parts'][index]
+ params=dict(market=manifest['request']['market'],key=manifest['key'],hash=part['hash'])
+ path='/v2/history/walls/part?'+urllib.parse.urlencode(params)
+ expectedWatermark=manifest['watermark'];expectedAfter=part['after']
+ (raw/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+else:
+ end=json.loads((root/'windows.json').read_text())['end'];params=dict(profile='binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',market='spot',**{'from':end-30*3600000,'to':end,'after':0,'limit':512,'display':1})
+ path='/v1/order-walls/archive?'+urllib.parse.urlencode(params)
+ manifest,body=read('pi-ssh','http://127.0.0.1:18780',path,'manifest');(raw/'manifest.json').write_text(json.dumps(dict(request=manifest,body=body),indent=2)+'\n')
+ assert body.get('displayVersion')==1 and body.get('snapshot'),body.keys()
+ params.update(watermark=body['watermark'],after=body['page']['nextAfter'],limit=4096)
+ path='/v1/order-walls/archive?'+urllib.parse.urlencode(params);expected=None
+ expectedWatermark=params['watermark'];expectedAfter=params['after']
+expected=None
 with output.open('w') as f:
  for route,base in [('staging-loopback','http://127.0.0.1:18780'),('pi-ssh','http://127.0.0.1:18780'),('vite','http://127.0.0.1:4181/market-data')]:
   for run in range(1,6):
    d,b=read(route,base,path,f'{route}-{run}');d.update(route=route,run=run,watermark=b['watermark'],after=b['page']['after'],nextAfter=b['page']['nextAfter'],patches=len(b['patches']))
-   expected=expected or d['financialBodyHash'];d['identicalPinnedBody']=d['financialBodyHash']==expected
+   bodyHash=d['decodedBodyHash'] if prepared else d['financialBodyHash'];expected=expected or bodyHash;d['identicalPinnedBody']=bodyHash==expected
    f.write(json.dumps(d)+'\n');f.flush();print(route,run,d['metrics']['time_total'],d['identicalPinnedBody'],flush=True)
-   assert d['identicalPinnedBody'] and b['watermark']==params['watermark'] and b['page']['after']==params['after']
+   assert d['identicalPinnedBody'] and b['watermark']==expectedWatermark and b['page']['after']==expectedAfter

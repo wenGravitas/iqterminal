@@ -1,0 +1,45 @@
+{
+  "kind": "bounded-invocation-cold-preparation-summary",
+  "invocations": 9,
+  "parts": [
+    8,
+    16,
+    24,
+    32,
+    40,
+    48,
+    56,
+    64,
+    66
+  ],
+  "complete": true,
+  "activeInvocationMs": [
+    5654.262912,
+    3002.916976,
+    6755.887207,
+    5717.835534,
+    4906.216014,
+    6147.12932,
+    6265.864152,
+    6056.6708149999995,
+    3043.1419659999997
+  ],
+  "sumActiveInvocationMs": 47549.924896000004,
+  "readRows": 86321231,
+  "readBytes": 8374980013,
+  "queries": 249,
+  "sampledRss": [
+    197029888,
+    186585088,
+    178372608,
+    187006976,
+    196591616,
+    186241024,
+    196157440,
+    194895872,
+    137613312
+  ],
+  "observations": 84959,
+  "sourceRecords": 85078,
+  "semantics": "Sum of non-overlapping bounded invocations on one host; excludes manual gaps between commands; not scheduler queue-to-complete time or browser latency."
+}

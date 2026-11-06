@@ -878,3 +878,110 @@ collectors. History Retry remains scoped to the failing history operation.
 Full release acceptance remains incomplete: startup/render cost, prepared wall
 source discovery and exact compact chart delivery, warm revisits, concurrency,
 full 30h repeated-use measurements and remaining audit entries are still open.
+
+## Prepared wall views: implementation and isolated source evidence
+
+The v5 path now connects exact-view prepared manifests/parts to the actual archive
+loader. It uses shared scheduling, two-part bounded prefetch, decoded content
+hashes, cursor-chain validation and independent terminal source validation. The
+same canonical projector receives the same financial pages. Quiet-head progress
+rebases transport metadata only. A retained prefix can resume only its original
+source token; a superseded revision rebuilds behind retained display. Failed
+views without a resume cursor now expose Retry without reconnecting current
+subscriptions. Extended live-tail projections keep an untouched retry baseline.
+
+Backend commits `fd4e09b` and `fa7807a` are pushed. At this checkpoint they are
+**not deployed**; staging serving remains `95017a09f5838a18b1196901aa3b8f249545a6e8`.
+Only the isolated `/home/daz/iqterminal-wall-source-probe` checkout was used for
+real preparation. Collector lifecycle and raw retention were not changed.
+
+`nov6-prepared-wall-v5/` retains raw timings and the completed manifest for USD-M
+`1793797200000..1793800800000`. Preparation persisted five exact canonical pages,
+512/1113/935/1121/830 patches, 8,161,242 decoded bytes. Separate invocations prove
+persisted resume. One attempted final publication failed because proof fields
+were accidentally rehashed; the helper now normalizes request identity and its
+regression test reproduces the bug. The failed run remains in the evidence.
+Fresh independent bounded canonical reads matched every complete prepared page,
+including seed, patches, ordering, gaps and metadata (mutable profile telemetry
+excluded). Reference validation took 3256.2ms, 23 queries, 6,627,334 read rows and
+796,909,361 read bytes. These are nested aggregate measurements, not exclusive
+phase durations or browser load timings.
+
+The source proof's independent SHA256/XOR reference covered 5442 FINAL canonical
+rows and matched exactly. It verifies source identity, separately from the page
+projection comparison. Anchor-query amplification remains material (~141MB per
+measured anchor read); no schema/index change was made. Prepared transport still
+carries exact page detail. No 30h latency, compaction, automatic fair default
+preparation or disk-retention gate is claimed by this one-hour experiment.
+
+Staging subsequently deployed `fa7807a2f68df9affe4bde00be9c592b15b221db` through the
+existing guarded workflow: **235 backend tests pass**, typecheck/build pass, both
+collector IDs/start times unchanged. Rollback image/commands and health checks are
+in `nov6-prepared-wall-v5/deploy-fa7807a2f68df9affe4bde00be9c592b15b221db/`.
+The client is `4cbc82788333cf168d28e60468e51ec0bdab7af9` with staging/history tiles
+and diagnostics enabled. Targeted tests: **55 pass**; typecheck/staging build pass.
+Headed actual-browser UI: **2 pass**, including Retry without a resume cursor.
+Workspace 9 routing was verified while workspace 1 remained focused. The full
+client run is **not green**: 1057 pass, 2 skip, 2 vault five-second timeouts. The
+same vault file passed all 8 tests in isolation; no timeout was widened.
+
+The padded 30h USD-M request `1793695500000..1793805300000` completed through 66
+parts in separately bounded persisted invocations. It contains 128,019,127 decoded
+bytes  / 5,870,380 gzip bytes. All66 pages matched independent canonical re-reads
+exactly; verification took 29,187.7ms, 76,332,706 read rows / 4,551,404,862 read bytes.
+The immutable lookup was published only after source revalidation, every part's
+hash/bytes and collector identities checked. The actual Pi SSH discovery route
+returned ready 66. Historical source gaps remain explicit, including original
+persistence/disk-watermark gaps; prepared completion does not erase them.
+
+Five empty-browser-cache normal headed Chromium/GLES runs of this already-ready
+30h view are `nov6-wall-v5-samples.jsonl`, with every screenshot/request retained.
+Actual environment matched the expected build/staging/history=true/fixture=false
+in all five. First historypaint (ms): **10319.6,8158.1,null,9528.7,7024.4**.
+Complete visible coverage: **null in all five** within the 12s observation. Both
+first-history and complete-display gates **FAIL**. A null is incomplete, not a
+latency sample; no median/max completion or p95 is invented. Screenshots show
+only loaded prefixes while the full requested view/status remains incomplete.
+
+This establishes real client use of the new immutable routes, not acceptable
+performance. In run1 two part responses took only 4.08/8.05ms server read time,
+while browser header waits were ~3.09s. The canonical projector applied its first
+two pages in 190.9ms aggregate. These overlapping/browser/server durations are
+separate observations, not quantities to subtract across hosts or add as exclusive
+phases. Transport/admission/host overhead and the 128MB exact display payload
+remain investigation targets. Prepared Spot 30h and all other outstanding release
+gates remain unaccepted. Production was not deployed or merged.
+
+The same immutable first part (36,820 gzip /954,631 decoded bytes) was read five
+times per route with identical decoded SHA256 in all 15. Curl total times (ms):
+
+| Route | Every sample | Median | Maximum |
+| --- | --- | --- | --- |
+| Staging loopback | 1.636,1.508,1.233,1.307,2.024 | 1.508 | 2.024 |
+| Pi SSH | 3358.020,3056.427,2124.366,2222.264,2721.056 | 2721.056 | 3358.020 |
+| Vite via SSH | 3740.835,831.771,1805.144,1035.374,1644.579 | 1644.579 | 3740.835 |
+
+These are separate monotonic curl durations on each host, not timestamp
+subtractions. The remote SSH process overhead is recorded separately and is not
+part of loopback curl time. The route cohort is diagnostic, not a chart gate.
+`nov6-prepared-part-routes*` preserves headers and wire bodies; the script supports
+explicit immutable manifests and otherwise retains its old pinned batch probe.
+An initial script-edit error failed before recording a sample; its code/log and
+raw first response remain under the failed evidence paths. Local source-proof
+typecheck finished before the Pi SSH/Vite curl samples; remote loopback curl
+excludes its SSH process overhead.
+
+The follow-up timestamp-regressing gap proof fix deployed as backend
+`3e23410d83ea352e63a3935150d32815bec059ab`; its guarded rollout passed **236 tests**,
+typecheck/build and identical collector/start checks. The benchmark above remains
+pinned to `fa7807a`, not relabeled as a new-build result. The post-rollout resource
+and source samples record the actual new build. The first Spot health probe
+omitted the required `market=spot` and returned 400; the corrected explicit-market
+probe is retained separately. This is a probe error, not evidence of source loss.
+
+Five direct Tailscale pings were 992, 781, 730, 838, 881ms. They used the direct peer
+endpoint, not a relay. Existing SSH sockets reported ~851–913ms RTT with recorded
+retransmission counters. `tailscale-route-ping.txt` and `ssh-tcp-state.txt` preserve
+the snapshot. No network configuration or collector was changed. These measured
+route constraints keep performance acceptance incomplete; they do not permit
+shortened ranges or raised gate thresholds.

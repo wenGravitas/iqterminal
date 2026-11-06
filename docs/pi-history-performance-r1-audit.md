@@ -17,7 +17,7 @@ interactive performance. See [the measurement report](pi-history-performance-r1.
 | Reserved current capacity and cancellation through path | Split tunnel/agents, gateway reservation, shared SQL admission tests, runtime interruptible-query cancellation | Ten runs captured, no collector errors; confirmation gaps worsen, gate not certified; controlled matched-background comparison remains |
 | Client CPU bounded and obsolete work cancelled | Scheduler holds body/decode, yield/cancellation and consumer tests | Native history bulk import verified against the old per-bar path on Pi; startup CPU/long tasks and repeated-use resource analysis remain open |
 | Incremental walls, stable identity/runs, bounded queues | Archive service/projector tests and diagnostics; bounded real legacy/display reference | Closed-reference getter regressions and 1,000 hidden updates now pass; actual retained heap/frame plateau and full 30h use remain open |
-| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | One-hour persistent chunk storage implemented with exact revision/hash barriers; manifest discovery, scheduler/retention and chart delivery still open, followed by complete real 30h coverage/reuse/warm measurements |
+| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | V5 exact 30h source validation/discovery and actual client part delivery implemented; all 66 USD-M pages match a fresh real canonical reference. Five ready-server Pi loads fail complete coverage/latency. Automatic fair preparation, disk retention, compaction, Spot 30h and warm validation remain open |
 | Avoid repeated metadata and oversized SQL reads | Metadata cache and key-first FINAL query; real read-byte comparisons | Pinned route probe and end-to-end attribution; no schema changes |
 | Exact profiles and incumbent settings | Existing Top Levels/Threshold/Fit/persistence suites | Full frontend 1048 pass / 2 skip and backend 222 pass; remaining real-chart checks; never replace gaps with continuous walls |
 | Actual flags/build/routes/viewport and correlated timing | Worker/request diagnostics, raw samples, main-thread paint marks, source/build records | Final build IDs, pinned identical loopback/SSH/Vite samples, evidence index |
@@ -39,3 +39,12 @@ prove coverage but cannot turn a failed 10-second latency gate into a pass.
 Performance acceptance remains incomplete. Source absence, actual cold builds,
 ready server / empty browser cache, warm revisits, development overhead and
 normal headed Pi rendering must remain distinct in the final report.
+
+
+The November 6 prepared-view cohort uses frontend `4cbc827` and backend `fa7807a`.
+All five actual Pi environments were verified and all five 30h loads failed to
+complete within 12 seconds. The complete prepared snapshot remains available;
+partial chart prefixes are not accepted coverage. See `nov6-wall-v5-gates.json`
+and the evidence ledger for every sample. Latest frontend full suite: 1057 pass,
+2 skip, 2 vault timing failures; history-focused 55 pass and two headed Retry UI
+checks pass. These are distinct validation results, not an all-green release.
