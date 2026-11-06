@@ -996,3 +996,99 @@ materialization. RSS at invocation end ranged 137.6–197.0MB across fresh proce
 that does not prove a long-running chart/worker memory plateau. The actual job
 run/page logs and raw one-hour independent canonical rows are retained alongside
 the summary and SHA256 manifest.
+
+## Bounded wall batches and progressive members (November 6 follow-up)
+
+Backend serving is `18a68da4d87b059bfeb57529e4b7bdb2573d2983`; the guarded rollout
+passed **237 tests**, typecheck/build and unchanged collector-ID/start checks.
+Frontend served code is `c467e57b09fcb2d91bcf99ba3042fa60a737e92a`. Source commits
+`ef083f5`, `6957834`, `8dcf039`, `dc9633e` and `c467e57` introduce bounded batches,
+version compatibility, settled-task retirement, progressive application and
+last-consumer stream cancellation. No production merge or rollout occurred.
+
+The exact 66-part USD-M snapshot now uses one initial part and 17 bounded batches
+instead of 66 individual part requests. Each response is limited to 8MiB decoded /
+8 parts; each original part retains its 4MiB limit. The first content can paint
+independently. Later verified members publish while the batch tail is still
+arriving. EOF validation precedes the terminal member, and source validation
+still precedes view completion. Failed tails retain the validated prefix and its
+exact part/cursor boundary. Shared consumers cancel independently; the final
+unsubscribe cancels the held stream and releases scheduler admission.
+
+A real Chromium test rejected the initial concatenated-gzip design: it returned
+exactly 954,631 bytes, matching part 0's SHA256, then stopped before the LF separator.
+No invalid financial page was applied. Version 2 uses a single gzip stream, with
+bounded asynchronous recompression and an 8MiB/32-entry LRU. Financial JSON bytes
+are never parsed/reserialized by that encoder. The new immutable URL includes
+`version=2`; both old and new clients can fall back to individual parts when the
+advertised encoding is unsupported. The failed version 1 browser logs remain in
+`nov6-wall-batch-v1/`; the corrected transport proof is `nov6-wall-batch-v2/`.
+
+Real normal headed Chromium on the Pi verified all 66 original part hashes through
+version 2. Seventeen sequential batch fetch/hash/parse durations totaled 203,751ms,
+excluding initial-part and Node-between-call time. All 17 encoding-cache states
+were cold misses over already-prepared canonical parts. This is a transport and
+encoding check on an explicit empty page, not chart paint, raw-depth-to-wall
+materialization, or an interactive gate. It verifies exact 128,019,127 canonical
+JSON bytes plus framing. The source snapshot and original source gaps are unchanged.
+
+Validation of the progressive reader: **68 focused tests pass**, typecheck and
+staging build pass. The final full frontend suite passed **1069 tests / 2 skips**.
+Earlier vault-timeout failures remain preserved; the same 8 vault tests passed in
+isolation before the final clean full run. Browser lifecycle checks initially
+passed 11 of 12; the native-history Retry test raced its own automatic successful
+recovery. Existing production DOM reuse was already correct. The test now holds
+its simulated source unavailable until explicit Retry; both 3-bar and 1000-bar
+cases pass, retaining healthy sockets, live prices and the wider saved view.
+Other 11 checks already passed on the same served product build. These explicit
+fixtures are distinct from the actual-source loading cohorts.
+
+The scheduler repeat-request defect has a direct before/after proof: a second
+immediate request remained unsettled after 100ms with only 1 run on the old code;
+the fix returns 2 with 2 runs. Completed or failed work leaves the deduplication map
+before resolving its consumers. `iq-history-scheduler-repeat-proof.jsonl` retains
+the evidence; the interval is a lifecycle probe, not a loading-gate threshold.
+
+Five buffered-batch runs (`nov6-wall-batch-v2-samples.jsonl`, client 6957834) failed
+complete 30h coverage within 12s. First-history paint was 8685.7,null,null,null,9309.9ms.
+The first progressive cohort recorded only 4 terminal rows despite 5 screenshots;
+its fifth timing is unknown and is not invented or pooled with a replacement.
+The exact unresolved Playwright call was not journaled. Its response trace waits
+were unbounded. The harness now records requests at start, saves observations
+before context close and bounds trace finalization to 1s without changing the 12s
+loading observation. Two focused helper tests cover an unresolved canceled trace.
+
+The complete replacement cohort is `nov6-wall-progressive-final-samples.jsonl`:
+client c467e57 / backend 18a68da, actual Pi normal headed Chromium/GLES and the same
+pinned 30h request. All 5 staging/history/build/fixture checks passed, all 5 context
+closures were journaled, and all 5 trace finalizations completed without timeout.
+
+| Run | First useful history (ms) | Complete validated visible coverage by 12s |
+| --- | --- | --- |
+| 1 | 8955.4 | No |
+| 2 | Not observed | No |
+| 3 | Not observed | No |
+| 4 | 7225.3 | No |
+| 5 | Not observed | No |
+
+Both wall loading gates **FAIL**. No completion median/maximum or p95 is fabricated
+from missing completions. These cohorts have different code/route observations;
+no causal latency win is claimed from them. Progressive delivery's earlier-member
+behavior is proven by the delayed-tail regression and real partial paint, while
+the route still prevents interactive full-view loading. Raw requests, journal,
+resource samples, every screenshot, exact script/helper hashes and gate output
+are retained. The latest source health remains live for both collectors with
+recovery counts 246/78 and unchanged collector identities.
+
+Automatic fair prepared-wall scheduling, bounded disk retention, reuse across
+ordinary sliding/panned windows, exact display compaction, the new Spot 30h path,
+warm/current-concurrency gates and full-view heap/frame plateau remain open.
+The earlier current-footprint and 4h/24h footprint latency failures remain failures.
+This is an implementation increment with measured failed acceptance, not a release
+claim. Operational batch/retry/rollback details are in the backend's
+`docs/PREPARED-WALL-VIEWS.md`.
+
+All five final chart diagnostics report `backend: canvas2d`. GLES describes the
+normal browser/compositor launch; no GPU chart-rendering or 60fps result is claimed.
+`release-identifiers.json` and `served-asset-sha256.json` pin the actual served
+builds, route, snapshot and asset bytes independently of later documentation commits.

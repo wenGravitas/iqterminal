@@ -1,0 +1,7 @@
+{
+  "externalLateProbe": "No matching tagged browser window was observed during the bounded external poll; this is not a successful placement assertion.",
+  "lateFocusedWorkspace": 1,
+  "benchmarkNavigationGuard": "Every benchmark context awaits routeTestBrowser after newPage and before navigation; the complete five-run cohort reached navigation and finished.",
+  "persistentRules": "i3 assigns IQTerminalPerf class and Playwright profile instance windows to workspace9 with no_focus.",
+  "note": "The late external polling failure is retained separately from the benchmark navigation guard; no personal browser window was moved."
+}

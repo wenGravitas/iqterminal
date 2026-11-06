@@ -48,3 +48,21 @@ partial chart prefixes are not accepted coverage. See `nov6-wall-v5-gates.json`
 and the evidence ledger for every sample. Latest frontend full suite: 1057 pass,
 2 skip, 2 vault timing failures; history-focused 55 pass and two headed Retry UI
 checks pass. These are distinct validation results, not an all-green release.
+
+
+Latest wall-delivery increment: backend `18a68da` / served frontend `c467e57`.
+Version 2 reduces the exact snapshot from 66 part requests to 18 bounded requests,
+and all 66 hashes pass actual Chromium verification. Progressive members, truncated
+tail retention, shared cancellation and immediate retry are covered by 68 focused
+tests; latest full frontend 1069 pass / 2 skip, backend 237 pass. Browser lifecycle
+coverage is 11 passing checks plus 2 passing scoped Retry rechecks after repairing
+a simulated-source auto-recovery race. This is not one all-green 12-test run.
+
+All five final Pi samples have verified environments and finalized traces, but
+none completes 30h history within 12s. First-history paints are 8955.4,null,null,7225.3,
+null ms. Both loading gates FAIL; no completion median/max/p95 is invented.
+Every renderer diagnostic is canvas2d in normal headed Chromium. See
+`nov6-wall-progressive-final-gates.json` and the current release ledger. Prepared
+Spot 30h, automatic scheduling/retention and sliding reuse, warm/current-concurrency
+and full-view memory/frame gates remain open. Earlier footprint latency failures
+remain unaccepted. Keep the original scope and failed source/transport evidence.

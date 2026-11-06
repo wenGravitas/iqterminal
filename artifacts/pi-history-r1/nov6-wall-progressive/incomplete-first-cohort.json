@@ -1,0 +1,12 @@
+{
+  "kind": "incomplete-benchmark-cohort",
+  "label": "nov6-wall-progressive",
+  "expectedRuns": 5,
+  "terminalRecords": 4,
+  "missingTerminalRuns": [
+    5
+  ],
+  "screenshotExists": "nov6-wall-progressive-walls-30h-perp-15m-5.png",
+  "observed": "Fifth screenshot exists; no terminal record. Exact pending Playwright call was not journaled. Response trace waits were unbounded.",
+  "acceptance": "FAIL / incomplete evidence; do not invent a fifth timing or pool with replacement cohort."
+}
