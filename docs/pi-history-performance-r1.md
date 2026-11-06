@@ -772,3 +772,44 @@ consumption remain open; directly concatenating hourly files would violate the
 current fence/cursor ordering contract when source timestamps regress. All
 previous unresolved gates remain incomplete. No production deployment or merge
 has occurred.
+
+
+### Early feed startup: complete coverage, latency still failing
+
+Client `2c7c396e27d2ac041a99e16fda30dcdcf187580a` starts the saved source
+selection before the large UI module loads and hands one worker to the UI.
+A deterministic browser check blocked that UI module: six bounded historical
+requests and current/native reads began independently, then all 24 historical
+bars appeared after UI release, without another worker or duplicate bootstrap.
+The startup selection is read-only and reconciled with the full UI config before
+handoff. Focused legacy/source/restore tests and the full suite passed: 1048 tests,
+two skipped; typecheck/build and eleven browser lifecycle tests passed. These
+are correctness checks, not real latency acceptance.
+
+Normal headed Pi Chromium through port 4181, backend `95017a09f5838a18b1196901aa3b8f249545a6e8`,
+empty browser contexts, actual Canvas2D renderer, produced these five samples:
+
+| Scenario | Every sample (ms) | Median | Maximum | Gate |
+|---|---|---:|---:|---|
+| First current footprint | 6694.8, 3957.2, 3616.4, 3316.5, 3396.7 | 3616.4 | 6694.8 | FAIL |
+| Complete prepared 4h/5m | 6976.6, 9113.4, 6207.7, 7378.3, 5866.2 | 6976.6 | 9113.4 | FAIL median |
+
+All five historical samples loaded and painted all 48 requested closed slots.
+The same pinned server window was checked before measurement: 48 ready 5m bars
+and all six chunks containing 24 ready hourly bars, with no build jobs.
+These readiness checks do not measure cold materialization. The latest 24h
+latency series is outstanding. The 4h result regressed relative to an earlier
+build; early startup is not an accepted overall performance improvement.
+Raw samples, screenshots and executed scripts are `nov6-early-current*` and
+`nov6-early-4h*`; startup logs/readiness are in `early-startup-validation/`.
+No heavy verification ran concurrently with these latency series.
+
+These samples add a splash-hidden/app-ready guard, but still used the RAF frame
+start as the mark. That timestamp can precede a costly draw in the same frame.
+They remain unchanged as raw evidence and are not precise end-of-draw latency.
+Subsequent samples use `navigation-relative-painted-content-observation-v2`:
+`performance.now()` after observing painted content, rather than the RAF argument.
+The primitive now stamps its diagnostic at the end, including totals/candles.
+This is a conservative main-thread observation of painted content, not compositor
+presentation telemetry. Timing methods are recorded and must not be pooled as a
+causal A/B comparison. Earlier failing samples are not converted to passes.

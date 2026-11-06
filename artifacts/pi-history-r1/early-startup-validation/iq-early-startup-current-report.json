@@ -1,0 +1,135 @@
+{
+  "source": "artifacts/pi-history-r1/nov6-early-current-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "current-footprint-5m",
+      "samplesMs": [
+        6694.8,
+        3957.2,
+        3616.4,
+        3316.5,
+        3396.7
+      ],
+      "medianMs": 3616.4,
+      "maximumMs": 6694.8,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        6694.8,
+        null,
+        3449.7,
+        null,
+        null
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "2c7c396e27d2ac041a99e16fda30dcdcf187580a"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793954100000,
+            "to": 1793968500000
+          },
+          "viewport": {
+            "from": 1793954100,
+            "to": 1793968500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793954100000,
+            "to": 1793968500000
+          },
+          "viewport": {
+            "from": 1793954100,
+            "to": 1793968500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793954100000,
+            "to": 1793968500000
+          },
+          "viewport": {
+            "from": 1793954100,
+            "to": 1793968500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793954100000,
+            "to": 1793968500000
+          },
+          "viewport": {
+            "from": 1793954100,
+            "to": 1793968500
+          },
+          "paintedClosedBars": 1,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793954100000,
+            "to": 1793968500000
+          },
+          "viewport": {
+            "from": 1793968200,
+            "to": 1793968200
+          },
+          "paintedClosedBars": 1,
+          "archive": {},
+          "exception": null
+        }
+      ]
+    }
+  ]
+}
