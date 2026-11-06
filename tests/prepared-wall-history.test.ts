@@ -40,6 +40,10 @@ function transport(f=fixture(),options:{changed?:boolean;corrupt?:boolean;before
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
   if(url.pathname.endsWith('/discover'))return new Response(JSON.stringify(f.discovery));
   if(url.pathname.endsWith('/source'))return new Response(JSON.stringify(options.changed?{...current,token:'c'.repeat(64)}:current));
+  if(url.pathname.endsWith('/batch')){
+   const start=Number(url.searchParams.get('start')),selected=f.parts.slice(start,start+8),body=selected.map((p,i)=>(options.corrupt&&start+i===1?f.texts[start+i]+' ':f.texts[start+i])+'\n').join('');
+   return new Response(body,{headers:{'x-iq-wall-start':String(start),'x-iq-wall-next':String(start+selected.length),'x-iq-wall-parts':String(selected.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.manifest.request.sourceRevision}});
+  }
   if(url.pathname.endsWith('/part')){
    const index=f.parts.findIndex(p=>p.hash===url.searchParams.get('hash'));expect(index).toBeGreaterThanOrEqual(0);
    active++;peak=Math.max(peak,active);try{await options.beforePart?.(index,init?.signal);return new Response(options.corrupt&&index===1?f.texts[index]+' ':f.texts[index]);}finally{active--;}
@@ -170,4 +174,48 @@ test('busy prepared discovery does not multiply load through a serial canonical 
  vi.stubEnv('VITE_HISTORY_TILES','1');const fetcher=vi.fn(async()=>new Response('{}',{status:503}));
  await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:fetcher as typeof fetch})).rejects.toThrow(/discovery HTTP 503/);
  expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+test('advertised bounded batches preserve the canonical projection with fewer requests',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};
+ const t=transport(f),updates:any[]=[],result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)});
+ const reference=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:transport().fetcher});
+ expect(result.segments).toEqual(reference.segments);expect(result.status.archive?.requestComplete).toBe(true);
+ expect(t.calls.filter(x=>x.endsWith('/part'))).toHaveLength(1);expect(t.calls.filter(x=>x.endsWith('/batch'))).toHaveLength(1);
+ expect(updates.slice(0,-1).every(u=>!u.status.archive.requestComplete)).toBe(true);
+});
+test('a corrupt batch retains the first painted part without publishing an invalid financial page',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};
+ const t=transport(f,{corrupt:true}),updates:any[]=[];
+ await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/byte identity|hash mismatch/);
+ expect(updates).toHaveLength(1);expect(updates[0].resume.after).toBe(10);expect(updates[0].status.archive.requestComplete).toBe(false);
+});
+test('batch Retry resumes the retained part boundary without duplicate financial state',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};
+ const updates:any[]=[];
+ await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:transport(f,{corrupt:true}).fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/byte identity|hash mismatch/);
+ const t=transport(f),result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,resume:updates[0].resume});
+ const fresh=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:transport().fetcher});
+ expect(result.segments).toEqual(fresh.segments);expect(result.pages).toBe(3);expect(t.calls.filter(p=>p.endsWith('/part'))).toHaveLength(0);expect(t.calls.filter(p=>p.endsWith('/batch'))).toHaveLength(1);
+});
+test('batch consumers coalesce while cancellation releases only the obsolete chart',async()=>{
+ const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);
+ let release:()=>void=()=>{},upstream:AbortSignal|null|undefined,batches=0;
+ const fetcher:typeof fetch=async(input,init)=>{
+  if(String(input).includes('/batch?')){batches++;upstream=init?.signal;await new Promise<void>(resolve=>release=resolve);}
+  return t.fetcher(input,init);
+ };
+ const a=await preparedWallReader(request,fetcher,new AbortController().signal),b=await preparedWallReader(request,fetcher,new AbortController().signal);
+ try{
+  const first=a!.read(10),second=b!.read(10);void first.catch(()=>{});
+  await vi.waitFor(()=>expect(batches).toBe(1));a!.dispose();await expect(first).rejects.toThrow(/Aborted/);expect(upstream?.aborted).toBe(false);
+  release();expect((await second).body).toMatchObject({page:{after:10}});
+ }finally{release();a?.dispose();b?.dispose();}
+ await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
+});
+test('invalid batch headers cancel the unread response and preserve the painted prefix',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);let canceled=false;
+ const fetcher:typeof fetch=async(input,init)=>String(input).includes('/batch?')?new Response(new ReadableStream({cancel(){canceled=true;}})):t.fetcher(input,init);
+ const updates:any[]=[];await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/batch identity/);
+ expect(canceled).toBe(true);expect(updates).toHaveLength(1);expect(updates[0].status.archive.requestComplete).toBe(false);
 });

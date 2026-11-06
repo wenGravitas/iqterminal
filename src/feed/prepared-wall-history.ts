@@ -15,14 +15,18 @@ const sourceUrl=(path:string,r:PreparedWallRequest)=>'/market-data/v2/history/wa
 function validSource(value:any,r:PreparedWallRequest):value is Source{return value?.version===1&&value.kind==='wall-source-sha256-xor-v1'&&value.eligible===true&&hex(value.token)&&sameRequest(value,r)&&integer(value.watermark)&&head(value.head)&&value.head.cursor===value.watermark&&value.head.at>=r.to;}
 /** Bounded decode remains inside the shared request admission. Browser fetch has
  * already decoded HTTP gzip; bound decoded bytes as well as the wire response. */
-async function readBody(response:Response,max:number,expectedHash?:string){
- const start=performance.now(),reader=response.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
+async function readBytes(response:Response,max:number){
+ const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let size=0;
  if(reader)try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>max){await reader.cancel();throw Error('Prepared wall response byte capacity');}chunks.push(value);}}finally{reader.releaseLock();}
  else{const bytes=new Uint8Array(await response.arrayBuffer());size=bytes.byteLength;if(size>max)throw Error('Prepared wall response byte capacity');chunks.push(bytes);}
  const bytes=new Uint8Array(size);let at=0;for(const chunk of chunks){bytes.set(chunk,at);at+=chunk.byteLength;}
+ return bytes;
+}
+async function readBody(response:Response,max:number,expectedHash?:string){
+ const start=performance.now(),bytes=await readBytes(response,max);
  if(expectedHash&&await hash(bytes)!==expectedHash)throw Error('Prepared wall part content hash mismatch');
  const bodyReadMs=performance.now()-start,parse=performance.now();
- const body:unknown=JSON.parse(new TextDecoder().decode(bytes));return {body,bytes:size,bodyReadMs,jsonParseMs:performance.now()-parse};
+ const body:unknown=JSON.parse(new TextDecoder().decode(bytes));return {body,bytes:bytes.byteLength,bodyReadMs,jsonParseMs:performance.now()-parse};
 }
 async function validateManifest(value:any,source:Source,r:PreparedWallRequest):Promise<Manifest>{
  if(value?.version!==5||!hex(value.key)||value.complete!==true||!sameRequest(value.request??{},r)||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token
@@ -68,6 +72,38 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||target.cursor<manifest.watermark||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal]);
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
+ const batchEnabled=found.delivery?.version===1&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
+ const readyBatch=new Map<number,PreparedWallFetched>();
+ async function loadBatch(startIndex:number){
+  const parts:Part[]=[];let expectedBytes=0;
+  for(const part of manifest.parts.slice(startIndex,startIndex+8)){
+   if(expectedBytes+part.bytes+1>8*1024*1024)break;parts.push(part);expectedBytes+=part.bytes+1;
+  }
+  const url='/market-data/v2/history/walls/batch?'+new URLSearchParams({market:request.market,key:manifest.key,start:String(startIndex),version:'1'});
+  const results=await historyScheduler.read(url,'order-walls',consumer,async upstream=>{
+   const start=performance.now(),response=await fetcher(url,{signal:upstream}),responseHeadersMs=performance.now()-start;
+   if(!response.ok){await response.body?.cancel();throw Error('Prepared wall batch HTTP '+response.status);}
+   if(response.headers.get('x-iq-wall-start')!==String(startIndex)||response.headers.get('x-iq-wall-next')!==String(startIndex+parts.length)
+    ||response.headers.get('x-iq-wall-parts')!==String(parts.length)||response.headers.get('x-iq-chunk-key')!==manifest.key
+    ||response.headers.get('x-iq-source-revision')!==manifest.request.sourceRevision){await response.body?.cancel();throw Error('Prepared wall batch identity mismatch');}
+   const bodyStarted=performance.now(),bytes=await readBytes(response,8*1024*1024),bodyReadMs=performance.now()-bodyStarted;
+   if(bytes.byteLength!==expectedBytes)throw Error('Prepared wall batch byte identity mismatch');
+   const results:PreparedWallFetched[]=[];let offset=0;
+   for(const [i,part] of parts.entries()){
+    upstream.throwIfAborted();
+    const end=offset+part.bytes,raw=bytes.subarray(offset,end);
+    if(bytes[end]!==10||await hash(raw)!==part.hash)throw Error('Prepared wall batch part content hash mismatch');
+    const parse=performance.now(),body:unknown=JSON.parse(new TextDecoder().decode(raw)),jsonParseMs=performance.now()-parse;
+    const headers=new Headers(response.headers);if(i>0)headers.set('content-length','0');
+    results.push({response:i===0?response:new Response(null,{headers}),body,bytes:part.bytes,responseHeadersMs:i===0?responseHeadersMs:0,bodyReadMs:i===0?bodyReadMs:0,jsonParseMs,attempts:1});
+    offset=end+1;
+   }
+   return results;
+  });
+  consumer.throwIfAborted();
+  for(const [i,result] of results.entries())readyBatch.set(startIndex+i,result);
+ }
+
  function prefetch(index:number,priority:number){
   if(index>=manifest.parts.length||pending.has(index))return;
   const part=manifest.parts[index],url='/market-data/v2/history/walls/part?'+new URLSearchParams({market:request.market,key:manifest.key,hash:part.hash});
@@ -80,12 +116,13 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   },priority);
   pending.set(index,promise);void promise.catch(()=>{});
  }
- return {sourceToken:source.token,dispose:()=>{abort.abort();pending.clear();},read:async after=>{
+ return {sourceToken:source.token,dispose:()=>{abort.abort();pending.clear();readyBatch.clear();},read:async after=>{
   if(consumer.aborted)throw new DOMException('Aborted','AbortError');
   if(expectedAfter!==undefined&&after!==expectedAfter)throw Error('Prepared wall continuation cursor mismatch');
   const index=after===0?0:manifest.parts.findIndex(part=>part.after===after);if(index<0)throw Error('Prepared wall resume cursor is not a part boundary');
-  prefetch(index,0);prefetch(index+1,1);
-  const result=await pending.get(index)!;pending.delete(index);
+  let result:PreparedWallFetched;
+  if(batchEnabled&&index>0){if(!readyBatch.has(index))await loadBatch(index);result=readyBatch.get(index)!;readyBatch.delete(index);}
+  else{prefetch(index,0);if(!batchEnabled)prefetch(index+1,1);result=await pending.get(index)!;pending.delete(index);}
   const body=rebasePreparedWallPage(result.body,manifest,manifest.parts[index]!,target);
   expectedAfter=body.page.nextAfter;
   if(!body.page.hasMore){
