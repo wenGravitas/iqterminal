@@ -5185,8 +5185,9 @@ export class CandlePanel implements IContentRenderer {
         this.status = event.status;
         this.updateStatus();
       } else if (event.type === 'snapshot') {
-        this.candles = event.candles.length > 5_000 ? event.candles.slice(-5_000) : [...event.candles];
-        this.engine?.setSnapshot(event.candles, !this.resetViewOnSnapshot || (this.selection.type === 'footprint' && this.footprintHasInitialView));
+        if(event.merge)this.mergeCandles(event.candles);
+        else this.candles = event.candles.length > 5_000 ? event.candles.slice(-5_000) : [...event.candles];
+        this.engine?.setSnapshot(this.candles, !this.resetViewOnSnapshot || (this.selection.type === 'footprint' && this.footprintHasInitialView));
         this.studyHost?.setSnapshot(this.candles); this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.schedulePaneIndicatorLayout();
         if (this.resetViewOnSnapshot && this.selection.type === 'candle') this.engine?.resetView();
@@ -5821,7 +5822,7 @@ export class CandlePanel implements IContentRenderer {
       : status.state === 'loading' ? 'Connecting live data…' : quoteUnavailable ? quoteHint : '';
     const totalsLive = !isFootprint && this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible ? this.footprintStatus.state === 'loading' ? 'Connecting live totals…' : ['failed','stale'].includes(this.footprintStatus.state) ? 'Live totals unavailable' : '' : '';
     const nativeHistory = !isFootprint ? this.status.nativeHistory : undefined;
-    const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${nativeHistory.loadedBars} bars displayed` : '';
+    const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${nativeHistory.loadedBars} bar${nativeHistory.loadedBars===1?'':'s'} displayed` : '';
     const text = [liveText, totalsLive, nativeHistoryText, historyText].filter(Boolean).join(' · ');
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;

@@ -426,3 +426,18 @@ test('native closed REST repairs survive replay of older cached closed stream ev
   expect(events.find(e=>e.type==='snapshot')).toMatchObject({candles:[closed]});
  }finally{service.dispose();}
 });
+
+test('large native backfill uses one merging snapshot while retaining the independently streamed current candle',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[];let resolve!:(r:Response)=>void;
+ const service=new StagingFeedService(e=>events.push(e),()=>new Promise<Response>(r=>resolve=r),()=>90000000,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ const current={t:90000000,o:84000,h:84100,l:83900,c:84080,v:8,revision:90000001,closed:false};
+ try{
+  service.command({type:'subscribe',id:'native',series});sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:current});
+  const candles=Array.from({length:1000},(_,i)=>({...current,t:current.t-(999-i)*60000,c:84010,v:1,revision:99999999,closed:i<999}));
+  resolve(new Response(JSON.stringify({source:'binance-native-kline',candles})));await vi.advanceTimersByTimeAsync(1);
+  const updates=events.filter(e=>e.type==='snapshot'||e.type==='patch');expect(updates).toHaveLength(2);
+  expect(updates[1]).toMatchObject({type:'snapshot',merge:true});
+  expect((updates[1] as any).candles).toHaveLength(1000);expect((updates[1] as any).candles.at(-1)).toEqual(current);
+  expect(service.diagnostics().retainedBars).toBe(1000);expect(sockets).toHaveLength(1);
+ }finally{service.dispose();}
+});

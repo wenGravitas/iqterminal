@@ -138,7 +138,7 @@ test('failed live Totals exposes scoped Retry while healthy native candles and c
  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintBars.length)).toBeGreaterThan(2);
 });
 
-test('native candles paint before history and history Retry preserves the live socket and current candle',async({page,context})=>{
+for(const historyBars of [3,1000])test(`native candles paint before ${historyBars}-bar history and history Retry preserves live state`,async({page,context})=>{
  test.setTimeout(45000);const now=Date.now(),step=60000,current=Math.floor(now/step)*step;let historyRequests=0,socketCount=0;
  let releaseHistory!:()=>void;const historyGate=new Promise<void>(resolve=>releaseHistory=resolve);
  page.on('console',message=>{if(message.text()==='iq-native-regression-socket')socketCount++;});
@@ -160,19 +160,31 @@ test('native candles paint before history and history Retry preserves the live s
   const u=new URL(route.request().url());
   if(u.pathname.endsWith('/native-candles')){
    historyRequests++;if(historyRequests===1){await historyGate;return route.fulfill({status:502,body:'history route unavailable'});}
-   return route.fulfill({contentType:'application/json',body:JSON.stringify({source:'binance-native-kline',candles:[current-2*step,current-step,current].map(t=>({t,o:80000,h:80100,l:79900,c:80010,v:1,revision:9999999999999,closed:t<current}))})});
+   return route.fulfill({contentType:'application/json',body:JSON.stringify({source:'binance-native-kline',candles:Array.from({length:historyBars},(_,i)=>current-(historyBars-1-i)*step).map(t=>({t,o:80000,h:80100,l:79900,c:80010,v:1,revision:9999999999999,closed:t<current}))})});
   }
   return route.fulfill({contentType:'application/json',body:JSON.stringify({version:1,cursor:0,watches:[],events:[]})});
  });
  await page.goto('/');
- const read=()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-native-independent');return p?{candles:p.candles,status:p.status,barCount:p.engine.barCount}:null;});
+ const read=()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-native-independent');return p?{candles:p.candles,status:p.status,barCount:p.engine.barCount,view:p.engine.visibleTimeRange(),bulk:(window as any).__nativeHistoryApply}:null;});
  await expect.poll(async()=>{const state=await read();return state?.status.state==='live'&&state.barCount===1&&state.candles.at(-1)?.c===80060;}).toBe(true);
- await expect(page.getByText('Candle history loading · 1 bars displayed',{exact:true})).toBeVisible();expect(historyRequests).toBe(1);
- await page.screenshot({path:'artifacts/pi-history-r1/native-current-before-history.png'});
+ await expect(page.getByText('Candle history loading · 1 bar displayed',{exact:true})).toBeVisible();expect(historyRequests).toBe(1);
+ await page.screenshot({path:`artifacts/pi-history-r1/native-current-before-history-${historyBars}.png`});
+ let retainedView;
+ if(historyBars===1000){
+  await page.evaluate(({current,step})=>{
+   const p=(window as any).__terminal.panels.get('chart-native-independent'),live=p.candles.at(-1);
+   p.candles=Array.from({length:5000},(_,i)=>({...live,t:current-(4999-i)*step,c:80040,v:4,closed:i<4999}));p.candles[p.candles.length-1]=live;
+   p.engine.setSnapshot(p.candles,true);p.engine.restoreHistoryTimeRange({from:(current-180*step)/1000,to:(current+2*step)/1000});
+   const work=(window as any).__nativeHistoryApply={snapshots:0,multiBarPatches:0,snapshotMs:[]},snapshot=p.engine.setSnapshot.bind(p.engine),patch=p.engine.applyPatch.bind(p.engine);
+   p.engine.setSnapshot=(...args:any[])=>{const start=performance.now();try{return snapshot(...args);}finally{work.snapshots++;work.snapshotMs.push(performance.now()-start);}};
+   p.engine.applyPatch=(bars:any[])=>{if(bars.length>1)work.multiBarPatches++;return patch(bars);};
+  },{current,step});retainedView=(await read())?.view;
+ }
  releaseHistory();await expect(page.getByText(/Candle history incomplete · Staging history HTTP 502/)).toBeVisible();
  expect((await read())?.status.state).toBe('live');await page.getByRole('button',{name:'Retry market data',exact:true}).click();
- await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===3;}).toBe(true);
+ await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===(historyBars===1000?5000:3);}).toBe(true);
+ if(historyBars===1000){expect((await read())?.view).toEqual(retainedView);expect((await read())?.candles[0].c).toBe(80040);expect((await read())?.candles[4000].c).toBe(80010);expect((await read())?.bulk).toMatchObject({snapshots:1,multiBarPatches:0});}
  expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
- await page.screenshot({path:'artifacts/pi-history-r1/native-history-recovered-live-retained.png'});
+ await page.screenshot({path:`artifacts/pi-history-r1/native-history-recovered-live-retained-${historyBars}.png`});
 });

@@ -37,6 +37,7 @@ export function footprintPastViewport(from: number, to: number, now: number, ste
 
 export const stagingMarket = (series: Series) => series.venue === 'binance';
 const NATIVE_CANDLE_HISTORY_TIMEOUT_MS = 60_000;
+const NATIVE_HISTORY_BULK_MIN_BARS = 32;
 const FOOTPRINT_BOOTSTRAP_TIMEOUT_MS = 20_000;
 const footprintSource = (market: ReturnType<typeof marketOf>) => market === 'spot' ? 'binance-spot-aggtrade' : 'binance-usdm-aggtrade';
 
@@ -321,7 +322,12 @@ export class StagingFeedService {
           if(!old||['o','h','l','c','v','closed','quoteVolume'].some(field=>(old as any)[field]!==(c as any)[field]))changes.push(c);
         }
         this.retainNative(g,map);g.native!.ready=true;g.native!.error=undefined;g.native!.retryAt=0;g.native!.failures=0;
-        if(initial||changes.length)this.emit({type:initial?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial?g.candles:changes});
+        // Large historical imports must rebuild the chart series once rather
+        // than rebuilding its data/accessibility indexes for every old bar.
+        // Merge at the consumer preserves older displayed bars beyond this
+        // worker's bounded replay cache; forming source state is already merged.
+        const bulk=!initial&&changes.length>=NATIVE_HISTORY_BULK_MIN_BARS;
+        if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,...(bulk?{merge:true}:{})});
         this.nativeStatus(g);
       } else {
         const source = footprintSource(marketOf(g.series));
