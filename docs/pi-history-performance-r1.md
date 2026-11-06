@@ -335,3 +335,87 @@ The raw logs, source-version probe and exact SQL-only coverage summary are
 committed alongside this report. The source-version summary verifies 48/48 raw
 candle groups for each 4h/5m source window and 24/24 for each 24h/1h source
 window; it explicitly makes no rendered-coverage claim.
+
+
+## Canonical source-version release, 6 November
+
+Staging serves backend `7256fd44af9728619a93d6191639d5e39e8d74ee`.
+Client `8a28a6081fdf13d297ca50e0e9680dd6802627d1` was built with staging data,
+history tiles and diagnostics enabled. These are normal headed Pi Chromium
+runs, empty browser cache over prepared server history, with the fixed source
+window ending at `1793804400000`. Actual chart rendering is Canvas2D. Raw
+`source-version-7256-*` samples retain every failure and request timing.
+
+| Scenario | Every complete/paint sample, ms | Median / maximum, ms | Gate |
+|---|---|---|---|
+| Complete 4h, 5m/$25 | 4698.2, 4048.9, 4139.6, 4490, 6287 | 4490 / 6287 | PASS |
+| Complete 24h, 1h/$25 | 5052.2, 6809.4, 6947.6, 9146.8, 5951.5 | 6809.4 / 9146.8 | FAIL median |
+| First current footprint | 3163.9, 2865.3, 3341.2, 3575.4, 3322.2 | 3322.2 / 3575.4 | FAIL |
+| Complete 30h Spot walls | incomplete in all five | unavailable | FAIL |
+| Complete 30h USD-M walls | incomplete in all five | unavailable | FAIL |
+| First current walls | no painted selection in all five | unavailable | FAIL |
+
+All footprint historical runs account for all 48 or 24 requested closed slots.
+The screenshot reproduction separately paints five closed hourly bars and one
+forming bar, preserving three hours of future whitespace. Its 30-second coverage
+observation is not a latency-gate sample. During part of the footprint series an
+unusual $37.5 cold repair was active; this is recorded workload, not an isolated
+causal before/after experiment. Server input-digest validation includes FINAL
+canonical Decimal fields, with independent per-row SHA256/XOR reference checks.
+
+The fixed fourteen-request legacy preparation completed in 192.206 seconds.
+The busy 333,999-execution hour repaired in 41.766 seconds with unchanged exact
+52-cell financial content and an independent reference match. Its 167 additional
+pages read 32,802,302 DB rows / 2,493,895,852 bytes: bounded returned rows still
+have substantial physical read amplification. These are cold derived rebuild
+results, separate from the prepared-server table. All four defaults subsequently
+had versioned closed bars and exactly one forming bar after rollover; boundary
+publication delay remains unmeasured. See the backend report and raw
+`source-version-*` evidence for scope and counters.
+
+### Current wall geometry and remaining delivery failure
+
+Client `302029935e0b1f1c0d0add783d8e6f61f85125e9` repairs two deterministic
+visibility defects: an instantaneous current seed was discarded as zero width,
+and confirmation-only patches did not advance open tails. A seed now paints a
+minimum physical pixel with its exact source timestamp; hover does not invent
+extra time coverage. Only open IDs advance on confirmation changes. Archived
+open ends advance only to delivered history, independently of current freshness.
+Full frontend verification passed 1,027 tests with two skips; eight lifecycle
+browser checks passed with explicit worker transport fixtures (headless software
+rendering, not live performance).
+
+The standard current-wall rerun retains a mistakenly abbreviated declared build
+label and is not gate evidence. Its diagnostics have the full correct build;
+selected prices were outside the native viewport. A separate Fit Walls series
+painted all sixteen selected markers, taking 8695, 7013.1, 4544.3, 6614.8 and
+4504.5 ms. That is supplemental behavior evidence and exceeds the current target;
+it cannot certify native-view latency. A partial local unit run overlapped its
+first sample and was stopped; no causal performance claim is made from it.
+
+Extended 90-second runs with client 3020299 remained incomplete: visible Spot
+coverage reached 26.47054 / 30 hours; USD-M 8.00920 / 30 hours. These numbers are
+clipped to the actual requested viewport, excluding archive padding. Normal wall
+pages still perform 7–9 SQL queries with substantial reads and serial delivery.
+Prepared exact time chunks/segment compaction remain implementation work. The
+query-log diagnostic failed because query_log is disabled; no global logging,
+collector configuration or exchange connections were changed.
+
+### Reproduction and operations
+
+Build with `pnpm build:staging:diagnostics`, then serve with
+`pnpm preview:staging:diagnostics`. The preview must use `--mode staging`; an
+initial preview without it returned app HTML on the health route and was rejected
+before live testing. `source-version-proxy-verified.json` records the corrected
+JSON health routes. Benchmarks now reject abbreviated declared client hashes,
+and reports label Fit Walls / extended observations supplemental. Test browsers
+use their own class and i3 workspace 9; a narrow temporary-profile fallback also
+catches default-class Playwright windows without moving ordinary Chromium.
+
+The backend rollback repair preserves six prior serving images and starts SQL
+admission before dependent services. The deployed 7256fd4 rollback entrypoint
+was repaired without executing a rollback. Collector IDs/start times remain the
+original October 25 identities. Actual rollback behavior is not yet exercised.
+Warm five-run acceptance, matched concurrent-history validation, complete 30h
+retention/frame measurements, final route comparisons and remaining latency
+failures stay open. No production deployment or main merge has occurred.

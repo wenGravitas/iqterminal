@@ -1,7 +1,27 @@
-import {test,expect} from '@playwright/test';
+import {test,expect,type BrowserContext} from '@playwright/test';
 import {addIndicator,setFootprint} from './indicator-actions';
 const HOUR=3600000;
 function executionBar(time:number,step:number){return {time:time/1000,revision:1,rowSize:25,cells:[{price:80000,bidVol:3,askVol:5,bidNotional:240000,askNotional:400000}],open:80000,high:80025,low:79975,close:80010,delta:2,minDelta:0,maxDelta:2,quoteDelta:160000,minQuoteDelta:0,maxQuoteDelta:160000,aggregateRecordCount:2,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false};}
+
+async function installHealthyStagingWorker(context:BrowserContext){
+ // The feed owns WebSockets inside a dedicated worker. Install this explicit
+ // deterministic transport in the worker bundle, so the unrelated native feed
+ // stays healthy even when no staging tunnel exists. Page socket routes do not
+ // establish that precondition for the worker.
+ await context.route('**/assets/worker-*.js',async route=>{
+  const response=await route.fetch();const script=await response.text();
+  if(!script.includes('Invalid durable execution batch'))return route.fulfill({response});
+  const transport=`globalThis.WebSocket=class {
+   static CONNECTING=0;static OPEN=1;static CLOSING=2;static CLOSED=3;
+   readyState=0;timer;onopen;onmessage;onclose;onerror;
+   constructor(){setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
+   send(){const health=()=>this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()},watermark:{id:1}})});health();clearInterval(this.timer);this.timer=setInterval(health,500);}
+   close(){clearInterval(this.timer);this.readyState=3;this.onclose?.({});}
+  };`;
+  await route.fulfill({response,body:transport+'\n'+script});
+ });
+}
+test.beforeEach(async({context})=>installHealthyStagingWorker(context));
 for(const mode of ['footprint','candle-totals'] as const)test(`prepared ${mode} history paints while the authoritative live bootstrap is delayed`,async({page,context})=>{
  test.setTimeout(45000);
  const now=Date.now(),end=Math.floor(now/HOUR)*HOUR,requests:Array<{from:number;to:number}>=[];
@@ -101,21 +121,6 @@ test('candle-chart Footprint Totals follows the visible range instead of a saved
 
 test('failed live Totals exposes scoped Retry while healthy native candles and closed history remain',async({page,context})=>{
  const now=Date.now(),current=Math.floor(now/HOUR)*HOUR;let nativeRequests=0,retries=0;
- // The feed owns WebSockets inside a dedicated worker. Install this explicit
- // deterministic transport in the worker bundle, so the unrelated native feed
- // stays healthy even when no staging tunnel exists. Page socket routes do not
- // establish that precondition for the worker.
- await context.route('**/assets/worker-*.js',async route=>{
-  const response=await route.fetch();const script=await response.text();
-  const transport=`globalThis.WebSocket=class {
-   static CONNECTING=0;static OPEN=1;static CLOSING=2;static CLOSED=3;
-   readyState=0;timer;onopen;onmessage;onclose;onerror;
-   constructor(){setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
-   send(){const health=()=>this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()},watermark:{id:1}})});health();clearInterval(this.timer);this.timer=setInterval(health,500);}
-   close(){clearInterval(this.timer);this.readyState=3;this.onclose?.({});}
-  };`;
-  await route.fulfill({response,body:transport+'\n'+script});
- });
  await context.route('**/market-data/**',route=>{const u=new URL(route.request().url()),step=u.searchParams.get('interval')==='1h'?HOUR:300000,json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){nativeRequests++;return json({source:'binance-native-kline',candles:Array.from({length:100},(_,i)=>({t:Math.floor(now/step)*step-(99-i)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:i<99}))});}
   if(u.pathname.endsWith('/footprint-current')){if(u.searchParams.get('retry')!=='1'&&!retries)return json({version:1,state:'unavailable',error:'Retained current job failed',job:{failed:true,retryable:true}});if(u.searchParams.get('retry')==='1')retries++;return json({version:1,state:'ready',source:'binance-usdm-aggtrade',market:'perpetual',tickSize:.1,watermark:1,cursor:1,coverage:{from:current,to:now,confirmedFrom:current-24*HOUR,confirmedTo:now,gaps:[],complete:true},bars:[executionBar(current,HOUR)],status:{state:'live',lastUpdate:now}});}

@@ -16,6 +16,7 @@ const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step
  {name:'walls-30h-perp-15m',kind:'walls',hours:30,interval:'15m',step:900000,market:'perpetual'},
  {name:'current-footprint-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'perpetual',now:true},
  {name:'current-walls-15m',kind:'walls',hours:1,interval:'15m',step:900000,market:'perpetual',now:true}];
+if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
 const output=`${dir}/${label}-samples.jsonl`;writeFileSync(output,'');

@@ -21,7 +21,8 @@
     "bench": "node scripts/bench.mjs",
     "smoke:live": "node scripts/live.mjs",
     "smoke:live-spot": "node scripts/live-spot.mjs",
-    "bench:order-wall-top-levels": "node scripts/order-wall-top-levels-bench.mjs"
+    "bench:order-wall-top-levels": "node scripts/order-wall-top-levels-bench.mjs",
+    "preview:staging:diagnostics": "VITE_DATA_MODE=staging vite preview --mode staging --host 127.0.0.1 --port 4181 --strictPort"
   },
   "dependencies": {
     "@nktkas/hyperliquid": "0.33.3",
