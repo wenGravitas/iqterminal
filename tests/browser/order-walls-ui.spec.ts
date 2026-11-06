@@ -95,7 +95,7 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(errors).toEqual([]);
 });
 
-test('Order Walls exposes a scoped history resume action only while the visible Top Levels archive is incomplete', async ({ page }) => {
+for (const retryWithoutCursor of [false,true]) test(`Order Walls exposes scoped history retry with ${retryWithoutCursor ? 'a superseded revision' : 'a resume cursor'}`, async ({ page }) => {
   await installDepthFixture(page);
   const panel = page.locator('.candle-panel').first();
   const panelId = await panel.getAttribute('data-panel-id');
@@ -118,12 +118,12 @@ test('Order Walls exposes a scoped history resume action only while the visible 
   });
   await addIndicator(panel, 'Order Walls');
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__orderWallsRetryUi.callback))).toBe(true);
-  await page.evaluate(() => (window as any).__orderWallsRetryUi.callback({ kind: 'patch', patches: [], status: {
+  await page.evaluate((retryWithoutCursor) => (window as any).__orderWallsRetryUi.callback({ kind: 'patch', patches: [], status: {
     state: 'live', lastConfirmedAt: Date.now(), message: 'History request incomplete; validated prefix retained and can be resumed.',
-    archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'partial', requestComplete: false, resumeAfter: 321,
+    archive: { profileId: 'binance-spot-profile', market: 'spot', state: 'partial', requestComplete: false, ...(retryWithoutCursor ? {retryable: true} : {resumeAfter: 321}),
       from: Date.now() - 3_600_000, to: Date.now(), gaps: [], requestedBandPercent: 10, profileBandPercent: 10,
       requestedTopN: 8, exact: true },
-  } }));
+  } }), retryWithoutCursor);
 
   const resume = panel.getByRole('button', { name: 'Resume Order Walls history', exact: true });
   await expect(resume).toBeVisible();

@@ -5320,7 +5320,7 @@ export class CandlePanel implements IContentRenderer {
     const market = this.selection.market === 'spot' ? 'spot' : 'perpetual';
     if (this.dead || this.abort.signal.aborted || !this.visible || !instance?.visible || this.selection.venue !== 'binance'
       || orderWallsSettings(instance.settings).mode !== 'top-levels' || !archive || archive.market !== market
-      || archive.requestComplete !== false || archive.resumeAfter === undefined) return;
+      || archive.requestComplete !== false || (archive.resumeAfter === undefined && archive.retryable !== true)) return;
     this.feed.retryOrderWallsHistory(this.params.api.id);
   }
 

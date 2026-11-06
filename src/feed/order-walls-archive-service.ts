@@ -1,3 +1,4 @@
+import {PreparedWallSourceChangedError} from './prepared-wall-history';
 import {
   DEFAULT_ORDER_WALLS_SETTINGS,
   orderWallsSettings,
@@ -194,19 +195,20 @@ export class OrderWallsArchiveService {
     const job = sub.historyJob;
     if (job) {
       if (!job.settled) return;
-      if (job.resume) {
+      {
         job.abort = new AbortController();
         job.settled = false;
         for (const subscriber of job.subscribers) {
           const previous = subscriber.historyStatus ?? job.latest?.status;
           const previousArchive = previous?.archive ?? emptyArchiveStatus(job.request, 'partial');
           subscriber.historyStatus = { ...(previous ?? { state: 'loading' as const }), state: 'loading',
-            message: 'Resuming the validated Order Walls history prefix.',
+            message: job.resume ? 'Resuming the validated Order Walls history prefix.' : 'Retrying Order Walls history with displayed data retained.',
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true },
             archive: { ...previousArchive, state: 'loading', requestComplete: false, rangeComplete: false,
-              resumeAfter: undefined, reason: undefined } };
+              resumeAfter: undefined, retryable: undefined, reason: undefined } };
           this.publish(subscriber, 'patch', [], this.status(subscriber));
         }
+        if(!job.resume)for(const subscriber of job.subscribers)if(subscriber.historyProjector)subscriber.cachedHistory=true;
         this.runHistoryJob(job, job.resume);
         return;
       }
@@ -529,7 +531,7 @@ export class OrderWallsArchiveService {
   private runHistoryJob(job: SharedHistoryJob, resume?: OrderWallsArchiveResumeState) {
     job.settled = false;
     void loadOrderWallsArchive({ request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
-      ...(job.initialProjector ? { initialProjector: job.initialProjector } : {}), onUpdate: update => {
+      ...(job.initialProjector ? { initialProjector: job.initialProjector.cloneForLiveTail(job.request.to) } : {}), onUpdate: update => {
       job.latest = update; job.resume = update.resume;
       for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, update);
     }, onPageMetrics: metrics => this.recordHistoryPageMetrics(metrics) }).then(result => {
@@ -542,18 +544,27 @@ export class OrderWallsArchiveService {
       job.settled = true;
       if (job.abort.signal.aborted || this.disposed) return;
       this.stats.failures++;
+      const sourceChanged=error instanceof PreparedWallSourceChangedError;
+      if(sourceChanged){
+        job.resume=undefined;
+        for(const subscriber of job.subscribers)if(subscriber.historyProjector)subscriber.cachedHistory=true;
+        // A user Retry may discover that its retained prepared prefix has been
+        // superseded. Restart once in that same Retry, staging replacements
+        // behind the displayed prefix. No socket/cursor or healthy job resets.
+        if(resume){this.runHistoryJob(job);return;}
+      }
       const message = error instanceof Error ? error.message : String(error);
       for (const subscriber of job.subscribers) {
         const previous = job.latest?.status;
         if (job.resume && previous) {
           const archive = { ...(previous.archive ?? emptyArchiveStatus(subscriber.request, 'partial')),
-            state: 'partial' as const, requestComplete: false, resumeAfter: job.resume.after, reason: message };
+            state: 'partial' as const, requestComplete: false, retryable: true, resumeAfter: job.resume.after, reason: message };
           subscriber.historyStatus = { ...previous, state: 'loading', message: `Order Walls history incomplete; validated prefix retained and can be resumed. ${message}`,
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message }, archive };
         } else {
           subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
-            archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), requestComplete: false } };
+            archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), requestComplete: false, retryable: true } };
         }
         this.publish(subscriber, 'patch', [], this.status(subscriber));
       }

@@ -157,6 +157,8 @@ export interface OrderWallArchiveStatus {
   rangeComplete?: boolean;
   /** Fixed-watermark cursor to resume after a transport interruption. */
   resumeAfter?: number;
+  /** Failed view may restart safely even when its old revision cannot resume. */
+  retryable?: boolean;
   /** Backend profile catch-up is independent of the requested interval's coverage state. */
   profileStatus?: 'building' | 'backfilling' | 'ready' | 'unavailable';
   from: number;

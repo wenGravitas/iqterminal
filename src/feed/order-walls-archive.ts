@@ -1,3 +1,4 @@
+import {preparedWallReader} from './prepared-wall-history';
 import { historyScheduler } from './history-scheduler';
 import { historyViewId } from './history-trace';
 import {
@@ -269,6 +270,8 @@ export interface OrderWallsArchivePageMetrics {
 }
 
 export interface OrderWallsArchiveResumeState {
+  /** Prepared-prefix revision must be reproved before resuming its projector. */
+  preparedSourceToken?:string;
   after: number;
   watermark?: number;
   head?: OrderWallsArchivePage['head'];
@@ -379,9 +382,11 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let profileStatus: OrderWallsArchivePage['profileStatus'] = prior?.profileStatus;
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
+  const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
+    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken):null;
   const captureResume = (resumeAfter = after): OrderWallsArchiveResumeState => ({ after: resumeAfter, watermark,
-    head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector });
-  for (;;) {
+    head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
+  try {for (;;) {
     if (signal?.aborted) throw abortError();
     if (pages >= ORDER_WALL_ARCHIVE_MAX_PAGES || patchCount > ORDER_WALL_ARCHIVE_MAX_PATCHES) {
       const archive = { ...archiveStatus(request, availability, 'partial', pageCoverage), ...(profileStatus ? { profileStatus } : {}) };
@@ -404,7 +409,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     if (import.meta.env.VITE_HISTORY_TILES === '1') params.set('display', '1');
     const url = `/market-data/v1/order-walls/archive?${params}`;
     let fetched: Awaited<ReturnType<typeof fetchArchivePageWithRetry>>;
-    try { fetched = await historyScheduler.read(url,'order-walls',consumerSignal,upstream=>fetchArchivePageWithRetry(correlatedFetcher,url,after,upstream)); }
+    try { fetched = prepared ? await prepared.read(after) : await historyScheduler.read(url,'order-walls',consumerSignal,upstream=>fetchArchivePageWithRetry(correlatedFetcher,url,after,upstream)); }
     catch (error) {
       if (signal?.aborted) throw abortError();
       if (!(error instanceof OrderWallsArchivePageRequestError)) throw error;
@@ -512,7 +517,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       patchCount: page.patches.length, responseBytes: pageBytes, responseHeadersMs, responseBodyReadMs,
       jsonParseMs, validationMs, projectorApplyMs, updateCallbackMs, eventLoopYieldDelayMs, attempts });
     if (!page.page.hasMore) return { kind: 'snapshot', segments: projector.snapshot(), status, watermark, head: watermarkHead, cursor: page.page.nextAfter, pages, bytes, projector };
-  }
+  }} finally {prepared?.dispose();}
 }
 
 /** Polls only bounded selected-profile changes; it never replays or projects the browser's 5k raw book. */
