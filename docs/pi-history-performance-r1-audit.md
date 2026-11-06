@@ -86,3 +86,12 @@ available 30h wall interval/record is imported: 23,850 walls / 104,112 points,
 not a latency pass. Current SSH PID/collector identities were retained during
 recovery of the task-owned history lane. Exact large-packet route diagnostics and
 long render frames identify further work; no broader acceptance is claimed.
+
+Client acdf09c native-path rendering has exact real-data pixel/reference proof,
+not loading acceptance. Its actual Pi five-run first-history series is
+[8389.2,null,null,9240.6,null]ms; all completions null. Both loading gates FAIL.
+The supplemental 180s observation fails with HTTP 408 after first paint at
+24.820s; full new-client path coverage is not proven. Headless fixture functional
+checks pass nine tests. Earlier full-suite vault timeout/scoped pass remains
+explicit. All original open gates, Spot preparation, scheduling/retention,
+current/concurrent, warm and repeated-use requirements remain open.

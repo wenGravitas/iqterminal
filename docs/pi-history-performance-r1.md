@@ -1357,3 +1357,33 @@ vault checks pass separately at the original limit. Focused renderer/prepared
 history/lifecycle checks, typecheck and build pass. The new production client
 still requires its own real-chart loading measurements; existing failed loading,
 concurrent/warm and repeated-use gates remain failed or open.
+
+### Native-path client: measured route results remain failed
+
+Client `acdf09c4d02e961f44c0203877c7f8ed212b3b27`, backend staging
+`18579d938364e5fd5a9c7631bb19681a043f1b66`, actual Pi headed Chromium,
+Vite production preview `http://127.0.0.1:4181`, staging/history enabled,
+fixtures disabled: the five empty-client-cache, already-prepared 30h USD-M runs
+in `nov6-wall-paint-cache-samples.jsonl` have first useful history
+`[8389.2, null, null, 9240.6, null]` ms and all five completion times null at the
+unchanged 12s observation. First useful history and complete coverage gates
+**FAIL**. An incomplete cohort has no claimed numeric median/maximum.
+
+The separate 180s `nov6-wall-paint-cache-coverage` observation paints first
+history at 24,820ms, then stops with `Prepared wall batch HTTP 408`, partial,
+retryable, requestComplete=false. Full path coverage for this client is unproven.
+The older fb11b9c successful 143.524s coverage observation remains evidence for
+that older build only. No completed-source absence is inferred from the timeout.
+Real-chart cache hit counters confirm the new path is used, but partial-chart
+render timings cannot establish full-chart latency or frame acceptance. All raw
+samples, requests, executed scripts, gates and screenshots remain under these
+label prefixes. Live is disabled in this pinned history scenario; it does not
+prove current/concurrent acceptance.
+
+Functional browser validation passes all nine settings/Top Levels/Threshold/
+Fit Walls/Retry/consumer-disposal checks against the new diagnostics build.
+These use headless SwiftShader and explicit fixture selection, separate from
+actual Pi loading evidence. The settings test now counts cumulative subscriptions
+correctly after its intentional hide/show cycle and checks exactly one active
+consumer. Earlier stale-assertion failures and final logs/screenshots are kept in
+`wall-paint-cache-route-validation/`. No product subscription logic changed.

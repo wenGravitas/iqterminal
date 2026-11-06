@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { installDepthFixture } from './depth-fixture';
 import { addIndicator, chooseChartMarket } from './indicator-actions';
+import {twoChartWorkspaceState} from './workspace-state';
+
+test.use({storageState:async({baseURL},use)=>{await use(twoChartWorkspaceState(baseURL??'http://127.0.0.1:4173'));}});
 
 test('Order Walls settings persist and remain a single viewport consumer alongside Heatmap', async ({ page }) => {
   test.setTimeout(60000);
@@ -64,7 +67,10 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   expect(await page.evaluate(() => (window as any).__terminal.stats().panels[0].orderWalls.mounted)).toBe(true);
   await addIndicator(panel, 'Order-book Heatmap');
   await expect(panel.locator('.active-indicator[data-definition-id="native.orderbook-heatmap"]')).toHaveCount(1);
-  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(1);
+  // Hide/show above deliberately released and recreated the consumer. Heatmap
+  // must leave that second subscription intact, with one active consumer.
+  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe)).toHaveLength(2);
+  expect(await page.evaluate(() => {const c=(window as any).__orderWallsUiCalls;return c.subscribe.length-c.unsubscribe.length;})).toBe(1);
 
   await panel.getByLabel('Timeframe', { exact: true }).selectOption('5m');
   const viewportCount = await page.evaluate(() => (window as any).__orderWallsUiCalls.viewport.length);
@@ -75,7 +81,8 @@ test('Order Walls settings persist and remain a single viewport consumer alongsi
   });
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.viewport.length)).toBeGreaterThan(viewportCount);
   await page.setViewportSize({ width: 900, height: 760 });
-  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(2);
+  expect(await page.evaluate(() => {const c=(window as any).__orderWallsUiCalls;return c.subscribe.length-c.unsubscribe.length;})).toBe(1);
 
   await chooseChartMarket(panel, 'Binance · BTCUSDT Spot');
   await expect.poll(() => page.evaluate(() => (window as any).__orderWallsUiCalls.subscribe.length)).toBe(3);

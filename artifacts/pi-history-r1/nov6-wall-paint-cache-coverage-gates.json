@@ -1,0 +1,58 @@
+{
+  "source": "artifacts/pi-history-r1/nov6-wall-paint-cache-coverage-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 1,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        24820
+      ],
+      "firstHistory3sGate": "SUPPLEMENTAL",
+      "builds": [
+        "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "exact": true
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

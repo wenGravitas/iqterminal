@@ -1,0 +1,172 @@
+{
+  "source": "artifacts/pi-history-r1/nov6-wall-paint-cache-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        8389.20000000298,
+        null,
+        null,
+        9240.60000000149,
+        null
+      ],
+      "firstHistory3sGate": "FAIL",
+      "builds": [
+        "acdf09c4d02e961f44c0203877c7f8ed212b3b27"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1793695500000
+          },
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "exact": true
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "exact": true
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1793695500000
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "exact": true
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}
