@@ -309,3 +309,18 @@ from client latency. The backend rollout now checks this prerequisite before
 starting ID-tail workers. The revision repair still needs inactive-configuration
 and legacy-payload freshness validation before deployment and real-chart checks.
 All previously failed acceptance gates remain failed/incomplete.
+
+The browser lifecycle run passed seven checks but exposed an invalid assumption
+in the scoped-Retry fixture: the dedicated worker's native socket was not kept
+healthy by a page-level socket mock. The fixture now installs an explicit worker
+transport, requires native live status before Retry, and passes without a staging
+tunnel. That deterministic result does not certify real live continuity.
+
+A further regression found same-revision analysis merge protection rejected a
+server-declared canonical invalidation. Prepared batches now carry explicit
+invalidated times; only these may revoke the old validated evidence while good
+bars remain visible. A service-level test verifies invalidation/recovery without
+changing the live cursor, accumulator or socket. The old guard fails the test;
+the repair passes all 35 focused prepared/service tests and typecheck. The
+preceding full 1,022-test result predates this small follow-up; final release
+validation must include it.

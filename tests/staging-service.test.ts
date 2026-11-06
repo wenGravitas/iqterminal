@@ -320,3 +320,20 @@ test('a normal bootstrap response cannot consume a Retry queued while it was in 
   const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('live');expect(group.cursor).toBe(10);
  }finally{service.dispose();}
 });
+
+test('explicit canonical invalidation revokes a same-revision prepared summary without resetting live state',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup();const g=[...(service as any).groups.values()][0];
+ const closed={...bar,revision:1000,cells:bar.cells.map(cell=>({...cell}))};
+ const summary=preparedFootprintAnalysisSummary(closed,{from:60000,to:120000,complete:true,gaps:[]},footprintAnalysisSourceKey('perpetual','1m'),'1m',true,900000)!;
+ let pending=false;
+ (service as any).prepared={load:async(...args:any[])=>args[5]([closed],!pending,true,{from:60000,to:120000,summaries:[pending?{...summary,coverageEvidence:{...summary.coverageEvidence,validated:false}}:summary],removedTimes:[],invalidatedTimes:pending?[60]:[]}),dispose(){}};
+ try{
+  service.command({type:'footprint-viewport',id:'a',from:60000,to:120000});await vi.advanceTimersByTimeAsync(0);
+  expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(true);const cursor=g.cursor,accumulator=g.accumulator;
+  pending=true;await (service as any).loadViewport(g,'a');
+  expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(false);expect(g.bars.find((b:any)=>b.time===60).revision).toBe(1000);
+  expect(g.cursor).toBe(cursor);expect(g.accumulator).toBe(accumulator);expect(sockets[0].closed).toBe(false);
+  expect((service as any).historyState(g).validated).toBe(false);
+  pending=false;await (service as any).loadViewport(g,'a');expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(true);
+ }finally{service.dispose();}
+});

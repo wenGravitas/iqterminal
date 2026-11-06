@@ -359,7 +359,7 @@ export class StagingFeedService {
               if ((g.liveSummaryVersions.get(summary.time) ?? 0) > requestLiveVersion) continue;
               const allowPreview = g.lastStatus?.state === 'live' && this.now() - g.lastStatus.lastUpdate <= 15_000;
               const safeSummary = allowPreview ? summary : withoutLiveFootprintPreview(summary);
-              summariesChanged = this.mergeSummary(g, safeSummary) || summariesChanged;
+              summariesChanged = this.mergeSummary(g, safeSummary, analysis.invalidatedTimes?.includes(summary.time)) || summariesChanged;
             }
             this.trimAnalysisSummaries(g);
           }
@@ -413,12 +413,12 @@ export class StagingFeedService {
     return changed;
   }
 
-  private mergeSummary(g: Group, summary: FootprintAnalysisSummary) {
+  private mergeSummary(g: Group, summary: FootprintAnalysisSummary, invalidate = false) {
     const previous = g.analysisSummaries.get(summary.time);
     if (previous && previous.revisionSource === summary.revisionSource) {
       if (previous.revision > summary.revision) return false;
       if (previous.revision === summary.revision && summary.revisionSource === 'prepared-content-hash'
-        && previous.coverageEvidence.validated && !summary.coverageEvidence.validated) return false;
+        && previous.coverageEvidence.validated && !summary.coverageEvidence.validated && !invalidate) return false;
     }
     if (previous && JSON.stringify(previous) === JSON.stringify(summary)) return false;
     g.analysisSummaries.set(summary.time, summary);

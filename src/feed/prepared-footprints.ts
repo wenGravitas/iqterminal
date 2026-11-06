@@ -12,6 +12,7 @@ export interface PreparedFootprintAnalysisBatch {
   to: number;
   summaries: FootprintAnalysisSummary[];
   removedTimes: number[];
+  invalidatedTimes?: number[];
 }
 
 export interface PreparedFootprintProgress {
@@ -89,7 +90,7 @@ export class PreparedFootprints {
     }
     this.trimSummaries(summaryKey, summaryFrom, visibleTo);
     if (!signal.aborted && (visibleTiles.size || cacheSummaries.size)) {
-      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
+      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
     }
 
     for (;;) {
@@ -188,7 +189,7 @@ export class PreparedFootprints {
         if (priority === 0) visiblePending ||= data.state === 'building';
         else analysisPending ||= data.state === 'building';
         if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
-          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
+          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
         if (priority === 0 && data.state === 'unavailable') throw Error(data.error ?? 'Historical footprint build unavailable; Retry available');
         if (data.state === 'ready' && chunkStarts.some(at => !validatedTimes.has(at / 1000))) throw Error('Prepared footprint response omitted requested slots');
       };
@@ -204,7 +205,7 @@ export class PreparedFootprints {
 
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
       if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
-        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes), progress());
+        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
       // Strength warmup is optional. A failed or still-building older chunk
       // leaves the visible tiles ready and lets the strength show unavailable.
       if (!visiblePending) return;
@@ -237,12 +238,13 @@ export class PreparedFootprints {
     return [...tiles].sort(([a], [b]) => a - b).flatMap(([, tile]) => tile.bar ? [tile.bar] : []);
   }
 
-  private analysisBatch(key: string, from: number, to: number, validated: ReadonlySet<number>, removed: ReadonlySet<number>): PreparedFootprintAnalysisBatch {
+  private analysisBatch(key: string, from: number, to: number, validated: ReadonlySet<number>, removed: ReadonlySet<number>, invalidated: ReadonlyMap<number, unknown>): PreparedFootprintAnalysisBatch {
     const summaries = this.summaries.get(key);
     return { from, to,
       summaries: summaries ? [...summaries.values()].filter(item => item.time * 1000 >= from && item.time * 1000 < to)
         .map(item => validated.has(item.time) ? item : { ...item, coverageEvidence: { ...item.coverageEvidence, validated: false } }) : [],
-      removedTimes: [...removed].filter(time => time * 1000 >= from && time * 1000 < to) };
+      removedTimes: [...removed].filter(time => time * 1000 >= from && time * 1000 < to),
+      invalidatedTimes: [...invalidated.keys()].filter(at => at >= from && at < to).map(at => at / 1000) };
   }
 
   dispose() { this.summaries.clear(); this.cache.dispose?.(); }
