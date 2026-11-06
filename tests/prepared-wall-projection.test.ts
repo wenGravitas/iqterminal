@@ -120,3 +120,17 @@ test('prepared completion preserves already painted segments and a late join sti
  }finally{service.dispose();}
  await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
 });
+
+test('projection retry attempts reach page diagnostics and financial records publish once',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),metrics:any[]=[],updates:any[]=[];let batches=0;
+ const fetcher:typeof fetch=async(input,init)=>{
+  if(String(input).includes('/projection-batch?')&&++batches===1)return new Response(null,{status:408});
+  return t.fetcher(input,init);
+ };
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onPageMetrics:m=>metrics.push(m),onUpdate:u=>updates.push(u)});
+ const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage(f.page);
+ expect(result.status.archive?.requestComplete).toBe(true);expect(result.segments).toEqual(reference.snapshot());
+ expect(metrics.filter(m=>m.delivery==='projection')).toHaveLength(f.manifest.parts.length);
+ expect(metrics.filter(m=>m.delivery==='projection').every(m=>m.attempts===2)).toBe(true);
+ expect(updates.filter(u=>u.presentation&&u.kind==='patch').flatMap(u=>u.patches??[]).map(p=>p.id)).toHaveLength(f.full.segments.length-f.manifest.active.segments.length);
+});

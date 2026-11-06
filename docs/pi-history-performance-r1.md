@@ -1387,3 +1387,40 @@ actual Pi loading evidence. The settings test now counts cumulative subscription
 correctly after its intentional hide/show cycle and checks exactly one active
 consumer. Earlier stale-assertion failures and final logs/screenshots are kept in
 `wall-paint-cache-route-validation/`. No product subscription logic changed.
+
+### Bounded recovery of an empty temporary batch response
+
+Prepared batch reads now allow three attempts total for HTTP 408/502/503/504
+responses that have not published any member. Retry re-enters the shared history
+scheduler after a 250ms/500ms backoff, honoring numeric Retry-After up to two
+seconds. Longer/unrecognized Retry-After is an explicit failure for user Retry.
+There is no automatic retry of content hashes, identities, missing files, source
+changes or interrupted successful bodies. Already validated member promises and
+financial records cannot be replayed by this path. Per-page diagnostics report
+actual attempt count. Another consumer can cancel without disconnecting its peer;
+the last consumer cancels backoff/upstream. No healthy live socket or cursor resets.
+After the attempt budget, retain the good display and use History Retry as before.
+Rollback is the preceding frontend commit, `72afc02`, with backend runtime and
+prepared artifacts unchanged. This recovery fix does not certify latency.
+
+The retained acdf09c coverage trace narrows the request bottleneck. Its first
+projection batch has 653,301 compressed / 7,879,182 decoded bytes, response body
+completion at 84,624.557ms from its browser request start. Backend Server-Timing
+reports preparedread=20.18ms, zero SQL queries/rows/bytes. The concurrent next batch
+gets HTTP 408 at about 84.7s, without the gateway request identity headers. Discovery
+already uses gzip (100,060 compressed / 428,228 decoded bytes); it reports three
+queries, 575,264 rows / 323,242,283 bytes and 407.08ms total gateway time.
+These browser durations include overlapping requests and are not exclusive phase
+sums. No cross-host clock subtraction is used. A separate current route diagnostic
+has direct Tailscale pings of 1.450s/1.306s/0.843s; it is not the earlier cohort's
+per-request network timing or a five-run release gate.
+
+Recovery validation: full suite 1,093 pass / two skipped; typecheck/build pass.
+All 96 focused scheduler/archive/lifecycle/prepared checks pass, with 15 final
+scoped checks including explicit nonempty attempt metrics. Headed Chromium
+155.0.8059.79 on workspace 9 passes an explicit offline injected-408 framing/hash/
+exact-decimal protocol check in two attempts. The check also found and repaired
+native fetch's accidental options-object method binding; its initial failure and
+final executed bundle/results are retained in `wall-batch-temporary-retry/`.
+This fixture result does not prove new-client full real-source coverage or any
+Pi latency gate. No backend code, serving runtime or collector changed.

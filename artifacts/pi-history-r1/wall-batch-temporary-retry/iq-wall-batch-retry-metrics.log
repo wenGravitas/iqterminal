@@ -1,0 +1,26 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (9 tests | 1 failed) 882ms
+   × projection retry attempts reach page diagnostics and financial records publish once 272ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > projection retry attempts reach page diagnostics and financial records publish once
+TypeError: (intermediate value).restore is not a function
+ ❯ tests/prepared-wall-projection.test.ts:131:141
+    129|  };
+    130|  const result=await loadOrderWallsArchive({request:{market:'binance-sp…
+    131|  expect(result.status.archive?.requestComplete).toBe(true);expect(resu…
+       |                                                                                                                                             ^
+    132|  expect(metrics.filter(m=>m.delivery==='projection').every(m=>m.attemp…
+    133|  expect(updates.filter(u=>u.presentation&&u.kind==='patch').flatMap(u=…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  21:55:42
+   Duration  3.21s (tests 68%, transform 27%, import 4%)
+

@@ -401,7 +401,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const at=performance.now();options.onUpdate?.(update);painted=true;
       if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
         requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
-        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:0,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:1});
+        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:0,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
       bytes=progress.bytes;
     },candidate=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');});
     if(projected){
