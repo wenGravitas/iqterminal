@@ -14,3 +14,12 @@ test('ordinary candle Totals and current Top Levels start without historical vie
 test('restore failure releases temporary consumers',()=>{const {feed,released}=source();const l={panels:{a:{contentComponent:'candle',params:selection()},b:{contentComponent:'candle',params:selection()}},grid:{root:{type:'branch',data:[{type:'leaf',data:{views:['a'],activeView:'a'}},{type:'leaf',data:{views:['b'],activeView:'b'}}]}}} as any;let count=0;expect(()=>startVisibleChartFeeds(feed,l,x=>{if(++count===2)throw Error('invalid restore');return x as any;})).toThrow('invalid restore');expect(released).toHaveLength(2);});
 
 test('nested restore consumers use independent tokens while sharing canonical selections',()=>{const {feed,calls}=source(),l=layout({a:{contentComponent:'candle',params:selection()}},['a']);const a=startVisibleChartFeeds(feed,l,x=>x as any),b=startVisibleChartFeeds(feed,l,x=>x as any);expect(new Set(calls.map(call=>call[0])).size).toBe(4);a();b();});
+
+test('early history demand uses saved footprint ranges and a bounded past range for ordinary Totals',()=>{
+ const {feed}=source();feed.requestFootprintViewport=vi.fn();const now=Date.now(),saved={from:600000,to:3600000};
+ const release=startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:selection({historyViewport:saved})}},['a']),x=>x as any,true);
+ expect(feed.requestFootprintViewport).toHaveBeenCalledWith(expect.any(String),saved.from,saved.to);release();feed.requestFootprintViewport.mockClear();
+ const totals=selection({type:'candle',historyViewport:saved,indicators:[{definitionId:'native.footprint-totals',visible:true}]});
+ startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:totals}},['a']),x=>x as any,true)();
+ const [,from,to]=feed.requestFootprintViewport.mock.calls[0];expect(to-from).toBe(4*3600000);expect(Math.abs(to-now)).toBeLessThan(3600000);
+});

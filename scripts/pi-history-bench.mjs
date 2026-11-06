@@ -37,7 +37,9 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   const b=window.__bench={frames:[],tasks:[],marks:{firstHistoryAt:null,completeAt:null,firstCurrentAt:null}};let last=performance.now(),sampleAt=0;
   function frame(now){b.frames.push(now-last);last=now;if(b.frames.length>2000)b.frames.shift();
    if(now-sampleAt>=80){sampleAt=now;const p=window.__terminal?.panels.get('chart-bench'),e=p?.engine;
-    if(e){const view=e.visibleTimeRange(),matches=view&&Math.abs(view.from-requested.from/1000)<step/1000&&Math.abs(view.to-requested.to/1000)<step/1000;
+    const shell=document.getElementById('app-shell'),splash=document.getElementById('startup-splash');
+    const uncovered=document.documentElement.dataset.appState==='ready'&&shell&&splash&&getComputedStyle(shell).visibility==='visible'&&getComputedStyle(splash).visibility==='hidden';
+    if(e&&uncovered){const view=e.visibleTimeRange(),matches=view&&Math.abs(view.from-requested.from/1000)<step/1000&&Math.abs(view.to-requested.to/1000)<step/1000;
      if(kind==='footprint'){
       const paint=e.footprintPaintDiagnostics?.(),times=paint?.times?.map(t=>t*1000)??[],closed=Math.floor(Date.now()/step)*step,history=p.footprintStatus?.history;
       if(matches&&times.some(t=>t>=requested.from&&t<Math.min(requested.to,closed)))b.marks.firstHistoryAt??=now;
@@ -85,5 +87,5 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  await page.evaluate(()=>window.__terminal?.feed.send({type:'diagnostics'})).catch(()=>{});await new Promise(r=>setTimeout(r,150));
  const paintMarks=last?.marks??null;
  const diagnostics=await page.evaluate(()=>window.__terminal?.feed.diagnostics).catch(()=>null);
- await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-main-thread-paint',scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
+ await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-main-thread-paint',appVisibilityGuard:true,scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
 }}finally{await browser.close();}

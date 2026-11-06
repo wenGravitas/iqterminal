@@ -18,7 +18,7 @@ import { ThemeController, THEME_EVENT, dockviewColorScheme } from './theme';
 import { Notifications } from './notifications';
 import { TradeTickerPanel } from './ticker/panel';
 import { TickerExecutionHoverCoordinator } from './ticker/hover';
-import { FeedClient } from './feed/client';
+import {takeStartupFeed,fixtureSelected} from './feed/startup';
 import { Scheduler } from './chart/scheduler';
 import { CandlePanel, config as chartConfig, panelRegistry, type CandlePanel as CandlePanelInstance } from './panel';
 import { LazyScriptEditorPanel } from './scripts/editor-loader';
@@ -39,10 +39,9 @@ import { TRADING_PANEL_ID } from './trading/model';
 
 const diagnosticsEnabled = import.meta.env.DEV || import.meta.env.VITE_DIAGNOSTICS === '1';
 const query = new URL(location.href).searchParams;
-const fixture = diagnosticsEnabled && query.get('fixture') === '1';
-const alignFixtureToNow = fixture && query.get('fixtureTime') === 'now';
+const fixture = fixtureSelected;
 if (fixture) document.querySelector('.brand')!.textContent = 'BASIS · FIXTURE';
-const feed = new FeedClient(fixture, alignFixtureToNow);
+const startupFeed=takeStartupFeed(),feed=startupFeed.feed;
 const scheduler = new Scheduler();
 const notifications = new Notifications();
 const trading = new TradingController({ fixtureMode: fixture });
@@ -279,16 +278,10 @@ dock = createDockview(root, {
 workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
   capture: () => dock.toJSON(),
   cancelPending: () => { clearTimeout(saveTimer); saveTimer = undefined; },
-  restore: layout => { const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
+  restore: layout => { startupFeed.reconcile(layout,chartConfig);const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
 });
 const releaseWorkspaceStorage = bindWorkspacePanelStorage(workspaceManager);
-let releaseInitial=()=>{};
-if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixture){try{releaseInitial=startVisibleChartFeeds(feed,workspaceManager.active.layout,chartConfig);}catch{/* WorkspaceManager retains the authoritative fallback/error path. */}}
-try {
-  // Let worker creation and its queued reads begin before synchronous chart DOM.
-  if(import.meta.env.VITE_DATA_MODE==='staging'&&!fixture)await new Promise<void>(resolve=>setTimeout(resolve,0));
-  workspaceManager.start();
-} finally {releaseInitial();}
+try { workspaceManager.start(); } finally {startupFeed.release();}
  journal.setOpenJournal(openJournal);
 restoring = false;
 const listeners: { dispose(): void }[] = [dock.onDidLayoutChange(() => save())];
