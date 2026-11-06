@@ -337,3 +337,92 @@ test('explicit canonical invalidation revokes a same-revision prepared summary w
   pending=false;await (service as any).loadViewport(g,'a');expect(g.analysisSummaries.get(60).coverageEvidence.validated).toBe(true);
  }finally{service.dispose();}
 });
+
+test('native current starts before delayed history and late REST receipt revisions cannot overwrite stream candles',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[];let resolve!: (r:Response)=>void;
+ const request=vi.fn(()=>new Promise<Response>(r=>resolve=r));let now=900000;
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ const live={t:900000,o:84000,h:84100,l:83900,c:84080,v:8,revision:900010,closed:false};
+ try{
+  service.command({type:'subscribe',id:'native',series});
+  expect(sockets).toHaveLength(1);sockets[0]!.onopen?.();
+  expect(sockets[0]!.sent[0]).toMatchObject({interval:'1m',after:0});
+  sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:live});
+  expect(events.find(e=>e.type==='snapshot')).toMatchObject({candles:[live]});
+  resolve(new Response(JSON.stringify({source:'binance-native-kline',candles:[{...live,t:840000,closed:true},{...live,c:84010,v:1,revision:999999}]})));
+  await vi.advanceTimersByTimeAsync(1);
+  const patches=events.filter(e=>e.type==='patch');expect(patches).toHaveLength(1);
+  expect(patches[0]).toMatchObject({candles:[expect.objectContaining({t:840000,closed:true})]});
+  now=900020;sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:{...live,c:84090,revision:900020}});
+  expect(events.filter(e=>e.type==='patch').at(-1)).toMatchObject({candles:[expect.objectContaining({c:84090})]});
+  expect((events.filter(e=>e.type==='status').at(-1) as any).status).toMatchObject({state:'live'});
+ }finally{service.dispose();}
+});
+test('native history Retry keeps healthy current socket, retains bars and clears recovered history error',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(900000);const events:Event[]=[],sockets:Socket[]=[];let reject!:(e:Error)=>void;
+ const live={t:900000,o:84000,h:84100,l:83900,c:84080,v:8,revision:900010,closed:false};
+ const request=vi.fn().mockImplementationOnce(()=>new Promise((_r,j)=>reject=j)).mockResolvedValueOnce(new Response(JSON.stringify({source:'binance-native-kline',candles:[{...live,t:840000,closed:true}]})));
+ const service=new StagingFeedService(e=>events.push(e),request,Date.now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ try{
+  service.command({type:'subscribe',id:'native',series});expect(sockets).toHaveLength(1);
+  sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:live});
+  reject(Error('history unavailable'));await vi.advanceTimersByTimeAsync(1);
+  expect((events.filter(e=>e.type==='status').at(-1) as any).status).toMatchObject({state:'live',message:expect.stringContaining('history unavailable')});
+  service.command({type:'retry',id:'native'});await vi.advanceTimersByTimeAsync(1);
+  expect(sockets).toHaveLength(1);expect(sockets[0]!.closed).toBe(false);expect(service.diagnostics().retainedBars).toBe(2);
+  const status=(events.filter(e=>e.type==='status').at(-1) as any).status;expect(status.state).toBe('live');expect(status.message).not.toContain('history unavailable');
+  sockets[0]!.close();await vi.advanceTimersByTimeAsync(2001);expect(sockets).toHaveLength(2);expect(request).toHaveBeenCalledTimes(2);
+ }finally{service.dispose();}
+});
+test('native collector heartbeats do not certify a missing or expired candle stream as live',async()=>{
+ vi.useFakeTimers();let now=900000;const events:Event[]=[],sockets:Socket[]=[];
+ const service=new StagingFeedService(e=>events.push(e),()=>new Promise(()=>{}),()=>now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ const health=()=>sockets[0]!.receive({type:'health',collector:{state:'live',lastUpdate:now}});
+ try{
+  service.command({type:'subscribe',id:'native',series});expect(sockets).toHaveLength(1);health();
+  expect((events.filter(e=>e.type==='status').at(-1) as any).status.state).not.toBe('live');
+  sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:{t:900000,o:84000,h:84100,l:83900,c:84080,v:8,revision:900010,closed:false}});
+  now+=16000;health();
+  expect((events.filter(e=>e.type==='status').at(-1) as any).status).toMatchObject({state:'stale',message:expect.stringContaining('native candle')});
+ }finally{service.dispose();}
+});
+
+test('native REST receipt revisions do not suppress subsequent exchange revisions or reopen closed candles',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[];
+ const current={t:900000,o:84000,h:84100,l:83900,c:84020,v:2,revision:999999,closed:false};
+ const service=new StagingFeedService(e=>events.push(e),async()=>new Response(JSON.stringify({source:'binance-native-kline',candles:[current]})),()=>900000,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ const send=(candle:typeof current)=>sockets.at(-1)!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle});
+ try{
+  service.command({type:'subscribe',id:'native',series});await vi.advanceTimersByTimeAsync(1);
+  send({...current,c:84050,v:5,revision:900005});
+  expect(events.filter(e=>e.type==='patch').at(-1)).toMatchObject({candles:[expect.objectContaining({c:84050,v:5,revision:900005})]});
+  send({...current,c:84060,v:6,revision:900006,closed:true});const count=events.filter(e=>e.type==='patch').length;
+  send({...current,c:84030,v:3,revision:900003});send({...current,c:84070,v:7,revision:900007});
+  expect(events.filter(e=>e.type==='patch')).toHaveLength(count);
+  service.command({type:'online',online:false});service.command({type:'online',online:true});expect(sockets).toHaveLength(2);
+  sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:{...current,c:84090,revision:900009}});
+  expect(events.filter(e=>e.type==='patch')).toHaveLength(count);
+ }finally{service.dispose();}
+});
+test('native stream revision bookkeeping stays bounded across rollover and unsubscribe',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[];
+ const service=new StagingFeedService(e=>events.push(e),async()=>new Response(JSON.stringify({source:'binance-native-kline',candles:[]})),()=>900000,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ try{
+  service.command({type:'subscribe',id:'native',series});await vi.advanceTimersByTimeAsync(1);
+  for(let i=0;i<1200;i++)sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:{t:(i+1)*60000,o:84000,h:84100,l:83900,c:84080,v:8,revision:i+1,closed:false}});
+  expect(service.diagnostics().retainedBars).toBe(1000);expect(service.diagnostics().streams[0]?.native?.retainedStreamVersions).toBe(1000);
+  service.command({type:'unsubscribe',id:'native'});expect(service.diagnostics().retainedBars).toBe(0);expect(service.diagnostics().streams).toEqual([]);expect(sockets[0]!.closed).toBe(true);
+ }finally{service.dispose();}
+});
+
+test('native closed REST repairs survive replay of older cached closed stream events',async()=>{
+ vi.useFakeTimers();const events:Event[]=[],sockets:Socket[]=[];
+ const closed={t:840000,o:84000,h:84100,l:83900,c:84080,v:8,revision:900000,closed:true};
+ const service=new StagingFeedService(e=>events.push(e),async()=>new Response(JSON.stringify({source:'binance-native-kline',candles:[closed]})),()=>900000,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ try{
+  service.command({type:'subscribe',id:'native',series});await vi.advanceTimersByTimeAsync(1);
+  sockets[0]!.receive({type:'native-candle',source:'binance-native-kline',interval:'1m',candle:{...closed,c:84050,v:5,revision:899000}});
+  expect(events.filter(e=>e.type==='patch')).toEqual([]);
+  expect(events.find(e=>e.type==='snapshot')).toMatchObject({candles:[closed]});
+ }finally{service.dispose();}
+});

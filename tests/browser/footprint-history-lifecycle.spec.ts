@@ -137,3 +137,42 @@ test('failed live Totals exposes scoped Retry while healthy native candles and c
  expect(retries).toBe(1);expect(nativeRequests).toBe(before);await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toHaveCount(0);
  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintBars.length)).toBeGreaterThan(2);
 });
+
+test('native candles paint before history and history Retry preserves the live socket and current candle',async({page,context})=>{
+ test.setTimeout(45000);const now=Date.now(),step=60000,current=Math.floor(now/step)*step;let historyRequests=0,socketCount=0;
+ let releaseHistory!:()=>void;const historyGate=new Promise<void>(resolve=>releaseHistory=resolve);
+ page.on('console',message=>{if(message.text()==='iq-native-regression-socket')socketCount++;});
+ await context.addInitScript(()=>{
+  const id='chart-native-independent',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'perpetual',interval:'1m',type:'candle',studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
+  localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));
+ });
+ await context.route('**/assets/worker-*.js',async route=>{
+  const response=await route.fetch(),script=await response.text();if(!script.includes('Invalid durable execution batch'))throw Error('Expected staging feed worker');
+  const transport=`globalThis.WebSocket=class {
+   readyState=0;timer;onopen;onmessage;onclose;onerror;
+   constructor(){console.info('iq-native-regression-socket');setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
+   send(wire){const command=JSON.parse(wire);if(!command.interval)return;const update=()=>{this.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval:command.interval,candle:{t:${current},o:80000,h:80100,l:79900,c:80060,v:8,revision:Date.now(),closed:false}})});this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()}})});};update();this.timer=setInterval(update,250);}
+   close(){clearInterval(this.timer);this.readyState=3;this.onclose?.({});}
+  };`;
+  await route.fulfill({response,body:transport+'\n'+script});
+ });
+ await context.route('**/market-data/**',async route=>{
+  const u=new URL(route.request().url());
+  if(u.pathname.endsWith('/native-candles')){
+   historyRequests++;if(historyRequests===1){await historyGate;return route.fulfill({status:502,body:'history route unavailable'});}
+   return route.fulfill({contentType:'application/json',body:JSON.stringify({source:'binance-native-kline',candles:[current-2*step,current-step,current].map(t=>({t,o:80000,h:80100,l:79900,c:80010,v:1,revision:9999999999999,closed:t<current}))})});
+  }
+  return route.fulfill({contentType:'application/json',body:JSON.stringify({version:1,cursor:0,watches:[],events:[]})});
+ });
+ await page.goto('/');
+ const read=()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-native-independent');return p?{candles:p.candles,status:p.status,barCount:p.engine.barCount}:null;});
+ await expect.poll(async()=>{const state=await read();return state?.status.state==='live'&&state.barCount===1&&state.candles.at(-1)?.c===80060;}).toBe(true);
+ await expect(page.getByText('Candle history loading · 1 bars displayed',{exact:true})).toBeVisible();expect(historyRequests).toBe(1);
+ await page.screenshot({path:'artifacts/pi-history-r1/native-current-before-history.png'});
+ releaseHistory();await expect(page.getByText(/Candle history incomplete · Staging history HTTP 502/)).toBeVisible();
+ expect((await read())?.status.state).toBe('live');await page.getByRole('button',{name:'Retry market data',exact:true}).click();
+ await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===3;}).toBe(true);
+ expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
+ await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
+ await page.screenshot({path:'artifacts/pi-history-r1/native-history-recovered-live-retained.png'});
+});

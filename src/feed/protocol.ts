@@ -55,7 +55,7 @@ export function supportsScriptDepth(s: Series) { return s.venue === 'binance' &&
 // All times are UTC epoch milliseconds; volume is cumulative base BTC, never a delta.
 export interface Candle { t: number; o: number; h: number; l: number; c: number; v: number; revision: number; closed: boolean }
 export type FeedState = 'loading' | 'live' | 'reconnecting' | 'stale' | 'failed';
-export interface Status { state: FeedState; message: string; lastUpdate: number }
+export interface Status { state: FeedState; message: string; lastUpdate: number; nativeHistory?: { state:'loading'|'ready'|'failed'; error?:string; loadedBars:number } }
 export type DepthState = 'syncing' | 'live' | 'stale' | 'failed' | 'unsupported';
 export interface DepthStatus { state: DepthState; message: string; lastUpdate: number; collectionStartedAt: number | null; snapshotBidBoundary?: number | null; snapshotAskBoundary?: number | null }
 export interface DepthObservation {

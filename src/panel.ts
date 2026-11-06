@@ -926,7 +926,7 @@ export class CandlePanel implements IContentRenderer {
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
-    this.retry.addEventListener('click', () => this.footprintDataWanted() && (this.footprintStatus.history?.error || ['failed', 'stale'].includes(this.footprintStatus.state) || this.selection.type === 'footprint') ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
+    this.retry.addEventListener('click', () => this.selection.type !== 'footprint' && this.status.nativeHistory?.error ? this.feed.retry(params.api.id) : this.footprintDataWanted() && (this.footprintStatus.history?.error || ['failed', 'stale'].includes(this.footprintStatus.state) || this.selection.type === 'footprint') ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
@@ -5820,12 +5820,14 @@ export class CandlePanel implements IContentRenderer {
     const liveText = status.state === 'failed' ? 'Live data unavailable' : status.state === 'stale' ? 'Live updates paused'
       : status.state === 'loading' ? 'Connecting live data…' : quoteUnavailable ? quoteHint : '';
     const totalsLive = !isFootprint && this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible ? this.footprintStatus.state === 'loading' ? 'Connecting live totals…' : ['failed','stale'].includes(this.footprintStatus.state) ? 'Live totals unavailable' : '' : '';
-    const text = [liveText, totalsLive, historyText].filter(Boolean).join(' · ');
+    const nativeHistory = !isFootprint ? this.status.nativeHistory : undefined;
+    const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${nativeHistory.loadedBars} bars displayed` : '';
+    const text = [liveText, totalsLive, nativeHistoryText, historyText].filter(Boolean).join(' · ');
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
     this.statusNode.dataset.quoteAvailability = quoteUnavailable ? 'unavailable' : 'available';
     const showRetry = status.state === 'failed' || status.state === 'stale' || Boolean(history?.error)
-      || Boolean(totalsLive && ['failed', 'stale'].includes(this.footprintStatus.state));
+      || Boolean(nativeHistory?.error) || Boolean(totalsLive && ['failed', 'stale'].includes(this.footprintStatus.state));
     if (this.statusText.parentElement !== this.statusNode || (this.retry.parentElement === this.statusNode) !== showRetry) {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }
