@@ -250,3 +250,13 @@ test('a truncated batch retains only validated members and never completes its f
  const updates:any[]=[];await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/byte identity/);
  expect(updates).toHaveLength(2);expect(updates.at(-1).resume.after).toBe(20);expect(updates.every(u=>!u.status.archive.requestComplete)).toBe(true);
 });
+test('unsubscribing the last batch consumer cancels its held stream and releases admission',async()=>{
+ const f=fixture();(f.discovery as any).delivery={version:2,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);let started=false,canceled=false;
+ const fetcher:typeof fetch=async(input,init)=>{
+  const response=await t.fetcher(input,init);if(!String(input).includes('/batch?'))return response;
+  started=true;return new Response(new ReadableStream({cancel(){canceled=true;}}),{headers:response.headers});
+ };
+ const reader=await preparedWallReader(request,fetcher,new AbortController().signal),pending=reader!.read(10);void pending.catch(()=>{});
+ await vi.waitFor(()=>expect(started).toBe(true));reader!.dispose();await expect(pending).rejects.toThrow(/Aborted/);
+ await vi.waitFor(()=>{expect(canceled).toBe(true);expect(historyScheduler.diagnostics().active).toBe(0);});
+});

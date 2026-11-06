@@ -27,6 +27,8 @@ export function acquireWallBatch(options:Options){
     ||response.headers.get('x-iq-source-revision')!==options.revision){await response.body?.cancel();throw Error('Prepared wall batch identity mismatch');}
    if(expectedBytes>8*1024*1024||parts.length>8||!response.body){await response.body?.cancel();throw Error('Prepared wall batch byte capacity');}
    const reader=response.body.getReader();let chunk:Uint8Array=new Uint8Array(0),offset=0,received=0,complete=false;
+   const cancelReader=()=>{void reader.cancel(aborted()).catch(()=>{});};
+   upstream.addEventListener('abort',cancelReader,{once:true});if(upstream.aborted)cancelReader();
    async function pull(){
     upstream.throwIfAborted();const item=await reader.read();if(item.done)return false;
     received+=item.value.byteLength;if(received>expectedBytes)throw Error('Prepared wall batch byte identity mismatch');
@@ -50,7 +52,7 @@ export function acquireWallBatch(options:Options){
      if(i===parts.length-1)work.finished=true;
      work.slots.get(part.index)!.resolve({response:i===0?response:new Response(null,{headers}),body,bytes:part.bytes,responseHeadersMs:i===0?responseHeadersMs:0,bodyReadMs,jsonParseMs,attempts:1});
     }
-   }finally{if(!complete)await reader.cancel().catch(()=>{});reader.releaseLock();}
+   }finally{upstream.removeEventListener('abort',cancelReader);if(!complete)await reader.cancel().catch(()=>{});reader.releaseLock();}
   }).catch(error=>{for(const slot of work.slots.values())slot.reject(error);});
  }
  const selected=group;selected.refs++;let released=false;
