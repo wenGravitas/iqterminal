@@ -1,0 +1,6 @@
+{"kind":"bytes","arch":"arm64","platform":"linux","raw":8556464,"packed":3359020,"rawGzip":389975,"packedGzip":322507}
+{"kind":"same-real-hour-decode","run":1,"plainMs":65.66334200000006,"packedMs":608.258081}
+{"kind":"same-real-hour-decode","run":2,"plainMs":71.51931899999977,"packedMs":682.123376}
+{"kind":"same-real-hour-decode","run":3,"plainMs":65.65664000000015,"packedMs":860.3821169999997}
+{"kind":"same-real-hour-decode","run":4,"plainMs":62.3099430000002,"packedMs":600.6976139999997}
+{"kind":"same-real-hour-decode","run":5,"plainMs":64.43601899999976,"packedMs":548.9884270000002}

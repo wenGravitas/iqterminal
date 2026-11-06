@@ -419,3 +419,90 @@ original October 25 identities. Actual rollback behavior is not yet exercised.
 Warm five-run acceptance, matched concurrent-history validation, complete 30h
 retention/frame measurements, final route comparisons and remaining latency
 failures stay open. No production deployment or main merge has occurred.
+
+
+## Prepared wall chunk implementation, continued
+
+Backend `b4f0e20` repairs a real pinned-history metadata error: continuation
+coverage could import today's midpoint/book scope if the global cursor had not
+advanced, and then change to null under the same pinned watermark. Only actual
+historical carry-in context is now exposed. The full failed USD-M comparison is
+retained; the comparator continues to check coverage fields rather than dropping
+them to obtain a pass.
+
+Backend `536f25d` adds a resumable one-hour prepared chunk store using the
+canonical display API and the existing durable publication helper. Each step
+processes one bounded page, with 4 MiB decoded parts and a 128-part explicit
+capacity bound. Data is content addressed and gzipped before checkpointing.
+Publication verifies the complete ordered canonical-page revision, including
+financial/coverage metadata; only the mutable profile catch-up label is excluded.
+Reads verify manifest membership and compressed hashes. Failed loads, changed
+heads/revisions and capacity errors retain good checkpointed parts. A final
+checkpoint interrupted before manifest publication resumes without replay.
+This is a storage foundation: chart delivery, manifest discovery, scheduler and
+global retention integration remain open; the serving chart route is unchanged.
+
+The same real Spot hour contains 5,316 exact patches and four explicit source
+gaps. Its native-JSON prototype used five prepared parts (8,556,464 decoded bytes,
+389,975 gzip bytes). The bounded two-pass source comparison matched all pages.
+Those prototype records predate the final publication-revision guard; final
+real-source validation must use the committed implementation and deployed
+metadata fix. Source preparation timing is separate from ready-server latency.
+
+The rejected shape/dictionary decoder experiment is in
+`artifacts/pi-history-r1/wall-codec-experiment`. On the arm64 Pi, all five
+native JSON decode samples were 65.663, 71.519, 65.657, 62.310, 64.436 ms
+(median 65.657, maximum 71.519). Compact decoding took 608.258, 682.123,
+860.382, 600.698, 548.988 ms (median 608.258, maximum 860.382). Gzip bytes
+fell only from 389,975 to 322,507. The runtime therefore uses cached JSON/gzip
+with native parsing; experimental codec code is retained only as evidence.
+These CPU samples do not certify browser paint or any 30h release gate.
+
+
+### Deployed chunk storage and metadata verification
+
+Staging serving build `536f25d9e63c4ce622b8140c3c5223a72ce927f2` passed the
+guarded 218-test/typecheck/build rollout, index and read-only state checks. All
+six serving/helper containers were healthy afterward. Collector IDs/start times
+remain exactly the October 25 identities recorded with the rollout; USD-M
+execution/depth overflows remain zero. Backend branch `27b5d4c` additionally
+contains the resumable proof command and documentation, without another serving
+rollout. The original dirty project checkouts remain preserved.
+
+The committed final publication guard passed both real HTTP comparisons through
+this deployed API. For the fixed November 4 14:00–15:00 UTC hour:
+
+| Market | Exact canonical patches | Parts | Decoded / gzip bytes | Explicit historical gaps |
+|---|---:|---:|---:|---:|
+| Spot | 5,316 | 5 | 8,556,464 / 389,983 | 4 |
+| USD-M | 6,051 | 6 | 8,879,480 / 429,712 | 4 |
+
+Every prepared page, including financial values and coverage metadata, matches
+the independent pinned reference. `complete` here certifies delivery of the
+canonical pages; both sources remain honestly partial because their historical
+gaps are preserved. These are x64 staging server checks over existing canonical
+wall archives. The reported preparation/readback passes (4.620 and 6.574 s)
+exclude the initial reference capture and include readback/decode; they are not
+whole cold-build, Pi/client-route or chart measurements.
+
+A separate real Spot resume check deliberately stopped after one part at cursor
+15652311. The next invocation reused its saved watermark/revision, continued
+from that cursor, and completed the same five parts with an exact reference
+match. The first invocation took 5.195 s including reference capture; the resumed
+invocation took 5.651 s, including a 5.581 s preparation/readback interval and a
+35.905 ms decode subset. Its saved 3.846 s reference phase belongs to the first
+invocation and must not be added to the resumed total. The new proof tool labels
+these phase scopes explicitly. Raw requests, results, immutable parts, manifests,
+rollback records and the failed predecessor comparison are retained together.
+
+No chunk-serving endpoint or chart consumer is enabled yet. The 30h delivery,
+first paint, warm browser, concurrent history, retained memory/frame and remaining
+footprint latency gates remain unchanged and incomplete.
+
+
+Read-only HTTP delivery is now implemented after the deployed build. Its local
+HTTP integration tests verify native gzip/identity decoding, exact decimal data,
+private immutable part caching, independent ETags/304, market/input validation
+and cancellation. The full backend suite now passes 219 tests, plus typecheck and
+build. This endpoint change still needs staging rollout and real route checks;
+source discovery, fair preparation/retention and chart consumption remain open.
