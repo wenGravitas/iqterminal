@@ -300,10 +300,10 @@ export class TerminalFootprint extends Footprint {
     for(const bar of this.bars){const index=rc.dataLayer.timeToIndex(bar.time);if(index===undefined||index<visible.from-.5||index>visible.to+.5)continue;
       const cells=bar.cells.filter(cell=>cell.price+(bar.rowSize||this.rowSize)>=priceRange.min&&cell.price<=priceRange.max).length;
       if(cells){this.paint.times.push(bar.time);this.paint.cells+=cells;}}
-    this.paint.at=performance.now();this.paint.draws++;
     if (o.statsPosition === 'bar') this.drawBarTotals(ctx, rc);
     if (this.bars.length && o.showCandle) this.drawCandles(ctx, rc);
-    this.paint.ms=performance.now()-paintStarted;
+    this.paint.at=performance.now();this.paint.draws++;
+    this.paint.ms=this.paint.at-paintStarted;
   }
   private rememberCellPaint(rect: [number, number, number, number], fillStyle: unknown, alpha: number) {
     if (typeof fillStyle !== 'string') return;

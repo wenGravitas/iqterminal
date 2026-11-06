@@ -35,6 +35,8 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:new URL(base).origin,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})},{name:'basis.theme.v1',value:'dark'},{name:'iqterminal:object-tree-sidebar:v1:chart-bench',value:JSON.stringify({version:1,width:280,collapsed:true})}]}]}});
  const page=await context.newPage();await routeTestBrowser();await page.addInitScript(({kind,requested,step})=>{
   const b=window.__bench={frames:[],tasks:[],marks:{firstHistoryAt:null,completeAt:null,firstCurrentAt:null}};let last=performance.now(),sampleAt=0;
+  // RAF now is the frame start; it can predate a long chart draw. Record the
+  // observation clock only after reading actual painted-content diagnostics.
   function frame(now){b.frames.push(now-last);last=now;if(b.frames.length>2000)b.frames.shift();
    if(now-sampleAt>=80){sampleAt=now;const p=window.__terminal?.panels.get('chart-bench'),e=p?.engine;
     const shell=document.getElementById('app-shell'),splash=document.getElementById('startup-splash');
@@ -42,16 +44,16 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
     if(e&&uncovered){const view=e.visibleTimeRange(),matches=view&&Math.abs(view.from-requested.from/1000)<step/1000&&Math.abs(view.to-requested.to/1000)<step/1000;
      if(kind==='footprint'){
       const paint=e.footprintPaintDiagnostics?.(),times=paint?.times?.map(t=>t*1000)??[],closed=Math.floor(Date.now()/step)*step,history=p.footprintStatus?.history;
-      if(matches&&times.some(t=>t>=requested.from&&t<Math.min(requested.to,closed)))b.marks.firstHistoryAt??=now;
-      if(p.footprintStatus?.state==='live'&&times.includes(closed))b.marks.firstCurrentAt??=now;
+      if(matches&&times.some(t=>t>=requested.from&&t<Math.min(requested.to,closed)))b.marks.firstHistoryAt??=performance.now();
+      if(p.footprintStatus?.state==='live'&&times.includes(closed))b.marks.firstCurrentAt??=performance.now();
       const empty=new Set((history?.ranges??[]).flatMap(r=>(r.progress?.slots??[]).filter(slot=>slot.validated&&slot.state==='empty').map(slot=>slot.from)));
       const expected=[];for(let t=requested.from;t<Math.min(requested.to,closed);t+=step)expected.push(t);
-      if(matches&&history?.validated&&!history.capacityLimited&&expected.length&&expected.every(t=>times.includes(t)||empty.has(t)))b.marks.completeAt??=now;
+      if(matches&&history?.validated&&!history.capacityLimited&&expected.length&&expected.every(t=>times.includes(t)||empty.has(t)))b.marks.completeAt??=performance.now();
      }else{
       const d=e.orderWallsDiagnostics(),archive=p.orderWallsStatus?.archive;
-      if(matches&&d.visibleHistorical>0)b.marks.firstHistoryAt??=now;
-      if(d.visibleCurrent>0&&p.orderWallsStatus?.state==='live')b.marks.firstCurrentAt??=now;
-      if(matches&&d.visibleHistorical>0&&archive?.requestComplete&&archive.exact&&archive.from<=requested.from&&archive.to>=requested.to&&archive.loadedThrough>=requested.to&&!d.valueHistoryLimited&&!d.episodeHistoryLimited)b.marks.completeAt??=now;
+      if(matches&&d.visibleHistorical>0)b.marks.firstHistoryAt??=performance.now();
+      if(d.visibleCurrent>0&&p.orderWallsStatus?.state==='live')b.marks.firstCurrentAt??=performance.now();
+      if(matches&&d.visibleHistorical>0&&archive?.requestComplete&&archive.exact&&archive.from<=requested.from&&archive.to>=requested.to&&archive.loadedThrough>=requested.to&&!d.valueHistoryLimited&&!d.episodeHistoryLimited)b.marks.completeAt??=performance.now();
      }
     }
    }requestAnimationFrame(frame);
@@ -87,5 +89,5 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  await page.evaluate(()=>window.__terminal?.feed.send({type:'diagnostics'})).catch(()=>{});await new Promise(r=>setTimeout(r,150));
  const paintMarks=last?.marks??null;
  const diagnostics=await page.evaluate(()=>window.__terminal?.feed.diagnostics).catch(()=>null);
- await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-main-thread-paint',appVisibilityGuard:true,scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
+ await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-painted-content-observation-v2',appVisibilityGuard:true,scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
 }}finally{await browser.close();}
