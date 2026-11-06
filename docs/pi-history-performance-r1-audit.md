@@ -66,3 +66,13 @@ Every renderer diagnostic is canvas2d in normal headed Chromium. See
 Spot 30h, automatic scheduling/retention and sliding reuse, warm/current-concurrency
 and full-view memory/frame gates remain open. Earlier footprint latency failures
 remain unaccepted. Keep the original scope and failed source/transport evidence.
+
+Selected-wall preparation increment: frontend exact projector `47bd469`, backend
+core `103da19` and bounded producer `ce0a208`. All 66 real canonical pages preserve
+23,850 original segments / 104,112 actual points through checkpoint/closed transfer
+and final public import. Producer full suite 243 pass; frontend functional
+bootstrap/Retry browser checks 10 pass. The final public manifest is 383,167 bytes
+and closed gzip records 3,004,574 bytes; this is stored-file correctness/size
+proof on x64 staging, not a Pi loading gate. Actual gateway/client projection
+transfer remains unimplemented. Serving staging stays 18a68da. Existing failed
+performance gates and all previously open acceptance requirements remain open.

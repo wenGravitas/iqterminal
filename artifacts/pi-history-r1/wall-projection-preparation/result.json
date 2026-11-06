@@ -1,0 +1,964 @@
+{
+  "kind": "isolated-prepared-wall-projection-original-reference",
+  "exact": true,
+  "sourceProofValidation": "pinned stored proof; no fresh DB proof in this transform benchmark",
+  "sourceKey": "0c59755f82338c16d9b012e1fd0e6214c521e39be58f809bc48def30b9112cbc",
+  "key": "4b30426dd61fdda2188e4af93a8ace541128766656c16efb24ca9bc84238a05a",
+  "core": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+  "request": {
+    "market": "perpetual",
+    "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "from": 1793695500000,
+    "to": 1793805300000,
+    "watermark": 21355248,
+    "display": true,
+    "sourceRevision": "bcc9dedfaa7f064e0f99704cbc53d14319b0ab1d02d03e11ef13614c874cad4e"
+  },
+  "sourceParts": 66,
+  "projectionParts": 66,
+  "segments": 23850,
+  "valueRuns": 104112,
+  "referenceModuleSha256": "d5dec6192f00f2582f79afe93f5fe011ccb757130e71ccb8c8ac96001bbc5c3d",
+  "originalSegmentHash": "de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6",
+  "preparedSegmentHash": "de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6",
+  "preparationMs": 9334.718334,
+  "importMs": 367.75944700000036,
+  "decodedClosedBytes": 32207953,
+  "compressedClosedBytes": 2975166,
+  "activeCheckpointBytes": 108225,
+  "privateCheckpointBytes": 6630469,
+  "manifestBytes": 335499,
+  "memory": {
+    "rss": 288538624,
+    "heapTotal": 166342656,
+    "heapUsed": 124634984,
+    "external": 13095952,
+    "arrayBuffers": 1062564
+  },
+  "samples": [
+    {
+      "page": 1,
+      "ms": 85.688139,
+      "closedParts": 1,
+      "segments": 209,
+      "checkpointBytes": 202754,
+      "memory": {
+        "rss": 111542272,
+        "heapTotal": 21602304,
+        "heapUsed": 13190008,
+        "external": 14610350,
+        "arrayBuffers": 2602614
+      }
+    },
+    {
+      "page": 2,
+      "ms": 128.52554600000002,
+      "closedParts": 2,
+      "segments": 658,
+      "checkpointBytes": 468639,
+      "memory": {
+        "rss": 128753664,
+        "heapTotal": 35229696,
+        "heapUsed": 15758288,
+        "external": 17076675,
+        "arrayBuffers": 5068899
+      }
+    },
+    {
+      "page": 3,
+      "ms": 132.25255499999997,
+      "closedParts": 3,
+      "segments": 1362,
+      "checkpointBytes": 822677,
+      "memory": {
+        "rss": 140087296,
+        "heapTotal": 54886400,
+        "heapUsed": 17919736,
+        "external": 15672010,
+        "arrayBuffers": 3664234
+      }
+    },
+    {
+      "page": 4,
+      "ms": 113.337223,
+      "closedParts": 4,
+      "segments": 2083,
+      "checkpointBytes": 1111064,
+      "memory": {
+        "rss": 149491712,
+        "heapTotal": 56508416,
+        "heapUsed": 24427288,
+        "external": 18761960,
+        "arrayBuffers": 6754184
+      }
+    },
+    {
+      "page": 5,
+      "ms": 127.73651399999994,
+      "closedParts": 5,
+      "segments": 2656,
+      "checkpointBytes": 1364917,
+      "memory": {
+        "rss": 161148928,
+        "heapTotal": 59510784,
+        "heapUsed": 22713960,
+        "external": 18045204,
+        "arrayBuffers": 6037428
+      }
+    },
+    {
+      "page": 6,
+      "ms": 99.22008000000005,
+      "closedParts": 6,
+      "segments": 2917,
+      "checkpointBytes": 1337121,
+      "memory": {
+        "rss": 161669120,
+        "heapTotal": 60211200,
+        "heapUsed": 28560976,
+        "external": 20545242,
+        "arrayBuffers": 8537466
+      }
+    },
+    {
+      "page": 7,
+      "ms": 106.97951499999999,
+      "closedParts": 7,
+      "segments": 3060,
+      "checkpointBytes": 1419832,
+      "memory": {
+        "rss": 168464384,
+        "heapTotal": 61149184,
+        "heapUsed": 32686232,
+        "external": 22402077,
+        "arrayBuffers": 10394301
+      }
+    },
+    {
+      "page": 8,
+      "ms": 115.96427100000005,
+      "closedParts": 8,
+      "segments": 3317,
+      "checkpointBytes": 976096,
+      "memory": {
+        "rss": 171683840,
+        "heapTotal": 58646528,
+        "heapUsed": 34644736,
+        "external": 18188372,
+        "arrayBuffers": 6180596
+      }
+    },
+    {
+      "page": 9,
+      "ms": 90.38220299999989,
+      "closedParts": 9,
+      "segments": 3589,
+      "checkpointBytes": 1146385,
+      "memory": {
+        "rss": 163962880,
+        "heapTotal": 54693888,
+        "heapUsed": 14577352,
+        "external": 15302820,
+        "arrayBuffers": 3295044
+      }
+    },
+    {
+      "page": 10,
+      "ms": 97.63628799999992,
+      "closedParts": 10,
+      "segments": 3662,
+      "checkpointBytes": 1170353,
+      "memory": {
+        "rss": 172072960,
+        "heapTotal": 62767104,
+        "heapUsed": 34967488,
+        "external": 22046716,
+        "arrayBuffers": 10038940
+      }
+    },
+    {
+      "page": 11,
+      "ms": 112.80096300000014,
+      "closedParts": 11,
+      "segments": 4015,
+      "checkpointBytes": 1149648,
+      "memory": {
+        "rss": 168325120,
+        "heapTotal": 52908032,
+        "heapUsed": 27344824,
+        "external": 18002612,
+        "arrayBuffers": 5998349
+      }
+    },
+    {
+      "page": 12,
+      "ms": 111.7439559999998,
+      "closedParts": 12,
+      "segments": 4249,
+      "checkpointBytes": 1214865,
+      "memory": {
+        "rss": 164610048,
+        "heapTotal": 52068352,
+        "heapUsed": 16731224,
+        "external": 17745601,
+        "arrayBuffers": 5741338
+      }
+    },
+    {
+      "page": 13,
+      "ms": 133.30920600000013,
+      "closedParts": 13,
+      "segments": 4748,
+      "checkpointBytes": 1435575,
+      "memory": {
+        "rss": 173801472,
+        "heapTotal": 61419520,
+        "heapUsed": 38531088,
+        "external": 25160893,
+        "arrayBuffers": 13156630
+      }
+    },
+    {
+      "page": 14,
+      "ms": 116.43207200000006,
+      "closedParts": 14,
+      "segments": 5480,
+      "checkpointBytes": 1573161,
+      "memory": {
+        "rss": 173248512,
+        "heapTotal": 55975936,
+        "heapUsed": 31518512,
+        "external": 20194329,
+        "arrayBuffers": 8190066
+      }
+    },
+    {
+      "page": 15,
+      "ms": 93.04425900000001,
+      "closedParts": 15,
+      "segments": 5703,
+      "checkpointBytes": 1721410,
+      "memory": {
+        "rss": 171769856,
+        "heapTotal": 54685696,
+        "heapUsed": 27568080,
+        "external": 18179489,
+        "arrayBuffers": 6175226
+      }
+    },
+    {
+      "page": 16,
+      "ms": 112.61349900000005,
+      "closedParts": 16,
+      "segments": 6155,
+      "checkpointBytes": 1731712,
+      "memory": {
+        "rss": 167739392,
+        "heapTotal": 54468608,
+        "heapUsed": 18149808,
+        "external": 16664375,
+        "arrayBuffers": 4660112
+      }
+    },
+    {
+      "page": 17,
+      "ms": 101.00824599999987,
+      "closedParts": 17,
+      "segments": 6702,
+      "checkpointBytes": 1882023,
+      "memory": {
+        "rss": 181526528,
+        "heapTotal": 65757184,
+        "heapUsed": 41451536,
+        "external": 25206539,
+        "arrayBuffers": 13202276
+      }
+    },
+    {
+      "page": 18,
+      "ms": 119.61032599999999,
+      "closedParts": 18,
+      "segments": 6889,
+      "checkpointBytes": 2067507,
+      "memory": {
+        "rss": 172371968,
+        "heapTotal": 56811520,
+        "heapUsed": 18482424,
+        "external": 16481074,
+        "arrayBuffers": 4476811
+      }
+    },
+    {
+      "page": 19,
+      "ms": 109.01066899999978,
+      "closedParts": 19,
+      "segments": 7093,
+      "checkpointBytes": 2196759,
+      "memory": {
+        "rss": 172748800,
+        "heapTotal": 57176064,
+        "heapUsed": 19646064,
+        "external": 16732759,
+        "arrayBuffers": 4728496
+      }
+    },
+    {
+      "page": 20,
+      "ms": 121.55492299999969,
+      "closedParts": 20,
+      "segments": 7707,
+      "checkpointBytes": 2200052,
+      "memory": {
+        "rss": 165711872,
+        "heapTotal": 60272640,
+        "heapUsed": 20455704,
+        "external": 17289401,
+        "arrayBuffers": 5285138
+      }
+    },
+    {
+      "page": 21,
+      "ms": 109.58638700000029,
+      "closedParts": 21,
+      "segments": 7894,
+      "checkpointBytes": 2398939,
+      "memory": {
+        "rss": 167321600,
+        "heapTotal": 57995264,
+        "heapUsed": 19944456,
+        "external": 16801195,
+        "arrayBuffers": 4796932
+      }
+    },
+    {
+      "page": 22,
+      "ms": 117.75232300000016,
+      "closedParts": 22,
+      "segments": 8008,
+      "checkpointBytes": 2602633,
+      "memory": {
+        "rss": 167899136,
+        "heapTotal": 58699776,
+        "heapUsed": 21195920,
+        "external": 16716623,
+        "arrayBuffers": 4712360
+      }
+    },
+    {
+      "page": 23,
+      "ms": 144.77822600000036,
+      "closedParts": 23,
+      "segments": 8097,
+      "checkpointBytes": 2788666,
+      "memory": {
+        "rss": 168972288,
+        "heapTotal": 61677568,
+        "heapUsed": 22572520,
+        "external": 16894779,
+        "arrayBuffers": 4890516
+      }
+    },
+    {
+      "page": 24,
+      "ms": 121.33514500000001,
+      "closedParts": 24,
+      "segments": 8156,
+      "checkpointBytes": 2530008,
+      "memory": {
+        "rss": 169000960,
+        "heapTotal": 60923904,
+        "heapUsed": 22473680,
+        "external": 17322209,
+        "arrayBuffers": 5317946
+      }
+    },
+    {
+      "page": 25,
+      "ms": 112.21275300000025,
+      "closedParts": 25,
+      "segments": 8231,
+      "checkpointBytes": 2700550,
+      "memory": {
+        "rss": 172306432,
+        "heapTotal": 62861312,
+        "heapUsed": 30376408,
+        "external": 21663491,
+        "arrayBuffers": 9659228
+      }
+    },
+    {
+      "page": 26,
+      "ms": 105.82182599999987,
+      "closedParts": 26,
+      "segments": 8446,
+      "checkpointBytes": 2730111,
+      "memory": {
+        "rss": 176144384,
+        "heapTotal": 60968960,
+        "heapUsed": 36351752,
+        "external": 19278180,
+        "arrayBuffers": 7273917
+      }
+    },
+    {
+      "page": 27,
+      "ms": 108.8884350000003,
+      "closedParts": 27,
+      "segments": 8593,
+      "checkpointBytes": 2848951,
+      "memory": {
+        "rss": 171536384,
+        "heapTotal": 60289024,
+        "heapUsed": 22873840,
+        "external": 16987911,
+        "arrayBuffers": 4983648
+      }
+    },
+    {
+      "page": 28,
+      "ms": 131.57604200000014,
+      "closedParts": 28,
+      "segments": 8965,
+      "checkpointBytes": 2546533,
+      "memory": {
+        "rss": 173162496,
+        "heapTotal": 62107648,
+        "heapUsed": 31388816,
+        "external": 21872213,
+        "arrayBuffers": 9867950
+      }
+    },
+    {
+      "page": 29,
+      "ms": 111.4420110000001,
+      "closedParts": 29,
+      "segments": 9165,
+      "checkpointBytes": 2612866,
+      "memory": {
+        "rss": 175947776,
+        "heapTotal": 59711488,
+        "heapUsed": 33441592,
+        "external": 18983052,
+        "arrayBuffers": 6978789
+      }
+    },
+    {
+      "page": 30,
+      "ms": 120.64110900000014,
+      "closedParts": 30,
+      "segments": 9491,
+      "checkpointBytes": 2645910,
+      "memory": {
+        "rss": 176340992,
+        "heapTotal": 59006976,
+        "heapUsed": 34877504,
+        "external": 19354196,
+        "arrayBuffers": 7349933
+      }
+    },
+    {
+      "page": 31,
+      "ms": 111.93040500000006,
+      "closedParts": 31,
+      "segments": 10128,
+      "checkpointBytes": 2823846,
+      "memory": {
+        "rss": 176889856,
+        "heapTotal": 60088320,
+        "heapUsed": 35634352,
+        "external": 19710449,
+        "arrayBuffers": 7706186
+      }
+    },
+    {
+      "page": 32,
+      "ms": 113.87363899999991,
+      "closedParts": 32,
+      "segments": 10245,
+      "checkpointBytes": 2900193,
+      "memory": {
+        "rss": 176701440,
+        "heapTotal": 60747776,
+        "heapUsed": 33752616,
+        "external": 19234937,
+        "arrayBuffers": 7230674
+      }
+    },
+    {
+      "page": 33,
+      "ms": 104.29352899999958,
+      "closedParts": 33,
+      "segments": 10305,
+      "checkpointBytes": 2998540,
+      "memory": {
+        "rss": 176709632,
+        "heapTotal": 60137472,
+        "heapUsed": 35477312,
+        "external": 19322944,
+        "arrayBuffers": 7318681
+      }
+    },
+    {
+      "page": 34,
+      "ms": 132.9017160000003,
+      "closedParts": 34,
+      "segments": 10766,
+      "checkpointBytes": 2996965,
+      "memory": {
+        "rss": 177795072,
+        "heapTotal": 61759488,
+        "heapUsed": 37457832,
+        "external": 20004015,
+        "arrayBuffers": 7999752
+      }
+    },
+    {
+      "page": 35,
+      "ms": 140.5073480000001,
+      "closedParts": 35,
+      "segments": 11096,
+      "checkpointBytes": 3181129,
+      "memory": {
+        "rss": 178401280,
+        "heapTotal": 62558208,
+        "heapUsed": 36961440,
+        "external": 19729956,
+        "arrayBuffers": 7725693
+      }
+    },
+    {
+      "page": 36,
+      "ms": 121.167641,
+      "closedParts": 36,
+      "segments": 11146,
+      "checkpointBytes": 3308787,
+      "memory": {
+        "rss": 178847744,
+        "heapTotal": 62935040,
+        "heapUsed": 37763048,
+        "external": 19583349,
+        "arrayBuffers": 7579086
+      }
+    },
+    {
+      "page": 37,
+      "ms": 134.41431199999988,
+      "closedParts": 37,
+      "segments": 11450,
+      "checkpointBytes": 3190242,
+      "memory": {
+        "rss": 179388416,
+        "heapTotal": 64966656,
+        "heapUsed": 39728528,
+        "external": 20145914,
+        "arrayBuffers": 8141651
+      }
+    },
+    {
+      "page": 38,
+      "ms": 125.91161999999986,
+      "closedParts": 38,
+      "segments": 11891,
+      "checkpointBytes": 3362784,
+      "memory": {
+        "rss": 179187712,
+        "heapTotal": 63926272,
+        "heapUsed": 38204408,
+        "external": 20032801,
+        "arrayBuffers": 8028538
+      }
+    },
+    {
+      "page": 39,
+      "ms": 117.89165099999991,
+      "closedParts": 39,
+      "segments": 11939,
+      "checkpointBytes": 3547348,
+      "memory": {
+        "rss": 179187712,
+        "heapTotal": 62726144,
+        "heapUsed": 38558760,
+        "external": 19729186,
+        "arrayBuffers": 7724923
+      }
+    },
+    {
+      "page": 40,
+      "ms": 119.78138300000046,
+      "closedParts": 40,
+      "segments": 12347,
+      "checkpointBytes": 3547116,
+      "memory": {
+        "rss": 179998720,
+        "heapTotal": 64892928,
+        "heapUsed": 41219712,
+        "external": 20481854,
+        "arrayBuffers": 8477591
+      }
+    },
+    {
+      "page": 41,
+      "ms": 118.27682900000036,
+      "closedParts": 41,
+      "segments": 12472,
+      "checkpointBytes": 3719376,
+      "memory": {
+        "rss": 179728384,
+        "heapTotal": 65376256,
+        "heapUsed": 39796784,
+        "external": 20029029,
+        "arrayBuffers": 8024766
+      }
+    },
+    {
+      "page": 42,
+      "ms": 120.93662399999994,
+      "closedParts": 42,
+      "segments": 12836,
+      "checkpointBytes": 3648967,
+      "memory": {
+        "rss": 180420608,
+        "heapTotal": 65880064,
+        "heapUsed": 41775008,
+        "external": 20582050,
+        "arrayBuffers": 8577787
+      }
+    },
+    {
+      "page": 43,
+      "ms": 122.98761099999956,
+      "closedParts": 43,
+      "segments": 13108,
+      "checkpointBytes": 3703319,
+      "memory": {
+        "rss": 180297728,
+        "heapTotal": 65413120,
+        "heapUsed": 40458056,
+        "external": 20418585,
+        "arrayBuffers": 8414322
+      }
+    },
+    {
+      "page": 44,
+      "ms": 122.97440900000038,
+      "closedParts": 44,
+      "segments": 13675,
+      "checkpointBytes": 3795276,
+      "memory": {
+        "rss": 180838400,
+        "heapTotal": 65646592,
+        "heapUsed": 41329576,
+        "external": 20824187,
+        "arrayBuffers": 8819924
+      }
+    },
+    {
+      "page": 45,
+      "ms": 138.75213299999996,
+      "closedParts": 45,
+      "segments": 14320,
+      "checkpointBytes": 3968226,
+      "memory": {
+        "rss": 181112832,
+        "heapTotal": 66555904,
+        "heapUsed": 42134072,
+        "external": 21054428,
+        "arrayBuffers": 9050165
+      }
+    },
+    {
+      "page": 46,
+      "ms": 133.30869200000052,
+      "closedParts": 46,
+      "segments": 14721,
+      "checkpointBytes": 4093983,
+      "memory": {
+        "rss": 181387264,
+        "heapTotal": 66494464,
+        "heapUsed": 41517544,
+        "external": 20833350,
+        "arrayBuffers": 8829087
+      }
+    },
+    {
+      "page": 47,
+      "ms": 119.67279099999996,
+      "closedParts": 47,
+      "segments": 15106,
+      "checkpointBytes": 4187030,
+      "memory": {
+        "rss": 181870592,
+        "heapTotal": 66740224,
+        "heapUsed": 41699032,
+        "external": 20970271,
+        "arrayBuffers": 8966008
+      }
+    },
+    {
+      "page": 48,
+      "ms": 140.50637900000038,
+      "closedParts": 48,
+      "segments": 15540,
+      "checkpointBytes": 4307069,
+      "memory": {
+        "rss": 186515456,
+        "heapTotal": 67260416,
+        "heapUsed": 42347912,
+        "external": 21135659,
+        "arrayBuffers": 9131396
+      }
+    },
+    {
+      "page": 49,
+      "ms": 138.01796899999954,
+      "closedParts": 49,
+      "segments": 16135,
+      "checkpointBytes": 4466651,
+      "memory": {
+        "rss": 187293696,
+        "heapTotal": 67796992,
+        "heapUsed": 44649336,
+        "external": 21526153,
+        "arrayBuffers": 9521890
+      }
+    },
+    {
+      "page": 50,
+      "ms": 146.7045480000006,
+      "closedParts": 50,
+      "segments": 16606,
+      "checkpointBytes": 4591905,
+      "memory": {
+        "rss": 164438016,
+        "heapTotal": 57921536,
+        "heapUsed": 22280824,
+        "external": 21473258,
+        "arrayBuffers": 4153736
+      }
+    },
+    {
+      "page": 51,
+      "ms": 136.99725200000012,
+      "closedParts": 51,
+      "segments": 16922,
+      "checkpointBytes": 4690601,
+      "memory": {
+        "rss": 164675584,
+        "heapTotal": 58281984,
+        "heapUsed": 22265744,
+        "external": 21325112,
+        "arrayBuffers": 4152802
+      }
+    },
+    {
+      "page": 52,
+      "ms": 133.13793799999985,
+      "closedParts": 52,
+      "segments": 17754,
+      "checkpointBytes": 4901493,
+      "memory": {
+        "rss": 164925440,
+        "heapTotal": 58228736,
+        "heapUsed": 23465472,
+        "external": 22117054,
+        "arrayBuffers": 4195129
+      }
+    },
+    {
+      "page": 53,
+      "ms": 140.1658040000002,
+      "closedParts": 53,
+      "segments": 18337,
+      "checkpointBytes": 5081834,
+      "memory": {
+        "rss": 165203968,
+        "heapTotal": 59195392,
+        "heapUsed": 23737112,
+        "external": 22065890,
+        "arrayBuffers": 4182250
+      }
+    },
+    {
+      "page": 54,
+      "ms": 140.28908200000023,
+      "closedParts": 54,
+      "segments": 19074,
+      "checkpointBytes": 5265290,
+      "memory": {
+        "rss": 165036032,
+        "heapTotal": 59379712,
+        "heapUsed": 24484000,
+        "external": 22350853,
+        "arrayBuffers": 4157650
+      }
+    },
+    {
+      "page": 55,
+      "ms": 240.49142399999982,
+      "closedParts": 55,
+      "segments": 19641,
+      "checkpointBytes": 5418367,
+      "memory": {
+        "rss": 165462016,
+        "heapTotal": 60317696,
+        "heapUsed": 24439200,
+        "external": 22270724,
+        "arrayBuffers": 4165256
+      }
+    },
+    {
+      "page": 56,
+      "ms": 165.89714600000025,
+      "closedParts": 56,
+      "segments": 20278,
+      "checkpointBytes": 5615927,
+      "memory": {
+        "rss": 165244928,
+        "heapTotal": 60780544,
+        "heapUsed": 25213424,
+        "external": 22680596,
+        "arrayBuffers": 4189070
+      }
+    },
+    {
+      "page": 57,
+      "ms": 150.39413800000057,
+      "closedParts": 57,
+      "segments": 20886,
+      "checkpointBytes": 5761790,
+      "memory": {
+        "rss": 165314560,
+        "heapTotal": 61448192,
+        "heapUsed": 25769400,
+        "external": 22752012,
+        "arrayBuffers": 4164564
+      }
+    },
+    {
+      "page": 58,
+      "ms": 146.0742650000002,
+      "closedParts": 58,
+      "segments": 21226,
+      "checkpointBytes": 5878897,
+      "memory": {
+        "rss": 165482496,
+        "heapTotal": 61304832,
+        "heapUsed": 25575144,
+        "external": 22577952,
+        "arrayBuffers": 4122998
+      }
+    },
+    {
+      "page": 59,
+      "ms": 172.60513999999876,
+      "closedParts": 59,
+      "segments": 21911,
+      "checkpointBytes": 6036656,
+      "memory": {
+        "rss": 177184768,
+        "heapTotal": 63131648,
+        "heapUsed": 27787432,
+        "external": 23131759,
+        "arrayBuffers": 4159934
+      }
+    },
+    {
+      "page": 60,
+      "ms": 148.65553699999873,
+      "closedParts": 60,
+      "segments": 22307,
+      "checkpointBytes": 6169456,
+      "memory": {
+        "rss": 168615936,
+        "heapTotal": 64741376,
+        "heapUsed": 28746768,
+        "external": 22928947,
+        "arrayBuffers": 4151675
+      }
+    },
+    {
+      "page": 61,
+      "ms": 157.2187410000006,
+      "closedParts": 61,
+      "segments": 22544,
+      "checkpointBytes": 6258715,
+      "memory": {
+        "rss": 168349696,
+        "heapTotal": 64569344,
+        "heapUsed": 29234024,
+        "external": 22970727,
+        "arrayBuffers": 4125033
+      }
+    },
+    {
+      "page": 62,
+      "ms": 136.1157800000001,
+      "closedParts": 62,
+      "segments": 22652,
+      "checkpointBytes": 6418989,
+      "memory": {
+        "rss": 168603648,
+        "heapTotal": 64991232,
+        "heapUsed": 29417544,
+        "external": 22788432,
+        "arrayBuffers": 4090884
+      }
+    },
+    {
+      "page": 63,
+      "ms": 138.61074499999995,
+      "closedParts": 63,
+      "segments": 23071,
+      "checkpointBytes": 6418514,
+      "memory": {
+        "rss": 168947712,
+        "heapTotal": 65916928,
+        "heapUsed": 30513080,
+        "external": 23430555,
+        "arrayBuffers": 4156039
+      }
+    },
+    {
+      "page": 64,
+      "ms": 147.24852099999953,
+      "closedParts": 64,
+      "segments": 23475,
+      "checkpointBytes": 6492585,
+      "memory": {
+        "rss": 168955904,
+        "heapTotal": 66252800,
+        "heapUsed": 30367744,
+        "external": 23438519,
+        "arrayBuffers": 4156348
+      }
+    },
+    {
+      "page": 65,
+      "ms": 162.26263800000015,
+      "closedParts": 65,
+      "segments": 23820,
+      "checkpointBytes": 6706555,
+      "memory": {
+        "rss": 169181184,
+        "heapTotal": 65802240,
+        "heapUsed": 30292784,
+        "external": 23326435,
+        "arrayBuffers": 4128694
+      }
+    },
+    {
+      "page": 66,
+      "ms": 172.68736100000024,
+      "closedParts": 66,
+      "segments": 23850,
+      "checkpointBytes": 6630469,
+      "memory": {
+        "rss": 168759296,
+        "heapTotal": 66510848,
+        "heapUsed": 30019144,
+        "external": 20287220,
+        "arrayBuffers": 1077016
+      }
+    }
+  ]
+}

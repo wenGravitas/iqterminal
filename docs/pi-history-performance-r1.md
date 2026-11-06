@@ -1133,3 +1133,48 @@ they do not yet reduce actual chart payloads. Existing failed performance gates
 remain failed and performance acceptance is incomplete. Rollback is a frontend
 revert/rebuild; backend helpers are not on a serving route. Cached future
 projections must match exact source, settings, range and algorithm SHA before use.
+
+### Bounded selected-wall preparation and final reference
+
+Frontend core commit `47bd469ca56bafc9cc9ca0df4c57862639880861` and backend
+core `103da19b870b86eb50ee8dee06054a9f0f14f6dd` share the exact projector. Backend
+producer commit `ce0a20819ebaf061e6f20a4b2e813bdc48921889` adds one-canonical-part
+steps, immutable closed records, active resume state and an explicit bounded
+preparation CLI. The version 2 key is
+`a6d39a0a5e53f05455032059e17d7586fb17e6b332d648fea25701ded1c9831d`.
+Its source SHA is `b8b86133394b33173a9abf6784cb9d108e5fc222d3f3a249cb4a741b3bcaea06`.
+
+The initial public-index prototype was 6.6 MB; the final public manifest is
+383,167 bytes. The private identity index remains in the resume checkpoint
+(6,582,801 bytes); active projector state is 108,225 bytes. Closed records total
+32,805,404 decoded / 3,004,574 gzip bytes, compared with canonical pages at
+128,019,127 decoded / 5,870,380 gzip bytes. Long-lived walls exceeding one part
+are split by exact value offsets, with header/order/sequence validation when
+reassembled. Four focused tests cover final proof failure/retry, interruption,
+wrong profile/filter, aggregate disk+active capacity, corruption and a wall over
+4 MiB with 3,000 long exact-decimal value points. No financial resolution is lost.
+
+Final isolated x64 staging transform: 9,649.009 ms preparation, 473.489 ms import,
+317,575,168-byte final RSS / 128,808,944-byte used heap, unchanged 256 MiB V8 heap
+cap. All 23,850 segments, 104,112 actual points and selected state match the pinned
+original projector. The original/prepared segment hash remains
+`de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6`.
+This single sample uses already prepared canonical files and their stored proof;
+it is not raw-source materialization, fresh DB proof, Pi paint or a latency gate.
+Production preparation validates a fresh source proof before publication.
+
+Backend final suite: 243/243, typecheck/build passed. Frontend diagnostics build
+at `47bd469` and its ten footprint/bootstrap/Retry functional browser checks passed.
+Those browser checks use explicit intercepted sources and headless system
+Chromium/SwiftShader, so they are correctness evidence, not real-venue or headed
+Pi performance evidence. Raw results are in
+`artifacts/pi-history-r1/wall-projection-preparation/`; the missing-Node remote
+launch and earlier format prototypes remain preserved. Collector Docker IDs and
+October 25 start times were rechecked and still match the baseline. The staging
+serving build remains `18a68da4d87b059bfeb57529e4b7bdb2573d2983`.
+
+This producer is not yet connected to gateway discovery, batched HTTP delivery or
+the chart importer. Automatic scheduling/retention, sliding reuse and remaining
+five-run loading/concurrency/heap/frame gates stay open. Existing latency gates
+remain failed. Retry and rollback are documented in backend PREPARED-WALL-VIEWS.md;
+stop only the explicit derived job and leave collectors/canonical inputs untouched.
