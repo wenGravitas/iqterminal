@@ -14,7 +14,7 @@ test('optional settings construct on first open and keep current data/status',as
  await expect(tpo).toHaveCount(0);
  const status=await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].tpoStatus.message);
  const tpoButton=panel.getByRole('button',{name:'UTC TPO Profile settings',exact:true});
- await tpoButton.click();await expect(tpo).toBeVisible();await expect(tpo.locator('.dialog-status')).toContainText(status);
+ await tpoButton.click();await expect(tpo).toBeVisible();await expect(tpo.getByRole('status')).toContainText(status);
  await tpo.getByRole('button',{name:'Close',exact:true}).click();
  await tpoButton.click();await expect(tpo).toHaveCount(1);await expect(tpo).toBeVisible();
  await tpo.getByRole('button',{name:'Close',exact:true}).click();

@@ -3923,9 +3923,9 @@ export class CandlePanel implements IContentRenderer {
       this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
       this.element.append(this.tpoControls.dialog);
     }
-    this.tpoControls.setStatus(this.tpoStatus);
     const settings = this.tpoSettings(instance);
     this.tpoControls.open(instance.instanceId, settings, settings.tickSize);
+    this.tpoControls.setStatus(this.tpoStatus);
   }
 
   private tpoSettings(instance = this.nativeIndicator(TPO_ID)): TpoIndicatorSettings {
