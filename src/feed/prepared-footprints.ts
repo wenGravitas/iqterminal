@@ -179,8 +179,9 @@ export class PreparedFootprints {
           revisionStates.delete(at);
           const pending = Array.isArray(data.revisionRanges) && data.revisionRanges.find((range:any) =>
             Number.isSafeInteger(range.from) && Number.isSafeInteger(range.to) && range.from < at + step && range.to > at);
-          if (pending || data.revisionState === 'unavailable') {
-            revisionStates.set(at, data.revisionState === 'unavailable' || pending.state === 'unavailable' ? 'unavailable' : 'building');
+          const allUnavailable = data.revisionState === 'unavailable' && (!Array.isArray(data.revisionRanges) || !data.revisionRanges.length);
+          if (pending || allUnavailable) {
+            revisionStates.set(at, allUnavailable || pending.state === 'unavailable' ? 'unavailable' : 'building');
             validatedTimes.delete(at / 1000);
           }
         }

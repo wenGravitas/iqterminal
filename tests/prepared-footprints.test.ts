@@ -108,3 +108,10 @@ test('failed canonical revision retains cached good bars with unavailable unvali
  await expect(client.load(from,from+step,'1h',25,signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('repair source unavailable');
  expect(events.at(-1)).toMatchObject({bars:[{time:from/1000,revision:1}],complete:false,progress:{loadedSlots:1,validatedSlots:0,slots:[{state:'unavailable',validated:false}]}});
 });
+
+test('a failed revision range does not revoke a separately validated sibling tile',async()=>{
+ const from=1800000000000,step=3600000,events:any[]=[];
+ const request:any=async()=>Response.json({version:1,feed,state:'unavailable',revisionState:'unavailable',revisionRanges:[{from,to:from+step,state:'unavailable'}],error:'One expired source interval',tiles:[0,1].map(i=>({from:from+i*step,revision:1,bar:{time:(from+i*step)/1000},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}))});
+ await expect(new PreparedFootprints(request,new Cache()).load(from,from+2*step,'1h',25,new AbortController().signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('One expired source interval');
+ expect(events.at(-1).bars).toHaveLength(2);expect(events.at(-1).progress).toMatchObject({validatedSlots:1,slots:[{state:'unavailable',validated:false},{state:'ready',validated:true}]});
+});
