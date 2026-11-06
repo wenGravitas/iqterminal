@@ -219,3 +219,8 @@ test('invalid batch headers cancel the unread response and preserve the painted 
  const updates:any[]=[];await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/batch identity/);
  expect(canceled).toBe(true);expect(updates).toHaveLength(1);expect(updates[0].status.archive.requestComplete).toBe(false);
 });
+test('an older batch encoding falls back to exact immutable parts without consuming its cached response',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:1,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher});
+ expect(result.status.archive?.requestComplete).toBe(true);expect(t.calls.filter(path=>path.endsWith('/batch'))).toHaveLength(0);expect(t.calls.filter(path=>path.endsWith('/part'))).toHaveLength(3);
+});
