@@ -1,0 +1,54 @@
+TAP version 13
+# Subtest: default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+not ok 1 - default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+  ---
+  duration_ms: 302.495633
+  type: 'test'
+  location: '/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:1:21550'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:222:33)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+not ok 2 - automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+  ---
+  duration_ms: 69.409131
+  type: 'test'
+  location: '/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:1:23297'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/daz/workarea/iqterminal-server-perf-history/tests/footprint-jobs.test.ts:235:64)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1515.33191

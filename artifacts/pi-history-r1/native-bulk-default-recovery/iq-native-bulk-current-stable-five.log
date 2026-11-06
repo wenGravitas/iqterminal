@@ -1,0 +1,5 @@
+{"case":"current-footprint-5m","run":1,"firstCurrentMs":4413.5,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":48}
+{"case":"current-footprint-5m","run":2,"firstCurrentMs":4609.3,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":3,"firstCurrentMs":5779.5,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":4,"firstCurrentMs":6388.9,"firstHistoryMs":5705.6,"completeMs":null,"exception":null,"bars":48}
+{"case":"current-footprint-5m","run":5,"firstCurrentMs":4853.3,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}

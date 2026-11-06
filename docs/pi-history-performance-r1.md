@@ -2,8 +2,9 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
-Current staging serving build is `072cc1d55e931ea82ee8edd623ef22543f454fa7`.
-Backend tests/typecheck/build pass (219 tests). The footprint viewport repair
+Current staging serving build is `95017a09f5838a18b1196901aa3b8f249545a6e8`.
+Current measured client build is `42db2e8845c71bc0d3bb32fb8ccdf32189c230bc`.
+Backend tests/typecheck/build pass (222 tests). The footprint viewport repair
 has real complete-coverage evidence; prepared 4h/5m latency passes, while 24h/1h,
 current display and 30h wall acceptance remain incomplete/failed. Verified wall
 parts now have read-only cached HTTP delivery, but chart discovery/consumption
@@ -664,3 +665,110 @@ explicit `timingBasis`. Historical wall paint must also match the requested
 viewport. Earlier raw records are retained unchanged; the acceptance report was
 already based on `paintMarks`, so this corrects ambiguous console/result counter
 fields without promoting earlier failures.
+
+## November 6: native bulk import and failed-default recovery
+
+Client runtime `42db2e8845c71bc0d3bb32fb8ccdf32189c230bc` imports large native
+history through one merging snapshot. The earlier independent-current change
+could deliver a live candle before HTTP, after which importing 999 older candles
+called the chart engine's individual update API 999 times. A normal headed Pi
+CPU diagnostic reproduces repeated data/index/accessibility rebuilds. The new
+worker message marks large imports for merge; the panel retains older displayed
+bars and rebuilds its series once. Current ticks and small corrections remain
+incremental. A 1,000-bar worker cache therefore does not truncate an existing
+5,000-bar displayed chart on history Retry, and its saved absolute viewport and
+independent forming candle survive. Financial aggregation and source revisions
+are unchanged.
+
+The explicit deterministic chart-kernel diagnostic alternates both methods on
+the same 1,000 canonical input candles, with CPU profiling enabled. Every row
+below is a separate normal headed Pi series; it is **not** an end-to-end loading
+gate or a causal whole-application speedup:
+
+| Series / method | Every apply sample, ms | Median | Maximum |
+|---|---|---:|---:|
+| Initial, individual updates | 356.3, 449.4, 251.1, 190.5, 191.1 | 251.1 | 449.4 |
+| Initial, bulk snapshot | 1.5, 1.8, 1.0, 1.2, 1.3 | 1.3 | 1.8 |
+| Verified-build repeat, individual updates | 317.6, 249.9, 244.9, 237.5, 202.4 | 244.9 | 317.6 |
+| Verified-build repeat, bulk snapshot | 1.4, 7.6, 5.6, 4.1, 1.2 | 4.1 | 7.6 |
+
+Both methods produce exactly identical chart bars. The repeat verifies compiled
+build/mode, explicit fixture selection, zero network sockets and arm64 Pi model;
+it saves the executed diagnostic source/hash and raw CPU profile. Fixture
+selection is explicit and does not replace a failed live feed. The first profile
+attributes work to `addBars`, `_rebuild` and `_updateAccessibleSummary`.
+`native-history-apply*.json`, `.cpuprofile` and screenshots preserve the runs.
+The full frontend serial suite passed 1,040 tests/two skips; all ten browser
+lifecycle checks pass, including one bulk snapshot/no multi-bar patch, 5,000-bar
+retention, earlier closed history, current revisions and saved-view restoration.
+An initial timing-array TypeScript error and its corrected build are retained.
+
+Live preflight then found a different real failure: a default current footprint
+job remained failed at a saved cursor after three `fetch failed` attempts,
+despite healthy gateway/depth health. The failed job's original transport error
+origin is not isolated. Explicit Retry resumed its cursor; processed records and
+cursor advanced by the same 119,400 IDs before a fresh forming bar returned.
+The captured forming snapshot's 149 records and OHLC match a pinned canonical
+FINAL query (18,657 rows / 802,393 read bytes). This proves that bounded reference
+scope, not all recovered closed cells/extrema or a cold-build timing.
+
+Backend `95017a09f5838a18b1196901aa3b8f249545a6e8` adds durable bounded supervision
+of **needed defaults only**. Recognized transient query/transport failures may
+resume at least 30 seconds after their ordinary retry deadline, at least 60
+seconds apart and at most three times per five-minute window. Cursor, accumulator
+and published work remain intact. Ordinary polling and healthy jobs are not
+reset; capacity/storage/source failures and optional jobs retain explicit Retry.
+Needed default closed jobs receive the same bounded supervision. Full backend
+validation passed 222 tests, typecheck and build, locally and in the guarded
+staging rollout. No source schema, raw retention or collector configuration
+changed.
+
+The six-service staging rollout passed on `95017a0`; collector IDs/start times
+match before/after and the gateway state mount remains read-only. Two known
+untracked probes were hash-checked and archived before the remote fast-forward;
+other untracked work was preserved. All four Spot/USD-M, 5m/$25 and 1h/$25 current
+configurations then returned ready, each recording one automatic recovery and
+**no explicit Retry in the validation probe**. All four latest-closed input-version
+and independent-forming publication checks also passed. These observations do
+not measure the exact publication delay at a clock boundary. Post-series
+collectors are live, execution recoveries 246/78 and execution/depth overflows
+zero. Spot recoveries increased from 77 to 78 during the observation; its origin
+is not attributed, and no gap-free concurrent-source claim is made. The existing custom 3% wall profile backfill continued.
+
+Five comparable fresh-browser current-footprint samples on this client/backend,
+normal headed Pi Chromium GLES / Canvas2D, actual split-SSH/Vite route, and the
+same 11:55 UTC forming slot are:
+
+| Actual current paint, every sample (ms) | Median | Maximum | Gate |
+|---|---:|---:|---|
+| 4413.5, 4609.3, 5779.5, 6388.9, 4853.3 | 4853.3 | 6388.9 | **FAIL** (limits 2000/3000 ms) |
+
+`nov6-bulk-current-stable-slot-samples.jsonl` contains every request, actual flags,
+requested/rendered bounds, paint marks, frame/long-task and resource sample.
+This is the current-display gate; it does not certify complete 4h closed-history
+coverage. The preceding exploratory series crossed a forming-slot rollover:
+6513.8, 5533.8, 4860.6, 5596.4, 4271.9 ms. Its raw records/screenshots remain in
+`nov6-bulk-current-samples.jsonl`; it is not used as a fixed-slot five-sample gate.
+No p95 is reported and no threshold is widened. There is no matched causal
+before/after whole-application comparison.
+
+A separate opt-in CPU-profiled startup sample is SUPPLEMENTAL, never a gate.
+It painted current at 5009.3 ms. Navigation/resource records and CPU samples are
+in `nov6-startup-profile*`; startup still has large native/DOM/indicator work.
+The main 2.38 MB JS resource took 619.5 ms in that sample and DOMContentLoaded
+was 1833 ms. A worker ResourceTiming entry has a negative duration; it is retained
+as anomalous raw evidence and is not used for phase attribution. Main-thread
+samples include floating-overlay synchronization, indicator initialization,
+DOM append and footprint cells, as well as unattributed native/program work.
+Parent/child samples are not added as exclusive phases. Early worker/feed
+startup and eager chart initialization need further investigation.
+
+Raw successful/failed test logs, the failed/default recovery inputs, canonical
+reference, source health and reports are under
+`artifacts/pi-history-r1/native-bulk-default-recovery/`. The full deployment,
+rollback and readiness records are under `default-recovery-staging/`.
+Prepared wall source discovery, fair preparation/retention and actual chart
+consumption remain open; directly concatenating hourly files would violate the
+current fence/cursor ordering contract when source timestamps regress. All
+previous unresolved gates remain incomplete. No production deployment or merge
+has occurred.

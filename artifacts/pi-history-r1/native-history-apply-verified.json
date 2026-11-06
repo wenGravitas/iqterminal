@@ -1,0 +1,494 @@
+{
+  "kind": "deterministic-chart-kernel-diagnostic-not-acceptance",
+  "scriptSha256": "49ded943ce116c54d3e0e1d3197e03149e74d6d9df8a59df7760c925c6d0585d",
+  "build": "42db2e8845c71bc0d3bb32fb8ccdf32189c230bc",
+  "base": "http://127.0.0.1:4181",
+  "rendering": "normal-headed-chromium-gles",
+  "profilerEnabled": true,
+  "diagnostics": {
+    "series": 1,
+    "subscriptions": 1,
+    "sockets": 1,
+    "caches": [
+      {
+        "key": "binance:perpetual:BTCUSDT:1m",
+        "bars": 5000,
+        "clients": 1,
+        "pending": 0
+      }
+    ],
+    "inactiveCaches": 0,
+    "comparison": {
+      "subscriptions": 0,
+      "activeIdentities": 0,
+      "transport": "fixture",
+      "socket": "closed",
+      "socketCreations": 0,
+      "historyRequests": 0,
+      "reconnectAttempts": 0,
+      "retainedBars": 0,
+      "pendingCandles": 0,
+      "pendingHistory": 0,
+      "metadataCaches": 0
+    },
+    "cvd": {
+      "clients": 0,
+      "sources": [],
+      "fixture": true
+    },
+    "liquidations": {
+      "clients": 0,
+      "events": 0,
+      "sockets": 0,
+      "cursor": 0,
+      "state": "loading",
+      "loaded": 0,
+      "requests": 0,
+      "rejected": 0,
+      "reconnects": 0,
+      "historyPages": 0,
+      "stalePackets": 0,
+      "batches": 0
+    },
+    "tpo": {
+      "subscriptions": 0,
+      "cacheHits": 0,
+      "pagesFetched": 0,
+      "profileRecomputes": 0,
+      "nakedRecomputes": 0,
+      "livePatches": 0,
+      "groups": []
+    },
+    "staging": {
+      "scheduler": {
+        "submitted": 0,
+        "coalesced": 0,
+        "cancelled": 0,
+        "completed": 0,
+        "failed": 0,
+        "peakActive": 0,
+        "queueMs": 0,
+        "runMs": 0,
+        "active": 0,
+        "queued": 0
+      },
+      "requests": [],
+      "config": {
+        "dataMode": "staging",
+        "historyTiles": true,
+        "build": "42db2e8845c71bc0d3bb32fb8ccdf32189c230bc"
+      },
+      "views": [],
+      "source": "staging",
+      "transport": "websocket",
+      "streams": [],
+      "groups": 0,
+      "subscriptions": 0,
+      "retainedLiveBars": 0,
+      "preparedClosedBars": 0,
+      "retainedBars": 0
+    },
+    "depth": {
+      "subscribers": 0,
+      "bookObservers": 0,
+      "sockets": 0,
+      "state": "syncing",
+      "lastUpdateId": 0,
+      "buffered": 0,
+      "samples": 0,
+      "snapshotBidBoundary": null,
+      "snapshotAskBoundary": null,
+      "collectionStartedAt": null,
+      "synthetic": false
+    },
+    "heatmap": {
+      "transitions": 0,
+      "processingMs": 0,
+      "flushMs": 0,
+      "publications": 0,
+      "configurations": 0,
+      "consumers": 0,
+      "tickSize": null,
+      "groups": []
+    },
+    "orderWalls": {
+      "subscriptions": 0,
+      "socketsOwned": 0,
+      "projection": {
+        "projections": 0,
+        "cacheHits": 0,
+        "changedPrices": 0,
+        "trackedLevels": 0
+      },
+      "liveMode": false
+    },
+    "orderWallsArchive": {
+      "incrementalSegments": 0,
+      "fullReconciliations": 0,
+      "comparisonVisits": 0,
+      "subscriptions": 0,
+      "groups": 0,
+      "historyRequests": 0,
+      "currentPages": 0,
+      "historyPages": 0,
+      "bytes": 0,
+      "historyBytes": 0,
+      "historyResponseHeadersMs": 0,
+      "historyBodyReadMs": 0,
+      "historyJsonParseMs": 0,
+      "historyValidationMs": 0,
+      "historyProjectorApplyMs": 0,
+      "historyUpdateCallbackMs": 0,
+      "historyEventLoopYieldDelayMs": 0,
+      "currentPatches": 0,
+      "ringDrops": 0,
+      "failures": 0,
+      "projections": [],
+      "historyJobs": 0,
+      "warmEntries": 0,
+      "warmBytes": 0,
+      "historyConsumers": 0,
+      "ringPages": 0,
+      "ringBytes": 0,
+      "recentHistoryRequests": [],
+      "historyPageTiming": {
+        "totalPages": 0,
+        "retainedSamples": 0,
+        "completeSample": true,
+        "p50": {
+          "responseHeadersMs": null,
+          "responseBodyReadMs": null,
+          "jsonParseMs": null,
+          "validationMs": null,
+          "projectorApplyMs": null,
+          "updateCallbackMs": null,
+          "eventLoopYieldDelayMs": null,
+          "responseBytes": null
+        },
+        "p95": {
+          "responseHeadersMs": null,
+          "responseBodyReadMs": null,
+          "jsonParseMs": null,
+          "validationMs": null,
+          "projectorApplyMs": null,
+          "updateCallbackMs": null,
+          "eventLoopYieldDelayMs": null,
+          "responseBytes": null
+        },
+        "max": {
+          "responseHeadersMs": null,
+          "responseBodyReadMs": null,
+          "jsonParseMs": null,
+          "validationMs": null,
+          "projectorApplyMs": null,
+          "updateCallbackMs": null,
+          "eventLoopYieldDelayMs": null,
+          "responseBytes": null
+        }
+      }
+    },
+    "depthMatrix": {
+      "fixture": true,
+      "activeWidgets": 0
+    },
+    "netPositioning": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "cachedIntervals": 0,
+      "lastPollMs": 0,
+      "cache": []
+    },
+    "rawOpenInterest": {
+      "requests": 0,
+      "rowsReceived": 0,
+      "rowsChanged": 0,
+      "snapshots": 0,
+      "patches": 0,
+      "errors": 0,
+      "subscribers": 0,
+      "lastPollMs": 0,
+      "fixtureSelected": true,
+      "history": {
+        "received": 0,
+        "changed": 0,
+        "snapshots": 0,
+        "patches": 0,
+        "duplicateRows": 0,
+        "retained": 0
+      },
+      "cacheVenues": []
+    },
+    "footprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "spotFootprint": {
+      "subscribers": 0,
+      "executionConsumers": 0,
+      "groups": [],
+      "sockets": 0,
+      "connected": false,
+      "tickSize": null,
+      "pending": 0,
+      "recentIds": 0,
+      "lastTradeId": null,
+      "expiredIdFloor": null,
+      "lastTradeTime": null,
+      "lastEventTime": null,
+      "counters": {
+        "messages": 0,
+        "accepted": 0,
+        "duplicates": 0,
+        "late": 0,
+        "unknownSide": 0,
+        "invalidGrid": 0,
+        "pendingFlushes": 0,
+        "socketOpens": 0,
+        "reconnects": 0,
+        "capacityDrops": 0,
+        "aggregationBatches": 0,
+        "aggregationObservations": 0,
+        "aggregationTotalMs": 0,
+        "aggregationMaxMs": 0
+      },
+      "rejected": {
+        "market": 0,
+        "contract": 0,
+        "symbol": 0,
+        "maker-side": 0,
+        "trade-id": 0,
+        "time": 0,
+        "price": 0,
+        "quantity": 0
+      },
+      "state": "loading"
+    },
+    "tickers": {
+      "publishedBatches": 0,
+      "publishedRecords": 0,
+      "widgets": 0,
+      "subscribers": []
+    },
+    "tradeBubbles": {
+      "subscribers": 0,
+      "feeds": [],
+      "fixture": true,
+      "caches": {
+        "binance:spot": 0,
+        "binance:perpetual": 0
+      },
+      "subscribersState": [],
+      "publishedRecords": 0,
+      "duplicateRecords": 0
+    },
+    "effortResult": [],
+    "fixture": true,
+    "networkSockets": 0,
+    "syntheticMessages": 0,
+    "historyApply": {
+      "footprintMs": 0,
+      "heatmapMs": 0,
+      "orderWallsMs": 0,
+      "footprintBatches": 0,
+      "heatmapBatches": 0,
+      "orderWallsBatches": 0
+    }
+  },
+  "fixture": true,
+  "samples": [
+    {
+      "run": 1,
+      "method": "patch",
+      "applyMs": 317.5999999977648,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 1,
+      "method": "snapshot",
+      "applyMs": 1.4000000022351742,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 2,
+      "method": "snapshot",
+      "applyMs": 7.600000001490116,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 2,
+      "method": "patch",
+      "applyMs": 249.89999999850988,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 3,
+      "method": "patch",
+      "applyMs": 244.90000000223517,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 3,
+      "method": "snapshot",
+      "applyMs": 5.599999997764826,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 4,
+      "method": "snapshot",
+      "applyMs": 4.100000001490116,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 4,
+      "method": "patch",
+      "applyMs": 237.5,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 5,
+      "method": "patch",
+      "applyMs": 202.40000000223517,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    },
+    {
+      "run": 5,
+      "method": "snapshot",
+      "applyMs": 1.199999999254942,
+      "before": {
+        "from": 1793952000,
+        "to": 1793952000
+      },
+      "after": {
+        "from": 1793939931.4285715,
+        "to": 1793952240
+      },
+      "bars": 1000
+    }
+  ],
+  "canonicalEquivalent": true,
+  "renderer": {
+    "draws": 26,
+    "backend": "canvas2d"
+  },
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+  "architecture": "arm64",
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "resources": {
+    "load": "8.77 7.39 5.95 5/1333 255153\n",
+    "mem": "MemTotal:        8142664 kB\nMemFree:          319568 kB\nMemAvailable:     920812 kB\nBuffers:           11460 kB\nCached:          1797068 kB\nSwapCached:          824 kB\nActive:          3328532 kB\nInactive:        1846072 kB\nActive(anon):    2738040 kB\nInactive(anon):  1581712 kB\nActive(file):     590492 kB\nInactive(file):   264360 kB\nUnevictable:      877424 kB\nMlocked:               0 kB\nSwapTotal:      33094924 kB\nSwapFree:       30519772 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              5968 kB\nWriteback:             0 kB\nAnonPages:       4242916 kB\nMapped:           673348 kB\nShmem:            953692 kB\nKReclaimable:     170920 kB\nSlab:             288148 kB\nSReclaimable:     170920 kB\nSUnreclaim:       117228 kB\nKernelStack:       21376 kB\nPageTables:        98928 kB\nSecPageTables:       180 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   27845912 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      331964 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             132 kB\n"
+  }
+}

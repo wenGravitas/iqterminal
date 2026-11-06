@@ -1,0 +1,35 @@
+{
+  "scope": "deterministic chart-kernel diagnostic; CPU profiler enabled; not a loading gate",
+  "build": "a1dc934f23a82987c2912de0a4578af8488ca3f9",
+  "architecture": "aarch64",
+  "model": "Raspberry Pi 5 Model B Rev 1.0",
+  "assetHashes": {
+    "index-DLng788T.js": "657a649c5271a5abbc860eb5c04839be3b961fb9145d6626c6abfa2dee305c1f",
+    "worker-SK6ZoYJm.js": "87d74efb4f7fbcff67dca94707f93962156ce41c4663c34ff9c42fc4076bdb28"
+  },
+  "samples": {
+    "patch": {
+      "samplesMs": [
+        356.30000000074506,
+        449.3999999985099,
+        251.10000000149012,
+        190.5,
+        191.10000000149012
+      ],
+      "medianMs": 251.10000000149012,
+      "maximumMs": 449.3999999985099
+    },
+    "snapshot": {
+      "samplesMs": [
+        1.5,
+        1.800000000745058,
+        1,
+        1.199999999254942,
+        1.300000000745058
+      ],
+      "medianMs": 1.300000000745058,
+      "maximumMs": 1.800000000745058
+    }
+  },
+  "canonicalEquivalent": true
+}

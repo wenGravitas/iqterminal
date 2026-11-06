@@ -1,0 +1,17 @@
+node:fs:440
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EACCES: permission denied, open '/dev/stdin'
+    at readFileSync (node:fs:440:20)
+    at file:///home/daz/iqterminal-perf-history/ops/pi-current-footprint-reference.mjs:4:14
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'open',
+  path: '/dev/stdin'
+}
+
+Node.js v22.23.4
