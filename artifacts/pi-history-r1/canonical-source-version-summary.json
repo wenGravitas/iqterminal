@@ -1,0 +1,89 @@
+{
+  "kind": "read-only-server-source-version-cost",
+  "backendCheckout": "f519c44",
+  "servingBuild": "34d7939b75e3505726b2f5279c8db27335567a33",
+  "rawFile": "artifacts/pi-history-r1/canonical-source-version-proof.jsonl",
+  "rawSha256": "1f3af0feeff486b6e9f9418de6afb09f38b81c713687c18e66bd70183ee84062",
+  "clientLoadingGate": "not measured",
+  "scenarios": [
+    {
+      "market": "perpetual",
+      "scenario": "4h-5m",
+      "requestedSlots": 48,
+      "receivedSourceGroups": 48,
+      "sourceRecords": 349210,
+      "pinnedHorizon": 3510548080,
+      "everyElapsedMs": [
+        63.766017000000005,
+        38.302852,
+        30.056746000000004,
+        125.15141700000001,
+        59.474054000000024
+      ],
+      "medianMs": 59.474054000000024,
+      "maximumMs": 125.15141700000001,
+      "identicalHashes": true,
+      "renderedCoverage": "not measured by this SQL-only probe"
+    },
+    {
+      "market": "perpetual",
+      "scenario": "24h-1h",
+      "requestedSlots": 24,
+      "receivedSourceGroups": 24,
+      "sourceRecords": 1528812,
+      "pinnedHorizon": 3510548080,
+      "everyElapsedMs": [
+        362.70542100000006,
+        76.88254100000006,
+        386.54018500000006,
+        73.961456,
+        153.37726599999996
+      ],
+      "medianMs": 153.37726599999996,
+      "maximumMs": 386.54018500000006,
+      "identicalHashes": true,
+      "renderedCoverage": "not measured by this SQL-only probe"
+    },
+    {
+      "market": "spot",
+      "scenario": "4h-5m",
+      "requestedSlots": 48,
+      "receivedSourceGroups": 48,
+      "sourceRecords": 195402,
+      "pinnedHorizon": 4108520221,
+      "everyElapsedMs": [
+        15.760647000000063,
+        10.485599000000093,
+        12.14930000000004,
+        22.417515999999978,
+        15.374812999999904
+      ],
+      "medianMs": 15.374812999999904,
+      "maximumMs": 22.417515999999978,
+      "identicalHashes": true,
+      "renderedCoverage": "not measured by this SQL-only probe"
+    },
+    {
+      "market": "spot",
+      "scenario": "24h-1h",
+      "requestedSlots": 24,
+      "receivedSourceGroups": 24,
+      "sourceRecords": 940626,
+      "pinnedHorizon": 4108520221,
+      "everyElapsedMs": [
+        74.44261299999994,
+        60.453516000000036,
+        56.70066500000007,
+        106.6597119999999,
+        283.60674700000004
+      ],
+      "medianMs": 74.44261299999994,
+      "maximumMs": 283.60674700000004,
+      "identicalHashes": true,
+      "renderedCoverage": "not measured by this SQL-only probe"
+    }
+  ],
+  "probeCommit": "b7c2c0f",
+  "probeSha256": "fe668f8d82f1669e8069ed5ae2a482971a9d25d0121a68fc943bb863f53c91f9",
+  "probeDelivery": "Read-only probe copied to f519c44 staging checkout; serving image unchanged"
+}

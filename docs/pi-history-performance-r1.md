@@ -324,3 +324,14 @@ changing the live cursor, accumulator or socket. The old guard fails the test;
 the repair passes all 35 focused prepared/service tests and typecheck. The
 preceding full 1,022-test result predates this small follow-up; final release
 validation must include it.
+
+The corrected browser fixture and analysis follow-up were then rebuilt as client
+`845e4ed`. All eight lifecycle browser checks passed in one run (57.4 seconds),
+using headless software rendering and mocked data. Both projects' builds and
+typechecks passed. The staging read-only index check passed again at 06:52:51 UTC;
+collectors remained live with the same IDs/starts/counters as installation.
+This does not supersede live/Pi performance failures or authorize production.
+The raw logs, source-version probe and exact SQL-only coverage summary are
+committed alongside this report. The source-version summary verifies 48/48 raw
+candle groups for each 4h/5m source window and 24/24 for each 24h/1h source
+window; it explicitly makes no rendered-coverage claim.
