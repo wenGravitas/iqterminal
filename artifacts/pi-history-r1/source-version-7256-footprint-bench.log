@@ -1,0 +1,15 @@
+{"case":"footprint-4h-5m","run":1,"firstCurrentMs":3481.1120060000003,"firstHistoryMs":1416.0893580000002,"completeMs":1517.9691219999995,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":2,"firstCurrentMs":2914.310848000001,"firstHistoryMs":1313.0504660000006,"completeMs":1411.1855709999982,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":3,"firstCurrentMs":3457.5271939999984,"firstHistoryMs":856.7264850000029,"completeMs":856.818774000003,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":4,"firstCurrentMs":3737.4879580000015,"firstHistoryMs":974.7833909999972,"completeMs":1067.9239390000002,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":5,"firstCurrentMs":4000.3971410000013,"firstHistoryMs":2696.4238380000024,"completeMs":2801.1510940000007,"exception":null,"bars":48}
+{"case":"footprint-24h-1h","run":1,"firstCurrentMs":3188.7534400000004,"firstHistoryMs":910.3955879999994,"completeMs":2039.5105509999994,"exception":null,"bars":24}
+{"case":"footprint-24h-1h","run":2,"firstCurrentMs":4473.461881999996,"firstHistoryMs":879.2738290000052,"completeMs":2485.077004000006,"exception":null,"bars":24}
+{"case":"footprint-24h-1h","run":3,"firstCurrentMs":3707.9580490000008,"firstHistoryMs":904.7131389999995,"completeMs":3442.6781899999987,"exception":null,"bars":24}
+{"case":"footprint-24h-1h","run":4,"firstCurrentMs":3229.116784999991,"firstHistoryMs":2840.7381060000043,"completeMs":6148.8036770000035,"exception":null,"bars":24}
+{"case":"footprint-24h-1h","run":5,"firstCurrentMs":3002.810077999995,"firstHistoryMs":539.9471459999913,"completeMs":3154.3345580000023,"exception":null,"bars":24}
+{"case":"current-footprint-5m","run":1,"firstCurrentMs":3265.4748820000095,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":2,"firstCurrentMs":2876.4507169999997,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":3,"firstCurrentMs":3391.9049899999955,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":4,"firstCurrentMs":3594.805923000007,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}
+{"case":"current-footprint-5m","run":5,"firstCurrentMs":3407.335361000005,"firstHistoryMs":null,"completeMs":null,"exception":null,"bars":1}

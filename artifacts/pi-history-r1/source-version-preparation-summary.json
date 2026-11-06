@@ -1,0 +1,137 @@
+{
+  "kind": "one-time-legacy-footprint-source-version-preparation",
+  "backendServingCommit": "7256fd44af9728619a93d6191639d5e39e8d74ee",
+  "allReady": true,
+  "elapsedMs": 192206.498001,
+  "views": [
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793718000000,
+      "to": 1793732400000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793732400000,
+      "to": 1793746800000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793746800000,
+      "to": 1793761200000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793761200000,
+      "to": 1793775600000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793775600000,
+      "to": 1793790000000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "1h",
+      "from": 1793790000000,
+      "to": 1793804400000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "perpetual",
+      "interval": "5m",
+      "from": 1793790000000,
+      "to": 1793804400000,
+      "step": 300000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793718000000,
+      "to": 1793732400000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793732400000,
+      "to": 1793746800000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793746800000,
+      "to": 1793761200000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793761200000,
+      "to": 1793775600000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793775600000,
+      "to": 1793790000000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "1h",
+      "from": 1793790000000,
+      "to": 1793804400000,
+      "step": 3600000,
+      "ready": true
+    },
+    {
+      "market": "spot",
+      "interval": "5m",
+      "from": 1793790000000,
+      "to": 1793804400000,
+      "step": 300000,
+      "ready": true
+    }
+  ],
+  "workerPeakRss": {
+    "perpetual": 96894976,
+    "spot": 97816576
+  },
+  "sampledPerpetualHealth": {
+    "samples": 37,
+    "allLive": true,
+    "maximumReadMs": 11.198768000002019,
+    "maximumIngestionLagMs": 1539,
+    "recoveries": [
+      245
+    ],
+    "overflows": [
+      0
+    ]
+  },
+  "scope": "Server-loopback migration/preparation, not ready-server/browser loading or a complete live-continuity gate."
+}

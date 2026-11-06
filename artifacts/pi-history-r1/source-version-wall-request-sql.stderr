@@ -1,0 +1,11 @@
+file:///home/daz/iqterminal-perf-history/src/db.ts:11
+  if(!response.ok||Number(response.headers.get('x-clickhouse-exception-code')??0))throw new Error(`ClickHouse ${response.status}: ${text.slice(0,200)}`);
+                                                                                        ^
+
+Error: ClickHouse 404: {"exception": "Code: 60. DB::Exception: Unknown table expression identifier 'system.query_log' in scope SELECT query_id, query_duration_ms, read_rows, read_bytes, result_rows, result_bytes, memory_usa
+    at sql (file:///home/daz/iqterminal-perf-history/src/db.ts:11:89)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async query (file:///home/daz/iqterminal-perf-history/src/db.ts:15:66)
+    at async file:///home/daz/iqterminal-perf-history/ops/pi-history-request-query-trace.mjs:5:33
+
+Node.js v22.23.4
