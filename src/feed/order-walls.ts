@@ -171,6 +171,8 @@ export interface OrderWallArchiveStatus {
   availableFrom?: number;
   confirmedTo?: number;
   loadedThrough?: number;
+  /** Confirmed extent of received prepared segments; not whole-view coverage. */
+  presentationThrough?: number;
   gaps: Array<{ from: number; to: number; reason: string }>;
   gapsTruncated?: boolean;
   requestedBandPercent: number;

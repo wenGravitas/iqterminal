@@ -596,6 +596,7 @@ export class OrderWallsArchiveService {
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
     sub.historyStatus = update.status;
+    const alreadyPresented=update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector&&(sub.historyPresentation||sub.historyProjector===update.projector));
     if(sub.cachedHistory){
       const archive=update.status.archive;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
@@ -606,6 +607,7 @@ export class OrderWallsArchiveService {
       // validates. Intermediate prefixes cannot erase previously visible walls.
       update={...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
     }
+    if(alreadyPresented)update={...update,kind:'patch',patches:[],segments:undefined};
     if (update.projector) {sub.historyProjector = update.projector;sub.historyPresentation=undefined;}
     else if(update.presentation)sub.historyPresentation=update.presentation;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
@@ -615,7 +617,8 @@ export class OrderWallsArchiveService {
     else if(!sub.bridgeProjector){
       const patches=this.markPatches(sub,update.patches??[],false);this.stats.incrementalSegments+=patches.length;
       this.publish(sub,'patch',patches,status);
-    }else this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),status);
+    }else if(alreadyPresented&&previousBridge===sub.bridgeProjector)this.publish(sub,'patch',[],status);
+    else this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),status);
   }
 
   private addCurrentPage(group: CurrentGroup, page: OrderWallsArchiveCurrentPage) {

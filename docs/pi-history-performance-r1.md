@@ -1312,3 +1312,48 @@ verification. Historical-only observations disable the current wall group and do
 not certify current/concurrent gates. Source proof/financial equivalence and full
 supplemental coverage pass; every original loading/interaction/repeated-use gate
 still requires its own evidence. Performance acceptance remains incomplete.
+
+### Reuse received presentation and unchanged native paths
+
+The next frontend increment removes repeated final history replacement. Once all
+prepared records and the final source proof validate, the service installs the
+live-capable projector without resending already published segments. Failed
+revision Retry still replaces only after full validation; late subscribers still
+receive a complete snapshot. No presentation map remains attached to the final
+result. An independent renderer boundary lets received historical spans paint to
+their own confirmed extent while whole-view loadedThrough/requestComplete stay
+honestly incomplete. Per-segment confirmed duration remains the upper bound.
+
+Unchanged native Canvas paths are now reused instead of rebuilding styles,
+coordinate arrays and commands for every price-tick repaint. Actual visible
+geometry mutations, transform/DPR, settings and reference-extrema changes
+invalidate the cache; offscreen updates without style changes retain it. Paths
+are bounded by actual retained drawing geometry and dropped on detach. Immediate
+rendering remains available for the explicit benchmark/reference and environments
+without Path2D. No financial points, gaps, identities or configured budgets change.
+
+In the final offline Pi benchmark, five alternating-order runs have per-run
+median draw plus forced readback times (ms):
+
+| Run | Immediate reference | Cached native path |
+| --- | ---: | ---: |
+| 1 | 103.85 | 27.00 |
+| 2 | 220.75 | 41.90 |
+| 3 | 129.15 | 46.05 |
+| 4 | 94.00 | 68.70 |
+| 5 | 111.35 | 34.10 |
+
+Every raw eight-repaint sample, observed RAF interval, resource snapshot and
+executed bundle is in `artifacts/pi-history-r1/wall-paint-cache-final/`. This is
+headed system Chromium with native 2d/willReadFrequently and forced readback,
+using the entire original real 23,850-wall / 104,112-point set. It is not a chart
+loading gate, ordinary GPU paint timing or a claim of 60fps. All six full pixel
+comparisons have zero differing channels (initial, cache hit, pan, DPR 2, style,
+removal). Detach retains zero cached paths for both renderers.
+
+Validation retains both full runs: the earlier 1,086 pass / two skip run, and the
+latest 1,085 pass / two skip / one unchanged five-second vault timeout. All eight
+vault checks pass separately at the original limit. Focused renderer/prepared
+history/lifecycle checks, typecheck and build pass. The new production client
+still requires its own real-chart loading measurements; existing failed loading,
+concurrent/warm and repeated-use gates remain failed or open.

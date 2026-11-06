@@ -100,11 +100,23 @@ test('shared service joins and Retry retain the prepared presentation until the 
   const before=events.length;phase=1;service.retry('one');await vi.waitFor(()=>expect(next.calls.at(-1)).toMatch(/\/source$/));
   expect(events.slice(before).every(event=>event.kind!=='snapshot')).toBe(true);
   release();await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
-  expect(events.at(-1).segments).toHaveLength(f.full.segments.length);
+  expect(events.filter(event=>event.kind==='snapshot').at(-1).segments).toHaveLength(f.full.segments.length);
   // A late subscriber receives the complete shared presentation/projector,
   // rather than only the most recently delivered batch.
   service.subscribe('two',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes('two')).at(-1)?.segments).toHaveLength(f.full.segments.length));
   service.unsubscribe('one');service.unsubscribe('two');expect(service.diagnostics().historyJobs).toBe(0);
  }finally{release();service.dispose();}
+ await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
+});
+test('prepared completion preserves already painted segments and a late join still receives a full snapshot',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),t.fetcher,()=>to+3600000);
+ try{
+  service.subscribe('first',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
+  const first=events.filter(event=>event.ids?.includes('first'));expect(first.filter(event=>event.kind==='snapshot'&&event.segments.length)).toHaveLength(1);
+  const displayed=new Map<string,any>();for(const event of first){if(event.kind==='snapshot'){displayed.clear();for(const segment of event.segments)displayed.set(segment.id,segment);}else for(const patch of event.patches){if(patch.segment)displayed.set(patch.id,patch.segment);else displayed.delete(patch.id);}}
+  const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage(f.page);
+  expect([...displayed.values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(reference.snapshot().sort((a,b)=>a.id.localeCompare(b.id)));
+  service.subscribe('late',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes('late')).at(-1)?.segments).toHaveLength(displayed.size));
+ }finally{service.dispose();}
  await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
 });
