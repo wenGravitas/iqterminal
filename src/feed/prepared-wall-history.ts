@@ -1,4 +1,6 @@
 import {acquireWallBatch} from './prepared-wall-batch';
+import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
+import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
 import {historyScheduler} from './history-scheduler';
 import type {OrderWallsArchivePage} from './order-walls-archive';
 type Head={cursor:number;epoch:number;at:number};
@@ -54,7 +56,7 @@ export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,targe
   page:{...raw.page,nextAfter:raw.page.hasMore?raw.page.nextAfter:target.cursor}} as OrderWallsArchivePage;
 }
 export class PreparedWallSourceChangedError extends Error {constructor(){super('Prepared wall source changed or cannot be revalidated; restart revision with displayed history retained');this.name='PreparedWallSourceChangedError';}}
-export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void}
+export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
 /** At most two immutable parts are prefetched. Every read uses the shared
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
@@ -72,6 +74,13 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const target=request.watermark===undefined?source.head:request.head;
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||target.cursor<manifest.watermark||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal]);
+ async function validateRevision(){
+  const latest=await historyScheduler.read(sourceUrl('source',request),'order-walls',consumer,async upstream=>{
+   const response=await fetcher(sourceUrl('source',request),{signal:upstream});if(!response.ok){await response.body?.cancel();throw Error('Prepared wall source validation HTTP '+response.status);}
+   return (await readBody(response,128*1024)).body;
+  });
+  if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target!.cursor)throw new PreparedWallSourceChangedError();
+ }
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
  const batchEnabled=found.delivery?.version===2&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
  let currentBatch:{start:number;next:number;handle:ReturnType<typeof acquireWallBatch>}|undefined;
@@ -94,7 +103,15 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   },priority);
   pending.set(index,promise);void promise.catch(()=>{});
  }
- return {sourceToken:source.token,dispose:()=>{abort.abort();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},read:async after=>{
+ return {sourceToken:source.token,dispose:()=>{abort.abort();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
+  const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
+   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,validateProfile},onProgress);
+  if(result){
+   await validateRevision();const state=result.projector.checkpoint();state.cursor=target!.cursor;state.epoch=target!.epoch;
+   result.projector=OrderWallsArchiveProjector.restoreCheckpoint(state,settings,request.from,request.to);
+  }
+  return result?{...result,head:target!}:null;
+ },read:async after=>{
   if(consumer.aborted)throw new DOMException('Aborted','AbortError');
   if(expectedAfter!==undefined&&after!==expectedAfter)throw Error('Prepared wall continuation cursor mismatch');
   const index=after===0?0:manifest.parts.findIndex(part=>part.after===after);if(index<0)throw Error('Prepared wall resume cursor is not a part boundary');
@@ -110,11 +127,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   if(!body.page.hasMore){
    // Independent revision validation precedes the terminal publication. A
    // source correction cannot turn a painted prefix into early completion.
-   const latest=await historyScheduler.read(sourceUrl('source',request),'order-walls',consumer,async upstream=>{
-    const response=await fetcher(sourceUrl('source',request),{signal:upstream});if(!response.ok){await response.body?.cancel();throw Error('Prepared wall source validation HTTP '+response.status);}
-    return (await readBody(response,128*1024)).body;
-   });
-   if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target.cursor)throw new PreparedWallSourceChangedError();
+   await validateRevision();
   }
   return {...result,body};
  }};

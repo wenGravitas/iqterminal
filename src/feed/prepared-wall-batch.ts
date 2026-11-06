@@ -1,7 +1,7 @@
 import {historyScheduler} from './history-scheduler';
 import type {PreparedWallFetched} from './prepared-wall-history';
 interface Part {index:number;bytes:number;hash:string}
-interface Options {url:string;key:string;revision:string;parts:Part[];fetcher:typeof fetch;signal:AbortSignal}
+interface Options {url:string;key:string;revision:string;parts:Part[];fetcher:typeof fetch;signal:AbortSignal;maxParts?:8|32}
 interface Slot {promise:Promise<PreparedWallFetched>;resolve:(value:PreparedWallFetched)=>void;reject:(reason:unknown)=>void}
 interface Group {identity:string;abort:AbortController;slots:Map<number,Slot>;refs:number;finished?:boolean}
 const groups=new Map<string,Group>();
@@ -25,7 +25,7 @@ export function acquireWallBatch(options:Options){
    if(response.headers.get('x-iq-wall-start')!==String(first)||response.headers.get('x-iq-wall-next')!==String(next)
     ||response.headers.get('x-iq-wall-parts')!==String(parts.length)||response.headers.get('x-iq-chunk-key')!==options.key
     ||response.headers.get('x-iq-source-revision')!==options.revision){await response.body?.cancel();throw Error('Prepared wall batch identity mismatch');}
-   if(expectedBytes>8*1024*1024||parts.length>8||!response.body){await response.body?.cancel();throw Error('Prepared wall batch byte capacity');}
+   if(expectedBytes>8*1024*1024||parts.length>(options.maxParts??8)||!response.body){await response.body?.cancel();throw Error('Prepared wall batch byte capacity');}
    const reader=response.body.getReader();let chunk:Uint8Array=new Uint8Array(0),offset=0,received=0,complete=false;
    const cancelReader=()=>{void reader.cancel(aborted()).catch(()=>{});};
    upstream.addEventListener('abort',cancelReader,{once:true});if(upstream.aborted)cancelReader();

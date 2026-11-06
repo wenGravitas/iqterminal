@@ -215,6 +215,8 @@ export interface OrderWallsArchiveUpdate {
   bytes: number;
   projector?: OrderWallsArchiveProjector;
   resume?: OrderWallsArchiveResumeState;
+  /** Validated prepared presentation; never a mutable live accumulator. */
+  presentation?:ReadonlyMap<string,OrderWallSegment>;
 }
 
 export interface OrderWallsArchiveCurrentPollerOptions {
@@ -252,6 +254,7 @@ export interface OrderWallsArchiveLoadOptions {
 }
 
 export interface OrderWallsArchivePageMetrics {
+  delivery?:'projection'|'canonical';receivedSegments?:number;
   viewId?:string;requestId?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;encodedBytes?:number;
   requestedAfter: number;
   pageAfter: number;
@@ -385,7 +388,33 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken):null;
   const captureResume = (resumeAfter = after): OrderWallsArchiveResumeState => ({ after: resumeAfter, watermark,
     head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
-  try {for (;;) {
+  try {
+  if(prepared&&!after&&!prior&&!options.initialProjector){
+    let painted=false;
+    const projected=await prepared.readProjection(settings,progress=>{
+      const archive={...archiveStatus(request,availability,'loading'),exact:true,requestComplete:false,rangeComplete:false,loadedThrough:request.from};
+      const status=statusForArchive(archive,'loading','Loading validated prepared wall records; full range validation pending.');
+      const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:progress.segments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:progress.segments}),
+        presentation:progress.presentation,status,pages:progress.parts,bytes:progress.bytes};
+      const at=performance.now();options.onUpdate?.(update);painted=true;
+      if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
+        requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
+        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:0,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:1});
+      bytes=progress.bytes;
+    },candidate=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');});
+    if(projected){
+      const head=projected.head,coverage=projected.coverage;
+      validatePage({version:1,profile:projected.profile,market:projected.profile.market,instrument:projected.profile.instrument,feed:projected.profile.feed,from:queryFrom,to:request.to,watermark:head.cursor,head,
+        page:{after:0,nextAfter:head.cursor,hasMore:false,lastAt:coverage.confirmedTo??queryFrom,limit:pageLimit,sameMillisecondClosed:true},patches:[],coverage},profile,queryRequest,0,watermark,watermarkHead);
+      const extent=coverage.availableFrom!==null&&coverage.availableFrom<=request.from&&coverage.confirmedTo!==null&&coverage.confirmedTo>=request.to-1;
+      const state=coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
+      const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector.confirmedAt,
+        profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,midpoint:projected.projector.selectedState().midpoint};
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector.snapshot(),projector:projected.projector,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
+      options.onUpdate?.(result);return result;
+    }
+  }
+  for (;;) {
     if (signal?.aborted) throw abortError();
     if (pages >= ORDER_WALL_ARCHIVE_MAX_PAGES || patchCount > ORDER_WALL_ARCHIVE_MAX_PATCHES) {
       const archive = { ...archiveStatus(request, availability, 'partial', pageCoverage), ...(profileStatus ? { profileStatus } : {}) };

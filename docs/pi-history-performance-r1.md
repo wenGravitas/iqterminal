@@ -1178,3 +1178,49 @@ the chart importer. Automatic scheduling/retention, sliding reuse and remaining
 five-run loading/concurrency/heap/frame gates stay open. Existing latency gates
 remain failed. Retry and rollback are documented in backend PREPARED-WALL-VIEWS.md;
 stop only the explicit derived job and leave collectors/canonical inputs untouched.
+
+### Selected-wall client and HTTP implementation
+
+Backend `94c73805c848ac260c3a5279ce8fc7098386785c` adds optional selected-projection
+discovery and `/v2/history/walls/projection-batch`, bounded to 32 members / 8 MiB
+decoded with exact content hashes and one gzip stream. Its explicit publisher
+checks fresh canonical proofs before/after, compares all walls with canonical
+prepared-page replay, checks serving build/collector identities, and installs
+the completed manifest last. Discovery does not start jobs. The gateway keeps
+its read-only state mount, historical admission bounds and current reserve.
+
+The frontend consumes exact native JSON records with at most two byte-bounded
+batches on the existing shared scheduler. Partial segments live in an incremental
+presentation map; old closed history is not replayed, cloned or sorted for each
+new batch. All records and the final independent source proof must pass before
+request completion or live-tail handoff. A single full checkpoint restore then
+preserves candidate/cell identity, original creation/value sequence order and
+future update semantics. Quiet-head rebase changes only transport cursor/epoch.
+Saved/good presentation remains during source failure and Retry; obsolete views
+release their consumer references. Unsupported core/settings use canonical
+prepared delivery. Current sockets and acknowledged cursors remain independent.
+
+The actual frontend importer and batch delivery passed all 66 real pinned parts,
+matching the original 23,850 segments / 104,112 points and segment SHA
+`de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6`.
+Five bounded batches replace the previous 18 requests. With read-ahead, the x64
+in-process reference took 863.472 ms; client bundle SHA
+`efab47a3bcd06e6e70cb284be761cb0a0234489bef1c07c15e53c66f011988a0`.
+This is not network, Pi, chart paint, a fresh SQL proof, or a performance gate.
+The earlier serial reference and missing-export prototype launch are retained.
+
+Validation: 99 focused frontend checks pass, including fragmented records,
+35-part/two-batch delivery, partial/final source failure, shared service joins,
+Retry preservation, settings fallback and abort cleanup. Full frontend run:
+1,078 pass, two skip, four failures (one 15-second detector-oracle timeout, two
+five-second vault timeouts and a vault transaction failure). Separate rerun of
+all nine detector/vault checks passes at unchanged limits. Typecheck/build pass.
+Backend 243/243, typecheck/build pass. Raw evidence is under
+`artifacts/pi-history-r1/wall-projection-delivery/`.
+
+The staging rollout, publication and actual Pi five-run acceptance follow this
+implementation; until recorded, existing latency gates remain failed. Automatic
+fair selected-history preparation, sliding reuse, disk retention and remaining
+coverage/concurrency/heap/frame gates are still open. No production deployment
+or merge is included. Backend PREPARED-WALL-VIEWS.md records publication/retry and
+rollback; the established staging rollback images apply to serving changes.

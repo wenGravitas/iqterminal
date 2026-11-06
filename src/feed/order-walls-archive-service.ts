@@ -55,6 +55,7 @@ interface Subscription {
   group?: CurrentGroup;
   historyJob?: SharedHistoryJob;
   historyProjector?: OrderWallsArchiveProjector;
+  historyPresentation?:ReadonlyMap<string,OrderWallSegment>;
   cachedHistory?: boolean;
   bridgeProjector?: OrderWallsArchiveProjector;
   /** Current checkpoint ID -> canonical archive entry ID, proved at historyFence. */
@@ -208,7 +209,7 @@ export class OrderWallsArchiveService {
               resumeAfter: undefined, retryable: undefined, reason: undefined } };
           this.publish(subscriber, 'patch', [], this.status(subscriber));
         }
-        if(!job.resume)for(const subscriber of job.subscribers)if(subscriber.historyProjector)subscriber.cachedHistory=true;
+        if(!job.resume)for(const subscriber of job.subscribers)if(subscriber.historyProjector||subscriber.historyPresentation?.size)subscriber.cachedHistory=true;
         this.runHistoryJob(job, job.resume);
         return;
       }
@@ -547,7 +548,7 @@ export class OrderWallsArchiveService {
       const sourceChanged=error instanceof PreparedWallSourceChangedError;
       if(sourceChanged){
         job.resume=undefined;
-        for(const subscriber of job.subscribers)if(subscriber.historyProjector)subscriber.cachedHistory=true;
+        for(const subscriber of job.subscribers)if(subscriber.historyProjector||subscriber.historyPresentation?.size)subscriber.cachedHistory=true;
         // A user Retry may discover that its retained prepared prefix has been
         // superseded. Restart once in that same Retry, staging replacements
         // behind the displayed prefix. No socket/cursor or healthy job resets.
@@ -588,7 +589,7 @@ export class OrderWallsArchiveService {
   }
 
   private publishSharedHistorySnapshot(sub: Subscription, update: OrderWallsArchiveUpdate) {
-    const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? update.segments ?? [], patches: undefined };
+    const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? (update.presentation?[...update.presentation.values()]:update.segments) ?? [], patches: undefined };
     this.publishSharedHistoryUpdate(sub, sub.historyJob!, replay);
   }
 
@@ -605,7 +606,8 @@ export class OrderWallsArchiveService {
       // validates. Intermediate prefixes cannot erase previously visible walls.
       update={...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
     }
-    if (update.projector) sub.historyProjector = update.projector;
+    if (update.projector) {sub.historyProjector = update.projector;sub.historyPresentation=undefined;}
+    else if(update.presentation)sub.historyPresentation=update.presentation;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
     const previousBridge=sub.bridgeProjector;this.tryBridge(sub);
     const status=this.status(sub);
@@ -684,9 +686,9 @@ export class OrderWallsArchiveService {
       currentSelection: currentSelection && segment.end === null }));
     if (sub.bridgeProjector) return markCurrent(sub.bridgeProjector.snapshot());
     const tail = markCurrent(sub.tailProjector?.snapshot() ?? []);
-    const history = sub.historyProjector?.snapshot() ?? [];
+    const history = sub.historyProjector?.snapshot() ?? (sub.historyPresentation?[...sub.historyPresentation.values()]:[]);
     if (!sub.group) return history.map(segment => ({ ...segment, currentSelection: false }));
-    if (!sub.historyProjector || !sub.historyStatus?.archive) return tail;
+    if ((!sub.historyProjector&&!sub.historyPresentation) || !sub.historyStatus?.archive) return tail;
     const combined = new Map<string, OrderWallSegment>();
     for (const segment of history) combined.set(segment.id, { ...segment, currentSelection: false });
     for (const segment of tail) combined.set(segment.id, segment);
