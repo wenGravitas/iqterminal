@@ -224,3 +224,29 @@ test('an older batch encoding falls back to exact immutable parts without consum
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher});
  expect(result.status.archive?.requestComplete).toBe(true);expect(t.calls.filter(path=>path.endsWith('/batch'))).toHaveLength(0);expect(t.calls.filter(path=>path.endsWith('/part'))).toHaveLength(3);
 });
+test('a slow batch tail does not hold back its hash-validated progressive prefix',async()=>{
+ const f=fixture();(f.discovery as any).delivery={version:2,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);
+ let tail!:ReadableStreamDefaultController<Uint8Array>;
+ const fetcher:typeof fetch=async(input,init)=>{
+  const response=await t.fetcher(input,init);if(!String(input).includes('/batch?'))return response;
+  const stream=new ReadableStream<Uint8Array>({start(controller){tail=controller;controller.enqueue(new TextEncoder().encode(f.texts[1]+'\n'));}});
+  return new Response(stream,{headers:response.headers});
+ };
+ const reader=await preparedWallReader(request,fetcher,new AbortController().signal);
+ try{
+  const prefix=await reader!.read(10);expect(prefix.body).toMatchObject({page:{after:10,hasMore:true}});
+  expect(historyScheduler.diagnostics().active).toBe(1);
+  let terminal=false;const pending=reader!.read(20).then(value=>{terminal=true;return value;});
+  await Promise.resolve();expect(terminal).toBe(false);
+  tail.enqueue(new TextEncoder().encode(f.texts[2]+'\n'));tail.close();expect((await pending).body).toMatchObject({page:{hasMore:false}});
+ }finally{reader?.dispose();}
+ await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
+});
+test('a truncated batch retains only validated members and never completes its final candle interval',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:2,maxDecodedBytes:8*1024*1024,maxParts:8};const t=transport(f);
+ const fetcher:typeof fetch=async(input,init)=>{
+  const response=await t.fetcher(input,init);return String(input).includes('/batch?')?new Response(f.texts[1]+'\n'+f.texts[2]!.slice(0,20),{headers:response.headers}):response;
+ };
+ const updates:any[]=[];await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/byte identity/);
+ expect(updates).toHaveLength(2);expect(updates.at(-1).resume.after).toBe(20);expect(updates.every(u=>!u.status.archive.requestComplete)).toBe(true);
+});
