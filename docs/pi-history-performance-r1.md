@@ -558,3 +558,109 @@ chunk composition; a terminal cursor advance across a quiet tail is not its last
 actual event. Normal current value changes also still need the remaining
 closed-history reference-work audit. No production deployment or main merge has
 occurred.
+
+## Current candle startup and retained wall references
+
+Frontend `fee695f1089537f62b5175140425e6de1c9f2aca` removes the wall-strength
+reference scan of every retained closed segment on an isolated current change.
+An ordered, reference-counted index maintains per-segment USD extrema. Snapshot,
+settings and visible-scope transforms rebuild the reference; ordinary updates
+replace only affected extents. The global retained-scope reference survives pan
+and price transforms. Removed data eagerly releases geometry, dirty/tail and
+reference entries, including while hidden. Full run replacement now reprojects
+the affected segment: a regression reproduced an earlier corrected USD value
+remaining 100 instead of 900. Independent min/max oracles cover duplicates,
+removal, retention, settings, viewport changes and empty/reopen/detach; getter
+instrumentation verifies zero closed-reference reads during a current-only
+change. The 1,000-update hidden test bounds pending work to retained data.
+
+The focused renderer/lifecycle tests passed (38). Full default and two-worker
+runs encountered the existing vault KDF timeout; the isolated vault passed all
+eight tests, and the unchanged full serial suite passed 1,033 with two skips.
+All failed and passing logs are preserved in `artifacts/pi-history-r1/renderer-reference/`.
+These are correctness/retention tests, not a measured Pi rendering gate.
+
+Frontend `a1dc934f23a82987c2912de0a4578af8488ca3f9` also fixes a source-confirmed
+current-data prerequisite: native candle WebSocket creation formerly followed
+the entire `/v1/native-candles` HTTP/body load. The existing 45-second transfer
+regression therefore implied a 45-second current startup delay. Native streaming
+and native history now start independently, and the first stream candle emits a
+snapshot. Reconnect does not refetch successful history. HTTP failure/retry has
+its own state and backoff, preserving current bars and a healthy socket.
+
+REST revisions are server receipt times, while streamed native revisions are
+exchange event times (`server.ts` native REST/kline contracts). A bounded map of
+native receive sequences protects forming bars and all concurrent native
+updates from a late REST response. Closed historical repairs remain possible;
+older cached closed events cannot undo them, and finalized candles cannot
+reopen. History merges retain current bars rather than replacing the whole
+cache. Native receipt freshness is tracked separately from collector heartbeats:
+heartbeats alone cannot certify missing or expired native updates. The chart
+shows a separate candle-history loading/error message and Retry while live
+updates remain healthy. No collector or exchange connection was added.
+
+Three new startup regressions fail against the old prerequisite; six new
+lifecycle tests cover delayed history, independent retry/reconnect, REST/native revision order,
+stale heartbeats, closed repair/replay and bounded 1,000-bar bookkeeping. The
+full serial suite passed **1,039 tests, two skips**, and the staging diagnostics
+build passed. This build's real-browser and timing evidence must be assessed
+separately below; no existing failed performance gate is promoted by these unit
+results.
+
+All nine deterministic browser lifecycle checks passed on the `a1dc934` staging
+build (headless Chromium / software rendering). The dedicated native test
+paints a real chart candle before releasing HTTP, exposes a history-only 502,
+clicks the visible Retry, and verifies three retained candles, the unchanged
+forming close and one native subscription. Its socket counter excludes unrelated
+depth subscriptions; the first test run counted both and is retained with that
+instrumentation failure. The shared fixture now emits actual native candles;
+collector heartbeats alone no longer establish a healthy native-feed precondition.
+Screenshots and raw logs are in `artifacts/pi-history-r1/native-independent/`
+and the two `native-current-before-history.png` /
+`native-history-recovered-live-retained.png` screenshots beside it.
+
+A **single supplemental**, normal headed Pi Chromium GLES / Canvas2D observation
+used `IQ_BENCH_FIT_WALLS=1`, `IQ_BENCH_KEEP_CURRENT=1`, 30 seconds, fresh browser
+cache and the actual preview/SSH route. i3 reported workspace 9, unfocused.
+`native-independent-reference-samples.jsonl` retains the full request/resource,
+coverage, current and frame evidence. Actual navigation-relative paint marks were
+6,763.7 ms current and 19,531.1 ms historical; complete visible coverage was not
+certified. The older `firstHistoryMs` counter observation of 1,789.1 ms is **not**
+the actual historical paint mark. No causal before/after speedup is claimed.
+The report correctly labels this fitted/extended single sample SUPPLEMENTAL.
+
+At the end, 669 segments / 2,711 archive runs were retained, 1,467 historical
+and 25 current drawables visible, no page errors and no value/episode cap flag.
+After 23 seconds, sampled changed draws maintained the same 669 retained
+segments; nonzero reference work touched 16 segments / at most 25 values, with
+no additional reference rebuild beyond the four initial/reconfiguration builds.
+This supplements the exact closed-getter unit regressions; it is not a heap
+plateau or 30h test. There were 22 long tasks (maximum 1,160 ms) and a 1,433.4 ms
+maximum frame interval, including startup and history work. The current target
+remains unaccepted, and the remaining long tasks need CPU attribution.
+
+Remote preflight and post-observation health confirm backend
+`072cc1d55e931ea82ee8edd623ef22543f454fa7`, healthy default/pinned materializers,
+no default backlog, and an independently progressing existing 3% custom profile
+backfill. The two source collector IDs and October 25 start times match the
+previous proof. Perpetual execution recoveries are now 246 (previous proof 245),
+Spot 77; execution/depth overflow counters remain zero. This is source continuity
+and bounded functional evidence, not a matched concurrent-history gate.
+The pre-existing failed `aide-check.service` and `staging-restore-test.service`
+were recorded without remediation.
+
+Operationally, a native candle-history error now uses chart **Retry** to resume
+HTTP without resetting healthy native streaming or unrelated footprint feeds.
+A successful response clears the error. Automatic bounded backoff remains
+available; a disconnected native socket reconnects independently of history.
+Roll back the frontend build to its previous pinned commit if needed; this
+change needs no server/collector restart, source migration or retention change.
+All existing performance gate failures and remaining prepared-wall
+consumption/discovery/retention work in the completion audit remain open.
+
+The benchmark harness now reports `firstCurrentMs`, `firstHistoryMs` and
+`completeMs` directly from navigation-relative main-thread paint marks, with an
+explicit `timingBasis`. Historical wall paint must also match the requested
+viewport. Earlier raw records are retained unchanged; the acceptance report was
+already based on `paintMarks`, so this corrects ambiguous console/result counter
+fields without promoting earlier failures.
