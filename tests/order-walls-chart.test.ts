@@ -363,3 +363,73 @@ it('advances a delivered archive tail only with archive coverage, independently 
  const projects=primitive.diagnostics().patchProjects;
  primitive.patch([],{...status,lastConfirmedAt:base+60000,archive:{loadedThrough:base+30000}});primitive.draw(canvas(),context());expect(primitive.diagnostics().patchProjects).toBe(projects);
 });
+
+for(const visibleRangeOnly of [false,true])it(`does not rescan closed wall strength when a current value changes (visible=${visibleRangeOnly})`,()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly,showHistory:true};
+ const wall=(id:string,end:number|null,usd:number):OrderWallSegment=>({id,archiveEntryId:id,epoch:1,side:'bid',price:100,start:base,end,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:end!==null,endReason:end===null?null:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false});
+ let closedRunReads=0,closedLineReads=0;
+ const closed=Array.from({length:100},(_,i)=>{const s=wall('closed-reference-'+i,base+120000,i+1);Object.defineProperty(s.valueRuns[0],'usd',{get(){closedRunReads++;return i+1;},enumerable:true});return s;});
+ const current={...wall('current-reference',null,200),currentSelection:true};
+ const primitive=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.1};
+ primitive.setSnapshot([...closed,current],status);primitive.draw(canvas(),context());
+ for(const line of (primitive as any).drawable.values())if(line.segment.id.startsWith('closed-reference-')){const usd=line.usd;Object.defineProperty(line,'usd',{get(){closedLineReads++;return usd;}});}
+ closedRunReads=0;closedLineReads=0;primitive.draw(canvas(),context());const paintReads=closedLineReads;
+ closedRunReads=0;closedLineReads=0;
+ primitive.patch([{id:current.id,segment:{...current,peakUsd:400,meanUsd:400,valueRuns:[{at:base,usd:400,percentile:null,rank:1,quantity:4}]}}],status);
+ primitive.draw(canvas(),context());
+ expect(closedRunReads).toBe(0);expect(closedLineReads).toBe(paintReads);
+ expect((primitive as any).reference).toEqual({min:1,max:400});
+});
+
+it('keeps strength extrema equal to an independent scan through revisions, viewport changes and retention',()=>{
+ const wall=(id:string,values:number[],closed=true):OrderWallSegment=>({id,epoch:1,side:'bid',price:100,start:base,end:closed?base+120000:null,peakUsd:Math.max(...values),meanUsd:values[0]!,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:closed,endReason:closed?'removed':null,detectionMode:'top-levels',rank:1,valueRuns:values.map((usd,i)=>({at:base+i*30000,usd,percentile:null,rank:1,quantity:1})),valueRunsTruncated:false});
+ let settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly:false,historyEpisodes:20};
+ const p=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.1};
+ let rc=context();
+ function verify(){
+  p.draw(canvas(),rc);const model=p as any;let values:number[]=[];
+  if(settings.visibleRangeOnly)values=[...model.drawable.values()].map((line:any)=>line.usd).filter((v:any)=>v!==null&&v>0);
+  else values=[...model.segments.values()].flatMap((s:any)=>settings.showHistory||s.end===null?s.valueRuns.map((v:any)=>v.usd).filter((v:any)=>v!==null&&v>0):[]);
+  expect(model.reference).toEqual({min:values.length?Math.min(...values):0,max:values.length?Math.max(...values):0});
+ }
+ p.setSnapshot([wall('min',[1,3]),wall('max',[1000,500]),wall('duplicate',[1,1000]),wall('current',[20],false)],status);verify();
+ p.patch([{id:'max',segment:wall('max',[50,60])}],status);verify();
+ p.patch([{id:'duplicate',segment:null}],status);verify();
+ p.patch([{id:'min',segment:wall('min',[25,30])}],status);verify();
+ p.patch([{id:'current',segment:wall('current',[20,2000],false)}],status);verify();
+ p.patch([{id:'current',segment:wall('current',[20,15],false)}],status);verify();
+ rc=context({from:.5,to:2});verify();expect(p.diagnostics().referenceSegments).toBe(0);
+ settings={...settings,visibleRangeOnly:true};p.setSettings(settings);verify();
+ rc=context({from:1,to:2});verify();
+ p.patch([{id:'current',segment:wall('current',[800],false)}],status);verify();
+ settings={...settings,visibleRangeOnly:false,showHistory:false};p.setSettings(settings);verify();
+ settings={...settings,showHistory:true,historyEpisodes:1};p.setSettings(settings);verify();
+ p.patch([...((p as any).segments.keys())].map(id=>({id,segment:null})),status);verify();
+ expect(p.diagnostics().retainedReferenceSegments).toBe(0);expect(p.diagnostics().retainedDrawables).toBe(0);expect(p.orderWallAt(100,100)).toBeNull();
+ p.patch([{id:'reopened',segment:wall('reopened',[7],false)}],status);verify();
+ p.setSnapshot([],status);expect(p.diagnostics().visibleHistorical).toBe(0);expect(p.diagnostics().visibleCurrent).toBe(0);expect(p.diagnostics().retainedReferenceSegments).toBe(0);
+ p.detached();expect(p.diagnostics().retainedReferenceSegments).toBe(0);
+});
+
+it('bounds pending strength/geometry work by retained data while a chart is not being drawn',()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly:false,historyEpisodes:2};
+ const p=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000};
+ const wall=(i:number):OrderWallSegment=>({id:'hidden-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:i+1,meanUsd:i+1,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:i+1,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false});
+ p.setSnapshot([wall(0),wall(1)],status);p.draw(canvas(),context());
+ for(let i=2;i<1000;i++)p.patch([{id:'hidden-'+i,segment:wall(i)}],status);
+ const model=p as any;
+ expect(p.diagnostics().retainedSegments).toBe(2);expect(model.dirty.size).toBeLessThanOrEqual(2);expect(model.tailDirty.size).toBeLessThanOrEqual(2);
+ expect(model.referenceIds.size).toBeLessThanOrEqual(2);expect(model.referenceExtents.size).toBeLessThanOrEqual(2);expect(model.referenceCounts.size).toBeLessThanOrEqual(4);
+ p.draw(canvas(),context());expect(model.reference).toEqual({min:999,max:1000});
+ p.patch([{id:'hidden-998',segment:null},{id:'hidden-999',segment:null}],status);
+ expect(p.diagnostics().retainedDrawables).toBe(0);expect(p.diagnostics().retainedReferenceSegments).toBe(0);expect(p.orderWallAt(100,100)).toBeNull();
+});
+
+it('reprojects an earlier value revision when the canonical patch explicitly replaces its runs',()=>{
+ const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native',visibleRangeOnly:true},60000);
+ const segment:OrderWallSegment={id:'revised-runs',archiveEntryId:'entry-revised',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:500,meanUsd:300,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:100,percentile:null,rank:1},{at:base+60000,usd:500,percentile:null,rank:1}],valueRunsTruncated:false};
+ const status={state:'live' as const,lastConfirmedAt:base+120000};p.setSnapshot([segment],status);p.draw(canvas(),context());
+ p.patch([{id:segment.id,segment:{...segment,peakUsd:900,valueRuns:[{...segment.valueRuns[0]!,usd:900},segment.valueRuns[1]!]},replaceValueRuns:true}],status);p.draw(canvas(),context());
+ expect([...(p as any).drawable.values()].find((line:any)=>line.runIndex===0).usd).toBe(900);
+ expect((p as any).reference).toEqual({min:500,max:900});
+});

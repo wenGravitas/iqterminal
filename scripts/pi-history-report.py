@@ -10,7 +10,7 @@ for name,samples in groups.items():
  values=[(r.get('paintMarks')or{}).get(field) for r in samples]
  environments=[(r.get('diagnostics')or{}).get('staging',{}).get('config',{}) for r in samples]
  environmentVerified=all(c.get('dataMode')=='staging' and c.get('historyTiles') is True and c.get('build')==r.get('build') and (r.get('diagnostics')or{}).get('fixture') is False for c,r in zip(environments,samples))
- supplemental=any(r.get('fitWalls') or r.get('extendedCoverageObservation') for r in samples)
+ supplemental=any(r.get('fitWalls') or r.get('extendedCoverageObservation') or r.get('keepCurrent') for r in samples)
  good=not supplemental and all(v is not None for v in values) and len(values)>=5 and environmentVerified
  numeric=all(v is not None for v in values)
  median=statistics.median(values) if numeric else None
