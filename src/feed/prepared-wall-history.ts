@@ -1,6 +1,7 @@
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
 import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
+import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import {historyScheduler} from './history-scheduler';
 import type {OrderWallsArchivePage} from './order-walls-archive';
 type Head={cursor:number;epoch:number;at:number};
@@ -60,12 +61,13 @@ export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Pro
 /** At most two immutable parts are prefetched. Every read uses the shared
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
-export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string):Promise<PreparedWallReader|null>{
+export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings):Promise<PreparedWallReader|null>{
  const discovery=sourceUrl('discover',request);
- const found=await historyScheduler.read(discovery,'order-walls',signal,async upstream=>{
-  const response=await fetcher(discovery,{signal:upstream});
+ const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
+ const found=await historyScheduler.read(discovery+(projection?'#projection='+WALL_PROJECTION_CORE_SHA256:''),'order-walls',signal,async upstream=>{
+  const response=await fetcher(discovery,{signal:upstream,...(projection?{headers:{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}}:{})});
   if(!response.ok){await response.body?.cancel();if(response.status===404)return null;throw Error('Prepared wall discovery HTTP '+response.status);}
-  return (await readBody(response,128*1024)).body as any;
+  return (await readBody(response,projection?8*1024*1024:128*1024)).body as any;
  });
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');

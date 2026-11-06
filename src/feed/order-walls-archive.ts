@@ -385,7 +385,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
   const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
-    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken):null;
+    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings):null;
   const captureResume = (resumeAfter = after): OrderWallsArchiveResumeState => ({ after: resumeAfter, watermark,
     head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
   try {

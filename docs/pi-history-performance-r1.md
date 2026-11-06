@@ -1224,3 +1224,25 @@ fair selected-history preparation, sliding reuse, disk retention and remaining
 coverage/concurrency/heap/frame gates are still open. No production deployment
 or merge is included. Backend PREPARED-WALL-VIEWS.md records publication/retry and
 rollback; the established staging rollback images apply to serving changes.
+
+### Discovery capacity regression found on the Pi
+
+All five `nov6-wall-selected-route-v2` samples failed first history and complete
+coverage. The environment was staging/history-enabled at frontend 02e96dd and
+backend 94c7380; the prepared source remained ready. The actual browser exposed
+`Prepared wall response byte capacity`: the legacy 128 KiB discovery reader was
+rejecting the larger selected-projection manifest. This is an implementation
+failure, not absent source, and is retained as failed acceptance. An earlier
+`nov6-wall-selected-v2` cohort used the wrong default port 4180, never loaded the
+app and is retained as invalid setup evidence; it is not pooled with loading runs.
+
+The repair explicitly requests projection metadata with the exact algorithm SHA
+in `X-IQ-Wall-Projection`. Backend clients without that capability keep their
+small legacy response. Opted-in discovery stays within the existing 8 MiB gateway
+response budget, while source-proof responses keep their original bound. Shared
+scheduler identities distinguish capabilities. A >128 KiB regression passes;
+27 frontend prepared-history checks pass, typecheck/build pass. The backend also
+bounds immutable encoding to three jobs, including canceled HTTP consumers.
+The corrected five-run Pi cohort must still be measured; no gate is yet repaired
+by assertion. The diagnostic production build at 02e96dd passed all ten browser
+bootstrap/history/Retry checks before these actual loading runs.

@@ -57,6 +57,11 @@ test('actual archive loader imports exact prepared cells, retains gaps and rebas
  expect(updates.slice(0,-1).every(u=>u.status.archive.requestComplete===false&&u.status.archive.loadedThrough===from)).toBe(true);
  expect(t.calls).toEqual(['/market-data/v2/history/walls/discover','/market-data/v2/history/walls/projection-batch','/market-data/v2/history/walls/source']);expect(metrics.every(m=>m.delivery==='projection')).toBe(true);
 });
+test('explicit projection capability accepts a manifest above the legacy discovery budget',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f);(f.manifest as any).testMetadataPadding='x'.repeat(200000);
+ let capability:string|null=null;const fetcher:typeof fetch=(input,init)=>{if(String(input).includes('/discover?'))capability=new Headers(init?.headers).get('X-IQ-Wall-Projection');return t.fetcher(input,init);};
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher});expect(capability).toBe(WALL_PROJECTION_CORE_SHA256);expect(result.status.archive?.requestComplete).toBe(true);
+});
 test('painted prepared records remain incomplete while final independent source validation is delayed or fails',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');let release!:()=>void;const gateSource=new Promise<void>(r=>release=r),f=fixture(),t=transport(f,{changed:true,gateSource}),updates:any[]=[];
  const work=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)});void work.catch(()=>{});
