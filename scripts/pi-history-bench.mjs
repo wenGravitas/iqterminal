@@ -5,6 +5,7 @@ import {chromium} from '@playwright/test';
 import {mkdirSync,writeFileSync,readFileSync,appendFileSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {performance} from 'node:perf_hooks';
+import {createHash} from 'node:crypto';
 const base=process.env.IQ_BENCH_URL??'http://127.0.0.1:4180',label=process.env.IQ_BENCH_LABEL??'baseline';
 const dir='artifacts/pi-history-r1';mkdirSync(dir,{recursive:true});
 const windowFile=`${dir}/windows.json`;
@@ -19,7 +20,9 @@ const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step
 if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
-const keepCurrent=process.env.IQ_BENCH_KEEP_CURRENT==='1';
+const keepCurrent=process.env.IQ_BENCH_KEEP_CURRENT==='1',cpuProfile=process.env.IQ_BENCH_CPU_PROFILE==='1';
+const executedSource=readFileSync(new URL(import.meta.url)),scriptSha256=createHash('sha256').update(executedSource).digest('hex');
+writeFileSync(`${dir}/${label}-executed.mjs`,executedSource);
 const output=`${dir}/${label}-samples.jsonl`;writeFileSync(output,'');
 const resource=()=>({at:new Date().toISOString(),uptime:readFileSync('/proc/uptime','utf8').trim(),load:readFileSync('/proc/loadavg','utf8').trim(),mem:readFileSync('/proc/meminfo','utf8'),cpu:readFileSync('/proc/stat','utf8').split('\n').slice(0,5),vmstat:readFileSync('/proc/vmstat','utf8').split('\n').filter(line=>/^(pswpin|pswpout|pgmajfault|pgfault) /.test(line)),temperatureMilliC:readFileSync('/sys/class/thermal/thermal_zone0/temp','utf8').trim(),cpuFrequencyKHz:readFileSync('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq','utf8').trim(),monotonicMs:performance.now(),processes:execFileSync('ps',['-eo','pid,ppid,pcpu,rss,comm','--sort=-pcpu'],{encoding:'utf8'}).split('\n').slice(0,16)});
 const browser=await chromium.launch({headless:process.env.IQ_BENCH_HEADLESS==='1',executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
@@ -54,6 +57,7 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   new PerformanceObserver(list=>b.tasks.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration})))).observe({type:'longtask',buffered:true});
  },{kind:item.kind,requested,step:item.step});
  const responseTasks=[];context.on('response',response=>{if(!response.url().includes('/market-data/')||response.url().includes('/stream'))return;const started=performance.now();responseTasks.push((async()=>{const headers=await response.allHeaders();const finished=await response.finished().catch(error=>error);const sizes=await response.request().sizes().catch(()=>null);requests.push({url:response.url(),status:response.status(),at:started,headers,requestTiming:response.request().timing(),sizes,finishedError:finished?String(finished):null});})());});page.on('pageerror',error=>errors.push(error.message));
+ const profiler=cpuProfile?await context.newCDPSession(page):null;if(profiler){await profiler.send('Profiler.enable');await profiler.send('Profiler.start');}
  const started=performance.now();let firstCurrentMs=null,firstHistoryMs=null,completeMs=null,viewportAt=null,last=null,exception=null;const referenceFrames=[];
  try{
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});
@@ -76,8 +80,10 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   }
   await page.screenshot({path:`${dir}/${label}-${item.name}-${run}.png`});
  }catch(error){exception=String(error);await page.screenshot({path:`${dir}/${label}-${item.name}-${run}-failure.png`}).catch(()=>{});}
+ if(profiler){const {profile}=await profiler.send('Profiler.stop');writeFileSync(`${dir}/${label}-${item.name}-${run}.cpuprofile`,JSON.stringify(profile));}
+ const browserTimings=await page.evaluate(()=>({timeOrigin:performance.timeOrigin,navigation:performance.getEntriesByType('navigation').map(e=>e.toJSON()),resources:performance.getEntriesByType('resource').slice(0,256).map(e=>e.toJSON())})).catch(()=>null);
  await page.evaluate(()=>window.__terminal?.feed.send({type:'diagnostics'})).catch(()=>{});await new Promise(r=>setTimeout(r,150));
  const paintMarks=last?.marks??null;
  const diagnostics=await page.evaluate(()=>window.__terminal?.feed.diagnostics).catch(()=>null);
- await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-main-thread-paint',label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
+ await context.close();await Promise.allSettled(responseTasks);const result={timingBasis:'navigation-relative-main-thread-paint',scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
 }}finally{await browser.close();}
