@@ -278,8 +278,8 @@ export class CandlePanel implements IContentRenderer {
   private effortView?: EffortView;
   private hiddenConditionsControls?: ConditionsControls;
   private netPositioningControls!: NetPositioningControls;
-  private footprintTotalsControls!: FootprintTotalsControls;
-  private tpoControls!: TpoControls;
+  private footprintTotalsControls?: FootprintTotalsControls;
+  private tpoControls?: TpoControls;
   private releaseTpo?: () => void;
   private tpoGeneration = 0;
   private tpoSubscriptionKey = '';
@@ -650,8 +650,6 @@ export class CandlePanel implements IContentRenderer {
     this.heatmapControls = new HeatmapControls((settings, units) => this.changeHeatmap(settings, units), () => this.feed.retryDepth(), this.abort.signal);
     this.netPositioningControls = new NetPositioningControls((id, settings) => this.changeNetPositioning(id, settings), this.abort.signal);
     this.vwapControls = new DailyVwapControls((id, settings) => this.changeIndicator(id, { settings: { ...settings } }), this.abort.signal);
-    this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
-    this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
     this.orderWallsControls = new OrderWallsControls(settings => this.changeOrderWalls(settings), () => {
       const instance = this.nativeIndicator(ORDER_WALLS_ID);
       return Boolean(instance?.visible && orderWallsSettings(instance.settings).mode === 'top-levels' && this.engine?.fitOrderWalls());
@@ -709,7 +707,7 @@ export class CandlePanel implements IContentRenderer {
     this.buildDrawingDialogs();
     this.chartFrame.append(this.chart);
     this.chartWorkspace.append(this.drawingSidebar, this.chartFrame, this.objectsPanel, this.chartSidebar, this.drawingSidebarMenuLayer);
-    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.footprintTotalsControls.dialog, this.vwapControls.dialog, this.tpoControls.dialog, this.orderWallsControls.dialog, this.compositionControls.dialog, this.placementControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
+    this.element.append(this.toolbarWrap, this.depthNotice, this.chartWorkspace, this.chartFooter, this.picker, this.settingsDialog, this.footprintDialog, this.heatmapControls.dialog, this.netPositioningControls.dialog, this.vwapControls.dialog, this.orderWallsControls.dialog, this.compositionControls.dialog, this.placementControls.dialog, this.chartSettingsDialog, this.drawingDialog, this.templatesDialog);
   }
 
   private sidebarButton(label: string, title: string, iconName: string, extraClass = '') {
@@ -3910,6 +3908,26 @@ export class CandlePanel implements IContentRenderer {
     });
   }
 
+  // Settings DOM is independent of subscriptions and rendering. Large optional
+  // dialogs should not delay the first visible data on every restored chart.
+  private openFootprintTotalsSettings(instance: IndicatorInstance) {
+    if (!this.footprintTotalsControls) {
+      this.footprintTotalsControls = new FootprintTotalsControls((id, settings) => this.changeFootprintTotals(id, settings), this.abort.signal);
+      this.element.append(this.footprintTotalsControls.dialog);
+    }
+    this.footprintTotalsControls.open(instance.instanceId, footprintTotalsSettings(instance.settings));
+  }
+
+  private openTpoSettings(instance: IndicatorInstance) {
+    if (!this.tpoControls) {
+      this.tpoControls = new TpoControls((id, settings) => this.changeTpo(id, settings), () => this.feed.retryTpo(this.params.api.id), this.abort.signal);
+      this.element.append(this.tpoControls.dialog);
+    }
+    this.tpoControls.setStatus(this.tpoStatus);
+    const settings = this.tpoSettings(instance);
+    this.tpoControls.open(instance.instanceId, settings, settings.tickSize);
+  }
+
   private tpoSettings(instance = this.nativeIndicator(TPO_ID)): TpoIndicatorSettings {
     const tickSize = this.selection.venue === 'binance' && marketOf(this.selection) === 'spot' ? .01 : .1;
     return tpoIndicatorSettings(instance?.settings ?? DEFAULT_TPO_INDICATOR_SETTINGS, tickSize);
@@ -3940,12 +3958,12 @@ export class CandlePanel implements IContentRenderer {
     this.releaseTpo?.(); this.releaseTpo = undefined;
     this.tpoSubscriptionKey = sourceKey; this.tpoSettingsKey = settingsKey;
     this.tpoStatus = { state: 'loading', message: 'Loading UTC 1-minute history…', coverageFrom: 0, coverageTo: 0, expectedMinutes: 0, observedMinutes: 0, missingMinutes: 0, cacheHits: 0, pagesFetched: 0, retentionLimited: false };
-    this.tpoControls.setStatus(this.tpoStatus);
+    this.tpoControls?.setStatus(this.tpoStatus);
     this.renderActiveIndicators();
     const generation = ++this.tpoGeneration;
     this.releaseTpo = this.feed.subscribeTpo(this.params.api.id, this.selection, settings, event => {
       if (this.dead || generation !== this.tpoGeneration || !this.nativeIndicator(TPO_ID)?.visible) return;
-      this.tpoStatus = event.status; this.tpoControls.setStatus(event.status);
+      this.tpoStatus = event.status; this.tpoControls?.setStatus(event.status);
       if (event.type === 'tpo-status') { this.renderActiveIndicators(); return; }
       if (event.type === 'tpo-snapshot') {
         this.tpoSessions = new Map(event.sessions.map(session => [session.day, session]));
@@ -4152,8 +4170,8 @@ export class CandlePanel implements IContentRenderer {
       }
     }
     else if (instance.definitionId === FOOTPRINT_ID) this.openFootprintSettings();
-    else if (instance.definitionId === FOOTPRINT_TOTALS_ID) this.footprintTotalsControls.open(instance.instanceId, footprintTotalsSettings(instance.settings));
-    else if (instance.definitionId === TPO_ID) this.tpoControls.open(instance.instanceId, this.tpoSettings(instance), this.tpoSettings(instance).tickSize);
+    else if (instance.definitionId === FOOTPRINT_TOTALS_ID) this.openFootprintTotalsSettings(instance);
+    else if (instance.definitionId === TPO_ID) this.openTpoSettings(instance);
     else if (instance.definitionId === HEATMAP_ID) this.heatmapControls.open();
     else if (instance.definitionId === ORDER_WALLS_ID) this.orderWallsControls.open(orderWallsSettings(instance.settings));
     else if (NET_POSITIONING_IDS.includes(instance.definitionId as typeof NET_POSITIONING_IDS[number])) this.netPositioningControls.open(instance.instanceId, netPositioningSettings(instance.settings));
@@ -5998,9 +6016,9 @@ export class CandlePanel implements IContentRenderer {
     this.hiddenOpenInterestControls?.dispose(); this.hiddenOpenInterestControls = undefined;
     this.conditionsView?.dispose(); this.conditionsView = undefined; this.hiddenConditionsControls?.dispose(); this.hiddenConditionsControls = undefined;
     this.releaseNetPositioning?.(); this.releaseNetPositioning = undefined; this.netPositioningGeneration++; this.netPositioningControls.dispose();
-    this.footprintTotalsControls.dispose();
+    this.footprintTotalsControls?.dispose();
     this.releaseOrderWalls?.(); this.orderWallsGeneration++; this.orderWallsControls.dispose();
-    this.releaseTpo?.(); this.tpoGeneration++; this.tpoControls.dispose();
+    this.releaseTpo?.(); this.tpoGeneration++; this.tpoControls?.dispose();
     this.releaseFootprint?.(); this.footprintGeneration++;
     this.indicatorLifecycle?.dispose();
     this.subscriptions.forEach(subscription => subscription.dispose());
