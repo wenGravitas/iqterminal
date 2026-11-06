@@ -72,14 +72,14 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||target.cursor<manifest.watermark||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal]);
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
- const batchEnabled=found.delivery?.version===1&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
+ const batchEnabled=found.delivery?.version===2&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
  const readyBatch=new Map<number,PreparedWallFetched>();
  async function loadBatch(startIndex:number){
   const parts:Part[]=[];let expectedBytes=0;
   for(const part of manifest.parts.slice(startIndex,startIndex+8)){
    if(expectedBytes+part.bytes+1>8*1024*1024)break;parts.push(part);expectedBytes+=part.bytes+1;
   }
-  const url='/market-data/v2/history/walls/batch?'+new URLSearchParams({market:request.market,key:manifest.key,start:String(startIndex),version:'1'});
+  const url='/market-data/v2/history/walls/batch?'+new URLSearchParams({market:request.market,key:manifest.key,start:String(startIndex),version:'2'});
   const results=await historyScheduler.read(url,'order-walls',consumer,async upstream=>{
    const start=performance.now(),response=await fetcher(url,{signal:upstream}),responseHeadersMs=performance.now()-start;
    if(!response.ok){await response.body?.cancel();throw Error('Prepared wall batch HTTP '+response.status);}
