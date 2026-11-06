@@ -7,9 +7,7 @@ export const ORDER_WALL_MAX_SEGMENTS = 20_000;
 export const ORDER_WALL_MAX_VALUE_RUNS = 50_000;
 export const ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT = 2_048;
 /** Larger, independent budgets for durable multi-hour Binance Top Levels archives. */
-export const ORDER_WALL_ARCHIVE_MAX_SEGMENTS = 100_000;
-export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS = 1_000_000;
-export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT = 100_000;
+export {ORDER_WALL_ARCHIVE_MAX_SEGMENTS,ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS,ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT} from '../shared/order-walls-projection';
 
 export type OrderWallAggregation = 'auto' | 'native' | 10 | 25 | 50 | 100 | 250;
 export type OrderWallColorMode = 'heat' | 'bid-ask';

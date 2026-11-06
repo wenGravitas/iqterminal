@@ -1092,3 +1092,44 @@ All five final chart diagnostics report `backend: canvas2d`. GLES describes the
 normal browser/compositor launch; no GPU chart-rendering or 60fps result is claimed.
 `release-identifiers.json` and `served-asset-sha256.json` pin the actual served
 builds, route, snapshot and asset bytes independently of later documentation commits.
+
+### Exact portable wall projection and checkpoint evidence
+
+The frontend archive projector now lives in `src/shared/order-walls-projection.ts`,
+with a byte-identical backend copy. `scripts/sync-wall-projection-core.mjs`
+checks both copies and generated SHA compatibility identifiers; use an explicit
+backend checkout and `--write` only when intentionally updating the algorithm.
+The current source SHA is
+`c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c`.
+No serving deployment or collector changes accompany this extraction.
+
+The fixed 30h USD-M snapshot (key `0c59755f82338c16d9b012e1fd0e6214c521e39be58f809bc48def30b9112cbc`)
+passed all 66 page patch/revision comparisons against the bundled original
+projector (SHA `d5dec6192f00f2582f79afe93f5fe011ccb757130e71ccb8c8ac96001bbc5c3d`).
+Closed records were transferred after each page and active state was serialized
+and restored halfway through. The midpoint checkpoint was 178,601 bytes.
+All 23,850 final segments and 104,112 actual value points matched exactly;
+both segment hashes were
+`de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6`.
+The isolated staging-host verification took 1,974.070 ms, final RSS 273,838,080
+bytes. This is a reference/resume check over existing prepared files, not Pi
+paint timing or raw-source cold materialization.
+
+The comparison exposed an incumbent counter defect: replacing a value at the
+same timestamp decremented the retained count despite retaining the same number
+of points. The original reported 104,086 for 104,112 actual points. The corrected
+counter is asserted against actual retained points after every real page and in
+a focused 40-correction regression. Financial segment/value contents are unchanged.
+
+Evidence: `artifacts/pi-history-r1/wall-projection-checkpoint/`. Backend full suite
+239/239, typecheck/build passed. Frontend full suite: 1,074 passed, two skipped,
+two unrelated vault tests timed out at the existing five-second limit. Separate
+vault rerun: 8/8 passed; frontend typecheck/build passed. Preserve both outcomes;
+this is not a claim of a single all-green full run. Six checkpoint tests plus the
+source-version test and existing archive/prepared suites passed in focused checks.
+
+Checkpoint and closed-transfer helpers prepare the next delivery implementation;
+they do not yet reduce actual chart payloads. Existing failed performance gates
+remain failed and performance acceptance is incomplete. Rollback is a frontend
+revert/rebuild; backend helpers are not on a serving route. Cached future
+projections must match exact source, settings, range and algorithm SHA before use.
