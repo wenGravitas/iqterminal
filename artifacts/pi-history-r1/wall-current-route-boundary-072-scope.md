@@ -1,0 +1,1 @@
+The raw file name/kind says during, but the health probe began near the end of the SSH benchmark and its handle was observed terminal shortly afterward. These five observations demonstrate live current-source health around completion only. They are not a controlled concurrency pass and have no current-only baseline. Raw labels and records are retained unchanged.

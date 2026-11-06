@@ -2,6 +2,14 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
+Current staging serving build is `072cc1d55e931ea82ee8edd623ef22543f454fa7`.
+Backend tests/typecheck/build pass (219 tests). The footprint viewport repair
+has real complete-coverage evidence; prepared 4h/5m latency passes, while 24h/1h,
+current display and 30h wall acceptance remain incomplete/failed. Verified wall
+parts now have read-only cached HTTP delivery, but chart discovery/consumption
+and automatic preparation/retention are still open. Later sections retain older
+measurements with their own exact builds; they are not superseding gate passes.
+
 ## Baselines and isolation
 
 Frontend base: `7aedc1896805be507382b8f5feb0e00775a4aa00` (refreshed main).
@@ -506,3 +514,47 @@ private immutable part caching, independent ETags/304, market/input validation
 and cancellation. The full backend suite now passes 219 tests, plus typecheck and
 build. This endpoint change still needs staging rollout and real route checks;
 source discovery, fair preparation/retention and chart consumption remain open.
+
+
+### Prepared read-route results and independent tunnel recovery
+
+The read-only endpoints are deployed on `072cc1d55e931ea82ee8edd623ef22543f454fa7`.
+A verified installer added only two immutable derived samples (819,695 compressed
+bytes total), preserving all raw source/checkpoints and collector identities.
+For the same fixed Spot hour, each received part matched its SHA256 and source
+revision; all successful responses reported zero database reads/queries.
+
+| Route | Every complete received-hour sample, ms | Median / max of the complete five-sample series | Received parts of five |
+|---|---|---|---|
+| Staging loopback, x64 | 59.189, 49.540, 48.403, 36.823, 38.168 | 48.403 / 59.189 | 5,5,5,5,5 |
+| Pi SSH history transport | 21070.760, incomplete, incomplete, incomplete, incomplete | unavailable | 5,0,2,4,0 |
+| Pi Vite preview | 7436.763, 9319.397, 5482.075, 7121.338, incomplete | unavailable | 5,5,5,5,4 |
+
+These are bounded one-hour transport/decode diagnostics, using a new two-socket
+agent per run and no HTTP cache. They do not measure paint, certify 30h coverage
+or replace any browser gate. Request timeout is 15 seconds and run observation
+45 seconds; failures remain incomplete rather than becoming unavailable source.
+Network conditions varied between these sequential route series, so the Vite
+numbers do not establish a causal proxy speedup. The actual history SSH TCP
+sample during Vite reported about 842 ms RTT with retransmission/reordering
+counters. Complete request phases, compressed/decoded bytes and failures are
+preserved in the raw JSONL. Five current-health observations around the end were
+live, recovery count 245, no execution overflows, 1.40–1.73 s. The original raw
+label says `during`; its scope audit explicitly excludes a concurrency claim.
+
+Both local tunnel listeners were absent during preflight and were restored only
+after healthy staging verification. The launcher also had a reproducible defect:
+`wait -n` followed by shared cleanup killed the live sibling on a historical SSH
+exit. Independent per-lane supervision now retries in 1–30 seconds without
+replacing the healthy sibling, resetting backoff after 60 stable seconds. The
+focused fake-SSH regression fails on the predecessor and passes after the fix,
+including child cleanup; frontend typecheck passes. The active healthy pair was
+left intact and keeps its original supervisor until its next launch.
+
+Chart consumption/discovery, source-revision validation across reused closed
+chunks, fair automatic preparation/retention and full 30h visible coverage are
+still open. Source cursor order, carry-in and timestamp regressions must survive
+chunk composition; a terminal cursor advance across a quiet tail is not its last
+actual event. Normal current value changes also still need the remaining
+closed-history reference-work audit. No production deployment or main merge has
+occurred.
