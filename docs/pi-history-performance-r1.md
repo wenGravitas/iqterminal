@@ -3,10 +3,10 @@
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
 Current staging serving build is `95017a09f5838a18b1196901aa3b8f249545a6e8`.
-Current measured client build is `42db2e8845c71bc0d3bb32fb8ccdf32189c230bc`.
+Current measured client build is `fa1764330c30b440bb78a5d603f381f94c6529e7`.
 Backend tests/typecheck/build pass (222 tests). The footprint viewport repair
-has real complete-coverage evidence; prepared 4h/5m latency passes, while 24h/1h,
-current display and 30h wall acceptance remain incomplete/failed. Verified wall
+has real complete-coverage evidence. The latest prepared 4h/5m and 24h/1h
+latency series fail, as do current display and 30h wall acceptance. Verified wall
 parts now have read-only cached HTTP delivery, but chart discovery/consumption
 and automatic preparation/retention are still open. Later sections retain older
 measurements with their own exact builds; they are not superseding gate passes.
@@ -813,3 +813,68 @@ The primitive now stamps its diagnostic at the end, including totals/candles.
 This is a conservative main-thread observation of painted content, not compositor
 presentation telemetry. Timing methods are recorded and must not be pooled as a
 causal A/B comparison. Earlier failing samples are not converted to passes.
+
+
+### Completed-draw observation and deferred optional settings
+
+The supplemental `nov6-observed-profile*` run uses client
+`7fcbde4ae0204e12d2f0060540498a84c51c0c96` and the stricter observation clock.
+It observes all 48 historical bars at 5382.1 ms, with CPU profiling enabled;
+this is not a gate sample. The CPU profile identifies eager TPO settings DOM
+construction (the compiled `ND` constructor) and other DOM/control work during
+startup. The final observed primitive draw takes 118 ms; repeated drawing also
+remains a responsiveness concern. Self/parent/native samples are not summed
+as exclusive phases or attributed entirely to JavaScript.
+
+`3f51f58` defers TPO and Footprint Totals settings DOM until first open;
+`fa17643` applies the latest TPO status after `open()`, which clears the line.
+Subscriptions, profiles, closed cells and live accumulation retain their existing
+paths. The browser regression verifies data arrives before settings exist,
+latest status, dialog reuse, a persisted Totals option and disposal on charts
+that did and did not open dialogs. All twelve browser lifecycle checks pass.
+The full unit suite passes 1048 tests, with two skipped; typecheck/build pass.
+Raw passing and initial failing logs are in `early-startup-validation/` with
+SHA-256 records. No heavy tests/builds ran during the latency series below.
+
+The exact served build is `fa1764330c30b440bb78a5d603f381f94c6529e7`;
+`nov6-lazy-build-assets.json` identifies its asset bytes/hashes. Backend remains
+`95017a09f5838a18b1196901aa3b8f249545a6e8`. Each actual worker diagnostic was
+checked: staging mode, history tiles enabled, matching full build, fixture false.
+Future benchmark runs reject a mismatch explicitly in the sample record.
+Normal headed Pi Chromium/GLES uses the actual Canvas2D chart backend; all
+windows remain on workspace 9 without focus changes. Browser cache is empty for
+each sample. Server readiness was rechecked for the same pinned windows:
+48 five-minute bars and 24 hourly bars, no build jobs.
+
+| Scenario | Every sample (ms) | Median | Maximum | Gate |
+|---|---|---:|---:|---|
+| First current footprint | 4199.8, 5164, 4081.7, 3622.3, 4591.4 | 4199.8 | 5164 | FAIL median and maximum |
+| Complete prepared 4h/5m | 4352.4, 5156.2, 4537.6, 6191, 5289.5 | 5156.2 | 6191 | FAIL median |
+| Complete prepared 24h/1h | 11709.5, 5720.1, 5613.6, 4748.2, 5667.4 | 5667.4 | 11709.5 | FAIL median and maximum |
+
+All ten historical samples validate and paint every requested closed candle:
+48/48 or 24/24. First useful historical content in the 24h series occurs at
+7836.2, 4085.4, 4741.8, 4568.1, 4979 ms, before full completion. Per-sample
+requested/retained/painted time arrays, environment checks and gates are in
+`nov6-lazy-coverage-and-gates.json`. Raw requests, header/body sizes, host resource
+samples, frames/long tasks, screenshots and executed scripts are `nov6-lazy-*`.
+No p95 is inferred. No ranges or latency thresholds changed. These records use
+the stricter observation clock and must not be pooled with older RAF-clock
+series to claim a causal speedup. Both current-display cohorts remain within
+their respective forming slots; current-only paint is not historical content.
+
+The post-series runtime/source/resource check is `nov6-lazy-server-after.json`.
+Both collectors remain live with their original container IDs and October 25
+start times; execution and depth overflow counters are zero. Execution recovery
+counters are 246 perpetual and 78 Spot, unchanged from this turn's health sample.
+This does not certify the still-outstanding matched concurrent-history gate.
+No backend service, collector or source retention was changed this turn.
+
+Operationally, these UI changes require no data migration or historical retry.
+For rollback, build the previous reviewed client in a separate clean worktree
+and serve its dist with the diagnostic preview; preserve the supervised tunnel,
+healthy sockets and server cursors. Do not reset a dirty checkout or restart
+collectors. History Retry remains scoped to the failing history operation.
+Full release acceptance remains incomplete: startup/render cost, prepared wall
+source discovery and exact compact chart delivery, warm revisits, concurrency,
+full 30h repeated-use measurements and remaining audit entries are still open.
