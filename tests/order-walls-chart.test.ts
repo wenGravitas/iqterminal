@@ -331,3 +331,35 @@ describe('Top Levels native rendering',()=>{
   expect(p.orderWallAt(150,100)?.segment).toMatchObject({end:base+120000,endReason:'rank-exit'});
  });
 });
+
+it('paints an instantaneous current selection without inventing a historical duration',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000);
+ const start=base+60000,segment:OrderWallSegment={id:'current-point',epoch:1,side:'bid',price:100,start,end:null,peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:true,startKnown:false,currentSelection:true,detectionMode:'top-levels',rank:1,valueRuns:[{at:start,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ const paths:CapturedPath[]=[];primitive.setSnapshot([segment],{state:'live',lastConfirmedAt:start});primitive.draw(canvas([],paths),context());
+ expect(primitive.diagnostics().visibleCurrent).toBe(1);expect(paths[0]!.points[1]![0]-paths[0]!.points[0]![0]).toBe(1);
+ expect(primitive.orderWallAt(150.1,100)?.at).toBe(start);
+ primitive.setSnapshot([{...segment,id:'historical-point',archiveEntryId:'old',currentSelection:false,end:start,endKnown:true}],{state:'live',lastConfirmedAt:start});primitive.draw(canvas(),context());
+ expect(primitive.diagnostics().visible).toBe(0);
+});
+
+it('a confirmation-only patch extends only open geometry and does not inspect closed history',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',visibleRangeOnly:false},60000);
+ const open:OrderWallSegment={id:'open-confirmation',epoch:1,side:'bid',price:100,start:base,end:null,peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:true,startKnown:false,currentSelection:true,detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ let closedReads=0;const closed:OrderWallSegment={...open,id:'closed-untouched',archiveEntryId:'old',currentSelection:false,end:base+1000};
+ Object.defineProperty(closed,'end',{get(){closedReads++;return base+1000;}});
+ primitive.setSnapshot([closed,open],{state:'live',lastConfirmedAt:base+1000});primitive.draw(canvas(),context());
+ const before=primitive.diagnostics(),reads=closedReads,paths:CapturedPath[]=[];
+ primitive.patch([],{state:'live',lastConfirmedAt:base+30000});primitive.draw(canvas([],paths),context());
+ expect(closedReads).toBe(reads);expect(primitive.diagnostics().patchProjects-before.patchProjects).toBe(1);expect(primitive.diagnostics().rebuilds).toBe(before.rebuilds);
+ const hit=primitive.orderWallAt(90,100);expect(hit?.segment.id).toBe('open-confirmation');expect(hit?.at).toBeGreaterThan(base+1000);
+});
+
+it('advances a delivered archive tail only with archive coverage, independently of current confirmation',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000);
+ const segment:OrderWallSegment={id:'archive-tail',archiveEntryId:'entry',epoch:1,side:'bid',price:100,start:base,end:null,peakUsd:1000,meanUsd:1000,durationMs:60000,percentile:null,scopePartial:true,startKnown:true,currentSelection:false,detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ const status:any={state:'live',lastConfirmedAt:base+30000,archive:{loadedThrough:base+1000}};
+ primitive.setSnapshot([segment],status);primitive.draw(canvas(),context());expect(primitive.orderWallAt(90,100)).toBeNull();
+ primitive.patch([],{...status,archive:{loadedThrough:base+30000}});primitive.draw(canvas(),context());expect(primitive.orderWallAt(90,100)?.segment.id).toBe('archive-tail');
+ const projects=primitive.diagnostics().patchProjects;
+ primitive.patch([],{...status,lastConfirmedAt:base+60000,archive:{loadedThrough:base+30000}});primitive.draw(canvas(),context());expect(primitive.diagnostics().patchProjects).toBe(projects);
+});
