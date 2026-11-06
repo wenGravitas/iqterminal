@@ -985,3 +985,14 @@ retransmission counters. `tailscale-route-ping.txt` and `ssh-tcp-state.txt` pres
 the snapshot. No network configuration or collector was changed. These measured
 route constraints keep performance acceptance incomplete; they do not permit
 shortened ranges or raised gate thresholds.
+
+
+Cold **prepared-display-cache** build scope: the canonical wall archive already
+existed. Nine separate bounded invocations persisted 8/16/24/32/40/48/56/64/66
+parts, with 47,549.9ms summed active invocation time, 249 queries, 86,321,231 read
+rows and 8,374,980,013 read bytes. Manual delays between commands are excluded;
+this is neither scheduler queue-to-completion time nor raw-depth-to-wall archive
+materialization. RSS at invocation end ranged 137.6–197.0MB across fresh processes;
+that does not prove a long-running chart/worker memory plateau. The actual job
+run/page logs and raw one-hour independent canonical rows are retained alongside
+the summary and SHA256 manifest.

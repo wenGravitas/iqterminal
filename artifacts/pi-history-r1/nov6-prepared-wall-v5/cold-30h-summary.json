@@ -1,5 +1,5 @@
 {
-  "kind": "bounded-invocation-cold-preparation-summary",
+  "kind": "cold-prepared-display-cache-over-existing-canonical-wall-archive",
   "invocations": 9,
   "parts": [
     8,
@@ -41,5 +41,5 @@
   ],
   "observations": 84959,
   "sourceRecords": 85078,
-  "semantics": "Sum of non-overlapping bounded invocations on one host; excludes manual gaps between commands; not scheduler queue-to-complete time or browser latency."
+  "semantics": "Sum of non-overlapping bounded invocations on one host; excludes manual gaps between commands; not scheduler queue-to-complete time or browser latency. Canonical wall archive already existed; this does not measure raw-depth-to-wall archive materialization."
 }
