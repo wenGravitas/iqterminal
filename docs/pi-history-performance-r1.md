@@ -1805,3 +1805,62 @@ Gateway CPU is 0.42%, RSS 76.04MiB; the two depth/history materializers use
 one instant during the footprint cohort, not a peak or five-sample server resource
 profile. Pi CPU/swap/process snapshots accompany every browser sample. The exact
 identity/resource receipt is `saved-wall-startup/staging-resource-and-identity.txt`.
+
+### Reader lifetime and cancellation capacity (3fc2cd4 / 9c5fe1f)
+
+Reader interests now span all prepared content and the independent final source
+check. The client acquires the canonical/optional selected immutable keys only
+when the enabled server advertises the fixed lease protocol. It renews every five
+seconds in one reserved control slot, independent of the two history-data slots.
+Failed renewal aborts that reader and prevents terminal validated publication;
+its peer, good displayed history and unrelated live groups retain their ownership.
+Disposal and expiry bound abandoned interest. 9c5fe1f also puts preparation DELETE
+cancellation on that control lane, preventing busy data reads from delaying it.
+Proxy/gateway use reserved current/health capacity for control traffic. Older
+nonadvertising servers retain the existing read path.
+
+Backend b963ddf / 890ca89 validates immutable manifest membership/source-key links
+once, protects keys while validation is pending, and renews without SQL or source
+repinning. A late validation cannot resurrect a released interest; read/build
+interests share a 128-consumer bound. The monotonic protection map is an eviction
+prerequisite, not active GC. Legacy delivery, retirement barriers and startup
+quiescence still need integration. No prepared, canonical, raw or collector files
+are deleted by this release increment.
+
+Real retained-source proof uses backend 890ca89b423589fd9acf3b868745aa342d4b054a,
+client reader 3fc2cd418b70ec5b7afab5af0453300cadbe36d3 and the original 5358b9d
+projector, through the actual private HTTP control and a temporary gateway 18792.
+A deliberate 16,000.870ms final-validation hold spans the 15s lease lifetime;
+four control acquisitions/renewals preserve both keys and report zero DB queries.
+All 8,293 walls / 49,154 points and selected state match the reference, hash
+cf9d17a2...afd944e, source d211a766...621e394. No jobs are admitted. Final server
+consumers/readers and client active/queued control requests are zero. Gateway and
+control stop cleanly, ports are free, and serving/collector IDs/start times are
+unchanged. This is one artificially delayed x64 lifecycle/reference proof, not Pi
+paint latency, current concurrency or cold materialization. Backend raw evidence
+is `wall-reader-staging/`, evidence commits c3b8215 / 265b4a3.
+
+An explicitly offline normal headed Chromium 155 probe on Pi workspace 9 holds
+both history slots, fails one renewal, and keeps the peer active. Each consumer
+releases once, history/control active and queued work end at zero, and the error
+exposes Retry. It renders no chart and reads no retained source. Bundle, exact
+executed script, every request/consumer and diagnostics are in
+`artifacts/pi-history-r1/wall-reader-browser/`.
+
+Validation is reported separately: backend 279 tests pass locally and staging,
+type/build pass. Frontend full run has 1,118 pass / two skips / one 5s crypto-vault
+timeout; the eight vault tests pass in a focused unchanged-timeout run. Chart
+lifecycle batch has ten passes and one saved-view native-data expectation timeout;
+that test passes in a focused unchanged-threshold rerun. A new fixture's
+zero-tick assumption about asynchronous validation caused a separate failed run
+and cleanup rejection; it now waits for the actual event and settles pending reads.
+Final 95 history/archive/lease tests pass, typecheck and staging build pass at
+9c5fe1f. These are not retroactive all-green full-suite/browser-batch claims.
+Raw failed/passing/type/build outputs remain in `wall-reader-validation/`.
+
+The portable financial projection core remains byte-identical. Compiled staging
+client is 9c5fe1f; incumbent backend remains 18579d9 with preparation disabled.
+Earlier passing footprint latency cohorts use b47457b and are not new-reader
+performance acceptance. Final serving activation, transfer-safe retention,
+rolling/default wall reuse and all previously failed/unproven current/warm/wall
+latency/resource gates remain incomplete.

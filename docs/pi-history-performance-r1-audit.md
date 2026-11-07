@@ -196,3 +196,20 @@ Serving remains 18579d9 with bridge disabled; unchanged collectors reverified.
 Rolling/default preparation, managed retention, warm full-wall reuse, current
 visibility/freshness/concurrency, route comparisons and repeated-use resource
 gates remain incomplete. See the full measurement report and raw cohort files.
+
+Reader lifetime increment 3fc2cd4 / 9c5fe1f and backend b963ddf / 890ca89 protects
+both immutable roots through transfer/final validation, with bounded independent
+control admission and consumer-specific cancellation. Actual retained-source HTTP
+proof spans a deliberate 16s delay and remains exactly equal to the original
+8,293-wall / 49,154-point reference; final leases/requests/ports are released.
+An offline headed Pi/workspace-9 browser checks two occupied data slots and
+independent peer recovery. Neither proves an active GC or a Pi loading gate.
+
+Latest validation: 279 backend tests pass; frontend 95 focused history tests,
+typecheck/build pass. Full frontend run retains one vault timeout (1,118 pass,
+two skips); eight focused vault tests pass. Browser batch retains one saved-view
+startup timeout / ten passes; the focused saved-view rerun passes unchanged.
+The fixture event-order failure and its correction are retained. No all-green
+claim replaces those individual results. Serving is still unchanged/disabled;
+legacy-reader protection, retirement/restart barriers, bounded eviction, rolling
+reuse and final performance/resource gates remain required.

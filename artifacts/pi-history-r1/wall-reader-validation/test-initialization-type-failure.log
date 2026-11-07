@@ -1,0 +1,6 @@
+
+> terminal-t0@0.1.0 typecheck /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit
+
+tests/prepared-wall-history.test.ts(368,42): error TS2454: Variable 'reader' is used before being assigned.
+ ELIFECYCLE  Command failed with exit code 1.

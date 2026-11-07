@@ -1,0 +1,25 @@
+{
+  "scope": "Reader lifecycle correctness; not prepared-cache or cold-build latency acceptance",
+  "files": [
+    {
+      "name": "client.mjs",
+      "bytes": 6657,
+      "sha256": "29b4909e064eba8b0eca4be7e0602b488cc34734b5748175f0e92db4a1fd2eaa"
+    },
+    {
+      "name": "driver.log",
+      "bytes": 929,
+      "sha256": "b7cb4f048549d9fe6ce923d712103232252ade01ccfc6a4d5219efd54d9087bb"
+    },
+    {
+      "name": "executed.mjs",
+      "bytes": 4606,
+      "sha256": "84e4747293bfb8155c89db08fa61e01a037648d6ea962f8fbe37e4083c6d4a4d"
+    },
+    {
+      "name": "result.json",
+      "bytes": 3076,
+      "sha256": "fbaac049aa3cf3161509b5aa9b21f876b2a56d5f996ebe6b1128a1ed43dfa3fb"
+    }
+  ]
+}
