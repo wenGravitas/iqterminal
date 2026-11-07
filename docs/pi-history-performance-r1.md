@@ -1689,3 +1689,119 @@ financial resolution or source time/depth range was reduced. All owned actors st
 cleanly; serving 18579d9 and collectors remain unchanged. These x64 protocol checks
 render no browser/chart. Serving rollout/integration, rolling/default reuse,
 retention and every prior failed/unproven Pi/current/warm/resource gate remain open.
+
+### Saved wall-view startup and strict painted coverage (November 7)
+
+The normal headed Pi cohort `nov7-spot-ae8-route` uses frontend
+`ae8e42a2bb3d0b4ad0b534b9c41aacae9972a255` and unchanged serving backend
+`18579d938364e5fd5a9c7631bb19681a043f1b66`. All five environments are staging,
+history enabled and fixtures disabled. The requested visible window remains
+1793696400000..1793804400000; no time/depth/profile resolution is reduced.
+
+Traces expose an actual lifecycle fault: a saved candle-chart wall viewport first
+joins current-only reads, then requests the recent default chart range, cancels
+that work, and only then loads the saved 30h range. Candle charts ignored the
+saved range that footprint charts already honored. `c0a1c13` restores that owned
+range, starts its exact padded history before native candles, and shares it with
+attached Totals. Ordinary candles/Totals still ignore leftover footprint-only
+ranges. The actual browser catches a second current-only subscription during
+layout restore; `b47457b` preserves the same history demand in that handoff too.
+No live cursor, canonical finance, profile or coverage semantics are changed.
+
+`526642c` tightens the loading gate: a completed flag is insufficient. The measured
+chart must contain the independent pinned reference segment/value counts, have
+no pending projection/reference work or capacity flags, and paint its latest
+input revision. Final source validation must match the pinned source token and
+padded range/gap count. The reference file names its original-projector evidence.
+This stronger gate cannot retroactively certify the older cohort's 10,200ms
+completion candidate. Before/after first-history timing is comparable; full
+completion instrumentation is explicitly stronger after the fix.
+
+Five empty-browser-cache normal Chromium/GLES Pi samples over already prepared
+server history, through the existing SSH tunnels and production preview 4181:
+
+| Cohort | First historical paint ms, every sample | Complete validated painted coverage ms, every sample | Result |
+|---|---|---|---|
+| Spot before, ae8e42a | 9262.8, 9240.9, 8198.5, 11122.7, 8801.9; median 9240.9, max 11122.7 | null, null, 10200 (older gate), null, null; whole-cohort median/max unavailable | FAIL |
+| Spot after, b47457b | 2193, 1801.7, 2106, 3835.7, 2107.8; median 2107.8, max 3835.7 | 9054, 5512.8, 6681.1, 6661.4, 5804.5; median 6661.4, max 9054 | FAIL median <=5s and first-history <=3s |
+| USD-M after, b47457b | 5016.8, 3107.9, 3117.4, 3166.2, 4297.8; median 3166.2, max 5016.8 | 11623.7, null, 10539.1, 10963, 10203; whole-cohort median/max unavailable | FAIL |
+
+All five Spot runs paint all 8,293 walls / 49,154 value points with 35 explicit
+source gaps and matching source token d211a766...621e394. Each makes exactly four
+wall requests: one saved-range discovery, two selected batches and one independent
+source validation. There are no offscreen current/recent wall requests. Spot
+screenshots 3 and 5 were visually inspected. The full USD-M reference is 23,850
+walls / 104,112 value points with 47 gaps and source token 96b070b7...33a70e.
+All five USD-M charts reach the reference counts and finish projection/paint, but
+run 2 remains loading without final coverage confirmation at its 12s observation
+boundary; it is a failure, not complete history. The other four validate fully.
+
+The first Spot run's two selected transfers take 4,994.613 and 5,017.906ms from
+their own request starts, for 924,807 and 514,247 encoded body bytes. They overlap;
+these durations are not added or subtracted from remote host clocks. This is
+remaining path evidence, not proof that all remaining cost is networking. Raw
+request/header/size timings, client resources, frame/long-task observations,
+render queues, environment IDs, all samples and screenshots are retained in
+`nov7-spot-ae8-route-*`, `nov7-spot-saved-view-*`, and
+`nov7-perp-saved-view-*` under `artifacts/pi-history-r1/`.
+
+Functional evidence is separate: the saved-range browser regression fails on
+ae8e42a (no discovery before delayed native data), fails on 526642c (current-only
+handoff), and passes on b47457b. Ten existing lifecycle cases pass on 526642c.
+The explicit offline browser fixture holds wall history unavailable; it proves
+request ownership/restoration, not financial/performance acceptance. 526642c full
+unit suite passes 1,113 tests with two skips; b47457b's 39 focused tests and staging
+build/typecheck pass. Exact logs are in `saved-wall-startup/`.
+
+Rollback the client source changes using the normal client release workflow to
+ae8e42a if necessary; no state/schema migration is introduced. Serving backend
+and collectors remain unchanged, preparation bridge remains disabled. Cold builds,
+current display/concurrency, warm revisit, rolling/default preparation, disk
+retention and repeated-use resource gates remain separately incomplete. These
+prepared-cache measurements do not certify those requirements.
+
+The same b47457b build then passes both prepared historical footprint latency
+cohorts on the actual Pi route (five empty-cache runs each, full configured $25
+rows and unchanged pinned end 1793804400000):
+
+| Scenario | Complete painted/validated coverage ms, every sample | Median / maximum ms | Coverage | Gate |
+|---|---|---|---|---|
+| 4h at 5m/$25 | 3638, 2876.2, 2958.9, 2549.3, 2474 | 2876.2 / 3638 | 48/48 closed bars in every run | PASS |
+| 24h at 1h/$25 | 3608.7, 3405, 3066.6, 4607.8, 3793.7 | 3608.7 / 4607.8 | 24/24 closed bars in every run | PASS |
+
+Both sets retain exact requested-versus-rendered times, per-slot validation,
+resources, every request and real-chart screenshots in `nov7-footprint-4h-saved-build-*`
+and `nov7-footprint-24h-saved-build-*`. Screenshot 5 of each was visually inspected.
+These are fresh passing cohorts; earlier failed cohorts remain failures. Since
+the new source change concerns wall startup, this measurement alone does not
+attribute footprint speedup to it or establish route stability.
+
+Current-display acceptance remains failed. The initial `nov7-current-saved-build`
+footprint samples are [2070.1, 2853.6, 1835.9, 2211, null]ms; the last null was
+observed only to 1859.3ms because the old harness incorrectly stopped when closed
+history completed first. Preserve that cohort as invalid for a full failed-current
+observation. `ffb6e7c` makes the stopping condition scenario-specific and fixes
+extended observations too; four helper tests pass. It changes benchmark code,
+not the compiled b47457b client. The independent corrected five-run footprint
+cohort `nov7-current-footprint-corrected-stop` yields
+[null, null, 5544.6, 4772.4, 3596.1]ms: FAIL, with whole-cohort median/max
+unavailable. Run 2 times out waiting for native data; run 1 has no current bootstrap
+or connected execution stream by its observation boundary. Native/history HTTP
+loading and live readiness are recorded independently; these observations do not
+prove source absence or a healthy-source current latency pass.
+
+All five current-wall observations in the initial cohort run to approximately 12s
+and fail to paint visible current walls, despite live status and 16 selected
+current segments. Historical content is visible. They remain failures; current
+segments received outside the price viewport are not useful painted display.
+No Fit Walls or shortened-range result is substituted. Current-only versus two
+history charts/custom-build continuity and route attribution still need work.
+
+A separate read-only staging resource/identity sample at 12:41:58 UTC records the
+same two collector IDs/start times and unchanged history serving container.
+Gateway CPU is 0.42%, RSS 76.04MiB; the two depth/history materializers use
+311.7/223.5MiB, the independent footprint processes 42.31/45.47MiB, SQL admission
+47.22MiB. Host load is 6.06/5.41/5.16 with 6,030,622,720 swap bytes used. This is
+one instant during the footprint cohort, not a peak or five-sample server resource
+profile. Pi CPU/swap/process snapshots accompany every browser sample. The exact
+identity/resource receipt is `saved-wall-startup/staging-resource-and-identity.txt`.

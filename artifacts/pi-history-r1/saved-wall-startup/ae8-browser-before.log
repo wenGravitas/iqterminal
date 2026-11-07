@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:193370) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/footprint-history-lifecycle.spec.ts:25:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap (5.8s)
+
+
+  1) tests/browser/footprint-history-lifecycle.spec.ts:25:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      34 |  });
+      35 |  try{
+    > 36 |   await page.goto('/',{waitUntil:'domcontentloaded'});await expect.poll(()=>requests.filter(path=>path.includes('/walls/discover')).length).toBeGreaterThan(0);
+         |                                                                                                                                             ^
+      37 |   expect(requests.some(path=>path.includes('/archive/current'))).toBe(false);for(const path of requests.filter(path=>path.includes('/walls/discover'))){const u=new URL(path,'http://fixture');expect(Number(u.searchParams.get('from'))).toBe(from-step);expect(Number(u.searchParams.get('to'))).toBe(to+step);}
+      38 |   releaseNative();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.candles.length??0,id)).toBe(1000);
+      39 |   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:36:141
+
+    Error Context: test-results/footprint-history-lifecycl-431cf-offscreen-current-bootstrap/error-context.md
+
+  1 failed
+    tests/browser/footprint-history-lifecycle.spec.ts:25:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap 

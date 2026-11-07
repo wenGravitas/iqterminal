@@ -17,15 +17,15 @@ interactive performance. See [the measurement report](pi-history-performance-r1.
 | Reserved current capacity and cancellation through path | Split tunnel/agents, gateway reservation, shared SQL admission tests, runtime interruptible-query cancellation | Ten runs captured, no collector errors; confirmation gaps worsen, gate not certified; controlled matched-background comparison remains |
 | Client CPU bounded and obsolete work cancelled | Scheduler holds body/decode, yield/cancellation and consumer tests | Native history bulk import verified against the old per-bar path on Pi; startup CPU/long tasks and repeated-use resource analysis remain open |
 | Incremental walls, stable identity/runs, bounded queues | Archive service/projector tests and diagnostics; bounded real legacy/display reference | Closed-reference getter regressions and 1,000 hidden updates now pass; actual retained heap/frame plateau remains open; one exact full 30h USD-M browser observation is supplemental |
-| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | V5 exact 30h source validation/discovery and actual client part delivery implemented; all 66 USD-M pages match a fresh real canonical reference. Selected projection preserves all 23,850 walls / 104,112 points in five batches. Latest five Pi loads fail latency/coverage; separate recovered-lane full coverage takes 143.524s. Automatic fair preparation, disk retention, sliding reuse, Spot 30h and warm validation remain open |
+| Batched exact versioned wall delivery, carry-in/watermark | Display API, timestamp closure/carry-in tests, canonical SQL reference five pairs per market | V5 exact 30h source validation/discovery and actual client part delivery implemented; all 66 USD-M pages match a fresh real canonical reference. Selected projection preserves all 23,850 walls / 104,112 points in five batches. Latest five Spot loads have exact full painted coverage but FAIL latency; USD-M has complete painted counts in five and final validation in four, still FAIL. Automatic serving preparation, disk retention, sliding reuse and warm validation remain open |
 | Avoid repeated metadata and oversized SQL reads | Metadata cache and key-first FINAL query; real read-byte comparisons | Pinned route probe and end-to-end attribution; no schema changes |
-| Exact profiles and incumbent settings | Existing Top Levels/Threshold/Fit/persistence suites | Latest full frontend 1078 pass / 2 skip / 4 failures; scoped nine-check rerun passes, 27 prepared-history checks and ten functional browser checks pass. Backend guarded 243 pass. Never replace gaps with continuous walls |
+| Exact profiles and incumbent settings | Existing Top Levels/Threshold/Fit/persistence suites | Latest frontend 1,114 pass / 2 skip, typecheck and staging build pass; all 11 footprint/history lifecycle browser checks pass. Backend guarded 273 pass. Never replace gaps with continuous walls |
 | Actual flags/build/routes/viewport and correlated timing | Worker/request diagnostics, raw samples, main-thread paint marks, source/build records | Final build IDs, pinned identical loopback/SSH/Vite samples, evidence index |
-| Five comparable prepared empty-cache loading runs | Older cohorts plus latest five samples each for current, 4h/5m and 24h/1h retained | Latest completed-draw-clock 4h/5m and 24h/1h series fail; current footprint and both 30h wall scenarios fail; all historical footprint slots paint in all ten latest samples |
+| Five comparable prepared empty-cache loading runs | Older cohorts plus latest five samples each for current, 4h/5m and 24h/1h retained | November 7 b47457b 4h/5m and 24h/1h series PASS with all 48/24 slots painted in all ten samples; current footprint and both 30h wall scenarios still FAIL |
 | Warm useful display <=1s then independent validation | One exploratory 24h footprint revisit (260.7ms useful, 1,526.2ms validation) | Five comparable footprint samples and actual wall warm-revisit evidence |
 | Repeated-use plateau and real interaction timing | Retention/worker-heap probe implemented; unit retention checks | 36 correctly ranged prefix cycles release all resources, late heaps bounded; full 30h retention still unverified |
 | Operational retry/rollback and collector continuity | Guarded staging rollout, exact unchanged collector IDs, rollback records, documented retry tools | Six-service rollback repair verified without execution; retain exact image/topology records and finish final source-continuity evidence |
-| Independently reviewable commits, no production/main merge | Isolated `perf/pi-history-r1` branches; backend pushed; original dirty checkouts preserved | Frontend source through deferred-settings fixes pushed; complete final evidence/release ledger |
+| Independently reviewable commits, no production/main merge | Isolated `perf/pi-history-r1` branches; backend pushed; original dirty checkouts preserved | Frontend source through saved-wall restore and strict painted gates committed; complete final serving/evidence/release ledger |
 
 ## Gate policy
 
@@ -168,3 +168,31 @@ inputs still refuse reuse. Current samples stay ready/live only through incumben
 18780: this is shared-server/SQL evidence, not same-gateway/Pi confirmation proof.
 Serving remains unchanged/disabled. Rolling/default reuse, retention and all prior
 failed/unproven Pi loading/current/warm/resource gates remain incomplete.
+
+
+November 7 saved-wall startup c0a1c13 / b47457b removes offscreen current/recent
+requests for restored historical wall charts. Real browser fails before both
+fixes and passes after; all 11 lifecycle checks pass, full frontend 1,114 pass /
+two skips, typecheck/build pass. Strict reference-count/paint-revision gates
+526642c replace completion-flag-only wall acceptance.
+
+Fresh normal headed Pi, empty-browser-cache / already-prepared source cohorts:
+4h/5m footprints PASS (all 48 slots in five runs; median/max 2,876.2/3,638ms),
+24h/1h footprints PASS (all 24 slots in five runs; 3,608.7/4,607.8ms). These do
+not erase earlier failed cohorts or prove cold preparation/current concurrency.
+Spot 30h has exact complete painted/validated reference in all five runs
+(8,293 walls / 49,154 points / 35 gaps), but FAIL latency: median/max
+6,661.4/9,054ms and one first-history result exceeds 3s. USD-M 30h reaches
+all reference counts in five runs, with only four final validations inside 12s;
+FAIL latency/complete coverage within the observation bound. No early completion
+or missing derived-source excuse is used.
+
+Current gates remain FAIL: corrected footprint observation [null, null, 5544.6,
+4772.4, 3596.1]ms; all five current-wall observations lack visible current
+paint. The older footprint-current cohort stopped one sample prematurely; it is
+retained as invalid and replaced by a distinct corrected cohort, never discarded.
+ffb6e7c fixes the harness stopping condition, without rebuilding client finance.
+Serving remains 18579d9 with bridge disabled; unchanged collectors reverified.
+Rolling/default preparation, managed retention, warm full-wall reuse, current
+visibility/freshness/concurrency, route comparisons and repeated-use resource
+gates remain incomplete. See the full measurement report and raw cohort files.

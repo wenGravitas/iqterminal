@@ -1,0 +1,306 @@
+{
+  "source": "artifacts/pi-history-r1/nov7-current-saved-build-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "current-footprint-5m",
+      "samplesMs": [
+        2070.099999997765,
+        2853.599999997765,
+        1835.9000000022352,
+        2211,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "wallReferenceVerified": null,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        null,
+        2853.5,
+        1835.800000000745,
+        2211,
+        1823
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "b47457b460a1d4d18be2b73af2415af0e75c6217"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1794041100000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794041100,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1794041100000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794041100,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1794041100000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794041100,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1794041100000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794041100,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1794041100000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794041100,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 48,
+          "archive": {},
+          "exception": null
+        }
+      ]
+    },
+    {
+      "case": "current-walls-15m",
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "wallReferenceVerified": null,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "b47457b460a1d4d18be2b73af2415af0e75c6217"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "b47457b460a1d4d18be2b73af2415af0e75c6217"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1794051900000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794050561.25,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1794051000000,
+            "to": 1794055369100,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794055366586
+          },
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1794051900000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794050561.25,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1794051000000,
+            "to": 1794055382159,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794055378725
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1794051900000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794050561.25,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1794051000000,
+            "to": 1794055395840,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794055393719
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1794051900000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794050561.25,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1794051000000,
+            "to": 1794055409689,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794055407693
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1794051900000,
+            "to": 1794055500000
+          },
+          "viewport": {
+            "from": 1794050561.25,
+            "to": 1794055500
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "partial",
+            "from": 1794051000000,
+            "to": 1794055423023,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794055420977
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}
