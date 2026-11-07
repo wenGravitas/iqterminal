@@ -151,3 +151,20 @@ fetch/abort/header/slot behavior; it renders no chart and uses no retained sourc
 These supersede the frontend-wiring TODO above, not real staging/financial/chart
 acceptance. Persistent worker/gateway validation, rolling/default reuse, cold first
 progressive content, retention and all prior failed/unproven Pi gates remain open.
+
+Retained-source isolated backend 0ccfa7a now validates real consumer sharing,
+last-release pause at three pages, worker restart, same-proof resume and actual
+client import of all 34+34 Spot parts. All 8,293 walls / 49,154 runs / 35 gaps match
+the original reference. This supersedes the isolated process/protocol TODO, not
+serving rollout or real-chart/Pi acceptance. Raw evidence is backend 9bb4d7b.
+
+It also reproduces an unnecessary fallback when a completed build watermark is
+newer than the captured bootstrap but all financial inputs fit the older fence.
+ae8e42a requires matching independent max-input/carry-in proofs and bounded page/
+row cursors before rebinding transport metadata. Real before fails; after imports
+the same complete data and original selected state while retaining the old cursor.
+81 focused / 1,110 full client tests pass, two skips, type/build pass. Late/unproven
+inputs still refuse reuse. Current samples stay ready/live only through incumbent
+18780: this is shared-server/SQL evidence, not same-gateway/Pi confirmation proof.
+Serving remains unchanged/disabled. Rolling/default reuse, retention and all prior
+failed/unproven Pi loading/current/warm/resource gates remain incomplete.

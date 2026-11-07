@@ -6,7 +6,7 @@ Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
 Current measured production client is `7a1f6b129c78cf3e86178759bd98617213bcd701`.
 Backend coordinator Retry repair `bba1e6746cf8d861b6683355dc295cc88f0c22e4` has
 isolated staging validation; it has not replaced the serving build. Its 260 tests,
-typecheck/build pass. Latest frontend full suite: 1,093 pass / two skip,
+typecheck/build pass. That earlier frontend suite: 1,093 pass / two skip,
 typecheck/build pass; nine prior functional UI checks and the explicit headed
 retry protocol check have their own scopes/builds below. Collectors are unchanged.
 
@@ -15,6 +15,11 @@ consumer admission bridge; it is disabled and has not received serving validatio
 Client `997e383` is wired and has 1,104 passing tests / two skips, typecheck and
 staging diagnostics build passing. Its component/offline-browser proof is distinct
 from bba1e67's real cache Retry proof and the older measured Pi chart cohorts.
+
+Latest client ae8e42a repairs a proven older-bootstrap cache rejection: 81 focused /
+1,110 full tests pass (two full skips), typecheck/staging build pass. Backend
+0ccfa7a has real isolated retained-source admission/resume/client protocol proof,
+archived in backend 9bb4d7b. Serving itself remains unchanged/disabled.
 
 Footprint coverage repairs have complete real-chart evidence, but their latest
 latency gates remain failed. Prepared USD-M walls have an older full-coverage
@@ -1640,3 +1645,47 @@ Serving 18579d9 still has the bridge disabled. Real persistent-worker/gateway/cl
 staging validation, ordinary/default moving-window reuse, cold progressive-content
 delivery, retention and all earlier failed/unproven Pi gates remain outstanding.
 The cold build progress shown here is metadata, not first useful historical paint.
+
+### Real retained-source admission and older-bootstrap coverage
+
+Backend 0ccfa7a passes staging 273-test/type/build/Compose checks. A temporary
+gateway 18792 and separate 256 MiB worker use an empty managed cache and the same
+Spot padded 30h source request as the earlier cohort. Two consumers share the
+job: first release leaves progress intact, last release pauses after three pages,
+and a planned stop/restart resumes the identical proof/checkpoint. Actual 997e383
+client protocol imports all 34 canonical / 34 selected parts. All 8,293 walls /
+49,154 value runs and selected book state match the original projector; 35 source
+gaps remain, financial hash cf9d17a2...afd944e.
+
+69 bounded turns sum to 27,563.579ms processing, 115 queries reading 32,434,891
+rows / 2,477,962,991 bytes. Sampled worker maximum RSS 197,320,704 bytes; managed
+final apparent bytes 6,745,504. One resume-to-validated client import is
+38,037.564ms, first imported segments at 37,024.639ms, excluding the earlier three
+pages/manual pause/restart gap. These are not total unattended cold-build, chart
+paint or prepared-server loading samples. Actual cold content still waits for
+completed preparation. All 25 manual admitted-job polls perform zero DB queries.
+
+Incumbent current API samples on unchanged serving 18780 stay ready/live with no
+errors: baseline five median/max 3.889/10.669ms; control/restart 27 samples
+2.826/8.128ms; client resume/delivery 151 samples 4.043/75.867ms. Sixty distinct
+cursors are nondecreasing. These demonstrate shared-server/SQL behavior, not the
+temporary gateway's admission pool, Pi current display/confirmations or two
+distinct historical charts/custom work. All individual samples are retained.
+
+The test exposes a real cache/fence failure: authoritative target 18135954 is 14
+behind build watermark 18135968, but maximum actual input is only 15679177.
+The old reader rejects the ready cache. ae8e42a permits backward transport binding
+only with matching fresh/stored max-input and carry-in proofs and all page/input
+cursors within the original fence. Late/missing proof retains refusal; decoded
+input cannot cross the old cursor. The same retained source/fence fails before
+and passes after, preserving all walls/value runs and exact original selected
+state while retaining 18135954. No acknowledged cursor is advanced. Final client
+81 focused / 1,110 full tests pass, two skips, typecheck/staging build pass.
+
+Backend fa5127b contains the helpers; 9bb4d7b archives exact scripts, bundles,
+manifests, failed-before/success-after requests, raw CPU/SQL/RSS/current samples and
+process exit/ownership receipts. Source token stays d211a766...621e394. No
+financial resolution or source time/depth range was reduced. All owned actors stop
+cleanly; serving 18579d9 and collectors remain unchanged. These x64 protocol checks
+render no browser/chart. Serving rollout/integration, rolling/default reuse,
+retention and every prior failed/unproven Pi/current/warm/resource gate remain open.

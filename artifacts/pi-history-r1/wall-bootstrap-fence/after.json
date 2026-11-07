@@ -1,0 +1,53 @@
+{
+  "scope": "isolated retained-source prepared reuse with an older authoritative bootstrap fence; not Pi/chart latency acceptance",
+  "build": "0ccfa7a871a9d635b87a18bdeffd864c23d1e29c",
+  "clientSha256": "bac286f0ab444b4b10396b63c4783582ebbc0ec4b8c448ffe10e193b6c73545d",
+  "scriptSha256": "314c753a15a4c8f40f9877cc18b6377423439e2c98aca49ad2186ed64a6a4681",
+  "request": {
+    "market": "spot",
+    "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+    "from": 1793696100000,
+    "to": 1793804700000
+  },
+  "target": {
+    "cursor": 18135954,
+    "epoch": 1793987438220,
+    "at": 1794050144644
+  },
+  "preparedWatermark": 18135968,
+  "financialMaxCursor": 15679177,
+  "anchorCursor": 14589045,
+  "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+  "cacheState": "ready",
+  "pinnedBootstrapPreparedReuse": true,
+  "requests": [
+    {
+      "path": "/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "http": 200,
+      "requestId": "561649a4-e1fe-4495-8882-c65849dab552",
+      "dbQueries": 3
+    },
+    {
+      "path": "/v2/history/walls/projection-batch?market=spot&key=8d8eda754c165f029cafe832ff2ebcd62bb2dbf3b61ce4c8d05a5904c80d352b&start=22&version=1",
+      "http": 200,
+      "requestId": "9959fd04-1b2c-4232-aa26-d5f5d7030855",
+      "dbQueries": 0
+    },
+    {
+      "path": "/v2/history/walls/projection-batch?market=spot&key=8d8eda754c165f029cafe832ff2ebcd62bb2dbf3b61ce4c8d05a5904c80d352b&start=0&version=1",
+      "http": 200,
+      "requestId": "c8103fbc-9d49-499f-af32-38eef23ccc26",
+      "dbQueries": 0
+    },
+    {
+      "path": "/v2/history/walls/source?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000",
+      "http": 200,
+      "requestId": "a80ba595-086c-4a69-a1d2-134f4e7cae86",
+      "dbQueries": 3
+    }
+  ],
+  "exact": true,
+  "segments": 8293,
+  "valueRuns": 49154,
+  "segmentHash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+}
