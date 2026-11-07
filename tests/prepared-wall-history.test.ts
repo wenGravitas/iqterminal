@@ -140,9 +140,33 @@ test('older backends or a missing prepared view retain canonical loading',async(
  const fetcher=vi.fn(async()=>new Response('{}',{status:404}));expect(await preparedWallReader(request,fetcher as typeof fetch,new AbortController().signal)).toBeNull();
  const missing=vi.fn(async()=>new Response(JSON.stringify({state:'missing'})));expect(await preparedWallReader(request,missing as typeof fetch,new AbortController().signal)).toBeNull();
 });
-test('a cache built after the requested current fence cannot be rebound backwards',async()=>{
+test('a cache newer than the requested current fence requires explicit canonical cursor proof',async()=>{
  const f=fixture(),t=transport(f);expect(await preparedWallReader({...request,watermark:25,head:{cursor:25,epoch:1,at:to+1}},t.fetcher,new AbortController().signal)).toBeNull();
  expect(t.calls).toEqual(['/market-data/v2/history/walls/discover']);
+});
+function quietFenceFixture(){
+ const f=fixture(),anchor={cursor:5,epoch:1,at:from-1,hash:'e'.repeat(64)};
+ f.manifest.sourceProof={...f.manifest.sourceProof,maxCursor:22,anchor} as any;f.discovery.source={...f.discovery.source,maxCursor:22,anchor} as any;
+ return f;
+}
+test('a quiet newer prepared horizon reuses exact canonical inputs inside the older bootstrap without advancing its cursor',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=quietFenceFixture(),t=transport(f),target={cursor:25,epoch:2,at:to+5000};
+ const actual=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings,watermark:25,head:target},fetcher:t.fetcher});
+ const reference=new OrderWallsArchiveProjector(settings,from,to);for(const [index,page] of f.pages.entries())reference.applyPage({...page,watermark:25,head:target,page:{...page.page,nextAfter:index===2?25:page.page.nextAfter}} as any);
+ expect(actual.segments).toEqual(reference.snapshot());expect(actual.projector!.selectedState()).toEqual(reference.selectedState());expect(actual.head).toEqual(target);expect(actual.cursor).toBe(25);expect(actual.status.archive?.requestComplete).toBe(true);
+ expect(t.calls.filter(path=>path.endsWith('/part'))).toHaveLength(3);
+});
+test.each(['late-input','late-anchor','changed-anchor-proof','out-of-fence-page'])('backward transport rebinding rejects %s rather than crossing a bootstrap fence',async mode=>{
+ const f=quietFenceFixture();
+ if(mode==='late-input'){(f.manifest.sourceProof as any).maxCursor=26;(f.discovery.source as any).maxCursor=26;}
+ if(mode==='late-anchor'){(f.manifest.sourceProof as any).anchor={...(f.manifest.sourceProof as any).anchor,cursor:26};(f.discovery.source as any).anchor=(f.manifest.sourceProof as any).anchor;}
+ if(mode==='changed-anchor-proof')(f.discovery.source as any).anchor={...(f.discovery.source as any).anchor,hash:'f'.repeat(64)};
+ if(mode==='out-of-fence-page'){f.parts[1].nextAfter=26;f.parts[2].after=26;}
+ expect(await preparedWallReader({...request,watermark:25,head:{cursor:25,epoch:2,at:to+5000}},transport(f).fetcher,new AbortController().signal)).toBeNull();
+});
+test('a decoded financial input cannot cross an older bootstrap even if its metadata claims a quiet horizon',()=>{
+ const f=quietFenceFixture(),page={...f.pages[2],patches:[{...f.pages[2].patches[0],cursor:26}]};
+ expect(()=>rebasePreparedWallPage(page,f.manifest as any,f.parts[2] as any,{cursor:25,epoch:2,at:to+5000})).toThrow(/financial input exceeds/);
 });
 test('canceling one chart releases only its consumers of coalesced immutable parts',async()=>{
  const gates=new Map<number,{resolve:()=>void;aborted:boolean}>();

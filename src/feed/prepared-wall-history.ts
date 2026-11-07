@@ -8,12 +8,23 @@ type Head={cursor:number;epoch:number;at:number};
 export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;from:number;to:number;watermark?:number;head?:Head}
 interface Part {index:number;hash:string;canonicalHash:string;bytes:number;after:number;nextAfter:number}
 interface Manifest {version:5;key:string;complete:true;watermark:number;head:Head;after:number;request:PreparedWallRequest&{sourceRevision:string};sourceProof:Source;parts:Part[]}
-interface Source extends PreparedWallRequest {version:1;kind:'wall-source-sha256-xor-v1';token:string;eligible:boolean;watermark:number;head:Head}
+interface Source extends PreparedWallRequest {version:1;kind:'wall-source-sha256-xor-v1';token:string;eligible:boolean;watermark:number;head:Head;maxCursor?:number;anchor?:{cursor:number;epoch:number;at:number;hash:string}|null}
 export interface PreparedWallFetched {response:Response;body:unknown;bytes:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;attempts:number}
 const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 const hex=(value:unknown)=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const head=(value:any):value is Head=>value&&[value.cursor,value.epoch,value.at].every(integer);
 const sameRequest=(a:PreparedWallRequest,b:PreparedWallRequest)=>a.market===b.market&&a.profile===b.profile&&a.from===b.from&&a.to===b.to;
+/** A quiet/out-of-range head advance need not invalidate an older bootstrap.
+ * Permit backward transport rebinding only when the independently validated
+ * source proves every financial input/carry-in fits inside that older fence. */
+function sourceFitsFence(manifest:Manifest,source:Source,target:Head){
+ if(target.cursor>=manifest.watermark)return true;
+ const anchor=source.anchor,stored=manifest.sourceProof.anchor,max=source.maxCursor;
+ return typeof max==='number'&&integer(max)&&max<=target.cursor&&manifest.sourceProof.maxCursor===max
+  &&anchor&&stored&&integer(anchor.cursor)&&anchor.cursor<=target.cursor&&integer(anchor.epoch)&&integer(anchor.at)&&anchor.at<manifest.request.from&&hex(anchor.hash)
+  &&anchor.cursor===stored.cursor&&anchor.epoch===stored.epoch&&anchor.at===stored.at&&anchor.hash===stored.hash
+  &&manifest.parts.every((part,index)=>part.after<=target.cursor&&(index===manifest.parts.length-1||part.nextAfter<=target.cursor));
+}
 const hash=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const sourceUrl=(path:string,r:PreparedWallRequest)=>'/market-data/v2/history/walls/'+path+'?'+new URLSearchParams({market:r.market,profile:r.profile,from:String(r.from),to:String(r.to)});
 function validSource(value:any,r:PreparedWallRequest):value is Source{return value?.version===1&&value.kind==='wall-source-sha256-xor-v1'&&value.eligible===true&&hex(value.token)&&sameRequest(value,r)&&integer(value.watermark)&&head(value.head)&&value.head.cursor===value.watermark&&value.head.at>=r.to;}
@@ -51,7 +62,8 @@ async function validateManifest(value:any,source:Source,r:PreparedWallRequest):P
 export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,target:Head){
  if(!sameRequest({...raw,profile:raw?.profile?.id},manifest.request)||raw.profile?.id!==manifest.request.profile||raw.watermark!==manifest.watermark||JSON.stringify(raw.head)!==JSON.stringify(manifest.head)
   ||raw.page?.after!==part.after||raw.page.nextAfter!==part.nextAfter||raw.page.hasMore!==(part.index<manifest.parts.length-1))throw Error('Prepared wall page identity mismatch');
- if(target.cursor<manifest.watermark||target.at<manifest.request.to)throw Error('Prepared wall source fence cannot cover request');
+ if(!sourceFitsFence(manifest,manifest.sourceProof,target)||target.at<manifest.request.to)throw Error('Prepared wall source fence cannot cover request');
+ if(target.cursor<manifest.watermark&&(raw.patches?.some((patch:any)=>!integer(patch.cursor)||patch.cursor>target.cursor)||raw.seed&&(!integer(raw.seed.cursor)||raw.seed.cursor>target.cursor)))throw Error('Prepared wall financial input exceeds bootstrap fence');
  const {profileStatus: _mutableProfileStatus,...canonical}=raw;
  return {...canonical,watermark:target.cursor,head:{...target},snapshot:`${manifest.request.profile}:${target.cursor}:${raw.from}:${raw.to}`,
   page:{...raw.page,nextAfter:raw.page.hasMore?raw.page.nextAfter:target.cursor}} as OrderWallsArchivePage;
@@ -70,7 +82,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
  const manifest=await validateManifest(found.manifest,source,request);
  const target=request.watermark===undefined?source.head:request.head;
- if(!head(target)||target.cursor!==(request.watermark??source.watermark)||target.cursor<manifest.watermark||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
+ if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal]);
  async function validateRevision(){
   const latest=await historyScheduler.read(sourceUrl('source',request),'order-walls',consumer,async upstream=>{
