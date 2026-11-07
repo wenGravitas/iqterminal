@@ -11,8 +11,10 @@ typecheck/build pass; nine prior functional UI checks and the explicit headed
 retry protocol check have their own scopes/builds below. Collectors are unchanged.
 
 New backend source `00f11e0` has 273 passing tests/type/build for the opt-in
-consumer admission bridge; it is disabled and has not been staged or wired into
-the client. Its component proof is distinct from bba1e67's real cache Retry proof.
+consumer admission bridge; it is disabled and has not received serving validation.
+Client `997e383` is wired and has 1,104 passing tests / two skips, typecheck and
+staging diagnostics build passing. Its component/offline-browser proof is distinct
+from bba1e67's real cache Retry proof and the older measured Pi chart cohorts.
 
 Footprint coverage repairs have complete real-chart evidence, but their latest
 latency gates remain failed. Prepared USD-M walls have an older full-coverage
@@ -1594,9 +1596,47 @@ dependencies. They do not establish genuine staging materialization or Pi UX.
 Raw outputs and the read-only serving/collector observation are in backend
 `artifacts/pi-history-r1/wall-consumer-admission/`.
 
-The bridge remains disabled. Frontend consumer identity, progress polling/status,
-Retry and cancellation must be wired, then the persistent worker and serving path
-must receive real staging validation. Serving remains 18579d9 in the recorded
+At that increment the bridge remained disabled and client wiring was outstanding
+(implemented below). The persistent worker and serving path still require real
+staging validation. Serving remains 18579d9 in the recorded
 observation, with unchanged collectors. This increment does not complete ordinary
 view preparation, rolling defaults, long-term retention or any failed/unproven Pi
 gate. No production deployment or merge has occurred.
+
+### Client admission lifecycle, 9febaff / 997e383
+
+The client now renews one opaque consumer interest while waiting for the prepared
+job, sends its exact admitted job ID on subsequent polls and releases just that
+interest on cancellation, completion or failure. Poll delays hold no history
+scheduler/socket slot. Old/disabled servers retain their existing fallback. Content
+part deduplication and final independent source validation remain unchanged.
+
+Preparation phase/counts and source coverage are separate status metadata. Source
+confirmedTo never advances loadedThrough or requestComplete: only received and
+validated historical data does that. Progress updates are empty patches, preserving
+previous display. Specific failure category/retryability reaches history status.
+Retry retains its command token through renewals; if resuming a displayed prefix
+reveals a changed source, escalation to a new revision uses a distinct command
+token. It cannot be mistaken for replay of the already acknowledged resume command.
+Replacement snapshots wait for validation. No current group is created by the
+history-only regression fixtures; they do not prove healthy-current continuity.
+
+Final validation: 75 focused and 1,104 full frontend tests pass / two full skips;
+typecheck and staging diagnostics build pass. Shared portable projector remains
+byte-identical, SHA c4939405...6859938c. Four flow regressions fail on 728cc51; the
+revision-command regression fails on 9febaff. Raw outputs are retained under
+`artifacts/pi-history-r1/wall-client-admission/`.
+
+Normal headed Chromium 155.0.8059.79 runs the actual admission helper on workspace
+9 in an explicitly offline protocol probe: one consumer aborts after one request,
+its peer completes after three requests, both issue their own release, and two
+between-poll observations see zero active scheduler requests. Retry/job headers
+remain stable. This probe renders no chart and uses no retained/live source; its
+single execution is not a loading latency sample or full view coverage proof.
+The browser helper bundle is from 9febaff, before the service revision-escalation
+repair; that repair has separate 997e383 regression/build evidence.
+
+Serving 18579d9 still has the bridge disabled. Real persistent-worker/gateway/client
+staging validation, ordinary/default moving-window reuse, cold progressive-content
+delivery, retention and all earlier failed/unproven Pi gates remain outstanding.
+The cold build progress shown here is metadata, not first useful historical paint.

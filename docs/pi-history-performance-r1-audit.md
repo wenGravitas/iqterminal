@@ -141,3 +141,13 @@ chart validation. Frontend polling/status/Retry/cancellation wiring, real persis
 worker and serving validation remain outstanding. Rolling/default reuse, retention
 and all existing failed/unproven Pi gates remain incomplete; the full objective
 has not been reduced to these component proofs.
+
+Client 9febaff / 997e383 wires admission polling, job identity, scoped release,
+separate build/source versus loaded coverage status, specific failures and stable
+Retry/revision commands. Final 75 focused / 1,104 full tests pass, two full skips,
+typecheck/build pass. Old versions fail four flow tests and the separate revision
+escalation test. A headed workspace-9 Chromium fixture verifies actual browser
+fetch/abort/header/slot behavior; it renders no chart and uses no retained source.
+These supersede the frontend-wiring TODO above, not real staging/financial/chart
+acceptance. Persistent worker/gateway validation, rolling/default reuse, cold first
+progressive content, retention and all prior failed/unproven Pi gates remain open.
