@@ -304,3 +304,29 @@ test('Order Walls distinguishes pending replay from an empty finished history',a
   await page.evaluate(()=>(window as any).__wallProgressCallback({kind:'patch',patches:[],status:{state:'live',provisional:false}}));
   await expect(panel.locator('.order-walls-notice')).not.toContainText('History replay');
 });
+
+
+test('wall value patches preserve every point without rebuilding pane and indicator controls',async({page})=>{
+  await installDepthFixture(page);
+  await page.evaluate(()=>{(window as any).__terminal.feed.subscribeOrderWalls=(_id:string,_request:unknown,callback:unknown)=>{
+    (window as any).__wallDataOnlyCallback=callback;return()=>{};
+  };});
+  const panel=page.locator('.candle-panel').first(),panelId=await panel.getAttribute('data-panel-id');await addIndicator(panel,'Order Walls');
+  const result=await page.evaluate(id=>{
+    const p=(window as any).__terminal.panels.get(id),send=(window as any).__wallDataOnlyCallback,at=Date.now()-10000;
+    const segment={id:'data-only-wall',epoch:1,side:'bid',price:p.candles.at(-1).c,start:at,end:null,peakUsd:100000,meanUsd:100000,durationMs:0,percentile:null,scopePartial:false,startKnown:true,currentSelection:true,rank:1,
+      detectionMode:'top-levels',valueRuns:[{at,usd:100000,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false,endReason:null,endKnown:false};
+    send({kind:'snapshot',segments:[segment],status:{state:'live',lastConfirmedAt:at}});
+    const before=p.diagnostics().compositionWork.activeIndicatorRenders;
+    for(let i=1;i<=100;i++)send({kind:'patch',patches:[{id:segment.id,revision:i,segment:{...segment,rank:i%8+1,durationMs:i,valueRuns:[]},valuePoints:[{at:at+i,usd:100000+i,percentile:null,rank:i%8+1,quantity:1+i/100}]}],status:{state:'live',lastConfirmedAt:at+i}});
+    const after=p.diagnostics().compositionWork.activeIndicatorRenders,wall=p.engine.orderWallSegments.get(segment.id);
+    send({kind:'patch',patches:[],status:{state:'loading',message:'Revalidating history'}});
+    const loading=p.diagnostics().compositionWork.activeIndicatorRenders;
+    return {before,after,loading,points:wall.valueRuns.length,last:wall.valueRuns.at(-1),rank:wall.rank};
+  },panelId);
+  expect(result.after).toBe(result.before);expect(result.loading).toBe(result.after+1);expect(result.points).toBe(101);
+  expect(result.last).toMatchObject({usd:100100,quantity:2,rank:5});expect(result.rank).toBe(5);
+  await expect(panel.getByRole('button',{name:'Hide Order Walls',exact:true})).toHaveAttribute('aria-busy','true');
+  await page.evaluate(()=> (window as any).__wallDataOnlyCallback({kind:'patch',patches:[],status:{state:'live',lastConfirmedAt:Date.now()}}));
+  await expect(panel.getByRole('button',{name:'Hide Order Walls',exact:true})).not.toHaveAttribute('aria-busy','true');
+});

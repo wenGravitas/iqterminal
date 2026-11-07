@@ -5394,11 +5394,14 @@ export class CandlePanel implements IContentRenderer {
     this.releaseOrderWalls = this.feed.subscribeOrderWalls(this.params.api.id, { market, from, to, settings,
       ...(autoPriceWidth !== undefined ? { autoPriceWidth } : {}), followLive }, event => {
       if (this.dead || generation !== this.orderWallsGeneration || !this.nativeIndicator(ORDER_WALLS_ID)) return;
+      const wasLoading = this.orderWallsStatus?.state === 'loading';
       this.orderWallsStatus = (event.kind === 'snapshot'
         ? this.engine?.setOrderWallSnapshot(event.segments ?? [], event.status)
         : this.engine?.patchOrderWalls(event.patches ?? [], event.status)) ?? event.status;
       this.orderWallsControls.setStatus(this.orderWallsStatus);
-      this.renderActiveIndicators();
+      // Financial patches and archive progress do not change indicator actions
+      // or pane geometry. Refresh the row's spinner only on its state transition.
+      if (wasLoading !== (this.orderWallsStatus.state === 'loading')) this.renderActiveIndicators();
       if (event.status.retentionStart !== undefined) this.updateOrderWallsViewport();
     });
   }
