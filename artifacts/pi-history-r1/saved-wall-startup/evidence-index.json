@@ -4,7 +4,6 @@
   "latestSource": "ffb6e7ccd89562c44298925fb1662588c8eeb889",
   "platform": "Linux-6.12.109+rpt-rpi-v8-aarch64-with-glibc2.36",
   "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
-  "node": "v22.19.0",
   "cohorts": [
     "nov7-spot-ae8-route",
     "nov7-spot-saved-view",
@@ -460,5 +459,9 @@
       "bytes": 102,
       "sha256": "95ab3ab7f7c8e3875ab168641f413d218ca3f5522e7aee1c6ec0cf763a19c56d"
     }
-  ]
+  ],
+  "indexToolNode": "v22.19.0",
+  "benchmarkNode": "v22.23.4",
+  "benchmarkNodePath": "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+  "nodeProvenance": "Every recorded browser/build/test launch explicitly prepended this installation to PATH; index generation used the shell default separately."
 }
