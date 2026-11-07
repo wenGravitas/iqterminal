@@ -43,6 +43,8 @@ export class OrderWallsPrimitive implements IPrimitive {
   private paintKey='';
   private paintPaths?:Array<{color:string;thickness:number;path:Path2D}>;
   private paintCounts={historical:0,current:0};
+  private inputRevision=0;
+  private paintedRevision=-1;
   readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0};
   private durations:number[]=[];
 
@@ -51,14 +53,16 @@ export class OrderWallsPrimitive implements IPrimitive {
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
   detached(){this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.timeAtX=undefined;this.stats.bytes=0;}
-  setSettings(settings:OrderWallsSettings){this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
-  setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
+  setSettings(settings:OrderWallsSettings){this.inputRevision++;this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
+  setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.inputRevision++;this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
   setStatus(status:OrderWallStatus){
+    this.inputRevision++;
     const prior=this.status;this.status=this.effectiveStatus(status);
     this.advanceOpenTails(prior);
     this.host?.requestUpdate();
   }
   setSnapshot(segments:OrderWallSegment[],status:OrderWallStatus){
+    this.inputRevision++;
     this.status={...status};this.archiveEpisodeHistoryLimited=status.episodeHistoryLimited===true;
     this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();
     for(const segment of segments)if(validSegment(segment)&&!this.beforeRetention(segment)){this.segments.set(segment.id,segment);if(segment.end===null)this.openIds.add(segment.id);}
@@ -67,6 +71,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.dirty=new Set(this.segments.keys());this.version++;this.transformKey='';this.measureBytes();this.host?.requestUpdate();
   }
   patch(patches:OrderWallPatch[],status:OrderWallStatus){
+    this.inputRevision++;
     const prior=this.status;this.status={...status};
     for(const patch of patches){
       if(!patch.segment||!validSegment(patch.segment)||this.beforeRetention(patch.segment)){
@@ -219,6 +224,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
+    this.paintedRevision=this.inputRevision;
     this.stats.lastPaintMs=performance.now()-paintStarted;
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
   }
@@ -339,7 +345,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,retainedPaintPaths:this.paintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }

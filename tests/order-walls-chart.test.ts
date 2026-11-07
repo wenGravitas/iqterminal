@@ -35,6 +35,15 @@ function canvas(styles: string[] = [], paths: CapturedPath[] = []): CanvasRender
 }
 
 describe('Order Walls chart hit testing', () => {
+  it('does not certify a new input/status revision as painted until a completed draw',()=>{
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true},60_000),status={state:'live' as const,lastConfirmedAt:base+120_000};
+    const segment:OrderWallSegment={id:'paint-version',epoch:1,side:'bid',price:100,start:base,end:base+120_000,peakUsd:10000,meanUsd:10000,durationMs:120000,percentile:99,scopePartial:false,startKnown:true,valueRuns:[],valueRunsTruncated:false,endReason:'removed',endKnown:true};
+    primitive.setSnapshot([segment],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+    primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);expect(primitive.diagnostics().pendingProjectionSegments).toBe(0);
+    primitive.setStatus({...status,message:'Final source validation complete'});expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+    primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);
+    primitive.patch([{id:segment.id,segment:{...segment,peakUsd:20000}}],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+  });
   it('maps CSS pointer x to the same event time at DPR 2 used by projected geometry', () => {
     const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {

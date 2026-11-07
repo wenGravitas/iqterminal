@@ -54,5 +54,14 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(result['gate'], 'SUPPLEMENTAL')
         self.assertEqual(result['firstHistory3sGate'], 'SUPPLEMENTAL')
 
+    def test_complete_flags_cannot_certify_wall_coverage_without_reference_and_paint_proof(self):
+        rows = [sample(i) for i in range(1, 6)]
+        self.assertEqual(self.report(rows)['gate'], 'FAIL')
+        for row in rows:
+            row['wallCoverageVerification'] = {'valid': True}
+        self.assertEqual(self.report(rows)['gate'], 'PASS')
+        rows[2]['wallCoverageVerification']['valid'] = False
+        self.assertEqual(self.report(rows)['gate'], 'FAIL')
+
 if __name__ == '__main__':
     unittest.main()

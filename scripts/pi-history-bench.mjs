@@ -11,6 +11,7 @@ const base=process.env.IQ_BENCH_URL??'http://127.0.0.1:4180',label=process.env.I
 const dir='artifacts/pi-history-r1';mkdirSync(dir,{recursive:true});
 const windowFile=`${dir}/windows.json`;
 const windows=existsSync(windowFile)?JSON.parse(readFileSync(windowFile,'utf8')):{end:Math.floor(Date.now()/3600000)*3600000-3600000};
+const wallReferences=JSON.parse(readFileSync(process.env.IQ_BENCH_WALL_REFERENCES??new URL('./pi-wall-reference.json',import.meta.url),'utf8'));if(wallReferences.version!==1)throw Error('Unknown wall reference version');
 writeFileSync(windowFile,JSON.stringify(windows,null,2)+'\n');
 const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'perpetual'},
  {name:'footprint-24h-1h',kind:'footprint',hours:24,interval:'1h',step:3600000,market:'perpetual'},
@@ -21,6 +22,7 @@ const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step
 if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
+// This extends observation/frame capture only; it does not enable a live subscription.
 const keepCurrent=process.env.IQ_BENCH_KEEP_CURRENT==='1',cpuProfile=process.env.IQ_BENCH_CPU_PROFILE==='1';
 const executedSource=readFileSync(new URL(import.meta.url)),scriptSha256=createHash('sha256').update(executedSource).digest('hex');
 writeFileSync(`${dir}/${label}-executed.mjs`,executedSource);
@@ -31,11 +33,12 @@ const browser=await chromium.launch({headless:process.env.IQ_BENCH_HEADLESS==='1
 try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for(let run=1;run<=samples;run++){
  const end=item.now?Math.floor(Date.now()/item.step)*item.step+item.step:windows.end;
  const requested={from:end-item.hours*3600000,to:end},requests=[],errors=[],before=resource();
+ const candidateReference=wallReferences.cases[item.name],wallReference=item.kind==='walls'&&!item.now&&candidateReference?.from===requested.from&&candidateReference?.to===requested.to?candidateReference:null;
  const params={venue:'binance',market:item.market,interval:item.interval,type:item.kind==='footprint'?'footprint':'candle',rowPrice:25,historyViewport:requested,studies:[]};
  if(item.kind==='walls')params.indicators=[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native',minDurationMs:0,showHistory:true}}];
  const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:['chart-bench'],activeView:'chart-bench',id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{'chart-bench':{id:'chart-bench',contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:new URL(base).origin,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})},{name:'basis.theme.v1',value:'dark'},{name:'iqterminal:object-tree-sidebar:v1:chart-bench',value:JSON.stringify({version:1,width:280,collapsed:true})}]}]}});
- const page=await context.newPage();await routeTestBrowser();await page.addInitScript(({kind,requested,step})=>{
+ const page=await context.newPage();await routeTestBrowser();await page.addInitScript(({kind,requested,step,wallReference})=>{
   const b=window.__bench={frames:[],tasks:[],marks:{firstHistoryAt:null,completeAt:null,firstCurrentAt:null}};let last=performance.now(),sampleAt=0;
   // RAF now is the frame start; it can predate a long chart draw. Record the
   // observation clock only after reading actual painted-content diagnostics.
@@ -55,13 +58,14 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
       const d=e.orderWallsDiagnostics(),archive=p.orderWallsStatus?.archive;
       if(matches&&d.visibleHistorical>0)b.marks.firstHistoryAt??=performance.now();
       if(d.visibleCurrent>0&&p.orderWallsStatus?.state==='live')b.marks.firstCurrentAt??=performance.now();
-      if(matches&&d.visibleHistorical>0&&archive?.requestComplete&&archive.exact&&archive.from<=requested.from&&archive.to>=requested.to&&archive.loadedThrough>=requested.to&&!d.valueHistoryLimited&&!d.episodeHistoryLimited)b.marks.completeAt??=performance.now();
+      const painted=wallReference&&d.mounted&&d.archiveSegments===wallReference.segments&&d.segments===wallReference.segments&&d.archiveValueRuns===wallReference.valueRuns&&d.pendingProjectionSegments===0&&d.pendingReferenceSegments===0&&Number.isInteger(d.inputRevision)&&d.inputRevision===d.paintedRevision;
+      if(matches&&painted&&d.visibleHistorical>0&&archive?.requestComplete&&archive.exact&&archive.from===wallReference.sourceFrom&&archive.to===wallReference.sourceTo&&archive.gaps.length===wallReference.gaps&&archive.loadedThrough>=requested.to&&!d.valueHistoryLimited&&!d.episodeHistoryLimited)b.marks.completeAt??=performance.now();
      }
     }
    }requestAnimationFrame(frame);
   }requestAnimationFrame(frame);
   new PerformanceObserver(list=>b.tasks.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration})))).observe({type:'longtask',buffered:true});
- },{kind:item.kind,requested,step:item.step});
+ },{kind:item.kind,requested,step:item.step,wallReference});
  const requestRecords=new WeakMap();
  const relevant=request=>request.url().includes('/market-data/')&&!request.url().includes('/stream');
  context.on('request',request=>{if(!relevant(request))return;const record={url:request.url(),status:null,at:performance.now(),transferState:'request-started',viewId:request.headers()['x-iq-view-id']??null};requestRecords.set(request,record);requests.push(record);});
@@ -106,5 +110,8 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   valid:diagnostics?.fixture===false&&actualEnvironment?.dataMode==='staging'&&actualEnvironment?.historyTiles===true&&(!process.env.IQ_BENCH_BUILD||actualEnvironment?.build===process.env.IQ_BENCH_BUILD)};
  if(!environmentVerification.valid)exception??='Unverified or incorrect staging/history/build environment; sample cannot certify a gate';
  appendFileSync(observations,JSON.stringify({phase:'observed-before-context-close',label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,requested,deadlineMs:observationMs,environmentVerification,paintMarks,last,diagnostics,requests,exception})+'\n');
- await context.close();appendFileSync(observations,JSON.stringify({phase:'context-closed',label,case:item.name,run})+'\n');const traceFinalization=await finishResponseTraces(responseTasks);const result={traceFinalization,traceHelperSha256,timingBasis:'navigation-relative-painted-content-observation-v2',appVisibilityGuard:true,environmentVerification,scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
+ await context.close();appendFileSync(observations,JSON.stringify({phase:'context-closed',label,case:item.name,run})+'\n');const traceFinalization=await finishResponseTraces(responseTasks);
+ const batchRevisions=requests.filter(r=>r.url.includes('/walls/projection-batch')&&r.status===200).map(r=>r.headers?.['x-iq-source-revision']);
+ const wallCoverageVerification=wallReference?{reference:wallReference,sourceVerified:batchRevisions.length>0&&batchRevisions.every(revision=>revision===wallReference.sourceToken),valid:completeMs!==null&&batchRevisions.length>0&&batchRevisions.every(revision=>revision===wallReference.sourceToken)}:null;
+ const result={traceFinalization,traceHelperSha256,timingBasis:'navigation-relative-painted-content-observation-v3-reference-paint',wallCoverageVerification,appVisibilityGuard:true,environmentVerification,scriptSha256,cpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
 }}finally{await browser.close();}
