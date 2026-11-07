@@ -1,5 +1,6 @@
 /** Real staging coverage/screenshots. No fixture data or fake clock. */
 import {chromium} from '@playwright/test';
+import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',fixed=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end,prefix=process.env.IQ_BENCH_LABEL??'real';
 const browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles']});
@@ -9,6 +10,7 @@ try{for(const scenario of ['five-closed-plus-forming','current-5m-retry','spot-4
  const params={venue:'binance',market:spot?'spot':'perpetual',interval:five?'5m':'1h',type:'footprint',rowPrice:25,historyViewport:range,studies:[]};
  const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Coverage',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:base,localStorage:[{name:'basis.theme.v1',value:'dark'},{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage(),requests=[];let error,recovery;
+ await routeTestBrowser();
  page.on('response',r=>{if(r.url().includes('footprint'))requests.push({url:r.url(),status:r.status()});});
  try{await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});
  if(process.env.IQ_COVERAGE_RETRY==='1'){await page.waitForFunction(id=>window.__terminal?.panels.get(id)?.footprintStatus?.state==='failed',id,{timeout:12000}).catch(()=>{});const failed=await page.evaluate(id=>{const p=window.__terminal?.panels.get(id);return p?.footprintStatus?.state==='failed'?{state:p.footprintStatus.state,message:p.footprintStatus.message}:null;},id);if(failed){recovery={before:failed,action:'one explicit user-facing Retry market data click'};await page.getByRole('button',{name:'Retry market data',exact:true}).click();}}
