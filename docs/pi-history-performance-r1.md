@@ -1943,3 +1943,58 @@ validation and projector import are excluded. The full ready30h wall loading
 gate must still be rerun and remains failed/unproven. No production rollout or
 incumbent staging-serving change occurred. Owned temporary endpoints, tunnel,
 preview and browser exited. Test windows were verified on workspace 9, unfocused.
+
+### Full chart gate recheck and data-only control work (f602673)
+
+A new isolated a33b01c gateway reused read-only incumbent state and existing
+collectors/materializers under the same512MiB/oneCPU bounds. It passed293staging
+tests, typecheck/build and actual Docker build. The production c9073e4 client
+used a new4182preview: history via separate18794SSH to new18792gateway; current,
+health and streams retained incumbent18781. Exact route/build/source/collector
+IDs and raw server resources are in backend `chart-gateway-a33/`. This was not a
+serving replacement, bridge/GC activation or production rollout.
+
+Five c907 Spot30h samples all import/paint8293walls,49154points and35explicit
+source gaps. First history [3484.9,6280.1,6692.8,6688,6764]ms and completion
+[5473.3,7280.5,7693,7682.6,6764.1]ms fail first3s and median5s. Two USD-M
+five-run cohorts both fail complete coverage. The first SSH handle exited255
+from keepalive timeout; gateway remained running/noOOM with no collector/API
+identity change. The second connection was launched only after confirming that
+handle terminal/listener absent. Its failed samples are also retained. Ready
+source was not called unavailable to excuse missing coverage.
+
+A supplemental native Pi CPU profile showed repeated pane-control layout work
+from every wall callback. f602673 gates indicator/pane-control refresh on loading
+transitions, keeping every financial geometry/status patch. A browser fixture
+checks100patches retain101points without a control rebuild, followed by correct
+spinner transitions. All9headed software-rendered wall UI/pane lifecycle tests,
+typecheck and build pass. Local blank native Canvas2D workspace9RAF remains near
+16.7ms; it does not prove chart60fps or explain away the chart stalls.
+
+Five f602 Spot samples all validate and paint the identical full reference.
+First useful history [2921.1,1773.6,2381.9,2409.5,2238.6]ms gives
+median2381.9/max2921.1: first-history3s gate PASS. Completion
+[5617.1,4644.3,8377.2,5320,6019.7]ms gives median5617.1/max8377.2: median5s
+FAIL, maximum10s PASS, overall prepared-view latency FAIL. These sequential
+cohorts have variable route conditions; they do not isolate the timing effect
+of one code change. Exact native rendering mode is Canvas2D; no GPU claim.
+
+New native-candle diagnostics also expose missing base-chart context: its
+1000bar cache starts1793765400000, after the requested1793696400000left edge.
+Wall history itself meets the exact reference counts/coverage in those Spot
+runs, while screenshots show that earlier price context is not loaded. This
+remains a distinct visible-history limitation; no cap was raised and no derived
+OHLC was silently substituted for native exchange candles.
+
+Raw samples/requests/paint checks, source discovery, CPU profile, failed cohorts,
+all screenshots, executed scripts and validation outputs are indexed in
+`artifacts/pi-history-r1/chart-c907-a33/README.md`. An invalid initial expectedSHA
+launch is explicitly excluded and retained; benchmark identity now rejects an
+unknown source commit before opening a browser. The owned gateway exits0;
+preview/tunnel/browsers close and collector/incumbent API identities match.
+
+No new footprint/current/warm/heap/default-rollover acceptance is claimed by
+this cohort. Prior footprint passes remain b47457b evidence; current first-paint,
+warm1s, full two-history/custom-profile concurrency, repeated-use plateau and
+rolling default reuse remain failed or unproven. Performance acceptance stays
+incomplete and the full release goal remains active.

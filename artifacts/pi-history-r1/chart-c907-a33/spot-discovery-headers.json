@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "elapsedMs": 3235.6102209996607,
+  "headers": {
+    "X-IQ-Request-Id": "c9362cf5-e881-4dcf-8eb3-1acfdb4e7851",
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+    "Content-Length": "197258",
+    "X-IQ-Decoded-Bytes": "197258",
+    "X-IQ-Db-Queries": "3",
+    "X-IQ-Db-Read-Rows": "309673",
+    "X-IQ-Db-Read-Bytes": "248055053",
+    "Server-Timing": "admission;dur=0, db;dur=717.12, sqlqueue;dur=444.81, dbdecode;dur=0.31, project;dur=0.00, serialize;dur=1.10, total;dur=730.88",
+    "Date": "Sat, 07 Nov 2026 15:07:48 GMT",
+    "Connection": "close"
+  },
+  "path": "/v2/history/walls/discover?market=spot&profile=binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1&from=1793696100000&to=1793804700000"
+}
