@@ -5,3 +5,8 @@ export async function finishResponseTraces(tasks,budgetMs=1000){
  finally{clearTimeout(timer);}
  return {timedOut,taskCount:tasks.length};
 }
+
+/** Closed history is not the stopping condition for a current-display sample. */
+export function loadingObservationComplete({currentCase,currentAt,completeAt,keepObserving=false}){
+ return !keepObserving&&(currentCase?currentAt!==null:completeAt!==null);
+}
