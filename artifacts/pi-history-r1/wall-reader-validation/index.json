@@ -17,6 +17,11 @@
       "sha256": "17223f22e0db74aefd8035a626e40c11be9da2bcbc6f0a9c38d7aefb3336c751"
     },
     {
+      "name": "compiled-build.json",
+      "bytes": 351,
+      "sha256": "0f1febc7e5808a2e78b710e5b05762f408489e04bad8c8e2344a16c0a0f46e6e"
+    },
+    {
       "name": "event-order-test-failure.log",
       "bytes": 3794,
       "sha256": "36cd3c428c2e462bbb69b9f85f29f969d3cae31e143429e5142537f5d1db24ce"
