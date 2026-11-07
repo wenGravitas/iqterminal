@@ -1,5 +1,5 @@
 import {afterEach,expect,test,vi} from 'vitest';
-import {discoverPreparedWallAdmission,PreparedWallPreparationError} from '../src/feed/prepared-wall-admission';
+import {discoverPreparedWallAdmission,PreparedWallPreparationError,wallPreparationReason} from '../src/feed/prepared-wall-admission';
 import {historyScheduler} from '../src/feed/history-scheduler';
 afterEach(()=>vi.useRealTimers());
 const request={market:'spot' as const,profile:'exact-profile',from:1000,to:2000},url='/market-data/v2/history/walls/discover?market=spot';
@@ -43,4 +43,18 @@ test('mismatched progress never publishes coverage and a ready-but-invalidated c
 test('disabled/legacy discovery keeps its existing fallback without creating lease work',async()=>{
  const calls:RequestInit[]=[];const fetcher=(async(_input,init)=>{calls.push(init!);return new Response('{"state":"missing"}');}) as typeof fetch;
  expect(await run(fetcher)).toEqual({state:'missing'});expect(calls).toHaveLength(1);expect(calls[0].method).toBeUndefined();
+});
+
+test('capacity pauses remain visible, yield sockets and clear on automatic recovery using the same consumer',async()=>{
+ vi.useFakeTimers();const updates:any[]=[],headers:Headers[]=[];let reads=0;
+ const fetcher=(async(_input,init)=>{
+  if(init?.method==='DELETE')return new Response('{}');headers.push(new Headers(init?.headers));
+  return new Response(JSON.stringify(++reads===1?reply(job('canonical',{state:'paused',category:'capacity',error:'Derived cache budget. Resumes automatically.',retryable:true})):reads===2?reply(job('projection')):{...reply(job('ready')),state:'ready'}));
+ }) as typeof fetch;
+ const pending=run(fetcher,undefined,{onPreparation:(value:any)=>updates.push(value)});
+ await vi.advanceTimersByTimeAsync(0);expect(updates[0].state).toBe('paused');expect(wallPreparationReason(updates[0])).toContain('Derived cache budget. Resumes automatically.');
+ expect(historyScheduler.diagnostics().active).toBe(0);
+ await vi.advanceTimersByTimeAsync(250);expect(updates[1].state).toBe('building');expect(wallPreparationReason(updates[1])).not.toContain('paused');expect(updates[1].error).toBeUndefined();
+ await vi.advanceTimersByTimeAsync(250);await pending;await vi.advanceTimersByTimeAsync(0);
+ expect(new Set(headers.map(h=>h.get('X-IQ-Wall-Consumer'))).size).toBe(1);expect(headers.every(h=>!h.has('X-IQ-Wall-Retry'))).toBe(true);
 });

@@ -1,3 +1,4 @@
+import {wallPreparationReason} from './prepared-wall-admission';
 import {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
 export {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
 import {preparedWallReader} from './prepared-wall-history';
@@ -389,7 +390,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let lastStatus: OrderWallStatus | undefined;
   const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
     watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{retry:options.preparationRetry,onPreparation:preparation=>{
-      const reason=`Preparing wall history: ${preparation.phase}; ${preparation.pages} canonical / ${preparation.projectionPages} selected parts.`;
+      const reason=wallPreparationReason(preparation);
       const archive:OrderWallArchiveStatus={...archiveStatus(request,availability,'building'),requestComplete:false,rangeComplete:false,
         loadedThrough:Math.min(request.to,Math.max(request.from,prior?.projector.confirmedAt??request.from)),preparation,reason};
       options.onUpdate?.({kind:'patch',patches:[],status:statusForArchive(archive,'building',reason),pages,bytes,...(prior?{resume:prior}:{})});

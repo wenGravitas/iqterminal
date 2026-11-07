@@ -7,6 +7,11 @@ export interface WallPreparationProgress {
  category?:string;error?:string;retryable?:boolean;
  sourceCoverage?:{availableFrom:number|null;confirmedTo:number|null;gapCount:number;gapsTruncated:boolean};
 }
+/** History progress stays separate from the live feed's freshness state. */
+export function wallPreparationReason(value:WallPreparationProgress){
+ const parts=`${value.phase}; ${value.pages} canonical / ${value.projectionPages} selected parts.`;
+ return value.state==='paused'?`Wall history preparation paused: ${value.error??'waiting for processing capacity; resumes automatically.'} (${parts})`:`Preparing wall history: ${parts}`;
+}
 export class PreparedWallPreparationError extends Error {
  constructor(message:string,readonly category:string,readonly retryable:boolean){super(message);this.name='PreparedWallPreparationError';}
 }
