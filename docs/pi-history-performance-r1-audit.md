@@ -95,3 +95,17 @@ The supplemental 180s observation fails with HTTP 408 after first paint at
 checks pass nine tests. Earlier full-suite vault timeout/scoped pass remains
 explicit. All original open gates, Spot preparation, scheduling/retention,
 current/concurrent, warm and repeated-use requirements remain open.
+
+
+November 7 current evidence: backend preparation CLI 74837d7 (247 tests/type/build
+pass), serving 18579d9, measured client 7a1f6b1 (1,093 pass/two skip plus scoped
+browser protocol evidence). Spot 30h server preparation/publication and independent
+canonical/original-projector references now PASS for 8,293 walls / 49,154 points /
+35 gaps. Requested-versus-rendered Pi coverage still FAILS: five first-paint values
+[null,9591.6,null,null,null]ms, all completions null; supplemental 180s discovery
+HTTP 502 with no history painted. Preserve the full viewport and every sample.
+The exact source-resume comparison removes three queries and about 237MB read
+bytes without changing its next page; regressed horizons cannot publish. This
+provides no automatic fair wall scheduling, sliding reuse or disk retention.
+All earlier failed latency/current/warm/repeated-use gates and unverified items
+remain open. Do not infer full Spot browser coverage from server reference proofs.

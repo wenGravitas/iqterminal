@@ -74,7 +74,10 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  const started=performance.now();let firstCurrentMs=null,firstHistoryMs=null,completeMs=null,viewportAt=null,last=null,exception=null;const referenceFrames=[];
  try{
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});
-  await page.waitForFunction(()=>window.__terminal?.panels.get('chart-bench')?.engine?.chart.dataLayer.length>0,null,{timeout:12000});
+  // A supplemental coverage observation must also observe a delayed native
+  // bootstrap. Normal latency runs retain the unchanged 12s failure boundary.
+  await page.waitForFunction(()=>window.__terminal?.panels.get('chart-bench')?.engine?.chart.dataLayer.length>0,null,
+    {timeout:observationMs>12000?Math.max(1,observationMs-(performance.now()-started)):12000});
   viewportAt=performance.now();if(item.kind==='walls')await page.evaluate(range=>{const p=window.__terminal.panels.get('chart-bench'),d=p.engine.chart.dataLayer;p.engine.setRange({from:d.timeToIndexFloat(range.from/1000),to:d.timeToIndexFloat(range.to/1000)});},requested);
   const deadline=started+observationMs;
   while(performance.now()<deadline){

@@ -3,24 +3,27 @@
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
 Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
-Current measured production client is `fb11b9c7bd0cba9864d2ac12d75023ca921687a1`.
-Backend guarded rollout passes 243 tests/typecheck/build; collector IDs/start times
-are unchanged. Frontend full run has 1,078 pass / 2 skip / 4 failures, with all
-nine detector/vault checks passing separately at unchanged limits; 27 prepared
-history checks, typecheck/build and the prior ten functional browser checks pass.
-This is not one all-green frontend full run.
+Current measured production client is `7a1f6b129c78cf3e86178759bd98617213bcd701`.
+Backend preparation CLI `74837d7c1595c4a94111ecc694b531945da5cb1f` runs in an
+isolated staging worktree; it has not replaced the serving build. Its 247 tests,
+typecheck/build pass. Latest frontend full suite: 1,093 pass / two skip,
+typecheck/build pass; nine prior functional UI checks and the explicit headed
+retry protocol check have their own scopes/builds below. Collectors are unchanged.
 
 Footprint coverage repairs have complete real-chart evidence, but their latest
-latency gates remain failed. Selected-wall discovery/client delivery now preserve
-all 23,850 walls / 104,112 points / 47 source gaps through five bounded batches.
-The latest five normal Pi loading samples still FAIL: first-history values are
-[10594.3, null, null, null, null] ms and complete values are all null. A separate
-recovered-lane coverage observation completes in 143,524 ms; it is supplemental,
-not acceptance. The requested viewport remains the full 30 hours. Transport stalls
-and long render frames remain material bottlenecks. Automatic fair preparation,
-sliding reuse, derived disk retention, Spot 30h, warm/concurrent and repeated-use
-resource gates remain open. Later sections preserve historical results with their
-own exact builds; none supersedes a failed gate with eventual completion.
+latency gates remain failed. Prepared USD-M walls have an older full-coverage
+observation (23,850 walls / 104,112 points / 47 gaps at 143.524s), not a current
+client latency pass. Spot 30h is now prepared and published, with all 8,293 walls /
+49,154 points / 35 gaps checked against canonical and original-projector references.
+Its five Pi loading samples FAIL: first-history [null,9591.6,null,null,null]ms,
+complete all null. A separate 180s attempt also has no historical paint and fails
+with discovery HTTP 502; the native chart bootstrap took 4.870s in that attempt.
+Thus full Spot browser coverage is still unproven, despite complete server files.
+
+Automatic fair wall preparation, sliding reuse, derived disk retention,
+warm/current-concurrent and full-view repeated-use resource gates remain open.
+Earlier failed cohorts and timed-out tests remain below with their exact builds;
+eventual completion and independent reference checks do not supersede loading gates.
 
 ## Baselines and isolation
 
@@ -1424,3 +1427,76 @@ native fetch's accidental options-object method binding; its initial failure and
 final executed bundle/results are retained in `wall-batch-temporary-retry/`.
 This fixture result does not prove new-client full real-source coverage or any
 Pi latency gate. No backend code, serving runtime or collector changed.
+
+
+### November 7: pinned Spot preparation, exact reference and failed Pi gates
+
+Serving remains 18579d9; preparation uses isolated backend 74837d7; measured
+production frontend is 7a1f6b1. Visible request is
+1793696400000..1793804400000; incumbent 5m padding makes the on-wire request
+1793696100000..1793804700000. Profile is the canonical Spot BTCUSDT native 10%
+Top-10 source, exactly deriving displayed Top 8/side. Source token is
+`d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394`, pinned
+watermark 18047515. Canonical key is
+`445660f531976fa8d83359067ca5aa40886d11f39c97388423654e3c71a727f2`;
+selected key is
+`efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0`.
+
+All 34 canonical pages match independent FINAL re-reads. The actual frontend
+importer/batch protocol matches the original projector from frontend
+5358b9d162d8303fada24f2bb5679c4a2df306e6 for every final segment and selected
+state: 8,293 walls / 49,154 exact value points. Both segment hashes are
+`cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e`.
+There are 35 explicit source gaps; they remain gaps rather than continuous walls.
+The original/reference and current importer bundles, hashes, source proof,
+canonical/projection manifests, progress, SQL/resource logs and guarded publication
+records are in the backend repository's `artifacts/pi-history-r1/spot-30h-nov7/`.
+Canonical data is 64,395,366 decoded / 2,794,422 gzip bytes; selected records are
+13,330,354 decoded / 1,454,262 gzip bytes, delivered in two bounded batches.
+The x64 in-process client reference took 378.346ms; it is not network/Pi/paint data.
+
+Unpublished resume now reuses its durable horizon and validates fresh source at
+publication. The same real next page produces byte-identical progress, before
+versus after: 8 vs 5 queries, 335,499,035 vs 98,562,397 SQL read bytes. Single-run
+elapsed values are 1,344.752 vs 665.076ms, but SQL queue wait is also different
+(721.648 vs 158.786ms); do not attribute their entire elapsed difference to code.
+No schema/index/limit change is involved. Matched prefix proof and raw samples
+are retained. Final publication/recovery rejects regressed horizons and corrections.
+
+Actual missing-derived preparation is separate from prepared delivery. The
+canonical chain's nonoverlapping bounded invocations total 20,997.507ms processing,
+132 queries, 34,751,439 read rows / 3,432,340,046 read bytes; first persisted page is
+at 1,332.105ms in the first invocation. Sampled endpoint RSS maximum is 216,907,776
+bytes, not a continuous RSS peak. This sum excludes manual gaps between invocations,
+comparison/reference runs and publication. Selected preparation totals 5,059.233ms
+across five serial invocations, with final source validation. Raw per-invocation
+wall times/CPU/RSS/cursors remain authoritative; this is not one unattended build
+latency or a cold-client cache timing. Automatic default scheduling remains open.
+
+On the actual Pi/client SSH/Vite route, `nov7-spot-prepared` preserves all five
+empty-browser-cache samples: first historical paint
+[null,9591.6,null,null,null]ms, completion all null. Environments all verify staging,
+history enabled, build 7a1f6b1, fixtures disabled. Both loading gates FAIL; no complete
+cohort median/maximum/p95 is reported. Runs 1 and 5 have the unchanged 12s native
+chart-bootstrap observation timeout. Run 2 paints only 16 active historical
+segments / 183 points, rather than the full prepared set. Its screenshot and
+actual plot-culling diagnostics verify a tiny historical prefix, not full coverage.
+
+The distinct `nov7-spot-coverage` 180s observation reaches the exact requested
+viewport after native bootstrap at 4,870.198ms, then fails discovery with HTTP 502:
+zero archive walls painted, requestComplete=false, retryable partial history.
+It is SUPPLEMENTAL, not a loading gate. Local tunnel startup first timed out;
+supervision recovered and both direct lanes plus proxied build/health verified
+before browser launch. Those startup errors and all later request failures are
+retained. Historical source gaps and the unrelated Hyperliquid OI stale status are
+not repaired or treated as source absence for this known-ready Spot view.
+
+Normal observations keep the 12s boundary and original latency thresholds.
+Supplemental observations now permit a delayed bootstrap within their explicitly
+longer coverage budget; this cannot count as latency acceptance. The report's
+first-history gate now also requires verified environment metadata. Three synthetic
+reporting regressions pass; these are report tests, not financial/loading fixtures.
+No heavyweight tests, builds or remote preparation ran during either Pi cohort.
+Server health/RSS snapshots are retained, but per-frame server CPU sampling is
+not available for this cohort. Warm, current/concurrent and full memory/frame
+acceptance remain incomplete; history-only measurements cannot certify them.
