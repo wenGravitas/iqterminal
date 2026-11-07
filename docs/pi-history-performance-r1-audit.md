@@ -132,3 +132,12 @@ Evidence e1921d9 retains six validation queries reading 703,103,126 bytes: this
 remaining cost is explicit. Server cache recovery is verified; serving admission,
 rolling reuse, cancellation/leases, derived retention and every failed/unproven
 Pi gate remain incomplete. Serving and collectors have not changed.
+
+Admission bridge b7855e4 / 00f11e0 is implemented but disabled: independent bounded
+loopback admission, leased cancellation/expiry, restart/resume, explicit Retry,
+capacity and metadata-only build polling have 26 focused / 273 full backend tests
+plus type/build passing. Local loopback protocol tests are not genuine staging or
+chart validation. Frontend polling/status/Retry/cancellation wiring, real persistent
+worker and serving validation remain outstanding. Rolling/default reuse, retention
+and all existing failed/unproven Pi gates remain incomplete; the full objective
+has not been reduced to these component proofs.

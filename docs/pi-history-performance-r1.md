@@ -10,6 +10,10 @@ typecheck/build pass. Latest frontend full suite: 1,093 pass / two skip,
 typecheck/build pass; nine prior functional UI checks and the explicit headed
 retry protocol check have their own scopes/builds below. Collectors are unchanged.
 
+New backend source `00f11e0` has 273 passing tests/type/build for the opt-in
+consumer admission bridge; it is disabled and has not been staged or wired into
+the client. Its component proof is distinct from bba1e67's real cache Retry proof.
+
 Footprint coverage repairs have complete real-chart evidence, but their latest
 latency gates remain failed. Prepared USD-M walls have an older full-coverage
 observation (23,850 walls / 104,112 points / 47 gaps at 143.524s), not a current
@@ -1571,3 +1575,28 @@ source/queue receipts, SQL/resource samples and runtime identities under
 `artifacts/pi-history-r1/wall-public-cache-retry/`. Ordinary-view admission, rolling
 reuse, leases/cancellation, derived retention and standalone-CLI pin migration
 remain open. Every failed/unproven Pi acceptance gate above is unchanged.
+
+### Consumer admission bridge component (not yet live-view acceptance)
+
+Backend b7855e4 connects explicitly enabled discovery to the existing separate
+bounded coordinator over loopback. Consumer leases share exact work, pause it on
+last release/expiry, retain progress and resume without repinning. Restart waits
+for fresh consumer interest. Manual/default work survives visible cancellation;
+paused artifacts yield active slots while remaining within tracked/disk budgets.
+Completion concurrent with last release leaves reusable ready data. Explicit Retry
+tokens remain idempotent and failures cannot reset through ordinary polling.
+
+Backend 00f11e0 adds exact admitted-job hints to avoid repeated canonical-source
+hashing during build-status polling. Ready discovery still independently validates
+source. Twenty-six focused and 273 full backend tests, typecheck/build pass. The
+tests include actual local loopback control requests plus bounded injected source
+dependencies. They do not establish genuine staging materialization or Pi UX.
+Raw outputs and the read-only serving/collector observation are in backend
+`artifacts/pi-history-r1/wall-consumer-admission/`.
+
+The bridge remains disabled. Frontend consumer identity, progress polling/status,
+Retry and cancellation must be wired, then the persistent worker and serving path
+must receive real staging validation. Serving remains 18579d9 in the recorded
+observation, with unchanged collectors. This increment does not complete ordinary
+view preparation, rolling defaults, long-term retention or any failed/unproven Pi
+gate. No production deployment or merge has occurred.
