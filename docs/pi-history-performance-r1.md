@@ -1864,3 +1864,58 @@ Earlier passing footprint latency cohorts use b47457b and are not new-reader
 performance acceptance. Final serving activation, transfer-safe retention,
 rolling/default wall reuse and all previously failed/unproven current/warm/wall
 latency/resource gates remain incomplete.
+
+### Derived retirement and capacity recovery (ee28eb5 / a77ac62)
+
+The frontend reader now passes its consumer identity as `X-IQ-Wall-Reader`
+through every prepared data/source request, preserving the existing view-ID
+correlation header. Backend c667678/9b525ba gates prepared file reads with
+transfer-spanning pins when opt-in derived GC is enabled; missing reader headers
+return explicit HTTP 428. Paired gateway/client rollout is required before
+activation. Current incumbent staging serving remains 18579d9, bridge disabled.
+
+Backend 9b525ba's actual packaged worker retired only an isolated derived copy,
+then rebuilt retained Spot 30h source. Client ee28eb5 and the original 5358b9d
+projector agree exactly: 8,293 walls, 49,154 value points, 35 explicit source gaps,
+financial hash cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e.
+A live reader and then an independent HTTP request pin each prevented eviction.
+Original derived files, raw source token and collector/incumbent API identities
+were unchanged. All owned actors stopped; test ports were released.
+
+This is one staging loopback lifecycle/cold-materialization run. Artificial GC
+policy time, a 16-second ready-reader validation hold and a brief owned-gateway
+SIGSTOP inspect the barriers; they are not Pi loading timings. Cold import after
+retirement took 43,175.38 ms, first imported content 41,937.99 ms. It still waits
+for completed preparation; it is not progressive chart paint. The worker's 69
+bounded steps issued 113 SQL queries reading 32,744,261 rows / 2,465,245,764 bytes,
+with peak recorded step RSS 138,096,640 bytes. Source-read amplification remains.
+
+All 43 current-footprint probes during that cold build remained ready/live,
+median 2.910 ms / maximum 9.480 ms; their cursors advanced. This is limited
+loopback serving evidence, not the complete two-history-chart plus custom-profile
+Pi/UI concurrency gate. Every raw sample, build/image identity and query/resource
+receipt is in backend `artifacts/pi-history-r1/wall-gc-staging/` (ad95a7d).
+Operational/retry/rollback contracts are in backend `docs/wall-derived-retention.md`.
+
+Backend 5ebe55c additionally reports transient storage pauses without mutating
+failed/ready state or resetting checkpoints. Frontend a77ac62 shows the pause
+reason in history status, keeps polling without occupying sockets, and clears
+it automatically on recovery using the same consumer/job. A separate real runner
+probe injects the existing apparent-byte storage guard with a sparse file only
+inside a copied derived root. Three renewals report paused/capacity; removing the
+file resumes the same job to canonical progress without Retry. Clean exit and
+unchanged collectors/API are recorded in backend `wall-capacity-staging/`.
+
+Client validation receipts are in `wall-retention-client-validation/`: reader
+headers/correlation and lifecycle suites 52 passed; capacity/admission/history
+suites 40 passed; typecheck and staging diagnostics build passed. These are
+focused tests, not a new full browser/Pi gate cohort. The builds ran before the
+subsequent source commits, so their embedded build SHA is the previous HEAD;
+source diffs and exact test output identify what was checked.
+
+The prior b47457b footprint coverage/latency passes remain prior-build evidence.
+Ready wall latency, current first useful wall paint, warm revisit, full retained
+heap/frame plateaus and rolling default reuse remain failed/unproven. No gate is
+reclassified by this recovery work. Browser routing rules were reloaded and three
+new native Chromium test windows appeared on i3 workspace 9 while the user's
+workspace kept focus.
