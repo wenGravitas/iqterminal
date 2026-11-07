@@ -120,5 +120,15 @@ HTTP errors; this is server capacity evidence only. Completed-queue reopen
 changes neither queue metadata nor step logs. Serving/collectors stay unchanged.
 It does not complete serving-triggered admission, moving-window composition,
 leases/cancellation, global cache accounting/retention or any failed/unproven
-Pi loading/current/warm/repeated-use gate. Migration and explicit ready-job Retry
-limitations are documented. Preserve the full original scope.
+Pi loading/current/warm/repeated-use gate. Standalone-CLI pin migration remains
+open. Preserve the full original scope.
+
+Retry increment bba1e67: 260 backend tests/type/build pass; both added regressions
+fail on 5dd8b93. Real isolated staging Retry reuses all 66+66 USD-M parts without
+private canonical progress, repinning or changing 134 immutable files. Stable
+command replay after restart performs zero steps and preserves queue/log hashes.
+Full pending capacity rejects ready-job Retry without damaging the receipt.
+Evidence e1921d9 retains six validation queries reading 703,103,126 bytes: this
+remaining cost is explicit. Server cache recovery is verified; serving admission,
+rolling reuse, cancellation/leases, derived retention and every failed/unproven
+Pi gate remain incomplete. Serving and collectors have not changed.

@@ -4,8 +4,8 @@ Implementation and performance acceptance are separate. No production deployment
 
 Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
 Current measured production client is `7a1f6b129c78cf3e86178759bd98617213bcd701`.
-Backend coordinator `a6c57870d6dbdc84bf505a058f79b6caa30b1beb` runs in an
-isolated staging worktree; it has not replaced the serving build. Its 258 tests,
+Backend coordinator Retry repair `bba1e6746cf8d861b6683355dc295cc88f0c22e4` has
+isolated staging validation; it has not replaced the serving build. Its 260 tests,
 typecheck/build pass. Latest frontend full suite: 1,093 pass / two skip,
 typecheck/build pass; nine prior functional UI checks and the explicit headed
 retry protocol check have their own scopes/builds below. Collectors are unchanged.
@@ -1544,6 +1544,30 @@ proofs/manifests, step CPU/SQL/RSS samples, current-read samples, identities, so
 hashes and independent reference results. Serving build and collectors did not
 change. No production deploy or merge occurred. Source-window generation, serving
 admission, consumer cancellation/leases, global derived accounting/eviction and
-explicit public-only ready-job Retry/pin migration remain open. Every earlier Pi
+standalone-CLI pin migration remain open. Every earlier Pi
 loading failure and unverified acceptance gate is retained; server results cannot
 substitute for chart acceptance.
+
+### Public-only prepared-cache Retry recovery
+
+Backend bba1e67 repairs explicit Retry of a completed public-only canonical cache:
+fresh validation reuses its canonical and selected manifests without replaying raw
+history or repinning its source horizon. A changed source still requires explicit
+new revision admission. Retry rejects a full 32-pending queue while preserving the
+ready cache receipt and command token. Both regressions fail on 5dd8b93 and pass
+after repair; full backend 260 tests, typecheck/build pass.
+
+On isolated real staging, two bounded steps retain all 66 canonical and 66 selected
+parts, the exact horizon, coverage and 47 explicit gaps. All 134 immutable files
+remain byte-identical; no private canonical progress file appears. Replaying the
+same Retry command in a new process makes zero steps and leaves queue/step-log
+hashes unchanged. The single child lifecycle samples (2,136.150ms and 194.437ms)
+are server operation timings, not browser warm-load samples. Fresh validation still
+reads 1,216,793 DB rows / 703,103,126 bytes in six queries. This amplification remains
+visible. Serving 18579d9 and both collector identities/start times stay unchanged.
+
+Backend e1921d9 records the exact validation helper hash, immutable file hashes,
+source/queue receipts, SQL/resource samples and runtime identities under
+`artifacts/pi-history-r1/wall-public-cache-retry/`. Ordinary-view admission, rolling
+reuse, leases/cancellation, derived retention and standalone-CLI pin migration
+remain open. Every failed/unproven Pi acceptance gate above is unchanged.
