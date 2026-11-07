@@ -1919,3 +1919,27 @@ heap/frame plateaus and rolling default reuse remain failed/unproven. No gate is
 reclassified by this recovery work. Browser routing rules were reloaded and three
 new native Chromium test windows appeared on i3 workspace 9 while the user's
 workspace kept focus.
+
+### Exact selected-wall encoding transport (backend fae5c0d)
+
+The server-only codec experiment checked identical decoded hashes for five runs
+per batch/codec. Brotli quality 5 reduces the pinned Spot30h selected payload from
+1,439,054 to 1,276,146 bytes (11.32%). Higher qualities save little and consume
+substantially more CPU. Backend fae5c0d negotiates br5/gzip/identity with existing
+8 MiB total cache and three-encoder bounds. Financial content is unchanged.
+Full backend suite: 293 passed; typecheck/build and staged projection checks pass.
+
+A separate native Pi Chromium 155/Vite-preview/SSH transport comparison fetched
+the same two prepared batches concurrently, using five empty contexts per codec
+and exact decoded SHA validation. Gzip elapsed samples are [3259.7,1815.8,2751.6,
+3419.1,3020.4] ms, median 3020.4 / max 3419.1. Brotli samples are [1984.2,1776.9,
+2655.4,3183.6,2432.4], median 2432.4 / max 3183.6. Codec order alternates. Raw
+samples/resources, frozen executed script and environment are in
+`artifacts/pi-history-r1/wall-encoding-transport-fae/`; server experiments and
+identity/termination receipts are in backend `wall-encoding-profile/`.
+
+This is native transport/decode/hash timing, not chart paint: discovery, source
+validation and projector import are excluded. The full ready30h wall loading
+gate must still be rerun and remains failed/unproven. No production rollout or
+incumbent staging-serving change occurred. Owned temporary endpoints, tunnel,
+preview and browser exited. Test windows were verified on workspace 9, unfocused.

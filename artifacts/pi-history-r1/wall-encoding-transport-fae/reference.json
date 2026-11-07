@@ -1,0 +1,758 @@
+{
+  "scope": "Server-only lossless HTTP encoding microbenchmark on exact prepared selected records; not Pi loading or chart paint",
+  "node": "v22.23.4",
+  "arch": "x64",
+  "root": "/home/daz/iqterminal-wall-gc-proof/artifacts/pi-history-r1/gc-validation-9b5/retained/managed/projections",
+  "results": [
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "gzip6",
+      "run": 1,
+      "encodedBytes": 924807,
+      "encodeMs": 105.456785,
+      "decodeMs": 16.392578999999984,
+      "cpu": {
+        "user": 105482,
+        "system": 0
+      },
+      "memory": {
+        "rss": 99123200,
+        "heapTotal": 11288576,
+        "heapUsed": 7941880,
+        "external": 38928945,
+        "arrayBuffers": 34062688
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "gzip6",
+      "run": 2,
+      "encodedBytes": 924807,
+      "encodeMs": 69.658569,
+      "decodeMs": 19.42342000000002,
+      "cpu": {
+        "user": 69227,
+        "system": 80
+      },
+      "memory": {
+        "rss": 112406528,
+        "heapTotal": 11116544,
+        "heapUsed": 6458880,
+        "external": 44482246,
+        "arrayBuffers": 42338952
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "gzip6",
+      "run": 3,
+      "encodedBytes": 924807,
+      "encodeMs": 97.47625,
+      "decodeMs": 16.248853999999994,
+      "cpu": {
+        "user": 95093,
+        "system": 376
+      },
+      "memory": {
+        "rss": 124301312,
+        "heapTotal": 11116544,
+        "heapUsed": 7220952,
+        "external": 62907561,
+        "arrayBuffers": 60764267
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "gzip6",
+      "run": 4,
+      "encodedBytes": 924807,
+      "encodeMs": 70.93154199999998,
+      "decodeMs": 20.137385999999992,
+      "cpu": {
+        "user": 70425,
+        "system": 0
+      },
+      "memory": {
+        "rss": 120336384,
+        "heapTotal": 15572992,
+        "heapUsed": 6797952,
+        "external": 44482246,
+        "arrayBuffers": 42338952
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "gzip6",
+      "run": 5,
+      "encodedBytes": 924807,
+      "encodeMs": 79.84499000000005,
+      "decodeMs": 18.57329500000003,
+      "cpu": {
+        "user": 79269,
+        "system": 0
+      },
+      "memory": {
+        "rss": 129839104,
+        "heapTotal": 15572992,
+        "heapUsed": 7492184,
+        "external": 62907561,
+        "arrayBuffers": 60764267
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br4",
+      "run": 1,
+      "encodedBytes": 891793,
+      "encodeMs": 55.315458000000035,
+      "decodeMs": 15.830043000000046,
+      "cpu": {
+        "user": 49585,
+        "system": 8341
+      },
+      "memory": {
+        "rss": 137601024,
+        "heapTotal": 15835136,
+        "heapUsed": 6897792,
+        "external": 46275203,
+        "arrayBuffers": 44131909
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br4",
+      "run": 2,
+      "encodedBytes": 891793,
+      "encodeMs": 49.75685699999997,
+      "decodeMs": 11.855711999999926,
+      "cpu": {
+        "user": 49511,
+        "system": 0
+      },
+      "memory": {
+        "rss": 169496576,
+        "heapTotal": 15835136,
+        "heapUsed": 7430032,
+        "external": 64634736,
+        "arrayBuffers": 62491442
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br4",
+      "run": 3,
+      "encodedBytes": 891793,
+      "encodeMs": 57.69130400000006,
+      "decodeMs": 11.364446000000044,
+      "cpu": {
+        "user": 60160,
+        "system": 3266
+      },
+      "memory": {
+        "rss": 193757184,
+        "heapTotal": 15835136,
+        "heapUsed": 6885528,
+        "external": 46242189,
+        "arrayBuffers": 44098895
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br4",
+      "run": 4,
+      "encodedBytes": 891793,
+      "encodeMs": 54.87083499999994,
+      "decodeMs": 12.764054999999985,
+      "cpu": {
+        "user": 50784,
+        "system": 3935
+      },
+      "memory": {
+        "rss": 217276416,
+        "heapTotal": 15835136,
+        "heapUsed": 7417448,
+        "external": 64601722,
+        "arrayBuffers": 62458428
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br4",
+      "run": 5,
+      "encodedBytes": 891793,
+      "encodeMs": 55.272575000000074,
+      "decodeMs": 12.083197000000041,
+      "cpu": {
+        "user": 61690,
+        "system": 289
+      },
+      "memory": {
+        "rss": 225656832,
+        "heapTotal": 15835136,
+        "heapUsed": 6885984,
+        "external": 46242189,
+        "arrayBuffers": 44098895
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br5",
+      "run": 1,
+      "encodedBytes": 823530,
+      "encodeMs": 91.98141199999998,
+      "decodeMs": 13.911224000000175,
+      "cpu": {
+        "user": 90932,
+        "system": 0
+      },
+      "memory": {
+        "rss": 226238464,
+        "heapTotal": 15835136,
+        "heapUsed": 7433392,
+        "external": 64467923,
+        "arrayBuffers": 62324629
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br5",
+      "run": 2,
+      "encodedBytes": 823530,
+      "encodeMs": 94.38830599999983,
+      "decodeMs": 14.204360000000179,
+      "cpu": {
+        "user": 94486,
+        "system": 0
+      },
+      "memory": {
+        "rss": 236511232,
+        "heapTotal": 15835136,
+        "heapUsed": 7058440,
+        "external": 65291453,
+        "arrayBuffers": 63148159
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br5",
+      "run": 3,
+      "encodedBytes": 823530,
+      "encodeMs": 103.37715600000001,
+      "decodeMs": 10.959653000000117,
+      "cpu": {
+        "user": 98724,
+        "system": 3893
+      },
+      "memory": {
+        "rss": 237637632,
+        "heapTotal": 16097280,
+        "heapUsed": 5576632,
+        "external": 65291453,
+        "arrayBuffers": 33961411
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br5",
+      "run": 4,
+      "encodedBytes": 823530,
+      "encodeMs": 93.01109500000007,
+      "decodeMs": 13.235230000000001,
+      "cpu": {
+        "user": 89856,
+        "system": 3617
+      },
+      "memory": {
+        "rss": 240545792,
+        "heapTotal": 16097280,
+        "heapUsed": 6154336,
+        "external": 54330439,
+        "arrayBuffers": 52187145
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 0,
+      "parts": 22,
+      "decodedBytes": 8276300,
+      "decodedSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "variant": "br5",
+      "run": 5,
+      "encodedBytes": 823530,
+      "encodeMs": 95.34011800000007,
+      "decodeMs": 11.939683000000059,
+      "cpu": {
+        "user": 93036,
+        "system": 0
+      },
+      "memory": {
+        "rss": 241074176,
+        "heapTotal": 16097280,
+        "heapUsed": 6696312,
+        "external": 72556173,
+        "arrayBuffers": 70412879
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "gzip6",
+      "run": 1,
+      "encodedBytes": 514247,
+      "encodeMs": 104.79977000000008,
+      "decodeMs": 14.529619000000139,
+      "cpu": {
+        "user": 99697,
+        "system": 4019
+      },
+      "memory": {
+        "rss": 245866496,
+        "heapTotal": 16097280,
+        "heapUsed": 6050664,
+        "external": 66937974,
+        "arrayBuffers": 64794680
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "gzip6",
+      "run": 2,
+      "encodedBytes": 514247,
+      "encodeMs": 47.8100280000001,
+      "decodeMs": 10.051294999999982,
+      "cpu": {
+        "user": 47415,
+        "system": 0
+      },
+      "memory": {
+        "rss": 251002880,
+        "heapTotal": 16097280,
+        "heapUsed": 6403928,
+        "external": 78093269,
+        "arrayBuffers": 75949975
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "gzip6",
+      "run": 3,
+      "encodedBytes": 514247,
+      "encodeMs": 37.37666599999989,
+      "decodeMs": 7.592619000000013,
+      "cpu": {
+        "user": 33938,
+        "system": 3622
+      },
+      "memory": {
+        "rss": 251002880,
+        "heapTotal": 16097280,
+        "heapUsed": 6072576,
+        "external": 71992062,
+        "arrayBuffers": 69848768
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "gzip6",
+      "run": 4,
+      "encodedBytes": 514247,
+      "encodeMs": 55.50514700000008,
+      "decodeMs": 11.686095000000023,
+      "cpu": {
+        "user": 54902,
+        "system": 164
+      },
+      "memory": {
+        "rss": 256139264,
+        "heapTotal": 16097280,
+        "heapUsed": 6421800,
+        "external": 83147357,
+        "arrayBuffers": 81004063
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "gzip6",
+      "run": 5,
+      "encodedBytes": 514247,
+      "encodeMs": 57.56692999999996,
+      "decodeMs": 12.72232299999996,
+      "cpu": {
+        "user": 57463,
+        "system": 4
+      },
+      "memory": {
+        "rss": 262893568,
+        "heapTotal": 16097280,
+        "heapUsed": 6769032,
+        "external": 94302652,
+        "arrayBuffers": 92159358
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br4",
+      "run": 1,
+      "encodedBytes": 492749,
+      "encodeMs": 33.85085700000013,
+      "decodeMs": 8.215517999999975,
+      "cpu": {
+        "user": 33720,
+        "system": 65
+      },
+      "memory": {
+        "rss": 262893568,
+        "heapTotal": 16097280,
+        "heapUsed": 6201952,
+        "external": 77531091,
+        "arrayBuffers": 75387797
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br4",
+      "run": 2,
+      "encodedBytes": 492749,
+      "encodeMs": 33.33905099999993,
+      "decodeMs": 9.186124999999947,
+      "cpu": {
+        "user": 39799,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 5769216,
+        "external": 28930886,
+        "arrayBuffers": 26791105
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br4",
+      "run": 3,
+      "encodedBytes": 492749,
+      "encodeMs": 31.03447899999992,
+      "decodeMs": 7.468981999999869,
+      "cpu": {
+        "user": 30761,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 6130304,
+        "external": 40048299,
+        "arrayBuffers": 37908518
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br4",
+      "run": 4,
+      "encodedBytes": 492749,
+      "encodeMs": 32.9923859999999,
+      "decodeMs": 5.67739900000015,
+      "cpu": {
+        "user": 32942,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 6452336,
+        "external": 51165712,
+        "arrayBuffers": 49025931
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br4",
+      "run": 5,
+      "encodedBytes": 492749,
+      "encodeMs": 27.59274400000004,
+      "decodeMs": 6.3777900000000045,
+      "cpu": {
+        "user": 27856,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 5822712,
+        "external": 35478384,
+        "arrayBuffers": 33338603
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br5",
+      "run": 1,
+      "encodedBytes": 452616,
+      "encodeMs": 48.95476299999973,
+      "decodeMs": 7.4618789999999535,
+      "cpu": {
+        "user": 48899,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 6119560,
+        "external": 46506512,
+        "arrayBuffers": 44366731
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br5",
+      "run": 2,
+      "encodedBytes": 452616,
+      "encodeMs": 47.71662800000013,
+      "decodeMs": 8.486715000000004,
+      "cpu": {
+        "user": 47238,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 5669120,
+        "external": 34437590,
+        "arrayBuffers": 32297809
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br5",
+      "run": 3,
+      "encodedBytes": 452616,
+      "encodeMs": 49.893148999999994,
+      "decodeMs": 7.001185000000078,
+      "cpu": {
+        "user": 49119,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 5965696,
+        "external": 45465718,
+        "arrayBuffers": 43325937
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br5",
+      "run": 4,
+      "encodedBytes": 452616,
+      "encodeMs": 54.914807999999994,
+      "decodeMs": 7.3103000000000975,
+      "cpu": {
+        "user": 50774,
+        "system": 3779
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 6262608,
+        "external": 56493846,
+        "arrayBuffers": 54354065
+      }
+    },
+    {
+      "key": "1d3936ea30a1f4c58e21837e3bbfdc269f182bc4708f93c2941e1033e7d2a3ba",
+      "sourceToken": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "market": "spot",
+      "start": 22,
+      "parts": 12,
+      "decodedBytes": 5054088,
+      "decodedSha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+      "variant": "br5",
+      "run": 5,
+      "encodedBytes": 452616,
+      "encodeMs": 47.27183100000002,
+      "decodeMs": 5.706838000000062,
+      "cpu": {
+        "user": 46728,
+        "system": 0
+      },
+      "memory": {
+        "rss": 248262656,
+        "heapTotal": 15572992,
+        "heapUsed": 5865224,
+        "external": 40411630,
+        "arrayBuffers": 38271849
+      }
+    }
+  ]
+}

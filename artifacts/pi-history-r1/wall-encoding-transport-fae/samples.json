@@ -1,0 +1,712 @@
+[
+  {
+    "run": 1,
+    "encoding": "gzip",
+    "before": {
+      "load": "1.40 1.11 1.77 5/1162 328473",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          648108 kB\nMemAvailable:    2892816 kB\nBuffers:           83308 kB\nCached:          2527456 kB\nSwapCached:           36 kB\nActive:          3449880 kB\nInactive:        2803020 kB\nActive(anon):    2479892 kB\nInactive(anon):  1539888 kB\nActive(file):     969988 kB\nInactive(file):  1263132 kB\nUnevictable:      178444 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33071904 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1548 kB\nWriteback:             4 kB\nAnonPages:       3821356 kB\nMapped:           751544 kB\nShmem:            376572 kB\nKReclaimable:     469820 kB\nSlab:             566068 kB\nSReclaimable:     469820 kB\nSUnreclaim:        96248 kB\nKernelStack:       18468 kB\nPageTables:        55572 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   15680780 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329064 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:              96 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328475  328063  100  4436 ps",
+        " 328086  328063 70.9 217956 chromium",
+        " 328063  327814 67.5 161764 node",
+        " 328432  328086 60.0 139920 chromium",
+        " 328429  328404 37.5 81292 chromium",
+        " 328404  328086 25.8 117520 chromium",
+        " 328405  328086 25.8 117520 chromium",
+        " 288913  288761 22.4 724548 chromium",
+        " 328435  328405 10.0 53536 chromium",
+        "  37994   16103  7.9 102324 codex",
+        " 310002  288761  6.0 330600 chromium"
+      ]
+    },
+    "elapsedMs": 3259.7000000029802,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 924807,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 1999.7999999970198,
+        "receivedMs": 3244.699999999255,
+        "hashMs": 14.699999999254942,
+        "serverEncodingMs": 169.64461799999845,
+        "cache": "miss",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 514247,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 637.1000000014901,
+        "receivedMs": 1984.5,
+        "hashMs": 6.800000000745058,
+        "serverEncodingMs": 88.36312200000248,
+        "cache": "miss",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "1.40 1.11 1.77 1/1196 328554",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          556552 kB\nMemAvailable:    2693808 kB\nBuffers:           81400 kB\nCached:          2465108 kB\nSwapCached:           56 kB\nActive:          3604196 kB\nInactive:        2659096 kB\nActive(anon):    2632052 kB\nInactive(anon):  1503724 kB\nActive(file):     972144 kB\nInactive(file):  1155372 kB\nUnevictable:      218768 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33066528 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3612 kB\nWriteback:             0 kB\nAnonPages:       3936080 kB\nMapped:           763388 kB\nShmem:            419004 kB\nKReclaimable:     467972 kB\nSlab:             566176 kB\nSReclaimable:     467972 kB\nSUnreclaim:        98204 kB\nKernelStack:       19168 kB\nPageTables:        59168 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16992840 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329708 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328556  328063  100  4444 ps",
+        " 328482  328405 30.2 165700 chromium",
+        " 328086  328063 26.9 264316 chromium",
+        " 288913  288761 22.4 724508 chromium",
+        " 328063  327814 21.8 163640 node",
+        " 328429  328404 10.4 111208 chromium",
+        "  37994   16103  7.9 102296 codex",
+        " 328493  328405  6.3 164492 chromium",
+        " 310002  288761  6.0 330596 chromium",
+        "   7476    7475  5.3 86952 Xorg",
+        " 328432  328086  5.1 151296 chromium"
+      ]
+    }
+  },
+  {
+    "run": 1,
+    "encoding": "br",
+    "before": {
+      "load": "1.40 1.11 1.77 9/1180 328557",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          580456 kB\nMemAvailable:    2717712 kB\nBuffers:           81400 kB\nCached:          2460208 kB\nSwapCached:           56 kB\nActive:          3531996 kB\nInactive:        2659096 kB\nActive(anon):    2559852 kB\nInactive(anon):  1503724 kB\nActive(file):     972144 kB\nInactive(file):  1155372 kB\nUnevictable:      214368 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33066528 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3612 kB\nWriteback:             0 kB\nAnonPages:       3865280 kB\nMapped:           761788 kB\nShmem:            414004 kB\nKReclaimable:     467972 kB\nSlab:             566176 kB\nSReclaimable:     467972 kB\nSUnreclaim:        98204 kB\nKernelStack:       19168 kB\nPageTables:        58468 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16216836 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329580 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328559  328063  100  4436 ps",
+        " 328482  328405 30.4     0 chromium",
+        " 328086  328063 28.6 263996 chromium",
+        " 288913  288761 22.4 724508 chromium",
+        " 328063  327814 22.0 165272 node",
+        " 328429  328404 10.5 111004 chromium",
+        "  37994   16103  7.9 102296 codex",
+        " 310002  288761  6.0 330596 chromium",
+        "   7476    7475  5.3 86952 Xorg",
+        " 328432  328086  5.0 149824 chromium",
+        " 288782  288757  4.6 178920 chromium"
+      ]
+    },
+    "elapsedMs": 1984.199999999255,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 823530,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 1444.1000000014901,
+        "receivedMs": 1973.5,
+        "hashMs": 10.300000000745058,
+        "serverEncodingMs": 152.59257700000308,
+        "cache": "miss",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 452616,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 623.4000000022352,
+        "receivedMs": 1423.2000000029802,
+        "hashMs": 6.199999999254942,
+        "serverEncodingMs": 81.99276699999609,
+        "cache": "miss",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.49 1.34 1.85 1/1192 328592",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          675944 kB\nMemAvailable:    2724356 kB\nBuffers:           79156 kB\nCached:          2385416 kB\nSwapCached:           96 kB\nActive:          3687924 kB\nInactive:        2443740 kB\nActive(anon):    2715328 kB\nInactive(anon):  1373068 kB\nActive(file):     972596 kB\nInactive(file):  1070672 kB\nUnevictable:      225636 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33014304 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3236 kB\nWriteback:             0 kB\nAnonPages:       3892972 kB\nMapped:           763276 kB\nShmem:            421316 kB\nKReclaimable:     463376 kB\nSlab:             561548 kB\nSReclaimable:     463376 kB\nSUnreclaim:        98172 kB\nKernelStack:       19104 kB\nPageTables:        59220 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17003060 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329612 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328594  328063  100  4436 ps",
+        " 328560  328405 49.2 165588 chromium",
+        " 328086  328063 26.9 266304 chromium",
+        " 288913  288761 22.4 720948 chromium",
+        " 328063  327814 16.6 166108 node",
+        " 328571  328405  9.3 164296 chromium",
+        " 328429  328404  8.2 112524 chromium",
+        "  37994   16103  7.9 102136 codex",
+        " 310002  288761  6.0 329540 chromium",
+        "   7476    7475  5.3 86812 Xorg",
+        " 288782  288757  4.6 177712 chromium"
+      ]
+    }
+  },
+  {
+    "run": 2,
+    "encoding": "br",
+    "before": {
+      "load": "2.49 1.34 1.85 12/1177 328596",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          693988 kB\nMemAvailable:    2742400 kB\nBuffers:           79160 kB\nCached:          2385764 kB\nSwapCached:           96 kB\nActive:          3639324 kB\nInactive:        2443740 kB\nActive(anon):    2666728 kB\nInactive(anon):  1373068 kB\nActive(file):     972596 kB\nInactive(file):  1070672 kB\nUnevictable:      226936 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33014304 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3240 kB\nWriteback:             0 kB\nAnonPages:       3845420 kB\nMapped:           762832 kB\nShmem:            421668 kB\nKReclaimable:     463376 kB\nSlab:             561544 kB\nSReclaimable:     463376 kB\nSUnreclaim:        98168 kB\nKernelStack:       18976 kB\nPageTables:        58876 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16232956 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329516 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328598  328063  100  4424 ps",
+        " 328560  328405 48.6     0 chromium",
+        " 328086  328063 27.6 265548 chromium",
+        " 288913  288761 22.4 720948 chromium",
+        " 328063  327814 16.5 166120 node",
+        " 328429  328404  8.1 112016 chromium",
+        "  37994   16103  7.9 102136 codex",
+        " 310002  288761  6.0 329540 chromium",
+        "   7476    7475  5.3 86812 Xorg",
+        " 288782  288757  4.6 177712 chromium",
+        " 328432  328086  4.3 151584 chromium"
+      ]
+    },
+    "elapsedMs": 1776.8999999985099,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 823530,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 1018,
+        "receivedMs": 1765.1000000014901,
+        "hashMs": 11.099999997764826,
+        "serverEncodingMs": 4.848488999996334,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 452616,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 541.1000000014901,
+        "receivedMs": 920.8999999985099,
+        "hashMs": 8.700000002980232,
+        "serverEncodingMs": 3.829454999999143,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.49 1.34 1.85 2/1200 328638",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          908700 kB\nMemAvailable:    2789092 kB\nBuffers:           71448 kB\nCached:          2228924 kB\nSwapCached:           96 kB\nActive:          3748852 kB\nInactive:        2089644 kB\nActive(anon):    2761984 kB\nInactive(anon):  1193740 kB\nActive(file):     986868 kB\nInactive(file):   895904 kB\nUnevictable:      236464 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32877344 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3324 kB\nWriteback:             0 kB\nAnonPages:       3775432 kB\nMapped:           757432 kB\nShmem:            417612 kB\nKReclaimable:     455852 kB\nSlab:             554236 kB\nSReclaimable:     455852 kB\nSUnreclaim:        98384 kB\nKernelStack:       19152 kB\nPageTables:        59276 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17038460 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329692 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328640  328063  100  4444 ps",
+        " 328599  328405 53.0 165800 chromium",
+        " 328086  328063 27.0 262532 chromium",
+        " 288913  288761 22.4 715816 chromium",
+        " 328063  327814 14.0 169276 node",
+        " 328610  328405 11.2 164064 chromium",
+        "  37994   16103  7.9 100128 codex",
+        " 328429  328404  7.0 112040 chromium",
+        " 310002  288761  6.0 327248 chromium",
+        "   7476    7475  5.3 85740 Xorg",
+        " 288782  288757  4.6 173452 chromium"
+      ]
+    }
+  },
+  {
+    "run": 2,
+    "encoding": "gzip",
+    "before": {
+      "load": "2.49 1.34 1.85 12/1184 328658",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          930160 kB\nMemAvailable:    2810552 kB\nBuffers:           71448 kB\nCached:          2228324 kB\nSwapCached:           96 kB\nActive:          3705152 kB\nInactive:        2089644 kB\nActive(anon):    2718284 kB\nInactive(anon):  1193740 kB\nActive(file):     986868 kB\nInactive(file):   895904 kB\nUnevictable:      236464 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32877344 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3324 kB\nWriteback:             0 kB\nAnonPages:       3732432 kB\nMapped:           755132 kB\nShmem:            416812 kB\nKReclaimable:     455852 kB\nSlab:             554236 kB\nSReclaimable:     455852 kB\nSUnreclaim:        98384 kB\nKernelStack:       19152 kB\nPageTables:        58476 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16654280 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329708 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328672  328063  200  4436 ps",
+        " 328599  328405 52.7     0 chromium",
+        " 328086  328063 27.4 261884 chromium",
+        " 288913  288761 22.4 715816 chromium",
+        " 328063  327814 14.1 169672 node",
+        " 328633   16349  8.3  6560 bash",
+        "  37994   16103  7.9 100128 codex",
+        " 328429  328404  7.0 111532 chromium",
+        " 310002  288761  6.0 327248 chromium",
+        "   7476    7475  5.3 85740 Xorg",
+        " 288782  288757  4.6 173452 chromium"
+      ]
+    },
+    "elapsedMs": 1815.800000000745,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 924807,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 503.8999999985099,
+        "receivedMs": 1425.800000000745,
+        "hashMs": 11.699999999254942,
+        "serverEncodingMs": 1.960242000001017,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 514247,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 1433.7999999970198,
+        "receivedMs": 1803,
+        "hashMs": 7.099999997764826,
+        "serverEncodingMs": 4.852745000003779,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "3.01 1.47 1.88 1/1180 328926",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          927452 kB\nMemAvailable:    2808940 kB\nBuffers:           71528 kB\nCached:          2229992 kB\nSwapCached:           96 kB\nActive:          3746444 kB\nInactive:        2089880 kB\nActive(anon):    2758716 kB\nInactive(anon):  1193740 kB\nActive(file):     987728 kB\nInactive(file):   896140 kB\nUnevictable:      236524 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32877344 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3572 kB\nWriteback:             0 kB\nAnonPages:       3771804 kB\nMapped:           752244 kB\nShmem:            417664 kB\nKReclaimable:     455852 kB\nSlab:             554344 kB\nSReclaimable:     455852 kB\nSUnreclaim:        98492 kB\nKernelStack:       18912 kB\nPageTables:        58944 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16902920 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329452 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             436 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328770  328405 54.2 165700 chromium",
+        " 328086  328063 27.7 262680 chromium",
+        " 288913  288761 22.4 715816 chromium",
+        " 328063  327814 12.5 172240 node",
+        " 328817  328405 11.5 165268 chromium",
+        "  37994   16103  7.9 100280 codex",
+        " 328429  328404  6.7 112172 chromium",
+        " 310002  288761  5.9 327248 chromium",
+        "   7476    7475  5.3 85736 Xorg",
+        " 288782  288757  4.6 173452 chromium",
+        " 328432  328086  4.0 148140 chromium"
+      ]
+    }
+  },
+  {
+    "run": 3,
+    "encoding": "gzip",
+    "before": {
+      "load": "3.01 1.47 1.88 10/1165 328929",
+      "mem": "MemTotal:        8142664 kB\nMemFree:          955772 kB\nMemAvailable:    2837260 kB\nBuffers:           71528 kB\nCached:          2229192 kB\nSwapCached:           96 kB\nActive:          3698444 kB\nInactive:        2089880 kB\nActive(anon):    2710716 kB\nInactive(anon):  1193740 kB\nActive(file):     987728 kB\nInactive(file):   896140 kB\nUnevictable:      236524 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32877344 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3572 kB\nWriteback:             0 kB\nAnonPages:       3715904 kB\nMapped:           750644 kB\nShmem:            416864 kB\nKReclaimable:     455852 kB\nSlab:             554344 kB\nSReclaimable:     455852 kB\nSUnreclaim:        98492 kB\nKernelStack:       18800 kB\nPageTables:        58944 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16121464 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329308 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             436 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328931  328063  100  4416 ps",
+        " 328770  328405 54.1     0 chromium",
+        " 328086  328063 28.1 262104 chromium",
+        " 288913  288761 22.4 715816 chromium",
+        " 328063  327814 12.5 172612 node",
+        "  37994   16103  7.9 100280 codex",
+        " 328429  328404  6.7 111664 chromium",
+        " 310002  288761  5.9 327248 chromium",
+        "   7476    7475  5.3 85736 Xorg",
+        " 288782  288757  4.6 173452 chromium",
+        " 328432  328086  4.0 147952 chromium"
+      ]
+    },
+    "elapsedMs": 2751.60000000149,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 924807,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 775.8999999985099,
+        "receivedMs": 1758.2999999970198,
+        "hashMs": 10,
+        "serverEncodingMs": 8.933962000002794,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 514247,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 1768,
+        "receivedMs": 2743,
+        "hashMs": 7.099999997764826,
+        "serverEncodingMs": 2.3283449999944423,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.77 1.44 1.87 1/1183 328987",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1205692 kB\nMemAvailable:    2795944 kB\nBuffers:           59768 kB\nCached:          1982020 kB\nSwapCached:          112 kB\nActive:          3580484 kB\nInactive:        1990180 kB\nActive(anon):    2633500 kB\nInactive(anon):  1309936 kB\nActive(file):     946984 kB\nInactive(file):   680244 kB\nUnevictable:      235496 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32865056 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3116 kB\nWriteback:             0 kB\nAnonPages:       3764952 kB\nMapped:           744920 kB\nShmem:            414524 kB\nKReclaimable:     421256 kB\nSlab:             519568 kB\nSReclaimable:     421256 kB\nSUnreclaim:        98312 kB\nKernelStack:       18960 kB\nPageTables:        58956 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16901580 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329500 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328932  328405 37.5 165448 chromium",
+        " 328086  328063 26.5 258852 chromium",
+        " 288913  288761 22.3 715620 chromium",
+        " 328063  327814 10.7 175952 node",
+        "  37994   16103  7.9 100028 codex",
+        " 328944  328405  7.5 164692 chromium",
+        " 328429  328404  6.1 111840 chromium",
+        " 310002  288761  5.9 327024 chromium",
+        "   7476    7475  5.3 85740 Xorg",
+        " 288782  288757  4.6 173180 chromium",
+        "  12720   12719  3.7 38492 xfce4-terminal"
+      ]
+    }
+  },
+  {
+    "run": 3,
+    "encoding": "br",
+    "before": {
+      "load": "2.77 1.44 1.87 7/1167 328990",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1224084 kB\nMemAvailable:    2814336 kB\nBuffers:           59768 kB\nCached:          1974420 kB\nSwapCached:          112 kB\nActive:          3532376 kB\nInactive:        1990180 kB\nActive(anon):    2585392 kB\nInactive(anon):  1309936 kB\nActive(file):     946984 kB\nInactive(file):   680244 kB\nUnevictable:      229096 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32865056 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3116 kB\nWriteback:             0 kB\nAnonPages:       3717268 kB\nMapped:           744116 kB\nShmem:            406924 kB\nKReclaimable:     421256 kB\nSlab:             519568 kB\nSReclaimable:     421256 kB\nSUnreclaim:        98312 kB\nKernelStack:       18932 kB\nPageTables:        58184 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16123940 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329356 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 328992  328063  100  4416 ps",
+        " 328932  328405 37.8     0 chromium",
+        " 328086  328063 26.9 258044 chromium",
+        " 288913  288761 22.3 715620 chromium",
+        " 328063  327814 10.8 176352 node",
+        "  37994   16103  7.9 100028 codex",
+        " 328429  328404  6.2 111336 chromium",
+        " 310002  288761  5.9 327024 chromium",
+        "   7476    7475  5.3 85740 Xorg",
+        " 288782  288757  4.6 173180 chromium",
+        "  12720   12719  3.7 38492 xfce4-terminal"
+      ]
+    },
+    "elapsedMs": 2655.39999999851,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 823530,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 874.6000000014901,
+        "receivedMs": 2172.300000000745,
+        "hashMs": 11.699999999254942,
+        "serverEncodingMs": 2.2157829999996466,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 452616,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 1685.4000000022352,
+        "receivedMs": 2644.800000000745,
+        "hashMs": 7.100000001490116,
+        "serverEncodingMs": 4.295118999994884,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.77 1.44 1.87 3/1182 329090",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1299660 kB\nMemAvailable:    2797068 kB\nBuffers:           54420 kB\nCached:          1903764 kB\nSwapCached:          112 kB\nActive:          3613404 kB\nInactive:        1890116 kB\nActive(anon):    2663212 kB\nInactive(anon):  1295116 kB\nActive(file):     950192 kB\nInactive(file):   595000 kB\nUnevictable:      233972 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32865056 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3228 kB\nWriteback:             0 kB\nAnonPages:       3779948 kB\nMapped:           749648 kB\nShmem:            413004 kB\nKReclaimable:     410448 kB\nSlab:             508680 kB\nSReclaimable:     410448 kB\nSUnreclaim:        98232 kB\nKernelStack:       18944 kB\nPageTables:        59032 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16908812 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329476 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               4 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329084    4556  100 17048 python",
+        " 328993  328405 40.7 165712 chromium",
+        " 328086  328063 25.8 258856 chromium",
+        " 288913  288761 22.3 715620 chromium",
+        " 328063  327814  9.7 181596 node",
+        "  37994   16103  7.9 100028 codex",
+        " 329004  328405  7.9 164412 chromium",
+        " 310002  288761  5.9 327024 chromium",
+        " 328429  328404  5.8 111848 chromium",
+        "   7476    7475  5.3 85736 Xorg",
+        " 288782  288757  4.6 173180 chromium"
+      ]
+    }
+  },
+  {
+    "run": 4,
+    "encoding": "br",
+    "before": {
+      "load": "2.77 1.44 1.87 11/1173 329093",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1325684 kB\nMemAvailable:    2823092 kB\nBuffers:           54420 kB\nCached:          1903764 kB\nSwapCached:          112 kB\nActive:          3572620 kB\nInactive:        1890116 kB\nActive(anon):    2622428 kB\nInactive(anon):  1295116 kB\nActive(file):     950192 kB\nInactive(file):   595000 kB\nUnevictable:      234772 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32865056 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3236 kB\nWriteback:             0 kB\nAnonPages:       3739156 kB\nMapped:           749240 kB\nShmem:            413004 kB\nKReclaimable:     410448 kB\nSlab:             508684 kB\nSReclaimable:     410448 kB\nSUnreclaim:        98236 kB\nKernelStack:       18912 kB\nPageTables:        58216 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16501360 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329364 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             104 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329095  328063  200  4420 ps",
+        " 329084    4556  107 18896 python",
+        " 328993  328405 40.1     0 chromium",
+        " 328086  328063 26.0 258592 chromium",
+        " 288913  288761 22.3 715620 chromium",
+        " 328063  327814  9.6 181988 node",
+        "  37994   16103  7.9 100028 codex",
+        " 310002  288761  5.9 327024 chromium",
+        " 328429  328404  5.7 111464 chromium",
+        "   7476    7475  5.3 85736 Xorg",
+        " 288782  288757  4.6 173180 chromium"
+      ]
+    },
+    "elapsedMs": 3183.60000000149,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 823530,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 1724.199999999255,
+        "receivedMs": 3171.199999999255,
+        "hashMs": 10.599999997764826,
+        "serverEncodingMs": 3.4245230000015,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 452616,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 847.6000000014901,
+        "receivedMs": 1580.6000000014901,
+        "hashMs": 8.5,
+        "serverEncodingMs": 1.6244260000021313,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.87 1.49 1.89 3/1191 329141",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1246012 kB\nMemAvailable:    2659964 kB\nBuffers:           49324 kB\nCached:          1830916 kB\nSwapCached:          252 kB\nActive:          3352396 kB\nInactive:        2192744 kB\nActive(anon):    2544280 kB\nInactive(anon):  1529692 kB\nActive(file):     808116 kB\nInactive(file):   663052 kB\nUnevictable:      231932 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32839456 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1048 kB\nWriteback:             0 kB\nAnonPages:       3897276 kB\nMapped:           744812 kB\nShmem:            409076 kB\nKReclaimable:     401016 kB\nSlab:             499428 kB\nSReclaimable:     401016 kB\nSUnreclaim:        98412 kB\nKernelStack:       19088 kB\nPageTables:        60268 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17409960 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329540 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329130  288761  100 247416 chromium",
+        " 329143  328063  100  4424 ps",
+        " 329096  328405 34.0 165696 chromium",
+        " 328086  328063 24.7 258936 chromium",
+        " 288913  288761 22.3 725012 chromium",
+        " 328063  327814  9.0 184056 node",
+        "  37994   16103  7.9 99796 codex",
+        " 329108  328405  6.5 164240 chromium",
+        " 310002  288761  5.9 326796 chromium",
+        " 328429  328404  5.4 111896 chromium",
+        "   7476    7475  5.3 85364 Xorg"
+      ]
+    }
+  },
+  {
+    "run": 4,
+    "encoding": "gzip",
+    "before": {
+      "load": "2.87 1.49 1.89 9/1175 329144",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1290464 kB\nMemAvailable:    2704416 kB\nBuffers:           49328 kB\nCached:          1814712 kB\nSwapCached:          252 kB\nActive:          3284296 kB\nInactive:        2192744 kB\nActive(anon):    2476180 kB\nInactive(anon):  1529692 kB\nActive(file):     808116 kB\nInactive(file):   663052 kB\nUnevictable:      217032 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32839456 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1048 kB\nWriteback:             0 kB\nAnonPages:       3830676 kB\nMapped:           743620 kB\nShmem:            392776 kB\nKReclaimable:     401016 kB\nSlab:             499428 kB\nSReclaimable:     401016 kB\nSUnreclaim:        98412 kB\nKernelStack:       18920 kB\nPageTables:        58668 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16624460 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329396 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             500 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329130  288761 99.0 254716 chromium",
+        " 329146  328063 50.0  4420 ps",
+        " 329096  328405 33.5     0 chromium",
+        " 328086  328063 24.9 258068 chromium",
+        " 288913  288761 22.3 725016 chromium",
+        " 328063  327814  9.0 184056 node",
+        "  37994   16103  7.9 99796 codex",
+        " 310002  288761  5.9 326796 chromium",
+        " 328429  328404  5.4 111436 chromium",
+        "   7476    7475  5.3 85364 Xorg",
+        " 288782  288757  4.6 173224 chromium"
+      ]
+    },
+    "elapsedMs": 3419.099999997765,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 924807,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 1712.4000000022352,
+        "receivedMs": 3406.300000000745,
+        "hashMs": 11.900000002235174,
+        "serverEncodingMs": 5.619788000003609,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 514247,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 736,
+        "receivedMs": 1672.3999999985099,
+        "hashMs": 7.100000001490116,
+        "serverEncodingMs": 2.9331179999935557,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.72 1.48 1.88 8/1193 329205",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1314076 kB\nMemAvailable:    2644056 kB\nBuffers:           44944 kB\nCached:          1755416 kB\nSwapCached:          284 kB\nActive:          3464716 kB\nInactive:        2005200 kB\nActive(anon):    2627072 kB\nInactive(anon):  1446904 kB\nActive(file):     837644 kB\nInactive(file):   558296 kB\nUnevictable:      230772 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32807200 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1712 kB\nWriteback:             0 kB\nAnonPages:       3900704 kB\nMapped:           744420 kB\nShmem:            404432 kB\nKReclaimable:     392272 kB\nSlab:             490960 kB\nSReclaimable:     392272 kB\nSUnreclaim:        98688 kB\nKernelStack:       19136 kB\nPageTables:        60548 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17447236 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329652 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:               0 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329130  288761 87.1 284524 chromium",
+        " 329147  328405 33.2 166220 chromium",
+        " 328086  328063 23.6 258860 chromium",
+        " 288913  288761 22.3 723588 chromium",
+        " 328063  327814  8.1 184044 node",
+        "  37994   16103  7.9 98356 codex",
+        " 329157  328405  6.4 164424 chromium",
+        " 310002  288761  5.9 325888 chromium",
+        "   7476    7475  5.3 85260 Xorg",
+        " 328429  328404  5.0 111888 chromium",
+        " 288782  288757  4.6 172688 chromium"
+      ]
+    }
+  },
+  {
+    "run": 5,
+    "encoding": "gzip",
+    "before": {
+      "load": "2.72 1.48 1.88 9/1183 329216",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1298044 kB\nMemAvailable:    2628152 kB\nBuffers:           44972 kB\nCached:          1735560 kB\nSwapCached:          284 kB\nActive:          3485640 kB\nInactive:        2005328 kB\nActive(anon):    2647996 kB\nInactive(anon):  1446904 kB\nActive(file):     837644 kB\nInactive(file):   558424 kB\nUnevictable:      211572 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32807200 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1720 kB\nWriteback:             0 kB\nAnonPages:       3913736 kB\nMapped:           744960 kB\nShmem:            384468 kB\nKReclaimable:     392272 kB\nSlab:             490960 kB\nSReclaimable:     392272 kB\nSUnreclaim:        98688 kB\nKernelStack:       19044 kB\nPageTables:        59552 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   16706836 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329492 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             200 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329218  328063  100  4420 ps",
+        " 329130  288761 86.5 413044 chromium",
+        " 329147  328405 33.0     0 chromium",
+        " 328086  328063 23.8 258236 chromium",
+        " 288913  288761 22.3 723644 chromium",
+        " 328063  327814  8.2 184056 node",
+        "  37994   16103  7.9 98356 codex",
+        " 310002  288761  5.9 325888 chromium",
+        "   7476    7475  5.3 85260 Xorg",
+        " 328429  328404  5.0 111352 chromium",
+        " 288782  288757  4.6 172688 chromium"
+      ]
+    },
+    "elapsedMs": 3020.39999999851,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 924807,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 810.2999999970198,
+        "receivedMs": 2434.599999997765,
+        "hashMs": 10.400000002235174,
+        "serverEncodingMs": 1.9591059999947902,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "gzip",
+        "wireBytes": 514247,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 2431.099999997765,
+        "receivedMs": 2998.39999999851,
+        "hashMs": 6,
+        "serverEncodingMs": 8.523769000006723,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.66 1.49 1.88 2/1195 329505",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1432308 kB\nMemAvailable:    2682188 kB\nBuffers:           38260 kB\nCached:          1683908 kB\nSwapCached:          284 kB\nActive:          3029372 kB\nInactive:        2285908 kB\nActive(anon):    2311236 kB\nInactive(anon):  1676184 kB\nActive(file):     718136 kB\nInactive(file):   609724 kB\nUnevictable:      223248 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32772128 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             13844 kB\nWriteback:             0 kB\nAnonPages:       3816344 kB\nMapped:           744168 kB\nShmem:            394320 kB\nKReclaimable:     380252 kB\nSlab:             479072 kB\nSReclaimable:     380252 kB\nSUnreclaim:        98820 kB\nKernelStack:       19152 kB\nPageTables:        60596 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17466148 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329652 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             168 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329507  328063  100  4432 ps",
+        " 329130  288761 61.3 250612 chromium",
+        " 329273  328405 37.9 166108 chromium",
+        " 328086  328063 23.2 258796 chromium",
+        " 288913  288761 22.3 728560 chromium",
+        " 328063  327814  8.4 151956 node",
+        "  37994   16103  7.9 97728 codex",
+        " 329339  328405  6.5 164756 chromium",
+        " 310002  288761  5.8 325872 chromium",
+        "   7476    7475  5.3 84460 Xorg",
+        " 328429  328404  4.6 111756 chromium"
+      ]
+    }
+  },
+  {
+    "run": 5,
+    "encoding": "br",
+    "before": {
+      "load": "2.66 1.49 1.88 12/1180 329508",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1451008 kB\nMemAvailable:    2700888 kB\nBuffers:           38260 kB\nCached:          1672108 kB\nSwapCached:          284 kB\nActive:          2982672 kB\nInactive:        2285908 kB\nActive(anon):    2264536 kB\nInactive(anon):  1676184 kB\nActive(file):     718136 kB\nInactive(file):   609724 kB\nUnevictable:      212248 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32772128 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             13844 kB\nWriteback:             0 kB\nAnonPages:       3746344 kB\nMapped:           743868 kB\nShmem:            382520 kB\nKReclaimable:     380252 kB\nSlab:             479072 kB\nSReclaimable:     380252 kB\nSUnreclaim:        98820 kB\nKernelStack:       19068 kB\nPageTables:        60596 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17040408 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329652 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:             168 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329510  328063  100  4416 ps",
+        " 329130  288761 60.9 250612 chromium",
+        " 329273  328405 38.4     0 chromium",
+        " 328086  328063 23.4 258540 chromium",
+        " 288913  288761 22.3 728560 chromium",
+        " 328063  327814  8.5 153324 node",
+        "  37994   16103  7.9 97728 codex",
+        " 310002  288761  5.8 325872 chromium",
+        "   7476    7475  5.3 84460 Xorg",
+        " 328429  328404  4.6 111364 chromium",
+        " 288782  288757  4.6 172552 chromium"
+      ]
+    },
+    "elapsedMs": 2432.400000002235,
+    "results": [
+      {
+        "start": 0,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 823530,
+        "decodedBytes": 8276300,
+        "sha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+        "headersMs": 522.8000000007451,
+        "receivedMs": 2422.5,
+        "hashMs": 9.300000000745058,
+        "serverEncodingMs": 3.772582000005059,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      },
+      {
+        "start": 22,
+        "status": 200,
+        "encoding": "br",
+        "wireBytes": 452616,
+        "decodedBytes": 5054088,
+        "sha256": "e7570c62d07a5b00bce14d03bb56129d03e3be13e13017f7dca61a6a48634b9b",
+        "headersMs": 1509.300000000745,
+        "receivedMs": 2409.5,
+        "hashMs": 6.5,
+        "serverEncodingMs": 6.55918300000485,
+        "cache": "hit",
+        "build": "fae5c0d0870ef1ffddeb4a1d9f71ee1f559c70d2"
+      }
+    ],
+    "after": {
+      "load": "2.66 1.49 1.88 1/1192 329566",
+      "mem": "MemTotal:        8142664 kB\nMemFree:         1583628 kB\nMemAvailable:    2752652 kB\nBuffers:           29968 kB\nCached:          1622188 kB\nSwapCached:          288 kB\nActive:          3055488 kB\nInactive:        2160844 kB\nActive(anon):    2332512 kB\nInactive(anon):  1627120 kB\nActive(file):     722976 kB\nInactive(file):   533724 kB\nUnevictable:      228060 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       32746784 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             14308 kB\nWriteback:             0 kB\nAnonPages:       3791896 kB\nMapped:           742600 kB\nShmem:            395468 kB\nKReclaimable:     370556 kB\nSlab:             469356 kB\nSReclaimable:     370556 kB\nSUnreclaim:        98800 kB\nKernelStack:       19104 kB\nPageTables:        60576 kB\nSecPageTables:       156 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   17468676 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329636 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:              16 kB\n",
+      "processes": [
+        "    PID    PPID %CPU   RSS COMMAND",
+        " 329568  328063  100  4428 ps",
+        " 329130  288761 46.3 246184 chromium",
+        " 329511  328405 43.7 165888 chromium",
+        " 328086  328063 23.3 258260 chromium",
+        " 288913  288761 22.2 727728 chromium",
+        " 328063  327814  8.1 153620 node",
+        "  37994   16103  7.9 96364 codex",
+        " 329522  328405  7.8 163912 chromium",
+        " 310002  288761  5.8 325096 chromium",
+        "   7476    7475  5.3 84404 Xorg",
+        " 288782  288757  4.6 172296 chromium"
+      ]
+    }
+  }
+]
