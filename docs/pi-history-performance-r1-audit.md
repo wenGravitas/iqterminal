@@ -109,3 +109,16 @@ bytes without changing its next page; regressed horizons cannot publish. This
 provides no automatic fair wall scheduling, sliding reuse or disk retention.
 All earlier failed latency/current/warm/repeated-use gates and unverified items
 remain open. Do not infer full Spot browser coverage from server reference proofs.
+
+
+Coordinator a6c5787 has 258 passing backend tests/type/build and supplemental
+isolated staging proof: cold Spot resumes six-page progress through all 34+34
+parts; default USD-M reuses complete cache in two turns. Both financial hashes
+match independent original-projector references, with source gaps intact. Five
+loopback current baselines and 34 during-build reads stay ready/live with no
+HTTP errors; this is server capacity evidence only. Completed-queue reopen
+changes neither queue metadata nor step logs. Serving/collectors stay unchanged.
+It does not complete serving-triggered admission, moving-window composition,
+leases/cancellation, global cache accounting/retention or any failed/unproven
+Pi loading/current/warm/repeated-use gate. Migration and explicit ready-job Retry
+limitations are documented. Preserve the full original scope.

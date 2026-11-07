@@ -4,8 +4,8 @@ Implementation and performance acceptance are separate. No production deployment
 
 Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
 Current measured production client is `7a1f6b129c78cf3e86178759bd98617213bcd701`.
-Backend preparation CLI `74837d7c1595c4a94111ecc694b531945da5cb1f` runs in an
-isolated staging worktree; it has not replaced the serving build. Its 247 tests,
+Backend coordinator `a6c57870d6dbdc84bf505a058f79b6caa30b1beb` runs in an
+isolated staging worktree; it has not replaced the serving build. Its 258 tests,
 typecheck/build pass. Latest frontend full suite: 1,093 pass / two skip,
 typecheck/build pass; nine prior functional UI checks and the explicit headed
 retry protocol check have their own scopes/builds below. Collectors are unchanged.
@@ -20,8 +20,8 @@ complete all null. A separate 180s attempt also has no historical paint and fail
 with discovery HTTP 502; the native chart bootstrap took 4.870s in that attempt.
 Thus full Spot browser coverage is still unproven, despite complete server files.
 
-Automatic fair wall preparation, sliding reuse, derived disk retention,
-warm/current-concurrent and full-view repeated-use resource gates remain open.
+Durable exact-view wall supervision now has server-only validation; serving
+admission, rolling-window reuse, derived disk retention, warm/current-concurrent and full-view repeated-use resource gates remain open.
 Earlier failed cohorts and timed-out tests remain below with their exact builds;
 eventual completion and independent reference checks do not supersede loading gates.
 
@@ -1500,3 +1500,50 @@ No heavyweight tests, builds or remote preparation ran during either Pi cohort.
 Server health/RSS snapshots are retained, but per-frame server CPU sampling is
 not available for this cohort. Warm, current/concurrent and full memory/frame
 acceptance remain incomplete; history-only measurements cannot certify them.
+
+
+### Durable wall supervision and server-only capacity evidence
+
+Backend a6c5787 adds a separate bounded preparation coordinator around the existing
+canonical and exact selected producers. It persists source/cursor/phase, processing
+fairness and idempotent Retry tokens; existing CLI owners defer work rather than
+having their locks removed. Its 11 regressions pass, and the full backend suite is
+258 pass with typecheck/build. This is isolated operator tooling, not a deployed
+serving API or an ordinary live-window integration. Serving remains 18579d9;
+measured browser/client remains 7a1f6b1.
+
+On real staged source, Spot stopped after six canonical pages, then a fresh process
+resumed the same horizon. It completes 34 canonical plus 34 selected parts in 69
+turns; summed nonoverlapping queue-step processing is 28,411.827ms. The already
+prepared USD-M default reuses both stages in two turns / 1,390.576ms, ready at turn
+15 while the cold Spot job continues until turn 71. The resumed process reports
+33,768.309ms including scheduler spacing and metadata work. Manual restart gaps
+are excluded; these are not one unattended build time or Pi cached-load samples.
+Maximum sampled worker RSS is 199,544,832 bytes, not a continuous peak. Final
+managed apparent bytes are 16,076,517, with the global owner released.
+
+Both actual frontend importer/original-projector comparisons preserve every
+financial segment and selected state: Spot 8,293 walls / 49,154 points / 35 gaps,
+USD-M 23,850 / 104,112 / 47 gaps. Segment hashes remain the previously recorded
+cf9d17a2...afd944e and de4d77b3...899c6, including the new Spot source horizon.
+A completed-queue reopen makes zero build steps and leaves queue/step-log hashes
+unchanged. It is operational idempotence, not the one-second browser warm gate.
+
+Supplemental staging x64 loopback authoritative 1h/$25 current reads: five baseline
+samples median 4.988ms / maximum 10.789ms; 34 during resumed preparation median
+4.078ms / maximum 18.446ms, no errors and endpoint states ready/live throughout,
+30 distinct monotonic cursors. Those durations use a single probe clock. The
+initial helper's unverified cross-clock age field and post-check-inclusive child
+field are explicitly ignored; raw executed source and corrected helper remain
+available. Worker duration comes from its own monotonic interval. This is not
+Pi SSH/Vite/UI first paint, continuous confirmation-gap proof, two chart loads
+with custom backfill, or repeated interactive heap/frame acceptance.
+
+Backend `artifacts/pi-history-r1/wall-preparation-coordinator/` contains all source
+proofs/manifests, step CPU/SQL/RSS samples, current-read samples, identities, source
+hashes and independent reference results. Serving build and collectors did not
+change. No production deploy or merge occurred. Source-window generation, serving
+admission, consumer cancellation/leases, global derived accounting/eviction and
+explicit public-only ready-job Retry/pin migration remain open. Every earlier Pi
+loading failure and unverified acceptance gate is retained; server results cannot
+substitute for chart acceptance.
