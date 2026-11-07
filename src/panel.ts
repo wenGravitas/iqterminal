@@ -1,4 +1,5 @@
 import { workspacePanelStorage } from './workspaces/panel-storage';
+import {restoredHistoryViewport} from './feed/restore-bootstrap';
 import { currentTheme } from './theme';
 import { boundedBrushPoints, installEverydayPresets } from './chart/everyday-drawings';
 import { JournalChartBridge } from './journal/chart-bridge';
@@ -543,7 +544,7 @@ export class CandlePanel implements IContentRenderer {
   private footprintSnapshotSignature?: string[];
   private footprintNeedsSync = false;
   private footprintHasInitialView = false;
-  private footprintRestoreView?:{from:number;to:number};
+  private pendingHistoryView?:{from:number;to:number};
   private historyViewSaveTimer?:ReturnType<typeof setTimeout>;
   private footprintStatus: FootprintStatus = {
     state: 'loading', message: 'Waiting for Binance USD-M aggTrade observations', lastUpdate: 0,
@@ -819,7 +820,7 @@ export class CandlePanel implements IContentRenderer {
     this.params = params;
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params, true);
-    this.footprintRestoreView = this.selection.type==='footprint'?this.selection.historyViewport:undefined;
+    this.pendingHistoryView = restoredHistoryViewport(this.selection);
     if (this.tradingController) {
       const release = this.tradingController.subscribe(() => this.syncTradingOverlay(), this.abort.signal);
       this.subscriptions.push({ dispose: release });
@@ -1047,9 +1048,9 @@ export class CandlePanel implements IContentRenderer {
       { dispose: this.engine.chart.on('drawing:change', () => this.syncDrawingActions()) },
     );
     this.engine.onFootprintViewport=(from,to,analysis)=>{
-      const view=this.footprintRestoreView??{from,to};
-      this.feed.requestFootprintViewport(this.params.api.id,view.from,view.to,this.footprintRestoreView?{...analysis,candidateFrom:view.from}:analysis);
-      if(this.selection.type!=='footprint'||!this.footprintHasInitialView||this.footprintRestoreView)return;
+      const view=this.pendingHistoryView??{from,to};
+      this.feed.requestFootprintViewport(this.params.api.id,view.from,view.to,this.pendingHistoryView?{...analysis,candidateFrom:view.from}:analysis);
+      if(this.selection.type!=='footprint'||!this.footprintHasInitialView||this.pendingHistoryView)return;
       const next=validHistoryViewport({from:Math.round(from/1000)*1000,to:Math.round(to/1000)*1000});
       if(!next||next.from===this.selection.historyViewport?.from&&next.to===this.selection.historyViewport?.to)return;
       this.selection={...this.selection,historyViewport:next};
@@ -5141,7 +5142,7 @@ export class CandlePanel implements IContentRenderer {
       nextSelection = config({ ...nextSelection, indicators });
     }
     this.selection = nextSelection;
-    this.footprintRestoreView = this.selection.type==='footprint'?this.selection.historyViewport:undefined;
+    this.pendingHistoryView = restoredHistoryViewport(this.selection);
     this.syncTradingOverlay();
     this.cancelWatchPick?.();this.setWatchZones(this.watchList);
     this.params.api.updateParameters(this.selection);
@@ -5205,10 +5206,13 @@ export class CandlePanel implements IContentRenderer {
       } else if (event.type === 'snapshot') {
         if(event.merge)this.mergeCandles(event.candles);
         else this.candles = event.candles.length > 5_000 ? event.candles.slice(-5_000) : [...event.candles];
-        this.engine?.setSnapshot(this.candles, !this.resetViewOnSnapshot || (this.selection.type === 'footprint' && this.footprintHasInitialView));
+        this.engine?.setSnapshot(this.candles, !this.resetViewOnSnapshot || Boolean(this.pendingHistoryView) || (this.selection.type === 'footprint' && this.footprintHasInitialView));
         this.studyHost?.setSnapshot(this.candles); this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.schedulePaneIndicatorLayout();
-        if (this.resetViewOnSnapshot && this.selection.type === 'candle') this.engine?.resetView();
+        if(this.selection.type==='candle'){
+          if(this.pendingHistoryView){if(this.engine?.restoreHistoryTimeRange(this.pendingHistoryView))this.pendingHistoryView=undefined;}
+          else if(this.resetViewOnSnapshot)this.engine?.resetView();
+        }
         this.resetViewOnSnapshot = false;
         this.hoveredBar = null;
         this.syncOrderWalls();
@@ -5325,6 +5329,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private updateOrderWallsViewport(from?: number, to?: number, low?: number, high?: number, height?: number) {
+    if(this.pendingHistoryView){from=this.pendingHistoryView.from;to=this.pendingHistoryView.to;}
     const instance = this.nativeIndicator(ORDER_WALLS_ID);
     if (!instance || this.selection.venue !== 'binance') return;
     const visible = from === undefined || to === undefined ? this.engine?.visibleTimeRange() : null;
@@ -5346,6 +5351,7 @@ export class CandlePanel implements IContentRenderer {
   }
 
   private orderWallsRange(from?: number, to?: number) {
+    if(this.pendingHistoryView){from=this.pendingHistoryView.from;to=this.pendingHistoryView.to;}
     const visible = from === undefined || to === undefined ? this.engine?.visibleTimeRange() : null;
     const visibleFrom = from ?? (visible ? visible.from * 1000 : NaN);
     const visibleTo = to ?? (visible ? visible.to * 1000 : NaN);
@@ -5462,7 +5468,7 @@ export class CandlePanel implements IContentRenderer {
       if (previousState !== this.footprintStatus.state) this.renderActiveIndicators();
     });
     const step = duration[selection.interval], now = Date.now(), to = Math.floor(now / step) * step;
-    const saved = this.footprintRestoreView;
+    const saved = this.pendingHistoryView;
     this.feed.requestFootprintViewport(this.params.api.id, saved?.from ?? to - Math.max(4 * 3600000, Math.min(24 * 3600000, 24 * step)), saved?.to ?? to,
       { enabled: false, lookback: 50 });
     this.updateStatus();
@@ -5773,7 +5779,7 @@ export class CandlePanel implements IContentRenderer {
 
   private focusFootprintOnce() {
     if (this.selection.type !== 'footprint' || this.footprintHasInitialView || !this.footprintBars.length) return;
-    if(this.footprintRestoreView){if(this.engine?.restoreHistoryTimeRange(this.footprintRestoreView)){this.footprintRestoreView=undefined;this.footprintHasInitialView=true;}return;}
+    if(this.pendingHistoryView){if(this.engine?.restoreHistoryTimeRange(this.pendingHistoryView)){this.pendingHistoryView=undefined;this.footprintHasInitialView=true;}return;}
     this.engine?.focusFootprintLatest();
     this.footprintHasInitialView = true;
   }

@@ -3,7 +3,7 @@ import {addIndicator,setFootprint} from './indicator-actions';
 const HOUR=3600000;
 function executionBar(time:number,step:number){return {time:time/1000,revision:1,rowSize:25,cells:[{price:80000,bidVol:3,askVol:5,bidNotional:240000,askNotional:400000}],open:80000,high:80025,low:79975,close:80010,delta:2,minDelta:0,maxDelta:2,quoteDelta:160000,minQuoteDelta:0,maxQuoteDelta:160000,aggregateRecordCount:2,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false};}
 
-async function installHealthyStagingWorker(context:BrowserContext){
+async function installHealthyStagingWorker(context:BrowserContext,emitCandles=true){
  // The feed owns WebSockets inside a dedicated worker. Install this explicit
  // deterministic transport in the worker bundle, so the unrelated native feed
  // stays healthy even when no staging tunnel exists. Page socket routes do not
@@ -15,13 +15,31 @@ async function installHealthyStagingWorker(context:BrowserContext){
    static CONNECTING=0;static OPEN=1;static CLOSING=2;static CLOSED=3;
    readyState=0;timer;onopen;onmessage;onclose;onerror;
    constructor(){setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
-   send(wire){const command=JSON.parse(wire),steps={'1m':60000,'5m':300000,'15m':900000,'30m':1800000,'1h':3600000,'4h':14400000,'1d':86400000};const health=()=>{if(command.interval){const step=steps[command.interval];this.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval:command.interval,candle:{t:Math.floor(Date.now()/step)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:Date.now(),closed:false}})});}this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()},watermark:{id:1}})});};health();clearInterval(this.timer);this.timer=setInterval(health,500);}
+   send(wire){const command=JSON.parse(wire),steps={'1m':60000,'5m':300000,'15m':900000,'30m':1800000,'1h':3600000,'4h':14400000,'1d':86400000};const health=()=>{if(command.interval&&${emitCandles}){const step=steps[command.interval];this.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval:command.interval,candle:{t:Math.floor(Date.now()/step)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:Date.now(),closed:false}})});}this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()},watermark:{id:1}})});};health();clearInterval(this.timer);this.timer=setInterval(health,500);}
    close(){clearInterval(this.timer);this.readyState=3;this.onclose?.({});}
   };`;
   await route.fulfill({response,body:transport+'\n'+script});
  });
 }
 test.beforeEach(async({context})=>installHealthyStagingWorker(context));
+test('saved candle wall history starts before native candles and restores without an offscreen current bootstrap',async({page,context})=>{
+ test.setTimeout(45000);await installHealthyStagingWorker(context,false);
+ const step=300000,now=Date.now(),to=Math.floor(now/step)*step-24*HOUR,from=to-30*HOUR,id='chart-saved-walls',requests:string[]=[];
+ let releaseNative!:()=>void;const gate=new Promise<void>(resolve=>releaseNative=resolve);
+ await context.addInitScript(({from,to,id})=>{const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'spot',interval:'5m',type:'candle',historyViewport:{from,to},studies:[],indicators:[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,aggregation:'native',searchRangePercent:10,showHistory:true}}]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));},{from,to,id});
+ await context.route('**/market-data/**',async route=>{const u=new URL(route.request().url());requests.push(u.pathname+u.search);const json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
+  if(u.pathname.endsWith('/native-candles')){await gate;return json({source:'binance-native-kline',candles:Array.from({length:1000},(_,i)=>({t:Math.floor(now/step)*step-(999-i)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:i<999}))});}
+  if(u.pathname.endsWith('/walls/discover'))return route.fulfill({status:503,contentType:'application/json',body:'{"error":"Explicit fixture holds financial history unavailable"}'});
+  return json({version:1,cursor:0,watches:[],events:[]});
+ });
+ try{
+  await page.goto('/',{waitUntil:'domcontentloaded'});await expect.poll(()=>requests.filter(path=>path.includes('/walls/discover')).length).toBeGreaterThan(0);
+  expect(requests.some(path=>path.includes('/archive/current'))).toBe(false);for(const path of requests.filter(path=>path.includes('/walls/discover'))){const u=new URL(path,'http://fixture');expect(Number(u.searchParams.get('from'))).toBe(from-step);expect(Number(u.searchParams.get('to'))).toBe(to+step);}
+  releaseNative();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.candles.length??0,id)).toBe(1000);
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+  expect(requests.some(path=>path.includes('/archive/current'))).toBe(false);
+ }finally{releaseNative();}
+});
 for(const mode of ['footprint','candle-totals'] as const)test(`prepared ${mode} history paints while the authoritative live bootstrap is delayed`,async({page,context})=>{
  test.setTimeout(45000);
  const now=Date.now(),end=Math.floor(now/HOUR)*HOUR,requests:Array<{from:number;to:number}>=[];
