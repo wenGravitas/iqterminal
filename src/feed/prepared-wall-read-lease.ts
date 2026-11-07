@@ -3,7 +3,7 @@ import {HistoryScheduler} from './history-scheduler';
  * long history body reads. No slot is held between renewals. */
 export const wallReadControlScheduler=new HistoryScheduler(1);
 const endpoint='/market-data/v2/history/walls/reader';
-export interface PreparedWallReadLease {signal:AbortSignal;assertActive:()=>void;release:()=>void}
+export interface PreparedWallReadLease {consumer:string;signal:AbortSignal;assertActive:()=>void;release:()=>void}
 export async function acquirePreparedWallReadLease(identity:{canonicalKey:string;projectionKey?:string},fetcher:typeof fetch,signal:AbortSignal):Promise<PreparedWallReadLease>{
  if(!/^[a-f0-9]{64}$/.test(identity.canonicalKey)||identity.projectionKey!==undefined&&!/^[a-f0-9]{64}$/.test(identity.projectionKey))throw Error('Invalid wall reader lease identity');
  const consumer=crypto.randomUUID(),abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined,expires=0,closed=false,failure:Error|undefined;
@@ -32,5 +32,5 @@ export async function acquirePreparedWallReadLease(identity:{canonicalKey:string
   timer=setTimeout(()=>{void renew().catch(error=>{failure=Error('Wall history reader lease lost; Retry available: '+String(error?.message??error).slice(0,200));release();});},5000);
  }
  signal.throwIfAborted();signal.addEventListener('abort',release,{once:true});
- try{await renew();return {signal:combined,assertActive,release};}catch(error){release();throw error;}
+ try{await renew();return {consumer,signal:combined,assertActive,release};}catch(error){release();throw error;}
 }

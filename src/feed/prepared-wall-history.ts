@@ -86,6 +86,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(found.readerLease&&(found.readerLease.version!==1||found.readerLease.leaseMs!==15000))throw Error('Invalid wall reader lease capability');
  const lease=found.readerLease?await acquirePreparedWallReadLease({canonicalKey:manifest.key,...(projection&&found.projection?.manifest?.key?{projectionKey:found.projection.manifest.key}:{})},fetcher,signal):undefined;
+ if(lease){const original=fetcher;fetcher=(input,init)=>{const headers:Record<string,string>={};new Headers(init?.headers).forEach((value,key)=>headers[key]=value);headers['X-IQ-Wall-Reader']=lease.consumer;return original(input,{...init,headers});};}
  const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal,...(lease?[lease.signal]:[])]);
  const assertActive=()=>{lease?.assertActive();consumer.throwIfAborted();};
  const leaseFailure=(error:unknown):never=>{lease?.assertActive();throw error;};

@@ -367,3 +367,15 @@ test('reader holds and renews its advertised lease through blocked pages and ind
   releaseSource();expect((await terminal).body).toMatchObject({page:{hasMore:false}});reader!.dispose();await vi.advanceTimersByTimeAsync(0);expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
  }finally{releasePages();releaseSource();reader?.dispose();await Promise.allSettled(pendingReads);await vi.advanceTimersByTimeAsync(0);vi.useRealTimers();}
 });
+
+test('archive correlation preserves reader identity on shared content and final source requests',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();Object.assign(f.discovery,{readerLease:{version:1,leaseMs:15000}});const t=transport(f);let token='',released=0;const identities:Headers[]=[];
+ const fetcher:typeof fetch=async(input,init)=>{
+  const path=new URL(String(input),'http://test').pathname;
+  if(path.endsWith('/reader')){token=JSON.parse(init!.body as string).consumer;return new Response(JSON.stringify({version:1,leaseMs:15000,canonicalKey:f.manifest.key}));}
+  if(init?.method==='DELETE'){released++;return new Response('{}');}
+  if(path.endsWith('/part')||path.endsWith('/source'))identities.push(new Headers(init?.headers));return t.fetcher(input,init);
+ };
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher});
+ expect(result.status.archive?.requestComplete).toBe(true);expect(identities.length).toBeGreaterThan(0);expect(identities.every(h=>h.get('x-iq-wall-reader')===token&&h.get('x-iq-view-id'))).toBe(true);await vi.waitFor(()=>expect(released).toBe(1));
+});
