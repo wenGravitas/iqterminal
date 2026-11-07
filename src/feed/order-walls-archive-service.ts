@@ -1,3 +1,4 @@
+import {wallReadControlScheduler} from './prepared-wall-read-lease';
 import {PreparedWallSourceChangedError} from './prepared-wall-history';
 import {PreparedWallPreparationError} from './prepared-wall-admission';
 import {
@@ -254,7 +255,7 @@ export class OrderWallsArchiveService {
     for(const job of this.historyJobs.values())for(const p of [job.initialProjector,job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
     for(const entry of this.warmHistory.values())if(entry.result.projector)projectors.add(entry.result.projector);
     return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
-      historyJobs: this.historyJobs.size,
+      historyJobs: this.historyJobs.size,readerControl:wallReadControlScheduler.diagnostics(),
       warmEntries:this.warmHistory.size,warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: [...this.groups.values()].reduce((sum, group) => sum + group.pages.length, 0),

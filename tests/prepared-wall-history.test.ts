@@ -345,3 +345,25 @@ test('unsubscribing the last batch consumer cancels its held stream and releases
  await vi.waitFor(()=>expect(started).toBe(true));reader!.dispose();await expect(pending).rejects.toThrow(/Aborted/);
  await vi.waitFor(()=>{expect(canceled).toBe(true);expect(historyScheduler.diagnostics().active).toBe(0);});
 });
+
+test('reader holds and renews its advertised lease through blocked pages and independent final validation',async()=>{
+ vi.useFakeTimers();const f=fixture();Object.assign(f.discovery,{readerLease:{version:1,leaseMs:15000}});
+ let releasePages!:()=>void,releaseSource!:()=>void;const pages=new Promise<void>(r=>releasePages=r),sourceGate=new Promise<void>(r=>releaseSource=r);
+ const t=transport(f,{beforePart:async index=>{if(index>0)await pages;}}),calls:RequestInit[]=[];let validating=false;
+ const fetcher:typeof fetch=async(input,init)=>{
+  const path=new URL(String(input),'http://test').pathname;
+  if(path.endsWith('/reader')){calls.push(init!);return new Response(JSON.stringify({version:1,leaseMs:15000,canonicalKey:f.manifest.key}));}
+  if(init?.method==='DELETE'){calls.push(init);return new Response('{}');}
+  if(path.endsWith('/source')){validating=true;await sourceGate;}
+  return t.fetcher(input,init);
+ };
+ let reader:Awaited<ReturnType<typeof preparedWallReader>>=null;
+ try{
+  reader=await preparedWallReader(request,fetcher,new AbortController().signal);expect(reader).not.toBeNull();
+  const first=await reader!.read(0);expect((first.body as any).page.hasMore).toBe(true);
+  const second=reader!.read(10);await vi.advanceTimersByTimeAsync(11000);expect(historyScheduler.diagnostics().active).toBe(2);expect(calls.filter(c=>c.method==='POST')).toHaveLength(3);expect(calls.some(c=>c.method==='DELETE')).toBe(false);
+  releasePages();await second;const terminal=reader!.read(20);await vi.advanceTimersByTimeAsync(0);expect(validating).toBe(true);
+  await vi.advanceTimersByTimeAsync(11000);expect(calls.filter(c=>c.method==='POST')).toHaveLength(5);expect(calls.some(c=>c.method==='DELETE')).toBe(false);
+  releaseSource();expect((await terminal).body).toMatchObject({page:{hasMore:false}});reader!.dispose();await vi.advanceTimersByTimeAsync(0);expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
+ }finally{releasePages();releaseSource();reader?.dispose();await vi.advanceTimersByTimeAsync(0);vi.useRealTimers();}
+});

@@ -1,3 +1,4 @@
+import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
 import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
@@ -83,12 +84,19 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const manifest=await validateManifest(found.manifest,source,request);
  const target=request.watermark===undefined?source.head:request.head;
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
- const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal]);
+ if(found.readerLease&&(found.readerLease.version!==1||found.readerLease.leaseMs!==15000))throw Error('Invalid wall reader lease capability');
+ const lease=found.readerLease?await acquirePreparedWallReadLease({canonicalKey:manifest.key,...(projection&&found.projection?.manifest?.key?{projectionKey:found.projection.manifest.key}:{})},fetcher,signal):undefined;
+ const abort=new AbortController(),consumer=AbortSignal.any([signal,abort.signal,...(lease?[lease.signal]:[])]);
+ const assertActive=()=>{lease?.assertActive();consumer.throwIfAborted();};
+ const leaseFailure=(error:unknown):never=>{lease?.assertActive();throw error;};
+ consumer.addEventListener('abort',()=>lease?.release(),{once:true});
  async function validateRevision(){
+  assertActive();
   const latest=await historyScheduler.read(sourceUrl('source',request),'order-walls',consumer,async upstream=>{
    const response=await fetcher(sourceUrl('source',request),{signal:upstream});if(!response.ok){await response.body?.cancel();throw Error('Prepared wall source validation HTTP '+response.status);}
    return (await readBody(response,128*1024)).body;
-  });
+  }).catch(leaseFailure);
+  assertActive();
   if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target!.cursor)throw new PreparedWallSourceChangedError();
  }
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
@@ -113,25 +121,25 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   },priority);
   pending.set(index,promise);void promise.catch(()=>{});
  }
- return {sourceToken:source.token,dispose:()=>{abort.abort();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
+ return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
   const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
-   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,validateProfile},onProgress);
+   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,validateProfile},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   if(result){
    await validateRevision();const state=result.projector.checkpoint();state.cursor=target!.cursor;state.epoch=target!.epoch;
    result.projector=OrderWallsArchiveProjector.restoreCheckpoint(state,settings,request.from,request.to);
   }
-  return result?{...result,head:target!}:null;
+  assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{
-  if(consumer.aborted)throw new DOMException('Aborted','AbortError');
+  assertActive();
   if(expectedAfter!==undefined&&after!==expectedAfter)throw Error('Prepared wall continuation cursor mismatch');
   const index=after===0?0:manifest.parts.findIndex(part=>part.after===after);if(index<0)throw Error('Prepared wall resume cursor is not a part boundary');
   let result:PreparedWallFetched;
   if(batchEnabled&&index>0){
    if(!currentBatch||index<currentBatch.start||index>=currentBatch.next){currentBatch?.handle.release();currentBatch=batchAt(index);}
-   result=await currentBatch.handle.read(index);
+   result=await currentBatch.handle.read(index).catch(leaseFailure);
    if(index+1===currentBatch.next){currentBatch.handle.release();currentBatch=undefined;}
   }
-  else{prefetch(index,0);if(!batchEnabled)prefetch(index+1,1);result=await pending.get(index)!;pending.delete(index);}
+  else{prefetch(index,0);if(!batchEnabled)prefetch(index+1,1);result=await pending.get(index)!.catch(leaseFailure);pending.delete(index);}
   const body=rebasePreparedWallPage(result.body,manifest,manifest.parts[index]!,target);
   expectedAfter=body.page.nextAfter;
   if(!body.page.hasMore){
@@ -139,6 +147,6 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
    // source correction cannot turn a painted prefix into early completion.
    await validateRevision();
   }
-  return {...result,body};
+  assertActive();return {...result,body};
  }};
 }

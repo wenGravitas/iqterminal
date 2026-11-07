@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
     // Current-book recovery must not queue behind long historical reads.
     '/market-data/v1/liquidations/stream': { target: liquidationTarget??'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations': { target: liquidationTarget??'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/reader': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/preparation': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/footprint-current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v2/history/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
