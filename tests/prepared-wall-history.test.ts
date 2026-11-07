@@ -67,7 +67,7 @@ test('admitted cold preparation remains incomplete until real prepared content v
   expect(updates.filter(u=>u.status.archive?.preparation).every(u=>u.status.archive.requestComplete===false&&u.status.archive.loadedThrough===from)).toBe(true);
   expect(t.calls.every(p=>!p.includes('/archive'))).toBe(true);
 });
-test.each(['query','source-changed'])('service Retry clears %s build failure with a stable command and no current reconnect',async category=>{
+test.each(['query','source-changed'])('service Retry clears %s build failure with stable command metadata',async category=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const t=transport(),events:any[]=[],headers:Headers[]=[];let repair=false,renewals=0;
  const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;if(init?.method==='DELETE')return new Response('{}');
   if(path.endsWith('/discover')){
@@ -89,6 +89,28 @@ test('specific nonretryable preparation failure is preserved in the chart histor
  const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);try{
   service.subscribe('bad-preparation',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.retryable).toBe(false));
   expect(events.at(-1).status.archive.requestComplete).toBe(false);expect(events.at(-1).status.message).toMatch(/Invalid prepared content/);
+ }finally{service.dispose();}
+});
+test('Retry of a retained prefix escalates a source-changed worker with a distinct revision command, retaining good bars',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const old=transport(fixture(),{corrupt:true}),replacement=fixture();
+ replacement.discovery.source={...replacement.discovery.source,token:'c'.repeat(64)};replacement.manifest.sourceProof={...replacement.manifest.sourceProof,token:'c'.repeat(64)};
+ const next=transport(replacement),events:any[]=[],commands:Headers[]=[];let repair=false,failedToken:string|null=null;
+ const fetcher:typeof fetch=async(input,init)=>{
+  const path=new URL(String(input),'http://test').pathname;if(init?.method==='DELETE')return new Response('{}');if(!repair)return old.fetcher(input,init);
+  if(path.endsWith('/source'))return new Response(JSON.stringify(replacement.discovery.source));
+  if(path.endsWith('/discover')){
+   const header=new Headers(init?.headers);commands.push(header);
+   if(header.get('X-IQ-Wall-New-Revision')!=='1'||header.get('X-IQ-Wall-Retry')===failedToken){
+    failedToken??=header.get('X-IQ-Wall-Retry');return new Response(JSON.stringify({state:'building',preparation:preparation('canonical',{state:'failed',category:'source-changed',error:'Prepared wall source changed',retryable:true})}));
+   }
+  }return next.fetcher(input,init);
+ };
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);try{
+  service.subscribe('retry-revision',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.message).toMatch(/hash mismatch/));
+  expect(events.some(e=>e.kind==='snapshot'&&e.segments?.length)).toBe(true);const before=events.length;repair=true;service.retry('retry-revision');
+  await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));expect(commands).toHaveLength(2);
+  expect(commands[0].get('X-IQ-Wall-New-Revision')).toBeNull();expect(commands[1].get('X-IQ-Wall-New-Revision')).toBe('1');expect(commands[1].get('X-IQ-Wall-Retry')).not.toBe(failedToken);
+  expect(events.slice(before).filter(e=>e.kind==='snapshot').every(e=>e.status.archive.requestComplete===true)).toBe(true);expect(service.diagnostics().groups).toBe(0);
  }finally{service.dispose();}
 });
 test('30h prepared parts preserve the independent canonical projector through timestamp regression, gaps and head progress',async()=>{

@@ -552,6 +552,7 @@ export class OrderWallsArchiveService {
       if (job.abort.signal.aborted || this.disposed) return;
       this.stats.failures++;
       const sourceChanged=error instanceof PreparedWallSourceChangedError||error instanceof PreparedWallPreparationError&&error.category==='source-changed';
+      const requestedRevision=job.preparationNeedsRevision===true;
       job.preparationNeedsRevision=sourceChanged;
       const retryable=error instanceof PreparedWallPreparationError?error.retryable:true;
       if(sourceChanged){
@@ -560,7 +561,13 @@ export class OrderWallsArchiveService {
         // A user Retry may discover that its retained prepared prefix has been
         // superseded. Restart once in that same Retry, staging replacements
         // behind the displayed prefix. No socket/cursor or healthy job resets.
-        if(resume){this.runHistoryJob(job);return;}
+        if(resume){
+          // Escalating a previously acknowledged resume command to a revision
+          // is a distinct intent. Reusing its token would correctly be ignored
+          // by the worker and leave the failed old-source job unchanged.
+          if(job.preparationRetryToken&&!requestedRevision)job.preparationRetryToken=crypto.randomUUID();
+          this.runHistoryJob(job);return;
+        }
       }
       const message = error instanceof Error ? error.message : String(error);
       for (const subscriber of job.subscribers) {
