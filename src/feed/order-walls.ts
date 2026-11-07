@@ -1,6 +1,7 @@
 import { OrderWallRankIndex } from './order-wall-rank';
 import type { Series } from './protocol';
 
+import type {WallPreparationProgress} from './prepared-wall-admission';
 export const ORDER_WALLS_ID = 'native.order-walls';
 export const ORDER_WALL_MAX_LEVELS_PER_SIDE = 5_000;
 export const ORDER_WALL_MAX_SEGMENTS = 20_000;
@@ -147,6 +148,8 @@ export interface OrderWallStatus {
   archive?: OrderWallArchiveStatus;
 }
 export interface OrderWallArchiveStatus {
+  /** Build/source progress is separate from received/painted historical coverage. */
+  preparation?:WallPreparationProgress;
   profileId: string;
   state: 'loading' | 'building' | 'backfilling' | 'complete' | 'partial' | 'unavailable';
   /** False while transport paging is incomplete, independently of source coverage gaps. */

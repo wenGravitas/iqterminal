@@ -52,6 +52,45 @@ function transport(f=fixture(),options:{changed?:boolean;corrupt?:boolean;before
  });
  return {fetcher:fetcher as typeof fetch,calls,peak:()=>peak};
 }
+const preparation=(phase:string,extra:Record<string,unknown>={})=>({version:1,leaseMs:15000,pollMs:250,job:{id:'d'.repeat(64),request,phase,state:'building',pages:3,projectionPages:0,
+ coverage:{availableFrom:from-10000,confirmedTo:to,gapCount:1,gapsTruncated:false},...extra}});
+test('admitted cold preparation remains incomplete until real prepared content validates, without serial fallback',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+  const f=fixture(),t=transport(f),updates:any[]=[];let discoveries=0,firstUpdate!:()=>void;const first=new Promise<void>(resolve=>firstUpdate=resolve);
+  const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;if(init?.method==='DELETE')return new Response('{}');
+   if(path.endsWith('/discover')&&++discoveries<=2)return new Response(JSON.stringify({state:'building',preparation:preparation(discoveries===1?'canonical':'projection')}));return t.fetcher(input,init);};
+  const pending=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>{updates.push(u);firstUpdate();}});
+  await Promise.race([first,pending.then(()=>{throw Error('Completed before preparation status');})]);expect(updates[0]).toMatchObject({kind:'patch',patches:[],status:{archive:{state:'building',requestComplete:false,rangeComplete:false,loadedThrough:from,preparation:{sourceCoverage:{confirmedTo:to,gapCount:1}}}}});
+  expect(updates[0].segments).toBeUndefined();const result=await pending;
+  const reference=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:transport(f).fetcher});
+  expect(result.segments).toEqual(reference.segments);expect(result.status.archive?.requestComplete).toBe(true);expect(result.status.archive?.gaps).not.toHaveLength(0);
+  expect(updates.filter(u=>u.status.archive?.preparation).every(u=>u.status.archive.requestComplete===false&&u.status.archive.loadedThrough===from)).toBe(true);
+  expect(t.calls.every(p=>!p.includes('/archive'))).toBe(true);
+});
+test.each(['query','source-changed'])('service Retry clears %s build failure with a stable command and no current reconnect',async category=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const t=transport(),events:any[]=[],headers:Headers[]=[];let repair=false,renewals=0;
+ const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;if(init?.method==='DELETE')return new Response('{}');
+  if(path.endsWith('/discover')){
+   headers.push(new Headers(init?.headers));if(!repair)return new Response(JSON.stringify({state:'building',preparation:preparation('canonical',{state:'failed',category,error:'Failure removed by operator',retryable:true})}));
+   if(++renewals===1)return new Response(JSON.stringify({state:'building',preparation:preparation('canonical')}));
+  }return t.fetcher(input,init);};
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);
+ try{
+  service.subscribe('prepare-retry',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.message).toMatch(/Failure removed/));
+  expect(events.at(-1).status.archive).toMatchObject({requestComplete:false,retryable:true});repair=true;service.retry('prepare-retry');
+  await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true),{timeout:2000});
+  expect(events.at(-1).status.message??'').not.toMatch(/Failure removed/);expect(service.diagnostics().groups).toBe(0);
+  const retried=headers.slice(1);expect(retried.length).toBeGreaterThanOrEqual(2);expect(new Set(retried.map(h=>h.get('X-IQ-Wall-Retry'))).size).toBe(1);expect(retried[0].get('X-IQ-Wall-Retry')).toBeTruthy();
+  expect(retried.every(h=>h.get('X-IQ-Wall-New-Revision')===(category==='source-changed'?'1':null))).toBe(true);
+ }finally{service.dispose();}
+});
+test('specific nonretryable preparation failure is preserved in the chart history status',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],fetcher:typeof fetch=async(_input,init)=>new Response(JSON.stringify(init?.method==='DELETE'?{}:{state:'building',preparation:preparation('canonical',{state:'failed',category:'invalid-content',error:'Invalid prepared content',retryable:false})}));
+ const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);try{
+  service.subscribe('bad-preparation',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.retryable).toBe(false));
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);expect(events.at(-1).status.message).toMatch(/Invalid prepared content/);
+ }finally{service.dispose();}
+});
 test('30h prepared parts preserve the independent canonical projector through timestamp regression, gaps and head progress',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),updates:any[]=[];
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)});

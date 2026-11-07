@@ -1,8 +1,8 @@
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
 import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
-import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import {historyScheduler} from './history-scheduler';
+import {discoverPreparedWallAdmission,type WallPreparationProgress} from './prepared-wall-admission';
 import type {OrderWallsArchivePage} from './order-walls-archive';
 type Head={cursor:number;epoch:number;at:number};
 export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;from:number;to:number;watermark?:number;head?:Head}
@@ -61,14 +61,10 @@ export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Pro
 /** At most two immutable parts are prefetched. Every read uses the shared
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
-export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings):Promise<PreparedWallReader|null>{
+export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
  const discovery=sourceUrl('discover',request);
  const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
- const found=await historyScheduler.read(discovery+(projection?'#projection='+WALL_PROJECTION_CORE_SHA256:''),'order-walls',signal,async upstream=>{
-  const response=await fetcher(discovery,{signal:upstream,...(projection?{headers:{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}}:{})});
-  if(!response.ok){await response.body?.cancel();if(response.status===404)return null;throw Error('Prepared wall discovery HTTP '+response.status);}
-  return (await readBody(response,projection?8*1024*1024:128*1024)).body as any;
- });
+ const found=await discoverPreparedWallAdmission({request,url:discovery,projection,fetcher,signal,...options,decode:async(response,max)=>(await readBody(response,max)).body});
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();

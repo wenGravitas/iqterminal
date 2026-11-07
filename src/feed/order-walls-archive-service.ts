@@ -1,4 +1,5 @@
 import {PreparedWallSourceChangedError} from './prepared-wall-history';
+import {PreparedWallPreparationError} from './prepared-wall-admission';
 import {
   DEFAULT_ORDER_WALLS_SETTINGS,
   orderWallsSettings,
@@ -78,6 +79,8 @@ interface Subscription {
 }
 
 interface SharedHistoryJob {
+  preparationRetryToken?:string;
+  preparationNeedsRevision?:boolean;
   key: string;
   request: OrderWallsArchiveRequest;
   fence?: { cursor: number; at: number; epoch: number };
@@ -197,6 +200,7 @@ export class OrderWallsArchiveService {
     if (job) {
       if (!job.settled) return;
       {
+        job.preparationRetryToken=crypto.randomUUID();
         job.abort = new AbortController();
         job.settled = false;
         for (const subscriber of job.subscribers) {
@@ -532,11 +536,13 @@ export class OrderWallsArchiveService {
   private runHistoryJob(job: SharedHistoryJob, resume?: OrderWallsArchiveResumeState) {
     job.settled = false;
     void loadOrderWallsArchive({ request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+      ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       ...(job.initialProjector ? { initialProjector: job.initialProjector.cloneForLiveTail(job.request.to) } : {}), onUpdate: update => {
       job.latest = update; job.resume = update.resume;
       for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, update);
     }, onPageMetrics: metrics => this.recordHistoryPageMetrics(metrics) }).then(result => {
       job.latest = result; job.resume = result.resume; job.settled = true;
+      job.preparationNeedsRevision=false;job.preparationRetryToken=undefined;
       this.rememberHistory(job.request,result);
       for (const subscriber of [...job.subscribers]) {
         if (!this.tryStartPendingViewportHistory(subscriber)) this.publishSharedHistoryUpdate(subscriber, job, result);
@@ -545,7 +551,9 @@ export class OrderWallsArchiveService {
       job.settled = true;
       if (job.abort.signal.aborted || this.disposed) return;
       this.stats.failures++;
-      const sourceChanged=error instanceof PreparedWallSourceChangedError;
+      const sourceChanged=error instanceof PreparedWallSourceChangedError||error instanceof PreparedWallPreparationError&&error.category==='source-changed';
+      job.preparationNeedsRevision=sourceChanged;
+      const retryable=error instanceof PreparedWallPreparationError?error.retryable:true;
       if(sourceChanged){
         job.resume=undefined;
         for(const subscriber of job.subscribers)if(subscriber.historyProjector||subscriber.historyPresentation?.size)subscriber.cachedHistory=true;
@@ -559,13 +567,13 @@ export class OrderWallsArchiveService {
         const previous = job.latest?.status;
         if (job.resume && previous) {
           const archive = { ...(previous.archive ?? emptyArchiveStatus(subscriber.request, 'partial')),
-            state: 'partial' as const, requestComplete: false, retryable: true, resumeAfter: job.resume.after, reason: message };
+            state: 'partial' as const, requestComplete: false, retryable, resumeAfter: job.resume.after, reason: message };
           subscriber.historyStatus = { ...previous, state: 'loading', message: `Order Walls history incomplete; validated prefix retained and can be resumed. ${message}`,
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message }, archive };
         } else {
           subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
             coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
-            archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), requestComplete: false, retryable: true } };
+            archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), requestComplete: false, retryable } };
         }
         this.publish(subscriber, 'patch', [], this.status(subscriber));
       }

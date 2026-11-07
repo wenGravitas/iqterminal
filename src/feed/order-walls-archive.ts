@@ -250,6 +250,7 @@ export interface OrderWallsArchiveLoadOptions {
   initialProjector?: OrderWallsArchiveProjector;
   /** Retains the committed projector and fixed page cursor after a bounded transport failure. */
   resume?: OrderWallsArchiveResumeState;
+  preparationRetry?:{token:string;newRevision?:boolean};
   onUpdate?: (update: OrderWallsArchiveUpdate) => void;
   /** Optional bounded-page timings for acceptance diagnostics; callers decide whether to retain them. */
   onPageMetrics?: (metrics: OrderWallsArchivePageMetrics) => void;
@@ -387,7 +388,12 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
   const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
-    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings):null;
+    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{retry:options.preparationRetry,onPreparation:preparation=>{
+      const reason=`Preparing wall history: ${preparation.phase}; ${preparation.pages} canonical / ${preparation.projectionPages} selected parts.`;
+      const archive:OrderWallArchiveStatus={...archiveStatus(request,availability,'building'),requestComplete:false,rangeComplete:false,
+        loadedThrough:Math.min(request.to,Math.max(request.from,prior?.projector.confirmedAt??request.from)),preparation,reason};
+      options.onUpdate?.({kind:'patch',patches:[],status:statusForArchive(archive,'building',reason),pages,bytes,...(prior?{resume:prior}:{})});
+    }}):null;
   const captureResume = (resumeAfter = after): OrderWallsArchiveResumeState => ({ after: resumeAfter, watermark,
     head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
   try {
