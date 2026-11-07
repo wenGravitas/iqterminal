@@ -1,3 +1,4 @@
+import {wallReadControlScheduler} from './prepared-wall-read-lease';
 import {historyScheduler} from './history-scheduler';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import type {PreparedWallRequest} from './prepared-wall-history';
@@ -35,7 +36,7 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  const {request,url,projection,fetcher,signal}=options,consumer=crypto.randomUUID();let job:string|undefined,leased=false;
  const release=()=>{
   const cancel='/market-data/v2/history/walls/preparation?'+new URLSearchParams({consumer});
-  void historyScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{
+  void wallReadControlScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{
    const response=await fetcher(cancel,{method:'DELETE',signal:upstream});await response.body?.cancel();
    if(!response.ok&&response.status!==404)throw Error('Wall preparation release HTTP '+response.status);
   },-1).catch(()=>{}); // Expiring server leases bound work if cancellation cannot arrive.

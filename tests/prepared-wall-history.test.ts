@@ -357,13 +357,13 @@ test('reader holds and renews its advertised lease through blocked pages and ind
   if(path.endsWith('/source')){validating=true;await sourceGate;}
   return t.fetcher(input,init);
  };
- let reader:Awaited<ReturnType<typeof preparedWallReader>>=null;
+ let reader:Awaited<ReturnType<typeof preparedWallReader>>=null;const pendingReads:Promise<unknown>[]=[];
  try{
   reader=await preparedWallReader(request,fetcher,new AbortController().signal);expect(reader).not.toBeNull();
   const first=await reader!.read(0);expect((first.body as any).page.hasMore).toBe(true);
-  const second=reader!.read(10);await vi.advanceTimersByTimeAsync(11000);expect(historyScheduler.diagnostics().active).toBe(2);expect(calls.filter(c=>c.method==='POST')).toHaveLength(3);expect(calls.some(c=>c.method==='DELETE')).toBe(false);
-  releasePages();await second;const terminal=reader!.read(20);await vi.advanceTimersByTimeAsync(0);expect(validating).toBe(true);
+  const second=reader!.read(10);pendingReads.push(second);await vi.advanceTimersByTimeAsync(11000);expect(historyScheduler.diagnostics().active).toBe(2);expect(calls.filter(c=>c.method==='POST')).toHaveLength(3);expect(calls.some(c=>c.method==='DELETE')).toBe(false);
+  releasePages();await second;const terminal=reader!.read(20);pendingReads.push(terminal);await vi.waitFor(()=>expect(validating).toBe(true));
   await vi.advanceTimersByTimeAsync(11000);expect(calls.filter(c=>c.method==='POST')).toHaveLength(5);expect(calls.some(c=>c.method==='DELETE')).toBe(false);
   releaseSource();expect((await terminal).body).toMatchObject({page:{hasMore:false}});reader!.dispose();await vi.advanceTimersByTimeAsync(0);expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
- }finally{releasePages();releaseSource();reader?.dispose();await vi.advanceTimersByTimeAsync(0);vi.useRealTimers();}
+ }finally{releasePages();releaseSource();reader?.dispose();await Promise.allSettled(pendingReads);await vi.advanceTimersByTimeAsync(0);vi.useRealTimers();}
 });
