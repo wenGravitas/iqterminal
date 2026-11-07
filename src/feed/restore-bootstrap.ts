@@ -28,7 +28,7 @@ export function startVisibleChartFeeds(feed:Pick<FeedClient,'subscribe'|'subscri
   }
   const wall=selection.indicators.find(i=>i.definitionId==='native.order-walls'&&i.visible);
   if(wall){const settings=orderWallsSettings(wall.settings);if(settings.enabled&&settings.mode==='top-levels'){
-   const now=Date.now(),saved=preloadHistory?restoredHistoryViewport(selection):undefined,step=duration[selection.interval];
+   const now=Date.now(),saved=restoredHistoryViewport(selection),step=duration[selection.interval];
    const historical=saved&&saved.to<now-step?{from:Math.max(0,Math.floor(saved.from/step)*step-step),to:Math.min(now,Math.ceil(saved.to/step)*step+step),followLive:false}:undefined;
    releases.push(feed.subscribeOrderWalls(`${scope}:walls:${id}`,{market:orderWallMarket(selection),...(historical??{from:now-60000,to:now+60000,followLive:true,currentOnly:true}),settings},()=>{}));
   }}

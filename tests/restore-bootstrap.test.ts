@@ -3,12 +3,12 @@ import {startVisibleChartFeeds,restoredHistoryViewport,restoreFeedPlan} from '..
 const selection=(patch:any={})=>({venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,indicators:[],...patch}) as any;
 function source(){const released:unknown[]=[],calls:unknown[][]=[];const sub=(...args:unknown[])=>{calls.push(args);return()=>released.push(args[0]);};return {feed:{subscribe:vi.fn(sub),subscribeFootprint:vi.fn(sub),subscribeOrderWalls:vi.fn(sub)} as any,calls,released};}
 const layout=(panels:any,views:string[],activeView=views[0])=>({panels,grid:{root:{type:'leaf',data:{views,activeView}}}}) as any;
-test('saved candle Top Levels starts its padded historical view before native data and shares that range with Totals',()=>{
+test.each([true,false])('saved candle Top Levels starts its padded view through both restore phases (preload=%s)',preload=>{
  const {feed,released}=source();feed.requestFootprintViewport=vi.fn();const saved={from:10*3600000,to:40*3600000};
  const s=selection({type:'candle',historyViewport:saved,indicators:[{definitionId:'native.order-walls',visible:true,settings:{enabled:true,mode:'top-levels',showHistory:true}},{definitionId:'native.footprint-totals',visible:true}]});
- const release=startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:s}},['a']),x=>x as any,true);
+ const release=startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:s}},['a']),x=>x as any,preload);
  expect(feed.subscribeOrderWalls).toHaveBeenCalledWith(expect.any(String),expect.objectContaining({from:saved.from-3600000,to:saved.to+3600000,followLive:false}),expect.any(Function));
- expect(feed.subscribeOrderWalls.mock.calls[0][1].currentOnly).toBeUndefined();expect(feed.requestFootprintViewport).toHaveBeenCalledWith(expect.any(String),saved.from,saved.to);
+ expect(feed.subscribeOrderWalls.mock.calls[0][1].currentOnly).toBeUndefined();if(preload)expect(feed.requestFootprintViewport).toHaveBeenCalledWith(expect.any(String),saved.from,saved.to);else expect(feed.requestFootprintViewport).not.toHaveBeenCalled();
  release();expect(released).toHaveLength(3);
 });
 test('saved wall history participates in early-feed reconciliation while plain Totals keeps its existing visible-range behavior',()=>{
