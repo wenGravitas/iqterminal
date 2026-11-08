@@ -701,7 +701,7 @@ export class OrderWallsArchiveService {
 
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
-    const forceValidatedSnapshot=forceSnapshot&&update.preparedPresentationComplete&&update.status.archive?.requestComplete&&update.status.archive.exact;
+    const forceValidatedSnapshot=forceSnapshot&&update.preparedPresentationComplete&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable';
     if(forceValidatedSnapshot){sub.cachedHistory=false;this.releaseWarmReplay(sub);}
     const priorStatus=sub.historyStatus;sub.historyStatus = update.status;
     if(!sub.cachedHistory&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable')this.releaseWarmReplay(sub);

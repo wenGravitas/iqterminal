@@ -334,3 +334,16 @@ test('an unfinished warm replay cannot certify complete presentation from a matc
   expect(events.slice(before).some(e=>e.patches?.some((p:any)=>p.segment))).toBe(false);
  }finally{release();service.dispose();spy?.mockRestore();}
 });
+
+test('a late shared join cannot turn unavailable prepared coverage into validated cached history',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),bad=fixture(true);bad.manifest.coverage.status='unavailable';
+ let phase=0;const first=transport(f),unavailable=transport(bad),events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?unavailable:first).fetcher(input,init),()=>to+1000),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmEntries:1,warmBuilds:0}));phase=1;service.retry('seed');
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('seed')).at(-1)?.status.archive.state).toBe('unavailable'));
+  service.subscribe('late',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('late')).at(-1)?.status.archive.state).toBe('unavailable'));
+  expect(displayedWalls(events,'late').size).toBe(f.full.segments.length);
+  expect(events.filter(e=>e.ids?.includes('late')).at(-1).status.archive.requestComplete).toBe(false);
+  expect(service.diagnostics().warmValidatedReuses).toBe(0);
+ }finally{service.dispose();}
+});
