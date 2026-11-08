@@ -609,20 +609,39 @@ it('retains closed native paint work through open-tail changes and preserves ord
   // paths even when those drawables still refer to the former open header.
   open={...open,end:base+120000,endKnown:true,currentSelection:false};
   for(const p of [cached,reference])p.patch([{id:open.id,segment:open}],status);
-  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+1);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds);expect(cached.stats.closedPaintCacheAppends).toBe(1);
+  expect(cached.stats.closedPaintStyleVisits-visits).toBeLessThanOrEqual(open.valueRuns.length);
   const revised={...closed[1]!,valueRuns:[{...closed[1]!.valueRuns[0]!,usd:777},closed[1]!.valueRuns[1]!]};
   for(const p of [cached,reference])p.patch([{id:revised.id,segment:revised,replaceValueRuns:true}],status);
-  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+2);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+1);
   for(const p of [cached,reference])p.patch([{id:revised.id,segment:null}],status);
-  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+3);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+2);
   // A changed strength reference must recolor historical paths, while a mixed
   // Threshold tail retains the original immediate-first stroke ordering.
   other={...other,valueRuns:[...other.valueRuns,{at:base+110000,usd:10000,percentile:null}]};
   for(const p of [cached,reference])p.patch([{id:other.id,segment:other,valuePoints:[other.valueRuns.at(-1)!]}],status);
-  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+4);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+3);
   const threshold={...wall('threshold',500,null),detectionMode:'threshold' as const,percentile:99,valueRuns:[]};
   for(const p of [cached,reference])p.patch([{id:threshold.id,segment:threshold}],status);
   compare();
   cached.detached();expect(cached.diagnostics().retainedClosedPaintPaths).toBe(0);expect(cached.diagnostics().retainedPaintPaths).toBe(0);
+ }finally{vi.unstubAllGlobals();}
+});
+
+it('releases cached closed paths and membership when hidden retention removes their source segments',()=>{
+ class TestPath {moveTo(){}lineTo(){}addPath(){}}
+ vi.stubGlobal('Path2D',TestPath);
+ try{
+  const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',historyEpisodes:2,showPriceLines:false},60000);
+  const wall=(i:number):OrderWallSegment=>({id:'retained-paint-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:100,meanUsd:100,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',valueRuns:[{at:base,usd:100,percentile:null}],valueRunsTruncated:false});
+  const status={state:'live' as const,lastConfirmedAt:base+120000};p.setSnapshot([wall(0),wall(1)],status);p.draw(canvas(),context());
+  expect(p.diagnostics().retainedClosedPaintSegments).toBe(2);expect(p.diagnostics().retainedClosedPaintPaths).toBeGreaterThan(0);
+  for(let i=2;i<1000;i++){
+   p.patch([{id:'retained-paint-'+i,segment:wall(i)}],status);const d=p.diagnostics();
+   expect(d.retainedClosedPaintSegments).toBeLessThanOrEqual(d.retainedSegments);expect(d.pendingClosedPaintSegments).toBeLessThanOrEqual(d.retainedSegments);
+  }
+  expect(p.diagnostics().retainedSegments).toBe(2);expect(p.diagnostics().retainedClosedPaintPaths).toBe(0);expect(p.diagnostics().retainedPaintPaths).toBe(0);expect(p.diagnostics().retainedClosedPaintSegments).toBe(0);
+  p.draw(canvas(),context());expect(p.diagnostics().retainedClosedPaintSegments).toBe(2);expect(p.diagnostics().pendingClosedPaintSegments).toBe(0);
+  p.detached();expect(p.diagnostics().retainedClosedPaintSegments).toBe(0);expect(p.diagnostics().retainedClosedPaintPaths).toBe(0);
  }finally{vi.unstubAllGlobals();}
 });
