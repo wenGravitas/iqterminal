@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';
-import {finishResponseTraces,loadingObservationComplete} from './benchmark-traces.mjs';
+import {finishResponseTraces,loadingObservationComplete,nativeClosedCoverage} from './benchmark-traces.mjs';
 test('a canceled response with an unresolved trace cannot prevent sample finalization',async()=>{
  const result=await finishResponseTraces([Promise.resolve(),new Promise(()=>{})],10);
  assert.deepEqual(result,{timedOut:true,taskCount:2});
@@ -17,4 +17,15 @@ test('ready closed history cannot end a current-display observation before healt
 });
 test('extended current observation remains active after both current and history paint',()=>{
  for(const currentCase of [true,false])assert.equal(loadingObservationComplete({currentCase,currentAt:2070.1,completeAt:3638,keepObserving:true}),false);
+});
+
+test('wall history observation stays open until native closed coverage is inspected',()=>{
+ assert.equal(loadingObservationComplete({currentCase:false,currentAt:null,completeAt:2500,coverageReady:false}),false);
+ assert.equal(loadingObservationComplete({currentCase:true,currentAt:1200,completeAt:null,coverageReady:false}),true);
+});
+test('native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar',()=>{
+ const range={from:60000,to:360000},step=60000,closed=300000;
+ assert.deepEqual(nativeClosedCoverage([0,60000,120000,240000,300000,360000],range,step,closed),{valid:false,capacityLimited:false,from:60000,to:300000,requestedSlots:4,loadedSlots:3,missing:[180000]});
+ assert.equal(nativeClosedCoverage([60000,120000,180000,240000],range,step,closed).valid,true);
+ assert.equal(nativeClosedCoverage([],{from:0,to:10000*step},step,10000*step).capacityLimited,true);
 });
