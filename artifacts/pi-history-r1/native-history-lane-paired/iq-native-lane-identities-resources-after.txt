@@ -1,0 +1,10 @@
+/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z
+/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z
+/iqterminal-history-api a078bf91b4cd7bbed1182ac91733991cf52c876175cd90ce91a5598c0a6264af 2026-11-06T16:54:08.538780843Z
+iqterminal-server CPU=4.29% Memory=92.67MiB / 1GiB
+iqterminal-spot-server CPU=2.60% Memory=124.3MiB / 1GiB
+iqterminal-history-api CPU=0.10% Memory=75.75MiB / 512MiB
+5.29 4.97 4.95 1/1887 1729504
+               total        used        free      shared  buff/cache   available
+Mem:           64081       15064        3955        3727       49502       49017
+Swap:          32734        5968       26766

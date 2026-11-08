@@ -1,0 +1,156 @@
+[
+  {
+    "selfMs": 1188.6,
+    "name": "(idle)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 804.1,
+    "name": "(program)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 313.8,
+    "name": "projectIndex",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 457894
+  },
+  {
+    "selfMs": 293.5,
+    "name": "worker.onmessage",
+    "url": "http://127.0.0.1:4184/assets/index-BqLCZs-Z.js",
+    "line": 1,
+    "column": 7109
+  },
+  {
+    "selfMs": 240.2,
+    "name": "(garbage collector)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 106.6,
+    "name": "frame",
+    "url": "",
+    "line": 4,
+    "column": 14
+  },
+  {
+    "selfMs": 102.3,
+    "name": "project",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 458509
+  },
+  {
+    "selfMs": 94.8,
+    "name": "draw",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 450100
+  },
+  {
+    "selfMs": 72.7,
+    "name": "",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 59.7,
+    "name": "projectIndex",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 457894
+  },
+  {
+    "selfMs": 58.2,
+    "name": "updateReference",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 447890
+  },
+  {
+    "selfMs": 49.8,
+    "name": "updateReference",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 447890
+  },
+  {
+    "selfMs": 32.9,
+    "name": "project",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 458509
+  },
+  {
+    "selfMs": 31.5,
+    "name": "patch",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 445575
+  },
+  {
+    "selfMs": 31.1,
+    "name": "projectAll",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 456662
+  },
+  {
+    "selfMs": 30.1,
+    "name": "draw",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 450100
+  },
+  {
+    "selfMs": 27.4,
+    "name": "getBoundingClientRect",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 24.3,
+    "name": "draw",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 415201
+  },
+  {
+    "selfMs": 23.1,
+    "name": "_scrollTabIntoView",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 33,
+    "column": 235766
+  },
+  {
+    "selfMs": 22.7,
+    "name": "setOrderWallSnapshot",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 32,
+    "column": 39873
+  },
+  {
+    "selfMs": 22.6,
+    "name": "countReference",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 447722
+  },
+  {
+    "selfMs": 20.5,
+    "name": "renderStatus",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 387246
+  }
+]

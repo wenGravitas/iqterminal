@@ -1,0 +1,424 @@
+{
+  "control": {
+    "samples": [
+      {
+        "sample": 1,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-control/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 9270.2,
+          "complete": 15262.4,
+          "nativeData": 8398.4,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 1940.9,
+          "complete": 4498.4,
+          "nativeData": 1940.9,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 2,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-control/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": null,
+        "cold": {
+          "firstHistory": 3444.8,
+          "complete": 22033.6,
+          "nativeData": 3444.8,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 7780.7,
+          "complete": null,
+          "nativeData": 7780.6,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 3,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-control/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 23321,
+          "complete": 35482.1,
+          "nativeData": 23246.5,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 2542.0,
+          "complete": 4433.5,
+          "nativeData": 1273.7,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 4,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-control/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 3714.6,
+          "complete": 8295.8,
+          "nativeData": 3714.6,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 3807.9,
+          "complete": 5368.8,
+          "nativeData": 2071.9,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 5,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-control/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 5824.4,
+          "complete": 11527.4,
+          "nativeData": 5547.1,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 1537,
+          "complete": 4318,
+          "nativeData": 1846.1,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      }
+    ],
+    "summary": {
+      "cold_firstHistory": {
+        "samples": [
+          9270.2,
+          3444.8,
+          23321,
+          3714.6,
+          5824.4
+        ],
+        "median": 5824.4,
+        "maximum": 23321,
+        "completed": 5,
+        "note": ""
+      },
+      "cold_complete": {
+        "samples": [
+          15262.4,
+          22033.6,
+          35482.1,
+          8295.8,
+          11527.4
+        ],
+        "median": 15262.4,
+        "maximum": 35482.1,
+        "completed": 5,
+        "note": ""
+      },
+      "warm_firstHistory": {
+        "samples": [
+          1940.9,
+          7780.7,
+          2542.0,
+          3807.9,
+          1537
+        ],
+        "median": 2542.0,
+        "maximum": 7780.7,
+        "completed": 5,
+        "note": ""
+      },
+      "warm_complete": {
+        "samples": [
+          4498.4,
+          null,
+          4433.5,
+          5368.8,
+          4318
+        ],
+        "median": null,
+        "maximum": null,
+        "completed": 4,
+        "note": "No median/max substituted for missing loading samples"
+      }
+    }
+  },
+  "candidate": {
+    "samples": [
+      {
+        "sample": 1,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-1-candidate/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 8550.2,
+          "complete": 16021.4,
+          "nativeData": 8371.1,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 2060.7,
+          "complete": 5596.7,
+          "nativeData": 1791.6,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 2,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-2-candidate/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 7089.5,
+          "complete": 22834.7,
+          "nativeData": 5673.3,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 3333.4,
+          "complete": 4525.4,
+          "nativeData": 3022.7,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 3,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-3-candidate/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 6065.2,
+          "complete": 16673.1,
+          "nativeData": 4700.3,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 3667.4,
+          "complete": 5132.2,
+          "nativeData": 1997.8,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 4,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-4-candidate/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 7402.4,
+          "complete": 19618,
+          "nativeData": 4325.9,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 2871.1,
+          "complete": 4219.2,
+          "nativeData": 2344.2,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      },
+      {
+        "sample": 5,
+        "artifact": "artifacts/pi-history-r1/warm-route-paired-native-lane-5-candidate/run-1.json",
+        "error": null,
+        "coldHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "warmHash": {
+          "segments": 8293,
+          "runs": 49154,
+          "hash": "cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e"
+        },
+        "cold": {
+          "firstHistory": 2618.4,
+          "complete": 7892.2,
+          "nativeData": 2499.3,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        },
+        "warm": {
+          "firstHistory": 2659.7,
+          "complete": 4312.3,
+          "nativeData": 1504.9,
+          "visibleNativeSlots": 360,
+          "wallSegments": 8293,
+          "wallPoints": 49154
+        }
+      }
+    ],
+    "summary": {
+      "cold_firstHistory": {
+        "samples": [
+          8550.2,
+          7089.5,
+          6065.2,
+          7402.4,
+          2618.4
+        ],
+        "median": 7089.5,
+        "maximum": 8550.2,
+        "completed": 5,
+        "note": ""
+      },
+      "cold_complete": {
+        "samples": [
+          16021.4,
+          22834.7,
+          16673.1,
+          19618,
+          7892.2
+        ],
+        "median": 16673.1,
+        "maximum": 22834.7,
+        "completed": 5,
+        "note": ""
+      },
+      "warm_firstHistory": {
+        "samples": [
+          2060.7,
+          3333.4,
+          3667.4,
+          2871.1,
+          2659.7
+        ],
+        "median": 2871.1,
+        "maximum": 3667.4,
+        "completed": 5,
+        "note": ""
+      },
+      "warm_complete": {
+        "samples": [
+          5596.7,
+          4525.4,
+          5132.2,
+          4219.2,
+          4312.3
+        ],
+        "median": 4525.4,
+        "maximum": 5596.7,
+        "completed": 5,
+        "note": ""
+      }
+    }
+  }
+}

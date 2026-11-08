@@ -1,0 +1,24 @@
+{
+  "pid": 234854,
+  "verifiedArgs": [
+    "ssh",
+    "-N",
+    "-T",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ExitOnForwardFailure=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "-o",
+    "ServerAliveInterval=15",
+    "-o",
+    "ServerAliveCountMax=3",
+    "-L",
+    "127.0.0.1:18795:127.0.0.1:18780",
+    "staging",
+    ""
+  ],
+  "signal": "SIGTERM",
+  "scope": "Only the owned experimental native-history SSH lane; incumbent18780/18781 preserved"
+}

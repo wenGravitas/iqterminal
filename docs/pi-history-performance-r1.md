@@ -2222,3 +2222,87 @@ at four. Default tunnel tooling is unchanged pending comparable repeated runs.
 Rollback: unset the optional target and restart the owned preview, then close
 only the explicitly owned18795 SSH process after checking its identity. Revert
 the proxy commit to restore the former shared four-slot history agent.
+
+### Five-pair full-view native-lane comparison and main-thread profile
+
+Evidence: `artifacts/pi-history-r1/native-history-lane-paired/README.md` and
+`results.json`, with all ten raw per-run folders `warm-route-paired-native-lane-*`.
+The existing proxy on4183 is control a41931b (shared history4);4184 is candidate
+d483e15 (native2/bulk2 plus native SSH18795). Both load the exact same compiled
+6ed9ee4 staging/history/diagnostics application and18579d9 server. Odd pairs run
+control then candidate; even pairs reverse. No primary runs overlap. The five
+samples use fresh browsers/empty contexts over the same already prepared pinned
+Spot30h source; each completed seed is then reopened in the same worker.
+
+|Metric|Control median / maximum|Candidate median / maximum|Gate|
+|---|---:|---:|---|
+|Cold first historical paint|5824.4 /23321.0ms|7089.5 /8550.2ms|FAIL: first history3s|
+|Cold exact complete visible coverage|15262.4 /35482.1ms|16673.1 /22834.7ms|FAIL: median5s, maximum10s|
+|Warm useful historical paint|2542.0 /7780.7ms|2871.1 /3667.4ms|FAIL:1s|
+|Warm independent complete validation|4/5complete; no full-cohort median/max|4525.4 /5596.7ms|Control2 misses12s observation|
+
+Every cold view completes all360native candle slots,8293walls,49154value
+points and35explicit gaps; all ten cold hashes equal the independent reference
+cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e.
+All nine completed warm views match it too. Warm control2 remains a failed
+validation observation, not a discarded or replaced sample. All individual
+samples and median/max computation are retained; no p95 is reported. This is
+headless Pi-route evidence, not normal foreground Chromium acceptance. No
+footprint, USD-M30h, current-concurrency or heap-plateau gate is reclassified.
+The third SSH lane does not improve median latency and is not promoted to the
+default tunnel workflow. The separately tested HTTP reservation stays bounded
+at four history sockets and protects native admission without claiming a
+latency pass. Subsequent8a18a63 also bounds agents across origins, destroys them
+on preview shutdown, and tests bulk saturation across two fixture origins.
+
+The original headless probe's SwiftShader rendering string was inaccurate:
+this Pi's distribution wrapper appends GLES. The paired cohort retains actual
+process argv; its GPU mode was not queried directly. A subsequent supplemental
+profile queries SystemInfo and confirms ANGLE/Broadcom V3D7.1.7.0, OpenGLES3.1,
+Mesa24.2.8 hardware rendering. It remains headless. This correction supersedes
+software-rendering labels for these specific raw probes. Browser command-line
+CDP access is unavailable because the wrapper disables enable-automation; its
+error is explicitly retained, with process argv and SystemInfo as evidence.
+
+The profiled run (`warm-route-6ed-spot-main-thread-profile-r2`) preserves the
+same reference hash. Raw cold/warm .cpuprofile files, self-time summaries,
+compiled assets and browser GPU metadata are retained. In that warm profile,
+projectIndex accounts for about373.4ms self time across its sampled call sites,
+project135.2ms, worker.onmessage293.5ms and GC240.2ms. These are sampled CPU
+categories, not exclusive request phases or primary loading samples. A prior
+unprofiled pilot recorded a968ms main-thread task; worker cached first content
+was30.3ms while full replay took2910.5ms and actual paint3548.4ms. The remaining
+work includes bounding geometry rebuild and message/apply CPU, as well as the
+observed route/header variability; a faster cached worker callback alone does
+not satisfy warm paint.
+
+A distinct unnecessary scan was removed in9723dcc: optional price guides now
+look up geometry only through open episode IDs instead of enumerating all
+closed drawables. Its regression checks current-tail updates, label values,
+closure and refusal of full drawable enumeration. This preserves exact wall
+geometry and source history; no default-view latency improvement is claimed
+for it. Focused chart28tests and typecheck pass; subsequent build/browser
+receipts identify the checked app commit separately from the6ed9ee4 cohort.
+
+Post-cohort staging resource sampling reports collector CPU4.29%/2.60%, API
+CPU0.10% and API75.75MiB. This is one post-cohort sample, not per-run peaks.
+Serving18579d9 and all collector/API container IDs/start times match the before
+receipt. No production deployment, main merge, collector restart, exchange
+connection or source-retention change occurred.
+
+Final validation for the code after the measured cohort: app build e71048b
+(staging/history/diagnostics) passes; focused chart28/28 and headless browser
+10/10 pass. The multi-origin proxy checks pass five rounds in both development
+and preview, with typecheck clean. These are UI/fixture/capacity regressions,
+not a fresh five-sample financial latency cohort on e71048b. Owned experimental
+previews4183/4184 and SSH18795 are closed after identity checks; established
+4181 and history/live tunnels18780/18781 remain running. No IQTerminalPerf or
+Playwright test windows remain in the user's i3 tree. The performance goal
+remains incomplete; failed ready-wall/warm gates are unchanged.
+
+The initial UI-only validation build omitted embedded VITE_BUILD_COMMIT. It is
+retained as such; the established `pnpm build:staging:diagnostics` command then
+rebuilt e71048bd33cb1372bf89f516c8e2ed8641a3dcbd with the full SHA embedded,
+and the ten headless browser checks were repeated successfully. Both build
+logs and the identified asset SHA manifest are retained. This metadata repair
+does not alter or replace the earlier6ed9ee4 five-pair loading samples.

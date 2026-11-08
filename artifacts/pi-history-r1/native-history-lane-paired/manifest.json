@@ -1,0 +1,13 @@
+{
+  "appBuild": "6ed9ee4ef7b9e7d4b5d96dbeef73ef2e3dfa3139",
+  "probeAndCandidateProxyCommit": "d483e1535cd864a9f302abfecfd49605f9ad7d10",
+  "controlProxyCommit": "a41931b4a426d4329b3a0908a2f96aa2f6146d26",
+  "control": "http://127.0.0.1:4183; history agent4, existing18780 SSH",
+  "candidate": "http://127.0.0.1:4184; native2/bulk2, native18795 SSH and bulk18780 SSH",
+  "currentBoth": "four-slot current agent via18781 SSH, unchanged",
+  "serverBuild": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+  "order": "five sequential pairs, odd control then candidate/even candidate then control; one fresh browser/context per individual sample; same-worker reopen only after complete seed",
+  "renderingCorrection": "Headless system Chromium. Harness requests SwiftShader, but distribution wrapper appends --use-angle=gles. Effective renderer is not yet queried; do not certify software rendering or normal foreground Pi acceptance. Raw argv retained.",
+  "scriptSha256": "e73c3f42a0a9ddbe4832938339d800e6f075f75a6e36e23a6582939bbf9f16df",
+  "distIndexSha256": "8c84be62b9e964ff9368981f694e9a52d4c14b1e3a59b644a7587d879e2ffdd8"
+}

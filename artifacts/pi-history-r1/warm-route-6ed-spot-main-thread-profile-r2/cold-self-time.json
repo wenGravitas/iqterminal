@@ -1,0 +1,156 @@
+[
+  {
+    "selfMs": 20674.0,
+    "name": "(idle)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 4306.0,
+    "name": "(program)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 442.0,
+    "name": "frame",
+    "url": "",
+    "line": 4,
+    "column": 14
+  },
+  {
+    "selfMs": 287.6,
+    "name": "(garbage collector)",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 200.3,
+    "name": "draw",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 450100
+  },
+  {
+    "selfMs": 160.8,
+    "name": "worker.onmessage",
+    "url": "http://127.0.0.1:4184/assets/index-BqLCZs-Z.js",
+    "line": 1,
+    "column": 7109
+  },
+  {
+    "selfMs": 108.2,
+    "name": "projectIndex",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 457894
+  },
+  {
+    "selfMs": 95.2,
+    "name": "requestAnimationFrame",
+    "url": "",
+    "line": -1,
+    "column": -1
+  },
+  {
+    "selfMs": 76.5,
+    "name": "",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 0,
+    "column": 0
+  },
+  {
+    "selfMs": 73.9,
+    "name": "lineStyle",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 456064
+  },
+  {
+    "selfMs": 69.9,
+    "name": "paintBase",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 1,
+    "column": 138486
+  },
+  {
+    "selfMs": 54.3,
+    "name": "draw",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 32,
+    "column": 59518
+  },
+  {
+    "selfMs": 51.8,
+    "name": "n",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 452626
+  },
+  {
+    "selfMs": 48.7,
+    "name": "_syncFloatingOverlayHost",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 33,
+    "column": 383845
+  },
+  {
+    "selfMs": 48.2,
+    "name": "updateReference",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 447890
+  },
+  {
+    "selfMs": 43.0,
+    "name": "syncPaneLayoutControls",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 32,
+    "column": 335142
+  },
+  {
+    "selfMs": 39.1,
+    "name": "patchOrderWalls",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 32,
+    "column": 40706
+  },
+  {
+    "selfMs": 39.0,
+    "name": "o",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 452916
+  },
+  {
+    "selfMs": 36.4,
+    "name": "project",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 30,
+    "column": 458509
+  },
+  {
+    "selfMs": 34.0,
+    "name": "Ki",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 1,
+    "column": 107837
+  },
+  {
+    "selfMs": 33.5,
+    "name": "beginFrame",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 1,
+    "column": 122369
+  },
+  {
+    "selfMs": 29.0,
+    "name": "gr",
+    "url": "http://127.0.0.1:4184/assets/main-Di8rGM_k.js",
+    "line": 1,
+    "column": 87846
+  }
+]
