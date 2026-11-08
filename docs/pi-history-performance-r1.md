@@ -2718,3 +2718,84 @@ retention or persisted-data migration is required. Reverting the history QoS fla
 changes only the next owned history connection; do not restart healthy current
 sockets merely to retry a historical view. API rollback uses the exact prior image recorded in the
 e122 deployment receipt; this continuation performed no API/materializer rollout.
+
+
+## Current continuity and simultaneous footprint coverage: b1bb/e122
+
+Evidence: `artifacts/pi-history-r1/current-concurrency-b1bb-e122-r3/`.
+The headless system Chromium155 cohort contains five alternating pairs of fresh
+contexts through existing Pi SSH18780/history and18781/current, preview4185.
+Actual worker configuration in every sample is staging/history enabled, fixture
+false, application `b1bb790589f14542c479e9e922122571451a5ca9`; API is
+`e122f9d8d3995d5b6b907a1519cd6b2f639fa751`. No rebuild, transfer, tunnel restart
+or other heavy validation ran during this cohort. Canvas2D renderer is recorded
+per panel. Foreground UX remains unverified. The scripts now require explicit
+opt-in, fixed exact build identities, a new output directory, and headless launch.
+They preserve setup failures and failed samples. The companion reporter emits
+all samples, median and maximum, never p95 from five runs. Its exit code1 retains
+the observed reserved-health failure; captured samples cannot turn it green.
+The future probe also records status transport/cursor metadata; the exact
+executed source is retained separately and no cursor proof is invented for R3.
+
+Each observation lasts20s after current receipt. The concurrent case opens4h
+of5m/$25 and24h of1h/$25, pans the hourly view left at3s and restores at3.5s.
+Independent exact expected timestamps in `summary.json.coverageProof` match
+**48/48 and24/24 painted and validated slots in all five runs**. This is endpoint
+coverage evidence, not a first-use or complete-paint latency measurement.
+After releasing the execution observer and closing both history panels, every
+sample retains only the ordinary native candle group: zero history views and
+zero scheduler active/queued jobs. This one-close check does not prove repeated
+heap plateau. Raw cancelled requests and scheduler failures remain in samples.
+
+| Metric, ms; run1..5 | Current-only client | Two history charts |
+| --- | --- | --- |
+| First live status receipt |440.9,677.1,1265.9,1051,411.1|592.4,3566.3,1161,1438.2,507|
+| Receipt median / max |677.1 /1265.9|1161 /3566.3|
+| Maximum receive gap per observation |3250.4,2425,7075,2718.3,1574.8|6669.8,5732.9,3259.5,2196.2,1539.8|
+| Gap median / max |2718.3 /7075|3259.5 /6669.8|
+| Largest task starting inside observation |0,75,50,0,0|251,150,145,130,136|
+| Task median / max |0 /75|145 /251|
+
+First live status is not proof of current content painted. Receive gaps include
+both observation boundaries, use client monotonic time, and are not exchange
+execution gaps. Raw whole-page task maxima include startup: the1055ms concurrent
+maximum starts before observation and must not be attributed to history applying
+during that window. Frame arrays cover page startup too. Server ingestion-lag
+values are reported durations, not subtraction of unsynchronized host clocks.
+
+The first concurrent after-health call to reserved `/v2/history/health` timed out
+at12005.5ms. All baseline health calls succeeded. The following `/v1/health`
+returned200 after5817.4ms, with proxy queue1.02ms, proxy header5806.97ms and
+server legacy handler1.68ms. This is a **failed no-current-timeouts observation**;
+it points toward the route/header wait for that successful request, but does not
+prove the timed-out request's cause or that history caused it. The comparison
+still needs exact cursor/confirmation continuity and correlated route/server
+tracing. All ten main observations completed; `completeCohort` means captured
+samples, not performance acceptance. Concurrency release acceptance stays open.
+
+The requested3% native custom profile already had historical data, but health
+proves its worker was actively backfilling throughout both client scenarios:
+progressCursor22041697→22057057, with a remaining tail backlog. Earlier commentary
+inferred no active build from the ready historical read; that inference was wrong.
+Both scenarios therefore share background custom work; there is no server-idle
+baseline in this cohort. Available health samples show currentValid true and
+source ingestion lag545–1244ms. A missing after-health sample is retained, not
+filled with a previous healthy result. The custom source retains its explicit
+coverage limits; this is not proof of complete custom depth history.
+
+The first attempt r1 stopped in a legacy headed-workspace verifier even though
+the browser itself was headless; no measurements were captured. Its failure is
+retained. R2 captured one pair then terminated on an unsuccessful between-pair
+health assertion. Those two samples remain separate and are not substituted
+into R3. R3 records failures without losing subsequent samples. All browsers
+closed through their finally blocks. Four browser guard checks pass; final i3
+inventory has zero test windows. Protected identity/start-time receipt matches
+all seven collector/worker/admission containers, all running. No API/materializer
+rollout, production action, source retention or exchange connection change.
+
+The default-preparation review confirms the existing exact-view coordinator
+cannot simply enqueue a new30h range every rollover: that would replay overlap
+and accumulate jobs. Automatic rolling defaults and serving activation remain
+unfinished pending exact composable/sliding reuse. This cohort changes no worker
+or preparation configuration. Rollback is to stop this opt-in probe; application,
+serving build and collectors require no rollback.

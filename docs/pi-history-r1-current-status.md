@@ -511,3 +511,24 @@ container IDs/start times to the e122API-only rollout receipt, with every contai
 running. API health returns200/build e122after the tests. All temporary18880tunnels
 are closed; the original SSH processes remain alive. Final i3 inventory finds0
 visible test windows. Exact identities/checksums are in history-followups-r1/.
+
+
+## New current/history comparison on b1bb/e122
+
+Five alternating20s observations per scenario are now recorded under
+`artifacts/pi-history-r1/current-concurrency-b1bb-e122-r3/`, with exact builds,
+source health, requests, screenshots and a reproducible report. All five
+concurrent views paint and independently validate48/48 five-minute and24/24
+hourly requested timestamps after cancellation/pan restoration. History release
+returns to zero views and zero scheduler active/queued jobs in all samples.
+These are coverage/release observations, not latency or heap-plateau gates.
+
+Maximum receive-gap median/max is2718.3/7075ms baseline and3259.5/6669.8ms
+concurrent. Timed-window long-task median/max is0/75ms baseline and145/251ms
+concurrent; startup tasks are recorded separately. One reserved health request
+timed out during concurrent history; **no-current-timeouts has a failed
+observation and acceptance remains incomplete**. Exact cursor continuity and
+causal attribution remain open. Both client scenarios ran alongside a proven
+advancing custom-profile backfill. All seven protected identities/start times
+still match; no serving deployment occurred. All testing was headless; no i3
+test windows remain. See the detailed report for every sample and limitations.
