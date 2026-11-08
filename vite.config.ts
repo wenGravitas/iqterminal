@@ -7,15 +7,15 @@ export default defineConfig(({ mode }) => {
   if(liquidationTarget){const target=new URL(liquidationTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Liquidation development target must be loopback HTTP');}
   const nativeHistoryTarget=process.env.VITE_NATIVE_HISTORY_API_URL;
   if(nativeHistoryTarget){const target=new URL(nativeHistoryTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Native history development target must be loopback HTTP');}
-  const currentBookAgent=staging?new Agent({keepAlive:true,maxSockets:4,maxFreeSockets:4,timeout:15000}):undefined;
+  const currentBookAgent=staging?new Agent({keepAlive:true,maxSockets:4,maxTotalSockets:4,maxFreeSockets:4,timeout:15000}):undefined;
   // Preserve four historical HTTP slots in total, reserving two for small
   // visible candle reads instead of letting large wall bodies take all four.
-  const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
-  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
+  const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
+  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
   return ({
   worker: { format: 'es' },
   // Staging proxy is development-only and guarded against CLI --host overrides.
-  plugins: staging ? [{ name: 'staging-loopback-only', configureServer(server){server.httpServer?.once('close',()=>{historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
+  plugins: staging ? [{ name: 'staging-loopback-only', configureServer(server){server.httpServer?.once('close',()=>{historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configurePreviewServer(server){server.httpServer.once('close',()=>{historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
     if (config.server.host !== '127.0.0.1' && config.server.host !== 'localhost') throw new Error('Staging data mode requires a loopback Vite host');
   } }] : [],
   server: staging ? { host: '127.0.0.1', port: 5173, strictPort: true, proxy: {

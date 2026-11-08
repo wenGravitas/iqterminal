@@ -19,19 +19,20 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
   res.on('close',()=>closed.push(id));
   if(id==='released'){res.setHeader('server-timing','fixture;dur=1');res.setHeader('x-iq-request-id','fixture-upstream');res.end('{"ready":true}');}
  });
+ const secondHistory=http.createServer(history.listeners('request')[0]);
  const current=http.createServer((req,res)=>{res.setHeader('server-timing','fixture;dur=1');res.setHeader('x-iq-request-id','fixture-current');res.end('{"healthy":true}');});
  let server,proxy;const opened=[];
  try{
-  await listen(history);await listen(current);
+  await listen(history);await listen(secondHistory);await listen(current);
   const loaded=await loadConfigFromFile({command:'serve',mode:'staging'});assert.ok(loaded?.config.server?.proxy);
   const config=loaded.config;proxy=config.server.proxy;
-  for(const option of Object.values(proxy))if(typeof option==='object')option.target=`http://127.0.0.1:${(String(option.target).endsWith(':18781')?current:history).address().port}`;
+  for(const [route,option] of Object.entries(proxy))if(typeof option==='object')option.target=`http://127.0.0.1:${(route==='/market-data/v1/liquidations'?secondHistory:String(option.target).endsWith(':18781')?current:history).address().port}`;
   if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,host:'127.0.0.1',port:0,strictPort:true,proxy}});await server.listen();}
   else server=await preview({...config,configFile:false,mode:'staging',preview:{host:'127.0.0.1',port:0,strictPort:true,proxy}});
   const base=`http://127.0.0.1:${server.httpServer.address().port}`,samples=[];
   for(let run=1;run<=5;run++){
    const before=received.length,prefix=mode+'-'+run;
-   const bulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/v2/history/walls/batch?id=${prefix}-${i+2}`));opened.push(...bulk);
+   const bulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/${i===0?'v2/history/walls/batch':'v1/liquidations'}?id=${prefix}-${i+2}`));opened.push(...bulk);
    await until(()=>received.length===before+2,'Two bulk history slots did not reach the upstream');
    const bulkQueued=request(`${base}/market-data/v2/history/walls/batch?id=${prefix}-bulk-queued`);opened.push(bulkQueued);
    await new Promise(r=>setTimeout(r,30));assert.equal(received.length,before+2,'Bulk history consumed a reserved native slot');
@@ -61,7 +62,7 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
   for(const item of opened)item.req.destroy();
   if(proxy)for(const option of Object.values(proxy))if(typeof option==='object'&&option.agent&&typeof option.agent.destroy==='function')option.agent.destroy();
   if(mode==='dev')await server?.close();else if(server)await new Promise(resolve=>server.httpServer.close(resolve));
-  history.closeAllConnections();current.closeAllConnections();await new Promise(resolve=>history.close(resolve));await new Promise(resolve=>current.close(resolve));
+  history.closeAllConnections();secondHistory.closeAllConnections();current.closeAllConnections();await new Promise(resolve=>history.close(resolve));await new Promise(resolve=>secondHistory.close(resolve));await new Promise(resolve=>current.close(resolve));
  }
 });
 test.after(async()=>{await writeFile(process.env.IQ_PROXY_RECEIPT??'/tmp/iq-staging-proxy-capacity.json',JSON.stringify(receipts,null,2)+'\n');});
