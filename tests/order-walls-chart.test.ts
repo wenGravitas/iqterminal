@@ -517,3 +517,23 @@ it('culls an off-price wall without discarding its retained source values',()=>{
  expect(primitive.diagnostics()).toMatchObject({retainedSegments:1,retainedDrawables:0});
  expect((primitive as any).segments.get(segment.id).valueRuns).toEqual(segment.valueRuns);
 });
+
+
+it('unchanged settings reconciliation retains closed geometry, references and painted revision',()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const};
+ const p=new OrderWallsPrimitive(settings,60000);
+ const segment:OrderWallSegment={id:'unchanged-settings',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:1000,meanUsd:1000,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,archiveEntryId:'closed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true};
+ let reads=0;Object.defineProperty(segment,'valueRuns',{get(){reads++;return [{at:base,usd:1000,percentile:null,rank:1,quantity:10}];}});
+ p.setSnapshot([segment],{state:'live',tickSize:.1,lastConfirmedAt:base+120000});const paths:CapturedPath[]=[];p.draw(canvas([],paths),context());
+ const before=p.diagnostics(),initialReads=reads;
+ for(let i=0;i<3;i++)p.setSettings({...settings});
+ expect(p.diagnostics().inputRevision).toBe(before.inputRevision);
+ expect(p.diagnostics().paintedRevision).toBe(before.paintedRevision);
+ p.draw(canvas(),context());const after=p.diagnostics();
+ expect(after.rebuilds).toBe(before.rebuilds);expect(after.patchProjects).toBe(before.patchProjects);
+ expect(after.referenceRebuilds).toBe(before.referenceRebuilds);expect(reads).toBe(initialReads);expect(after.settingsNoops).toBe(3);
+ // A real visual change must still invalidate and repaint; the preserved path
+ // cannot hide an edited opacity or any other canonical flat setting.
+ p.setSettings({...settings,opacity:.2});expect(p.diagnostics().inputRevision).toBe(before.inputRevision+1);
+ p.draw(canvas(),context());expect(p.diagnostics().rebuilds).toBe(before.rebuilds+1);
+});

@@ -46,7 +46,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private inputRevision=0;
   private paintedRevision=-1;
   private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
-  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0};
+  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,settingsNoops:0};
   private durations:number[]=[];
 
   constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true){this.settings={...settings};this.intervalMs=intervalMs;}
@@ -54,7 +54,13 @@ export class OrderWallsPrimitive implements IPrimitive {
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
   detached(){this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.timeAtX=undefined;this.stats.bytes=0;}
-  setSettings(settings:OrderWallsSettings){this.inputRevision++;this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
+  setSettings(settings:OrderWallsSettings){
+    // Panel reconciliation also runs after native/history status changes. The
+    // canonical settings are flat; an equivalent fresh object changes no input
+    // and must not invalidate tens of thousands of closed value geometries.
+    const keys=Object.keys(settings) as Array<keyof OrderWallsSettings>;
+    if(keys.length===Object.keys(this.settings).length&&keys.every(key=>Object.is(settings[key],this.settings[key]))){this.stats.settingsNoops++;return;}
+    this.inputRevision++;this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
   setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.inputRevision++;this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
   setStatus(status:OrderWallStatus){
     this.inputRevision++;
