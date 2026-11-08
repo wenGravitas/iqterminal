@@ -1,4 +1,5 @@
-import {wallHistoryPresentation} from '../src/feed/wall-history-presentation-cache';
+import * as compactCodec from '../src/feed/compact-wall-presentation';
+import {wallHistoryPresentation,wallCompactPresentation} from '../src/feed/wall-history-presentation-cache';
 import {test,expect,vi,afterEach} from 'vitest';import {createHash} from 'node:crypto';
 import {OrderWallsArchiveProjector,loadOrderWallsArchive} from '../src/feed/order-walls-archive';
 import {orderWallsSettings} from '../src/feed/order-walls';import {readPreparedWallProjection} from '../src/feed/prepared-wall-projection';
@@ -191,6 +192,74 @@ test('presentation cache preserves a censorship applied after final restore and 
  const formerlyActive=f.full.segments.find(segment=>segment.end===null)!,cached=cache.get(formerlyActive.id)!;
  expect(cached).not.toBe(formerlyActive);expect(cached.valueRuns[0]).not.toBe(snapshot.find(s=>s.id===cached.id)!.valueRuns[0]);
  expect(cached.censoredReason).toBe('Verified tail could not be joined');
+ const compact=wallCompactPresentation(snapshot,prepared)!.get(formerlyActive.id)!;expect(compact).toEqual(cached);expect(compact.valueRuns).toBe(formerlyActive.valueRuns);expect(compact.valueRuns).not.toBe(snapshot.find(s=>s.id===cached.id)!.valueRuns);
  const fallback=wallHistoryPresentation(snapshot)!;for(const segment of snapshot){expect(fallback.get(segment.id)).not.toBe(segment);expect(fallback.get(segment.id)!.valueRuns[0]).not.toBe(segment.valueRuns[0]);}
  expect(wallHistoryPresentation(snapshot,new Map())).toBeUndefined();
+});
+
+test('compact warm replay is shared, survives one unsubscribe and never marks fresh coverage complete',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),first=transport(f);let release!:()=>void,phase=0;
+ const gateSource=new Promise<void>(r=>release=r),fresh=transport(f,{gateSource}),events:any[]=[];
+ // Lower representation threshold exercises the exact same bounded codec on a
+ // small fixture. Real default-budget admission is verified by the file probe.
+ const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>(phase?fresh:first).fetcher(input,init),()=>to+1000,0);
+ const subscription={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',subscription);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmEntries:1,warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');
+  expect(service.diagnostics().projections).toHaveLength(0);phase=1;service.subscribe('a',subscription);service.subscribe('b',subscription);
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')&&e.kind==='patch').flatMap(e=>e.patches??[]).filter(p=>p.segment)).toHaveLength(f.full.segments.length));
+  expect(events.filter(e=>e.ids?.includes('b')).at(-1)?.status.archive.gaps).toHaveLength(1);
+  expect(service.diagnostics().warmReplayConsumers).toBe(2);service.unsubscribe('a');expect(service.diagnostics().warmReplayConsumers).toBe(1);
+  const visible=new Map<string,any>();for(const e of events.filter(e=>e.ids?.includes('b'))){if(e.kind==='snapshot'){visible.clear();for(const segment of e.segments)visible.set(segment.id,segment);}else for(const p of e.patches){if(p.segment)visible.set(p.id,p.segment);else visible.delete(p.id);}}
+  expect([...visible.values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(f.full.segments.map(segment=>({...segment,currentSelection:false})).sort((a,b)=>a.id.localeCompare(b.id)));
+  expect(events.filter(e=>e.ids?.includes('b')).every(e=>e.status.archive.requestComplete===false)).toBe(true);
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')).at(-1)?.status.archive.requestComplete).toBe(true));
+  service.unsubscribe('b');await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmBuilds:0,warmReplayConsumers:0,historyConsumers:0,projections:[]}));
+ }finally{release();service.dispose();}
+});
+
+test('compact cached history paints before a delayed current bootstrap and last release cancels it',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],signals:AbortSignal[]=[];
+ const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>{
+  if(String(input).includes('/current?')){signals.push(init!.signal as AbortSignal);return new Promise((_resolve,reject)=>init!.signal!.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
+  return t.fetcher(input,init);
+ },()=>to+1000,0);
+ try{
+  service.subscribe('seed',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(service.diagnostics().warmCompactEntries).toBe(1));service.unsubscribe('seed');
+  service.subscribe('live',{market:'binance-spot',from,to,settings,followLive:true});
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('live')&&e.kind==='patch').flatMap(e=>e.patches??[]).filter(p=>p.segment)).toHaveLength(f.full.segments.length));
+  expect(events.filter(e=>e.ids?.includes('live')).every(e=>e.status.archive.requestComplete===false)).toBe(true);expect(signals).toHaveLength(1);expect(signals[0]!.aborted).toBe(false);
+  service.unsubscribe('live');expect(signals[0]!.aborted).toBe(true);expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0,groups:0,projections:[]});
+  await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
+ }finally{service.dispose();}
+});
+
+
+test('bounded compact builds cancel obsolete work and cannot overwrite a later completed view',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),events:any[]=[];let release!:()=>void;
+ const gate=new Promise<void>(resolve=>release=resolve),encode=compactCodec.compactWallPresentation,signals:AbortSignal[]=[];
+ const spy=vi.spyOn(compactCodec,'compactWallPresentation').mockImplementation(async(...args)=>{signals.push(args[2]);await gate;args[2].throwIfAborted();return encode(...args);});
+ const service=new OrderWallsArchiveService(event=>events.push(event),t.fetcher,()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  for(let i=0;i<3;i++){service.subscribe('build-'+i,request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('build-'+i)).at(-1)?.status.archive.requestComplete).toBe(true));service.unsubscribe('build-'+i);}
+  expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBuilds:2,warmCapacityMisses:1});expect(signals[0]!.aborted).toBe(true);
+  release();await vi.waitFor(()=>expect(service.diagnostics().warmBuilds).toBe(0));expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBuildFailures:0});
+  service.subscribe('recovered',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmEntries:1,warmCompactEntries:1,warmBuilds:0}));
+ }finally{release();service.dispose();spy.mockRestore();}
+});
+
+test('a corrupt compact cache falls back to the good fresh prefix and recovers without resetting its job',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),seed=transport(f);let phase=0,release!:()=>void;
+ const gateSource=new Promise<void>(resolve=>release=resolve),fresh=transport(f,{gateSource}),events:any[]=[];
+ const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics().warmCompactEntries).toBe(1));service.unsubscribe('seed');
+  // Fault injection changes retained bytes, not source financial fixtures.
+  const entry=[...(service as any).warmHistory.values()][0],body=entry.compact.chunks[0].body as Uint8Array;body[body.length-1]^=255;
+  phase=1;service.subscribe('retry',request);await vi.waitFor(()=>expect(service.diagnostics().warmDecodeFailures).toBe(1));
+  await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));
+  expect(events.filter(e=>e.ids?.includes('retry')).at(-1).status.archive.requestComplete).toBe(false);
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('retry')).at(-1).status.archive.requestComplete).toBe(true));
+  await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0,warmReplayConsumers:0}));expect(service.diagnostics().historyRequests).toBe(2);
+ }finally{release();service.dispose();}
 });

@@ -12,3 +12,15 @@ export function wallHistoryPresentation(segments:readonly OrderWallSegment[],pre
   return [segment.id,raw&&raw.end!==null?raw:detached(segment)];
  }));
 }
+
+/** Large prepared views are encoded asynchronously. Their input points can
+ * borrow the validated immutable prepared records: only the restored replay's
+ * active headers may have been censored. Do not synchronously clone a million
+ * active points just to start an optional background cache build. */
+export function wallCompactPresentation(segments:readonly OrderWallSegment[],prepared:ReadonlyMap<string,OrderWallSegment>):ReadonlyMap<string,OrderWallSegment>|undefined{
+ if(prepared.size!==segments.length||segments.some(segment=>!prepared.has(segment.id)))return;
+ return new Map(segments.map(segment=>{
+  const raw=prepared.get(segment.id)!;
+  return [segment.id,raw.end!==null?raw:{...segment,valueRuns:raw.valueRuns}];
+ }));
+}
