@@ -1,3 +1,4 @@
+import {pastCandleViewport,snapCandleViewportBoundary} from './candle-viewport';
 import {NativeCandlePresentationCache} from './native-candle-presentation-cache';
 import {NativeCandleHistory,type NativeCandleVersion} from './native-candle-history';
 import {historyRequestTraces} from './history-trace';
@@ -33,8 +34,7 @@ interface Group {
 }
 /** Whitespace is outside the eligible past range; four hours bounds a request, not a view. */
 export function footprintPastViewport(from: number, to: number, now: number, step: number) {
-  const end = Math.min(to, Math.floor(now / step) * step);
-  return { from: Math.max(step, Math.floor(from / step) * step), to: Math.ceil(end / step) * step };
+  const range=pastCandleViewport(from,to,now,step);return {from:Math.max(step,range.from),to:range.to};
 }
 
 export const stagingMarket = (series: Series) => series.venue === 'binance';
@@ -97,7 +97,7 @@ export class StagingFeedService {
         ? Math.max(20, Math.min(MAX_DELTA_FLIP_LOOKBACK, Math.trunc(requestedLookback))) : DEFAULT_DELTA_FLIP_LOOKBACK;
       const rawCandidateFrom = typeof c.analysis?.candidateFrom === 'number' && Number.isFinite(c.analysis.candidateFrom)
         ? c.analysis.candidateFrom : c.from;
-      const candidateFrom = Math.max(step, Math.floor(rawCandidateFrom / step) * step);
+      const candidateFrom = Math.max(step, Math.floor(snapCandleViewportBoundary(rawCandidateFrom,step) / step) * step);
       const viewKey = `${from}:${to}:${candidateFrom}:${analysisEnabled ? analysisLookback : 0}`;
       const old = g.views.get(c.id);
       if (old?.key === viewKey) return;

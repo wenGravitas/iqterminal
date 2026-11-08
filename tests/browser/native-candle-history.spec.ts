@@ -98,7 +98,7 @@ test('warm native prices paint independently while their revision validation wai
 
 test('bootstrap-owned history seeds warm prices even when independent native history pages fail',async({page,context})=>{
  test.setTimeout(45000);await installHealthyStagingWorker(context);
- const current=Math.floor(Date.now()/STEP)*STEP,to=current-72*HOUR,from=to-30*HOUR;await saved(context,from,to);
+ const current=Math.floor(Date.now()/STEP)*STEP,to=current-2*HOUR,from=to-30*HOUR;await saved(context,from,to);
  let warm=false,release!:()=>void;const gate=new Promise<void>(resolve=>release=resolve);
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});

@@ -1036,9 +1036,9 @@ export class OpenAlgoCandleChart {
     this.enqueueFootprintRefresh();
   }
 
-  applyPatch(candles: Candle[]) {
+  applyPatch(candles: Candle[], preserveTimeView=false) {
     if (this.disposed || !candles.length) return;
-    const footprintView=this.mode==='footprint'?this.captureView():null;
+    const footprintView=this.mode==='footprint'||preserveTimeView?this.captureView():null;
     let axisChanged=false,trim = false;
     for (const candle of candles) {
       const bar = toBar(candle);
