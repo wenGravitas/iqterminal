@@ -1,6 +1,7 @@
 import {test,expect,type BrowserContext} from '@playwright/test';
 import {addIndicator,setFootprint} from './indicator-actions';
 const HOUR=3600000;
+const capturePath=(name:string)=>`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1'}/${name}`;
 function executionBar(time:number,step:number){return {time:time/1000,revision:1,rowSize:25,cells:[{price:80000,bidVol:3,askVol:5,bidNotional:240000,askNotional:400000}],open:80000,high:80025,low:79975,close:80010,delta:2,minDelta:0,maxDelta:2,quoteDelta:160000,minQuoteDelta:0,maxQuoteDelta:160000,aggregateRecordCount:2,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false};}
 
 import {installHealthyStagingWorker} from './staging-worker-fixture';
@@ -49,13 +50,13 @@ for(const mode of ['footprint','candle-totals'] as const)test(`prepared ${mode} 
  await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return p.engine.footprintTotalsDiagnostics()[0]?.statsBars??0;})).toBeGreaterThan(2);
  expect(requests.every(request=>request.to-request.from<=4*HOUR)).toBe(true);
  expect(await page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return p.footprintStatus.state;})).toBe('loading');
- await page.screenshot({path:`artifacts/pi-history-r1/${mode}-delayed-live.png`});
+ await page.screenshot({path:capturePath(`${mode}-delayed-live.png`)});
  // Restored absolute history demand includes future whitespace without losing closed slots.
  await page.evaluate(({from,to})=>{const p=[...(window as any).__terminal.panels.values()][0] as any;p.engine.restoreHistoryTimeRange({from,to});p.engine.refreshCaptionCurrency();},{from:end-5*HOUR,to:end+3*HOUR});
  await expect.poll(()=>page.evaluate(({from,to})=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return p.footprintBars.filter((b:any)=>b.time*1000>=from&&b.time*1000<to).length;},{from:end-5*HOUR,to:end})).toBe(5);
  await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return Math.round(p.engine.visibleTimeRange().from*1000);})).toBe(end-5*HOUR);
  await expect.poll(()=>page.evaluate(()=>{const p=[...(window as any).__terminal.panels.values()][0] as any;return Math.round(p.engine.visibleTimeRange().to*1000);})).toBe(end+3*HOUR);
- await page.screenshot({path:`artifacts/pi-history-r1/${mode}-five-closed-hours.png`});
+ await page.screenshot({path:capturePath(`${mode}-five-closed-hours.png`)});
  releaseCurrent();
 });
 
@@ -78,7 +79,7 @@ test('a late native candle snapshot cannot move a restored 24h footprint range',
  expect(await view()).toEqual({from:from/1000,to:end/1000});releaseNative();
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-native').candles.length)).toBe(1000);
  expect(await view()).toEqual({from:from/1000,to:end/1000});
- await page.screenshot({path:'artifacts/pi-history-r1/late-native-24h-footprint.png'});
+ await page.screenshot({path:capturePath('late-native-24h-footprint.png')});
 });
 
 for(const future of [false,true])test(future?'a delayed current bootstrap retains five closed bars and future whitespace':'a delayed current bootstrap cannot expand a restored past footprint range',async({page,context})=>{
@@ -100,7 +101,7 @@ for(const future of [false,true])test(future?'a delayed current bootstrap retain
  await expect.poll(()=>page.evaluate(current=>(window as any).__terminal.panels.get('chart-delayed-current').footprintBars.some((bar:any)=>bar.time===current/1000),current)).toBe(true);
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-current').engine.footprintPaintDiagnostics()?.times.length??0)).toBe(future?6:24);
  expect(await view()).toEqual({from:from/1000,to:to/1000});
- await page.screenshot({path:`artifacts/pi-history-r1/late-current-${future?'future-whitespace':'24h'}-footprint.png`});
+ await page.screenshot({path:capturePath(`late-current-${future?'future-whitespace':'24h'}-footprint.png`)});
 });
 
 test('candle-chart Footprint Totals follows the visible range instead of a saved footprint-only range',async({page,context})=>{
@@ -118,7 +119,7 @@ test('candle-chart Footprint Totals follows the visible range instead of a saved
  await page.evaluate(({from,to})=>(window as any).__terminal.panels.get('chart-candle-saved-footprint').engine.restoreHistoryTimeRange({from,to}),{from:end-5*HOUR,to:end});
  await expect.poll(()=>page.evaluate(({end,HOUR})=>{const p=(window as any).__terminal.panels.get('chart-candle-saved-footprint');return p.footprintBars.filter((bar:any)=>bar.time*1000>=end-5*HOUR&&bar.time*1000<end).length;},{end,HOUR})).toBe(5);
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-candle-saved-footprint').engine.footprintTotalsDiagnostics()[0]?.statsBars??0)).toBeGreaterThanOrEqual(5);
- await page.screenshot({path:'artifacts/pi-history-r1/candle-totals-saved-footprint-range.png'});
+ await page.screenshot({path:capturePath('candle-totals-saved-footprint-range.png')});
 });
 
 test('failed live Totals exposes scoped Retry while healthy native candles and closed history remain',async({page,context})=>{
@@ -188,7 +189,7 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
  const read=()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-native-independent');return p?{candles:p.candles,status:p.status,barCount:p.engine.barCount,view:p.engine.visibleTimeRange(),bulk:(window as any).__nativeHistoryApply}:null;});
  await expect.poll(async()=>{const state=await read();return state?.status.state==='live'&&state.barCount===1&&state.candles.at(-1)?.c===80060;}).toBe(true);
  await expect(page.getByText('Candle history loading · 1 bar displayed',{exact:true})).toBeVisible();expect(historyRequests).toBe(1);
- await page.screenshot({path:`artifacts/pi-history-r1/native-current-before-history-${historyBars}.png`});
+ await page.screenshot({path:capturePath(`native-current-before-history-${historyBars}.png`)});
  let retainedView;
  if(historyBars===1000){
   await page.evaluate(({current,step})=>{
@@ -210,7 +211,7 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
  if(historyBars===1000){expect((await read())?.view).toEqual(retainedView);expect((await read())?.candles[0].c).toBe(80040);expect((await read())?.candles[4000].c).toBe(80010);expect((await read())?.bulk).toMatchObject({snapshots:1,multiBarPatches:0});}
  expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);expect(viewportRequests).toBeLessThanOrEqual(1);
  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
- await page.screenshot({path:`artifacts/pi-history-r1/native-history-recovered-live-retained-${historyBars}.png`});
+ await page.screenshot({path:capturePath(`native-history-recovered-live-retained-${historyBars}.png`)});
 });
 
 test('saved footprint reads start before the delayed UI bundle and hand off one worker',async({page,context})=>{
@@ -237,6 +238,10 @@ test('saved footprint reads start before the delayed UI bundle and hand off one 
   await expect.poll(()=>page.evaluate(()=>{const p=(window as any).__terminal?.panels.get('chart-early-ui');return p?.engine.footprintPaintDiagnostics()?.times.filter((t:number)=>t*1000>=p.selection.historyViewport.from&&t*1000<p.selection.historyViewport.to).length??0;})).toBe(24);
   await expect(page.locator('#startup-splash')).toBeHidden();expect(workers).toBe(1);expect(currentRequests).toBe(1);expect(nativeRequests).toBe(1);
   const view=await page.evaluate(()=>(window as any).__terminal.panels.get('chart-early-ui').engine.visibleTimeRange());expect(view).toEqual({from:from/1000,to:end/1000});
-  await page.screenshot({path:'artifacts/pi-history-r1/early-ui-saved-24h.png'});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-early-ui').footprintStatus.history?.validated)).toBe(true);
+  await page.evaluate(()=>(window as any).__terminal.feed.send({type:'diagnostics'}));
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.feed.diagnostics?.staging?.views?.[0]?.consumers)).toBe(1);
+  expect(await page.evaluate(()=>(window as any).__terminal.feed.diagnostics.staging.historyLoadAttempts.length)).toBe(1);expect(ranges).toHaveLength(6);
+  await page.screenshot({path:capturePath('early-ui-saved-24h.png')});
  }finally{releaseMain();}
 });
