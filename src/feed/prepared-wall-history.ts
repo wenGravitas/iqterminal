@@ -10,7 +10,7 @@ export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;f
 interface Part {index:number;hash:string;canonicalHash:string;bytes:number;after:number;nextAfter:number}
 interface Manifest {version:5;key:string;complete:true;watermark:number;head:Head;after:number;request:PreparedWallRequest&{sourceRevision:string};sourceProof:Source;parts:Part[]}
 interface Source extends PreparedWallRequest {version:1;kind:'wall-source-sha256-xor-v1';token:string;eligible:boolean;watermark:number;head:Head;maxCursor?:number;anchor?:{cursor:number;epoch:number;at:number;hash:string}|null}
-export interface PreparedWallFetched {response:Response;body:unknown;bytes:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;attempts:number}
+export interface PreparedWallFetched {response:Response;body:unknown;bytes:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs?:number;validationYieldMs?:number;attempts:number}
 const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 const hex=(value:unknown)=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const head=(value:any):value is Head=>value&&[value.cursor,value.epoch,value.at].every(integer);

@@ -1,3 +1,4 @@
+import {encodeWallPointTransport,WALL_POINT_TRANSPORT} from '../src/shared/order-wall-point-transport';
 import {OrderWallsPrimitive} from '../src/chart/order-walls';
 import type {PrimitiveRenderContext} from 'openalgo-charts';
 import * as compactCodec from '../src/feed/compact-wall-presentation';
@@ -46,9 +47,10 @@ function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrup
   if(url.pathname.endsWith('/discover'))return Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});
   if(url.pathname.endsWith('/source')){await options.gateSource;return Response.json(options.changed?{...f.source,token:'c'.repeat(64)}:f.source);}
   if(url.pathname.endsWith('/projection-batch')){
-   const start=Number(url.searchParams.get('start')),selected=f.manifest.parts.slice(start,start+32);let i=start;
-   const body=new ReadableStream<Uint8Array>({async pull(controller){if(i>=start+selected.length){controller.close();return;}if(i>start)await options.tailGate;controller.enqueue(new TextEncoder().encode((options.corrupt&&i===start?f.texts[i]!.replace('100.00000001','100.00000002'):f.texts[i])+'\n'));i++;}});
-   return new Response(body,{headers:{'x-iq-wall-start':String(start),'x-iq-wall-next':String(start+selected.length),'x-iq-wall-parts':String(selected.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.manifest.sourceToken}});
+   const start=Number(url.searchParams.get('start')),selected=f.manifest.parts.slice(start,start+32),compact=(f.advertised.delivery as any).pointTransport===1;expect(url.searchParams.get('version')).toBe(compact?'2':'1');
+   const texts=await Promise.all(f.texts.map(async text=>{const raw=options.corrupt?text.replace('100.00000001','100.00000002'):text;return compact?JSON.stringify((await encodeWallPointTransport(JSON.parse(raw))).value):raw;}));let i=start;
+   const body=new ReadableStream<Uint8Array>({async pull(controller){if(i>=start+selected.length){controller.close();return;}if(i>start)await options.tailGate;controller.enqueue(new TextEncoder().encode(texts[i]+'\n'));i++;}});
+   return new Response(body,{headers:{...(compact?{'x-iq-wall-transport':WALL_POINT_TRANSPORT,'x-iq-wall-part-bytes':JSON.stringify(texts.slice(start,start+selected.length).map(text=>Buffer.byteLength(text))),'x-iq-canonical-bytes':String(selected.reduce((n:number,p:{bytes:number})=>n+p.bytes+1,0)),'x-iq-decoded-bytes':String(texts.slice(start,start+selected.length).reduce((n,text)=>n+Buffer.byteLength(text)+1,0))}:{}),'x-iq-wall-start':String(start),'x-iq-wall-next':String(start+selected.length),'x-iq-wall-parts':String(selected.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.manifest.sourceToken}});
   }
   throw Error('Unexpected canonical replay request: '+url.pathname);
  });return {fetcher:fetcher as typeof fetch,calls};
@@ -271,4 +273,11 @@ test('a corrupt compact cache falls back to the good fresh prefix and recovers w
   release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('retry')).at(-1).status.archive.requestComplete).toBe(true));
   await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0,warmReplayConsumers:0}));expect(service.diagnostics().historyRequests).toBe(2);
  }finally{release();service.dispose();}
+});
+
+test('negotiated exact point transport reconstructs the identical selected walls and rejects canonical corruption',async()=>{
+ for(const corrupt of [false,true]){const f=fixture();(f.advertised.delivery as any).pointTransport=1;const io=transport(f,{corrupt});const ready:any[]=[];
+  if(corrupt)await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p))).rejects.toThrow(/hash/);
+  else{const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p));expect(result?.projector.snapshot()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,f.context.settings,f.context.from,f.context.to).snapshot());expect(ready.at(-1).metrics.validationMs).toBeGreaterThanOrEqual(0);}
+ }
 });

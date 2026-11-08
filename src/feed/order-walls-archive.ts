@@ -409,7 +409,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const at=performance.now();options.onUpdate?.(update);painted=true;
       if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
         requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
-        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:0,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
+        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:progress.metrics.validationMs,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
       bytes=progress.bytes;
     },candidate=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');});
     if(projected){
@@ -482,7 +482,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     }
     const validationStartedAt = performance.now();
     const page = validatePage(body, profile, queryRequest, after, watermark, watermarkHead);
-    const validationMs = performance.now() - validationStartedAt;
+    const validationMs = performance.now() - validationStartedAt + ('validationMs' in fetched?Number(fetched.validationMs??0):0);
     if (page.profileStatus) profileStatus = page.profileStatus;
     if (watermark === undefined) { watermark = page.watermark; watermarkHead = page.head; }
     const fixedAt = watermarkHead?.at;
