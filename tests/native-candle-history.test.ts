@@ -173,3 +173,14 @@ test('native bars already owned before viewport creation seed warm presentation 
  const history=new NativeCandleHistory(series,{now:()=>from+86400000,version:()=>({stream:0,request:1}),request,presentation:cache,nativeBars:()=>rows(from,5),apply:(_id,bars)=>{applied.push(bars);return bars.map(c=>c.t);},changed:()=>{}});
  try{history.viewport('a',from,from+5*step,[]);expect(history.progress('a')).toMatchObject({state:'ready',loadedSlots:5});expect(cache.diagnostics().rows).toBe(5);expect(applied).toEqual([]);expect(request).not.toHaveBeenCalled();}finally{history.dispose();}
 });
+test('a long-open view remains warm after release and pan/dispose release bounded key leases',async()=>{
+ let clock=0,calls=0;const cache=new NativeCandlePresentationCache(()=>clock),h=harness((async()=>{calls++;return reply(rows(from,5));}) as typeof fetch,series,from+86400000,cache);
+ try{
+  h.history.viewport('a',from,from+5*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(cache.diagnostics().activeLeases).toBe(1);
+  clock=120000;cache.expire();h.history.release('a');expect(cache.diagnostics()).toMatchObject({rows:5,activeLeases:0});h.applied.length=0;
+  h.history.viewport('b',from,from+5*step,[]);expect(h.applied[0]).toMatchObject({version:{stream:0,request:0},bars:rows(from,5)});expect(h.history.progress('b')).toMatchObject({loadedSlots:0,cachedSlots:5});
+  await vi.waitFor(()=>expect(calls).toBe(2));await vi.waitFor(()=>expect(h.history.progress('b')?.state).toBe('ready'));
+  h.history.viewport('b',from-step,from+4*step,[]);expect(cache.diagnostics()).toMatchObject({activeLeases:1,retainedKeys:1});
+ }finally{h.history.dispose();}
+ expect(cache.diagnostics()).toMatchObject({activeLeases:0,retainedKeys:0});clock+=60000;expect(cache.diagnostics()).toMatchObject({entries:0,rows:0});
+});
