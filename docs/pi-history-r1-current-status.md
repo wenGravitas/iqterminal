@@ -6,7 +6,7 @@ The active goal remains implementation and validation of the full release.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Current application build: `821092d83943b3e17bba88ee6a0a41657d17807a` (wall-cache active/idle lifetime); proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle-lifetime fix; it must be aligned before another matched comparison.
+- Current application build: `970541b79b1a9470f79a3644f5e8cdb8444420a9` (saved-view footprint job sharing, retaining the wall-cache idle fix); proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
 - Frontend branch: `perf/pi-history-r1`; test-launch commit `86abe0e` blocks all headed test launches, including the old workspace override. It changes no application source.
 - Staging API now serves `95114d0cb236e9de54fb535d58b901d5ac4a2d79` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not95114d0. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix is now included in serving95114d0.
@@ -213,7 +213,7 @@ screenshots are retained in `use-821092d-full-history-r4` and
 change, not a new latency cohort. Local821092d validation logs and the pre-fix
 red regression are in `wall-idle-821092d`.
 
-## Updated footprint loading cohort:821092d/95114d0
+## Previous footprint loading cohort:821092d/95114d0
 
 Five fresh empty-browser-cache samples per pinned scenario used the current shared
 proxy and serving stack. All requested closed slots were independently validated
@@ -250,3 +250,65 @@ See [final-stack manifest](../artifacts/pi-history-r1/final-stack-821-951-footpr
 [request work and current state](../artifacts/pi-history-r1/final-stack-821-951-footprint-cohort/request-work.json),
 and the linked raw samples/screenshots for every run. Post-cohort health identifies
 serving95114d0; the API-only deployment receipt retains protected container IDs.
+
+## Footprint preload handoff fix and latest evidence
+
+The82f43e8diagnostic pilot isolated the extra reads: the early restore consumer
+and real visible chart had the same exact view key and worker generation, but
+separate IDs started separate PreparedFootprints loads. Shared HTTP scheduling
+could not reuse already completed chunks whose known-revision lists had changed.
+Fix bf94b8d gives matching consumers one logical history job, progress ledger and
+validation state. A departing consumer removes only its own interest; the final
+consumer cancels. A later reopen creates fresh validation. Retry submits once per
+failed shared job and preserves unrelated sockets. Each asynchronous attempt
+checks its captured abort signal, preventing a late canceled attempt from using
+a replacement controller. Shared status ranges count the logical demand once.
+
+All1192unit tests pass (2skipped), including41focused staging-service cases.
+Production build and typecheck pass. Four deterministic browser checks pass:
+restored24h range survives late native input; ordinary candle Totals use the
+visible range; scoped Retry preserves healthy native sockets; delayed UI handoff
+has one worker, one history load and six bounded chunks. These fixture checks
+are distinct from real-source timing and financial comparisons.
+
+Five fresh actual Pi-route samples per case used production build970541b,
+proxy638caab and serving95114d0. Every24h sample used six HTTP chunks, one logical
+load and1,673,129DB read rows. The preceding five-run cohort used6,8,7,7,8chunks
+and up to2,252,918DB rows. No schema, index, raw-source or capacity change was made.
+Timing variability prevents attributing elapsed-time differences solely to this fix.
+
+|Case|All five completion times (ms)|Median/max (ms)|Closed-view loading gate|
+|---|---|---|---|
+|24h,1h/$25|6040.2,8888.2,9111.9,5083.9,5283.7|6040.2/9111.9|FAIL:median>5000|
+|4h,5m/$25|3179.2,3433.0,3370.2,3030.8,3877.3|3370.2/3877.3|PASS|
+
+All samples validate and paint24/24bars/530cells or48/48bars/354cells at the
+requested absolute range and$25row size. The five1h captures have identical
+financial hashes over their recorded fields, including base/quote cells and base
+cumulative extrema. Their initial capture schema omitted bar-level quote delta
+and its extrema; an explicitly separate full-field1h capture adds them. That
+additional sample completed in11,402.9ms, exceeding the10smaximum target. It is
+retained and prevents a broader claim that current24h maximum latency is accepted.
+All five5m captures include the quote-level totals/extrema fields.
+
+Independent bounded FINAL execution replay matches both full-field chart and
+prepared output exactly:14626executions/8cells across eight2000-row pages for1h,
+and1397executions/4cells in one page for5m. Checks cover OHLC, counts, every
+bid/ask base/quote cell, delta and cumulative delta/quote extrema across page
+boundaries. Seven protected collector/materializer/SQL IDs/start times are
+unchanged; serving remains95114d0. This does not substitute for the separate
+busy-hour>250000reference or certify every bar through independent raw replay.
+
+The first independent reference used stored Decimal quoteNotional converted to
+Float64 and found a7.45e-9USD difference. Investigation confirmed the incumbent
+accumulator uses ordered Float64 price*quantity; the corrected reference uses
+that documented contract with strict equality, no tolerance. Both source versions
+and the failed attempt remain in the backend receipt. No aggregation or source
+data was changed to make this pass.
+
+See the [handoff evidence manifest](../artifacts/pi-history-r1/footprint-handoff-bf94b8d/manifest.json),
+[per-run request work](../artifacts/pi-history-r1/footprint-handoff-bf94b8d/request-work.json),
+and [copied canonical reference receipt](../artifacts/pi-history-r1/footprint-handoff-bf94b8d/canonical-reference-manifest.json).
+The backend76db3efcommit contains the complete read-only reference logs and
+protected container identities. Current/warm/wall/plateau/foreground acceptance
+remains incomplete. All browser work stayed headless.

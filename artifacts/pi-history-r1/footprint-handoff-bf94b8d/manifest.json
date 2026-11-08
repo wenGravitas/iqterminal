@@ -1,0 +1,260 @@
+{
+  "applicationBuild": "970541b79b1a9470f79a3644f5e8cdb8444420a9",
+  "fixCommit": "bf94b8d",
+  "diagnosticPreFixBuild": "82f43e86e715d9fd0b511e206ecb929d994581c9",
+  "proxyImplementation": "638caabff4d4a441c3706898dc8602274a4d41d6",
+  "servingBuild": "95114d0cb236e9de54fb535d58b901d5ac4a2d79",
+  "backendReferenceCommit": "76db3ef00eca6e2f2e44b759a7e43a6017b0870a",
+  "rootCause": {
+    "scope": "Two load attempts in the same worker, same generation and exact view key; the restore preload and UI used different consumer IDs.",
+    "beforeAttempts": [
+      {
+        "at": 459.8999999985099,
+        "cause": "viewport",
+        "consumer": "footprint:restore-1:footprint:chart-bench:2",
+        "generation": 2,
+        "from": 1793718000000,
+        "to": 1793804400000,
+        "viewKey": "1793718000000:1793804400000:1793718000000:0",
+        "loaded": false,
+        "validated": false
+      },
+      {
+        "at": 2227.5,
+        "cause": "viewport",
+        "consumer": "footprint:chart-bench:6",
+        "generation": 2,
+        "from": 1793718000000,
+        "to": 1793804400000,
+        "viewKey": "1793718000000:1793804400000:1793718000000:0",
+        "loaded": false,
+        "validated": false
+      }
+    ],
+    "after": "Every formal24h sample has one logical load and six HTTP chunks; all are independently validated."
+  },
+  "scope": "Headless actual Pi/SSH/Vite, five empty-browser-cache samples per formal footprint scenario. Canvas2D charts. Unit/browser fixture checks, real financial reference and supplemental one-sample financial capture are separate. Foreground UX, current, walls, warm and plateau gates remain incomplete.",
+  "validation": {
+    "unit": "1192 passed,2 skipped",
+    "focused": "41 passed",
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "deterministicBrowser": "4 passed"
+  },
+  "formalCohorts": {
+    "handoff-970541b-foot24-r1": {
+      "case": "footprint-24h-1h",
+      "build": "970541b79b1a9470f79a3644f5e8cdb8444420a9",
+      "route": "http://127.0.0.1:4185",
+      "rendering": "headless-gles",
+      "requested": {
+        "from": 1793718000000,
+        "to": 1793804400000
+      },
+      "samples": [
+        {
+          "run": 1,
+          "firstUsefulHistoryMs": 3261.60000000149,
+          "completeMs": 6040.199999999255,
+          "requestedSlots": 24,
+          "paintedSlots": 24,
+          "validatedSlots": 24,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 2,
+          "firstUsefulHistoryMs": 2789,
+          "completeMs": 8888.199999999255,
+          "requestedSlots": 24,
+          "paintedSlots": 24,
+          "validatedSlots": 24,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 3,
+          "firstUsefulHistoryMs": 5910.599999997765,
+          "completeMs": 9111.89999999851,
+          "requestedSlots": 24,
+          "paintedSlots": 24,
+          "validatedSlots": 24,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 4,
+          "firstUsefulHistoryMs": 3956.800000000745,
+          "completeMs": 5083.89999999851,
+          "requestedSlots": 24,
+          "paintedSlots": 24,
+          "validatedSlots": 24,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 5,
+          "firstUsefulHistoryMs": 3743.5,
+          "completeMs": 5283.699999999255,
+          "requestedSlots": 24,
+          "paintedSlots": 24,
+          "validatedSlots": 24,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        }
+      ],
+      "medianMs": 6040.199999999255,
+      "maximumMs": 9111.89999999851,
+      "targets": {
+        "medianMs": 5000,
+        "maximumMs": 10000
+      },
+      "pass": false,
+      "scope": "Complete available footprint loading only; all five samples retained. No finite-subset median, p95, current/warm/wall/cold-build or foreground acceptance."
+    },
+    "handoff-970541b-foot4-r1": {
+      "case": "footprint-4h-5m",
+      "build": "970541b79b1a9470f79a3644f5e8cdb8444420a9",
+      "route": "http://127.0.0.1:4185",
+      "rendering": "headless-gles",
+      "requested": {
+        "from": 1793790000000,
+        "to": 1793804400000
+      },
+      "samples": [
+        {
+          "run": 1,
+          "firstUsefulHistoryMs": 3178.89999999851,
+          "completeMs": 3179.199999999255,
+          "requestedSlots": 48,
+          "paintedSlots": 48,
+          "validatedSlots": 48,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 2,
+          "firstUsefulHistoryMs": 3432.699999999255,
+          "completeMs": 3433,
+          "requestedSlots": 48,
+          "paintedSlots": 48,
+          "validatedSlots": 48,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 3,
+          "firstUsefulHistoryMs": 3370,
+          "completeMs": 3370.199999999255,
+          "requestedSlots": 48,
+          "paintedSlots": 48,
+          "validatedSlots": 48,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 4,
+          "firstUsefulHistoryMs": 3030.800000000745,
+          "completeMs": 3030.800000000745,
+          "requestedSlots": 48,
+          "paintedSlots": 48,
+          "validatedSlots": 48,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        },
+        {
+          "run": 5,
+          "firstUsefulHistoryMs": 3877.199999999255,
+          "completeMs": 3877.300000000745,
+          "requestedSlots": 48,
+          "paintedSlots": 48,
+          "validatedSlots": 48,
+          "missing": [],
+          "unvalidated": [],
+          "failures": [],
+          "coverageValid": true
+        }
+      ],
+      "medianMs": 3370.199999999255,
+      "maximumMs": 3877.300000000745,
+      "targets": {
+        "medianMs": 5000,
+        "maximumMs": 10000
+      },
+      "pass": true,
+      "scope": "Complete available footprint loading only; all five samples retained. No finite-subset median, p95, current/warm/wall/cold-build or foreground acceptance."
+    }
+  },
+  "supplementalFinancialCapture": {
+    "completeMs": 11402.89999999851,
+    "scope": "One additional full quote-field capture; exceeds the10smaximum target. Retained alongside the formal five-run cohort; never omitted from release assessment."
+  },
+  "financialCaptureScope": "Formal1h captures include all cells (base/quote) and base cumulative extrema; the supplemental1h capture also includes quoteDelta/minQuoteDelta/maxQuoteDelta. All5m captures include those quote fields. Two full-field real samples independently match FINAL executions exactly; see backend receipt.",
+  "evidenceSha256": {
+    "handoff-970-browser-captures/candle-totals-saved-footprint-range.png": "0a4d1bf1e9bbd8186750cac524bd29f372c5695dfde5edda1b444696644d9dcf",
+    "handoff-970-browser-captures/early-ui-saved-24h.png": "04940fd860cb9ef8625998970860f4a21ba3a2e42d1b58005509b8d5e0aca026",
+    "handoff-970-browser-captures/late-native-24h-footprint.png": "20fdd51a8f2ec40d4fbdea73b405e8fc07f08f974e106afabc35164199b43a39",
+    "handoff-970-browser-results.json": "f56e0377482f89e77fb04de36dfaaaf46b3aa53ecb5c5e038567b289a9dc73b8",
+    "handoff-970-browser-traces/.last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "handoff-970541b-foot24-quote-reference-executed.mjs": "14bed17a82462a819ea7e14f3edbb6f1fd9b883857b1d62aff8ce554bf278a24",
+    "handoff-970541b-foot24-quote-reference-footprint-24h-1h-1-financial.json": "a9df79bfbacc61e0a60fff65f7bbbbc2efead5a69352ea84469932ef5cf30102",
+    "handoff-970541b-foot24-quote-reference-footprint-24h-1h-1.png": "2f51e3c8fc7e60053a292f0c81964813c238da97e91dca2509a57c0f3ad664ae",
+    "handoff-970541b-foot24-quote-reference-observations.jsonl": "f279d417bc2cfe3954d3ddaa6977a905697a4ed84caa21eb0a96e4971d6b315b",
+    "handoff-970541b-foot24-quote-reference-samples.jsonl": "c6f399961a8127c88e7dc497f955b0782cc5ca761a6bd507683229e5f91cd6b5",
+    "handoff-970541b-foot24-quote-reference-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
+    "handoff-970541b-foot24-r1-executed.mjs": "2c7f088dd59a11e4fa7a4d9e3225e60489b3a537496c30c67756de29c2caafde",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-1-financial.json": "3cd8f2281e87d4299ee182eb81a75f7558013ca844ba4628ab4816dacd4b0221",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-1.png": "b1fe7f43b456965422556a1f16ba8d2d0036a173a1577910c6cee3353be99573",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-2-financial.json": "3cd8f2281e87d4299ee182eb81a75f7558013ca844ba4628ab4816dacd4b0221",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-2.png": "c5a7adae87418d958a19b78df400b560f0358420bd41147c5515d78305e6690f",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-3-financial.json": "3cd8f2281e87d4299ee182eb81a75f7558013ca844ba4628ab4816dacd4b0221",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-3.png": "560b2cc9d229bf10dd1c68ebc227d2a69717a8915859872cccc7d1448618aa05",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-4-financial.json": "3cd8f2281e87d4299ee182eb81a75f7558013ca844ba4628ab4816dacd4b0221",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-4.png": "d9296d424ba6756df39917b9f4f8f5f30be523434a1bf94649548b6d5b7ff44e",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-5-financial.json": "3cd8f2281e87d4299ee182eb81a75f7558013ca844ba4628ab4816dacd4b0221",
+    "handoff-970541b-foot24-r1-footprint-24h-1h-5.png": "dc07d6e1c20db4d8f8e97ad56e627e4d14a45d02149d76d75635f5799bdc1389",
+    "handoff-970541b-foot24-r1-observations.jsonl": "e63a0f3f00d5ca05cf6a99fc6953a3b2a6369915339d89c3cd1f7728eb15408e",
+    "handoff-970541b-foot24-r1-samples.jsonl": "455d6fb39a9b7cd8ef717e5f48a8ee19b7209864579dd88e282e9ae149797f47",
+    "handoff-970541b-foot24-r1-summary.json": "553857726cdb3430f4640f6dc3633a661ef2fc62fd93b6df7eb363b5bbed557d",
+    "handoff-970541b-foot24-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
+    "handoff-970541b-foot4-r1-executed.mjs": "14bed17a82462a819ea7e14f3edbb6f1fd9b883857b1d62aff8ce554bf278a24",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-1-financial.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-1.png": "79bf6471a35a49e6f233fa6e728acedf48d6d559deab0e8f5d1777231fefa0be",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-2-financial.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-2.png": "c9e52388d7ff4f34d3a935f7f7f03832c57219ef0391fb434ca46c1a644c13d7",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-3-financial.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-3.png": "541a3c6e8e5336e359dd02fba5d1fe011932b5e37223edda8e5dc1417a890297",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-4-financial.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-4.png": "8b44d8f0ac2731550a5f32af2d6b1ca039ddf2ec783b7d52270da23980b9736b",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-5-financial.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "handoff-970541b-foot4-r1-footprint-4h-5m-5.png": "4709074d3295a8d1c6fbf3c6ed4d7f2373f618b367440c30a32d9f7e33e34b9e",
+    "handoff-970541b-foot4-r1-observations.jsonl": "3b04993195c9330445199c837ff402cd52da743ada04e58981a20eefdd3e37a6",
+    "handoff-970541b-foot4-r1-samples.jsonl": "b269a2899d5839319619275824bea3c2069fa8722735f550f92dda1716f49935",
+    "handoff-970541b-foot4-r1-summary.json": "c729d8bd90270088983665494cbcd6ba768fa0f6708eb90adbb528da4cec5842",
+    "handoff-970541b-foot4-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
+    "lifecycle-82f43e8-foot24-pilot-executed.mjs": "3b115681bb485a5fd34ce021d708d89b11a798287424196cbbc711cdcbb9be80",
+    "lifecycle-82f43e8-foot24-pilot-footprint-24h-1h-1.png": "fa2e757c5a7219df9fb76bddd8c9c7ebd63a7ba6a5c447593b79c9f28ca84cbd",
+    "lifecycle-82f43e8-foot24-pilot-observations.jsonl": "fa1465234bf3c8b6e8919e8ce086d2412948be5fa756e7c83665c315931a24a9",
+    "lifecycle-82f43e8-foot24-pilot-samples.jsonl": "be58ccd3fb2f4fd486b4ddb9b1a4ee0392a7bfdad6d01478c62033b7641b4d25",
+    "lifecycle-82f43e8-foot24-pilot-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+  },
+  "financialHashFormat": "financialEvidence.sha256 hashes compact JSON before the final newline; evidenceSha256 hashes the complete file bytes."
+}

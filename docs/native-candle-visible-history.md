@@ -108,3 +108,23 @@ This cache adds no durable storage or migration. Client rollback restores the pr
 reviewed build without changing the backend, collectors or raw retention. Any
 headed browser command currently fails before launch, including the former
 IQ_TEST_HEADED=workspace9 override; use headless mode for diagnostics.
+
+## Shared footprint demand during saved-view handoff
+
+The early restore consumer and visible chart now share a matching historical
+footprint demand within their exact series/row-price group. The job key includes
+aligned visible bounds and analysis context. They reuse one progress/validation
+ledger; shared ranges are reported once. No cell/bar/request budget changes.
+
+Pan and unsubscribe release only that consumer. Final release cancels the job;
+reopen after final release starts independent revision validation, using retained
+presentation only as unvalidated content. Retry resumes one failed shared job
+without restarting healthy unrelated feeds. Every attempt captures its own abort
+signal so a canceled late response cannot apply through a newer controller.
+Historical replacements remain separate from the mutable live accumulator.
+
+Rollback uses the reviewed821092dclient build in an isolated checkout/static
+release, retaining the current staging gateway, current/history tunnels and raw
+source. The sharing map is ephemeral and adds no persistent state or migration.
+A client reload disposes it. Do not roll the backend back to pre-R2main or restart
+collectors for this frontend rollback.
