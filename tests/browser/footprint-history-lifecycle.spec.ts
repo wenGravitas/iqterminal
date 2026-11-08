@@ -152,6 +152,9 @@ test('failed live Totals exposes scoped Retry while healthy native candles and c
 
 for(const historyBars of [3,1000])test(`native candles paint before ${historyBars}-bar history and history Retry preserves live state`,async({page,context})=>{
  test.setTimeout(45000);const now=Date.now(),step=60000,current=Math.floor(now/step)*step;let historyRequests=0,viewportRequests=0,socketCount=0;
+ // This lifecycle fixture intentionally has one forming candle and no rollover.
+ // Pin both realms so a slow run crossing a minute cannot invent an absent closed slot.
+ await context.addInitScript(fixed=>{Date.now=()=>fixed;},now);
  let releaseHistory!:()=>void;const historyGate=new Promise<void>(resolve=>releaseHistory=resolve);
  let releaseRecovery!:()=>void;const recoveryGate=new Promise<void>(resolve=>releaseRecovery=resolve);
  await page.exposeFunction('iqNativeHistoryRecovery',()=>releaseRecovery());
@@ -162,7 +165,7 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
  });
  await context.route('**/assets/worker-*.js',async route=>{
   const response=await route.fetch(),script=await response.text();if(!script.includes('Invalid durable execution batch'))throw Error('Expected staging feed worker');
-  const transport=`globalThis.WebSocket=class {
+  const transport=`Date.now=()=>${now};globalThis.WebSocket=class {
    readyState=0;timer;onopen;onmessage;onclose;onerror;
    constructor(){setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
    send(wire){const command=JSON.parse(wire);if(!command.interval)return;console.info('iq-native-regression-socket');const update=()=>{this.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval:command.interval,candle:{t:${current},o:80000,h:80100,l:79900,c:80060,v:8,revision:Date.now(),closed:false}})});this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()}})});};update();this.timer=setInterval(update,250);}
