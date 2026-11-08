@@ -298,6 +298,19 @@ describe('optional Order Walls price guides', () => {
     primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
     expect(render(primitive).texts).toEqual(['~B 125 · $750K']);
   });
+  it('uses open-episode geometry for guides without enumerating closed drawables after a tail update',()=>{
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native',showPriceLines:true},60_000);
+    primitive.setSnapshot([...Array.from({length:100},(_,i)=>wall('closed-'+i,base+120_000)),wall()],{state:'live',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual(['B 100 · $1.2M']);
+    primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual(['~B 100 · $750K']);
+    const model=primitive as any,texts:string[]=[],ctx=canvas() as any;
+    ctx.measureText=(text:string)=>({width:text.length*5});ctx.fillText=(text:string)=>texts.push(text);ctx.fillRect=()=>{};ctx.strokeRect=()=>{};
+    const scan=vi.spyOn(model.drawable,'values').mockImplementation(()=>{throw Error('Closed drawable scan');});
+    try{model.drawPriceLines(ctx,{...context(),theme:{background:'#000',axisText:'#ccc'}});expect(texts).toEqual(['~B 100 · $750K']);}finally{scan.mockRestore();}
+    primitive.patch([{id:'active',segment:{...wall(),end:base+120_000,endKnown:true,endReason:'removed'}}],{state:'live',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual([]);
+  });
   it('suppresses overlapping tags without hiding guides or inventing history',()=>{
     const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,showPriceLines:true},60_000);
     primitive.setSnapshot([wall(),wall('second')],{state:'live',lastConfirmedAt:base+120_000});

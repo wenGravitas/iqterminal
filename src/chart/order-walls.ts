@@ -232,11 +232,15 @@ export class OrderWallsPrimitive implements IPrimitive {
   /** Presentation-only guides: never extend the recorded wall timeline itself. */
   private drawPriceLines(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     const active=new Map<string,WallDrawable>();
-    for(const line of this.drawable.values()){
-      const segment=this.segments.get(line.segment.id);
-      if(!segment||segment.end!==null)continue;
-      const previous=active.get(line.segment.id);
-      if(!previous||line.from>previous.from)active.set(line.segment.id,line);
+    // Guides belong only to open episodes. The retained closed drawable map
+    // can contain a million exact value points; a current-tail update must not
+    // traverse those points just to find the handful of live label anchors.
+    for(const id of this.openIds){
+      for(const key of this.drawableKeys.get(id)??[]){
+        const line=this.drawable.get(key);if(!line)continue;
+        const previous=active.get(id);
+        if(!previous||line.from>previous.from)active.set(id,line);
+      }
     }
     const dpr=rc.dpr,occupied:number[]=[];
     ctx.font=`${10*dpr}px ui-monospace, monospace`;ctx.textBaseline='middle';ctx.textAlign='right';
