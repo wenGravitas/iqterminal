@@ -1,0 +1,15 @@
+
+Running 8 tests using 1 worker
+
+(node:208078) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/order-walls-ui.spec.ts:8:1 › Order Walls settings persist and remain a single viewport consumer alongside Heatmap (8.1s)
+  ✓  2 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a resume cursor (3.4s)
+  ✓  3 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a superseded revision (3.5s)
+  ✓  4 tests/browser/order-walls-ui.spec.ts:147:1 › Order Walls releases its current/history consumer while a Dockview panel is hidden and on destroy (3.4s)
+  ✓  5 tests/browser/order-walls-ui.spec.ts:183:1 › wall tooltip uses the historical hit value and labels unknown bounds (2.0s)
+  ✓  6 tests/browser/order-walls-ui.spec.ts:220:1 › Fit Walls changes only the primary vertical scale and keeps it manual through the next candle update (3.4s)
+  ✓  7 tests/browser/order-walls-ui.spec.ts:289:1 › Order Walls distinguishes pending replay from an empty finished history (3.1s)
+  ✓  8 tests/browser/order-walls-ui.spec.ts:309:1 › wall value patches preserve every point without rebuilding pane and indicator controls (2.9s)
+
+  8 passed (31.7s)

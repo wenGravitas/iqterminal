@@ -1,5 +1,5 @@
-/** Actual client service over pinned captured files. No network/browser/fresh
- * SQL proof or latency gate. This reports a capacity failure honestly. */
+/** Actual client service over pinned in-memory fixture responses. No network,
+ * browser, fresh SQL/storage timing or latency acceptance gate. */
 import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
@@ -70,4 +70,4 @@ for(let run=1;run<=samplesRequested;run++){
  }finally{releaseFresh();service.dispose();}
 }
 
-await writeFile(output,JSON.stringify({scope:'Offline Pi production-service cold/client and compact warm reuse over captured immutable prepared parts; source proof is pinned input, not fresh SQL validation; not browser paint or an actual-route warm gate',clientCommit,workingSource,sourceToken:manifest.sourceToken,sourceKey:manifest.sourceKey,projectionKey:manifest.key,core:manifest.core,node:process.version,arch:process.arch,moduleSha256:createHash('sha256').update(await readFile(modulePath)).digest('hex'),samples,requests},null,2)+'\n');console.log(JSON.stringify(samples.map(s=>({run:s.run,seedReadyMs:s.seedReadyMs,encodingAfterReadyMs:s.encodingAfterReadyMs,firstCachedContentMs:s.firstCachedContentMs,fullCachedContentMs:s.fullCachedContentMs,warmBytes:s.diagnostics.warmBytes}))));
+await writeFile(output,JSON.stringify({scope:'Offline Pi fresh service instances and compact warm reuse over preloaded captured immutable responses; source proof is pinned input, not fresh SQL validation; not browser paint or an actual-route warm gate',clientCommit,workingSource,sourceToken:manifest.sourceToken,sourceKey:manifest.sourceKey,projectionKey:manifest.key,core:manifest.core,node:process.version,arch:process.arch,moduleSha256:createHash('sha256').update(await readFile(modulePath)).digest('hex'),samples,requests},null,2)+'\n');console.log(JSON.stringify(samples.map(s=>({run:s.run,seedReadyMs:s.seedReadyMs,encodingAfterReadyMs:s.encodingAfterReadyMs,firstCachedContentMs:s.firstCachedContentMs,fullCachedContentMs:s.fullCachedContentMs,warmBytes:s.diagnostics.warmBytes}))));

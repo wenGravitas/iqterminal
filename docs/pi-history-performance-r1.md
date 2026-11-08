@@ -29,8 +29,10 @@ canonical API instrument namespace defect discovered through the real route is
 fixed with captured-response regression evidence. New proxy wire checks verify
 current socket reservation and queued/active cancellation in dev and preview.
 Client b291b02 removes a duplicate full-history checkpoint/restore;
-its scoped Pi CPU comparison is not loading acceptance. Current first-paint,
-warm revisit, full concurrent-history/current, repeated-use heap/frame plateau
+its scoped Pi CPU comparison is not loading acceptance. Exact compact warm reuse
+is implemented through0de9545, with ownership follow-up6ed9ee4 and full captured
+Spot/USD-M file/service and native headless-worker correctness checks. Current
+first-paint, actual-route warm revisit, full concurrent-history/current, repeated-use heap/frame plateau
 and rolling default preparation/reuse remain failed or unproven. Performance
 acceptance is incomplete. Detailed sections retain failed attempts, correctness
 evidence and exact source/build/environment IDs.
@@ -2109,9 +2111,60 @@ The captured Spot prepared parts occupy13330354decoded bytes and1454262gzip
 bytes, with34immutable parts and16active walls/183active points. An exact bounded
 compact prepared representation could therefore address the actual default-view
 cache limit without dropping financial detail or inflating decoded-object budgets.
-That representation is not yet implemented or accepted. Presentation-map reuse
+At9d77c08that representation was not yet implemented or accepted; the compact
+implementation and its scoped validation are recorded below. Presentation-map reuse
 helps configurations that already fit; it does not fix the default30h warm gate,
 server rolling-default reuse or current/concurrent/foreground acceptance.
 
 Raw source/parts, exact compiled client, every committed sample, tests/build logs
 and limitations are in `artifacts/pi-history-r1/wall-presentation-cache-r1/`.
+
+## Exact compact default-view reuse
+
+711a8d3 implements exact bounded gzip presentation reuse; f965292 supplies the
+renderer's separate presentation extent without marking loaded coverage complete.
+0de9545 bounds metadata/point work before JSON serialization. Neither the existing
+16MiB entry/32MiB aggregate cache limit nor chart/cell budgets were raised. Every
+canonical point, exact decimal string, flag and wall identity remains. Large
+prepared defaults now enter the cache; canonical/unprepared oversized fallback
+remains uncached with an explicit capacity diagnostic. Source/current accumulator
+and backend prepared-format/core contracts are unchanged.
+
+Five sequential offline Pi service runs per market on0de9545 preserve the exact
+full references and all gaps while independent revision validation is deliberately
+held. Spot's accounted cache is1655229bytes; USD-M's3167216bytes. First cached
+worker-content samples(ms) are Spot[7.0,3.9,3.6,3.4,3.3]andUSD-M
+[6.1,6.4,3.5,4.7,8.4]. Full cached worker-content samples are Spot
+[472.5,487.6,473.0,437.6,493.3]andUSD-M[1279.8,1157.2,1210.7,1090.8,1193.9].
+Every queue/encoding/validation sample, median/max and host resource snapshot is
+retained in `artifacts/pi-history-r1/compact-warm-r1/final-0de9545/`. These are
+captured-file service observations, not browser paint, ready-server/cold-browser,
+actual-route warm timing or cold derivation. No acceptance gate changes to PASS.
+
+Actual native headless Chromium155workers round-trip both full reference hashes
+and prove cancellation; eight headless UI checks pass on render-extent parent
+f965292. Full0de9545suite1160passed/2skipped, typecheck/build pass. A service→chart
+primitive test draws/hits a delivered cached historical wall while loadedThrough
+remains at the request start and requestComplete remainsfalse. It protects against
+reporting useful received data that the renderer cannot yet paint.
+
+Compact replay is shared by consumers; a last release cancels native decode and
+releases its map. Pending builders/active decoders are bounded; expired pinned
+entries remain charged until release. Identical independently validated source /
+active-header signatures reuse encoding. Cached gaps survive building/failure;
+source invalidation clears old resume cursors. Corruption recovery releases its
+replay after fresh success. Timings distinguish local queue/elapsed/first-content
+from browser paint; active native work has separate diagnostic counts.
+
+Operational/retry/rollback details are in `docs/compact-wall-cache.md`. Serving
+remains18579d9and all three collector/history IDs/start times match before/after.
+No production/serving deployment or retention change occurred. The actual-route
+and foreground warm/first-paint, concurrent current, browser heap/frame plateau,
+rolling server-default preparation/reuse and remaining cold-build limits remain
+failed or unproven. The full release goal remains active.
+
+Follow-up6ed9ee4 detaches pending encoder closures from mutable loader results.
+It changes ownership, not codec/financial data. Its full current suite1160passes /
+2skips,50focused lifecycle/recovery checks, typecheck and staging build pass.
+Current compiled-asset hashes and logs are in compact-warm-r1/lifecycle-6ed9ee4;
+retained browser heap/queue plateau still needs actual interaction validation.

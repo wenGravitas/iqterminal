@@ -1,0 +1,135 @@
+{
+  "scope": "Compiled production assets/configuration only; does not establish runtime route or fresh live connectivity",
+  "build": "0de95456b9e200dcae7573447b03470d55543818",
+  "dataMode": "staging",
+  "historyTiles": true,
+  "diagnosticsBuildCommand": "VITE_DIAGNOSTICS=1 build:staging:diagnostics",
+  "feedWorker": "dist/assets/worker-CcpK4O29.js",
+  "assets": [
+    {
+      "path": "dist/assets/editor-CTVtUM2m.js",
+      "bytes": 16164,
+      "sha256": "3506235c8b400360d7e7362aac8056330b3995c7b60271c6b19a3a7030132af4"
+    },
+    {
+      "path": "dist/assets/index-nAfm4NmC.js",
+      "bytes": 50317,
+      "sha256": "8c29abc14fb3e65aa3e50b0bc360ea2a92b6ef999b6bcefdc692eb8af63ffd44"
+    },
+    {
+      "path": "dist/assets/main-5rSHsyET.js",
+      "bytes": 2345544,
+      "sha256": "553859a15f6884ade04169f3b0820ad7849b636d8bba0a8591580342faf852a6"
+    },
+    {
+      "path": "dist/assets/main-DuadqPLo.css",
+      "bytes": 288397,
+      "sha256": "5caf8d6e3ccd3ef234c5ab99dfea43b02956db4856703f631771e9ac864e94ac"
+    },
+    {
+      "path": "dist/assets/worker-BKSmN_Bs.js",
+      "bytes": 319806,
+      "sha256": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e"
+    },
+    {
+      "path": "dist/assets/worker-CcpK4O29.js",
+      "bytes": 502575,
+      "sha256": "223dbad8fdab44d825dbce0b47cf66fa021cc8876ad5fa9711bc830701022422"
+    },
+    {
+      "path": "dist/assets/worker-DaWyXJKB.js",
+      "bytes": 362171,
+      "sha256": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 13001,
+      "sha256": "f0560cffb8d5c68d8e6d0cfdb5c88d92719479bb415e24a81ae4d40eb411456d"
+    },
+    {
+      "path": "dist/licenses/axis-grid-NOTICE.txt",
+      "bytes": 558,
+      "sha256": "ae174a14f4ed4415ef054ee886da693d13092a2fc4f1639133db09db28ad3bdd"
+    },
+    {
+      "path": "dist/licenses/decimal-js-MIT.txt",
+      "bytes": 1104,
+      "sha256": "3108b546bcff5d346923a82f48b2d252ca722f9088076db6d145f6b67757ad6c"
+    },
+    {
+      "path": "dist/licenses/dockview-core-MIT.txt",
+      "bytes": 1063,
+      "sha256": "1d56757fdc06c9b33c0f80821efe4f4b11960dd7fb6544232cff61752101f513"
+    },
+    {
+      "path": "dist/licenses/hyperliquid-sdk-MIT.txt",
+      "bytes": 1062,
+      "sha256": "dc69b5f489b78ff65d128fe457f39b0e8d1d707d84e23beafe6a6a16209c38e7"
+    },
+    {
+      "path": "dist/licenses/index.html",
+      "bytes": 4111,
+      "sha256": "b116e62788e3a5e281ebb0ff1ce98ecec711e55a7303f98cb83b2f83687765b9"
+    },
+    {
+      "path": "dist/licenses/noble-hashes-MIT.txt",
+      "bytes": 1109,
+      "sha256": "4f221aee6e072336700c408c68ab3b96a3fc09f6aebe6f48f1bd99e5ef13faec"
+    },
+    {
+      "path": "dist/licenses/openalgo-charts/LICENSE",
+      "bytes": 11338,
+      "sha256": "ede6b8620b0f3598fc4982a2f238a62c1cb9283cfbadf0b0efa9d13888b344cd"
+    },
+    {
+      "path": "dist/licenses/openalgo-charts/NOTICE",
+      "bytes": 627,
+      "sha256": "80f17fec44125e186ef7dc36913e849831b651f02f38430c7d6f49c30a704bf4"
+    },
+    {
+      "path": "dist/licenses/openalgo-script/LICENSE",
+      "bytes": 11338,
+      "sha256": "ede6b8620b0f3598fc4982a2f238a62c1cb9283cfbadf0b0efa9d13888b344cd"
+    },
+    {
+      "path": "dist/licenses/openalgo-script/NOTICE",
+      "bytes": 493,
+      "sha256": "7964c364534a2c2c9dbf655e3246d188b5f829d3c4e3b1bc4c2f3fbbdab65f2f"
+    },
+    {
+      "path": "dist/licenses/theme-palettes-NOTICE.txt",
+      "bytes": 582,
+      "sha256": "7b48b764baa657cfe16f9ff1eeedaf087e1162743f75f1aa35b0868706635ea1"
+    },
+    {
+      "path": "dist/licenses/viem-MIT.txt",
+      "bytes": 1074,
+      "sha256": "091d17ae5f625ffeb381e7109daaf6c492dd32502d612d8ecd24e2ddf6d16b74"
+    },
+    {
+      "path": "dist/theme-init.js",
+      "bytes": 807,
+      "sha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae"
+    },
+    {
+      "path": "dist/venues/NOTICE.txt",
+      "bytes": 488,
+      "sha256": "a9301e5058dd46d23e4833fe1cd263e093d60c973bd7c90846f29160cdc5b556"
+    },
+    {
+      "path": "dist/venues/binance.ico",
+      "bytes": 4286,
+      "sha256": "8318ebbcb1cb4729eb0f78bb058dc618c3b63f9f9f0070a1a7a3265fdc79b833"
+    },
+    {
+      "path": "dist/venues/bybit.svg",
+      "bytes": 235,
+      "sha256": "c7b0b277b6b02b086d33ba049ae1c62cfdc496a03aee68f69f7326a51322804b"
+    },
+    {
+      "path": "dist/venues/hyperliquid.png",
+      "bytes": 898,
+      "sha256": "3cf31bdb20f8ad764b3c0368fd20106991b0b8ae3ba64f5dfebb0c468fa9b08f"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+
+> terminal-t0@0.1.0 test /home/daz/workarea/iqterminal-perf-history
+> vitest run
+
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-history.test.ts (33 tests | 1 failed) 2238ms
+   × service Retry restarts a source-invalidated view without a resume cursor and retains its display until validation 60ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > service Retry restarts a source-invalidated view without a resume cursor and retains its display until validation
+AssertionError: expected 20 to be undefined
+
+- Expected:
+undefined
+
++ Received:
+20
+
+ ❯ tests/prepared-wall-history.test.ts:248:52
+    246|   const retained=events.filter(e=>e.kind==='snapshot'&&e.segments?.len…
+    247|   expect(events.at(-1).status.archive).toMatchObject({retryable:true,r…
+    248|   expect(events.at(-1).status.archive.resumeAfter).toBeUndefined();
+       |                                                    ^
+    249|   const before=events.length;phase=1;service.retry('revision');
+    250|   await vi.waitFor(()=>expect(blocked).toBe(true));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 134 passed | 2 skipped (137)
+      Tests  1 failed | 1158 passed | 2 skipped (1161)
+   Start at  10:04:42
+   Duration  33.96s (tests 66%, import 20%, transform 13%, worker 2%)
+
+    Isolate  137 workers spawned · ~192ms startup each (spawn + environment, per file)
+             at least ~8.56s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.
