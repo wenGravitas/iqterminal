@@ -3,25 +3,9 @@ import {addIndicator,setFootprint} from './indicator-actions';
 const HOUR=3600000;
 function executionBar(time:number,step:number){return {time:time/1000,revision:1,rowSize:25,cells:[{price:80000,bidVol:3,askVol:5,bidNotional:240000,askNotional:400000}],open:80000,high:80025,low:79975,close:80010,delta:2,minDelta:0,maxDelta:2,quoteDelta:160000,minQuoteDelta:0,maxQuoteDelta:160000,aggregateRecordCount:2,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false};}
 
-async function installHealthyStagingWorker(context:BrowserContext,emitCandles=true){
- // The feed owns WebSockets inside a dedicated worker. Install this explicit
- // deterministic transport in the worker bundle, so the unrelated native feed
- // stays healthy even when no staging tunnel exists. Page socket routes do not
- // establish that precondition for the worker.
- await context.route('**/assets/worker-*.js',async route=>{
-  const response=await route.fetch();const script=await response.text();
-  if(!script.includes('Invalid durable execution batch'))return route.fulfill({response});
-  const transport=`globalThis.WebSocket=class {
-   static CONNECTING=0;static OPEN=1;static CLOSING=2;static CLOSED=3;
-   readyState=0;timer;onopen;onmessage;onclose;onerror;
-   constructor(){setTimeout(()=>{if(this.readyState!==0)return;this.readyState=1;this.onopen?.({});},0);}
-   send(wire){const command=JSON.parse(wire),steps={'1m':60000,'5m':300000,'15m':900000,'30m':1800000,'1h':3600000,'4h':14400000,'1d':86400000};const health=()=>{if(command.interval&&${emitCandles}){const step=steps[command.interval];this.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval:command.interval,candle:{t:Math.floor(Date.now()/step)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:Date.now(),closed:false}})});}this.onmessage?.({data:JSON.stringify({type:'health',collector:{state:'live',lastUpdate:Date.now()},watermark:{id:1}})});};health();clearInterval(this.timer);this.timer=setInterval(health,500);}
-   close(){clearInterval(this.timer);this.readyState=3;this.onclose?.({});}
-  };`;
-  await route.fulfill({response,body:transport+'\n'+script});
- });
-}
+import {installHealthyStagingWorker} from './staging-worker-fixture';
 test.beforeEach(async({context})=>installHealthyStagingWorker(context));
+test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed())console.log('FAILED_HISTORY_STATE',JSON.stringify(await page.evaluate(()=>{const terminal=(window as any).__terminal;return terminal?[...terminal.panels.values()].map((p:any)=>({diagnostics:p.diagnostics(),nativeBars:p.candles.length,pending:p.pendingHistoryView,nativeDemand:p.nativeCandleDemand,visibility:document.visibilityState,primitiveBars:p.engine.footprint?.bars?.map((b:any)=>b.time),sliceKey:p.engine.footprintSliceKey,indexData:p.engine.footprintIndexSeries?.getData().map((b:any)=>b.time),indices:p.footprintBars.map((b:any)=>[b.time,p.engine.chart.dataLayer.timeToIndex(b.time)]),layerLength:p.engine.chart.dataLayer.length,queuedRefresh:p.engine.visibleCallbacks.has(p.engine.footprintRefresh),schedulerDirty:p.scheduler.dirty.has(p.engine),schedulerFrame:p.scheduler.frame,engineVisible:p.engine.visible,dead:p.engine.disposed})):null;})));});
 test('saved candle wall history starts before native candles and restores without an offscreen current bootstrap',async({page,context})=>{
  test.setTimeout(45000);await installHealthyStagingWorker(context,false);
  const step=300000,now=Date.now(),to=Math.floor(now/step)*step-24*HOUR,from=to-30*HOUR,id='chart-saved-walls',requests:string[]=[];
@@ -152,12 +136,22 @@ test('failed live Totals exposes scoped Retry while healthy native candles and c
  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].status.state)).toBe('live');
  const before=nativeRequests;await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toBeVisible();await panel.getByRole('button',{name:'Retry market data',exact:true}).click();
  await expect.poll(()=>page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintStatus.state)).toBe('live');
- expect(retries).toBe(1);expect(nativeRequests).toBe(before);await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toHaveCount(0);
+ expect(retries).toBe(1);expect(nativeRequests).toBe(before);
+ // This fixture retains only99closed native bars for a202slotview. Its honest
+ // partial status keeps Retry after Totals has recovered; the next click is
+ // scoped to native history and must not restart the healthy Totals job.
+ await expect(panel).toContainText('Native prices partial');
+ await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toBeVisible();
+ const nativeSockets=()=>page.workers()[0].evaluate(()=>(globalThis as any).__stagingNativeFixture.sockets.flatMap((s:any,i:number)=>s.command?.interval==='1h'&&s.readyState===1?[i]:[]));
+ const sockets=await nativeSockets();
+ await panel.getByRole('button',{name:'Retry market data',exact:true}).click();
+ await expect.poll(()=>nativeRequests).toBe(before+1);expect(retries).toBe(1);
+ expect(await nativeSockets()).toEqual(sockets);
  expect(await page.evaluate(()=>[...(window as any).__terminal.panels.values()][0].footprintBars.length)).toBeGreaterThan(2);
 });
 
 for(const historyBars of [3,1000])test(`native candles paint before ${historyBars}-bar history and history Retry preserves live state`,async({page,context})=>{
- test.setTimeout(45000);const now=Date.now(),step=60000,current=Math.floor(now/step)*step;let historyRequests=0,socketCount=0;
+ test.setTimeout(45000);const now=Date.now(),step=60000,current=Math.floor(now/step)*step;let historyRequests=0,viewportRequests=0,socketCount=0;
  let releaseHistory!:()=>void;const historyGate=new Promise<void>(resolve=>releaseHistory=resolve);
  let releaseRecovery!:()=>void;const recoveryGate=new Promise<void>(resolve=>releaseRecovery=resolve);
  await page.exposeFunction('iqNativeHistoryRecovery',()=>releaseRecovery());
@@ -179,6 +173,9 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url());
   if(u.pathname.endsWith('/native-candles')){
+   // This bootstrap fixture has only its advertised3/1000bars. Requests for
+   // other native slots are separate, explicit partial source, not bootstrap.
+   if(u.searchParams.has('from')){viewportRequests++;return route.fulfill({contentType:'application/json',body:JSON.stringify({source:'binance-native-kline',candles:[]})});}
    historyRequests++;if(historyRequests===1){await historyGate;return route.fulfill({status:502,body:'history route unavailable'});}
    await recoveryGate;return route.fulfill({contentType:'application/json',body:JSON.stringify({source:'binance-native-kline',candles:Array.from({length:historyBars},(_,i)=>current-(historyBars-1-i)*step).map(t=>({t,o:80000,h:80100,l:79900,c:80010,v:1,revision:9999999999999,closed:t<current}))})});
   }
@@ -194,7 +191,7 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
   await page.evaluate(({current,step})=>{
    const p=(window as any).__terminal.panels.get('chart-native-independent'),live=p.candles.at(-1);
    p.candles=Array.from({length:5000},(_,i)=>({...live,t:current-(4999-i)*step,c:80040,v:4,closed:i<4999}));p.candles[p.candles.length-1]=live;
-   p.engine.setSnapshot(p.candles,true);p.engine.restoreHistoryTimeRange({from:(current-180*step)/1000,to:(current+2*step)/1000});
+   p.engine.setSnapshot(p.candles,true);p.engine.restoreHistoryTimeRange({from:current-180*step,to:current+2*step});
    const work=(window as any).__nativeHistoryApply={snapshots:0,multiBarPatches:0,snapshotMs:[] as number[]},snapshot=p.engine.setSnapshot.bind(p.engine),patch=p.engine.applyPatch.bind(p.engine);
    p.engine.setSnapshot=(...args:any[])=>{const start=performance.now();try{return snapshot(...args);}finally{work.snapshots++;work.snapshotMs.push(performance.now()-start);}};
    p.engine.applyPatch=(bars:any[])=>{if(bars.length>1)work.multiBarPatches++;return patch(bars);};
@@ -208,7 +205,7 @@ for(const historyBars of [3,1000])test(`native candles paint before ${historyBar
  expect((await read())?.status.state).toBe('live');await page.getByRole('button',{name:'Retry market data',exact:true}).click();
  await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===(historyBars===1000?5000:3);}).toBe(true);
  if(historyBars===1000){expect((await read())?.view).toEqual(retainedView);expect((await read())?.candles[0].c).toBe(80040);expect((await read())?.candles[4000].c).toBe(80010);expect((await read())?.bulk).toMatchObject({snapshots:1,multiBarPatches:0});}
- expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
+ expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);expect(viewportRequests).toBeLessThanOrEqual(1);
  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
  await page.screenshot({path:`artifacts/pi-history-r1/native-history-recovered-live-retained-${historyBars}.png`});
 });

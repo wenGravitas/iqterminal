@@ -441,3 +441,47 @@ test('large native backfill uses one merging snapshot while retaining the indepe
   expect(service.diagnostics().retainedBars).toBe(1000);expect(sockets).toHaveLength(1);
  }finally{service.dispose();}
 });
+
+test('saved native history loads before delayed bootstrap and late receipts carry a lower read order',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');vi.useFakeTimers();
+ const day=Date.UTC(2026,10,3),hour=3600000,now=day+16*hour+19*60000,source={...series,interval:'1h'} as const;
+ const c=(t:number,closed=true)=>({t,o:84000,h:84010,l:83990,c:84001,v:2,quoteVolume:168002,revision:1,closed});
+ const historical=[11,12,13,14,15].map(h=>c(day+h*hour)),events:Event[]=[],sockets:Socket[]=[];let finish!:(r:Response)=>void;
+ const request=vi.fn(async(input:any)=>String(input).includes('from=')?new Response(JSON.stringify({source:'binance-native-kline',candles:historical})):await new Promise<Response>(r=>finish=r));
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
+ try{
+  service.command({type:'subscribe',id:'native-view',series:source});service.command({type:'candle-viewport',id:'native-view',from:day+11*hour,to:day+19*hour,known:[]});await vi.advanceTimersByTimeAsync(0);
+  const delivered=events.find(e=>e.type==='snapshot'&&e.nativeVersion?.request!==undefined) as Extract<Event,{type:'snapshot'|'patch'}>;
+  expect(delivered).toMatchObject({type:'snapshot',merge:true,ids:['native-view'],candles:historical,nativeVersion:{stream:0,request:2}});
+  expect(events.filter(e=>e.type==='status').at(-1)).toMatchObject({status:{nativeHistory:{state:'loading',viewport:{state:'ready',requestedSlots:5,loadedSlots:5}}}});
+  const live={...c(day+16*hour,false),c:84009,v:9,revision:2};sockets[0].receive({type:'native-candle',source:'binance-native-kline',interval:'1h',candle:live});
+  finish(new Response(JSON.stringify({source:'binance-native-kline',candles:[{...historical[0],c:83999,revision:99999},{...live,c:83999,v:1,revision:99999}]})));await vi.advanceTimersByTimeAsync(0);
+  const older=events.filter(e=>e.type==='snapshot'||e.type==='patch').at(-1) as Extract<Event,{type:'snapshot'|'patch'}>;
+  expect(older.nativeVersion).toEqual({stream:0,request:1});expect(older.candles.some(c=>c.t===live.t)).toBe(false);
+  expect(events.filter(e=>e.type==='status').at(-1)).toMatchObject({status:{state:'live',nativeHistory:{state:'ready',viewport:{state:'ready',loadedSlots:5}}}});
+  expect(sockets).toHaveLength(1);expect(sockets[0].closed).toBe(false);
+ }finally{service.dispose();}
+});
+
+test('native visible-history Retry clears recovery status without reconnecting a healthy current stream',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');vi.useFakeTimers();
+ const day=Date.UTC(2026,10,3),hour=3600000,now=day+16*hour+19*60000,source={...series,interval:'1h'} as const;
+ const candles=[11,12,13,14,15].map(h=>({t:day+h*hour,o:84000,h:84001,l:83999,c:84000,v:2,revision:1,closed:true}));
+ const events:Event[]=[],sockets:Socket[]=[],headers:Headers[]=[];let fail=true;
+ const request=vi.fn(async(input:any,init?:RequestInit)=>{
+  if(!String(input).includes('from='))return new Response(JSON.stringify({source:'binance-native-kline',candles:[]}));
+  headers.push(new Headers(init?.headers));return fail?new Response('',{status:503}):new Response(JSON.stringify({source:'binance-native-kline',candles}));
+ });
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
+ try{
+  service.command({type:'subscribe',id:'native-view',series:source});await vi.advanceTimersByTimeAsync(0);
+  sockets[0].receive({type:'native-candle',source:'binance-native-kline',interval:'1h',candle:{...candles[0],t:day+16*hour,closed:false}});
+  service.command({type:'candle-viewport',id:'native-view',from:day+11*hour,to:day+19*hour,known:[]});await vi.advanceTimersByTimeAsync(0);
+  expect(events.filter(e=>e.type==='status').at(-1)).toMatchObject({status:{state:'live',nativeHistory:{state:'ready',viewport:{state:'failed',error:'History HTTP 503'}}}});
+  fail=false;service.command({type:'retry',id:'native-view'});await vi.advanceTimersByTimeAsync(0);
+  const latest=events.filter(e=>e.type==='status').at(-1) as Extract<Event,{type:'status'}>;
+  expect(latest.status.state).toBe('live');expect(latest.status.nativeHistory?.viewport).toMatchObject({state:'ready',loadedSlots:5,retryable:false});expect(latest.status.nativeHistory?.viewport?.error).toBeUndefined();
+  expect(sockets).toHaveLength(1);expect(sockets[0].closed).toBe(false);expect(headers).toHaveLength(2);expect(headers[0].get('X-IQ-View-Id')).toBe(headers[1].get('X-IQ-View-Id'));
+  expect(service.diagnostics().retainedBars).toBe(1);
+ }finally{service.dispose();}
+});

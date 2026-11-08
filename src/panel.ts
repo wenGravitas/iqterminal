@@ -1,3 +1,4 @@
+import {NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
 import { workspacePanelStorage } from './workspaces/panel-storage';
 import {restoredHistoryViewport} from './feed/restore-bootstrap';
 import { currentTheme } from './theme';
@@ -305,6 +306,10 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsGeneration = 0;
   private orderWallsAutoPriceWidth = 50;
   private orderWallsStatus?: OrderWallStatus;
+  private nativeCandleVersions=new NativeCandleVersions();
+  private nativeCandleDataEpoch=0;
+  private nativeCandleDemand?:{from:number;to:number};
+  private nativeCandleViewKey='';
   private toolbarWrap = document.createElement('div');
   private tradingOverlayButton = document.createElement('button');
   private journalBridge?: JournalChartBridge;
@@ -925,7 +930,14 @@ export class CandlePanel implements IContentRenderer {
     this.objectsToggle.addEventListener('click', () => this.toggleObjectsPanel(), options);
     this.latest.addEventListener('click', () => this.selection.type === 'footprint' ? this.engine?.focusFootprintLatest() : this.engine?.resetView(), options);
     this.indicators.addEventListener('click', () => void this.openPicker(), options);
-    this.retry.addEventListener('click', () => this.selection.type !== 'footprint' && this.status.nativeHistory?.error ? this.feed.retry(params.api.id) : this.footprintDataWanted() && (this.footprintStatus.history?.error || ['failed', 'stale'].includes(this.footprintStatus.state) || this.selection.type === 'footprint') ? this.feed.retryFootprint(params.api.id) : this.feed.retry(params.api.id), options);
+    this.retry.addEventListener('click', () => {
+      const footprintFailed=this.footprintDataWanted()&&(this.footprintStatus.history?.error||['failed','stale'].includes(this.footprintStatus.state)||this.selection.type==='footprint');
+      const nativeFailed=this.selection.type!=='footprint'&&(this.status.nativeHistory?.error||this.status.nativeHistory?.viewport?.state==='failed');
+      // A partial native range must not hide a failed Totals job. Retry actual
+      // failures first; a remaining partial native view keeps its own action.
+      if(footprintFailed)this.feed.retryFootprint(params.api.id);
+      if(nativeFailed||!footprintFailed)this.feed.retry(params.api.id);
+    }, options);
     this.pickerSearch.addEventListener('input', () => this.renderPicker(), options);
     this.picker.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-dialog-action],button[data-add-script],button[data-add-native]');
@@ -980,9 +992,9 @@ export class CandlePanel implements IContentRenderer {
     this.chart.addEventListener('dblclick', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.engine?.resetView(); }, options);
     this.chart.addEventListener('dblclick',event=>{const rect=this.chart.getBoundingClientRect(),hit=this.positioningRangeAt(event.clientX-rect.left,event.clientY-rect.top);if(!hit)return;event.preventDefault();event.stopImmediatePropagation();if(hit.range)this.addPositioningRange(hit.range);},{...options,capture:true});
     this.chart.addEventListener('pointermove',event=>{this.indicatorHoverPointerType=event.pointerType;if(!this.indicatorPointerDown)this.indicatorTooltipBlockedUntilMove=false;},options);
-    this.chart.addEventListener('pointerdown',()=>{this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
+    this.chart.addEventListener('pointerdown',()=>{this.takeNativeHistoryViewControl();this.indicatorPointerDown=true;this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},options);
     this.chart.addEventListener('pointerup',()=>{this.indicatorPointerDown=false;},options);
-    this.chart.addEventListener('wheel',()=>{this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},{...options,passive:true});
+    this.chart.addEventListener('wheel',()=>{this.takeNativeHistoryViewControl();this.indicatorTooltipBlockedUntilMove=true;this.cancelIndicatorTooltip();},{...options,passive:true});
     this.chart.addEventListener('pointerleave',()=>{this.indicatorHoverPointerType=undefined;this.positioningRangeHit=null;this.engine?.setPositioningRange(null);this.hoveredBar=null;this.hoveredFootprint=null;this.cancelIndicatorTooltip();},options);
     document.addEventListener('visibilitychange',()=>{if(document.hidden){this.positioningRangeHit=null;this.engine?.setPositioningRange(null);this.cancelIndicatorTooltip();}},{signal:this.abort.signal});
     this.chart.addEventListener('keydown', event => { if (!(event.target as HTMLElement).closest('.active-indicators')) this.keydown(event); }, options);
@@ -1061,6 +1073,7 @@ export class CandlePanel implements IContentRenderer {
       if (this.selection.type === 'footprint' && !this.footprintHasInitialView && this.footprintStatus.state === 'loading') return;
       if (this.nativeIndicator(HEATMAP_ID) && supportsDepth(this.selection)) this.feed.requestHeatmapViewport(this.params.api.id, viewport);
       this.updateOrderWallsViewport(viewport.from, viewport.to, viewport.low, viewport.high, viewport.height);
+      this.requestNativeCandleViewport(viewport.from,viewport.to);
     };
     this.engine.setWheelMode(this.selection.wheelMode);
     this.engine.setCandleTimerEnabled(this.selection.candleElapsedTimer);
@@ -5183,9 +5196,35 @@ export class CandlePanel implements IContentRenderer {
     else this.tradingChartOverlay?.disable();
   }
 
+  /** A saved range may exceed the chart's minimum zoom spacing. Keep loading
+   * it honestly, but let an explicit gesture supersede pending restoration. */
+  private takeNativeHistoryViewControl(){
+    if(this.selection.type==='candle'&&this.pendingHistoryView&&this.candles.length){
+      this.pendingHistoryView=undefined;this.resetViewOnSnapshot=false;
+    }
+  }
+
+  private requestNativeCandleViewport(from?:number,to?:number){
+    if(import.meta.env.VITE_DATA_MODE!=='staging'||import.meta.env.VITE_HISTORY_TILES!=='1'||this.selection.type!=='candle'
+      ||this.selection.venue!=='binance'||['30m','1d'].includes(this.selection.interval)||!this.engine)return;
+    const saved=this.pendingHistoryView,visible=from===undefined||to===undefined?this.engine.visibleTimeRange():undefined;
+    const rawFrom=saved?.from??from??(visible?visible.from*1000:NaN),rawTo=saved?.to??to??(visible?visible.to*1000:NaN);
+    if(!Number.isFinite(rawFrom)||!Number.isFinite(rawTo)||rawFrom>=rawTo)return;
+    const step=duration[this.selection.interval],end=Math.ceil(Math.min(rawTo,Math.floor(Date.now()/step)*step)/step)*step,start=Math.min(Math.floor(rawFrom/step)*step,end);
+    // The current bootstrap already supplies its last1000bars. Only start an
+    // independent request early when the saved/panned view lies beyond it.
+    if((this.status.nativeHistory?.state??'loading')==='loading'&&start>=Math.floor(Date.now()/step)*step-1000*step)return;
+    this.nativeCandleDemand={from:start,to:end};
+    const key=`${start}:${end}:${this.nativeCandleDataEpoch}:${this.candles.length}:${this.candles[0]?.t}:${this.candles.at(-1)?.t}`;
+    if(key===this.nativeCandleViewKey)return;this.nativeCandleViewKey=key;
+    const known=this.nativeCandleDataEpoch===this.selectionEpoch?this.candles.filter(c=>c.closed).map(c=>c.t):[];
+    this.feed.requestCandleViewport(this.params.api.id,rawFrom,rawTo,known);
+  }
+
   private subscribe() {
     this.release?.();
     const epoch = ++this.selectionEpoch;
+    this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=0;this.nativeCandleDemand=undefined;this.nativeCandleViewKey='';
     const selection = this.selection;
     this.engine?.setDrawingContext(selection);
     this.loadObjectTreeForSelection();
@@ -5200,12 +5239,22 @@ export class CandlePanel implements IContentRenderer {
     this.release = this.feed.subscribe(this.params.api.id, selection, event => {
       if (this.dead || epoch !== this.selectionEpoch) return;
       const vwapCoverage = this.dailyVwapCoverage();
+      let firstPrice=false;
+      if(event.type==='snapshot'||event.type==='patch'){
+        firstPrice=this.nativeCandleDataEpoch!==epoch;
+        if(firstPrice){this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=epoch;if(event.merge||event.type==='patch')this.candles=[];}
+        if(event.nativeVersion){const version=event.nativeVersion;event={...event,candles:event.candles.filter(c=>{
+          const at=lowerBoundCandle(this.candles,c.t);return this.nativeCandleVersions.accept(c,version,this.candles[at]?.t===c.t?this.candles[at]:undefined);
+        })};}
+      }
+
       if (event.type === 'status') {
         this.status = event.status;
         this.updateStatus();
       } else if (event.type === 'snapshot') {
         if(event.merge)this.mergeCandles(event.candles);
         else this.candles = event.candles.length > 5_000 ? event.candles.slice(-5_000) : [...event.candles];
+        this.nativeCandleVersions.retain(this.candles);
         this.engine?.setSnapshot(this.candles, !this.resetViewOnSnapshot || Boolean(this.pendingHistoryView) || (this.selection.type === 'footprint' && this.footprintHasInitialView));
         this.studyHost?.setSnapshot(this.candles); this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.schedulePaneIndicatorLayout();
@@ -5218,14 +5267,16 @@ export class CandlePanel implements IContentRenderer {
         this.syncOrderWalls();
         this.refreshFootprintCellTooltip();
       } else if (event.type === 'patch') {
-        this.mergeCandles(event.candles);
-        this.engine?.applyPatch(event.candles);
-        this.studyHost?.applyPatch(event.candles); this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
+        const retainedView=this.mergeCandles(event.candles);
+        if(firstPrice||retainedView){this.engine?.setSnapshot(this.candles,true);this.studyHost?.setSnapshot(this.candles);}
+        else{this.engine?.applyPatch(event.candles);this.studyHost?.applyPatch(event.candles);} this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.refreshFootprintCellTooltip();
-        this.status = { ...this.status, lastUpdate: Date.now() };
+        if(event.candles.length&&event.nativeVersion?.request===undefined)this.status = { ...this.status, lastUpdate: Date.now() };
       }
       if (this.nativeIndicator(DAILY_VWAP_ID) && vwapCoverage !== this.dailyVwapCoverage()) this.renderActiveIndicators();
+      this.requestNativeCandleViewport();
     });
+    this.requestNativeCandleViewport();
     this.syncHeatmap();
     this.subscribeFootprint();
     this.reconcileIndicators();
@@ -5850,12 +5901,15 @@ export class CandlePanel implements IContentRenderer {
     const totalsLive = !isFootprint && this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible ? this.footprintStatus.state === 'loading' ? 'Connecting live totals…' : ['failed','stale'].includes(this.footprintStatus.state) ? 'Live totals unavailable' : '' : '';
     const nativeHistory = !isFootprint ? this.status.nativeHistory : undefined;
     const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${nativeHistory.loadedBars} bar${nativeHistory.loadedBars===1?'':'s'} displayed` : '';
-    const text = [liveText, totalsLive, nativeHistoryText, historyText].filter(Boolean).join(' · ');
+    const nativeView=nativeHistory?.viewport;
+    const nativeRange=nativeView?`${new Date(nativeView.from).toISOString().slice(5,16).replace('T',' ')}–${new Date(nativeView.to).toISOString().slice(5,16).replace('T',' ')} UTC`:'';
+    const nativeViewText=nativeView?`Native prices ${nativeView.state==='ready'?'loaded':nativeView.state==='capacity-limited'?'capacity limited':nativeView.state} · ${nativeView.loadedSlots}/${nativeView.requestedSlots} closed bars · ${nativeRange}${nativeView.error?` · ${nativeView.error}`:''}`:'';
+    const text = [liveText, totalsLive, nativeHistoryText, nativeViewText, historyText].filter(Boolean).join(' · ');
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
     this.statusNode.dataset.quoteAvailability = quoteUnavailable ? 'unavailable' : 'available';
     const showRetry = status.state === 'failed' || status.state === 'stale' || Boolean(history?.error)
-      || Boolean(nativeHistory?.error) || Boolean(totalsLive && ['failed', 'stale'].includes(this.footprintStatus.state));
+      || Boolean(nativeHistory?.error)||Boolean(nativeView?.retryable&&nativeView.state!=='loading') || Boolean(totalsLive && ['failed', 'stale'].includes(this.footprintStatus.state));
     if (this.statusText.parentElement !== this.statusNode || (this.retry.parentElement === this.statusNode) !== showRetry) {
       this.statusNode.replaceChildren(this.statusText, ...(showRetry ? [this.retry] : []));
     }
@@ -5884,7 +5938,13 @@ export class CandlePanel implements IContentRenderer {
       if (this.candles[index]?.t === candle.t) this.candles[index] = candle;
       else this.candles.splice(index, 0, candle);
     }
-    if (this.candles.length > 5_000) this.candles.splice(0, this.candles.length - 5_000);
+    const trimmed=this.candles.length>5000;
+    if(trimmed){
+      if(this.nativeCandleDemand)this.candles=retainNativeViewport(this.candles,this.nativeCandleDemand.from,this.nativeCandleDemand.to);
+      else this.candles.splice(0,this.candles.length-5000);
+      this.nativeCandleVersions.retain(this.candles);
+    }
+    return trimmed&&Boolean(this.nativeCandleDemand);
   }
 
   private journalSnapshotInput() {

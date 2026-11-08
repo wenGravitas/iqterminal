@@ -214,6 +214,7 @@ export class FeedClient {
     return ()=>{this.comparisonListeners.delete(token);if(this.currentComparison.get(id)===token)this.currentComparison.delete(id);for(const meta of statuses.values())this.removeObservedFeed(meta.key);this.comparisonStatusMeta.delete(token);this.send({type:'comparison-unsubscribe',id:token});};
   }
   retryComparison(id:string){const token=this.currentComparison.get(id);if(token)this.send({type:'comparison-retry',id:token});}
+  requestCandleViewport(id:string,from:number,to:number,known:number[]){if(this.fixtureMode)return;if(import.meta.env.VITE_DATA_MODE!=='staging'||import.meta.env.VITE_HISTORY_TILES!=='1')return;const token=this.current.get(id);if(token)this.send({type:'candle-viewport',id:token,from,to,known});}
   requestFootprintViewport(id:string,from:number,to:number,analysis:FootprintAnalysisDemand={enabled:false,lookback:50}){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentFootprint.get(id);if(token)this.send({type:'footprint-viewport',id:token,from,to,analysis});}
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {

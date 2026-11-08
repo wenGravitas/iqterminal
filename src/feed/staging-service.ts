@@ -1,3 +1,4 @@
+import {NativeCandleHistory,type NativeCandleVersion} from './native-candle-history';
 import {historyRequestTraces} from './history-trace';
 import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-footprints';
 import {historyScheduler} from './history-scheduler';
@@ -19,7 +20,7 @@ async function readStagingJson(response:Response,label:string){
   return data;
 }
 interface Group {
-  native?: { ready:boolean; error?:string; retryAt:number; failures:number; sequence:number; receivedAt?:number; sourceState?:string; versions:Map<number,{sequence:number;revision:number}> };
+  native?: { readOrder:number;history?:NativeCandleHistory;ready:boolean; error?:string; retryAt:number; failures:number; sequence:number; receivedAt?:number; sourceState?:string; versions:Map<number,{sequence:number;revision:number}> };
   preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
   abort?: AbortController; busy: boolean; inFlight?: number; pending?: Envelope;
@@ -62,9 +63,16 @@ export class StagingFeedService {
         if (this.groups.size >= 16) return;
         group = { preparedTimes:new Set(),views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
           busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0,
-          native: rowPrice === undefined ? {ready:false,retryAt:0,failures:0,sequence:0,versions:new Map()} : undefined,
+          native: rowPrice === undefined ? {readOrder:0,ready:false,retryAt:0,failures:0,sequence:0,versions:new Map()} : undefined,
           analysisSummaries: new Map(), liveSummaryVersions: new Map(), quoteAvailable: new Map(), streamRevision: 0, appliedExecutionThroughMs: null };
         this.groups.set(key, group);
+      }
+      if(group.native&&!group.native.history){
+        const g=group;
+        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,
+          version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
+          apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
+          changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});
       }
       group.ids.add(c.id); this.clients.set(c.id, key);
       if (group.candles.length) this.emit({ type: 'snapshot', key, ids: [c.id], candles: group.candles });
@@ -72,6 +80,9 @@ export class StagingFeedService {
       this.status(group, 'loading', rowPrice === undefined ? 'Staging · loading native Binance candles' : 'Staging · loading retained aggregate executions');
       if (group.native) { this.connect(group); if(!group.native.ready)void this.load(group); this.nativeStatus(group); }
       else if (!group.ws) void this.load(group);
+    } else if(c.type==='candle-viewport'){
+      const key=this.clients.get(c.id),g=key?this.groups.get(key):undefined;
+      if(g?.native&&this.usePrepared){g.native.history?.viewport(c.id,c.from,c.to,c.known);this.nativeStatus(g);}
     } else if (c.type === 'footprint-viewport') {
       const key = this.clients.get(c.id), g = key ? this.groups.get(key) : undefined;
       if (!g || g.rowPrice === undefined || !this.usePrepared || !Number.isFinite(c.from) || !Number.isFinite(c.to) || c.from >= c.to) return;
@@ -109,6 +120,7 @@ export class StagingFeedService {
         if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);}continue;}
         if(historyOnly)continue;
         if(g.native){
+          if(c.id&&g.native.history?.progress(c.id)?.retryable){g.native.history.retry(c.id);if(!g.native.error)continue;}
           if(g.native.error){g.native.error=undefined;g.native.retryAt=0;g.native.failures=0;void this.load(g);this.nativeStatus(g);}
           else if(!g.ws){g.retryAt=0;this.connect(g);if(!g.native.ready)void this.load(g);}
           continue;
@@ -120,15 +132,15 @@ export class StagingFeedService {
     } else if (c.type === 'online') {
       this.online = c.online;
       for (const g of this.groups.values()) {
-        if (!c.online) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
-        else { g.retryAt = 0; if(g.native){this.connect(g);if(!g.native.ready)void this.load(g);} else if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
+        if (!c.online) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.ws = undefined;g.native?.history?.setOnline(false); this.status(g, 'stale', 'Staging · offline; retained data preserved'); }
+        else { g.retryAt = 0; if(g.native){this.connect(g);if(!g.native.ready)void this.load(g);g.native.history?.setOnline(true);} else if (g.rowPrice !== undefined && g.cursor !== undefined) { this.connect(g); if (g.history) void this.loadOlder(g); } else void this.load(g); }
       }
     }
   }
   private unsubscribe(id: string) {
     const key = this.clients.get(id); this.clients.delete(id); const g = key && this.groups.get(key);
-    if (!g) return;g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
-    if (!g.ids.size) {for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
+    if (!g) return;g.native?.history?.release(id);g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
+    if (!g.ids.size) {g.native?.history?.dispose();for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
   private refresh() {
     for (const g of this.groups.values()) {
@@ -187,7 +199,7 @@ export class StagingFeedService {
             native.versions.set(c.t,{sequence:++native.sequence,revision:c.revision});
             const map = new Map(g.candles.map(b => [b.t, b])); map.set(c.t, c); this.retainNative(g,map);
             native.receivedAt=receivedAt;g.lastUpdate=receivedAt;g.failures=0;g.retryAt=0;
-            this.emit({ type: initial?'snapshot':'patch', key: g.key, ids: [...g.ids], candles: initial?g.candles:[c] }); this.nativeStatus(g); return;
+            this.emit({ type: initial?'snapshot':'patch', key: g.key, ids: [...g.ids], candles: initial?g.candles:[c],nativeVersion:{stream:native.sequence},...(initial?{merge:true}:{}) }); this.nativeStatus(g); return;
           }
           if (data.type !== 'executions' || !g.accumulator || data.version !== 1 || data.after !== g.cursor || !Number.isSafeInteger(data.cursor) || data.cursor <= (g.cursor ?? 0) || !Array.isArray(data.executions) || !data.executions.length || data.executions.length > 1000 || !data.coverage) throw new Error('Invalid durable execution batch');
           let previous = g.cursor!;
@@ -253,7 +265,11 @@ export class StagingFeedService {
       coverage: historicalGaps.length ? 'gapped' : g.bars.some(b => b.coverage === 'capacity-limited') ? 'capacity-limited' : 'partial' };
   }
   private status(g: Group, state: FootprintStatus['state'], message: string) {
-    if (g.rowPrice === undefined) this.emit({ type: 'status', key: g.key, ids: [...g.ids], status: { state, message: message + (g.native?.error ? ` · history: ${g.native.error} · Retry available` : g.native && !g.native.ready ? ' · history loading' : ''), lastUpdate: g.lastUpdate, nativeHistory:g.native?{state:g.native.error?'failed':g.native.ready?'ready':'loading',error:g.native.error,loadedBars:g.candles.length}:undefined } });
+    if (g.rowPrice === undefined) {
+      const text=message+(g.native?.error?` · history: ${g.native.error} · Retry available`:g.native&&!g.native.ready?' · history loading':'');
+      for(const id of g.ids)this.emit({type:'status',key:g.key,ids:[id],status:{state,message:text,lastUpdate:g.lastUpdate,
+        ...(g.native?{nativeHistory:{state:g.native.error?'failed' as const:g.native.ready?'ready' as const:'loading' as const,error:g.native.error,loadedBars:g.candles.length,viewport:g.native.history?.progress(id)}}:{})}});
+    }
     else {
       if (state !== 'live') this.revokeLivePreviews(g);
       const status = g.lastStatus ? { ...g.lastStatus, history:this.historyState(g), state, message: this.historyMessage(g, message) } : this.footprintStatus(g, state, message);
@@ -274,6 +290,20 @@ export class StagingFeedService {
     const retained=new Set(g.candles.map(c=>c.t));
     for(const time of g.native!.versions.keys())if(!retained.has(time))g.native!.versions.delete(time);
   }
+  private applyNativeHistory(g:Group,id:string,bars:Candle[],version:NativeCandleVersion,at:number){
+    if(this.dead||!this.online||this.groups.get(g.key)!==g||!g.ids.has(id))return [];
+    const accepted:Candle[]=[],covered:number[]=[],currentByTime=new Map(g.candles.map(c=>[c.t,c]));
+    for(const candle of bars){
+      const current=currentByTime.get(candle.t),stream=g.native!.versions.get(candle.t);
+      if(current?.closed&&!candle.closed)continue;
+      if(stream&&(stream.sequence>version.stream||!candle.closed||candle.t+duration[g.series.interval]>at)){
+        if(current?.closed)covered.push(candle.t);continue;
+      }
+      accepted.push(candle);covered.push(candle.t);
+    }
+    if(accepted.length)this.emit({type:'snapshot',merge:true,nativeVersion:version,key:g.key,ids:[id],candles:accepted});
+    return covered;
+  }
   private revokeLivePreviews(g: Group) {
     for (const [time, summary] of g.analysisSummaries) {
       const revoked = withoutLiveFootprintPreview(summary);
@@ -284,6 +314,7 @@ export class StagingFeedService {
     if (g.busy || !this.online || this.dead || this.now() < (g.native?.retryAt??g.retryAt)) return;
     g.busy = true; const bootstrapRetry = g.bootstrapRetry === true;
     const nativeSequence=g.native?.sequence??0,nativeRequestedAt=this.now();
+    const nativeReadVersion=g.native?{stream:nativeSequence,request:++g.native.readOrder}:undefined;
     const abort = new AbortController(); g.abort = abort;
     // A full retained candle history can take about 45s to transfer through the
     // staging tunnel. Keep the short bound for the smaller footprint bootstrap.
@@ -327,7 +358,7 @@ export class StagingFeedService {
         // Merge at the consumer preserves older displayed bars beyond this
         // worker's bounded replay cache; forming source state is already merged.
         const bulk=!initial&&changes.length>=NATIVE_HISTORY_BULK_MIN_BARS;
-        if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,...(bulk?{merge:true}:{})});
+        if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,nativeVersion:nativeReadVersion,...(initial||bulk?{merge:true}:{})});
         this.nativeStatus(g);
       } else {
         const source = footprintSource(marketOf(g.series));
@@ -549,8 +580,8 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
-  dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose(); } this.groups.clear(); this.clients.clear(); }
+  diagnostics() { return { scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
 function hasQuoteProjection(bar: FootprintBar) {
