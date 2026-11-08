@@ -1,3 +1,4 @@
+import {NativeCandlePresentationCache} from '../src/feed/native-candle-presentation-cache';
 import capturedSpot from './fixtures/native-candles-spot-canonical.json';
 import {expect,test,vi} from 'vitest';
 import {NativeCandleHistory} from '../src/feed/native-candle-history';
@@ -8,9 +9,9 @@ const from=Date.UTC(2026,10,3,11),step=300000,series={venue:'binance',market:'sp
 const candle=(t:number):Candle&{quoteVolume:number}=>({t,o:80000,h:80010,l:79990,c:80001,v:2,quoteVolume:160002,revision:1,closed:true});
 const rows=(start:number,count:number,interval=step)=>Array.from({length:count},(_,i)=>candle(start+i*interval));
 const reply=(candles:Candle[],extra={})=>new Response(JSON.stringify({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles,...extra}));
-function harness(request?:typeof fetch,s:Series=series,now=from+40*86400000){
+function harness(request?:typeof fetch,s:Series=series,now=from+40*86400000,presentation?:NativeCandlePresentationCache){
  const applied:Array<{id:string;bars:Candle[];version:unknown}>=[],urls:string[]=[],states:any[]=[];let version=0;
- const history=new NativeCandleHistory(s,{now:()=>now,version:()=>({stream:0,request:++version}),scheduler:new HistoryScheduler(2),
+ const history=new NativeCandleHistory(s,{now:()=>now,version:()=>({stream:0,request:++version}),scheduler:new HistoryScheduler(2),presentation,
   request:(async(url,init)=>{urls.push(String(url));return request?request(url,init):reply(rows(Number(new URL(String(url),'http://test').searchParams.get('from')),1000));}) as typeof fetch,
   apply:(id,bars,v)=>{applied.push({id,bars,version:v});return bars.map(c=>c.t);},changed:()=>{states.push(history.progress('a'));}});
  return {history,urls,applied,states};
@@ -130,4 +131,32 @@ test('the canonical USD-M namespace is accepted independently of Spot',async()=>
 test('a different canonical market cannot be smuggled through a native symbol match',async()=>{
  const h=harness((async()=>reply(rows(from,2),{instrument:'binance:perpetual:BTCUSDT'})) as typeof fetch);
  try{h.history.viewport('a',from,from+2*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('failed'));expect(h.applied).toHaveLength(0);}finally{h.history.dispose();}
+});
+
+test('warm native presentation paints immediately but echoed known-times cannot certify or cancel fresh validation',async()=>{
+ const cache=new NativeCandlePresentationCache();let count=0,finish!:(r:Response)=>void,signal!:AbortSignal;
+ const h=harness((async(_u,init)=>{count++;if(count===1)return reply(rows(from,5));signal=init!.signal!;return new Promise<Response>(r=>finish=r);}) as typeof fetch,series,from+86400000,cache);
+ try{
+  h.history.viewport('a',from,from+5*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));h.history.release('a');h.applied.length=0;
+  h.history.viewport('b',from,from+5*step,[]);expect(h.applied).toHaveLength(1);expect(h.applied[0]).toMatchObject({id:'b',version:{stream:0,request:0},bars:rows(from,5)});
+  expect(h.history.progress('b')).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:5});
+  await vi.waitFor(()=>expect(count).toBe(2));h.history.viewport('b',from,from+5*step,rows(from,5).map(c=>c.t));expect(signal.aborted).toBe(false);expect(h.history.progress('b')).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:5});
+  const corrected=rows(from,5).map(c=>({...c,c:80002,quoteVolume:160004,revision:2}));finish(reply(corrected));await vi.waitFor(()=>expect(h.history.progress('b')?.state).toBe('ready'));
+  expect(h.applied.at(-1)?.bars).toEqual(corrected);expect(h.history.progress('b')).toMatchObject({loadedSlots:5});expect(h.history.progress('b')?.cachedSlots).toBeUndefined();
+ }finally{h.history.dispose();}
+});
+test('a cached view keeps good prices through failure and retries independently without claiming missing fresh source',async()=>{
+ const cache=new NativeCandlePresentationCache();let mode='seed';const h=harness((async()=>mode==='failed'?new Response('',{status:503}):mode==='empty'?reply([]):reply(rows(from,5))) as typeof fetch,series,from+86400000,cache);
+ try{
+  h.history.viewport('a',from,from+5*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));h.history.release('a');h.applied.length=0;mode='failed';
+  h.history.viewport('b',from,from+5*step,[]);await vi.waitFor(()=>expect(h.history.progress('b')?.state).toBe('failed'));expect(h.applied[0].bars).toEqual(rows(from,5));expect(h.history.progress('b')).toMatchObject({loadedSlots:0,cachedSlots:5,retryable:true});
+  mode='empty';h.history.retry('b');await vi.waitFor(()=>expect(h.history.progress('b')?.state).toBe('partial'));expect(h.history.progress('b')).toMatchObject({loadedSlots:0,cachedSlots:5});expect(cache.diagnostics().rows).toBe(0);
+  mode='ready';h.history.retry('b');await vi.waitFor(()=>expect(h.history.progress('b')?.state).toBe('ready'));expect(h.history.progress('b')?.error).toBeUndefined();expect(h.history.progress('b')?.cachedSlots).toBeUndefined();
+ }finally{h.history.dispose();}
+});
+test('authoritative closed native bootstrap can validate a cached view and cancel only its redundant history request',async()=>{
+ const cache=new NativeCandlePresentationCache();let count=0,finish!:(r:Response)=>void,signal!:AbortSignal;const h=harness((async(_u,init)=>{if(++count===1)return reply(rows(from,5));signal=init!.signal!;return new Promise<Response>(r=>finish=r);}) as typeof fetch,series,from+86400000,cache);
+ try{h.history.viewport('a',from,from+5*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));h.history.release('a');h.history.viewport('b',from,from+5*step,[]);await vi.waitFor(()=>expect(count).toBe(2));
+  h.history.confirmClosed(rows(from,5));expect(h.history.progress('b')).toMatchObject({state:'ready',loadedSlots:5});expect(h.history.progress('b')?.cachedSlots).toBeUndefined();expect(signal.aborted).toBe(true);finish(reply(rows(from,5)));
+ }finally{h.history.dispose();}
 });

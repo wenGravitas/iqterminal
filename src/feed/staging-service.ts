@@ -1,3 +1,4 @@
+import {NativeCandlePresentationCache} from './native-candle-presentation-cache';
 import {NativeCandleHistory,type NativeCandleVersion} from './native-candle-history';
 import {historyRequestTraces} from './history-trace';
 import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-footprints';
@@ -44,6 +45,7 @@ const footprintSource = (market: ReturnType<typeof marketOf>) => market === 'spo
 
 /** Worker-owned snapshot restore + durable cursor replay, with bounded shared caches and acknowledged IPC. */
 export class StagingFeedService {
+  private nativePresentation=new NativeCandlePresentationCache();
   private prepared:PreparedFootprints;private usePrepared=import.meta.env.VITE_HISTORY_TILES!=='0';
   private groups = new Map<string, Group>();
   private clients = new Map<string, string>();
@@ -69,7 +71,7 @@ export class StagingFeedService {
       }
       if(group.native&&!group.native.history){
         const g=group;
-        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,
+        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,presentation:this.nativePresentation,
           version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
           apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
           changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});
@@ -143,6 +145,7 @@ export class StagingFeedService {
     if (!g.ids.size) {g.native?.history?.dispose();for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
   private refresh() {
+    this.nativePresentation.expire();
     for (const g of this.groups.values()) {
       if (g.rowPrice !== undefined) this.expireLivePreviews(g);
       if (g.ws && g.streamAt && this.now() - g.streamAt > 15000) { g.ws.close(); g.ws = undefined; this.status(g, 'stale', 'Staging · stream heartbeat expired; replay pending'); }
@@ -199,7 +202,7 @@ export class StagingFeedService {
             native.versions.set(c.t,{sequence:++native.sequence,revision:c.revision});
             const map = new Map(g.candles.map(b => [b.t, b])); map.set(c.t, c); this.retainNative(g,map);
             native.receivedAt=receivedAt;g.lastUpdate=receivedAt;g.failures=0;g.retryAt=0;
-            this.emit({ type: initial?'snapshot':'patch', key: g.key, ids: [...g.ids], candles: initial?g.candles:[c],nativeVersion:{stream:native.sequence},...(initial?{merge:true}:{}) }); this.nativeStatus(g); return;
+            this.emit({ type: initial?'snapshot':'patch', key: g.key, ids: [...g.ids], candles: initial?g.candles:[c],nativeVersion:{stream:native.sequence},...(initial?{merge:true}:{}) }); if(c.closed===true)native.history?.confirmClosed([c]);this.nativeStatus(g); return;
           }
           if (data.type !== 'executions' || !g.accumulator || data.version !== 1 || data.after !== g.cursor || !Number.isSafeInteger(data.cursor) || data.cursor <= (g.cursor ?? 0) || !Array.isArray(data.executions) || !data.executions.length || data.executions.length > 1000 || !data.coverage) throw new Error('Invalid durable execution batch');
           let previous = g.cursor!;
@@ -359,7 +362,7 @@ export class StagingFeedService {
         // worker's bounded replay cache; forming source state is already merged.
         const bulk=!initial&&changes.length>=NATIVE_HISTORY_BULK_MIN_BARS;
         if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,nativeVersion:nativeReadVersion,...(initial||bulk?{merge:true}:{})});
-        this.nativeStatus(g);
+        g.native!.history?.confirmClosed(g.candles.filter(c=>c.closed===true));this.nativeStatus(g);
       } else {
         const source = footprintSource(marketOf(g.series));
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
@@ -580,8 +583,8 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
-  dispose() { this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
+  diagnostics() { return { nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  dispose() { this.nativePresentation.clear();this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
 function hasQuoteProjection(bar: FootprintBar) {

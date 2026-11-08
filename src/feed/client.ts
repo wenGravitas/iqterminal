@@ -76,7 +76,7 @@ export class FeedClient {
               const listener = this.listeners.get(id);
               if (listener && listener.key === e.key) this.updateObservedFeed(listener.status, e.status.state, e.status.message, e.status.lastUpdate);
             }
-            if (e.type === 'patch' || e.type === 'snapshot') {
+            if ((e.type === 'patch' || e.type === 'snapshot')&&e.nativeVersion?.request===undefined) {
               const listener = this.listeners.get(id);
               const current = listener && this.observedFeedStatuses.get(listener.status.key);
               if (listener && listener.key === e.key && current?.state === 'live') this.updateObservedFeed(listener.status, current.state, current.message, Date.now());

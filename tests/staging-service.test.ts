@@ -485,3 +485,28 @@ test('native visible-history Retry clears recovery status without reconnecting a
   expect(service.diagnostics().retainedBars).toBe(1);
  }finally{service.dispose();}
 });
+
+test('native cache survives group release, preserves healthy live state on validation failure and retries only that history view',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const from=Date.UTC(2026,10,3,11),step=300000,now=from+10*86400000,series={venue:'binance',market:'spot',interval:'5m'} as const;
+ const candle=(t:number,closed=true)=>({t,o:80000,h:80010,l:79990,c:80001,v:2,quoteVolume:160002,revision:1,closed}),past=Array.from({length:5},(_,i)=>candle(from+i*step));
+ const events:Event[]=[],sockets:Socket[]=[];let reads=0,fail!:(r:Response)=>void;
+ const request=vi.fn(async(url:RequestInfo|URL)=>{
+  const historical=new URL(String(url),'http://test').searchParams.has('from');
+  if(historical&&++reads===2)return new Promise<Response>(resolve=>fail=resolve);
+  return new Response(JSON.stringify({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:historical?past:[candle(now,false)]}));
+ });
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ try{
+  service.command({type:'subscribe',id:'a',series});service.command({type:'candle-viewport',id:'a',from,to:from+5*step,known:[]});
+  await vi.waitFor(()=>expect((service.diagnostics().streams[0] as any).native.viewportHistory.receivedBars).toBe(5));
+  service.command({type:'unsubscribe',id:'a'});expect(service.diagnostics()).toMatchObject({groups:0,nativePresentation:{entries:1,rows:5}});expect(sockets[0].closed).toBe(true);
+  events.length=0;service.command({type:'subscribe',id:'b',series});sockets[1].receive({type:'native-candle',source:'binance-native-kline',interval:'5m',candle:{...candle(now,false),v:8,revision:2}});
+  service.command({type:'candle-viewport',id:'b',from,to:from+5*step,known:[]});
+  expect(events.find((e:any)=>e.type==='snapshot'&&e.nativeVersion?.request===0)).toMatchObject({candles:past,nativeVersion:{stream:0,request:0}});
+  await vi.waitFor(()=>expect(reads).toBe(2));fail(new Response('',{status:503}));
+  await vi.waitFor(()=>expect((events.filter(e=>e.type==='status').at(-1) as any).status).toMatchObject({state:'live',nativeHistory:{viewport:{state:'failed',cachedSlots:5,loadedSlots:0}}}));
+  service.command({type:'retry',id:'b'});await vi.waitFor(()=>expect((events.filter(e=>e.type==='status').at(-1) as any).status.nativeHistory.viewport).toMatchObject({state:'ready',loadedSlots:5}));
+  expect(sockets).toHaveLength(2);expect(sockets[1].closed).toBe(false);expect((events.filter(e=>e.type==='status').at(-1) as any).status.state).toBe('live');
+ }finally{service.dispose();}
+ expect(service.diagnostics().nativePresentation.rows).toBe(0);
+});

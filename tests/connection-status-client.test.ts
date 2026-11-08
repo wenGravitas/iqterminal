@@ -73,3 +73,13 @@ it('ignores stale ticker configuration statuses and refreshes source metadata wh
   expect(feed.feedStatusSnapshot()).toEqual([]);
   feed.dispose();
 });
+
+it('historical native imports and warm presentation cannot freshen a live connection indicator',()=>{
+ vi.stubGlobal('Worker',WorkerMock);const feed=new FeedClient(),worker=WorkerMock.instance,series={venue:'binance',market:'spot',interval:'5m'} as const;
+ const release=feed.subscribe('chart',series,vi.fn()),id=worker.messages.at(-1).id,key=keyOf(series);
+ worker.emit({type:'status',key,ids:[id],status:{state:'live',message:'Native stream',lastUpdate:1000}});
+ for(const request of [0,1,9])worker.emit({type:'snapshot',key,ids:[id],candles:[],nativeVersion:{stream:0,request}});
+ expect(feed.feedStatusSnapshot()[0].lastUpdate).toBe(1000);
+ worker.emit({type:'patch',key,ids:[id],candles:[],nativeVersion:{stream:1}});expect(feed.feedStatusSnapshot()[0].lastUpdate).toBeGreaterThan(1000);
+ release();feed.dispose();
+});
