@@ -1,3 +1,5 @@
+import {OrderWallsPrimitive} from '../src/chart/order-walls';
+import type {PrimitiveRenderContext} from 'openalgo-charts';
 import * as compactCodec from '../src/feed/compact-wall-presentation';
 import {wallHistoryPresentation,wallCompactPresentation} from '../src/feed/wall-history-presentation-cache';
 import {test,expect,vi,afterEach} from 'vitest';import {createHash} from 'node:crypto';
@@ -209,6 +211,13 @@ test('compact warm replay is shared, survives one unsubscribe and never marks fr
   expect(service.diagnostics().projections).toHaveLength(0);phase=1;service.subscribe('a',subscription);service.subscribe('b',subscription);
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')&&e.kind==='patch').flatMap(e=>e.patches??[]).filter(p=>p.segment)).toHaveLength(f.full.segments.length));
   expect(events.filter(e=>e.ids?.includes('b')).at(-1)?.status.archive.gaps).toHaveLength(1);
+  const firstCached=events.find(e=>e.ids?.includes('b')&&e.kind==='patch'&&e.patches?.some((p:any)=>p.segment));
+  expect(firstCached.status.archive.loadedThrough).toBe(from);expect(firstCached.status.archive.requestComplete).toBe(false);
+  const primitive=new OrderWallsPrimitive({...settings,showHistory:true,aggregation:'native'},900000);
+  const context={timeScale:{visibleRange:()=>({from:0,to:120}),indexToX:(index:number)=>index*500/120,xToIndex:(x:number)=>x*120/500},priceScale:{priceRange:()=>({min:95,max:105}),priceToY:()=>100},dataLayer:{length:121,baseIndex:120,indexToTime:(index:number)=>(from+index*(to-from)/120)/1000,indexToTimeFloat:(index:number)=>(from+index*(to-from)/120)/1000,timeToIndexFloat:(seconds:number)=>(seconds*1000-from)*120/(to-from)},plotWidth:500,plotHeight:200,dpr:1} as unknown as PrimitiveRenderContext;
+  const canvas={save(){},beginPath(){},rect(){},clip(){},setLineDash(){},moveTo(){},lineTo(){},stroke(){},restore(){}} as unknown as CanvasRenderingContext2D;
+  primitive.setSnapshot(firstCached.patches.filter((p:any)=>p.segment).map((p:any)=>p.segment),firstCached.status);primitive.draw(canvas,context);
+  expect(primitive.orderWallAt(400,100)?.segment.archiveEntryId).toBe('B');primitive.detached();
   expect(service.diagnostics().warmReplayConsumers).toBe(2);service.unsubscribe('a');expect(service.diagnostics().warmReplayConsumers).toBe(1);
   const visible=new Map<string,any>();for(const e of events.filter(e=>e.ids?.includes('b'))){if(e.kind==='snapshot'){visible.clear();for(const segment of e.segments)visible.set(segment.id,segment);}else for(const p of e.patches){if(p.segment)visible.set(p.id,p.segment);else visible.delete(p.id);}}
   expect([...visible.values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(f.full.segments.map(segment=>({...segment,currentSelection:false})).sort((a,b)=>a.id.localeCompare(b.id)));

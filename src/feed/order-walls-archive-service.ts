@@ -601,7 +601,7 @@ export class OrderWallsArchiveService {
     if(!replay&&entry.compact&&this.warmReplays.size>=2){this.stats.warmCapacityMisses++;return;}
     if(!replay){replay={key,entry,abort:new AbortController(),presentation:new Map(entry.presentation),subscribers:new Set(),settled:!entry.compact,runs:entry.compact?0:entry.runs};entry.replay=replay;started=true;}
     const active=replay;active.subscribers.add(sub);sub.warmReplay=active;sub.cachedHistory=true;sub.historyProjector=undefined;sub.historyPresentation=active.presentation;
-    sub.historyStatus={...entry.status,archive:{...entry.status.archive!,state:'loading',requestComplete:false,rangeComplete:false,loadedThrough:active.settled?entry.status.archive!.loadedThrough:sub.request.from,reason:'Cached history visible; validating the current revision.'}};
+    sub.historyStatus={...entry.status,archive:{...entry.status.archive!,state:'loading',requestComplete:false,rangeComplete:false,loadedThrough:active.settled?entry.status.archive!.loadedThrough:sub.request.from,presentationThrough:entry.status.archive!.presentationThrough??entry.status.archive!.loadedThrough,reason:'Cached history visible; validating the current revision.'}};
     if(started&&entry.compact)this.warmReplays.add(active);
     this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));
     if(started&&entry.compact){if(active.abort.signal.aborted){this.warmReplays.delete(active);return;}const replayAt=performance.now();let firstContentMs:number|undefined,decodedSegments=0;void replayCompactWallPresentation(entry.compact,key,active.abort.signal,segments=>{
