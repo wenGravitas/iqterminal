@@ -2518,3 +2518,103 @@ commit; Vite health verifies the exact API commit. The first observation was
 a footprint/wall first-useful, five-sample, historical coverage, confirmation-gap
 or foreground acceptance result. Its real-chart screenshot and effective GPU
 metadata are retained with the source script.
+
+## Lossless wall points: app42c69a6 / APIe122f9d
+
+Pinned manifest inspection found no unused referenced parts to eliminate: all34
+Spot and66USD-M closed parts contribute selected history. The new negotiated
+`exact-points-v1` transport removes redundant native point fields, reconstructs
+original ordered JSON, and validates each unchanged manifest length/SHA256 before
+publication. Exact decimal strings, unknown objects, segment metadata, short walls,
+point order, coverage/gaps, selected state and profile identity remain intact.
+No resolution reduction, row-size change, prepared-core revision or source schema
+change is involved. Framing/expansion limits remain canonical4MiBpart/8MiBbatch;
+cooperative cancellation, prefix retention and shared-reader ownership are tested.
+
+The shared backend/frontend module is byte-identical. Backend300tests and frontend
+1,202tests pass (2frontend skips), with typechecks/builds. Focused protocol tests
+cover native fallback, malformed headers, canonical corruption, truncated tail,
+byte amplification and consumer-specific cancellation. All original part hashes
+also match through five paired real staging-loopback rounds for both markets.
+API-only guarded rollout preserves all seven protected container IDs/start times;
+the initial refused startup health poll and subsequent success remain in receipts.
+
+Brotli body bytes fall Spot1,276,146->1,002,776 and USD-M2,600,421->2,084,084.
+Loopback elapsed time increases: extra client reconstruction is a real cost.
+A separate headless actual-Pi browser benchmark decodes all34real Spot parts,
+checks every canonical hash, and records five alternating samples (ms): native
+113.7,96.6,94.5,136.2,169.5; points292.6,244.7,258.2,611.7,319.3.
+Native median/max113.7/169.5; points292.6/611.7. Maximum elapsed part98.9ms
+includes asynchronous hashing/scheduling; this alone is not a measured blocking
+frame. Inputs load before timing; no chart, live feed or network is included.
+This is a measured CPU-for-bandwidth tradeoff, not a universal speed improvement.
+Raw outputs: artifacts/pi-history-r1/point-codec-shared-r1/.
+
+Only discovery advertising `pointTransport=1` enables batchversion2. Legacy servers
+and clients retain version1. Retry keeps good bars/walls and healthy live sockets.
+API rollback needs no migration or artifact deletion; the exact previous image
+and commands are in the e122f9d API-only receipt. Re-discovery negotiates version1
+on old serving; an already in-flight version2 request can require scoped Retry.
+Automatic default wall preparation/GC remains disabled, a release limitation.
+
+The five formal point-transport Pi loading observations remain failed: see the
+current-status table and machine-checked wall gates. A separate five-run Spot
+warm setup/reopen probe passes useful cached paint<=1s (345.9,314.2,302.4,319.2,
+688.7ms), with all8,293walls/49,154runs matching the independent selected hash
+and subsequent fresh wall/native validation. This is headless Pi GLES only.
+The90s setup cap is explicitly diagnostic; setup completion10054.2,53657.1,
+34253.1,57646.2,29126.3ms does not pass or replace cold-browser loading gates.
+
+Warm usefulness does not establish interaction responsiveness.13..16long tasks
+per reopen include maxima655,385,347,357,585ms, and renderer accumulated draw
+work is substantial. Those overlapping observations are retained without summing
+them as phases. Frame buffers keep only256recent intervals. A further real-route
+profile and repeated-use heap/queue validation remain necessary; no FPS claim.
+
+Repeated-use attempts remain failed/incomplete. R1 completes exact Spot/USD-M
+seeds and retains both compressed entries through65s active hold, but an explicit
+empty indicator list in the probe creates candle rather than footprint in cycle1.
+The corrected probe immediately asserts footprint configuration; R2 then misses
+its90s USD-M seed deadline (22,652walls/96,757runs of23,850/104,112; native120/120),
+so no cycle series exists. Both original failures, stopped diagnostics and cleanup
+scope are retained under use-points42c-e122-r1/r2. No plateau or release pass is
+inferred from successful seed/cache counters. Failure request counts were recorded
+before closing the browser context, not after disposal.
+
+### Follow-up wall geometry invalidation (candidate9586faf)
+
+One separately labelled actual-route main-thread CPU profile of app42c69a6
+captures a complete exact Spot seed/reopen. Profiling overhead changes timing:
+profiled warm useful paint1457.2ms must not join the unprofiled five-run cohort.
+The warm profile contains11,236ms sampled elapsed weight including idle/program;
+OrderWallsPrimitive.draw has3,784ms inclusive sampled weight, projectAll1,654ms
+inclusive, projectIndex978ms self, and updateReference374ms self. Inclusive stack
+weights overlap and are not additive phases or GPU/worker completion times.
+All raw profiles, executed probe and bounded viewport observations remain under
+warm-route-points42c-e122-spot-profile-r1; profile-summary.json includes precise
+bundle positions and source function names.
+
+The primitive records5full transform/reference rebuilds,35,011segment projections
+and4,132ms accumulated draw-call time. Two observed rebuild transitions retain the
+same viewport, prices, plot dimensions and native count. Source inspection finds
+that panel reconciliation calls setOrderWalls again and primitive.setSettings
+unconditionally advances its geometry version even for equal fresh settings.
+Candidate9586faf compares every own flat setting with Object.is and skips that
+no-op invalidation. Real changed settings and interval changes retain the old
+invalidation path. It neither modifies source financial values nor bypasses
+status/coverage validation. A regression checks preserved painted revision,
+closed-value getter reads, projected count and reference rebuild count after
+three equal reconciliations, then verifies a changed opacity still rebuilds.
+All31focused chart tests and typecheck pass. Actual new-candidate browser/timing
+validation remains separate; no latency improvement is claimed from this profile.
+
+Candidate9586faf passes1,203unit tests/2skips,31focused chart tests, typecheck and
+an exact identified staging production build. Its five unprofiled real Spot warm
+reopens all preserve the canonical reference, but useful paint619.1,1561.1,312.9,
+630.2,429.0ms fails the unchanged<=1s maximum target. Real counters record8,7,8,8,8
+settings no-ops and5,3,6,5,5full rebuilds; long-task maxima1051,608,332,510,602ms
+remain unacceptable interaction evidence. This removes unnecessary invalidation
+without proving an overall latency win. The earlier sequential42c69a6cohort is
+not a matched causal timing control. All samples, exact hashes, native validation,
+request/resource traces and screenshots remain in warm-route-noop958-e122-spot-r1.
+No threshold, source range, financial row or failed sample has been removed.

@@ -1,0 +1,12 @@
+{
+  "visibleTestWindows": [],
+  "currentTestLaunch": "headless; existing user browser untouched",
+  "guardCommit": "6671249",
+  "checks": [
+    "explicit headed rejected",
+    "implicit DevTools headed rejected",
+    "headless display backend required",
+    "nested launchOptions override independently rejected"
+  ],
+  "testsPassed": 4
+}

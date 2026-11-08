@@ -6,12 +6,12 @@ The active goal remains implementation and validation of the full release.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Current application build: `970541b79b1a9470f79a3644f5e8cdb8444420a9` (saved-view footprint job sharing, retaining the wall-cache idle fix); proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
-- Frontend branch: `perf/pi-history-r1`; test-launch commit `86abe0e` blocks all headed test launches, including the old workspace override. It changes no application source.
-- Staging API now serves `95114d0cb236e9de54fb535d58b901d5ac4a2d79` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
-- The loading cohort below used API18579d9, not95114d0. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix is now included in serving95114d0.
+- Current application build: `9586faf3bf1a6e6fc5e6d75a0ab1f06a060fbc0a` (unchanged wall settings no longer invalidate geometry). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application, not9586faf; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
+- Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` also forces standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
+- Staging API now serves `e122f9d8d3995d5b6b907a1519cd6b2f639fa751` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
+- The loading cohort below used API18579d9, not the current API. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix remains included in current serving.
 - Normal two-SSH route: current18781, historical18780; Vite preview4185. The follow-up proxy allows2native and2bulk lanes under a shared3active-request cap, with a separate current reserve. The earlier loading/health cohort used the old4aggregate proxy; it is not relabelled as a measurement of the new cap.
-- Tests are headless system Chromium on the actual Pi. Per-run SystemInfo records effective hardware ANGLE/Broadcom GLES. This is not normal foreground-browser acceptance. Headed launches remain paused.
+- Tests are headless system Chromium on the actual Pi. Per-run SystemInfo records effective hardware ANGLE/Broadcom GLES. This is not normal foreground-browser acceptance. Charts use Canvas2D; GLES describes effective Chromium configuration, not proof that each Canvas operation is hardware accelerated. Headed launches remain blocked.
 - Collector/API identities and start times match before/after; see the raw staging receipts. No collector, exchange connection, retention or production setting was changed.
 
 ## Implemented in this continuation
@@ -312,3 +312,119 @@ and [copied canonical reference receipt](../artifacts/pi-history-r1/footprint-ha
 The backend76db3efcommit contains the complete read-only reference logs and
 protected container identities. Current/warm/wall/plateau/foreground acceptance
 remains incomplete. All browser work stayed headless.
+
+## Point transport follow-up (app42c69a6 / APIe122f9d)
+
+The original canonical hashes authenticate every reconstructed part. Actual Pi
+request headers confirm negotiated batchversion2, exact-points-v1; the prepared
+source/profile keys and30h windows are unchanged. This trades added decode CPU
+for21.4%fewer Spot bytes and19.9%fewer USD-M bytes. It does not fix the route's
+loading gate. Detailed decoder and loopback costs remain in the full report.
+
+All five cold-browser/already-prepared samples (milliseconds):
+
+| Case | First useful history | Complete validated paint | Gate |
+| --- | --- | --- | --- |
+|30h Spot5m|8638.8,7309.1,4434.5,3610.9,7904.8|31950.6,39047.2,20387.2,33226.8,unobserved|FAIL|
+|30h USD-M15m|9202.2,24414.1,35791.0,22561.6,37642.5|all five unobserved within45s|FAIL|
+
+Spot first-useful median/max7309.1/8638.8; USD-M24414.1/37642.5.
+Complete five-sample medians/maxima are unavailable for both cohorts; no finite
+subset is substituted. All runs validate360/360Spot or120/120USD-M native candle
+slots. Completed Spot runs paint8,293walls/49,154value runs and35explicit gaps.
+The incomplete Spot run paints1,445walls/10,528runs; USD-M paints15,540/73,797,
+8,097/31,760,4,015/15,636,7,894/30,815,3,662/13,267. These are partial results,
+not source unavailability. Required full USD-M remains23,850/104,112/47gaps.
+
+The new `scripts/wall-loading-gate.mjs` checks every run against the independently
+pinned reference, profile, painted range/revision, exact source and native slots.
+Its8focused tests pass, including false completion and subset-median regressions.
+Raw captures, request headers/timings, screenshots, resource samples and generated
+gates are under `artifacts/pi-history-r1/points-42c-e122-{spot,perp}-r1*` and
+`artifacts/pi-history-r1/point-transport-42c-e122/`. Frontend1,202passed/2skipped,
+backend300passed, both typechecks/builds pass. Warm reopen and normal foreground
+UX remain separate gates; default wall rollover/preparation is still unfinished.
+
+Tunnel inspection during these runs found two distinct staging TCP connections
+(local source ports49438/49442), one per SSH supervisor, with effective
+ControlMaster=false and compression=no. The tunnel script now pins
+ControlMaster=no, ControlPath=none and Compression=no, so local SSH preferences
+cannot silently multiplex the lanes. `bash -n` and `ssh -G` option checks pass.
+The running tunnels were not restarted; this records transport separation, not
+proof against shared-link congestion or a current-confirmation continuity pass.
+
+## Warm Spot follow-up and remaining render cost
+
+Five same-worker close/reopen samples now have complete exact real Spot seeds.
+Useful cached paint is345.9,314.2,302.4,319.2,688.7ms: median319.2,maximum688.7.
+All five pass the<=1s useful-display target **in headless Pi GLES only** and then
+independently validate both native prices and the wall source. Full selected
+hashcf9d17a2...afd944e,8,293walls/49,154runs matches the independent reference
+before and after every reopen. Complete validated paint follows at4779.4,5994.2,
+6758.7,7278.5,11710.1ms (median6758.7,maximum11710.1). No warm completion
+latency target is invented; these are separate from the failed cold-browser gates.
+
+Each setup is an empty browser over already-prepared history, observed for at
+most90s solely to seed the warm test. Setup completion samples10054.2,53657.1,
+34253.1,57646.2,29126.3ms are failures of the original loading targets, not a new
+successful loading cohort. They are not combined with the formal45s cohorts.
+Raw per-run environments, request traces, hashes, screenshots and timings:
+`artifacts/pi-history-r1/warm-route-points42c-e122-spot-r1/` (summary.json).
+
+Responsive interaction remains **FAIL/unfinished**: warm replay records13..16
+main-thread long tasks per sample, maximum655,385,347,357,585ms. Total long-task
+durations2854,2027,2059,1942,3393ms overlap elapsed validation and must not be
+added as exclusive phases. Renderer diagnostics show substantial draw work,
+requiring a separate profile before choosing another geometry/cache change.
+Frame arrays retain only the latest256intervals; they do not prove full-session
+frame rates. Foreground browser acceptance and USD-M warm revisit remain unproven.
+
+Repeated-use diagnostics remain incomplete. The first attempt
+`use-points42c-e122-r1` seeded both exact markets (Spot9.74s, USD-M65.53s), kept
+both compact entries through a65s open hold, and then failed cycle1 because the
+harness supplied `indicators:[]` with legacy `type:footprint`. The authoritative
+empty list correctly normalized to candle. The harness now omits that list and
+asserts the actual native footprint indicator/type before waiting for coverage.
+This was a harness error, not evidence of a new application footprint failure.
+The failed run is retained and proves no repeated-use plateau.
+
+Corrected `use-points42c-e122-r2` fully seeded Spot at50.29s, but USD-M reached
+only22,652/23,850walls and96,757/104,112runs within90s; native slots were120/120.
+No interaction cycles ran. Two incomplete chart requests were present when the
+failure receipt was written, before browser-context close; that is not an
+observed post-close leak count. Context/browser cleanup then completed. Both
+failures remain raw evidence; no shortened range or extra timeout converts them
+to release success. CPU profiling is a separate diagnostic, excluded from timing
+acceptance. No heap-plateau or natural peak-memory claim is made.
+
+## Latest candidate9586faf: unchanged-settings invalidation
+
+Equivalent canonical wall settings now return without invalidating geometry or
+reference state. Changed settings and interval changes retain their prior path.
+A focused regression observes no closed-value reads/projection/reference rebuilds
+after equal fresh settings, then confirms edited opacity still rebuilds.
+Frontend1,203tests pass,2skip;31focused chart tests, typecheck and identified
+staging production build pass. Backend serving remains e122f9d; no further
+staging deployment was made for this client-only change.
+
+Five complete exact-reference headless Spot reopens on this candidate give useful
+paint619.1,1561.1,312.9,630.2,429.0ms: median619.1,maximum1561.1, **FAIL<=1s**.
+Independent validated completion is7828.4,7969.5,8066.9,7669.7,10454.6ms. Every
+reopen preserves8,293walls/49,154runs/hashcf9d17a2...afd944e and360native slots.
+Setup times13272.7,50098.4,26914.7,29541.3,63342.8ms also remain failed cold-browser
+loading observations; their90s setup cap is not a widened target.
+
+The real primitive records8,7,8,8,8skipped settings reconciliations, but still
+5,3,6,5,5full rebuilds and29,608/20,680/40,168/27,764/33,277segment projections.
+Draw maxima946.6,588.5,313.7,484.3,572.0ms and main-thread long-task maxima
+1051,608,332,510,602ms leave responsiveness unfinished. The preceding42c69a6
+cohort had5..6rebuilds and passed useful warm paint, but these sequential runs
+are not a matched causal CPU comparison. No overall speedup or regression cause
+is asserted. Deterministic avoided work is proven; the full performance goal is
+not. Raw current cohort: warm-route-noop958-e122-spot-r1; validation manifest/logs:
+wall-settings-noop-958. Both under artifacts/pi-history-r1/.
+
+Current-release first-current,24h/4h footprint latency, USD-M warm, concurrent
+healthy-live confirmation continuity, default wall rollover/preparation, repeated
+interaction heap plateau and normal foreground Pi UX still need their remaining
+work/validation. Earlier scoped passes keep their original build identities.

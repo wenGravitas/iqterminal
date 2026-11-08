@@ -1,0 +1,214 @@
+[
+  {
+    "elapsedSinceReopenMs": 516.3999999985099,
+    "rebuilds": 0,
+    "segments": 0,
+    "projected": 0,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": null,
+    "native": {
+      "count": 360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 0,
+        "state": "loading",
+        "capacityLimited": false,
+        "retryable": false,
+        "cachedSlots": 360,
+        "unloaded": [
+          {
+            "from": 1793696400000,
+            "to": 1793804400000,
+            "reason": "not-returned"
+          }
+        ],
+        "unloadedTruncated": false
+      }
+    }
+  },
+  {
+    "elapsedSinceReopenMs": 1917.6000000014901,
+    "rebuilds": 1,
+    "segments": 535,
+    "projected": 535,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": {
+      "fromMs": 1793696400000,
+      "toMs": 1793804400000,
+      "minPrice": 75245.22,
+      "maxPrice": 80156.82,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    },
+    "native": {
+      "count": 360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 0,
+        "state": "loading",
+        "capacityLimited": false,
+        "retryable": false,
+        "cachedSlots": 360,
+        "unloaded": [
+          {
+            "from": 1793696400000,
+            "to": 1793804400000,
+            "reason": "not-returned"
+          }
+        ],
+        "unloadedTruncated": false
+      }
+    }
+  },
+  {
+    "elapsedSinceReopenMs": 3002.2999999970198,
+    "rebuilds": 2,
+    "segments": 4627,
+    "projected": 6466,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": {
+      "fromMs": 1793696400000,
+      "toMs": 1793804400000,
+      "minPrice": 75245.22,
+      "maxPrice": 80156.82,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    },
+    "native": {
+      "count": 362,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 0,
+        "state": "loading",
+        "capacityLimited": false,
+        "retryable": false,
+        "cachedSlots": 360,
+        "unloaded": [
+          {
+            "from": 1793696400000,
+            "to": 1793804400000,
+            "reason": "not-returned"
+          }
+        ],
+        "unloadedTruncated": false
+      }
+    }
+  },
+  {
+    "elapsedSinceReopenMs": 6105.69999999553,
+    "rebuilds": 3,
+    "segments": 8293,
+    "projected": 18425,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": {
+      "fromMs": 1793696400000,
+      "toMs": 1793804400000,
+      "minPrice": 75245.22,
+      "maxPrice": 80156.82,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    },
+    "native": {
+      "count": 362,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "state": "ready",
+        "capacityLimited": false,
+        "retryable": false,
+        "unloaded": [],
+        "unloadedTruncated": false
+      }
+    }
+  },
+  {
+    "elapsedSinceReopenMs": 7639.79999999702,
+    "rebuilds": 4,
+    "segments": 8293,
+    "projected": 26718,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": {
+      "fromMs": 1793696400000,
+      "toMs": 1793804400000,
+      "minPrice": 75113.42625,
+      "maxPrice": 81342.96375,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    },
+    "native": {
+      "count": 1360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "state": "ready",
+        "capacityLimited": false,
+        "retryable": false,
+        "unloaded": [],
+        "unloadedTruncated": false
+      }
+    }
+  },
+  {
+    "elapsedSinceReopenMs": 10631.79999999702,
+    "rebuilds": 5,
+    "segments": 8293,
+    "projected": 35011,
+    "viewport": {
+      "from": 1793696400,
+      "to": 1793804400
+    },
+    "paintedViewport": {
+      "fromMs": 1793696400000,
+      "toMs": 1793804400000,
+      "minPrice": 75113.42625,
+      "maxPrice": 81342.96375,
+      "plotWidth": 1756,
+      "plotHeight": 920
+    },
+    "native": {
+      "count": 1360,
+      "visible": 360,
+      "progress": {
+        "from": 1793696400000,
+        "to": 1793804400000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "state": "ready",
+        "capacityLimited": false,
+        "retryable": false,
+        "unloaded": [],
+        "unloadedTruncated": false
+      }
+    }
+  }
+]
