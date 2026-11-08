@@ -6,8 +6,8 @@ The active goal remains implementation and validation of the full release.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Current review frontend: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. Their app src trees differ only by cache injection.
-- Frontend branch: `perf/pi-history-r1`; later fixture/docs/evidence commits do not change that measured application source.
+- Current application build: `821092d83943b3e17bba88ee6a0a41657d17807a` (wall-cache active/idle lifetime); proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle-lifetime fix; it must be aligned before another matched comparison.
+- Frontend branch: `perf/pi-history-r1`; test-launch commit `86abe0e` blocks all headed test launches, including the old workspace override. It changes no application source.
 - Staging API now serves `95114d0cb236e9de54fb535d58b901d5ac4a2d79` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not95114d0. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix is now included in serving95114d0.
 - Normal two-SSH route: current18781, historical18780; Vite preview4185. The follow-up proxy allows2native and2bulk lanes under a shared3active-request cap, with a separate current reserve. The earlier loading/health cohort used the old4aggregate proxy; it is not relabelled as a measurement of the new cap.
@@ -85,7 +85,7 @@ added. This is one diagnostic per route, not five-run acceptance or chart paint.
 
 ## Validation and remaining work
 
-- Full frontend unit suite:1,182passed,2skipped. Typecheck and identified staging build pass.
+- Full frontend unit suite on821092d:1,189passed,2skipped. Wall archive focused suite48/48. Typecheck and identified staging build pass.
 - Four focused native-history browser regressions pass.
 - Broader UI run:26passed,1fixture-count failure at a minute rollover. Both fixture clocks were then pinned; the unchanged3bar/1,000bar Retry cases pass2/2. Original failure and rerun are retained. No single27/27rerun is claimed.
 - Normal current-only versus concurrent history/custom-profile comparison, repeated-use retained heap/frame plateau, automatic default-wall rollover/reuse and foreground Pi checks remain incomplete.
@@ -166,3 +166,49 @@ commit; Vite health verifies the exact API commit. The first observation was
 a footprint/wall first-useful, five-sample, historical coverage, confirmation-gap
 or foreground acceptance result. Its real-chart screenshot and effective GPU
 metadata are retained with the source script.
+
+## Active wall cache and repeated-use follow-up
+
+Build821092d fixes a60s cache timer that previously expired even while its original
+view remained open. Cache lifetime now measures idle time after the final active
+interest leaves. Two entries/32MiB total and16MiB per entry remain the same; active
+interests cannot prevent capacity eviction. Focused regressions cover long-open
+peers, viewport release, current-only subscriptions and eviction. This is a cache
+lifecycle fix, not proof of warm-paint latency or a memory plateau.
+
+The full-source repeated-use probe initially failed in setup: r1 navigated during
+a build-directory replacement; r2 supplied a chart ID rejected by layout validation;
+r3 incorrectly counted the application's independent Level Watches request as a
+chart request. These attempts are retained under use-821092d-full-history-r1/r2/r3.
+They provide no completed seed, loading pass or plateau. The corrected probe requires
+the entire30h reference wall projection, every native-price slot, actual painted
+viewport/revision and canonical financial hash before cycles start. The unchanged
+loading gates above remain failed; its90s seed observation is supplemental setup,
+not a widened performance target.
+
+The corrected simultaneous r4 attempt reached full Spot coverage (8,293walls,
+49,154value runs,360/360native slots) but only10,305/23,850USD-M walls at the
+90s setup deadline. The separately labelled sequential-memory r5 attempt
+completed Spot in37,223.8ms, with the exact canonical SHA256
+cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e.
+USD-M still had22,544/23,850walls and95,820/104,112value runs at its own90s
+setup deadline, while120/120native slots were validated. Two immutable USD-M
+batches remained in flight in each attempt. Both attempts failed before cycles,
+so repeated-use plateau and warm reopen remain UNPROVEN. No further timeout
+extension or identical retry is used to certify them.
+
+In r5 Spot's compact cache encoded in3,167.9ms and retained1,671,666accounted
+bytes with no encoder/decoder failure; the entry remained present while the
+original chart stayed open during USD-M loading. This is a single actual-source
+active-cache observation, not an idle-release/plateau or warm-paint gate. Across
+95progressive part observations, the largest header wait was37,114.2ms, largest
+part body wait10,954.4ms, JSON parse21.4ms, projector apply138.6ms and callback
+120.5ms. These phases are per-observation and can overlap; they are not added.
+The long merge/callback samples remain concerns alongside route delivery.
+
+Raw executed probes, environment/GPU identity, stopped worker diagnostics, exact
+painted ranges, hashes, request IDs/timings, resource/socket samples and failure
+screenshots are retained in `use-821092d-full-history-r4` and
+`use-821092d-sequential-retention-r5`. The latter was a memory setup protocol
+change, not a new latency cohort. Local821092d validation logs and the pre-fix
+red regression are in `wall-idle-821092d`.

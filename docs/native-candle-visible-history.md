@@ -92,3 +92,19 @@ the established isolated staging workflow. This feature has no new persistent
 state or collector migration to undo. Keep the history/current proxy split;
 rolling back gateway admission alone removes protection for native HTTP reads.
 No production rollout is part of this work.
+
+## Wall presentation cache lifetime
+
+The separate Order Walls presentation cache is limited to two entries,16MiB per
+entry and32MiB aggregate accounting, with at most two decoders and one encoder.
+Its60s timer now measures idle time after the last historical subscriber/job
+releases that exact request. Long-open views preserve cache interest; current-only
+subscriptions do not. Interest is metadata only and does not prevent capacity
+eviction. Retry retains displayed walls and validates independently. Cache reuse
+never claims requestComplete before fresh source validation; new revisions replace
+the presentation only after full validation. Disposal clears entries and timers.
+
+This cache adds no durable storage or migration. Client rollback restores the prior
+reviewed build without changing the backend, collectors or raw retention. Any
+headed browser command currently fails before launch, including the former
+IQ_TEST_HEADED=workspace9 override; use headless mode for diagnostics.

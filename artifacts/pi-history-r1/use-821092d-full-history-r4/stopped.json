@@ -1,0 +1,435 @@
+{
+  "phase": "seeding",
+  "panelIds": [
+    "chart-seed-spot",
+    "chart-seed-perpetual"
+  ],
+  "panels": [
+    {
+      "id": "chart-seed-spot",
+      "status": {
+        "state": "live",
+        "message": "Staging · Binance native candle stream",
+        "lastUpdate": 1794138868717,
+        "nativeHistory": {
+          "state": "ready",
+          "loadedBars": 1000,
+          "viewport": {
+            "from": 1793696400000,
+            "to": 1793804400000,
+            "requestedSlots": 360,
+            "loadedSlots": 360,
+            "state": "ready",
+            "capacityLimited": false,
+            "retryable": false,
+            "unloaded": [],
+            "unloadedTruncated": false
+          }
+        }
+      },
+      "footprint": {
+        "state": "loading",
+        "message": "Waiting for Binance USD-M aggTrade observations",
+        "lastUpdate": 0,
+        "tickSize": null,
+        "rowSize": null,
+        "collectionStartedAt": null,
+        "firstTradeAt": null,
+        "lastTradeAt": null,
+        "eventTime": null,
+        "outages": 0,
+        "lateRecords": 0,
+        "capacityDrops": 0,
+        "unknownSideRecords": 0,
+        "unknownSideVolume": 0,
+        "coverage": "waiting",
+        "retentionStart": null
+      },
+      "walls": {
+        "state": "gap",
+        "message": "Depth continuity gaps are present in the requested range",
+        "coverage": {
+          "from": 1793696100000,
+          "to": 1793804700000,
+          "complete": false,
+          "partial": true,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "archive": {
+          "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1793696100000,
+          "to": 1793804700000,
+          "rangeComplete": false,
+          "market": "spot",
+          "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+          "aggregation": "native",
+          "availableFrom": 1793521565645,
+          "confirmedTo": 1793804700000,
+          "gaps": [
+            {
+              "from": 1793708577644,
+              "to": 1793708577644,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793710873844,
+              "to": 1793710873844,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793721742643,
+              "to": 1793721742643,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793728093743,
+              "to": 1793728093743,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793739494053,
+              "to": 1793739494053,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793751787745,
+              "to": 1793751787745,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793760185253,
+              "to": 1793760185253,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793763136547,
+              "to": 1793763136547,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793767321244,
+              "to": 1793767321244,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793771281948,
+              "to": 1793771281948,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793782105351,
+              "to": 1793782105351,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793790793947,
+              "to": 1793790793947,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793791257049,
+              "to": 1793791257049,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793791441744,
+              "to": 1793791441744,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793791885344,
+              "to": 1793791885344,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793791934245,
+              "to": 1793791934245,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793792435047,
+              "to": 1793792435047,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793792666349,
+              "to": 1793792666349,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793792867854,
+              "to": 1793792867854,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793792873053,
+              "to": 1793792873053,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793793224746,
+              "to": 1793793224746,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793793346851,
+              "to": 1793793346851,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793793404643,
+              "to": 1793793404643,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793794904150,
+              "to": 1793794904150,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793795264547,
+              "to": 1793795264547,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793795475351,
+              "to": 1793795475351,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793796041047,
+              "to": 1793796041047,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793797727143,
+              "to": 1793797727143,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793797764744,
+              "to": 1793797764744,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793798054743,
+              "to": 1793798054743,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793800432445,
+              "to": 1793800432445,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793801910045,
+              "to": 1793801910045,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793802645644,
+              "to": 1793802645644,
+              "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1793803779344,
+              "to": 1793803779344,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1793804251942,
+              "to": 1793804251942,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1793804700000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "80089.015"
+        }
+      },
+      "paint": {
+        "draws": 70,
+        "rebuilds": 2,
+        "patchProjects": 8309,
+        "segments": 8293,
+        "visible": 41870,
+        "visibleHistorical": 41870,
+        "visibleCurrent": 0,
+        "bytes": 3558416,
+        "renderMs": 970.4999999925494,
+        "maxRenderMs": 97.30000000074506,
+        "strokes": 7,
+        "lastProjectMs": 0,
+        "lastReferenceMs": 0,
+        "lastPaintMs": 0.19999999925494194,
+        "referenceRebuilds": 2,
+        "referenceSegments": 0,
+        "referenceValueScans": 0,
+        "paintCacheHits": 39,
+        "paintCacheBuilds": 31,
+        "paintStyleVisits": 572843,
+        "paintedViewport": {
+          "fromMs": 1793696400000,
+          "toMs": 1793804400000,
+          "minPrice": 75114.59375,
+          "maxPrice": 81332.45625,
+          "plotWidth": 1756,
+          "plotHeight": 395
+        },
+        "inputRevision": 47,
+        "paintedRevision": 47,
+        "pendingProjectionSegments": 0,
+        "retainedPaintPaths": 7,
+        "retainedSegments": 8293,
+        "openSegments": 16,
+        "retainedReferenceSegments": 7573,
+        "referenceExtentValues": 8227,
+        "pendingReferenceSegments": 0,
+        "referenceMinimum": 230626.4040927,
+        "referenceMaximum": 12204574,
+        "retainedDrawables": 41870,
+        "p95RenderMs": 53,
+        "mounted": true,
+        "archiveSegments": 8293,
+        "directSegments": 0,
+        "valueRuns": 49154,
+        "archiveValueRuns": 49154,
+        "directValueRuns": 0,
+        "valueHistoryLimited": false,
+        "episodeHistoryLimited": false
+      },
+      "footprintPaint": null
+    },
+    {
+      "id": "chart-seed-perpetual",
+      "status": {
+        "state": "live",
+        "message": "Staging · Binance native candle stream",
+        "lastUpdate": 1794138869178,
+        "nativeHistory": {
+          "state": "ready",
+          "loadedBars": 1000,
+          "viewport": {
+            "from": 1793696400000,
+            "to": 1793804400000,
+            "requestedSlots": 120,
+            "loadedSlots": 120,
+            "state": "ready",
+            "capacityLimited": false,
+            "retryable": false,
+            "unloaded": [],
+            "unloadedTruncated": false
+          }
+        }
+      },
+      "footprint": {
+        "state": "loading",
+        "message": "Waiting for Binance USD-M aggTrade observations",
+        "lastUpdate": 0,
+        "tickSize": null,
+        "rowSize": null,
+        "collectionStartedAt": null,
+        "firstTradeAt": null,
+        "lastTradeAt": null,
+        "eventTime": null,
+        "outages": 0,
+        "lateRecords": 0,
+        "capacityDrops": 0,
+        "unknownSideRecords": 0,
+        "unknownSideVolume": 0,
+        "coverage": "waiting",
+        "retentionStart": null
+      },
+      "walls": {
+        "state": "loading",
+        "message": "Loading validated prepared wall records; full range validation pending.",
+        "coverage": {
+          "from": 1793695500000,
+          "to": 1793805300000,
+          "complete": false,
+          "partial": true,
+          "reason": "Loading validated prepared wall records; full range validation pending."
+        },
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "loading",
+          "from": 1793695500000,
+          "to": 1793805300000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "gaps": [],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "requestComplete": false,
+          "loadedThrough": 1793695500000,
+          "presentationThrough": 1793805300000
+        }
+      },
+      "paint": {
+        "draws": 91,
+        "rebuilds": 1,
+        "patchProjects": 10305,
+        "segments": 10305,
+        "visible": 40694,
+        "visibleHistorical": 40694,
+        "visibleCurrent": 0,
+        "bytes": 3894920,
+        "renderMs": 899.8000000268221,
+        "maxRenderMs": 79.60000000149012,
+        "strokes": 8,
+        "lastProjectMs": 0,
+        "lastReferenceMs": 0,
+        "lastPaintMs": 0.10000000149011612,
+        "referenceRebuilds": 1,
+        "referenceSegments": 0,
+        "referenceValueScans": 0,
+        "paintCacheHits": 66,
+        "paintCacheBuilds": 25,
+        "paintStyleVisits": 480212,
+        "paintedViewport": {
+          "fromMs": 1793696400000,
+          "toMs": 1793804400000,
+          "minPrice": 75016.95,
+          "maxPrice": 81749.45,
+          "plotWidth": 1756,
+          "plotHeight": 395
+        },
+        "inputRevision": 43,
+        "paintedRevision": 43,
+        "pendingProjectionSegments": 0,
+        "retainedPaintPaths": 8,
+        "retainedSegments": 10305,
+        "openSegments": 16,
+        "retainedReferenceSegments": 9799,
+        "referenceExtentValues": 7979,
+        "pendingReferenceSegments": 0,
+        "referenceMinimum": 449199.56,
+        "referenceMaximum": 79091272.26,
+        "retainedDrawables": 40694,
+        "p95RenderMs": 46,
+        "mounted": true,
+        "archiveSegments": 10305,
+        "directSegments": 0,
+        "valueRuns": 47909,
+        "archiveValueRuns": 47909,
+        "directValueRuns": 0,
+        "valueHistoryLimited": false,
+        "episodeHistoryLimited": false
+      },
+      "footprintPaint": null
+    }
+  ]
+}
