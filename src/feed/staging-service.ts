@@ -10,7 +10,7 @@ import { duration, instrumentKey, instrumentOf, footprintAnalysisSourceKey, foot
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
-interface View {retryRequested?:boolean;progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
+interface View {consumers:Set<string>;retryRequested?:boolean;progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 async function readStagingJson(response:Response,label:string){
   const text=await response.text();let data:any;
   try{data=JSON.parse(text);}catch(error){
@@ -101,8 +101,12 @@ export class StagingFeedService {
       const viewKey = `${from}:${to}:${candidateFrom}:${analysisEnabled ? analysisLookback : 0}`;
       const old = g.views.get(c.id);
       if (old?.key === viewKey) return;
-      old?.abort?.abort();
-      g.views.set(c.id, { from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
+      this.releaseViewport(g,c.id);
+      // The restore preload overlaps its visible chart. Share the same logical
+      // demand, including validation/progress, rather than rereading ready chunks.
+      const shared=[...g.views.values()].find(view=>view.key===viewKey);
+      if(shared){shared.consumers.add(c.id);g.views.set(c.id,shared);this.status(g,g.lastStatus?.state??'loading',g.lastStatus?.message??'Staging · loading visible footprints');return;}
+      g.views.set(c.id, {consumers:new Set([c.id]), from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
       this.status(g, g.lastStatus?.state ?? 'loading', 'Staging · loading visible footprints');
       void this.loadViewport(g, c.id,'viewport');
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
@@ -119,7 +123,7 @@ export class StagingFeedService {
       const historyOnly=this.usePrepared&&groups.some(g=>failedViews(g).length>0);
       for(const g of groups){
         const failed=this.usePrepared?failedViews(g):[];
-        if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id,'retry');}continue;}
+        if(failed.length){const retried=new Set<View>();for(const [id,v] of failed){if(retried.has(v)||v.busy)continue;retried.add(v);v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id,'retry');}continue;}
         if(historyOnly)continue;
         if(g.native){
           if(c.id&&g.native.history?.progress(c.id)?.retryable){g.native.history.retry(c.id);if(!g.native.error)continue;}
@@ -139,9 +143,12 @@ export class StagingFeedService {
       }
     }
   }
+  private releaseViewport(g:Group,id:string){
+    const view=g.views.get(id);if(!view)return;g.views.delete(id);view.consumers.delete(id);if(!view.consumers.size)view.abort?.abort();
+  }
   private unsubscribe(id: string) {
     const key = this.clients.get(id); this.clients.delete(id); const g = key && this.groups.get(key);
-    if (!g) return;g.native?.history?.release(id);g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
+    if (!g) return;g.native?.history?.release(id);this.releaseViewport(g,id);g.ids.delete(id);
     if (!g.ids.size) {g.native?.history?.dispose();for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
   private readonly historyLoadAttempts:Array<{at:number;cause:string;consumer:string;generation:number;from:number;to:number;viewKey:string;previousProgressId?:string;loaded:boolean;validated:boolean}>=[];
@@ -418,7 +425,7 @@ export class StagingFeedService {
     const view = g.views.get(id);
     if (!view || view.busy || !this.online) return;
     if(import.meta.env.VITE_DIAGNOSTICS==='1'){this.historyLoadAttempts.push({at:performance.now(),cause,consumer:id,generation:g.generation,from:view.from,to:view.to,viewKey:view.key,previousProgressId:view.progress?.viewId,loaded:view.loaded===true,validated:view.validatedAt!==undefined});if(this.historyLoadAttempts.length>16)this.historyLoadAttempts.shift();}
-    view.busy = true; view.abort = new AbortController();
+    view.busy = true; const abort=new AbortController();view.abort=abort;
     const retry = view.retryRequested === true; view.retryRequested = false;
     const requestLiveVersion = g.streamRevision;
     const step = duration[g.series.interval];
@@ -426,9 +433,9 @@ export class StagingFeedService {
     // deltas. Disabled analysis has no offscreen warmup demand.
     const analysisFrom = view.analysisEnabled ? Math.max(step, view.candidateFrom - (view.analysisLookback + 1) * step) : view.from;
     try {
-      await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, view.abort.signal,
+      await this.prepared.load(view.from, view.to, g.series.interval, g.rowPrice!, abort.signal,
         (bars, complete, validated, analysis, progress) => {
-          if (view.abort!.signal.aborted || g.views.get(id) !== view || this.groups.get(g.key) !== g) return;
+          if (abort.signal.aborted || !view.consumers.size || this.groups.get(g.key) !== g) return;
           if (!bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series)))) throw Error('Invalid historical footprint bars');
           if (progress) view.progress = progress;
           view.error = undefined; view.retryAt = 0;
@@ -477,12 +484,12 @@ export class StagingFeedService {
             status, analysisSummaries: [...g.analysisSummaries.values()] });
         }, marketOf(g.series), analysisFrom, retry);
     } catch (error) {
-      if (!view.abort.signal.aborted) {
+      if (!abort.signal.aborted) {
         view.error = error instanceof Error ? error.message : String(error); view.retryAt = this.now() + 5000;
         this.status(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message ?? 'Staging · connecting live executions');
       }
     } finally {
-      view.busy = false;
+      if(view.abort===abort)view.busy = false;
     }
   }
   private updateDurableSummaries(g: Group, bars: readonly FootprintBar[], coverage: unknown, appliedThroughMs: number, caughtUp: boolean, streamRevision: number, allowPreview: boolean) {
@@ -529,7 +536,7 @@ export class StagingFeedService {
 
   private visibleTimes(g:Group,bars:FootprintBar[]){return new Set(bars.filter(b=>b.time===g.accumulator?.latestTime||[...g.views.values()].some(v=>b.time*1000>=v.from&&b.time*1000<v.to)).map(b=>b.time));}
   private historyState(g:Group){
-    const views=[...g.views.values()];
+    const views=[...new Set(g.views.values())];
     return {views:views.length,ready:views.every(v=>v.loaded===true),validated:views.every(v=>v.loaded===true&&v.validatedAt!==undefined),
       error:views.find(v=>v.error)?.error, ranges:views.map(v=>({from:v.from,to:v.to,progress:v.progress})),
       capacityLimited: views.some(v=>v.progress?.capacityLimited===true)};
@@ -587,7 +594,7 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...new Set(g.views.values())].map(v=>({key:g.key,consumers:v.consumers.size,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
   dispose() { this.nativePresentation.clear();this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 

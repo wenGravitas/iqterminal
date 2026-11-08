@@ -529,3 +529,51 @@ for(const mismatch of [{market:'spot'},{instrument:'binance:perpetual:ETHUSDT'}]
  const service=new StagingFeedService(e=>events.push(e),request,()=>900000,()=>new Socket() as any);
  try{service.command({type:'subscribe',id:'identity',series});await vi.waitFor(()=>expect(events.some((event:any)=>event.type==='status'&&event.status.state==='failed')).toBe(true));expect(events.some(event=>event.type==='snapshot')).toBe(false);expect(service.diagnostics().nativePresentation.rows).toBe(0);}finally{service.dispose();}
 });
+
+test('saved-view handoff shares a prepared footprint job and releases only the departing consumer',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets}=await setup(),g=[...(service as any).groups.values()][0];
+ let publish!:Function,finish!:()=>void,signal!:AbortSignal;
+ const load=vi.fn(async(...args:any[])=>{signal=args[4];publish=args[5];await new Promise<void>(resolve=>finish=resolve);});
+ (service as any).prepared={load,dispose(){}};
+ try{
+  service.command({type:'footprint-viewport',id:'a',from:60000,to:180000});
+  publish([bar],false,true);const job=g.views.get('a'),socket=sockets[0],accumulator=g.accumulator,cursor=g.cursor;
+  service.command({type:'footprint-subscribe',id:'visible',series,rowPrice:25});
+  service.command({type:'footprint-viewport',id:'visible',from:60000,to:180000});
+  expect(load).toHaveBeenCalledTimes(1);expect(g.views.get('visible')).toBe(job);expect((service as any).historyState(g).ranges).toHaveLength(1);expect(service.diagnostics().views[0].consumers).toBe(2);
+  service.command({type:'footprint-unsubscribe',id:'a'});
+  expect(signal.aborted).toBe(false);expect(socket.closed).toBe(false);expect(g.cursor).toBe(cursor);expect(g.accumulator).toBe(accumulator);
+  publish([bar,{...bar,time:120}],true,true);finish();await vi.advanceTimersByTimeAsync(0);
+  expect(g.views.get('visible').loaded).toBe(true);expect(g.bars.map((b:any)=>b.time)).toContain(120);
+  service.command({type:'footprint-unsubscribe',id:'visible'});expect(signal.aborted).toBe(true);
+  service.command({type:'footprint-subscribe',id:'reopened',series,rowPrice:25});service.command({type:'footprint-viewport',id:'reopened',from:60000,to:180000});expect(load).toHaveBeenCalledTimes(2);
+ }finally{finish?.();service.dispose();}
+});
+
+test('panning one footprint consumer preserves its peer job and failed shared Retry submits once',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service}=await setup(),g=[...(service as any).groups.values()][0];const calls:any[][]=[];
+ (service as any).prepared={load:vi.fn(async(...args:any[])=>{calls.push(args);await new Promise<void>(resolve=>args[4].addEventListener('abort',()=>resolve(),{once:true}));}),dispose(){}};
+ try{
+  service.command({type:'footprint-viewport',id:'a',from:60000,to:180000});
+  service.command({type:'footprint-subscribe',id:'peer',series,rowPrice:25});service.command({type:'footprint-viewport',id:'peer',from:60000,to:180000});
+  expect(calls).toHaveLength(1);const original=g.views.get('a');
+  service.command({type:'footprint-viewport',id:'peer',from:120000,to:240000});expect(calls).toHaveLength(2);expect(calls[0][4].aborted).toBe(false);
+  service.command({type:'footprint-viewport',id:'peer',from:60000,to:180000});expect(calls).toHaveLength(2);expect(calls[1][4].aborted).toBe(true);expect(g.views.get('peer')).toBe(original);
+  // A shared settled failure is one retry interest, even with two subscribers.
+  original.abort.abort();original.busy=false;original.error='temporary build failure';original.retryAt=Infinity;
+  service.command({type:'footprint-retry'});expect(calls).toHaveLength(3);expect(original.retryRequested).toBe(false);
+ }finally{service.dispose();}
+});
+
+
+test('an aborted shared footprint attempt cannot publish through a replacement attempt controller',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service}=await setup(),g=[...(service as any).groups.values()][0],calls:any[][]=[],finish:Array<()=>void>=[];
+ (service as any).prepared={load:vi.fn(async(...args:any[])=>{calls.push(args);await new Promise<void>(resolve=>finish.push(resolve));}),dispose(){}};
+ try{
+  service.command({type:'footprint-viewport',id:'a',from:60000,to:180000});
+  service.command({type:'online',online:false});expect(calls[0][4].aborted).toBe(true);finish[0]();await vi.advanceTimersByTimeAsync(0);
+  service.command({type:'online',online:true});void (service as any).loadViewport(g,'a');expect(calls).toHaveLength(2);
+  calls[1][5]([{...bar,revision:2000}],true,true);expect(g.bars.find((b:any)=>b.time===60).revision).toBe(2000);
+  calls[0][5]([{...bar,revision:9999}],true,true);expect(g.bars.find((b:any)=>b.time===60).revision).toBe(2000);expect(g.views.get('a').busy).toBe(true);
+ }finally{for(const resolve of finish)resolve();service.dispose();}
+});
