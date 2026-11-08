@@ -2076,3 +2076,42 @@ source revalidation and every financial row remain. It does not establish a
 browser loading or repeated-use heap gate. Default rolling wall preparation /
 reuse, foreground paint, warm revisit, concurrent current and heap plateau still
 require implementation or stronger validation; the release remains unaccepted.
+
+## Presentation-only warm cache and default-view capacity
+
+Client9d77c08 replaces warm mutable replay projectors with detached
+presentation maps. Prepared closed records already exist separately from the
+restored mutable accumulator and can be retained directly. Active records are
+copied from their current replay state, including a censorship applied before
+cache admission; canonical fallback copies all financial rows once. Revisit
+presentation has no cursor/candidate/retention queue and cannot join a live tail
+until an independently validated new load supplies its own projector. Existing
+16MiB per-entry /32MiB aggregate /two-entry /60s limits remain unchanged.
+
+Tests cover delayed validation, exact cached walls, active replay mutation,
+post-restore censorship, fallback point independence and20reopen/unsubscribe
+cycles. The fixture retains one bounded presentation, with zero mutable replay
+projectors or history consumers after each unsubscribe. Diagnostics now report
+warmSegments/warmRuns, admissions and capacity/invalid misses separately. These
+counts are reference-lifecycle evidence, not a browser heap plateau or1s gate.
+The full frontend suite has1151passes/2skips and typecheck passes.
+
+This investigation also confirms why ordinary30h warm revisits remain broken:
+the incumbent estimate is`valueRuns*256+segments*512`. The exact Spot reference
+8293walls/49154points estimates16829440bytes(16.0498MiB), just above16MiB;
+USD-M23850/104112estimates38863872bytes(37.0635MiB). Neither default view is
+admitted. Five offline Pi loads through the actual production service preserve
+the exact Spot financial hash cf9d17...afd944e and all35gaps, then each reports
+zero warm entries and one capacity miss. The source proof is captured immutable
+input; no fresh DB/SSH/browser timing is claimed. No cap was raised to pass.
+
+The captured Spot prepared parts occupy13330354decoded bytes and1454262gzip
+bytes, with34immutable parts and16active walls/183active points. An exact bounded
+compact prepared representation could therefore address the actual default-view
+cache limit without dropping financial detail or inflating decoded-object budgets.
+That representation is not yet implemented or accepted. Presentation-map reuse
+helps configurations that already fit; it does not fix the default30h warm gate,
+server rolling-default reuse or current/concurrent/foreground acceptance.
+
+Raw source/parts, exact compiled client, every committed sample, tests/build logs
+and limitations are in `artifacts/pi-history-r1/wall-presentation-cache-r1/`.
