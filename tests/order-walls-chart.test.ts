@@ -487,3 +487,38 @@ it('received prepared walls paint their confirmed geometry while whole-view cove
  expect(archive.loadedThrough).toBe(base);expect(archive.requestComplete).toBe(false);
  primitive.setStatus({state:'loading',archive:{...archive,presentationThrough:base+60000}});primitive.draw(canvas(),context());expect(primitive.orderWallAt(200,100)).toBeNull();
 });
+
+it('reuses exact shared timestamp transforms within a draw and reprojects after pan',()=>{
+ const points=Array.from({length:1000},(_,i)=>({at:base+i*100,usd:100+i,percentile:null,quantity:i+1,rank:1}));
+ const walls=Array.from({length:10},(_,i):OrderWallSegment=>({id:'shared-time-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:1099,meanUsd:100,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',valueRuns:points,valueRunsTruncated:false}));
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native'},60000);
+ primitive.setSnapshot(walls,{state:'live',tickSize:.1});
+ for(const from of [0,.25]){
+  const rc=context({from}),toIndex=vi.fn((seconds:number)=>{const t=(seconds-base/1000)/60;return t+.05*t*t;}),toPrice=vi.fn(()=>100);
+  (rc.dataLayer as any).timeToIndexFloat=toIndex;(rc.priceScale as any).priceToY=toPrice;
+  primitive.draw(canvas(),rc);
+  const d=primitive.diagnostics();expect(d.lastProjectionPriceTransforms).toBe(10);expect(toPrice).toHaveBeenCalledTimes(10);
+  expect(toIndex.mock.calls.length).toBeLessThan(1100);expect(d.lastProjectionTimeCacheHits).toBeGreaterThan(15000);expect(d.projectionCachePeak).toBeLessThanOrEqual(2048);
+  const model=primitive as any;
+  expect(model.drawable.size).toBe(from===0?10000:8510);
+  for(const line of model.drawable.values()){
+   const index=(t:number)=>{const v=(t/1000-base/1000)/60;return v+.05*v*v;};
+   expect(line.x).toBe(Math.max(0,rc.timeScale.indexToX(index(line.from))));expect(line.right).toBe(Math.min(rc.plotWidth,rc.timeScale.indexToX(index(line.to))));
+   expect(line.usd).toBe(points[line.runIndex]!.usd);
+  }
+ }
+});
+it('culls an off-price wall before timestamp conversions without discarding its retained values',()=>{
+ const segment:OrderWallSegment={id:'off-price',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:10,meanUsd:10,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',valueRuns:Array.from({length:5000},(_,i)=>({at:base+i*20,usd:10,percentile:null})),valueRunsTruncated:false};
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true},60000),rc=context(),time=vi.fn(()=>0);
+ (rc.dataLayer as any).timeToIndexFloat=time;(rc.priceScale as any).priceToY=()=>-1;
+ primitive.setSnapshot([segment],{state:'live'});primitive.draw(canvas(),rc);
+ expect(time).not.toHaveBeenCalled();expect(primitive.diagnostics()).toMatchObject({retainedSegments:1,retainedDrawables:0,lastProjectionTimeTransforms:0,lastProjectionPriceTransforms:1});
+ expect((primitive as any).segments.get(segment.id).valueRuns).toEqual(segment.valueRuns);
+});
+it('bounds the per-draw timestamp cache even for more than2048unique endpoints',()=>{
+ const segment:OrderWallSegment={id:'many-times',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:10,meanUsd:10,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',valueRuns:Array.from({length:5000},(_,i)=>({at:base+i*20,usd:10,percentile:null})),valueRunsTruncated:false};
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true},60000);primitive.setSnapshot([segment],{state:'live'});primitive.draw(canvas(),context());
+ expect(primitive.diagnostics()).toMatchObject({retainedDrawables:5000,lastProjectionTimeTransforms:5001,projectionCachePeak:2048});
+ primitive.detached();expect(primitive.diagnostics().retainedDrawables).toBe(0);
+});
