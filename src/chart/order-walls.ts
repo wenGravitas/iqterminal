@@ -7,9 +7,8 @@ const TOP_HEAT={bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8
 const TOP_SIDE={bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#bf6273','#ed9a9e','#ffd0b0']};
 
 interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number }
-interface ProjectionFrame {from:number;to:number;width:number;timeX:Map<number,number>;transforms:number;hits:number;prices:number;peak:number}
+interface ProjectionFrame {from:number;to:number;width:number;lastTime:number;lastX:number;toLogical:(seconds:number)=>number;transforms:number;hits:number;prices:number;peak:number}
 interface WallPriceProjection {low:number;high:number;y:number;from:number;end:number}
-const PROJECTION_TIME_CACHE_LIMIT=2048;
 
 /** The chart data layer preserves sub-candle event times as fractional logical indices. */
 export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:number)=>number):number|null {
@@ -160,7 +159,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       rc.dataLayer.length,rc.dataLayer.indexToTime(0),rc.dataLayer.indexToTime(rc.dataLayer.baseIndex),this.width()].join(':');
     if(key!==this.transformKey){if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
     const projectionStarted=performance.now();
-    const frame:ProjectionFrame={from:rc.dataLayer.indexToTimeFloat(range.from)*1000,to:rc.dataLayer.indexToTimeFloat(range.to)*1000,width:this.width(),timeX:new Map(),transforms:0,hits:0,prices:0,peak:0};
+    const frame:ProjectionFrame={from:rc.dataLayer.indexToTimeFloat(range.from)*1000,to:rc.dataLayer.indexToTimeFloat(range.to)*1000,width:this.width(),lastTime:NaN,lastX:NaN,toLogical:seconds=>rc.dataLayer.timeToIndexFloat(seconds),transforms:0,hits:0,prices:0,peak:0};
     if(this.dirty.size){
       for(const id of this.dirty){if(this.settings.visibleRangeOnly)this.markReference(id);this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc,frame);this.stats.patchProjects++;}
       this.dirty.clear();
@@ -290,13 +289,13 @@ export class OrderWallsPrimitive implements IPrimitive {
     return {low,high,y,from:segment.start+this.settings.minDurationMs,end:this.segmentTo(segment)};
   }
   private timeX(time:number,rc:PrimitiveRenderContext,frame:ProjectionFrame){
-    const cached=frame.timeX.get(time);if(cached!==undefined){frame.hits++;return cached;}
-    const logical=wallTimestampToLogical(time,t=>rc.dataLayer.timeToIndexFloat(t));
+    if(time===frame.lastTime){frame.hits++;return frame.lastX;}
+    const logical=wallTimestampToLogical(time,frame.toLogical);
     const value=logical===null?NaN:rc.timeScale.indexToX(logical);frame.transforms++;
-    // A per-draw cache cannot survive a pan, scale/data mutation or revision.
-    // Clear on capacity; do not retain a timestamp journal across frames.
-    if(frame.timeX.size>=PROJECTION_TIME_CACHE_LIMIT)frame.timeX.clear();
-    frame.timeX.set(time,value);frame.peak=Math.max(frame.peak,frame.timeX.size);return value;
+    // Adjacent value spans share an endpoint. A single-entry per-draw memo
+    // avoids hashing/allocating a timestamp map on the Pi and cannot outlive a
+    // pan, scale/data mutation or revision. Every timestamp remains exact.
+    frame.lastTime=time;frame.lastX=value;frame.peak=1;return value;
   }
   private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext,frame:ProjectionFrame){
     const price=this.priceProjection(segment,rc,frame);if(!price)return;
