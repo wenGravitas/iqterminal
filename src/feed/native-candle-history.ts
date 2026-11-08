@@ -20,7 +20,7 @@ export class NativeCandleHistory {
  private views=new Map<string,View>();private dead=false;private online=true;
  readonly metrics={requests:0,receivedBars:0,presentedBars:0,applyMs:0};
  constructor(private series:Series,private options:{request:typeof fetch;version:()=>NativeCandleVersion;now:()=>number;
-  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler;presentation?:NativeCandlePresentationCache}){}
+  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler;presentation?:NativeCandlePresentationCache;nativeBars?:()=>readonly Candle[]}){}
  viewport(id:string,rawFrom:number,rawTo:number,knownTimes:number[]){
   if(this.dead||!Number.isFinite(rawFrom)||!Number.isFinite(rawTo)||rawFrom<0||rawFrom>=rawTo||rawTo>8.64e15
    ||!Array.isArray(knownTimes)||knownTimes.length>NATIVE_CHART_BAR_BUDGET||!knownTimes.every(Number.isSafeInteger))return;
@@ -44,7 +44,10 @@ export class NativeCandleHistory {
   old?.abort.abort();
   const view:View={trace:historyViewId(),from,to,loadFrom,key,known,received:new Set(),presented:new Set(),abort:new AbortController(),busy:false,attempted:false};
   this.views.set(id,view);
-  if(this.online)for(let end=to;end>loadFrom;){const start=Math.max(loadFrom,end-1000*step),rows=this.options.presentation?.read(this.presentationKey(start,end))?.filter(c=>!known.has(c.t));
+  const native=this.options.nativeBars?.()??[];
+  if(this.online)for(let end=to;end>loadFrom;){const start=Math.max(loadFrom,end-1000*step),key=this.presentationKey(start,end),owned=native.filter(c=>c.closed===true&&c.t%step===0&&c.t>=start&&c.t<end);
+   for(const bar of owned)view.known.add(bar.t);this.options.presentation?.seed(key,owned);
+   const rows=this.options.presentation?.read(key)?.filter(c=>!view.known.has(c.t));
    if(rows?.length){const covered=this.options.apply(id,rows,{stream:0,request:0},this.options.now());for(const time of covered)if(time>=start&&time<end)view.presented.add(time);this.metrics.presentedBars+=covered.length;}end=start;}
   void this.load(id,view);
  }
@@ -67,10 +70,11 @@ export class NativeCandleHistory {
  /** Only the authoritative native bootstrap/stream may acknowledge cache slots.
   * Viewport known-times can echo presentation and cannot do so on their own. */
  confirmClosed(bars:readonly Candle[]){
-  const closed=new Map(bars.filter(bar=>bar.closed===true).map(bar=>[bar.t,bar]));let changed=false;
-  for(const [id,v]of this.views){let touched=false;for(const time of closed.keys())if(v.presented.has(time)){v.presented.delete(time);v.received.add(time);touched=true;}
-   if(!touched)continue;changed=true;v.cached=undefined;
-   const step=duration[this.series.interval];for(let end=v.to;end>v.loadFrom;){const start=Math.max(v.loadFrom,end-1000*step);this.options.presentation?.revise(this.presentationKey(start,end),closed);end=start;}
+  const closed=bars.filter(bar=>bar.closed===true);let changed=false;
+  for(const [id,v]of this.views){const relevant=closed.filter(bar=>bar.t%duration[this.series.interval]===0&&bar.t>=v.loadFrom&&bar.t<v.to);if(!relevant.length)continue;
+   changed=true;v.cached=undefined;
+   const step=duration[this.series.interval];for(let end=v.to;end>v.loadFrom;){const start=Math.max(v.loadFrom,end-1000*step);this.options.presentation?.seed(this.presentationKey(start,end),relevant.filter(bar=>bar.t>=start&&bar.t<end));end=start;}
+   for(const bar of relevant){v.presented.delete(bar.t);v.received.add(bar.t);}
    if(!this.missing(v).length){v.error=undefined;if(v.busy){v.abort.abort();this.views.set(id,{...v,cached:undefined,abort:new AbortController(),busy:false,attempted:true});}}
   }
   if(changed)this.options.changed();

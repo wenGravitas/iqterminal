@@ -160,3 +160,16 @@ test('authoritative closed native bootstrap can validate a cached view and cance
   h.history.confirmClosed(rows(from,5));expect(h.history.progress('b')).toMatchObject({state:'ready',loadedSlots:5});expect(h.history.progress('b')?.cachedSlots).toBeUndefined();expect(signal.aborted).toBe(true);finish(reply(rows(from,5)));
  }finally{h.history.dispose();}
 });
+
+test('an authoritative bootstrap that wins the page read seeds warm native presentation before group release',async()=>{
+ const cache=new NativeCandlePresentationCache();let count=0,finish!:(r:Response)=>void;const h=harness((async()=>{count++;return new Promise<Response>(resolve=>finish=resolve);}) as typeof fetch,series,from+86400000,cache);
+ try{
+  h.history.viewport('a',from,from+5*step,[]);await vi.waitFor(()=>expect(count).toBe(1));h.history.confirmClosed(rows(from,5));expect(h.history.progress('a')).toMatchObject({state:'ready',loadedSlots:5});expect(cache.diagnostics().rows).toBe(5);finish(reply(rows(from,5)));h.history.release('a');h.applied.length=0;
+  h.history.viewport('b',from,from+5*step,[]);expect(h.applied[0]).toMatchObject({version:{stream:0,request:0},bars:rows(from,5)});expect(h.history.progress('b')).toMatchObject({state:'loading',cachedSlots:5,loadedSlots:0});
+ }finally{h.history.dispose();}
+});
+test('native bars already owned before viewport creation seed warm presentation without an extra history request',async()=>{
+ const cache=new NativeCandlePresentationCache(),applied:any[]=[],request=vi.fn();
+ const history=new NativeCandleHistory(series,{now:()=>from+86400000,version:()=>({stream:0,request:1}),request,presentation:cache,nativeBars:()=>rows(from,5),apply:(_id,bars)=>{applied.push(bars);return bars.map(c=>c.t);},changed:()=>{}});
+ try{history.viewport('a',from,from+5*step,[]);expect(history.progress('a')).toMatchObject({state:'ready',loadedSlots:5});expect(cache.diagnostics().rows).toBe(5);expect(applied).toEqual([]);expect(request).not.toHaveBeenCalled();}finally{history.dispose();}
+});
