@@ -1,3 +1,4 @@
+import type {NativeCandlePresentationCache} from './native-candle-presentation-cache';
 import {duration,instrumentKey,instrumentOf,marketOf,validCandle,type Candle,type Series} from './protocol';
 import {historyScheduler,type HistoryScheduler} from './history-scheduler';
 import {NATIVE_CHART_BAR_BUDGET,NATIVE_VISIBLE_BAR_BUDGET,type NativeCandleVersion} from './native-candle-state';
@@ -7,18 +8,19 @@ export interface NativeCandleViewProgress {
  from:number;to:number;requestedSlots:number;loadedSlots:number;
  state:'loading'|'ready'|'partial'|'failed'|'capacity-limited';
  capacityLimited:boolean;retryable:boolean;error?:string;
+ cachedSlots?:number;
  unloaded:Array<{from:number;to:number;reason:'not-returned'|'capacity'}>;unloadedTruncated:boolean;
 }
-interface View {trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
+interface View {trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;presented:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
 interface Page {candles:Candle[];version:NativeCandleVersion;at:number}
-/** Exact native OHLC only, via the existing collector API. No OHLC cache or
- * additional exchange connection is created here; chart retention stays5000.
+/** Exact native OHLC only, via the existing collector API. An optional bounded
+ * presentation cache is independently revalidated; chart retention stays5000.
  * Requests share the normal history scheduler and consumer-specific cancellation. */
 export class NativeCandleHistory {
  private views=new Map<string,View>();private dead=false;private online=true;
- readonly metrics={requests:0,receivedBars:0,applyMs:0};
+ readonly metrics={requests:0,receivedBars:0,presentedBars:0,applyMs:0};
  constructor(private series:Series,private options:{request:typeof fetch;version:()=>NativeCandleVersion;now:()=>number;
-  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler}){}
+  apply:(id:string,bars:Candle[],version:NativeCandleVersion,at:number)=>number[];changed:()=>void;scheduler?:HistoryScheduler;presentation?:NativeCandlePresentationCache}){}
  viewport(id:string,rawFrom:number,rawTo:number,knownTimes:number[]){
   if(this.dead||!Number.isFinite(rawFrom)||!Number.isFinite(rawTo)||rawFrom<0||rawFrom>=rawTo||rawTo>8.64e15
    ||!Array.isArray(knownTimes)||knownTimes.length>NATIVE_CHART_BAR_BUDGET||!knownTimes.every(Number.isSafeInteger))return;
@@ -27,7 +29,7 @@ export class NativeCandleHistory {
   const known=new Set(knownTimes.filter(t=>t>=loadFrom&&t<to&&t%step===0));
   const old=this.views.get(id);
   if(old?.key===key){
-   old.known=known;old.cached=undefined;
+   old.known=new Set([...known].filter(t=>!old.presented.has(t)));old.cached=undefined;
    if(old.busy&&this.missing(old).length===0){
     // Another native delivery satisfied this consumer. Releasing its interest
     // leaves any peer of the shared HTTP request intact.
@@ -40,9 +42,13 @@ export class NativeCandleHistory {
    return;
   }
   old?.abort.abort();
-  const view:View={trace:historyViewId(),from,to,loadFrom,key,known,received:new Set(),abort:new AbortController(),busy:false,attempted:false};
-  this.views.set(id,view);void this.load(id,view);
+  const view:View={trace:historyViewId(),from,to,loadFrom,key,known,received:new Set(),presented:new Set(),abort:new AbortController(),busy:false,attempted:false};
+  this.views.set(id,view);
+  if(this.online)for(let end=to;end>loadFrom;){const start=Math.max(loadFrom,end-1000*step),rows=this.options.presentation?.read(this.presentationKey(start,end))?.filter(c=>!known.has(c.t));
+   if(rows?.length){const covered=this.options.apply(id,rows,{stream:0,request:0},this.options.now());for(const time of covered)if(time>=start&&time<end)view.presented.add(time);this.metrics.presentedBars+=covered.length;}end=start;}
+  void this.load(id,view);
  }
+ private presentationKey(from:number,to:number){return JSON.stringify([instrumentKey(this.series),instrumentOf(this.series).native,this.series.interval,from,to]);}
  private missing(v:View){
   const step=duration[this.series.interval],ranges:Array<{from:number;to:number}>=[];
   for(let t=v.loadFrom;t<v.to;t+=step)if(!v.known.has(t)&&!v.received.has(t)){
@@ -56,7 +62,18 @@ export class NativeCandleHistory {
   const unloaded:NativeCandleViewProgress['unloaded']=[...(capacityLimited?[{from:v.from,to:v.loadFrom,reason:'capacity' as const}]:[]),...missing.map(r=>({...r,reason:'not-returned' as const}))];
   return v.cached={from:v.from,to:v.to,requestedSlots:(v.to-v.from)/step,loadedSlots:(v.to-v.loadFrom)/step-missing.reduce((n,r)=>n+(r.to-r.from)/step,0),
    state:v.error?'failed':v.busy?'loading':capacityLimited?'capacity-limited':missing.length?'partial':'ready',capacityLimited,retryable:!!v.error||!v.busy&&missing.length>0,
-   ...(v.error?{error:v.error}:{}),unloaded:unloaded.slice(0,64),unloadedTruncated:unloaded.length>64};
+   ...(v.error?{error:v.error}:{}),...(v.presented.size?{cachedSlots:v.presented.size}:{}),unloaded:unloaded.slice(0,64),unloadedTruncated:unloaded.length>64};
+ }
+ /** Only the authoritative native bootstrap/stream may acknowledge cache slots.
+  * Viewport known-times can echo presentation and cannot do so on their own. */
+ confirmClosed(bars:readonly Candle[]){
+  const closed=new Map(bars.filter(bar=>bar.closed===true).map(bar=>[bar.t,bar]));let changed=false;
+  for(const [id,v]of this.views){let touched=false;for(const time of closed.keys())if(v.presented.has(time)){v.presented.delete(time);v.received.add(time);touched=true;}
+   if(!touched)continue;changed=true;v.cached=undefined;
+   const step=duration[this.series.interval];for(let end=v.to;end>v.loadFrom;){const start=Math.max(v.loadFrom,end-1000*step);this.options.presentation?.revise(this.presentationKey(start,end),closed);end=start;}
+   if(!this.missing(v).length){v.error=undefined;if(v.busy){v.abort.abort();this.views.set(id,{...v,cached:undefined,abort:new AbortController(),busy:false,attempted:true});}}
+  }
+  if(changed)this.options.changed();
  }
  retry(id:string){const v=this.views.get(id);if(!v||v.busy)return false;v.error=undefined;v.attempted=false;void this.load(id,v);return true;}
  private async load(id:string,v:View){
@@ -82,9 +99,10 @@ export class NativeCandleHistory {
      return {candles:data.candles,version,at} as Page;
     });
     if(this.dead||this.views.get(id)!==v||v.abort.signal.aborted)return;
+    this.options.presentation?.put(this.presentationKey(from,to),page.candles.filter(c=>c.t>=from&&c.t<to&&c.closed));
     const bars=page.candles.filter(c=>c.t>=from&&c.t<to&&c.closed&&!v.known.has(c.t)&&!v.received.has(c.t));
     const applyAt=performance.now(),covered=this.options.apply(id,bars,page.version,page.at);this.metrics.receivedBars+=covered.length;this.metrics.applyMs+=performance.now()-applyAt;
-    for(const t of covered)if(t>=v.loadFrom&&t<v.to)v.received.add(t);
+    for(const t of covered)if(t>=v.loadFrom&&t<v.to){v.received.add(t);v.presented.delete(t);}
     v.cached=undefined;this.options.changed();to=from;
    }
    v.attempted=true;
@@ -93,7 +111,7 @@ export class NativeCandleHistory {
  }
  setOnline(online:boolean){
   if(this.online===online)return;this.online=online;
-  for(const [id,v]of this.views){v.abort.abort();const next={...v,cached:undefined,known:new Set(v.known),received:new Set(v.received),abort:new AbortController(),busy:false,error:undefined};this.views.set(id,next);if(online)void this.load(id,next);}
+  for(const [id,v]of this.views){v.abort.abort();const next={...v,cached:undefined,known:new Set(v.known),received:new Set(v.received),presented:new Set(v.presented),abort:new AbortController(),busy:false,error:undefined};this.views.set(id,next);if(online)void this.load(id,next);}
   this.options.changed();
  }
  release(id:string){this.views.get(id)?.abort.abort();this.views.delete(id);}

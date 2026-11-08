@@ -5904,7 +5904,7 @@ export class CandlePanel implements IContentRenderer {
     const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${displayedNativeBars} bar${displayedNativeBars===1?'':'s'} displayed` : '';
     const nativeView=nativeHistory?.viewport;
     const nativeRange=nativeView?`${new Date(nativeView.from).toISOString().slice(5,16).replace('T',' ')}–${new Date(nativeView.to).toISOString().slice(5,16).replace('T',' ')} UTC`:'';
-    const nativeViewText=nativeView?`Native prices ${nativeView.state==='ready'?'loaded':nativeView.state==='capacity-limited'?'capacity limited':nativeView.state} · ${nativeView.loadedSlots}/${nativeView.requestedSlots} closed bars · ${nativeRange}${nativeView.error?` · ${nativeView.error}`:''}`:'';
+    const nativeViewText=nativeView?`Native prices ${nativeView.state==='ready'?'loaded':nativeView.state==='capacity-limited'?'capacity limited':nativeView.state} · ${nativeView.loadedSlots}/${nativeView.requestedSlots} closed bars${nativeView.cachedSlots?` · ${nativeView.cachedSlots} cached (${nativeView.state==='loading'?'validating':'unvalidated'})`:''} · ${nativeRange}${nativeView.error?` · ${nativeView.error}`:''}`:'';
     const text = [liveText, totalsLive, nativeHistoryText, nativeViewText, historyText].filter(Boolean).join(' · ');
     if (this.statusText.textContent !== text) { this.statusText.textContent = text; this.statusText.title = text; }
     if (this.statusNode.dataset.state !== status.state) this.statusNode.dataset.state = status.state;
