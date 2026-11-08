@@ -24,3 +24,9 @@ test('encoding cancellation yields to other work and replay cancellation never e
  const data=await compactWallPresentation('cancel',input,new AbortController().signal),read=new AbortController();let callbacks=0;
  await expect(replayCompactWallPresentation(data,'cancel',read.signal,()=>{callbacks++;read.abort();})).rejects.toThrow(/abort/i);expect(callbacks).toBe(1);
 });
+
+test('oversized exact decimal metadata misses the optional cache before whole-array serialization',async()=>{
+ const row=segment('large-exact',256);row.valueRuns[0]!.quantityExact='2.'+'0'.repeat(300000);row.valueRuns[0]!.quantity=2;
+ await expect(compactWallPresentation('bounded-input',[row],new AbortController().signal)).rejects.toThrow(/capacity/);
+ expect(row.valueRuns).toHaveLength(256);expect(row.valueRuns[0]!.quantityExact).toHaveLength(300002);
+});

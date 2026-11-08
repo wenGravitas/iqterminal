@@ -21,7 +21,10 @@ Compact accounting includes encoded bytes, bounded chunk metadata and256KiB
 reserved for bounded status/signature metadata. Existing prepared decoded caps
 remain64MiB /100000segments /1000000points /100000points per segment. Each native
 stream handles at most1MiB of decoded chunk data, normally128KiB, and each JSON
-fragment has at most256points. Encoding yields after8ms of JS work and after
+fragment has at most256points. A conservative flat-metadata/string bound runs
+before JSON serialization; unusually large exact metadata can miss the optional
+cache without serializing a whole large point array or changing the chart data.
+Encoding yields after8ms of JS work and after
 bounded compression. Two input builds may be retained; one encoder runs at a
 time. Two decoding jobs may run; consumers of an entry share its decode. Active
 replay entries remain charged to the cache budget. Expired entries reject new

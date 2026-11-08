@@ -14,6 +14,17 @@ async function transform(bytes:Uint8Array,compress:boolean,max:number,signal:Abo
  finally{signal.removeEventListener('abort',cancel);await reader.cancel().catch(()=>{});reader.releaseLock();}
  const result=new Uint8Array(size);let at=0;for(const part of parts){result.set(part,at);at+=part.length;}return result;
 }
+// Bound work before JSON.stringify, including JSON's worst-case string escaping.
+// Canonical segment/point metadata is flat; a future nested extension remains
+// displayable but needs an explicit codec revision rather than unbounded work.
+function metadataBound(value:object,omitRuns=false){
+ let bytes=2048;for(const [key,item] of Object.entries(value)){
+  if(omitRuns&&key==='valueRuns')continue;bytes+=key.length*6;
+  if(typeof item==='string')bytes+=item.length*6;
+  else if(item!==null&&typeof item==='object')throw Error('Compact wall cache metadata capacity');
+  if(bytes>MAX_PART)throw Error('Compact wall cache fragment capacity');
+ }return bytes;
+}
 /** Optional background work: one bounded fragment/stream at a time. Exact
  * presentation only; no cursor/accumulator or display-resolution reduction. */
 export async function compactWallPresentation(identity:string,segments:readonly OrderWallSegment[],signal:AbortSignal):Promise<CompactWallPresentation>{
@@ -28,9 +39,11 @@ export async function compactWallPresentation(identity:string,segments:readonly 
   result.chunks.push({body,hash:await hash(raw),decodedBytes:raw.length,rows:rows.length});result.bytes+=body.length;result.decodedBytes+=raw.length;rows=[];size=2;await yieldTask();signal.throwIfAborted();yielded=performance.now();
  };
  for(const [index,segment] of segments.entries()){
-  const total=segment.valueRuns.length;result.runs+=total;if(result.runs>1000000)throw Error('Compact wall cache value capacity');let offset=0;
+  const total=segment.valueRuns.length,headerBytes=metadataBound(segment,true)+128;result.runs+=total;if(result.runs>1000000)throw Error('Compact wall cache value capacity');let offset=0;
   do{
-   signal.throwIfAborted();const count=Math.min(256,total-offset),row:Row={index,offset,total,segment:{...segment,valueRuns:segment.valueRuns.slice(offset,offset+count)}},text=JSON.stringify(row),bytes=new TextEncoder().encode(text).length;
+   signal.throwIfAborted();let count=0,bound=headerBytes;
+   while(offset+count<total&&count<256){const pointBytes=metadataBound(segment.valueRuns[offset+count]!);if(headerBytes+pointBytes>MAX_PART)throw Error('Compact wall cache fragment capacity');if(count&&bound+pointBytes>TARGET)break;bound+=pointBytes;count++;}
+   const row:Row={index,offset,total,segment:{...segment,valueRuns:segment.valueRuns.slice(offset,offset+count)}},text=JSON.stringify(row),bytes=new TextEncoder().encode(text).length;
    if(bytes+2>MAX_PART)throw Error('Compact wall cache fragment capacity');
    if(size+bytes+1>TARGET)await flush();rows.push(text);size+=bytes+1;offset+=count;
    if(performance.now()-yielded>=8){await yieldTask();signal.throwIfAborted();yielded=performance.now();}
