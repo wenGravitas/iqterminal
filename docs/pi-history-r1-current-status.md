@@ -532,3 +532,14 @@ causal attribution remain open. Both client scenarios ran alongside a proven
 advancing custom-profile backfill. All seven protected identities/start times
 still match; no serving deployment occurred. All testing was headless; no i3
 test windows remain. See the detailed report for every sample and limitations.
+
+
+The actual17:20 UTC five-minute default rollover was observed without enqueue,
+current or history requests: both markets advanced current state and published
+the17:15/$25 candle, first observed at+2.279sUSD-M/+2.291sSpot (includes polling).
+Independent canonical financial references match both bounded publications
+exactly. Backend9bc29cdcontains the complete receipt/observer. This closes the
+narrow5m automatic-rollover observation; hourly rollover timing and rolling wall
+defaults remain unverified/unfinished. A separate five-pair small-health QoS
+comparison did not reproduce the timeout and had unequal backend times; current
+transport configuration is preserved. Concurrency acceptance remains incomplete.

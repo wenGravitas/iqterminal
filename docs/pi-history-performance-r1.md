@@ -2799,3 +2799,44 @@ and accumulate jobs. Automatic rolling defaults and serving activation remain
 unfinished pending exact composable/sliding reuse. This cohort changes no worker
 or preparation configuration. Rollback is to stop this opt-in probe; application,
 serving build and collectors require no rollback.
+
+
+## Current route follow-up and actual default rollover
+
+`route-current-health-default-none-r1` contains five alternating fresh independent
+TCP SSH pairs for a small current health read. Explicit12s timeout, exact APIe122
+identity, response timings, TCP snapshots, all results and temporary-connection
+cleanup are recorded. This is no historical/live/paint acceptance cohort. Existing
+history18780/current18781 SSH processes549996/550014 remain unchanged.
+
+| QoS | Five receipt times, ms | Median | Maximum |
+| --- | --- | --- | --- |
+| Inherited default |1962.7,1442.5,1668.8,1141.8,942.1|1442.5|1962.7|
+| none |1169.3,1277.6,1274.8,1122.9,1030.1|1169.3|1277.6|
+
+All ten responses succeeded; none was faster in4/5 pairs, but backend timing
+was unequal (default up to588.72ms, none up to8.31ms). These observations neither
+reproduce the prior health timeout nor isolate a QoS cause. Keep the current
+script/transport unchanged. The prior, separately supported future history-only
+QoS setting remains as documented. Neither limits nor timeout thresholds grew.
+Successful prior concurrency health calls had proxy queue usually below a few
+milliseconds and server handler usually below10ms, with seconds of proxy header
+wait. Correlated tracing of failures and persistent live traffic remains needed.
+
+Backend commit9bc29cdadds an observer that never requests preparation. Through
+the actual2026-11-08 17:20 UTC5m boundary, both Spot/USD-M/$25 defaults advanced
+their accumulators and published the preceding17:15 candle autonomously. First
+observed ready was+2279ms USD-M/+2291ms Spot, including2s polling and queries.
+Before-boundary publications were absent. Canonical input digests and content
+hashes match, with complete/no-gap coverage. Independent FINAL cursor references
+then exactly matched all numeric fields/cells/CVD extrema for2206USD-M and1320
+Spot executions, five cells each, no duplicates and no tolerance changes. Full
+receipt, worker resources, source horizons and protected identities are in the
+backend's `artifacts/pi-history-r1/default-rollover-observed-r1/`.
+
+This proves the one observed5m default rollover and those bounded financial
+samples. It is not hourly rollover latency, chart paint, five-run load acceptance
+or a rolling Order Walls implementation. The serving footprint sources are
+unchanged from18579d9; API remainse122. Focused backend tests26pass; no deployment,
+collector/source retention change or main merge. Rollback simply stops the owned
+read-only observer/route probe; no service or cache mutation needs undoing.
