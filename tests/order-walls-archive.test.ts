@@ -887,6 +887,49 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
   });
 
+  it('retains active wall presentation across long-open peers and expires only after final idle release',async()=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'idle-wall',startedAt:from-100,startCursor:1,startKnown:false});
+    const ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let calls=0;const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    const events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false};
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('idle-a',subscription);await flush();expect(service.diagnostics().warmEntries).toBe(1);
+      await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics().warmEntries).toBe(1);service.subscribe('idle-b',subscription);await flush();
+      service.unsubscribe('idle-a');await vi.advanceTimersByTimeAsync(60000);service.unsubscribe('idle-b');
+      await vi.advanceTimersByTimeAsync(59999);service.subscribe('idle-c',subscription);await flush();
+      const cached=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('idle-c')&&event.segments?.length).at(-1);
+      expect(cached?.segments[0].archiveEntryId).toBe('idle-wall');expect(cached?.status.archive.requestComplete).toBe(false);expect(calls).toBe(2);
+      service.unsubscribe('idle-c');await vi.advanceTimersByTimeAsync(59999);expect(service.diagnostics().warmEntries).toBe(1);
+      await vi.advanceTimersByTimeAsync(1);expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0,historyConsumers:0,historyJobs:0,warmReplayConsumers:0});
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it.each(['viewport','current-only'])('releases unused wall cache interest on %s without extending unrelated data',async(mode)=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'released-idle',startedAt:from-100,startCursor:1,startKnown:false}),ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let calls=0;const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to),subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false},flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('idle-original',subscription);await flush();await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics().warmEntries).toBe(1);
+      if(mode==='viewport')service.updateViewport('idle-original',from-60000,to-60000,false);
+      else{service.subscribe('idle-current-only',{...subscription,currentOnly:true});service.unsubscribe('idle-original');}
+      await flush();await vi.advanceTimersByTimeAsync(60000);expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it('active wall interests cannot exceed the two-entry cache or retain evicted data',async()=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'bounded-idle',startedAt:from-100,startCursor:1,startKnown:false}),ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    const service=new OrderWallsArchiveService(()=>{},(async()=>new Response(JSON.stringify(ready))) as typeof fetch,()=>to),flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      for(const topLevels of [8,9,10]){service.subscribe('bounded-'+topLevels,{market:'binance-spot',from,to,settings:{...request().settings,topLevels},followLive:false});await flush();}
+      await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics()).toMatchObject({subscriptions:3,warmEntries:2});expect(service.diagnostics().warmBytes).toBeLessThanOrEqual(32*1024*1024);
+      for(const topLevels of [8,9,10])service.unsubscribe('bounded-'+topLevels);await vi.advanceTimersByTimeAsync(60000);expect(service.diagnostics()).toMatchObject({subscriptions:0,warmEntries:0,warmBytes:0,historyConsumers:0,warmReplayConsumers:0});
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
   it('cancels a shared history fetch only for its last consumer and on service disposal', async () => {
     let finishShared!: (response: Response) => void, sharedSignal: AbortSignal | undefined;
     const sharedFetcher = vi.fn((_url: RequestInfo | URL, init?: RequestInit) => {

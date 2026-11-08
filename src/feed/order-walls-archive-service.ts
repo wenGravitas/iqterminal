@@ -194,7 +194,7 @@ export class OrderWallsArchiveService {
       if(loading&&beforeVisible&&to-from<(sub.request.to-sub.request.from)*.75){
         // The current bootstrap can still be in flight. Keep its shared socket
         // and apply the visible bounds before it admits the historical job.
-        if(!sub.archiveStarted){sub.request={...sub.request,...nextViewport};sub.pendingViewport=undefined;return;}
+        if(!sub.archiveStarted){const previous=sub.request;sub.request={...sub.request,...nextViewport};this.releaseWarmInterests(previous);sub.pendingViewport=undefined;return;}
         this.subscribe(id,{...sub.request,...nextViewport});return;
       }
       sub.pendingViewport = undefined; return;
@@ -236,7 +236,7 @@ export class OrderWallsArchiveService {
 
   unsubscribe(id: string) {
     const sub = this.subscriptions.get(id); if (!sub) return;
-    this.subscriptions.delete(id);this.releaseWarmReplay(sub);
+    this.subscriptions.delete(id);this.releaseWarmInterests(sub.request.currentOnly?undefined:sub.request,sub.historyJob?.request);this.releaseWarmReplay(sub);
     const historyJob = sub.historyJob; sub.historyJob = undefined;
     if (historyJob) {
       historyJob.subscribers.delete(sub);
@@ -524,7 +524,9 @@ export class OrderWallsArchiveService {
       watermark: current.cursor, head: { cursor: current.cursor, at: current.at, epoch: current.epoch } };
     const initialProjector = priorProjector.cloneForLiveTail(target.to);
     this.detachHistoryJob(sub);
+    const previousRequest=sub.request;
     sub.request = { ...sub.request, from: Math.min(sub.request.from, target.from), to: target.to, followLive: target.followLive };
+    this.releaseWarmInterests(previousRequest);
     sub.pendingViewport = undefined;
     sub.archiveStarted = false;
     this.startHistory(sub, current, request, initialProjector, true);
@@ -534,7 +536,7 @@ export class OrderWallsArchiveService {
 
   private detachHistoryJob(sub: Subscription) {
     const job = sub.historyJob; if (!job) return;
-    sub.historyJob = undefined; job.subscribers.delete(sub);
+    sub.historyJob = undefined;this.releaseWarmInterests(job.request);job.subscribers.delete(sub);
     if (!job.subscribers.size) {
       if (this.historyJobs.get(job.key) === job) this.historyJobs.delete(job.key);
       if (!job.settled) job.abort.abort();
@@ -628,7 +630,23 @@ export class OrderWallsArchiveService {
       if(replay.entry.expired&&this.warmHistory.get(replay.key)===replay.entry){clearTimeout(replay.entry.timer);this.warmHistory.delete(replay.key);}}
   }
 
+  /** Only bounded subscription metadata is inspected; no closed segments,
+   * value runs or mutable accumulators participate in cache interest. */
+  private hasWarmConsumers(key:string){
+    for(const sub of this.subscriptions.values())if(!sub.request.currentOnly&&(warmHistoryKey(sub.request)===key||sub.historyJob&&warmHistoryKey(sub.historyJob.request)===key))return true;
+    return false;
+  }
+
+  private releaseWarmInterests(...requests:Array<OrderWallsArchiveRequest|undefined>){
+    const keys=new Set(requests.filter((request):request is OrderWallsArchiveRequest=>Boolean(request)).map(warmHistoryKey));
+    for(const key of keys){const entry=this.warmHistory.get(key);if(!entry||entry.expired||this.hasWarmConsumers(key))continue;
+      clearTimeout(entry.timer);entry.timer=setTimeout(()=>this.expireWarm(key,entry),60000);
+    }
+  }
+
   private expireWarm(key:string,entry:WarmEntry){
+    if(this.warmHistory.get(key)!==entry)return;
+    if(!entry.expired&&this.hasWarmConsumers(key)){entry.timer=setTimeout(()=>this.expireWarm(key,entry),60000);return;}
     entry.expired=true;if(!entry.replay?.subscribers.size&&this.warmHistory.get(key)===entry)this.warmHistory.delete(key);
   }
 
