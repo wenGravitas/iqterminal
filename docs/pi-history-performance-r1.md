@@ -2,39 +2,38 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
-Current staging serving build is `18579d938364e5fd5a9c7631bb19681a043f1b66`.
-Current measured production client is `7a1f6b129c78cf3e86178759bd98617213bcd701`.
-Backend coordinator Retry repair `bba1e6746cf8d861b6683355dc295cc88f0c22e4` has
-isolated staging validation; it has not replaced the serving build. Its 260 tests,
-typecheck/build pass. That earlier frontend suite: 1,093 pass / two skip,
-typecheck/build pass; nine prior functional UI checks and the explicit headed
-retry protocol check have their own scopes/builds below. Collectors are unchanged.
+Current staging serving build remains `18579d938364e5fd5a9c7631bb19681a043f1b66`;
+collectors are unchanged. The isolated gateway and materializer experiments below
+have not replaced serving, activated the preparation/GC bridge, or changed production.
 
-New backend source `00f11e0` has 273 passing tests/type/build for the opt-in
-consumer admission bridge; it is disabled and has not received serving validation.
-Client `997e383` is wired and has 1,104 passing tests / two skips, typecheck and
-staging diagnostics build passing. Its component/offline-browser proof is distinct
-from bba1e67's real cache Retry proof and the older measured Pi chart cohorts.
+The latest full-chart cohort is client `46ea11d` against the isolated `253ed22`
+gateway, with default Fit Walls disabled. All five Spot30h samples fail complete
+validated paint; first history is6,675.2ms,7,164.9ms,then three unobserved within
+12s. Native360/360slots validate in three of five samples; this is data observation,
+not native-body paint timing. The route also failed in an earlier614cohort. These
+failed cohorts remain evidence; the prepared source was not relabelled unavailable.
+Workspace9 controls now show severe background RAF throttling despite visibility
+flags. Foreground primary-browser acceptance remains unproven and headed launches
+are paused after the user reported work-window disruption.
 
-Latest client ae8e42a repairs a proven older-bootstrap cache rejection: 81 focused /
-1,110 full tests pass (two full skips), typecheck/staging build pass. Backend
-0ccfa7a has real isolated retained-source admission/resume/client protocol proof,
-archived in backend 9bb4d7b. Serving itself remains unchanged/disabled.
+The preceding `f602673`/isolated`a33b01c` Fit Walls cohort painted the exact8,293
+Spot walls /49,154points /35explicit gaps in all five runs: first median2,381.9ms /
+max2,921.1ms PASS3s; complete median5,617.1ms FAIL5s /max8,377.2ms PASS10s.
+These differing configurations/routes do not isolate a code effect. Both c9073e4
+USD-M five-run cohorts fail complete validated paint. The last passing footprint
+cohorts are b47457b:4h5m median2,876ms/max3,638ms;24h1h median3,608.7ms /
+max4,607.8ms. These do not validate newer builds.
 
-Footprint coverage repairs have complete real-chart evidence, but their latest
-latency gates remain failed. Prepared USD-M walls have an older full-coverage
-observation (23,850 walls / 104,112 points / 47 gaps at 143.524s), not a current
-client latency pass. Spot 30h is now prepared and published, with all 8,293 walls /
-49,154 points / 35 gaps checked against canonical and original-projector references.
-Its five Pi loading samples FAIL: first-history [null,9591.6,null,null,null]ms,
-complete all null. A separate 180s attempt also has no historical paint and fails
-with discovery HTTP 502; the native chart bootstrap took 4.870s in that attempt.
-Thus full Spot browser coverage is still unproven, despite complete server files.
-
-Durable exact-view wall supervision now has server-only validation; serving
-admission, rolling-window reuse, derived disk retention, warm/current-concurrent and full-view repeated-use resource gates remain open.
-Earlier failed cohorts and timed-out tests remain below with their exact builds;
-eventual completion and independent reference checks do not supersede loading gates.
+Native candle backfill/lifecycle/status fixes are committed through46ea11d; the
+canonical API instrument namespace defect discovered through the real route is
+fixed with captured-response regression evidence. New proxy wire checks verify
+current socket reservation and queued/active cancellation in dev and preview.
+Client b291b02 removes a duplicate full-history checkpoint/restore;
+its scoped Pi CPU comparison is not loading acceptance. Current first-paint,
+warm revisit, full concurrent-history/current, repeated-use heap/frame plateau
+and rolling default preparation/reuse remain failed or unproven. Performance
+acceptance is incomplete. Detailed sections retain failed attempts, correctness
+evidence and exact source/build/environment IDs.
 
 ## Baselines and isolation
 
@@ -1998,3 +1997,82 @@ this cohort. Prior footprint passes remain b47457b evidence; current first-paint
 warm1s, full two-history/custom-profile concurrency, repeated-use plateau and
 rolling default reuse remain failed or unproven. Performance acceptance stays
 incomplete and the full release goal remains active.
+
+## Native coverage integration and latest failed full-chart cohorts
+
+The implementation commits b89f3ad,614c4c2,066d588and46ea11d add bounded native
+visible OHLC independently of current bootstrap, retain5000chart bars with explicit
+capacity, protect live/REST versions and units, and verify every requested closed
+slot. Saved-view gesture handoff, scoped Retry and displayed-bar status were fixed
+through browser failures. Actual source response instruments are canonical names
+(`binance:spot:BTCUSDT` / `binance:perpetual:BTCUSDT`); the initial bare-symbol
+validator rejected valid native response rows and46ea11d corrects it. Two captured
+real Spot rows cover exact OHLC, base/quote and namespace rejection. The full46ea
+suite has1146passed/2skipped, typecheck/build pass, and both headed native fixture
+browser cases pass. They are correctness fixtures, not live latency acceptance.
+
+All three following cohorts use the pinned30h1793696400000..1793804400000view,
+empty browser contexts, already prepared Spot source, default Fit Walls=false,
+actual Pi/system Chromium155.0.8059.79Canvas2D/GLES and independent SSH current /
+history routes through Vite production preview. Full SHA/mode/history flags,
+requests, screenshots, source token and every run's resource/frame data are in the
+`chart-614-253-spot-default*` and `chart-46ea-253-spot-default*` artifacts. No p95 is
+reported. An unobserved sample remains right-censored at12s, not zero latency.
+
+| Client/cohort | First historical paint, every run(ms) | Complete paint | Native requested360closed slots |
+|---|---|---|---|
+|614c4c2 original route|unobserved in all five|all five unobserved|three no chart state; two0/360|
+|614c4c2 route2|11044.3,unobserved,unobserved,unobserved,unobserved|all five unobserved|all0/360; valid HTTP rows rejected by namespace bug|
+|46ea11d corrected namespace|6675.2,7164.9,unobserved,unobserved,unobserved|all five unobserved|360,360,0,360,0of360|
+
+Each cohort FAILS the proposed first3s/complete5s median and10s maximum gates
+under its observed environment. Completion medians/maxima cannot be assigned
+finite successful values. Source d211a766...621e394remains ready, with exact
+reference8293walls/49154points/35gaps; none of these new runs paints/validates the
+whole reference. In46ea, native coverage is observed at5908.7,6242.3,unobserved,
+6312.8,unobserved ms. Native-body paint timing is not inferred from those values.
+The retained wall counts are4757,2040,0,0,377respectively.
+
+The original isolated SSH process exited255with keepalive timeout. Current,
+history and resource observations were affected. Direct staging health later
+proved the same gateway running/noOOM before a replacement tunnel was launched.
+No collector or serving restart was used. One paired151486decoded-byte native
+response took0.2878s on staging loopback and2.1158s on direct Pi SSH, with header
+wait0.2875s versus1.0966s. These are single diagnostics, not a five-run loading
+gate or proof of a network root cause. Small ping samples had0%loss; no MTU or
+transport tuning was applied.
+
+The final46ea chart samples record20–30RAF callbacks over roughly12s, maximum
+frame gaps2.98–4.40s, and maximum long tasks514–1158ms. New three-context blank
+Canvas2D controls on workspace9 settle near1RAF/s; `bringToFront` and experimental
+CDP focus emulation do not remove it or switch the user's workspace. Launch
+flags include the background-throttling disables, verified through browser
+command-line introspection. Earlier near16.7ms blank controls are retained as
+separate observations; the current controls do not retroactively certify them
+or excuse these failed gates. Foreground primary UX remains unproven. Do not
+move the user's working workspace to obtain a green result.
+
+The isolated253ed22gateway has stopped with exit0. Backend commit2a0c61e records
+its exact image/container, read-only mount,512MiB/oneCPU budget,295test/type/build
+logs and matching incumbent collector/API identities before/after. Staging serving
+remains18579d9; preparation/GC serving bridge remains disabled. No production
+change, main merge or collector retention change occurred.
+
+## Additional proxy and client CPU work
+
+`docs/staging-proxy-capacity.md` documents d6da137and its five dev/five preview
+wire cycles. Current/health bypass held history sockets; queued cancellation
+never reaches the upstream; active cancellation releases the upstream slot.
+Proxy queue and upstream-header durations append to Server-Timing and remain
+nested inside worker/browser header wait. They are not exclusive extra phases.
+The installed Vite cancellation path passes without a duplicate implementation.
+
+`wall-single-restore-r1/README.md` records b291b02and the duplicate reconstruction fix and
+five paired Pi CPU samples using captured financial content in an explicitly
+constructed queue-order envelope. The shared financial projector/core hash and
+persisted preparation format remain unchanged. This removes one whole-history
+clone/validation/queue sort from each prepared projection completion, while final
+source revalidation and every financial row remain. It does not establish a
+browser loading or repeated-use heap gate. Default rolling wall preparation /
+reuse, foreground paint, warm revisit, concurrent current and heap plateau still
+require implementation or stronger validation; the release remains unaccepted.

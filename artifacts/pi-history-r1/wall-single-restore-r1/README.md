@@ -49,3 +49,8 @@ launches are paused following the user's reported i3 workspace disruption.
 Validation: full frontend suite1149passed/2skipped,134filespassed/2skipped;
 typecheck passes. The focused projection/history suite passed43before the
 additional older-fence variant; both newer/older variants pass in the full suite.
+
+Exact committed client b291b02 was rebuilt with staging data mode, history tiles
+and diagnostics enabled; `staging-build-b291b02.log` retains the raw output.
+Raw compiler/test/browser logs preserve their original trailing whitespace;
+source-only diff checks pass, but a whole-evidence whitespace check is not clean.

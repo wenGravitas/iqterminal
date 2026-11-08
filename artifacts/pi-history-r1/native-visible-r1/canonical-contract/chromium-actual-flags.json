@@ -1,0 +1,58 @@
+{
+  "browser": "155.0.8059.79",
+  "found": [
+    {
+      "pid": 132976,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 2374,
+      "argumentCount": 2,
+      "arguments": []
+    },
+    {
+      "pid": 133298,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 259,
+      "argumentCount": 2,
+      "arguments": []
+    },
+    {
+      "pid": 133299,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 239,
+      "argumentCount": 2,
+      "arguments": []
+    },
+    {
+      "pid": 133324,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 1475,
+      "argumentCount": 2,
+      "arguments": []
+    },
+    {
+      "pid": 133327,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 1277,
+      "argumentCount": 2,
+      "arguments": []
+    },
+    {
+      "pid": 133337,
+      "exe": "/usr/lib/chromium/chromium",
+      "rawLength": 1281,
+      "argumentCount": 2,
+      "arguments": []
+    }
+  ],
+  "protocol": [
+    "--enable-experimental-canvas-features",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-backgrounding-occluded-windows",
+    "--disable-component-extensions-with-background-pages",
+    "--disable-renderer-backgrounding",
+    "--enable-automation",
+    "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,ParallelDownloading,CDPScreenshotNewSurface",
+    "--disable-features=UseChromeOSDirectVideoDecoder,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion"
+  ]
+}

@@ -1,0 +1,56 @@
+
+Running 2 tests using 1 worker
+
+(node:34827) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/native-candle-history.spec.ts:11:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (5.5s)
+(node:35329) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/native-candle-history.spec.ts:40:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (30.7s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:11:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 360
+    Received: 0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      24 |  try{
+      25 |   await page.goto('/',{waitUntil:'domcontentloaded'});
+    > 26 |   await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal?.panels.get(id);return p?.candles.filter((c:any)=>c.t>=from&&c.t<to).length??0;},{id,from,to})).toBe(360);
+         |                                                                                                                                                                                           ^
+      27 |   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+      28 |   const pre=await page.evaluate(({id,from})=>{const p=(window as any).__terminal.panels.get(id);return {status:p.status,first:p.candles.find((c:any)=>c.t===from)};},{id,from});
+      29 |   expect(pre.status.nativeHistory).toMatchObject({state:'loading',viewport:{state:'ready',loadedSlots:360,requestedSlots:360}});expect(pre.first).toMatchObject({c:80040,quoteVolume:160080});
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:26:187
+
+    Error Context: test-results/native-candle-history-nati-a8c2a--and-newer-historical-reads/error-context.md
+
+  2) tests/browser/native-candle-history.spec.ts:40:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 4998
+    Received: 202
+
+    Call Log:
+    - Timeout 30000ms exceeded while waiting on the predicate
+
+      50 |  });
+      51 |  await page.goto('/',{waitUntil:'domcontentloaded'});
+    > 52 |  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.status.nativeHistory?.viewport?.loadedSlots??0,id),{timeout:30000}).toBe(4998);
+         |                                                                                                                                                          ^
+      53 |  const old=await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {count:p.candles.length,visible:p.candles.filter((c:any)=>c.t>=from&&c.t<to).length,versions:p.nativeCandleVersions.size()};},{id,from,to});
+      54 |  expect(old).toEqual({count:5000,visible:4998,versions:5000});
+      55 |  const nextFrom=from-10*86400000,nextTo=nextFrom+30*HOUR;
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:52:154
+
+    Error Context: test-results/native-candle-history-nati-f0702-ars-within-the5000barbudget/error-context.md
+
+  2 failed
+    tests/browser/native-candle-history.spec.ts:11:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads 
+    tests/browser/native-candle-history.spec.ts:40:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
