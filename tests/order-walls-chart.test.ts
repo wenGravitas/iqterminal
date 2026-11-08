@@ -1,7 +1,7 @@
 import { describe, expect, it,vi } from 'vitest';
 import type { PrimitiveRenderContext } from 'openalgo-charts';
 import { DEFAULT_ORDER_WALLS_SETTINGS, resolveAutoOrderWallPriceWidth, type OrderWallSegment } from '../src/feed/order-walls';
-import { OrderWallsPrimitive, orderWallsFitRange } from '../src/chart/order-walls';
+import { OrderWallsPrimitive, orderWallsFitRange, wallProjectionMappingKey } from '../src/chart/order-walls';
 
 const LEGACY_ORDER_WALLS_SETTINGS={...DEFAULT_ORDER_WALLS_SETTINGS,mode:'threshold' as const,aggregation:'auto' as const,thicknessPx:2};
 const base = 1_704_067_200_000;
@@ -536,4 +536,45 @@ it('unchanged settings reconciliation retains closed geometry, references and pa
  // cannot hide an edited opacity or any other canonical flat setting.
  p.setSettings({...settings,opacity:.2});expect(p.diagnostics().inputRevision).toBe(before.inputRevision+1);
  p.draw(canvas(),context());expect(p.diagnostics().rebuilds).toBe(before.rebuilds+1);
+});
+
+
+describe('visible wall time-mapping identity',()=>{
+ function axis(times:number[],offset=0){
+  const rc=context(),range={from:offset,to:offset+2};
+  const at=(index:number)=>{const logical=index-offset,i=Math.max(0,Math.min(times.length-2,Math.floor(logical)));return times[i]!+(logical-i)*(times[i+1]!-times[i]!);};
+  Object.assign(rc.timeScale,{visibleRange:()=>range,indexToX:(index:number)=>50+(index-range.from)*100,xToIndex:(x:number)=>range.from+(x-50)/100});
+  Object.assign(rc.dataLayer,{length:times.length,baseIndex:times.length-1+offset,indexToTime:(index:number)=>times[index-offset],indexToTimeFloat:at,timeToIndexFloat:(t:number)=>{let i=0;while(i<times.length-2&&times[i+1]!<t)i++;return offset+i+(t-times[i]!)/(times[i+1]!-times[i]!);}});
+  return rc;
+ }
+ const times=[base/1000,base/1000+60,base/1000+120];
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const};
+ const wall:OrderWallSegment={id:'visible-mapping',epoch:1,side:'bid',price:100,start:base+30000,end:base+90000,peakUsd:1000,meanUsd:1000,durationMs:60000,percentile:null,scopePartial:false,startKnown:true,archiveEntryId:'closed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base+30000,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true};
+ const status={state:'live' as const,tickSize:.1,lastConfirmedAt:base+120000};
+ it('retains exact visible knots through integer axis padding and outside-tail growth',()=>{
+  const original=axis(times),padded=axis([...times,base/1000+1000],4);
+  expect(wallProjectionMappingKey(padded)).toBe(wallProjectionMappingKey(original));
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);const initial:CapturedPath[]=[];p.draw(canvas([],initial),original);const before=p.diagnostics();
+  const reused:CapturedPath[]=[];p.draw(canvas([],reused),padded);const after=p.diagnostics();
+  expect(reused).toEqual(initial);expect(after.rebuilds).toBe(before.rebuilds);expect(after.patchProjects).toBe(before.patchProjects);expect(after.referenceRebuilds).toBe(before.referenceRebuilds);
+  const fresh=new OrderWallsPrimitive(settings,60000),expected:CapturedPath[]=[];fresh.setSnapshot([wall],status);fresh.draw(canvas([],expected),padded);expect(reused).toEqual(expected);
+  expect(p.orderWallAt(150,100)?.at).toBe(base+60000);
+ });
+ it('invalidates an interior timestamp correction with unchanged length and endpoints',()=>{
+  const original=axis(times),corrected=axis([times[0]!,times[1]!+30,times[2]!]);expect(wallProjectionMappingKey(corrected)).not.toBe(wallProjectionMappingKey(original));
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);const initial:CapturedPath[]=[];p.draw(canvas([],initial),original);const before=p.diagnostics();
+  const changed:CapturedPath[]=[];p.draw(canvas([],changed),corrected);expect(p.diagnostics().rebuilds).toBe(before.rebuilds+1);expect(changed).not.toEqual(initial);
+  const fresh=new OrderWallsPrimitive(settings,60000),expected:CapturedPath[]=[];fresh.setSnapshot([wall],status);fresh.draw(canvas([],expected),corrected);expect(changed).toEqual(expected);
+ });
+ it('captures future whitespace changes and fractional viewport boundaries',()=>{
+  const a=axis(times),b=axis([...times,base/1000+300]);Object.assign(a.timeScale,{visibleRange:()=>({from:.25,to:3.25})});Object.assign(b.timeScale,{visibleRange:()=>({from:.25,to:3.25})});
+  expect(wallProjectionMappingKey(a)).not.toBe(wallProjectionMappingKey(b));
+  const shifted=axis(times,10);Object.assign(shifted.timeScale,{visibleRange:()=>({from:10.25,to:13.25}),indexToX:(i:number)=>50+(i-10)*100});expect(wallProjectionMappingKey(a)).toBe(wallProjectionMappingKey(shifted));
+ });
+ it('bounds mapping probes and disables reuse when a complete proof is unavailable',()=>{
+  const rc=axis(times);let calls=0;Object.assign(rc.timeScale,{visibleRange:()=>({from:0,to:5000})});Object.assign(rc.dataLayer,{indexToTimeFloat:()=>{calls++;return base/1000;}});
+  expect(wallProjectionMappingKey(rc)).toBeUndefined();expect(calls).toBe(0);
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);p.draw(canvas(),rc);p.draw(canvas(),rc);expect(p.diagnostics().mappingFallbacks).toBe(2);expect(p.diagnostics().rebuilds).toBe(2);
+  Object.assign(rc.timeScale,{visibleRange:()=>({from:0,to:2})});Object.assign(rc.dataLayer,{indexToTimeFloat:()=>NaN});expect(wallProjectionMappingKey(rc)).toBeUndefined();
+ });
 });

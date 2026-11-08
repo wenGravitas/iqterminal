@@ -15,6 +15,18 @@ export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:n
   return Number.isFinite(logical)?logical:null;
 }
 
+/** Exact knots of the public piecewise-linear time mapping, relative to the
+ * visible origin. Axis padding/tail changes outside these knots do not move
+ * visible geometry. Keep work bounded; an unprovable mapping disables reuse. */
+export function wallProjectionMappingKey(rc:PrimitiveRenderContext):string|undefined {
+  const range=rc.timeScale.visibleRange(),lo=Math.floor(range.from),hi=Math.ceil(range.to);
+  if(!Number.isSafeInteger(lo)||!Number.isSafeInteger(hi)||!(range.to>range.from)||hi-lo>4096)return;
+  const values=[range.to-range.from,rc.timeScale.indexToX(range.from),rc.timeScale.indexToX(range.to)];
+  for(let index=lo;index<=hi;index++)values.push(index-range.from,rc.dataLayer.indexToTimeFloat(index));
+  if(values.some(value=>!Number.isFinite(value)))return;
+  return values.join(':');
+}
+
 export class OrderWallsPrimitive implements IPrimitive {
   private host?:PrimitiveHost;
   private settings:OrderWallsSettings;
@@ -46,7 +58,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private inputRevision=0;
   private paintedRevision=-1;
   private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
-  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,settingsNoops:0};
+  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,settingsNoops:0,mappingChecks:0,mappingFallbacks:0};
   private durations:number[]=[];
 
   constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true){this.settings={...settings};this.intervalMs=intervalMs;}
@@ -160,8 +172,11 @@ export class OrderWallsPrimitive implements IPrimitive {
     // Primitive hit inputs are plot-local CSS pixels, like indexToX/projected lines.
     // Only drawing coordinates are multiplied by DPR.
     this.timeAtX=x=>rc.dataLayer.indexToTimeFloat(rc.timeScale.xToIndex(x))*1000;
-    const key=[this.version,this.intervalMs,range.from,range.to,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,
-      rc.dataLayer.length,rc.dataLayer.indexToTime(0),rc.dataLayer.indexToTime(rc.dataLayer.baseIndex),this.width()].join(':');
+    this.stats.mappingChecks++;
+    const mapping=wallProjectionMappingKey(rc);
+    if(mapping===undefined)this.stats.mappingFallbacks++;
+    const axis=mapping??`unproven:${this.stats.mappingChecks}`;
+    const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,this.width(),axis].join(':');
     if(key!==this.transformKey){if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
     const projectionStarted=performance.now();
     if(this.dirty.size){
