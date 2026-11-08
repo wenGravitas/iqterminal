@@ -657,6 +657,12 @@ export class OrderWallsArchiveService {
     const presentation=bytes>this.compactPreparedAboveBytes?wallCompactPresentation(result.segments,result.presentation!):wallHistoryPresentation(result.segments,result.preparedPresentationComplete?result.presentation:undefined);
     if(!presentation||presentation.size!==count.retainedSegments){this.stats.warmInvalidMisses++;return;}
     if(bytes<=this.compactPreparedAboveBytes){this.admitWarm(key,result.status,count.valueRuns,count.retainedSegments,bytes,presentation,undefined,signature);return;}
+    this.enqueueWarmBuild(key,result.status,signature,presentation,count);
+  }
+
+  /** Separate scope prevents the asynchronous encoder from retaining the
+   * completed loader result/projector through a shared closure environment. */
+  private enqueueWarmBuild(key:string,status:OrderWallStatus,signature:string|undefined,presentation:ReadonlyMap<string,OrderWallSegment>,count:{valueRuns:number;retainedSegments:number}){
     // Two retained inputs at most, one encoder at a time. Neither visible
     // network scheduling nor fresh history publication waits for this work.
     if(this.warmBuilds.size>=2){this.stats.warmCapacityMisses++;return;}
@@ -664,8 +670,8 @@ export class OrderWallsArchiveService {
     const work=this.warmBuildTail.then(async()=>{
       build.abort.signal.throwIfAborted();buildAt=performance.now();const compact=await compactWallPresentation(key,[...presentation.values()],build.abort.signal);
       build.abort.signal.throwIfAborted();if(this.disposed)return;
-      if(new TextEncoder().encode(JSON.stringify([result.status,signature])).byteLength*2+4096>256*1024)throw Error('Compact wall status capacity');
-      this.admitWarm(key,result.status,count.valueRuns,count.retainedSegments,compact.retainedBytes+256*1024,undefined,compact,signature);this.stats.warmCompactBuilds++;built=true;
+      if(new TextEncoder().encode(JSON.stringify([status,signature])).byteLength*2+4096>256*1024)throw Error('Compact wall status capacity');
+      this.admitWarm(key,status,count.valueRuns,count.retainedSegments,compact.retainedBytes+256*1024,undefined,compact,signature);this.stats.warmCompactBuilds++;built=true;
     }).catch(()=>{if(!build.abort.signal.aborted){this.stats.warmBuildFailures++;this.stats.warmCapacityMisses++;}}).finally(()=>{this.warmBuilds.delete(build);const end=performance.now();this.recordWarmTiming({kind:'encode',identity:key,queueMs:(buildAt??end)-queuedAt,elapsedMs:buildAt===undefined?0:end-buildAt,segments:count.retainedSegments,runs:count.valueRuns,state:built?'ready':build.abort.signal.aborted?'cancelled':'failed'});});
     this.warmBuildTail=work;
   }
