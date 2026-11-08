@@ -3,7 +3,7 @@ import { twoChartWorkspaceState } from './tests/browser/workspace-state';
 
 const baseURL = 'http://127.0.0.1:4193';
 
-export default defineConfig({
+export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',
   testDir: './tests/browser',
   testMatch: ['connection-status.spec.ts', 'market-pulse.spec.ts', 'footer.spec.ts', 'theme.spec.ts'],
   workers: 1,

@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 const baseURL = 'http://127.0.0.1:4176';
 
-export default defineConfig({
+export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',
   testDir: './tests/browser',
   workers: 1,
   use: {

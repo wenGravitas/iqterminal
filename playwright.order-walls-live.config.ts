@@ -7,7 +7,7 @@ if (!enabled) {
 }
 
 const baseURL = process.env.IQTERMINAL_ORDER_WALLS_BASE_URL ?? 'http://127.0.0.1:5173';
-export default defineConfig({
+export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',
   testDir: './tools/profile',
   testMatch: '**/order-walls-live-probe.playwright.ts',
   workers: 1,
