@@ -47,6 +47,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private paintCounts={historical:0,current:0};
   private inputRevision=0;
   private paintedRevision=-1;
+  private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
   readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,lastProjectionTimeTransforms:0,lastProjectionTimeCacheHits:0,lastProjectionPriceTransforms:0,projectionCachePeak:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0};
   private durations:number[]=[];
 
@@ -97,7 +98,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(extent){this.countReference(extent.min,-1);this.countReference(extent.max,-1);this.referenceExtents.delete(id);}
   }
   private clearEmptyProjection(){
-    this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
+    this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
     this.drawable.clear();this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.clearReference();this.referenceDirty=true;
     this.stats.referenceSegments=0;this.stats.referenceValueScans=0;this.stats.segments=0;this.stats.visible=0;this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
   }
@@ -229,6 +230,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
     this.paintedRevision=this.inputRevision;
+    this.paintedViewport={fromMs:frame.from,toMs:frame.to,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
     this.stats.lastPaintMs=performance.now()-paintStarted;
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
   }
@@ -363,7 +365,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }
