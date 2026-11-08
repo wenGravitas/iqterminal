@@ -12,7 +12,7 @@ export interface NativeCandleViewProgress {
  cachedSlots?:number;
  unloaded:Array<{from:number;to:number;reason:'not-returned'|'capacity'}>;unloadedTruncated:boolean;
 }
-interface View {trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;presented:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
+interface View {leases:Array<()=>void>;trace:string;cached?:NativeCandleViewProgress;from:number;to:number;loadFrom:number;key:string;known:Set<number>;received:Set<number>;presented:Set<number>;abort:AbortController;busy:boolean;error?:string;attempted:boolean}
 interface Page {candles:Candle[];version:NativeCandleVersion;at:number}
 /** Exact native OHLC only, via the existing collector API. An optional bounded
  * presentation cache is independently revalidated; chart retention stays5000.
@@ -42,9 +42,10 @@ export class NativeCandleHistory {
    }
    return;
   }
-  old?.abort.abort();
-  const view:View={trace:historyViewId(),from,to,loadFrom,key,known,received:new Set(),presented:new Set(),abort:new AbortController(),busy:false,attempted:false};
+  old?.abort.abort();for(const release of old?.leases??[])release();
+  const view:View={leases:[],trace:historyViewId(),from,to,loadFrom,key,known,received:new Set(),presented:new Set(),abort:new AbortController(),busy:false,attempted:false};
   this.views.set(id,view);
+  for(let end=to;end>loadFrom;){const start=Math.max(loadFrom,end-1000*step),release=this.options.presentation?.retain(this.presentationKey(start,end));if(release)view.leases.push(release);end=start;}
   const native=this.options.nativeBars?.()??[];
   if(this.online)for(let end=to;end>loadFrom;){const start=Math.max(loadFrom,end-1000*step),key=this.presentationKey(start,end),owned=native.filter(c=>c.closed===true&&c.t%step===0&&c.t>=start&&c.t<end);
    for(const bar of owned)view.known.add(bar.t);this.options.presentation?.seed(key,owned);
@@ -119,7 +120,7 @@ export class NativeCandleHistory {
   for(const [id,v]of this.views){v.abort.abort();const next={...v,cached:undefined,known:new Set(v.known),received:new Set(v.received),presented:new Set(v.presented),abort:new AbortController(),busy:false,error:undefined};this.views.set(id,next);if(online)void this.load(id,next);}
   this.options.changed();
  }
- release(id:string){this.views.get(id)?.abort.abort();this.views.delete(id);}
+ release(id:string){const view=this.views.get(id);view?.abort.abort();for(const release of view?.leases??[])release();this.views.delete(id);}
  dispose(){this.dead=true;for(const id of this.views.keys())this.release(id);}
  diagnostics(){return {...this.metrics,retainedOHLC:0,views:this.views.size,busy:[...this.views.values()].filter(v=>v.busy).length,retainedTimes:[...this.views.values()].reduce((n,v)=>n+new Set([...v.known,...v.received]).size,0)};}
 }

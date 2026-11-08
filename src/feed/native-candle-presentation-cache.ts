@@ -4,10 +4,20 @@ interface Entry {bars:Candle[];bytes:number;expires:number}
  * validate every cached slot; this cache owns no stream sequence or live cursor. */
 export class NativeCandlePresentationCache {
  private entries=new Map<string,Entry>();private rows=0;private bytes=0;
+ private leases=new Map<string,Set<symbol>>();private activeLeases=0;
  readonly metrics={hits:0,admissions:0,capacityMisses:0};
  constructor(private clock=()=>performance.now()){}
  private drop(key:string){const entry=this.entries.get(key);if(entry){this.rows-=entry.bars.length;this.bytes-=entry.bytes;this.entries.delete(key);}}
- expire(){for(const [key,entry]of this.entries)if(entry.expires<=this.clock())this.drop(key);}
+ expire(){const now=this.clock();for(const [key,entry]of this.entries)if(!this.leases.has(key)&&entry.expires<=now)this.drop(key);}
+ /** Only key/token metadata is retained: even active entries remain evictable
+  * within the existing row/byte caps. Final release starts the idle TTL. */
+ retain(key:string){
+  if(key.length>512||this.activeLeases>=128){this.metrics.capacityMisses++;return ()=>{};}
+  const token=Symbol(),owners=this.leases.get(key)??new Set<symbol>();owners.add(token);this.leases.set(key,owners);this.activeLeases++;
+  return ()=>{const current=this.leases.get(key);if(!current?.delete(token))return;this.activeLeases--;
+   if(!current.size){this.leases.delete(key);const entry=this.entries.get(key);if(entry)entry.expires=this.clock()+60000;}
+  };
+ }
  read(key:string){
   this.expire();const entry=this.entries.get(key);if(!entry)return;
   this.entries.delete(key);this.entries.set(key,entry);this.metrics.hits++;
@@ -37,6 +47,6 @@ export class NativeCandlePresentationCache {
   const revised=this.entries.get(key);if(revised&&expires!==undefined)revised.expires=expires;
  }
 
- clear(){this.entries.clear();this.rows=0;this.bytes=0;}
- diagnostics(){this.expire();return {...this.metrics,entries:this.entries.size,rows:this.rows,accountedBytes:this.bytes,limits:{entries:2,rows:1000,accountedBytes:1024*1024,ttlMs:60000}};}
+ clear(){this.entries.clear();this.leases.clear();this.activeLeases=0;this.rows=0;this.bytes=0;}
+ diagnostics(){this.expire();return {...this.metrics,entries:this.entries.size,rows:this.rows,accountedBytes:this.bytes,activeLeases:this.activeLeases,retainedKeys:this.leases.size,limits:{entries:2,rows:1000,accountedBytes:1024*1024,ttlMs:60000,activeLeases:128}};}
 }

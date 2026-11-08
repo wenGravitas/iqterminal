@@ -16,3 +16,15 @@ test('authoritative corrections update cached values without prolonging other sl
  const corrected={...rows(1)[0],quoteVolume:9,revision:2};cache.seed('view',[corrected]);expect((cache.read('view')![0] as any).quoteVolume).toBe(9);
  now=60000;expect(cache.read('view')).toBeUndefined();
 });
+test('active exact views keep bounded presentation until release, then idle TTL applies without read renewal',()=>{
+ let now=0;const cache=new NativeCandlePresentationCache(()=>now),release=cache.retain('view'),peer=cache.retain('view');cache.put('view',rows(360));
+ now=120000;cache.expire();expect(cache.read('view')).toHaveLength(360);release();now=180000;expect(cache.read('view')).toHaveLength(360);
+ peer();now=239999;expect(cache.read('view')).toHaveLength(360);now=240000;expect(cache.read('view')).toBeUndefined();
+ expect(cache.diagnostics()).toMatchObject({entries:0,rows:0,activeLeases:0,retainedKeys:0});
+});
+test('active leases cannot bypass row caps or retain evicted data, and stale release after clear is harmless',()=>{
+ let now=0;const cache=new NativeCandlePresentationCache(()=>now),old=cache.retain('a');cache.put('a',rows(700));cache.put('b',rows(700));now=120000;
+ expect(cache.read('a')).toBeUndefined();expect(cache.diagnostics().rows).toBe(0);cache.clear();const current=cache.retain('a');cache.put('a',rows(5));old();
+ now=240000;expect(cache.read('a')).toHaveLength(5);current();now+=60000;expect(cache.read('a')).toBeUndefined();
+ const releases=Array.from({length:129},(_,i)=>cache.retain('key'+i));expect(cache.diagnostics()).toMatchObject({activeLeases:128,retainedKeys:128});releases.forEach(release=>release());expect(cache.diagnostics().activeLeases).toBe(0);
+});
