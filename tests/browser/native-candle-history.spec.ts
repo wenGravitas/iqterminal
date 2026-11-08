@@ -28,6 +28,7 @@ test('native30hpricecontext paints before bootstrap and retains current volume a
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
   const pre=await page.evaluate(({id,from})=>{const p=(window as any).__terminal.panels.get(id);return {status:p.status,first:p.candles.find((c:any)=>c.t===from)};},{id,from});
   expect(pre.status.nativeHistory).toMatchObject({state:'loading',viewport:{state:'ready',loadedSlots:360,requestedSlots:360}});expect(pre.first).toMatchObject({c:80040,quoteVolume:160080});
+  await expect(page.locator('.candle-panel').first()).toContainText('Candle history loading · 360 bars displayed');
   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
   await page.screenshot({path:'artifacts/pi-history-r1/native-visible-r1/native30h-before-bootstrap.png'});
   await page.workers()[0].evaluate(()=>{(globalThis as any).__stagingNativeFixture.emitCandles=true;});

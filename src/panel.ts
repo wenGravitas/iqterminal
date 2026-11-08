@@ -5900,7 +5900,8 @@ export class CandlePanel implements IContentRenderer {
       : status.state === 'loading' ? 'Connecting live data…' : quoteUnavailable ? quoteHint : '';
     const totalsLive = !isFootprint && this.nativeIndicator(FOOTPRINT_TOTALS_ID)?.visible ? this.footprintStatus.state === 'loading' ? 'Connecting live totals…' : ['failed','stale'].includes(this.footprintStatus.state) ? 'Live totals unavailable' : '' : '';
     const nativeHistory = !isFootprint ? this.status.nativeHistory : undefined;
-    const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${nativeHistory.loadedBars} bar${nativeHistory.loadedBars===1?'':'s'} displayed` : '';
+    const displayedNativeBars=this.nativeCandleDataEpoch===this.selectionEpoch?this.candles.length:0;
+    const nativeHistoryText = nativeHistory?.error ? `Candle history incomplete · ${nativeHistory.error}` : nativeHistory?.state === 'loading' ? `Candle history loading · ${displayedNativeBars} bar${displayedNativeBars===1?'':'s'} displayed` : '';
     const nativeView=nativeHistory?.viewport;
     const nativeRange=nativeView?`${new Date(nativeView.from).toISOString().slice(5,16).replace('T',' ')}–${new Date(nativeView.to).toISOString().slice(5,16).replace('T',' ')} UTC`:'';
     const nativeViewText=nativeView?`Native prices ${nativeView.state==='ready'?'loaded':nativeView.state==='capacity-limited'?'capacity limited':nativeView.state} · ${nativeView.loadedSlots}/${nativeView.requestedSlots} closed bars · ${nativeRange}${nativeView.error?` · ${nativeView.error}`:''}`:'';
