@@ -104,7 +104,7 @@ export class StagingFeedService {
       old?.abort?.abort();
       g.views.set(c.id, { from, to, candidateFrom, key: viewKey, analysisEnabled, analysisLookback });
       this.status(g, g.lastStatus?.state ?? 'loading', 'Staging · loading visible footprints');
-      void this.loadViewport(g, c.id);
+      void this.loadViewport(g, c.id,'viewport');
     } else if (c.type === 'unsubscribe' || c.type === 'footprint-unsubscribe') this.unsubscribe(c.id);
     else if (c.type === 'footprint-ack') {
       const g = this.groups.get(c.key);
@@ -119,7 +119,7 @@ export class StagingFeedService {
       const historyOnly=this.usePrepared&&groups.some(g=>failedViews(g).length>0);
       for(const g of groups){
         const failed=this.usePrepared?failedViews(g):[];
-        if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id);}continue;}
+        if(failed.length){for(const [id,v] of failed){v.retryAt=0;v.error=undefined;v.loaded=false;v.retryRequested=true;void this.loadViewport(g,id,'retry');}continue;}
         if(historyOnly)continue;
         if(g.native){
           if(c.id&&g.native.history?.progress(c.id)?.retryable){g.native.history.retry(c.id);if(!g.native.error)continue;}
@@ -144,6 +144,7 @@ export class StagingFeedService {
     if (!g) return;g.native?.history?.release(id);g.views.get(id)?.abort?.abort();g.views.delete(id);g.ids.delete(id);
     if (!g.ids.size) {g.native?.history?.dispose();for(const v of g.views.values())v.abort?.abort();g.abort?.abort(); g.historyAbort?.abort(); g.ws?.close(); g.accumulator?.dispose(); this.groups.delete(g.key); }
   }
+  private readonly historyLoadAttempts:Array<{at:number;cause:string;consumer:string;generation:number;from:number;to:number;viewKey:string;previousProgressId?:string;loaded:boolean;validated:boolean}>=[];
   private refresh() {
     this.nativePresentation.expire();
     for (const g of this.groups.values()) {
@@ -154,7 +155,7 @@ export class StagingFeedService {
         if(!g.native.ready&&!g.busy&&this.now()>=g.native.retryAt)void this.load(g);
         if(g.ws&&g.native.receivedAt!==undefined&&this.now()-g.native.receivedAt>15000)this.nativeStatus(g);
       }
-      if(this.online&&this.usePrepared)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=(v.retryAt??0))void this.loadViewport(g,id);
+      if(this.online&&this.usePrepared)for(const [id,v] of g.views)if((!v.loaded||this.now()-(v.validatedAt??0)>30000)&&!v.busy&&this.now()>=(v.retryAt??0))void this.loadViewport(g,id,'refresh');
       if (this.online && g.history && g.history.next > g.history.target && !g.historyBusy && !g.historyError && g.cursor !== undefined) void this.loadOlder(g);
     }
   }
@@ -413,9 +414,10 @@ export class StagingFeedService {
       this.status(g, g.bars.length || g.candles.length ? 'stale' : 'failed', `Staging unavailable · ${error instanceof Error ? error.message : 'request failed'} · retrying; Retry available`);
     } finally { clearTimeout(timeout); g.busy = false; g.abort = undefined; }
   }
-  private async loadViewport(g: Group, id: string) {
+  private async loadViewport(g: Group, id: string,cause='unspecified') {
     const view = g.views.get(id);
     if (!view || view.busy || !this.online) return;
+    if(import.meta.env.VITE_DIAGNOSTICS==='1'){this.historyLoadAttempts.push({at:performance.now(),cause,consumer:id,generation:g.generation,from:view.from,to:view.to,viewKey:view.key,previousProgressId:view.progress?.viewId,loaded:view.loaded===true,validated:view.validatedAt!==undefined});if(this.historyLoadAttempts.length>16)this.historyLoadAttempts.shift();}
     view.busy = true; view.abort = new AbortController();
     const retry = view.retryRequested === true; view.retryRequested = false;
     const requestLiveVersion = g.streamRevision;
@@ -585,7 +587,7 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return { nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...g.views.values()].map(v=>({key:g.key,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
   dispose() { this.nativePresentation.clear();this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
