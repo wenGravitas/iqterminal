@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: headless and default launches do not access the desktop
+ok 1 - headless and default launches do not access the desktop
+  ---
+  duration_ms: 1.833567
+  type: 'test'
+  ...
+# Subtest: visible launches are blocked even with the former workspace override
+ok 2 - visible launches are blocked even with the former workspace override
+  ---
+  duration_ms: 1.34887
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 255.169685
