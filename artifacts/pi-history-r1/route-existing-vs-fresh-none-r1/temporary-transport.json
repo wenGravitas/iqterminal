@@ -1,0 +1,29 @@
+{
+  "pid": 701105,
+  "args": [
+    "-N",
+    "-T",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ExitOnForwardFailure=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "-o",
+    "ServerAliveInterval=15",
+    "-o",
+    "ServerAliveCountMax=3",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ControlPath=none",
+    "-o",
+    "Compression=no",
+    "-o",
+    "IPQoS=none",
+    "-L",
+    "127.0.0.1:18880:127.0.0.1:18780",
+    "staging"
+  ],
+  "scope": "Isolated diagnostic only. Fresh TCP lifetime and IPQoS differ from existing route; this pilot cannot attribute a difference solely to QoS. No persistent SSH settings, collectors or exchange connections changed."
+}

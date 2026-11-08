@@ -6,8 +6,8 @@ The active goal remains implementation and validation of the full release.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Current application build: `9586faf3bf1a6e6fc5e6d75a0ab1f06a060fbc0a` (unchanged wall settings no longer invalidate geometry). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application, not9586faf; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
-- Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` also forces standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
+- Current application build: `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
+- Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` force standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
 - Staging API now serves `e122f9d8d3995d5b6b907a1519cd6b2f639fa751` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not the current API. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix remains included in current serving.
 - Normal two-SSH route: current18781, historical18780; Vite preview4185. The follow-up proxy allows2native and2bulk lanes under a shared3active-request cap, with a separate current reserve. The earlier loading/health cohort used the old4aggregate proxy; it is not relabelled as a measurement of the new cap.
@@ -397,7 +397,7 @@ failures remain raw evidence; no shortened range or extra timeout converts them
 to release success. CPU profiling is a separate diagnostic, excluded from timing
 acceptance. No heap-plateau or natural peak-memory claim is made.
 
-## Latest candidate9586faf: unchanged-settings invalidation
+## Earlier candidate9586faf: unchanged-settings invalidation
 
 Equivalent canonical wall settings now return without invalidating geometry or
 reference state. Changed settings and interval changes retain their prior path.
@@ -428,3 +428,86 @@ Current-release first-current,24h/4h footprint latency, USD-M warm, concurrent
 healthy-live confirmation continuity, default wall rollover/preparation, repeated
 interaction heap plateau and normal foreground Pi UX still need their remaining
 work/validation. Earlier scoped passes keep their original build identities.
+
+## Visible mapping and identical-revision handoff (sourceaac09cf/eddec07)
+
+The current local preview now serves buildb1bb790589f14542c479e9e922122571451a5ca9;
+API remains e122f9d. Earlier five-run measurements keep their actual build IDs.
+Full frontend1,211tests pass/2skip,70focused archive/projection,35chart mapping,
+6real Vite/proxy/target tests, typecheck and identified build pass. No backend,
+collector or production deployment occurred in this continuation.
+
+Visible wall geometry now survives exact equivalent time mappings when native
+axis padding or off-view prices arrive. Real captured Spot/USD-M walls, actual
+OpenAlgo DataLayer and five alternating offline rounds pass80paired stages with
+identical financial fields/pixels. Outside-tail/padding median draw calls drop
+from209..1086ms to0.2..0.3ms. Initial/corrected/panned views still rebuild; those
+cases remain expensive. Source timestamps are not rounded. Oversized/unproved
+mappings rebuild conservatively. Offline orchestrator memory (~872MiB) and host
+swap are recorded; this is not app heap or foreground loading acceptance.
+
+A separate actual-route trace identifies another final rebuild caused solely
+by a new presentation snapshot after cache revalidation. The worker now hashes
+the complete validated selected manifest (parts, active checkpoint, coordinate
+mapping, profile/coverage and source identity). Only a fully replayed cached view
+with the same fingerprint survives as status-only publication. The fresh projector
+and transport cursor still become authoritative. Changed/unavailable/unproved
+revisions retain replacement/error behavior; late subscribers get full shared
+snapshots. Tests cover changed metadata with an unchanged source token, stalled
+replay, late callbacks/subscribers, and unavailable coverage. No cache caps grow.
+
+Five headless Spot reopens on build74beebcc70a295c07a3d2ee2c2fd5d3649ccc32f show
+useful paint571.3,302.6,431.0,298.6,286.8ms (median302.6,max571.3): useful-display
+subgate passes. Fresh complete paint is5323.2,5547.0,8077.4,5562.5,unobserved
+within12s. Therefore no five-run complete-paint median/max is reported. Four
+full warm hashes match8,293walls/49,154runs/referencecf9d17a2...afd944e; the fifth
+warm hash was not captured. Source-validation reuse counters advance1in every
+run by finalization, but two source transport traces report aborts after200headers;
+retain these distinct observations rather than rewriting network completion.
+The fifth screenshot shows recovered history status after the timing loop, but
+no complete-paint timestamp is invented. Cold setup62.09/30.07/51.38/27.53/39.33s
+remains failed loading evidence. Long-task/interaction gates remain unfinished.
+
+Latestb1bb single functional smoke matches the exact cold reference; warm useful
+paint394.9ms is observed but fresh warm completion/hash is absent at12s. This is
+not a replacement five-run acceptance cohort. Raw paths: visible-mapping-*,
+warm-route-mapping*, warm-route-handoff74b-e122-spot-r1, warm-route-finalb1bb-e122-smoke
+and history-followups-r1 under artifacts/pi-history-r1/.
+
+## Route diagnosis and isolated history transport
+
+One immutable Spot batch has640,872compressed body bytes,4,745,124decoded transport
+bytes and22canonical parts. Every complete route sample validates all original
+part hashes. Body replies report0SQL queries/rows/bytes. The old persistent tunnel
+pilot times out at45s; a fresh QoS-disabled pilot completes at11.19s. That pilot
+confounds connection age and QoS, so it is not causal proof.
+
+Five fresh TCP SSH connections per variant then alternate order per round:
+
+| History QoS | All5batch receipt samples(ms) | Median | Maximum |
+| --- | --- | --- | --- |
+|inherited lowdelay/throughput|44859.9,18230.9,41404.3,37274.8,35045.2|37274.8|44859.9|
+|none|22919.8,21839.2,31388.9,21366.7,18096.1|21839.2|31388.9|
+
+All10body hashes and original canonical parts match. This is one batch, not30h
+chart paint or a loading/current-continuity gate. Both variants remain too slow.
+Direct Tailscale pings record1.028/1.374/1.417s; local SSH RTT/retransmit/out-of-order
+snapshots are retained without claiming a network cause or deriving server-side
+throughput from client sender statistics. Existing18780/18781tunnels were not
+restarted. All temporary18880listeners/processes terminate in the raw receipts.
+
+The future tunnel script applies IPQoS=none to history only; the current lane
+keeps its inherited setting. Compression stays disabled and transports remain
+independent. A new optional VITE_HISTORY_API_URL loopback origin allows isolated
+Vite history-route validation while current/stream routes remain18781. External,
+credentialled, path/query/hash targets are rejected. Six actual Vite/private-target/
+reserved-current/cancellation tests pass. No socket/admission cap is raised.
+Current preview4185 still uses the original running history tunnel; none of the
+74/b1bbcohorts is relabelled as using the new route setting. Raw paired evidence:
+route-fresh-default-none-r1; pilot:route-existing-vs-fresh-none-r1.
+
+A final read-only check matches all7protected collector/background/admission
+container IDs/start times to the e122API-only rollout receipt, with every container
+running. API health returns200/build e122after the tests. All temporary18880tunnels
+are closed; the original SSH processes remain alive. Final i3 inventory finds0
+visible test windows. Exact identities/checksums are in history-followups-r1/.

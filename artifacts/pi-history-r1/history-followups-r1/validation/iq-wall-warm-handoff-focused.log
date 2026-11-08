@@ -1,0 +1,29 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (18 tests | 2 failed) 4418ms
+   × shared service joins and Retry retain the prepared presentation until the full replacement validates 1167ms
+   × prepared completion preserves already painted segments and a late join still receives a full snapshot 1056ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > shared service joins and Retry retain the prepared presentation until the full replacement validates
+AssertionError: Target cannot be null or undefined.
+ ❯ tests/prepared-wall-projection.test.ts:113:181
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > prepared completion preserves already painted segments and a late join still receives a full snapshot
+AssertionError: Target cannot be null or undefined.
+ ❯ tests/prepared-wall-projection.test.ts:126:183
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 64 passed (66)
+   Start at  18:04:59
+   Duration  6.22s (tests 83%, transform 14%, import 2%)
+

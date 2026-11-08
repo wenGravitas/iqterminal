@@ -2618,3 +2618,103 @@ without proving an overall latency win. The earlier sequential42c69a6cohort is
 not a matched causal timing control. All samples, exact hashes, native validation,
 request/resource traces and screenshots remain in warm-route-noop958-e122-spot-r1.
 No threshold, source range, financial row or failed sample has been removed.
+
+### Visible time-mapping reuse: aac09cf
+
+The old wall geometry key includes the complete DataLayer length/first/last time
+and absolute logical viewport indices. A current price append outside a historical
+viewport, or an older padding candle that shifts logical indices, therefore
+invalidates every retained closed wall even when the visible pixel/time mapping
+is unchanged. This is separate from equal-settings invalidation.
+
+The new key describes all integer interpolation knots spanning the visible
+fractional range, relative to its logical origin, plus the index-to-x endpoints.
+It uses the existing public OpenAlgo piecewise-linear mapping without timestamp
+rounding, approximate hashes, private version fields or source-data changes.
+Price bounds, viewport dimensions, DPR, row width, interval and real settings
+changes still invalidate geometry. Interior timestamp corrections, gaps and
+changed future-whitespace interpolation invalidate even if axis endpoints and
+length stay equal (which the old key could miss). At most4,097knots are compared;
+unsafe/non-finite/oversized mappings conservatively rebuild instead of reusing
+unproved coordinates. This is a bounded comparison, not a history/bar limit.
+
+All35focused chart tests and typecheck pass. One actual-Pi headless comparison
+uses both original canonical wall datasets and actual OpenAlgo DataLayer objects
+on an explicit UTC time-axis fixture. Five alternating rounds per market cover
+initial, idle, outside-tail, prefix-padding, inside-correction, pan, restore and
+DPR2: all80paired stages preserve every source geometry field and every readback
+pixel. Maximum coordinate-only roundoff is2.274e-13CSS pixels, measured but never
+rounded into runtime source data. The old implementation is forced to fully
+project the interior-correction reference because its coarse key misses that case.
+
+Median synchronous draw-call times (ms), old9586faf/newaac09cf:
+
+| Captured market | Initial | Idle | Outside tail | Prefix padding | Correction | Pan | Restore | DPR2 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Spot|284.0/216.3|0.2/0.2|228.9/0.3|208.5/0.3|242.9/265.2|212.6/217.2|206.2/259.2|210.1/252.8|
+|USD-M|523.6/520.4|0.2/0.3|685.7/0.3|1086.4/0.2|622.1/737.1|500.3/491.4|522.5/527.4|508.8/519.4|
+
+All five raw samples, maxima, counters, pixels and canonical input hashes remain
+in visible-mapping-aac09cf-r1/summary.json/results.json. These prove retained work
+for equivalent mappings, not faster initial projection/correction/panning. Actual
+application loading, foreground UX, current continuity and interactive frame gates
+remain separate. Readback/hashing is outside the timed draw. Canvas2D uses the
+willReadFrequently hint; GLES configuration is not proof of GPU rasterization.
+The offline orchestrator holds build/data memory (~872MiB RSS observed); retained
+host swap was also substantial. Its timings are diagnostic, not release acceptance
+or an application heap plateau. No source, collector, serving or production change.
+
+### Identical selected revision: eddec07 / guard5e2b828
+
+Warm source revalidation previously rebuilt the entire presentation even when
+its data was identical: a real transform trace advances only the snapshot version
+on the final replacement. The cache now binds to SHA256 of the whole validated
+selected manifest, not just the canonical input token/active headers. Closed part
+hashes, coordinate ownership, active state, coverage and profile all participate.
+Only a completed cached replay with the same digest and row count emits an empty
+status patch after fresh source validation. The fresh projector/head remains the
+live continuity authority, and comparison references release replay arrays.
+Changed or unproved revisions still replace only after full validation; unavailable
+results retain good cached data and remain unvalidated. New late subscribers still
+receive full shared snapshots. No cache/data bound or financial source changes.
+
+Latest full1,211tests/2skips,70focused archive/projection,35chart and6proxy/target
+checks pass, plus typecheck and buildb1bb790589f14542c479e9e922122571451a5ca9.
+The actual five-run build74beebcc70a295c07a3d2ee2c2fd5d3649ccc32f yields useful
+Spot warm571.3,302.6,431.0,298.6,286.8ms. Fresh complete paint is5323.2,5547.0,
+8077.4,5562.5,unobservedwithin12s; no finite-subset completion median/max. Four
+warm hashes match the independent full8,293wall/49,154point reference. The fifth
+hash is absent; validation reuse advances1byfinalization in all5, but two source
+network traces say aborted after200headers despite successful application proof.
+These raw distinctions remain intact. The fifth final screenshot shows recovered
+history status, without a fabricated completion time. The latestb1bb one-run smoke
+has exact cold reference and395ms useful cached paint, but no observed fresh warm
+completion/hash at12s. No overall/current/foreground/heap acceptance is claimed.
+
+### Read-only route comparison and history-only QoS
+
+Three direct Tailscale pings take1.028,1.374,1.417s. A640,872byte compressed immutable
+Spot body (4,745,124decoded bytes/22parts) times out45s on the old tunnel; a fresh
+QoS-disabled pilot completes11.19s. To separate connection age, five fresh TCP
+connections per variant alternate order. Inherited QoS receipt samples are44.86,
+18.23,41.40,37.27,35.05s (median37.27,max44.86); disabled QoS samples are
+22.92,21.84,31.39,21.37,18.10s (median21.84,max31.39).
+All10bodies match and independently reconstruct original part hashes, with0SQL
+queries/rows/bytes. Every sample remains in route-fresh-default-none-r1. This is
+neither full chart/loading acceptance nor a network-cause/current-confirmation
+proof. All temporary SSH processes/listeners close; existing tunnels stay alive.
+
+The future history lane pins IPQoS=none based on these scoped observations; current
+traffic keeps its inherited setting. The new loopback-only VITE_HISTORY_API_URL
+permits isolated history transport tests without moving current/stream routes.
+It rejects external/credentialled/non-origin targets. Capacity, streaming and the
+private-access model remain unchanged. Actual current preview measurements still
+use the old running18780history/18781current transports; future settings do not
+retroactively change their identity. No collector, exchange or production action.
+
+Rollback is client-only: restore the previous build/script and unset the optional
+history-origin override. Geometry/fingerprint state is ephemeral; no schema, source,
+retention or persisted-data migration is required. Reverting the history QoS flag
+changes only the next owned history connection; do not restart healthy current
+sockets merely to retry a historical view. API rollback uses the exact prior image recorded in the
+e122 deployment receipt; this continuation performed no API/materializer rollout.

@@ -1,0 +1,149 @@
+{
+  "scope": "Explicit diagnostic with private primitive transform-key observation; not one of the five timing samples. Raw mapping keys are retained in observations.jsonl. Field0 version,1 interval,2..3 prices,4..5 plot size,6 DPR,7 row width,8 span,9..10 x endpoints,remaining relative-index/time knots.",
+  "changes": [
+    {
+      "elapsedMs": 743.6000000014901,
+      "rebuilds": 2,
+      "nativeCount": 360,
+      "segments": 28,
+      "rawAxis": {
+        "logical": {
+          "from": 5.684341886080802e-14,
+          "to": 360
+        },
+        "length": 360,
+        "first": 1793696400,
+        "last": 1793804100
+      },
+      "keyFields": 733,
+      "sameLengthAsPrevious": false,
+      "changedFields": [],
+      "changedFieldCount": 0
+    },
+    {
+      "elapsedMs": 2611.5,
+      "rebuilds": 3,
+      "nativeCount": 1360,
+      "segments": 6640,
+      "rawAxis": {
+        "logical": {
+          "from": 0,
+          "to": 359.00657894736844
+        },
+        "length": 1360,
+        "first": 1793696400,
+        "last": 1794149400
+      },
+      "keyFields": 733,
+      "sameLengthAsPrevious": true,
+      "changedFields": [
+        {
+          "field": 2,
+          "before": "75245.22",
+          "after": "75098.975"
+        },
+        {
+          "field": 3,
+          "before": "80156.82",
+          "after": "81473.025"
+        },
+        {
+          "field": 8,
+          "before": "359.99999999999994",
+          "after": "359.00657894736844"
+        },
+        {
+          "field": 9,
+          "before": "2.2737367544323206e-13",
+          "after": "-2.2737367544323206e-13"
+        },
+        {
+          "field": 11,
+          "before": "-5.684341886080802e-14",
+          "after": "0"
+        },
+        {
+          "field": 13,
+          "before": "0.9999999999999432",
+          "after": "1"
+        },
+        {
+          "field": 15,
+          "before": "1.9999999999999432",
+          "after": "2"
+        },
+        {
+          "field": 17,
+          "before": "2.999999999999943",
+          "after": "3"
+        },
+        {
+          "field": 19,
+          "before": "3.999999999999943",
+          "after": "4"
+        },
+        {
+          "field": 21,
+          "before": "4.999999999999943",
+          "after": "5"
+        },
+        {
+          "field": 23,
+          "before": "5.999999999999943",
+          "after": "6"
+        },
+        {
+          "field": 25,
+          "before": "6.999999999999943",
+          "after": "7"
+        },
+        {
+          "field": 27,
+          "before": "7.999999999999943",
+          "after": "8"
+        },
+        {
+          "field": 29,
+          "before": "8.999999999999943",
+          "after": "9"
+        },
+        {
+          "field": 31,
+          "before": "9.999999999999943",
+          "after": "10"
+        },
+        {
+          "field": 33,
+          "before": "10.999999999999943",
+          "after": "11"
+        }
+      ],
+      "changedFieldCount": 366
+    },
+    {
+      "elapsedMs": 7340.89999999851,
+      "rebuilds": 4,
+      "nativeCount": 1360,
+      "segments": 8293,
+      "rawAxis": {
+        "logical": {
+          "from": 0,
+          "to": 359.00657894736844
+        },
+        "length": 1360,
+        "first": 1793696400,
+        "last": 1794149400
+      },
+      "keyFields": 733,
+      "sameLengthAsPrevious": true,
+      "changedFields": [
+        {
+          "field": 0,
+          "before": "5",
+          "after": "6"
+        }
+      ],
+      "changedFieldCount": 1
+    }
+  ]
+}
