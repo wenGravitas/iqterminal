@@ -40,7 +40,10 @@ describe('Order Walls chart hit testing', () => {
     const segment:OrderWallSegment={id:'paint-version',epoch:1,side:'bid',price:100,start:base,end:base+120_000,peakUsd:10000,meanUsd:10000,durationMs:120000,percentile:99,scopePartial:false,startKnown:true,valueRuns:[],valueRunsTruncated:false,endReason:'removed',endKnown:true};
     primitive.setSnapshot([segment],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
     primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);expect(primitive.diagnostics().pendingProjectionSegments).toBe(0);
-    primitive.setStatus({...status,message:'Final source validation complete'});expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+    expect(primitive.diagnostics().paintedViewport).toMatchObject({fromMs:base,toMs:base+120000});
+    primitive.setStatus({...status,message:'Final source validation complete'});
+    // A pending status must not erase proof of historical content already drawn.
+    expect(primitive.diagnostics().paintedViewport).toMatchObject({fromMs:base,toMs:base+120000});expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
     primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);
     primitive.patch([{id:segment.id,segment:{...segment,peakUsd:20000}}],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
   });
