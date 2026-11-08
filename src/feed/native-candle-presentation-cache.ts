@@ -28,13 +28,15 @@ export class NativeCandlePresentationCache {
   while(this.entries.size>=2||this.rows+bars.length>1000||this.bytes+bytes>1024*1024)this.drop(this.entries.keys().next().value!);
   this.entries.set(key,{bars:bars.map(bar=>Object.freeze({...bar})),bytes,expires:this.clock()+60000});this.rows+=bars.length;this.bytes+=bytes;this.metrics.admissions++;
  }
- /** Reconcile only an existing presentation entry; partial current reads must
-  * not keep the other old slots alive past their original TTL. */
- revise(key:string,closed:ReadonlyMap<number,Candle>){
-  this.expire();const entry=this.entries.get(key);if(!entry||!entry.bars.some(bar=>closed.has(bar.t)))return;
-  const expires=entry.expires;this.put(key,entry.bars.map(bar=>closed.get(bar.t)??bar));
-  const revised=this.entries.get(key);if(revised)revised.expires=expires;
+ /** Merge authoritative native slots, including a bootstrap that wins the
+  * history race. Partial updates cannot prolong the other cached slots' TTL. */
+ seed(key:string,bars:readonly Candle[]){
+  this.expire();if(!bars.length)return;const entry=this.entries.get(key),expires=entry?.expires;
+  const merged=new Map((entry?.bars??[]).map(bar=>[bar.t,bar]));for(const bar of bars)merged.set(bar.t,bar);
+  this.put(key,[...merged.values()].sort((a,b)=>a.t-b.t));
+  const revised=this.entries.get(key);if(revised&&expires!==undefined)revised.expires=expires;
  }
+
  clear(){this.entries.clear();this.rows=0;this.bytes=0;}
  diagnostics(){this.expire();return {...this.metrics,entries:this.entries.size,rows:this.rows,accountedBytes:this.bytes,limits:{entries:2,rows:1000,accountedBytes:1024*1024,ttlMs:60000}};}
 }

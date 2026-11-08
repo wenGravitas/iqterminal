@@ -13,6 +13,6 @@ test('rejects forming, excessive or nested content instead of dropping financial
 });
 test('authoritative corrections update cached values without prolonging other slots TTL',()=>{
  let now=0;const cache=new NativeCandlePresentationCache(()=>now);cache.put('view',rows(5));now=59000;
- cache.revise('view',new Map([[1,{...rows(1)[0],quoteVolume:9,revision:2}]]));expect((cache.read('view')![0] as any).quoteVolume).toBe(9);
+ const corrected={...rows(1)[0],quoteVolume:9,revision:2};cache.seed('view',[corrected]);expect((cache.read('view')![0] as any).quoteVolume).toBe(9);
  now=60000;expect(cache.read('view')).toBeUndefined();
 });

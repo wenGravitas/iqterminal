@@ -510,3 +510,22 @@ test('native cache survives group release, preserves healthy live state on valid
  }finally{service.dispose();}
  expect(service.diagnostics().nativePresentation.rows).toBe(0);
 });
+
+test('an empty fresh bootstrap cannot validate retained native bars and presentation cannot overwrite a group-owned bar',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const c={t:600000,o:84000,h:84100,l:83900,c:84050,v:12,revision:2,closed:true};let empty=false;const events:Event[]=[];
+ const request=vi.fn(async()=>new Response(JSON.stringify({source:'binance-native-kline',candles:empty?[]:[c]})));
+ const service=new StagingFeedService(e=>events.push(e),request,()=>900000,()=>new Socket() as any),series={venue:'binance',market:'perpetual',interval:'5m'} as const;
+ try{
+  service.command({type:'subscribe',id:'a',series});await vi.waitFor(()=>expect((service.diagnostics().streams[0] as any).native.historyReady).toBe(true));
+  const group=[...(service as any).groups.values()][0],history=group.native.history,confirm=vi.spyOn(history,'confirmClosed');
+  const before=events.length;expect((service as any).applyNativeHistory(group,'a',[{...c,c:84000,revision:1}],{stream:0,request:0},900000)).toEqual([]);expect(events).toHaveLength(before);expect(group.candles[0]).toEqual(c);
+  empty=true;group.native.error='temporary bootstrap failure';service.command({type:'retry',id:'a'});await vi.waitFor(()=>expect(request).toHaveBeenCalledTimes(2));await vi.waitFor(()=>expect(confirm).toHaveBeenCalled());
+  expect(confirm).toHaveBeenLastCalledWith([]);expect(group.candles[0]).toEqual(c);
+ }finally{service.dispose();}
+});
+
+for(const mismatch of [{market:'spot'},{instrument:'binance:perpetual:ETHUSDT'}])test(`native bootstrap rejects mismatched source identity before seeding presentation ${JSON.stringify(mismatch)}`,async()=>{
+ const events:Event[]=[],request=async()=>new Response(JSON.stringify({source:'binance-native-kline',market:'perpetual',instrument:'binance:perpetual:BTCUSDT',candles:[{t:600000,o:84000,h:84100,l:83900,c:84050,v:12,revision:1,closed:true}],...mismatch}));
+ const service=new StagingFeedService(e=>events.push(e),request,()=>900000,()=>new Socket() as any);
+ try{service.command({type:'subscribe',id:'identity',series});await vi.waitFor(()=>expect(events.some((event:any)=>event.type==='status'&&event.status.state==='failed')).toBe(true));expect(events.some(event=>event.type==='snapshot')).toBe(false);expect(service.diagnostics().nativePresentation.rows).toBe(0);}finally{service.dispose();}
+});

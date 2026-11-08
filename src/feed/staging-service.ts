@@ -5,7 +5,7 @@ import {PreparedFootprints, type PreparedFootprintProgress} from './prepared-foo
 import {historyScheduler} from './history-scheduler';
 import { FOOTPRINT_MAX_BARS, FOOTPRINT_MAX_CELLS, FootprintAccumulator } from './footprint';
 import { footprintTicksForPrice } from './protocol';
-import { duration, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Series } from './protocol';
+import { duration, instrumentKey, instrumentOf, footprintAnalysisSourceKey, footprintKeyOf, keyOf, marketOf, validCandle, type Candle, type Command, type Event, type FootprintAnalysisSummary, type FootprintBar, type FootprintStatus, type Series } from './protocol';
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
@@ -71,7 +71,7 @@ export class StagingFeedService {
       }
       if(group.native&&!group.native.history){
         const g=group;
-        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,
+        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,nativeBars:()=>g.candles,
           version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
           apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
           changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});
@@ -298,6 +298,8 @@ export class StagingFeedService {
     const accepted:Candle[]=[],covered:number[]=[],currentByTime=new Map(g.candles.map(c=>[c.t,c]));
     for(const candle of bars){
       const current=currentByTime.get(candle.t),stream=g.native!.versions.get(candle.t);
+      // Presentation cannot replace any bar already owned by the native group.
+      if(version.request===0&&current)continue;
       if(current?.closed&&!candle.closed)continue;
       if(stream&&(stream.sequence>version.stream||!candle.closed||candle.t+duration[g.series.interval]>at)){
         if(current?.closed)covered.push(candle.t);continue;
@@ -343,8 +345,8 @@ export class StagingFeedService {
         return;
       }
       if (g.rowPrice === undefined) {
-        if (data.source !== 'binance-native-kline' || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
-        const initial=!g.candles.length,map=new Map(g.candles.map(c=>[c.t,c])),changes:Candle[]=[];
+        if (data.source !== 'binance-native-kline' || data.market!==undefined&&data.market!==marketOf(g.series) || data.instrument!==undefined&&data.instrument!==`${instrumentKey(g.series)}:${instrumentOf(g.series).native}` || !Array.isArray(data.candles) || data.candles.length > 1000 || !data.candles.every(validCandle)) throw new Error('Invalid staging native candles');
+        const initial=!g.candles.length,map=new Map(g.candles.map(c=>[c.t,c])),changes:Candle[]=[],confirmed:Candle[]=[];
         for(const c of data.candles as Candle[]){
           const old=map.get(c.t),version=g.native!.versions.get(c.t);
           // The REST response has no exchange event cursor. It may repair closed
@@ -352,7 +354,7 @@ export class StagingFeedService {
           // update received in flight or a live/forming bar with ambiguous order.
           if(old?.closed&&!c.closed)continue;
           if(version&&(version.sequence>nativeSequence||!c.closed||c.t+duration[g.series.interval]>nativeRequestedAt))continue;
-          map.set(c.t,c);
+          map.set(c.t,c);if(c.closed===true)confirmed.push(c);
           if(!old||['o','h','l','c','v','closed','quoteVolume'].some(field=>(old as any)[field]!==(c as any)[field]))changes.push(c);
         }
         this.retainNative(g,map);g.native!.ready=true;g.native!.error=undefined;g.native!.retryAt=0;g.native!.failures=0;
@@ -362,7 +364,7 @@ export class StagingFeedService {
         // worker's bounded replay cache; forming source state is already merged.
         const bulk=!initial&&changes.length>=NATIVE_HISTORY_BULK_MIN_BARS;
         if(initial||changes.length)this.emit({type:initial||bulk?'snapshot':'patch',key:g.key,ids:[...g.ids],candles:initial||bulk?g.candles:changes,nativeVersion:nativeReadVersion,...(initial||bulk?{merge:true}:{})});
-        g.native!.history?.confirmClosed(g.candles.filter(c=>c.closed===true));this.nativeStatus(g);
+        g.native!.history?.confirmClosed(confirmed);this.nativeStatus(g);
       } else {
         const source = footprintSource(marketOf(g.series));
         if (data.version !== 1 || data.source !== source || !Array.isArray(data.bars) || data.bars.length > 300 || !data.bars.every((bar: unknown) => validBackendBar(bar, marketOf(g.series))) || !Number.isSafeInteger(data.watermark) || !data.coverage || !Number.isFinite(data.tickSize)) throw new Error('Invalid staging footprint contract');
