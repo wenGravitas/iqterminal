@@ -1,7 +1,7 @@
 import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
-import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
+import {type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
 import {historyScheduler} from './history-scheduler';
 import {discoverPreparedWallAdmission,type WallPreparationProgress} from './prepared-wall-admission';
 import type {OrderWallsArchivePage} from './order-walls-archive';
@@ -124,10 +124,12 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  }
  return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
   const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
-   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,validateProfile},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
+   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   if(result){
-   await validateRevision();const state=result.projector.checkpoint();state.cursor=target!.cursor;state.epoch=target!.epoch;
-   result.projector=OrderWallsArchiveProjector.restoreCheckpoint(state,settings,request.from,request.to);
+   // The independently proven transport fence is installed during the one
+   // final restore. Re-check source before publishing; do not clone and restore
+   // the entire closed history again merely to replace cursor/epoch metadata.
+   await validateRevision();
   }
   assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{

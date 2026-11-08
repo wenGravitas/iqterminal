@@ -3,6 +3,7 @@ import {OrderWallsArchiveProjector,loadOrderWallsArchive} from '../src/feed/orde
 import {orderWallsSettings} from '../src/feed/order-walls';import {readPreparedWallProjection} from '../src/feed/prepared-wall-projection';
 import {WALL_PROJECTION_CORE_SHA256} from '../src/shared/order-walls-projection-version';
 import {OrderWallsArchiveService} from '../src/feed/order-walls-archive-service';
+import {preparedWallReader} from '../src/feed/prepared-wall-history';
 import {historyScheduler} from '../src/feed/history-scheduler';
 afterEach(()=>vi.unstubAllEnvs());
 const hash=(text:string)=>createHash('sha256').update(text).digest('hex');
@@ -133,4 +134,20 @@ test('projection retry attempts reach page diagnostics and financial records pub
  expect(metrics.filter(m=>m.delivery==='projection')).toHaveLength(f.manifest.parts.length);
  expect(metrics.filter(m=>m.delivery==='projection').every(m=>m.attempts===2)).toBe(true);
  expect(updates.filter(u=>u.presentation&&u.kind==='patch').flatMap(u=>u.patches??[]).map(p=>p.id)).toHaveLength(f.full.segments.length-f.manifest.active.segments.length);
+});
+
+test.each(['newer','older'] as const)('%s quiet-head rebinding restores retained history once without a transport-metadata clone',async direction=>{
+ const f=fixture(true),target=direction==='newer'?head:{cursor:25,epoch:2,at:to+1000};
+ const anchor={cursor:1,epoch:1,at:from-1,hash:'c'.repeat(64)};Object.assign(f.source,{maxCursor:4,anchor});Object.assign(f.canonical.sourceProof,{maxCursor:4,anchor});
+ const t=transport(f),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to,watermark:target.cursor,head:target},t.fetcher,new AbortController().signal,undefined,settings);
+ expect(reader).not.toBeNull();
+ const checkpoint=vi.spyOn(OrderWallsArchiveProjector.prototype,'checkpoint'),restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint');
+ try{
+  const result=await reader!.readProjection(settings,()=>{});
+  expect(result).not.toBeNull();expect(checkpoint).not.toHaveBeenCalled();
+  const completeRestores=restore.mock.calls.filter(([value])=>(value as any).segments.length===f.full.segments.length);
+  expect(completeRestores).toHaveLength(1);expect(completeRestores[0]![0]).toMatchObject({cursor:target.cursor,epoch:target.epoch});
+  const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:target.cursor,head:target,page:{...f.page.page,nextAfter:target.cursor}});
+  expect(result!.projector.snapshot()).toEqual(reference.snapshot());expect(result!.projector.selectedState()).toEqual(reference.selectedState());
+ }finally{checkpoint.mockRestore();restore.mockRestore();reader?.dispose();}
 });

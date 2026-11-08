@@ -4,7 +4,7 @@ import {acquireWallBatch} from './prepared-wall-batch';
 interface Part {hash:string;bytes:number;records:number}
 interface RecordRow {order:number;segment:OrderWallSegment;valueRunOrder:number[];offset:number;totalRuns:number}
 export interface PreparedWallProjectionManifest {version:2;key:string;sourceKey:string;sourceToken:string;core:string;complete:true;settings:OrderWallsProjectionSettings;active:WallProjectionCheckpoint;activeOrder:number[];closed:Array<Array<[number,number]>>;parts:Part[];coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile}
-interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;validateProfile?:(profile:OrderWallsArchiveProfile)=>void}
+interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void}
 export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;requestId?:string}}
 const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
@@ -22,6 +22,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   ||m.active?.from!==context.from||m.active.to!==context.to||m.active.cursor!==context.watermark||m.active.epoch!==context.epoch
   ||!Array.isArray(m.parts)||m.parts.length>512||!Array.isArray(m.closed)||m.closed.length>100000||!Array.isArray(m.activeOrder)||m.activeOrder.length!==m.active.segments?.length
   ||m.closed.length+m.activeOrder.length>100000||await digest(new TextEncoder().encode(JSON.stringify({version:2,sourceKey:context.sourceKey,core:WALL_PROJECTION_CORE_SHA256,settings:normalized(context.settings)})))!==m.key)throw Error('Invalid prepared wall projection identity');
+ if(context.outputHead&&![context.outputHead.cursor,context.outputHead.epoch].every(integer))throw Error('Invalid prepared wall output fence');
  const manifest=m as PreparedWallProjectionManifest,hashes=new Set<string>();let decodedBytes=0;
  context.validateProfile?.(manifest.profile);
  for(const p of manifest.parts){if(!hex(p.hash)||hashes.has(p.hash)||!integer(p.bytes)||p.bytes<1||p.bytes>4*1024*1024||!integer(p.records)||p.records<1)throw Error('Invalid prepared wall projection part');hashes.add(p.hash);decodedBytes+=p.bytes;}
@@ -84,6 +85,9 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  }}finally{current?.handle.release();next?.handle.release();}
  if(retained.length!==manifest.closed.length+manifest.active.segments.length||new Set(retained.map(record=>record.order)).size!==retained.length)throw Error('Prepared wall projection incomplete identities');
  retained.sort((a,b)=>a.order-b.order);context.signal.throwIfAborted();
- const projector=OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
+ // outputHead is the transport fence already admitted by the source-proof
+ // reader. Financial rows/order and active candidates remain untouched. The
+ // reader still revalidates the source before returning this final projector.
+ const projector=OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
  return {projector,coverage:manifest.coverage,profile:manifest.profile,presentation,parts,bytes,decodeMs,mergeMs};
 }
