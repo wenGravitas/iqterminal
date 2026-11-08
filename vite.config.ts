@@ -1,3 +1,4 @@
+import {observeStagingProxy} from './scripts/staging-proxy-observability.ts';
 import { Agent } from 'node:http';
 import { defineConfig, loadEnv, type UserConfig } from 'vite';
 export default defineConfig(({ mode }) => {
@@ -15,22 +16,22 @@ export default defineConfig(({ mode }) => {
   server: staging ? { host: '127.0.0.1', port: 5173, strictPort: true, proxy: {
     // Current-book recovery must not queue behind long historical reads.
     '/market-data/v1/liquidations/stream': { target: liquidationTarget??'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/liquidations': { target: liquidationTarget??'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/reader': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/walls/preparation': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/footprint-current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v2/history/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/order-walls/archive/current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/effort-result': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/depth-matrix': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/liquidations': { target: liquidationTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/reader': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/walls/preparation': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/footprint-current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v2/history/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/order-walls/archive/current': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/effort-result': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/health': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/depth-matrix': { target: 'http://127.0.0.1:18781', agent:currentBookAgent, configure:observeStagingProxy, proxyTimeout:12000, rewrite: path => path.replace(/^\/market-data/, '') },
     // Candle/Footprint snapshots are history responses. Keep their transfers
     // off the live SSH TCP connection so they cannot delay stream heartbeats.
-    '/market-data/v1/footprints': { target: 'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data/v1/native-candles': { target: 'http://127.0.0.1:18780', agent:historyAgent, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/footprints': { target: 'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data/v1/native-candles': { target: 'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/stream': { target: 'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
-    '/market-data': { target: 'http://127.0.0.1:18780', agent:historyAgent, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
+    '/market-data': { target: 'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
   } } : undefined,
   test: { include: ['tests/**/*.test.ts'] },
 }) as UserConfig;

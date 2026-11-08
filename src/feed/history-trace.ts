@@ -3,7 +3,7 @@ export interface HistoryRequestTrace {
  queueMs:number;headerMs?:number;transferMs?:number;decodeMs?:number;encodedBytes?:number;decodedBytes?:number;
  jobs?:Array<{id:string;lastQueryId?:string;queuePosition?:number|null;pages?:number;records?:number;category?:string;retryable?:boolean}>;
  receivedBars?:number;receivedFrom?:number;receivedLast?:number;
- requestId?:string;serverTiming?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;slots?:number;state?:string;error?:string;
+ requestId?:string;serverTiming?:string;proxyQueueMs?:number;proxyHeaderMs?:number;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;slots?:number;state?:string;error?:string;
 }
 const sessionId=crypto.randomUUID();
 let sequence=0;
@@ -19,7 +19,7 @@ export async function tracedHistoryJson(request:typeof fetch,url:string,signal:A
   trace.headersAt=performance.now();trace.headerMs=trace.headersAt-wireAt;
   trace.requestId=response.headers.get('x-iq-request-id')??undefined;trace.serverTiming=response.headers.get('server-timing')??undefined;
   const encoded=response.headers.get('content-length');if(encoded!==null)trace.encodedBytes=Number(encoded);
-  for(const [key,header] of [['dbQueries','x-iq-db-queries'],['dbReadRows','x-iq-db-read-rows'],['dbReadBytes','x-iq-db-read-bytes']] as const){const value=response.headers.get(header);if(value!==null)trace[key]=Number(value);}
+  for(const [key,header] of [['proxyQueueMs','x-iq-proxy-queue-ms'],['proxyHeaderMs','x-iq-proxy-header-ms'],['dbQueries','x-iq-db-queries'],['dbReadRows','x-iq-db-read-rows'],['dbReadBytes','x-iq-db-read-bytes']] as const){const value=response.headers.get(header);if(value!==null)trace[key]=Number(value);}
   let text:string;
   if(options.maxDecodedBytes!==undefined){
    const reader=response.body?.getReader(),parts:Uint8Array[]=[];let size=0;
