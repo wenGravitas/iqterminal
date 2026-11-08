@@ -55,9 +55,21 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    const queueMs=Number(next.headers['x-iq-proxy-queue-ms']);assert.ok(queueMs>=50,`Queued history wait missing: ${queueMs}`);
    for(const item of held)item.req.destroy();
    await until(()=>held.every((_,i)=>closed.includes(prefix+'-'+i)),'History requests leaked after consumer cancellation');
+   // Borrow the third shared slot fairly: two independent native reads may
+   // run beside one bulk read, then the queued bulk proceeds on cancellation.
+   const dynamicBefore=received.length,dynamicPrefix=prefix+'-dynamic';
+   const pair=Array.from({length:2},(_,i)=>request(`${base}/market-data/v1/native-candles?id=${dynamicPrefix}-${i}`));opened.push(...pair);
+   await until(()=>received.length===dynamicBefore+2,'Independent native history was serialized behind bootstrap');
+   const dynamicBulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/${i===0?'v2/history/walls/batch':'v1/liquidations'}?id=${dynamicPrefix}-${i+2}`));opened.push(...dynamicBulk);
+   await until(()=>received.length===dynamicBefore+3,'Bulk history did not borrow the available shared slot');
+   await new Promise(r=>setTimeout(r,30));assert.equal(received.length,dynamicBefore+3,'Aggregate native/bulk admission exceeded the gateway historical cap');
+   pair[0].req.destroy();await until(()=>closed.includes(dynamicPrefix+'-0'),'Native cancellation did not release shared admission');
+   await until(()=>received.length===dynamicBefore+4,'Queued bulk work did not progress after native cancellation');
+   for(const item of [...pair,...dynamicBulk])item.req.destroy();
+   await until(()=>[0,1,2,3].every(i=>closed.includes(dynamicPrefix+'-'+i)),'Shared admission retained obsolete requests');
    samples.push({run,currentMs,survivingQueueMs:queueMs,currentHeaders:health.headers,historyHeaders:next.headers,queuedCancellationNeverOnWire:true,activeCancellationReachedUpstream:true});
   }
-  receipts.push({mode,samples,historyMaxSockets:3,nativeHistoryMaxSockets:1,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
+  receipts.push({mode,samples,historyMaxSockets:3,nativeHistoryMaxSockets:2,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
  }finally{
   for(const item of opened)item.req.destroy();
   if(proxy)for(const option of Object.values(proxy))if(typeof option==='object'&&option.agent&&typeof option.agent.destroy==='function')option.agent.destroy();

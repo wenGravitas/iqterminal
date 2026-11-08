@@ -2,12 +2,15 @@ import {performance} from 'node:perf_hooks';
 import type {IncomingMessage} from 'node:http';
 import type {ProxyOptions} from 'vite';
 
+const admissionStarts=new WeakMap<IncomingMessage,number>();
+export function markProxyAdmission(request:IncomingMessage,start:number){admissionStarts.set(request,start);}
+
 /** Durations share the proxy's monotonic clock; they are nested inside the
  * client's header wait, never additional exclusive network phases. Weak keys
  * retain no completed or cancelled request bodies/history. */
 export const observeStagingProxy:NonNullable<ProxyOptions['configure']>=(proxy)=>{
  const requests=new WeakMap<IncomingMessage,{start:number;socketAt?:number}>();
- proxy.on('start',(request:IncomingMessage)=>{requests.set(request,{start:performance.now()});});
+ proxy.on('start',(request:IncomingMessage)=>{requests.set(request,{start:admissionStarts.get(request)??performance.now()});admissionStarts.delete(request);});
  proxy.on('proxyReq',(_upstream,request:IncomingMessage)=>{
   const state=requests.get(request);if(state)state.socketAt=performance.now();
  });

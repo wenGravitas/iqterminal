@@ -1,6 +1,7 @@
+import {StagingHistoryBudget} from './scripts/staging-proxy-budget.ts';
 import {observeStagingProxy} from './scripts/staging-proxy-observability.ts';
 import { Agent } from 'node:http';
-import { defineConfig, loadEnv, type UserConfig } from 'vite';
+import { defineConfig, loadEnv, type UserConfig,type ProxyOptions } from 'vite';
 export default defineConfig(({ mode }) => {
   const staging = mode === 'staging' || process.env.VITE_DATA_MODE === 'staging' || loadEnv(mode, process.cwd()).VITE_DATA_MODE === 'staging';
   const liquidationTarget=process.env.VITE_LIQUIDATION_API_URL;
@@ -8,18 +9,11 @@ export default defineConfig(({ mode }) => {
   const nativeHistoryTarget=process.env.VITE_NATIVE_HISTORY_API_URL;
   if(nativeHistoryTarget){const target=new URL(nativeHistoryTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Native history development target must be loopback HTTP');}
   const currentBookAgent=staging?new Agent({keepAlive:true,maxSockets:4,maxTotalSockets:4,maxFreeSockets:4,timeout:15000}):undefined;
-  // Match the gateway's three historical admissions: one reserved native
-  // lane plus two bulk lanes. A fourth local history transfer would only
-  // provoke an avoidable503 while the gateway preserves current capacity.
+  // Both historical lanes may use two sockets; shared admission below caps
+  // their aggregate at three and retains room for independent native reads.
   const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
-  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:1,maxTotalSockets:1,maxFreeSockets:1,timeout:60000}):undefined;
-  return ({
-  worker: { format: 'es' },
-  // Staging proxy is development-only and guarded against CLI --host overrides.
-  plugins: staging ? [{ name: 'staging-loopback-only', configureServer(server){server.httpServer?.once('close',()=>{historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configurePreviewServer(server){server.httpServer.once('close',()=>{historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
-    if (config.server.host !== '127.0.0.1' && config.server.host !== 'localhost') throw new Error('Staging data mode requires a loopback Vite host');
-  } }] : [],
-  server: staging ? { host: '127.0.0.1', port: 5173, strictPort: true, proxy: {
+  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
+  const proxy:Record<string,string|ProxyOptions>|undefined=staging?{
     // Current-book recovery must not queue behind long historical reads.
     '/market-data/v1/liquidations/stream': { target: liquidationTarget??'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/liquidations': { target: liquidationTarget??'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, proxyTimeout:30000, rewrite: path => path.replace(/^\/market-data/, '') },
@@ -38,7 +32,19 @@ export default defineConfig(({ mode }) => {
     '/market-data/v1/native-candles': { target: nativeHistoryTarget??'http://127.0.0.1:18780', agent:nativeHistoryAgent, configure:observeStagingProxy, proxyTimeout:60000, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data/v1/stream': { target: 'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data': { target: 'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
-  } } : undefined,
+  }:undefined;
+  const historyBudget=staging?new StagingHistoryBudget(request=>{
+    const match=Object.entries(proxy!).find(([path])=>request.url?.startsWith(path));
+    const option=match?.[1];if(!option||typeof option==='string')return;
+    return option.agent===nativeHistoryAgent?'native':option.agent===historyAgent?'bulk':undefined;
+  }):undefined;
+  return ({
+  worker: { format: 'es' },
+  // Staging proxy is development-only and guarded against CLI --host overrides.
+  plugins: staging ? [{ name: 'staging-loopback-only', configureServer(server){server.middlewares.use(historyBudget!.middleware);server.httpServer?.once('close',()=>{historyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configurePreviewServer(server){server.middlewares.use(historyBudget!.middleware);server.httpServer.once('close',()=>{historyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
+    if (config.server.host !== '127.0.0.1' && config.server.host !== 'localhost') throw new Error('Staging data mode requires a loopback Vite host');
+  } }] : [],
+  server: staging ? { host: '127.0.0.1', port: 5173, strictPort: true, proxy } : undefined,
   test: { include: ['tests/**/*.test.ts'] },
 }) as UserConfig;
 });
