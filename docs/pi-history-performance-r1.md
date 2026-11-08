@@ -1,5 +1,7 @@
 # Pi history performance release R1
 
+[Current evidence and remaining gates](pi-history-r1-current-status.md) provides the compact status; the sections below retain the full investigation history.
+
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
 Current continuation build1ef788c fixes native-price warm-cache lifecycle and saved

@@ -38,8 +38,9 @@ the normal exact loader still serves the view. Actual retained heap is measured
 separately from this accounting limit.
 
 A cached bar is presentation, not validated coverage. The footer exposes cached
-slots separately; loaded/requested still counts validated slots. Each warm view
-independently requests its native revision. Echoing displayed timestamps back
+slots separately; loaded/requested still counts validated slots. Cached-only slots independently request their native revision. Native bars
+already owned by the current group remain authoritative inputs, as described
+below. Echoing displayed timestamps back
 from the viewport cannot cancel this validation or certify cached slots. A fresh
 authoritative bootstrap or closed stream bar can validate its own slots and
 correct cached values without extending other slots' original TTL. Failure
