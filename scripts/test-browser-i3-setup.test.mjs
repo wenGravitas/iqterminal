@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {testBrowserArgs,verifyHeadedBrowser} from './test-browser-i3-setup.mjs';
+import verifyTestBrowserWorkspace,{testBrowserArgs,verifyHeadedBrowser} from './test-browser-i3-setup.mjs';
 test('headless and default launches do not access the desktop',()=>{
  const fail=()=>{throw Error('must not read desktop state');};
  verifyHeadedBrowser({headless:true},{},fail);
@@ -16,4 +16,9 @@ test('devtools cannot implicitly enable a visible browser',()=>{
  assert.throws(()=>verifyHeadedBrowser({devtools:true}),/Refusing headed/);
  assert.throws(()=>verifyHeadedBrowser({headless:true,devtools:true}),/Refusing headed/);
  assert.ok(testBrowserArgs.includes('--ozone-platform=headless'));
+});
+
+test('Playwright launchOptions cannot hide a headed override behind undefined use.headless',()=>{
+ for(const use of [{launchOptions:{headless:false}},{headless:true,launchOptions:{headless:false}},{headless:false,launchOptions:{headless:true}},{launchOptions:{devtools:true}}])assert.throws(()=>verifyTestBrowserWorkspace({projects:[{use}]}),/Refusing headed/);
+ verifyTestBrowserWorkspace({projects:[{use:{headless:true,launchOptions:{}}}]});
 });

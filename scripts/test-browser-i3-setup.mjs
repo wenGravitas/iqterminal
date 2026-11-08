@@ -7,5 +7,8 @@ export function verifyHeadedBrowser(options={}){
  if(options.headless===false||options.devtools===true)throw new Error('Refusing headed test browser: desktop isolation is unverified; run headless');
 }
 export default function verifyTestBrowserWorkspace(config){
- for(const project of config.projects)verifyHeadedBrowser({...project.use.launchOptions,headless:project.use.headless});
+ for(const project of config.projects){
+  verifyHeadedBrowser(project.use.launchOptions);
+  verifyHeadedBrowser({headless:project.use.headless});
+ }
 }
