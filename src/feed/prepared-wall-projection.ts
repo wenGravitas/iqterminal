@@ -89,5 +89,8 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  // reader. Financial rows/order and active candidates remain untouched. The
  // reader still revalidates the source before returning this final projector.
  const projector=OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
- return {projector,coverage:manifest.coverage,profile:manifest.profile,presentation,parts,bytes,decodeMs,mergeMs};
+ // Authenticate the complete presentation description, not merely its source
+ // input token: corrections can change part hashes or selected metadata.
+ const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));context.signal.throwIfAborted();
+ return {projector,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
 }

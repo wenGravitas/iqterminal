@@ -281,3 +281,56 @@ test('negotiated exact point transport reconstructs the identical selected walls
   else{const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p));expect(result?.projector.snapshot()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,f.context.settings,f.context.from,f.context.to).snapshot());expect(ready.at(-1).metrics.validationMs).toBeGreaterThanOrEqual(0);}
  }
 });
+
+function displayedWalls(events:any[],id:string){
+ const rows=new Map<string,any>();for(const e of events.filter(e=>e.ids?.includes(id))){if(e.kind==='snapshot'){rows.clear();for(const s of e.segments??[])rows.set(s.id,s);}else for(const p of e.patches??[]){if(p.segment)rows.set(p.id,p.segment);else rows.delete(p.id);}}return rows;
+}
+test('identical complete prepared manifest validates warm rows without a second presentation snapshot',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+ for(const compact of [false,true]){
+  const f=fixture(true),seed=transport(f);let release!:()=>void;const sourceGate=new Promise<void>(r=>release=r),fresh=transport(f,{gateSource:sourceGate});let phase=0;
+  const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+1000,compact?0:16*1024*1024),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+  try{
+   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
+   service.subscribe('warm',request);await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));
+   await vi.waitFor(()=>expect(displayedWalls(events,'warm').size).toBe(f.full.segments.length));await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
+   const displayed=[...displayedWalls(events,'warm').values()],snapshots=events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length,before=events.length;
+   expect(events.at(-1).status.archive.requestComplete).toBe(false);release();
+   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.requestComplete).toBe(true));
+   expect(events.slice(before).filter(e=>e.ids?.includes('warm')).every(e=>e.kind==='patch'&&e.patches.length===0)).toBe(true);
+   expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot')).toHaveLength(snapshots);
+   expect([...displayedWalls(events,'warm').values()]).toEqual(displayed);expect(service.diagnostics().warmValidatedReuses).toBe(1);
+   // A new viewer still needs a complete authoritative shared snapshot.
+   service.subscribe('late',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('late')).at(-1)?.segments).toHaveLength(f.full.segments.length));
+   service.unsubscribe('late');service.unsubscribe('warm');expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0,historyConsumers:0});
+  }finally{release();service.dispose();}
+ }
+});
+
+test('changed presentation metadata with the same source token cannot reuse warm geometry',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const old=fixture(true),revised=fixture(true);revised.manifest.coverage.gaps[0].reason='Corrected coverage detail';expect(revised.manifest.sourceToken).toBe(old.manifest.sourceToken);
+ const seed=transport(old);let release!:()=>void;const gateSource=new Promise<void>(r=>release=r),fresh=transport(revised,{gateSource});let phase=0;
+ const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
+  service.subscribe('warm',request);await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
+  const before=events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length;release();
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length).toBeGreaterThan(before);expect(service.diagnostics().warmValidatedReuses).toBe(0);
+  expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.gaps[0].reason).toBe('Corrected coverage detail');
+ }finally{release();service.dispose();}
+});
+
+test('an unfinished warm replay cannot certify complete presentation from a matching revision',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),t.fetcher,()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ let release!:()=>void;const gate=new Promise<void>(r=>release=r),original=compactCodec.replayCompactWallPresentation;let spy:{mockRestore:()=>unknown}|undefined;
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');
+  spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImplementationOnce(async(...args)=>{await gate;return original(...args);});
+  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(service.diagnostics().warmValidatedReuses).toBe(0);const reference=f.full.segments;
+  expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(reference.sort((a,b)=>a.id.localeCompare(b.id)));
+  const before=events.length;release();await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
+  expect(events.slice(before).some(e=>e.patches?.some((p:any)=>p.segment))).toBe(false);
+ }finally{release();service.dispose();spy?.mockRestore();}
+});

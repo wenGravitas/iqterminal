@@ -136,7 +136,7 @@ export class OrderWallsArchiveService {
   private recordWarmTiming(timing:WarmTiming){this.warmTimings.push(timing);if(this.warmTimings.length>16)this.warmTimings.shift();}
   private sequence = 0;
   private disposed = false;
-  readonly stats = { warmAdmissions:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
+  readonly stats = { warmAdmissions:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
     currentPatches: 0, ringDrops: 0, failures: 0 };
@@ -666,7 +666,7 @@ export class OrderWallsArchiveService {
     const archive=result.status.archive,projector=result.projector;
     if(this.disposed||!projector||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume)return;
     const key=warmHistoryKey(request);
-    const signature=result.preparedSourceToken&&result.presentation?JSON.stringify([result.preparedSourceToken,result.segments.filter(segment=>result.presentation!.get(segment.id)?.end===null).map(({valueRuns:_runs,...header})=>header)]):undefined;
+    const signature=result.preparedPresentationRevision?'manifest:'+result.preparedPresentationRevision:result.preparedSourceToken&&result.presentation?JSON.stringify([result.preparedSourceToken,result.segments.filter(segment=>result.presentation!.get(segment.id)?.end===null).map(({valueRuns:_runs,...header})=>header)]):undefined;
     const prior=this.warmHistory.get(key);
     if(signature&&prior?.signature===signature&&!prior.expired){prior.status=result.status;clearTimeout(prior.timer);prior.timer=setTimeout(()=>this.expireWarm(key,prior),60000);this.stats.warmRevisionReuses++;return;}
     for(const build of this.warmBuilds)if(build.key===key)build.abort.abort();
@@ -696,14 +696,16 @@ export class OrderWallsArchiveService {
 
   private publishSharedHistorySnapshot(sub: Subscription, update: OrderWallsArchiveUpdate) {
     const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? (update.presentation?[...update.presentation.values()]:update.segments) ?? [], patches: undefined };
-    this.publishSharedHistoryUpdate(sub, sub.historyJob!, replay);
+    this.publishSharedHistoryUpdate(sub, sub.historyJob!, replay, true);
   }
 
-  private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate) {
+  private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
+    const forceValidatedSnapshot=forceSnapshot&&update.preparedPresentationComplete&&update.status.archive?.requestComplete&&update.status.archive.exact;
+    if(forceValidatedSnapshot){sub.cachedHistory=false;this.releaseWarmReplay(sub);}
     const priorStatus=sub.historyStatus;sub.historyStatus = update.status;
     if(!sub.cachedHistory&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable')this.releaseWarmReplay(sub);
-    const alreadyPresented=update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector&&(sub.historyPresentation||sub.historyProjector===update.projector));
+    let alreadyPresented=!forceValidatedSnapshot&&update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector&&(sub.historyPresentation||sub.historyProjector===update.projector));
     if(sub.cachedHistory){
       const archive=update.status.archive;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
@@ -711,10 +713,23 @@ export class OrderWallsArchiveService {
           sub.historyStatus={...update.status,archive:{...priorStatus.archive,...archive,gaps:[...gaps.values()].slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS),gapsTruncated:priorStatus.archive.gapsTruncated||archive.gapsTruncated||gaps.size>MAX_SUBSCRIPTION_ARCHIVE_GAPS,loadedThrough:Math.max(priorStatus.archive.loadedThrough??sub.request.from,archive.loadedThrough??sub.request.from),requestComplete:false,rangeComplete:false}};}
         this.publish(sub,'patch',[],this.status(sub));return;
       }
+      const replay=sub.warmReplay;
+      const unchanged=update.preparedPresentationComplete&&replay?.settled&&update.preparedPresentationRevision
+        &&replay.entry.signature==='manifest:'+update.preparedPresentationRevision
+        &&update.segments?.length===replay.entry.segments;
+      if(unchanged){
+        // The fresh projector/cursor still becomes authoritative below. Rebind
+        // comparison references to it so the released replay's arrays can die;
+        // the already displayed immutable rows need no new main-thread snapshot.
+        for(const segment of update.segments!){const previous=sub.lastPublished.get(segment.id);
+          if(previous&&!previous.currentSelection)sub.lastPublished.set(segment.id,{...segment,currentSelection:false});}
+        alreadyPresented=true;this.stats.warmValidatedReuses++;
+      }
       sub.cachedHistory=false;this.releaseWarmReplay(sub);
-      // Replace the cached presentation only after the entire new projection
-      // validates. Intermediate prefixes cannot erase previously visible walls.
-      update={...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
+      // Only a complete identical manifest may keep the cached presentation.
+      // Changed or unproved revisions retain the existing replacement path.
+      update=unchanged?{...update,kind:'patch',patches:[],segments:undefined}:
+        {...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
     }
     if(alreadyPresented)update={...update,kind:'patch',patches:[],segments:undefined};
     if (update.projector) {sub.historyProjector = update.projector;sub.historyPresentation=undefined;}
