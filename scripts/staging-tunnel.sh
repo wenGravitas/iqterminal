@@ -12,6 +12,8 @@ cleanup() {
 trap cleanup EXIT INT TERM
 supervise() {
   local port=$1 lane=$2 child='' delay=1 started status
+  local -a traffic_class=()
+  if [ "$lane" = history ]; then traffic_class=(-o IPQoS=none); fi
   stop_lane() {
     trap - EXIT INT TERM
     if [ -n "$child" ]; then kill "$child" 2>/dev/null || true; wait "$child" 2>/dev/null || true; fi
@@ -22,7 +24,7 @@ supervise() {
     started=$SECONDS
     ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 \
       -o ControlMaster=no -o ControlPath=none -o Compression=no \
-      -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+      -o ServerAliveInterval=15 -o ServerAliveCountMax=3 "${traffic_class[@]}" \
       -L "127.0.0.1:${port}:127.0.0.1:18780" staging &
     child=$!; status=0
     wait "$child" || status=$?
