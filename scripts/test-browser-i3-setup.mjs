@@ -1,7 +1,10 @@
 import {execFileSync} from 'node:child_process';
-export const testBrowserArgs=['--class=IQTerminalPerf'];
+export const testBrowserArgs=['--class=IQTerminalPerf','--ozone-platform=x11'];
 export function verifyHeadedBrowser(options={},env=process.env,readConfig=()=>execFileSync('i3-msg',['-t','get_config'],{encoding:'utf8'})){
- if(options.headless!==false||!env.DISPLAY)return;
+ if(options.headless!==false)return;
+ // Fail before Chromium maps any window. Headed runs require a deliberate opt-in.
+ if(env.IQ_TEST_HEADED!=='workspace9')throw new Error('Refusing headed test browser: tests default to headless; IQ_TEST_HEADED=workspace9 is required');
+ if(!env.DISPLAY)return;
  // An i3 socket can be omitted by a runner; detect the session rather than bypass routing.
  if(!env.I3SOCK&&!env.SWAYSOCK&&!/i3/i.test(env.XDG_CURRENT_DESKTOP??'')){
   try{execFileSync('i3-msg',['-t','get_version'],{stdio:'ignore'});}catch{return;}

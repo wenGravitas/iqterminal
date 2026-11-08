@@ -13,7 +13,7 @@ export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',
     viewport: { width: 1366, height: 768 },
     launchOptions: {
       executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
-      args: ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+      args: ['--class=IQTerminalPerf','--ozone-platform=x11', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     },
   },
   webServer: {

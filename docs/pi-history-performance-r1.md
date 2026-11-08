@@ -2168,3 +2168,23 @@ It changes ownership, not codec/financial data. Its full current suite1160passes
 2skips,50focused lifecycle/recovery checks, typecheck and staging build pass.
 Current compiled-asset hashes and logs are in compact-warm-r1/lifecycle-6ed9ee4;
 retained browser heap/queue plateau still needs actual interaction validation.
+
+### Browser launch interruption safeguard
+
+After another report of browser windows appearing on the working workspace,
+headed performance tests remain paused. The shared standalone launcher and
+Playwright global setup now reject headed launches before Chromium starts unless
+`IQ_TEST_HEADED=workspace9` is explicitly set. Default/headless runs do not inspect
+or change desktop focus. The guarded browser arguments force X11 and the
+`IQTerminalPerf` class so the loaded i3 assignment/no-focus rules apply; caller
+arguments cannot override the shared standalone identity or platform.
+
+Validation: three focused guard tests pass, including refusal before any i3 read
+without opt-in. A separate Xvfb desktop running its own i3 4.22 and Chromium
+155.0.8059.79 performed three page-creation checks: the browser class was
+IQTerminalPerf, its workspace was 9, and focused workspace remained 1 each time.
+No browser window was opened on the user's desktop; that desktop remained on
+workspace 1. Chromium ignored an experimental `--name` flag, which was removed.
+The isolated check demonstrates assignment with the forced X11 path; it does
+not establish the cause of the previously reported intermittent desktop leak or
+certify normal foreground rendering/performance acceptance.

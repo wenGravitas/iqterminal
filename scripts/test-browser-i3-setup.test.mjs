@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {testBrowserArgs,verifyHeadedBrowser} from './test-browser-i3-setup.mjs';
-const env={DISPLAY:':0',I3SOCK:'/test/i3.sock'};
+const env={IQ_TEST_HEADED:'workspace9',DISPLAY:':0',I3SOCK:'/test/i3.sock'};
 const rules=['assign [class="^IQTerminalPerf$"] 9','no_focus [class="^IQTerminalPerf$"]','assign [instance="^chromium \\(/tmp/playwright_"] 9','no_focus [instance="^chromium \\(/tmp/playwright_"]'].join('\n');
 test('headed i3 launch requires both pre-map identities and loaded rules',()=>{
  assert.doesNotThrow(()=>verifyHeadedBrowser({headless:false,args:testBrowserArgs},env,()=>rules));
@@ -10,4 +10,8 @@ test('headed i3 launch requires both pre-map identities and loaded rules',()=>{
 });
 test('headless launch does not query i3',()=>{
  verifyHeadedBrowser({headless:true},env,()=>{throw Error('must not read');});
+});
+
+test('headed launch without explicit opt-in fails before reading i3',()=>{
+ assert.throws(()=>verifyHeadedBrowser({headless:false,args:testBrowserArgs},{DISPLAY:':0'},()=>{throw Error('must not read');}),/IQ_TEST_HEADED=workspace9/);
 });
