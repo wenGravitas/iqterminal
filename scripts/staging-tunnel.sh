@@ -21,6 +21,7 @@ supervise() {
   while true; do
     started=$SECONDS
     ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 \
+      -o ControlMaster=no -o ControlPath=none -o Compression=no \
       -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
       -L "127.0.0.1:${port}:127.0.0.1:18780" staging &
     child=$!; status=0
