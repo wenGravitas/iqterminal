@@ -1,3 +1,4 @@
+import {pastCandleViewport} from './candle-viewport';
 import type {NativeCandlePresentationCache} from './native-candle-presentation-cache';
 import {duration,instrumentKey,instrumentOf,marketOf,validCandle,type Candle,type Series} from './protocol';
 import {historyScheduler,type HistoryScheduler} from './history-scheduler';
@@ -24,8 +25,8 @@ export class NativeCandleHistory {
  viewport(id:string,rawFrom:number,rawTo:number,knownTimes:number[]){
   if(this.dead||!Number.isFinite(rawFrom)||!Number.isFinite(rawTo)||rawFrom<0||rawFrom>=rawTo||rawTo>8.64e15
    ||!Array.isArray(knownTimes)||knownTimes.length>NATIVE_CHART_BAR_BUDGET||!knownTimes.every(Number.isSafeInteger))return;
-  const step=duration[this.series.interval],to=Math.ceil(Math.min(rawTo,Math.floor(this.options.now()/step)*step)/step)*step;
-  const from=Math.min(Math.floor(rawFrom/step)*step,to),loadFrom=Math.max(from,to-NATIVE_VISIBLE_BAR_BUDGET*step),key=`${from}:${to}`;
+  const step=duration[this.series.interval],eligible=pastCandleViewport(rawFrom,rawTo,this.options.now(),step),to=eligible.to;
+  const from=Math.min(eligible.from,to),loadFrom=Math.max(from,to-NATIVE_VISIBLE_BAR_BUDGET*step),key=`${from}:${to}`;
   const known=new Set(knownTimes.filter(t=>t>=loadFrom&&t<to&&t%step===0));
   const old=this.views.get(id);
   if(old?.key===key){
