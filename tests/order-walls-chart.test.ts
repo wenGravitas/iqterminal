@@ -578,3 +578,51 @@ describe('visible wall time-mapping identity',()=>{
   Object.assign(rc.timeScale,{visibleRange:()=>({from:0,to:2})});Object.assign(rc.dataLayer,{indexToTimeFloat:()=>NaN});expect(wallProjectionMappingKey(rc)).toBeUndefined();
  });
 });
+
+it('retains closed native paint work through open-tail changes and preserves ordered styles, closure, corrections and fallback',()=>{
+ class TestPath {points:Array<[number,number]>=[];moveTo(x:number,y:number){this.points.push([x,y]);}lineTo(x:number,y:number){this.points.push([x,y]);}addPath(path:TestPath){this.points.push(...path.points);}}
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const,showPriceLines:false,visibleRangeOnly:true};
+ const wall=(id:string,usd:number,end:number|null,side:'bid'|'ask'='bid'):OrderWallSegment=>({id,archiveEntryId:id,epoch:1,side,price:100,start:base,end,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,detectionMode:'top-levels',currentSelection:end===null,valueRuns:[{at:base,usd,percentile:null},{at:base+60000,usd,percentile:null}],valueRunsTruncated:false,endReason:end===null?null:'rank-exit',endKnown:end!==null});
+ const closed=Array.from({length:1000},(_,i)=>wall('closed-'+i,i===0?1:1000+i,base+120000,i%2?'bid':'ask'));
+ let open=wall('open',300,null),other=wall('other',900,null,'ask');
+ const cached=new OrderWallsPrimitive(settings,60000),reference=new OrderWallsPrimitive(settings,60000,false);let status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.01};
+ const captured=()=>{const paths:Array<{color:string;points:Array<[number,number]>}>=[],ctx:any=canvas([],paths),old=ctx.stroke;ctx.stroke=(path?:TestPath)=>{if(path)paths.push({color:ctx.strokeStyle,points:[...path.points]});else old();};return {ctx,paths};};
+ const normalize=(paths:Array<{color:string;points:Array<[number,number]>}>)=>paths.map(path=>{
+  // One Canvas stroke paints the union of its same-style subpaths. Filtering
+  // closed/open groups can join the same interval without changing that union.
+  const rows=new Map<number,Array<[number,number]>>();
+  for(let i=0;i<path.points.length;i+=2){const [x,y]=path.points[i]!,right=path.points[i+1]![0],lines=rows.get(y)??[];lines.push([x,right]);rows.set(y,lines);}
+  return {color:path.color,rows:[...rows].sort((a,b)=>a[0]-b[0]).map(([y,lines])=>{const union:Array<[number,number]>=[];for(const line of lines.sort((a,b)=>a[0]-b[0]||a[1]-b[1])){const last=union.at(-1);if(last&&line[0]<=last[1])last[1]=Math.max(last[1],line[1]);else union.push([...line]);}return {y,union};})};
+ });
+ vi.stubGlobal('Path2D',TestPath);
+ try{
+  for(const p of [cached,reference])p.setSnapshot([open,...closed,other],status);
+  const compare=()=>{const a=captured(),b=captured();cached.draw(a.ctx,context());reference.draw(b.ctx,context());expect(normalize(a.paths)).toEqual(normalize(b.paths));expect(cached.stats.visibleHistorical).toBe(reference.stats.visibleHistorical);expect(cached.stats.visibleCurrent).toBe(reference.stats.visibleCurrent);expect(cached.orderWallAt(200,100)).toEqual(reference.orderWallAt(200,100));};
+  compare();const visits=cached.stats.closedPaintStyleVisits,builds=cached.stats.closedPaintCacheBuilds;
+  for(let i=0;i<8;i++){
+   open={...open,valueRuns:[...open.valueRuns,{at:base+70000+i*1000,usd:400+i,percentile:null}],durationMs:120000};
+   for(const p of [cached,reference])p.patch([{id:open.id,segment:open,valuePoints:[open.valueRuns.at(-1)!]}],status);
+   compare();expect(cached.stats.closedPaintStyleVisits).toBe(visits);expect(cached.stats.closedPaintCacheBuilds).toBe(builds);
+  }
+  expect(cached.stats.closedPaintCacheHits).toBe(8);expect(cached.diagnostics().retainedClosedPaintPaths).toBeLessThanOrEqual(9);expect(cached.diagnostics().retainedPaintPaths).toBeLessThanOrEqual(9);
+  // Closing a wall keeps its already projected prefix and invalidates closed
+  // paths even when those drawables still refer to the former open header.
+  open={...open,end:base+120000,endKnown:true,currentSelection:false};
+  for(const p of [cached,reference])p.patch([{id:open.id,segment:open}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+1);
+  const revised={...closed[1]!,valueRuns:[{...closed[1]!.valueRuns[0]!,usd:777},closed[1]!.valueRuns[1]!]};
+  for(const p of [cached,reference])p.patch([{id:revised.id,segment:revised,replaceValueRuns:true}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+2);
+  for(const p of [cached,reference])p.patch([{id:revised.id,segment:null}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+3);
+  // A changed strength reference must recolor historical paths, while a mixed
+  // Threshold tail retains the original immediate-first stroke ordering.
+  other={...other,valueRuns:[...other.valueRuns,{at:base+110000,usd:10000,percentile:null}]};
+  for(const p of [cached,reference])p.patch([{id:other.id,segment:other,valuePoints:[other.valueRuns.at(-1)!]}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+4);
+  const threshold={...wall('threshold',500,null),detectionMode:'threshold' as const,percentile:99,valueRuns:[]};
+  for(const p of [cached,reference])p.patch([{id:threshold.id,segment:threshold}],status);
+  compare();
+  cached.detached();expect(cached.diagnostics().retainedClosedPaintPaths).toBe(0);expect(cached.diagnostics().retainedPaintPaths).toBe(0);
+ }finally{vi.unstubAllGlobals();}
+});

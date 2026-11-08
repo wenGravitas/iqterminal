@@ -6,7 +6,8 @@ import { orderWallValuePointAt, type OrderWallHit, type OrderWallPatch, type Ord
 const TOP_HEAT={bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8b99eb','#e9c15b','#ff8766']};
 const TOP_SIDE={bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#bf6273','#ed9a9e','#ffd0b0']};
 
-interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number }
+interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number; paintOrder:number }
+interface WallPaintBucket {color:string;thickness:number;path:Path2D;firstOrder:number;historical:number;current:number}
 
 /** The chart data layer preserves sub-candle event times as fractional logical indices. */
 export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:number)=>number):number|null {
@@ -54,11 +55,15 @@ export class OrderWallsPrimitive implements IPrimitive {
   private paintInvalid=true;
   private paintKey='';
   private paintPaths?:Array<{color:string;thickness:number;path:Path2D}>;
+  private closedPaintPaths?:WallPaintBucket[];
+  private closedPaintKey='';
+  private closedPaintInvalid=true;
+  private nextPaintOrder=0;
   private paintCounts={historical:0,current:0};
   private inputRevision=0;
   private paintedRevision=-1;
   private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
-  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,settingsNoops:0,mappingChecks:0,mappingFallbacks:0};
+  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,closedPaintCacheHits:0,closedPaintCacheBuilds:0,closedPaintStyleVisits:0,settingsNoops:0,mappingChecks:0,mappingFallbacks:0};
   private durations:number[]=[];
 
   constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true){this.settings={...settings};this.intervalMs=intervalMs;}
@@ -115,6 +120,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private clearEmptyProjection(){
     this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
+    this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;
     this.drawable.clear();this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.clearReference();this.referenceDirty=true;
     this.stats.referenceSegments=0;this.stats.referenceValueScans=0;this.stats.segments=0;this.stats.visible=0;this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
   }
@@ -177,7 +183,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(mapping===undefined)this.stats.mappingFallbacks++;
     const axis=mapping??`unproven:${this.stats.mappingChecks}`;
     const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,this.width(),axis].join(':');
-    if(key!==this.transformKey){if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
+    if(key!==this.transformKey){if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.closedPaintInvalid=true;this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
     const projectionStarted=performance.now();
     if(this.dirty.size){
       for(const id of this.dirty){if(this.settings.visibleRangeOnly)this.markReference(id);this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc);this.stats.patchProjects++;}
@@ -204,6 +210,12 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(cacheable&&!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths){
       for(const entry of this.paintPaths){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
       this.stats.visibleHistorical=this.paintCounts.historical;this.stats.visibleCurrent=this.paintCounts.current;this.stats.paintCacheHits++;
+    }else{
+    const incremental=cacheable&&typeof Path2D.prototype.addPath==='function'?this.topLevelPaintPaths(paintKey,dpr):undefined;
+    if(incremental){
+      this.paintPaths=incremental;
+      for(const entry of incremental){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
+      this.paintKey=paintKey;this.paintInvalid=false;this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};this.stats.paintCacheBuilds++;
     }else{
     const compiled:Array<{color:string;thickness:number;path:Path2D}>=[];
     const stroke=(color:string,thickness:number,lines:Array<[number,number,number]>)=>{
@@ -244,12 +256,72 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.paintPaths=cacheable?compiled:undefined;this.paintKey=paintKey;this.paintInvalid=false;
     this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};if(cacheable)this.stats.paintCacheBuilds++;
     }
+    }
     if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
     this.paintedRevision=this.inputRevision;
     this.paintedViewport={fromMs:rc.dataLayer.indexToTimeFloat(range.from)*1000,toMs:rc.dataLayer.indexToTimeFloat(range.to)*1000,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
     this.stats.lastPaintMs=performance.now()-paintStarted;
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
+  }
+
+  /** Closed paths hold only native geometry and scalar paint metadata. Dynamic
+   * tails are combined into the same style stroke, preserving alpha at overlap.
+   * Mixed/Threshold geometry retains the incumbent ordered renderer. */
+  private topLevelPaintPaths(key:string,dpr:number):Array<{color:string;thickness:number;path:Path2D}>|undefined {
+    if(this.closedPaintInvalid||this.closedPaintKey!==key){
+      const self=this;
+      function* closed(){for(const line of self.drawable.values())if(self.segments.get(line.segment.id)?.end!==null)yield line;}
+      this.closedPaintPaths=this.compileTopPaths(closed(),dpr,true);this.closedPaintKey=key;this.closedPaintInvalid=false;
+      if(this.closedPaintPaths)this.stats.closedPaintCacheBuilds++;
+    }else if(this.closedPaintPaths)this.stats.closedPaintCacheHits++;
+    if(!this.closedPaintPaths)return;
+    const open:WallDrawable[]=[];
+    for(const id of this.openIds)for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)open.push(line);}
+    open.sort((a,b)=>a.paintOrder-b.paintOrder);
+    const dynamic=this.compileTopPaths(open,dpr,false);if(!dynamic)return;
+    const paths=new Map<string,WallPaintBucket>();
+    for(const entry of this.closedPaintPaths)paths.set(`${entry.color}:${entry.thickness}`,entry);
+    for(const entry of dynamic){
+      const id=`${entry.color}:${entry.thickness}`,closed=paths.get(id);
+      if(!closed){paths.set(id,entry);continue;}
+      const path=new Path2D();path.addPath(closed.path);path.addPath(entry.path);
+      paths.set(id,{...entry,path,firstOrder:Math.min(closed.firstOrder,entry.firstOrder),historical:closed.historical+entry.historical,current:closed.current+entry.current});
+    }
+    const ordered=[...paths.values()].sort((a,b)=>a.firstOrder-b.firstOrder);
+    this.stats.visibleHistorical=ordered.reduce((n,p)=>n+p.historical,0);this.stats.visibleCurrent=ordered.reduce((n,p)=>n+p.current,0);
+    return ordered;
+  }
+  private compileTopPaths(lines:Iterable<WallDrawable>,dpr:number,closed:boolean):WallPaintBucket[]|undefined {
+    const paths=new Map<string,WallPaintBucket>();
+    let group:{line:WallDrawable;color:string;thickness:number;right:number;to:number}|undefined;
+    const flush=()=>{
+      if(!group)return;
+      const {line,color,thickness,right}=group,id=`${color}:${thickness}`;
+      const bucket=paths.get(id)!;bucket.path.moveTo(line.x*dpr,line.y*dpr);bucket.path.lineTo(right*dpr,line.y*dpr);group=undefined;
+    };
+    for(const line of lines){
+      if(line.segment.detectionMode!=='top-levels')return;
+      this.stats.paintStyleVisits++;if(closed)this.stats.closedPaintStyleVisits++;
+      const {color,thickness}=this.lineStyle(line),id=`${color}:${thickness}`;
+      let bucket=paths.get(id);
+      if(!bucket){bucket={color,thickness,path:new Path2D(),firstOrder:line.paintOrder,historical:0,current:0};paths.set(id,bucket);}
+      if(line.segment.currentSelection)bucket.current++;else if(line.segment.archiveEntryId)bucket.historical++;
+      const right=Math.max(line.x+1/dpr,line.right);
+      if(group&&group.line.segment.id===line.segment.id&&group.line.segment.epoch===line.segment.epoch&&group.line.segment.side===line.segment.side&&group.color===color&&group.thickness===thickness&&group.to===line.from&&group.line.low===line.low&&group.line.high===line.high&&group.line.y===line.y&&line.x<=group.right){
+        group.to=line.to;group.right=Math.max(group.right,right);continue;
+      }
+      flush();group={line,color,thickness,right,to:line.to};
+    }
+    flush();return [...paths.values()];
+  }
+  private setDrawable(line:WallDrawable){
+    const previous=this.drawable.get(line.key);line.paintOrder=previous?.paintOrder??this.nextPaintOrder++;
+    if(previous&&previous.segment.end!==null||this.segments.get(line.segment.id)?.end!==null)this.closedPaintInvalid=true;
+    this.drawable.set(line.key,line);
+  }
+  private deleteDrawable(key:string){
+    const line=this.drawable.get(key);if(line&&(line.segment.end!==null||this.segments.get(line.segment.id)?.end!==null))this.closedPaintInvalid=true;this.drawable.delete(key);
   }
 
   /** Presentation-only guides: never extend the recorded wall timeline itself. */
@@ -302,7 +374,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){
     if(segment.detectionMode==='top-levels'&&segment.valueRunsTruncated&&segment.valueRuns.length>0&&segment.valueRuns[0]!.at>segment.start){
       const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,rc);
-      if(line){this.paintInvalid=true;this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
+      if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
     }
     if(segment.valueRuns.length){
       const range=rc.timeScale.visibleRange();
@@ -314,21 +386,21 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     const to=this.segmentTo(segment);
     const line=this.project(segment,0,segment.start,to,null,rc);
-    if(line){this.paintInvalid=true;this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
+    if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
   }
   private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){
     if(!segment.valueRuns.length){this.removeDrawables(segment.id);this.projectAll(segment,rc);return;}
     const keys=this.drawableKeys.get(segment.id)??[];
-    for(const key of keys){const drawable=this.drawable.get(key);if(drawable&&drawable.runIndex>=fromIndex){this.paintInvalid=true;this.drawable.delete(key);}}
+    for(const key of keys){const drawable=this.drawable.get(key);if(drawable&&drawable.runIndex>=fromIndex){this.paintInvalid=true;this.deleteDrawable(key);}}
     this.drawableKeys.set(segment.id,keys.filter(key=>this.drawable.has(key)));
     for(let i=fromIndex;i<segment.valueRuns.length;i++)this.projectIndex(segment,i,rc);
   }
-  private removeDrawables(id:string){const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;for(const key of keys)this.drawable.delete(key);this.drawableKeys.delete(id);}
+  private removeDrawables(id:string){const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;for(const key of keys)this.deleteDrawable(key);this.drawableKeys.delete(id);}
   private projectIndex(segment:OrderWallSegment,index:number,rc:PrimitiveRenderContext){
     const value=segment.valueRuns[index];if(!value)return;
     const next=segment.valueRuns[index+1],from=value.at,to=Math.min(next?.at??this.segmentTo(segment),this.segmentTo(segment));
     const line=this.project(segment,index,from,to,value.percentile,rc);if(!line)return;
-    this.paintInvalid=true;this.drawable.set(line.key,line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
+    this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
   private segmentTo(segment:OrderWallSegment){
     if(segment.end!==null)return segment.end;
@@ -355,7 +427,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const x=rc.timeScale.indexToX(startLogical),right=rc.timeScale.indexToX(endLogical),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
     if(![x,right,y].every(Number.isFinite)||y<0||y>rc.plotHeight||right<0||x>rc.plotWidth)return null;
     const key=`${segment.id}@${from}`;
-    return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high};
+    return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high,paintOrder:0};
   }
 
   orderWallAt(x:number,y:number):OrderWallHit|null{
@@ -372,7 +444,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }
