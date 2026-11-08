@@ -32,14 +32,14 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
   const base=`http://127.0.0.1:${server.httpServer.address().port}`,samples=[];
   for(let run=1;run<=5;run++){
    const before=received.length,prefix=mode+'-'+run;
-   const bulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/${i===0?'v2/history/walls/batch':'v1/liquidations'}?id=${prefix}-${i+2}`));opened.push(...bulk);
+   const bulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/${i===0?'v2/history/walls/batch':'v1/liquidations'}?id=${prefix}-${i+1}`));opened.push(...bulk);
    await until(()=>received.length===before+2,'Two bulk history slots did not reach the upstream');
    const bulkQueued=request(`${base}/market-data/v2/history/walls/batch?id=${prefix}-bulk-queued`);opened.push(bulkQueued);
    await new Promise(r=>setTimeout(r,30));assert.equal(received.length,before+2,'Bulk history consumed a reserved native slot');
-   const native=Array.from({length:2},(_,i)=>request(`${base}/market-data/v1/native-candles?id=${prefix}-${i}`)),held=[...native,...bulk];opened.push(...native);
-   await until(()=>received.length===before+4,'Reserved native sockets queued behind saturated bulk history');
+   const native=Array.from({length:1},(_,i)=>request(`${base}/market-data/v1/native-candles?id=${prefix}-${i}`)),held=[...native,...bulk];opened.push(...native);
+   await until(()=>received.length===before+3,'Reserved native sockets queued behind saturated bulk history');
    const canceled=request(`${base}/market-data/v1/native-candles?id=${prefix}-canceled`),next=request(`${base}/market-data/v1/native-candles?id=released`);opened.push(canceled,next);
-   await new Promise(r=>setTimeout(r,50));assert.equal(received.length,before+4,'Historical socket budget was exceeded');
+   await new Promise(r=>setTimeout(r,50));assert.equal(received.length,before+3,'Historical socket budget was exceeded');
    const health=request(`${base}/market-data/v2/history/health`);opened.push(health);
    await until(()=>health.body==='{"healthy":true}','Current health queued behind saturated history sockets');
    const currentMs=performance.now()-health.started;assert.ok(currentMs<1000,`Fixture current latency ${currentMs}ms`);
@@ -57,7 +57,7 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    await until(()=>held.every((_,i)=>closed.includes(prefix+'-'+i)),'History requests leaked after consumer cancellation');
    samples.push({run,currentMs,survivingQueueMs:queueMs,currentHeaders:health.headers,historyHeaders:next.headers,queuedCancellationNeverOnWire:true,activeCancellationReachedUpstream:true});
   }
-  receipts.push({mode,samples,historyMaxSockets:4,nativeHistoryMaxSockets:2,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
+  receipts.push({mode,samples,historyMaxSockets:3,nativeHistoryMaxSockets:1,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
  }finally{
   for(const item of opened)item.req.destroy();
   if(proxy)for(const option of Object.values(proxy))if(typeof option==='object'&&option.agent&&typeof option.agent.destroy==='function')option.agent.destroy();

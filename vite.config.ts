@@ -8,10 +8,11 @@ export default defineConfig(({ mode }) => {
   const nativeHistoryTarget=process.env.VITE_NATIVE_HISTORY_API_URL;
   if(nativeHistoryTarget){const target=new URL(nativeHistoryTarget);if(target.protocol!=='http:'||!['127.0.0.1','localhost'].includes(target.hostname))throw Error('Native history development target must be loopback HTTP');}
   const currentBookAgent=staging?new Agent({keepAlive:true,maxSockets:4,maxTotalSockets:4,maxFreeSockets:4,timeout:15000}):undefined;
-  // Preserve four historical HTTP slots in total, reserving two for small
-  // visible candle reads instead of letting large wall bodies take all four.
+  // Match the gateway's three historical admissions: one reserved native
+  // lane plus two bulk lanes. A fourth local history transfer would only
+  // provoke an avoidable503 while the gateway preserves current capacity.
   const historyAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
-  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:2,maxTotalSockets:2,maxFreeSockets:2,timeout:60000}):undefined;
+  const nativeHistoryAgent=staging?new Agent({keepAlive:true,maxSockets:1,maxTotalSockets:1,maxFreeSockets:1,timeout:60000}):undefined;
   return ({
   worker: { format: 'es' },
   // Staging proxy is development-only and guarded against CLI --host overrides.
