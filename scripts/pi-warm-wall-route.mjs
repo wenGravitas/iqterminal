@@ -12,12 +12,20 @@ const resources=()=>({at:new Date().toISOString(),load:readFileSync('/proc/loada
 const params={venue:'binance',market,interval,type:'candle',rowPrice:25,historyViewport:range,studies:[],indicators:[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native',minDurationMs:0,showHistory:true}}]};
 const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Prepared wall history',params,minimumWidth:220,minimumHeight:140}},activeGroup:'1'};
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader','--enable-precise-memory-info']});
-try{for(let run=1;run<=samples;run++){
+let browserInfo;
+try{const browserSession=await browser.newBrowserCDPSession();
+const inspect=async method=>{try{return await browserSession.send(method);}catch(error){return {error:String(error)};}};
+browserInfo={commandLine:await inspect('Browser.getBrowserCommandLine'),system:await inspect('SystemInfo.getInfo')};
+for(let run=1;run<=samples;run++){
  const requests=[],responseTasks=[],lookup=new WeakMap(),errors=[],before=resources();let phase='cold';
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:new URL(base).origin,localStorage:[{name:'basis.theme.v1',value:'dark'},{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})}]}]}}),page=await context.newPage();
  context.on('request',request=>{if(!request.url().includes('/market-data/')||request.url().includes('/stream'))return;const record={phase,url:request.url(),at:performance.now(),viewId:request.headers()['x-iq-view-id']??null,state:'started'};requests.push(record);lookup.set(request,record);});
  context.on('requestfailed',request=>{const record=lookup.get(request);if(record){record.state='failed';record.failedAt=performance.now();record.error=request.failure()?.errorText;}});
  context.on('response',response=>{const record=lookup.get(response.request());if(!record)return;responseTasks.push((async()=>{record.status=response.status();record.headers=await response.allHeaders();record.state='headers';const error=await response.finished().catch(e=>e);record.sizes=await response.request().sizes().catch(()=>null);record.timing=response.request().timing();record.state=error?'failed':'complete';record.finishedError=error?String(error):null;})());});page.on('pageerror',error=>errors.push(error.message));
+ const profiler=process.env.IQ_WARM_PROFILE==='1'?await context.newCDPSession(page):undefined;
+ if(profiler)await profiler.send('Profiler.enable');
+ const startProfile=async()=>{if(profiler)await profiler.send('Profiler.start');};
+ const stopProfile=async phase=>{if(profiler){const {profile}=await profiler.send('Profiler.stop');writeFileSync(dir+`/run-${run}-${phase}.cpuprofile`,JSON.stringify(profile));}};
  await page.addInitScript(({id,range,step,reference})=>{
   const b=window.__wallRoute={phase:'cold',range,start:0,firstHistory:null,complete:null,nativeData:null,frames:[],tasks:[],observations:[]};let last=performance.now(),sampleAt=0;
   new PerformanceObserver(list=>{b.tasks.push(...list.getEntries().map(e=>({at:e.startTime,duration:e.duration})));if(b.tasks.length>128)b.tasks.splice(0,b.tasks.length-128);}).observe({type:'longtask',buffered:true});
@@ -34,7 +42,7 @@ try{for(let run=1;run<=samples;run++){
  let cold,warm,cacheReady,environment,coldHash,warmHash,error,warmNotRun;
  const fingerprint=async()=>{const rows=await page.evaluate(id=>[...window.__terminal.panels.get(id).engine.orderWallSegments.values()].sort((a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price).map(({currentSelection:_current,...segment})=>segment),id),h=createHash('sha256');for(const row of rows)h.update(JSON.stringify(row));return {segments:rows.length,runs:rows.reduce((n,row)=>n+row.valueRuns.length,0),hash:h.digest('hex')};};
  try{
-  await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});cold=await observe(45000);
+  await startProfile();await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});cold=await observe(45000);await stopProfile('cold');
   await page.evaluate(()=>window.__terminal.feed.send({type:'diagnostics'}));await page.waitForTimeout(200);environment=await page.evaluate(()=>({fixture:window.__terminal.feed.diagnostics?.fixture,config:window.__terminal.feed.diagnostics?.staging?.config}));
   assert.equal(environment.fixture,false);assert.deepEqual(environment.config,{dataMode:'staging',historyTiles:true,build});
   await page.screenshot({path:dir+`/run-${run}-cold.png`});
@@ -44,11 +52,11 @@ try{for(let run=1;run<=samples;run++){
    assert.equal(coldHash.hash,market==='spot'?'cf9d17a2b3140583cbd01e6ba8c2ad93d964079d839159ed3988650a7afd944e':'de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6');
    assert.ok(cacheReady.warmCompactEntries>0,'No full prepared cache admitted');
    await page.evaluate(id=>window.__terminal.dock.removePanel(window.__terminal.dock.getPanel(id)),id);await page.waitForFunction(id=>!window.__terminal.panels.has(id),id);await page.waitForTimeout(100);
-   phase='warm';await page.evaluate(({id,params})=>{const b=window.__wallRoute;b.phase='warm';b.start=performance.now();b.firstHistory=null;b.complete=null;b.nativeData=null;b.frames=[];b.tasks=[];window.__terminal.dock.addPanel({id,component:'candle',title:'Prepared wall history',params,minimumWidth:220,minimumHeight:140});},{id,params});
-   warm=await observe(12000);if(warm.complete!==null)warmHash=await fingerprint();await page.screenshot({path:dir+`/run-${run}-warm.png`});
+   phase='warm';await startProfile();await page.evaluate(({id,params})=>{const b=window.__wallRoute;b.phase='warm';b.start=performance.now();b.firstHistory=null;b.complete=null;b.nativeData=null;b.frames=[];b.tasks=[];window.__terminal.dock.addPanel({id,component:'candle',title:'Prepared wall history',params,minimumWidth:220,minimumHeight:140});},{id,params});
+   warm=await observe(12000);await stopProfile('warm');if(warm.complete!==null)warmHash=await fingerprint();await page.screenshot({path:dir+`/run-${run}-warm.png`});
   }else warmNotRun='Cold seed did not become complete in the bounded supplemental observation';
  }catch(e){error=String(e);await page.screenshot({path:dir+`/run-${run}-failure.png`}).catch(()=>{});}
  await page.evaluate(()=>window.__terminal?.feed.send({type:'diagnostics'})).catch(()=>{});await page.waitForTimeout(100);const diagnostics=await page.evaluate(()=>window.__terminal?.feed.diagnostics).catch(()=>null);
  await context.close();const traceFinalization=await finishResponseTraces(responseTasks);
- const result={run,clientBuild:build,route:base,market,reference,rendering:'headless system Chromium / SwiftShader; not normal foreground Pi acceptance',scope:'Actual staging SSH/Vite route, cold browser context followed by same-worker reopen. Cold seed observes at most45s; completion after12s is a late supplemental observation, never a loading-gate pass. Warm observes12s, first useful target1s. Paint must match viewport and exact complete counts/native slots.',browser:browser.version(),scriptSha256:createHash('sha256').update(executed).digest('hex'),environment,cold,warm,warmNotRun,cacheReady,coldHash,warmHash,diagnostics,requests,traceFinalization,errors,error,before,after:resources()};writeFileSync(dir+`/run-${run}.json`,JSON.stringify(result,null,2));console.log(JSON.stringify({run,coldPaint:cold?.firstHistory,coldComplete:cold?.complete,warmPaint:warm?.firstHistory===null?null:warm?.firstHistory-warm?.start,warmComplete:warm?.complete===null?null:warm?.complete-warm?.start,error}));
+ const result={run,clientBuild:build,route:base,market,reference,rendering:'headless system Chromium; effective GPU and command line recorded; not normal foreground Pi acceptance',profiled:!!profiler,browserInfo,scope:'Actual staging SSH/Vite route, cold browser context followed by same-worker reopen. Cold seed observes at most45s; completion after12s is a late supplemental observation, never a loading-gate pass. Warm observes12s, first useful target1s. Paint must match viewport and exact complete counts/native slots.',browser:browser.version(),scriptSha256:createHash('sha256').update(executed).digest('hex'),environment,cold,warm,warmNotRun,cacheReady,coldHash,warmHash,diagnostics,requests,traceFinalization,errors,error,before,after:resources()};writeFileSync(dir+`/run-${run}.json`,JSON.stringify(result,null,2));console.log(JSON.stringify({run,coldPaint:cold?.firstHistory,coldComplete:cold?.complete,warmPaint:warm?.firstHistory===null?null:warm?.firstHistory-warm?.start,warmComplete:warm?.complete===null?null:warm?.complete-warm?.start,error}));
 }}finally{await browser.close();}
