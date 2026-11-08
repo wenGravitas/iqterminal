@@ -71,7 +71,7 @@ export class StagingFeedService {
       }
       if(group.native&&!group.native.history){
         const g=group;
-        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,presentation:this.nativePresentation,
+        group.native.history=new NativeCandleHistory(group.series,{request:this.request,now:this.now,
           version:()=>({stream:g.native!.sequence,request:++g.native!.readOrder}),
           apply:(id,bars,version,at)=>this.applyNativeHistory(g,id,bars,version,at),
           changed:()=>{if(!this.dead&&this.groups.get(g.key)===g)this.nativeStatus(g);}});
