@@ -1,3 +1,4 @@
+import {wallHistoryPresentation} from '../src/feed/wall-history-presentation-cache';
 import {test,expect,vi,afterEach} from 'vitest';import {createHash} from 'node:crypto';
 import {OrderWallsArchiveProjector,loadOrderWallsArchive} from '../src/feed/order-walls-archive';
 import {orderWallsSettings} from '../src/feed/order-walls';import {readPreparedWallProjection} from '../src/feed/prepared-wall-projection';
@@ -150,4 +151,46 @@ test.each(['newer','older'] as const)('%s quiet-head rebinding restores retained
   const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:target.cursor,head:target,page:{...f.page.page,nextAfter:target.cursor}});
   expect(result!.projector.snapshot()).toEqual(reference.snapshot());expect(result!.projector.selectedState()).toEqual(reference.selectedState());
  }finally{checkpoint.mockRestore();restore.mockRestore();reader?.dispose();}
+});
+
+test('prepared warm revisits retain detached presentation without a second mutable projector or history clone',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),first=transport(f);let release!:()=>void;
+ const gateSource=new Promise<void>(resolve=>release=resolve),validation=transport(f,{gateSource}),events:any[]=[];let phase=0;
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint'),clone=vi.spyOn(OrderWallsArchiveProjector.prototype,'cloneForLiveTail');
+ const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>(phase===0?first:validation).fetcher(input,init),()=>to+3600000);
+ const subscription={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('first',subscription);await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(clone).not.toHaveBeenCalled();expect(service.diagnostics()).toMatchObject({warmEntries:1,warmSegments:f.full.segments.length,warmRuns:f.full.segments.reduce((n,s)=>n+s.valueRuns.length,0)});
+  const completed=restore.mock.results.map(result=>result.value as OrderWallsArchiveProjector|undefined).find(projector=>projector?.diagnostics().retainedSegments===f.full.segments.length)!;
+  // Even an active replay mutation cannot change the detached cached records.
+  completed.censorOpen(to,'Test replay mutation after cache admission');
+  service.unsubscribe('first');expect(service.diagnostics()).toMatchObject({projections:[],historyJobs:0});
+  phase=1;service.subscribe('revisit',subscription);
+  const cached=events.filter(event=>event.ids?.includes('revisit')&&event.kind==='snapshot').at(-1);
+  expect(cached.segments.sort((a:any,b:any)=>a.id.localeCompare(b.id))).toEqual(f.full.segments.map(segment=>({...segment,currentSelection:false})).sort((a,b)=>a.id.localeCompare(b.id)));
+  expect(cached.status.archive).toMatchObject({state:'loading',requestComplete:false});
+  await vi.waitFor(()=>expect(validation.calls.at(-1)).toMatch(/\/source$/));
+  expect(events.filter(event=>event.ids?.includes('revisit')&&event.kind==='snapshot'&&event.segments?.length)).toHaveLength(1);
+  release();await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(clone).not.toHaveBeenCalled();service.unsubscribe('revisit');expect(service.diagnostics().projections).toHaveLength(0);
+  for(let cycle=0;cycle<20;cycle++){
+   const id='reopen-'+cycle;service.subscribe(id,subscription);
+   await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes(id)).at(-1)?.status.archive.requestComplete).toBe(true),{interval:5});
+   service.unsubscribe(id);expect(service.diagnostics()).toMatchObject({subscriptions:0,historyJobs:0,historyConsumers:0,groups:0,projections:[],warmEntries:1,warmSegments:f.full.segments.length});
+  }
+  expect(clone).not.toHaveBeenCalled();
+ }finally{release();service.dispose();restore.mockRestore();clone.mockRestore();}
+ expect(service.diagnostics()).toMatchObject({warmEntries:0,warmSegments:0,warmRuns:0,warmBytes:0});
+});
+
+test('presentation cache preserves a censorship applied after final restore and detaches active/fallback points',()=>{
+ const f=fixture(),projector=OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to),prepared=new Map(f.full.segments.map(segment=>[segment.id,segment]));
+ projector.censorOpen(to,'Verified tail could not be joined');const snapshot=projector.snapshot(),cache=wallHistoryPresentation(snapshot,prepared)!;
+ expect([...cache.values()]).toEqual(snapshot);expect([...cache.values()].every(segment=>segment.end!==null)).toBe(true);
+ const formerlyActive=f.full.segments.find(segment=>segment.end===null)!,cached=cache.get(formerlyActive.id)!;
+ expect(cached).not.toBe(formerlyActive);expect(cached.valueRuns[0]).not.toBe(snapshot.find(s=>s.id===cached.id)!.valueRuns[0]);
+ expect(cached.censoredReason).toBe('Verified tail could not be joined');
+ const fallback=wallHistoryPresentation(snapshot)!;for(const segment of snapshot){expect(fallback.get(segment.id)).not.toBe(segment);expect(fallback.get(segment.id)!.valueRuns[0]).not.toBe(segment.valueRuns[0]);}
+ expect(wallHistoryPresentation(snapshot,new Map())).toBeUndefined();
 });

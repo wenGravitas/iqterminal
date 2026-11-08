@@ -1,3 +1,4 @@
+import {wallHistoryPresentation} from './wall-history-presentation-cache';
 import {wallReadControlScheduler} from './prepared-wall-read-lease';
 import {PreparedWallSourceChangedError} from './prepared-wall-history';
 import {PreparedWallPreparationError} from './prepared-wall-admission';
@@ -122,10 +123,10 @@ export class OrderWallsArchiveService {
   private readonly groups = new Map<string, CurrentGroup>();
   /** Same fixed profile/range/fence shares one bounded loader and projector. */
   private readonly historyJobs = new Map<string, SharedHistoryJob>();
-  private readonly warmHistory=new Map<string,{result:OrderWallsArchiveResult;bytes:number;timer:ReturnType<typeof setTimeout>}>();
+  private readonly warmHistory=new Map<string,{presentation:ReadonlyMap<string,OrderWallSegment>;status:OrderWallStatus;bytes:number;runs:number;timer:ReturnType<typeof setTimeout>}>();
   private sequence = 0;
   private disposed = false;
-  readonly stats = { incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
+  readonly stats = { warmAdmissions:0,warmCapacityMisses:0,warmInvalidMisses:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
     currentPatches: 0, ringDrops: 0, failures: 0 };
@@ -253,10 +254,9 @@ export class OrderWallsArchiveService {
     for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector,sub.bridgeProjector])if(p)projectors.add(p);
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
     for(const job of this.historyJobs.values())for(const p of [job.initialProjector,job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
-    for(const entry of this.warmHistory.values())if(entry.result.projector)projectors.add(entry.result.projector);
     return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,readerControl:wallReadControlScheduler.diagnostics(),
-      warmEntries:this.warmHistory.size,warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
+      warmEntries:this.warmHistory.size,warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.presentation.size,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: [...this.groups.values()].reduce((sum, group) => sum + group.pages.length, 0),
       ringBytes: [...this.groups.values()].reduce((sum, group) => sum + group.ringBytes, 0),
@@ -483,9 +483,9 @@ export class OrderWallsArchiveService {
       abort: new AbortController(), subscribers: new Set([sub]), settled: false, initialProjector };
     sub.historyJob = job; this.historyJobs.set(key, job); this.stats.historyRequests++;
     const cached=this.warmHistory.get(warmHistoryKey(request));
-    if(cached&&cached.result.projector){
-      sub.cachedHistory=true;sub.historyProjector=cached.result.projector;
-      sub.historyStatus={...cached.result.status,archive:{...cached.result.status.archive!,state:'loading',requestComplete:false,
+    if(cached){
+      sub.cachedHistory=true;sub.historyProjector=undefined;sub.historyPresentation=cached.presentation;
+      sub.historyStatus={...cached.status,archive:{...cached.status.archive!,state:'loading',requestComplete:false,
         reason:'Cached history visible; validating the current revision.'}};
       this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));
     }
@@ -592,16 +592,21 @@ export class OrderWallsArchiveService {
     const archive=result.status.archive,projector=result.projector;
     if(this.disposed||!projector||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume)return;
     const count=projector.diagnostics(),bytes=count.valueRuns*256+count.retainedSegments*512;
-    if(bytes>16*1024*1024)return;
+    if(bytes>16*1024*1024){this.stats.warmCapacityMisses++;return;}
     const key=warmHistoryKey(request),old=this.warmHistory.get(key);
     if(old){clearTimeout(old.timer);this.warmHistory.delete(key);}
     while(this.warmHistory.size>=2||[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0)+bytes>32*1024*1024){
       const first=this.warmHistory.keys().next().value;if(first===undefined)break;
       clearTimeout(this.warmHistory.get(first)!.timer);this.warmHistory.delete(first);
     }
-    const copy=projector.cloneForLiveTail(request.to);
-    const entry={result:{...result,projector:copy,segments:copy.snapshot()},bytes,timer:setTimeout(()=>this.warmHistory.delete(key),60000)};
-    this.warmHistory.set(key,entry);
+    // Prepared records are detached from the mutable restored projector. Cache
+    // only presentation; revisits cannot bridge/apply a live page until fresh
+    // revision validation supplies its own authoritative projector. Canonical
+    // fallback detaches its financial rows once, without rebuilding queues.
+    const presentation=wallHistoryPresentation(result.segments,result.preparedPresentationComplete?result.presentation:undefined);
+    if(!presentation||presentation.size!==count.retainedSegments){this.stats.warmInvalidMisses++;return;}
+    const entry={presentation,status:result.status,runs:count.valueRuns,bytes,timer:setTimeout(()=>this.warmHistory.delete(key),60000)};
+    this.warmHistory.set(key,entry);this.stats.warmAdmissions++;
   }
 
   private publishSharedHistorySnapshot(sub: Subscription, update: OrderWallsArchiveUpdate) {

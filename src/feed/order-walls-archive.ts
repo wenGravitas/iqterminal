@@ -419,7 +419,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const state=coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
       const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector.confirmedAt,
         profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,midpoint:projected.projector.selectedState().midpoint};
-      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector.snapshot(),projector:projected.projector,preparedPresentationComplete:true,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector.snapshot(),projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
       options.onUpdate?.(result);return result;
     }
   }
