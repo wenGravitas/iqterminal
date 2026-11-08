@@ -1,4 +1,4 @@
-import {StagingHistoryBudget} from './scripts/staging-proxy-budget.ts';
+import {StagingProxyBudget} from './scripts/staging-proxy-budget.ts';
 import {observeStagingProxy} from './scripts/staging-proxy-observability.ts';
 import { Agent } from 'node:http';
 import { defineConfig, loadEnv, type UserConfig,type ProxyOptions } from 'vite';
@@ -33,15 +33,15 @@ export default defineConfig(({ mode }) => {
     '/market-data/v1/stream': { target: 'http://127.0.0.1:18781', agent:false, ws:true, rewrite: path => path.replace(/^\/market-data/, '') },
     '/market-data': { target: 'http://127.0.0.1:18780', agent:historyAgent, configure:observeStagingProxy, ws: true, rewrite: path => path.replace(/^\/market-data/, '') },
   }:undefined;
-  const historyBudget=staging?new StagingHistoryBudget(request=>{
+  const proxyBudget=staging?new StagingProxyBudget(request=>{
     const match=Object.entries(proxy!).find(([path])=>request.url?.startsWith(path));
     const option=match?.[1];if(!option||typeof option==='string')return;
-    return option.agent===nativeHistoryAgent?'native':option.agent===historyAgent?'bulk':undefined;
+    return option.agent===currentBookAgent?'current':option.agent===nativeHistoryAgent?'native':option.agent===historyAgent?'bulk':undefined;
   }):undefined;
   return ({
   worker: { format: 'es' },
   // Staging proxy is development-only and guarded against CLI --host overrides.
-  plugins: staging ? [{ name: 'staging-loopback-only', configureServer(server){server.middlewares.use(historyBudget!.middleware);server.httpServer?.once('close',()=>{historyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configurePreviewServer(server){server.middlewares.use(historyBudget!.middleware);server.httpServer.once('close',()=>{historyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
+  plugins: staging ? [{ name: 'staging-loopback-only', api:{proxyBudget}, configureServer(server){server.middlewares.use(proxyBudget!.middleware);server.httpServer?.once('close',()=>{proxyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configurePreviewServer(server){server.middlewares.use(proxyBudget!.middleware);server.httpServer.once('close',()=>{proxyBudget?.close();historyAgent?.destroy();nativeHistoryAgent?.destroy();currentBookAgent?.destroy();});}, configResolved(config) {
     if (config.server.host !== '127.0.0.1' && config.server.host !== 'localhost') throw new Error('Staging data mode requires a loopback Vite host');
   } }] : [],
   server: staging ? { host: '127.0.0.1', port: 5173, strictPort: true, proxy } : undefined,

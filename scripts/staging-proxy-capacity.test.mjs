@@ -14,18 +14,24 @@ function request(url){
 }
 const receipts=[];
 for(const mode of ['dev','production-preview'])test(`${mode}: reserved current sockets and upstream cancellation`,async()=>{
+ const currentReceived=[],currentClosed=[];let activeTotal=0,activeHistorical=0,rejections=0;
+ const grant=(res,current)=>{
+  if(activeTotal>=4||!current&&activeHistorical>=3){rejections++;res.writeHead(503);res.end('{"error":"fixture admission"}');return false;}
+  activeTotal++;if(!current)activeHistorical++;let done=false;
+  const release=()=>{if(done)return;done=true;activeTotal--;if(!current)activeHistorical--;};res.once('finish',release);res.once('close',release);return true;
+ };
  const received=[],closed=[],history=http.createServer((req,res)=>{
-  const id=new URL(req.url,'http://fixture').searchParams.get('id');received.push(id);
+  if(!grant(res,false))return;const id=new URL(req.url,'http://fixture').searchParams.get('id');received.push(id);
   res.on('close',()=>closed.push(id));
   if(id==='released'){res.setHeader('server-timing','fixture;dur=1');res.setHeader('x-iq-request-id','fixture-upstream');res.end('{"ready":true}');}
  });
  const secondHistory=http.createServer(history.listeners('request')[0]);
- const current=http.createServer((req,res)=>{res.setHeader('server-timing','fixture;dur=1');res.setHeader('x-iq-request-id','fixture-current');res.end('{"healthy":true}');});
+ const current=http.createServer((req,res)=>{if(!grant(res,true))return;const id=new URL(req.url,'http://fixture').searchParams.get('id');currentReceived.push(id);res.once('close',()=>currentClosed.push(id));if(id?.endsWith('-current-hold'))return;res.setHeader('server-timing','fixture;dur=1');res.setHeader('x-iq-request-id','fixture-current');res.end('{"healthy":true}');});
  let server,proxy;const opened=[];
  try{
   await listen(history);await listen(secondHistory);await listen(current);
   const loaded=await loadConfigFromFile({command:'serve',mode:'staging'});assert.ok(loaded?.config.server?.proxy);
-  const config=loaded.config;proxy=config.server.proxy;
+  const config=loaded.config;proxy=config.server.proxy;const budget=config.plugins.find(plugin=>plugin.name==='staging-loopback-only').api.proxyBudget;
   for(const [route,option] of Object.entries(proxy))if(typeof option==='object')option.target=`http://127.0.0.1:${(route==='/market-data/v1/liquidations'?secondHistory:String(option.target).endsWith(':18781')?current:history).address().port}`;
   if(mode==='dev'){server=await createServer({...config,configFile:false,mode:'staging',server:{...config.server,host:'127.0.0.1',port:0,strictPort:true,proxy}});await server.listen();}
   else server=await preview({...config,configFile:false,mode:'staging',preview:{host:'127.0.0.1',port:0,strictPort:true,proxy}});
@@ -46,6 +52,14 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    assert.equal(health.headers['x-iq-request-id'],'fixture-current');
    assert.match(health.headers['server-timing'],/fixture;dur=1.*proxyqueue;dur=.*proxyheader;dur=/);
    assert.ok(Number(health.headers['x-iq-proxy-queue-ms'])>=0);
+   const currentHold=request(`${base}/market-data/v2/history/current?id=${prefix}-current-hold`);opened.push(currentHold);
+   await until(()=>currentReceived.includes(prefix+'-current-hold'),'Current reserve did not admit the held request');
+   const currentCanceled=request(`${base}/market-data/v2/history/health?id=${prefix}-current-canceled`),currentNext=request(`${base}/market-data/v2/history/health?id=${prefix}-current-next`);opened.push(currentCanceled,currentNext);
+   await until(()=>budget.diagnostics().waitingCurrent===2,'Current overflow did not queue behind the total serving cap');assert.ok(!currentReceived.includes(prefix+'-current-next'),'Current overflow bypassed the aggregate serving cap');
+   currentCanceled.req.destroy();await until(()=>budget.diagnostics().waitingCurrent===1,'Proxy did not acknowledge queued current cancellation');currentHold.req.destroy();
+   await until(()=>currentClosed.includes(prefix+'-current-hold'),'Current cancellation did not reach upstream');
+   await until(()=>currentNext.body==='{"healthy":true}','Queued current read did not resume after cancellation');
+   assert.ok(!currentReceived.includes(prefix+'-current-canceled'),'Canceled current interest reached upstream');
    bulkQueued.req.destroy();canceled.req.destroy();await new Promise(r=>setTimeout(r,30));
    held[0].req.destroy();await until(()=>closed.includes(prefix+'-0'),'Active cancellation did not reach upstream');
    await until(()=>next.body==='{"ready":true}','Released upstream socket did not serve the surviving queued request');
@@ -69,7 +83,9 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    await until(()=>[0,1,2,3].every(i=>closed.includes(dynamicPrefix+'-'+i)),'Shared admission retained obsolete requests');
    samples.push({run,currentMs,survivingQueueMs:queueMs,currentHeaders:health.headers,historyHeaders:next.headers,queuedCancellationNeverOnWire:true,activeCancellationReachedUpstream:true});
   }
-  receipts.push({mode,samples,historyMaxSockets:3,nativeHistoryMaxSockets:2,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
+  await until(()=>budget.diagnostics().active===0,'Proxy retained completed admissions');assert.deepEqual(budget.diagnostics(),{active:0,historicalActive:0,currentActive:0,nativeActive:0,bulkActive:0,waitingCurrent:0,waitingHistorical:0,closed:false});
+  assert.equal(rejections,0,'The local proxy overcommitted actual upstream admission');
+  receipts.push({mode,samples,upstreamRejections:rejections,totalActiveLimit:4,currentWaitingReserve:16,historyMaxSockets:3,nativeHistoryMaxSockets:2,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
  }finally{
   for(const item of opened)item.req.destroy();
   if(proxy)for(const option of Object.values(proxy))if(typeof option==='object'&&option.agent&&typeof option.agent.destroy==='function')option.agent.destroy();
