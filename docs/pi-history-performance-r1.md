@@ -2,11 +2,18 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
+Current continuation build1ef788c fixes native-price warm-cache lifecycle and saved
+viewport restoration, with1,182unit tests passing/2skipped. Refreshed five-sample
+headless Pi-route cohorts FAIL both footprint and both30h wall loading gates;
+warm revisit and normal foreground acceptance remain unproven. Exact samples,
+route diagnostics and prior failed experiments are retained below. No failed
+sample is replaced, range shortened or missing prepared history relabelled absent.
+
 Current staging serving build remains `18579d938364e5fd5a9c7631bb19681a043f1b66`;
 collectors are unchanged. The isolated gateway and materializer experiments below
 have not replaced serving, activated the preparation/GC bridge, or changed production.
 
-The latest full-chart cohort is client `46ea11d` against the isolated `253ed22`
+An earlier isolated full-chart cohort is client `46ea11d` against the isolated `253ed22`
 gateway, with default Fit Walls disabled. All five Spot30h samples fail complete
 validated paint; first history is6,675.2ms,7,164.9ms,then three unobserved within
 12s. Native360/360slots validate in three of five samples; this is data observation,
@@ -2306,3 +2313,161 @@ rebuilt e71048bd33cb1372bf89f516c8e2ed8641a3dcbd with the full SHA embedded,
 and the ten headless browser checks were repeated successfully. Both build
 logs and the identified asset SHA manifest are retained. This metadata repair
 does not alter or replace the earlier6ed9ee4 five-pair loading samples.
+
+
+## Native-price presentation and painted-range correction (continuation)
+
+The previous goal turn made concrete progress: browser routing now fails closed
+when loaded i3 rules cannot be verified, and guarded launches set both explicit
+class and instance identities with no-focus placement on workspace9. Headed
+launches remain paused; the following checks use headless system Chromium.
+The user's existing Chromium session is not moved or closed.
+
+A separate worker-service cache now retains at most2 exact native series/window
+entries,1,000closed bars aggregate,1MiB conservative accounting and60s TTL.
+It restores native price context on same-worker reopen independently of fresh
+revision validation. Cached slots remain visibly unvalidated and cannot satisfy
+completion, freshen live status, or enter the execution accumulator. Source
+quote volume and normal stream/request version precedence are preserved.
+Bootstrap and closed-stream acknowledgements seed/validate only their accepted
+authoritative slots; an empty bootstrap cannot validate retained old prices.
+See native-candle-visible-history.md for retry, lifecycle and rollback semantics.
+
+The first implementation missed a real USD-M lifecycle: bootstrap can win before
+the independent history page, leaving the cache unseeded. The prototype matched
+cohort was intentionally stopped after its current child terminated normally;
+14 raw case results and the stop receipt remain in native-cache-matched-r1.
+They are an incomplete prototype cohort, not five-run acceptance. Source fixes
+also let explicit saved views inside the1,000bar bootstrap window reach the
+cache before bootstrap, stabilize saved time ranges across initial resize and
+first current data, and snap only viewport boundary noise within1ms. The source
+clock is never rounded into an unclosed candle.
+
+The previous first-history observer incorrectly required input quiescence. A
+new completed-draw viewport marker allows first useful content to be recognized
+when actual historical geometry has painted the requested viewport even while
+later inputs are pending. Complete coverage still requires latest painted input,
+all exact wall segments/value runs/gaps and independently validated native slots.
+Older first-paint timings with the quiescence condition are superseded as a
+first-useful metric; retain their raw observations rather than claiming them as
+valid first-paint measurements. Cached worker arrival remains insufficient.
+
+Projection timestamp/price memoization experiments31785fa and99c401d passed
+exact bounded real-wall geometry and pixel comparisons in the final consistent
+readback harness, but5of6 median elapsed draw-call comparisons were unchanged
+or slower on the Pi. Commit8f9233b restores incumbent projection mathematics.
+Raw failed harness attempts and all5 alternating samples remain under the
+projection-math-* artifacts. These offline call durations are neither GPU
+completion nor actual-route, foreground, frame-rate or loading acceptance.
+
+The native-cache-r2 cohort uses candidate3dfd2507bbc52362d25d8ebc8e88588368b23011
+and cache-disabled controla15c9ae61cba875bd5c0712868717b27d9e73de1. Their entire
+runtime src trees differ only by the NativeCandleHistory cache injection; the
+exact patch and route manifest are retained in native-cache-validation-r2.
+Both use the established two SSH transports with2 native +2 bulk historical
+sockets (4 aggregate) and the independent current reserve. No third transport
+or larger cap is promoted. Temperature, current frequency and throttling flags
+are sampled outside measured browser phases; historical flag bits alone do not
+prove current throttling. Actual SystemInfo identifies effective rendering.
+
+At this candidate, full unit validation passes1,179tests with2skipped; the four
+focused native-history browser regressions pass, including the previously failing
+5,000bar pan and warm saved-view cases. These fixture checks do not certify real
+source performance. Loading measurements and per-gate results follow separately.
+No production deploy, collector restart or main merge is part of this continuation.
+
+
+### Five-sample actual-route wall result on1ef788c (headless)
+
+The subsequent cache-lifetime fixfa16d41 keeps only bounded key/token leases for
+active exact views (maximum128); entries remain evictable under the same2entry,
+1,000row and1MiB caps. Last release starts the60s idle TTL. Pan/dispose releases
+leases; clear invalidates stale releases safely. A fake-clock regression now
+reproduces a chart open for120s followed by immediate reopen, with cached prices
+presented but loadedSlots0 until fresh validation. Fresh source values and normal
+version precedence are unchanged. Full validation on1ef788c passes1,182tests
+with2skipped, typecheck and four focused headless browser regressions.
+
+Five sequential empty-cache samples per market were run on the actual Pi through
+the established SSH/Vite route; source windows were fixed at
+1793696400000..1793804400000. The source remains prepared, not unavailable.
+No comparison was allowed to replace this requested30h range with a shorter one.
+Raw requests, screenshots, hardware/GPU observations, executed script, per-case
+receipts and summaries are in native-cache-r3-cohort and warm-route-native-cache-r3-*.
+Every child reached a normal terminal state; there were no restarted samples.
+
+| Sample | Spot first history ms | Spot rendered walls /8,293 | USD-M first history ms | USD-M rendered walls /23,850 |
+| --- | ---: | ---: | ---: | ---: |
+|1|9186.2|7767|13885.8|3589|
+|2|unobserved|0|unobserved|0|
+|3|11765.3|4065|40059.2|3060|
+|4|12018.2|6428|unobserved|0|
+|5|10946.3|3891|unobserved|0|
+
+All ten complete-paint results are unobserved at45s. This supplemental
+observation does not change the3s first-history or median5s/maximum10s completion
+targets: both30h ready-history gates FAIL for both markets. There are fewer than
+five observed first-history values and no complete values, so a five-sample
+median/maximum is not computable; no missing sample is discarded or imputed.
+No full seed completed, so none of these ten cases ran a warm revisit; that gate
+remains UNPROVEN, not a cached-arrival pass. Normal foreground Chromium remains
+UNPROVEN with headed launches paused after the user's disruption report.
+The exact per-run native counts, value-run counts and requested/loaded ranges
+are retained in summary.json; partial display never certifies full coverage.
+
+A separate transport diagnostic fetched the identical first USD-M gzip batch
+(653,301wire bytes /7,879,182decoded bytes, SHA256
+244fd87434f666e316059bcf400d3b4c86bc5646675366457672c8e6e45a33cb):
+server loopback25.58ms, existing SSH13,085.98ms, Vite34,564.07ms. This is one
+sequential diagnostic sample per route, not five-sample acceptance and not
+exclusive additive phases. Each duration is measured on its executing host;
+loopback orchestration overhead includes SSH setup separately. The batch reports
+cache hit, zero DB queries/rows/bytes. TCP state captures about523ms RTT, small
+congestion windows, retransmissions and out-of-order delivery. These observations
+locate substantial route cost outside SQL; they do not prove its network cause
+or isolate Vite overhead from changing link conditions. No network, collector
+or production setting was changed to improve the score.
+
+
+### Refreshed footprint cohort on the same client/route
+
+The five4h/5m complete-paint samples in milliseconds are [unobserved,5780.3,
+3015.0,4789.8,3053.4], with requested closed slots [48,48,48,48,48] and rendered
+requested slots [0,48,48,48,48]. The first run is a retained failure, not a rerun.
+The five24h/1h complete-paint samples are [unobserved,8549.8,5283.9,7958.8,
+unobserved], with rendered requested slots [20,24,24,24,12] out of24each.
+Both refreshed footprint latency gates FAIL at the unchanged12s observation
+limit (median<=5s /maximum<=10s targets). Missing completions make a full
+five-sample completion median/maximum uncomputable. All five environments
+per case verify staging/history enabled, fixture false and full1ef788c SHA.
+Raw native-cache-r3-footprint4h/24h request/observation logs and screenshots
+retain the computed viewport, coverage and actual source status.
+
+The24h first-history samples are [6345.2,3184.6,3383.8,2918.7,3141.1]ms,
+median3184.6/max6345.2. The4h first-history samples are [unobserved,5780.0,
+3014.9,4577.7,3053.3]ms, so no complete five-sample median/maximum is claimed.
+These are prepared-source, empty-browser-cache measurements. They are not
+cold materialization, source unavailability or normal foreground acceptance.
+The earlierb47457b passing footprint cohort remains historical evidence and
+is not used to turn these new failures green. No gate threshold was widened.
+
+All three collector/API IDs and start times match before/after this cohort.
+The staging serving SHA remains18579d938364e5fd5a9c7631bb19681a043f1b66;
+backend source HEAD2a0c61e is not represented as deployed. Current-only baseline
+versus concurrent custom/history, repeated-use retained-heap plateau, default
+wall preparation rollover/reuse and normal foreground Pi UX remain incomplete.
+The implementation goal stays active; these failed gates are not release acceptance.
+
+
+Broader headless UI verification initially finished26passed/1failed. The failure
+was a native-history fixture count assertion (2viewport requests versus<=1),
+not Footprint Totals loading: its single forming1m candle had no rollover while
+the real clock crossed a minute. The worker correctly requested the newly closed
+slot and exposed partial coverage. Both page and worker fixture clocks are now
+pinned; the unchanged3bar/1,000bar Retry assertions pass2/2 without increasing
+request allowances. The original error context, diagnostics and full failed log
+are retained beside the focused passing rerun and typecheck. This is fixture
+determinism repair, not an additional production performance fix. The measured
+app source remains1ef788c; later test/document/evidence commits are not silently
+reported as the deployed build. The remaining26UI checks passed in the initial
+run; no single27/27rerun is claimed.

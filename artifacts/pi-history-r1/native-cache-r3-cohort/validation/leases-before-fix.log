@@ -1,0 +1,39 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/native-candle-presentation-cache.test.ts (5 tests | 2 failed) 25ms
+   × active exact views keep bounded presentation until release, then idle TTL applies without read renewal 7ms
+   × active leases cannot bypass row caps or retain evicted data, and stale release after clear is harmless 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/native-candle-presentation-cache.test.ts > active exact views keep bounded presentation until release, then idle TTL applies without read renewal
+TypeError: cache.retain is not a function
+ ❯ tests/native-candle-presentation-cache.test.ts:20:81
+     18| });
+     19| test('active exact views keep bounded presentation until release, then…
+     20|  let now=0;const cache=new NativeCandlePresentationCache(()=>now),rele…
+       |                                                                                 ^
+     21|  now=120000;cache.expire();expect(cache.read('view')).toHaveLength(360…
+     22|  peer();now=239999;expect(cache.read('view')).toHaveLength(360);now=24…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/native-candle-presentation-cache.test.ts > active leases cannot bypass row caps or retain evicted data, and stale release after clear is harmless
+TypeError: cache.retain is not a function
+ ❯ tests/native-candle-presentation-cache.test.ts:26:77
+     24| });
+     25| test('active leases cannot bypass row caps or retain evicted data, and…
+     26|  let now=0;const cache=new NativeCandlePresentationCache(()=>now),old=…
+       |                                                                             ^
+     27|  expect(cache.read('a')).toBeUndefined();expect(cache.diagnostics().ro…
+     28|  now=240000;expect(cache.read('a')).toHaveLength(5);current();now+=600…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  13:12:19
+   Duration  284ms (transform 53%, tests 25%, import 16%, worker 6%)
+

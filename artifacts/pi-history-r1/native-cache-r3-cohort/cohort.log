@@ -1,0 +1,20 @@
+{"sample": 1, "market": "spot", "label": "native-cache-r3-1-spot", "phase": "running", "startedAt": 1794132866.8156238}
+{"sample": 1, "market": "spot", "label": "native-cache-r3-1-spot", "phase": "terminal", "startedAt": 1794132866.8156238, "exitCode": 0, "finishedAt": 1794132915.0078115, "result": "../warm-route-native-cache-r3-1-spot/run-1.json"}
+{"sample": 1, "market": "perpetual", "label": "native-cache-r3-1-perpetual", "phase": "running", "startedAt": 1794132915.008464}
+{"sample": 1, "market": "perpetual", "label": "native-cache-r3-1-perpetual", "phase": "terminal", "startedAt": 1794132915.008464, "exitCode": 0, "finishedAt": 1794132963.1360757, "result": "../warm-route-native-cache-r3-1-perpetual/run-1.json"}
+{"sample": 2, "market": "perpetual", "label": "native-cache-r3-2-perpetual", "phase": "running", "startedAt": 1794132963.13663}
+{"sample": 2, "market": "perpetual", "label": "native-cache-r3-2-perpetual", "phase": "terminal", "startedAt": 1794132963.13663, "exitCode": 0, "finishedAt": 1794133011.344707, "result": "../warm-route-native-cache-r3-2-perpetual/run-1.json"}
+{"sample": 2, "market": "spot", "label": "native-cache-r3-2-spot", "phase": "running", "startedAt": 1794133011.3452315}
+{"sample": 2, "market": "spot", "label": "native-cache-r3-2-spot", "phase": "terminal", "startedAt": 1794133011.3452315, "exitCode": 0, "finishedAt": 1794133059.4532626, "result": "../warm-route-native-cache-r3-2-spot/run-1.json"}
+{"sample": 3, "market": "spot", "label": "native-cache-r3-3-spot", "phase": "running", "startedAt": 1794133059.4537573}
+{"sample": 3, "market": "spot", "label": "native-cache-r3-3-spot", "phase": "terminal", "startedAt": 1794133059.4537573, "exitCode": 0, "finishedAt": 1794133107.5719528, "result": "../warm-route-native-cache-r3-3-spot/run-1.json"}
+{"sample": 3, "market": "perpetual", "label": "native-cache-r3-3-perpetual", "phase": "running", "startedAt": 1794133107.5724702}
+{"sample": 3, "market": "perpetual", "label": "native-cache-r3-3-perpetual", "phase": "terminal", "startedAt": 1794133107.5724702, "exitCode": 0, "finishedAt": 1794133155.7821808, "result": "../warm-route-native-cache-r3-3-perpetual/run-1.json"}
+{"sample": 4, "market": "perpetual", "label": "native-cache-r3-4-perpetual", "phase": "running", "startedAt": 1794133155.7826896}
+{"sample": 4, "market": "perpetual", "label": "native-cache-r3-4-perpetual", "phase": "terminal", "startedAt": 1794133155.7826896, "exitCode": 0, "finishedAt": 1794133204.0770586, "result": "../warm-route-native-cache-r3-4-perpetual/run-1.json"}
+{"sample": 4, "market": "spot", "label": "native-cache-r3-4-spot", "phase": "running", "startedAt": 1794133204.0775824}
+{"sample": 4, "market": "spot", "label": "native-cache-r3-4-spot", "phase": "terminal", "startedAt": 1794133204.0775824, "exitCode": 0, "finishedAt": 1794133252.1813495, "result": "../warm-route-native-cache-r3-4-spot/run-1.json"}
+{"sample": 5, "market": "spot", "label": "native-cache-r3-5-spot", "phase": "running", "startedAt": 1794133252.1820009}
+{"sample": 5, "market": "spot", "label": "native-cache-r3-5-spot", "phase": "terminal", "startedAt": 1794133252.1820009, "exitCode": 0, "finishedAt": 1794133300.079249, "result": "../warm-route-native-cache-r3-5-spot/run-1.json"}
+{"sample": 5, "market": "perpetual", "label": "native-cache-r3-5-perpetual", "phase": "running", "startedAt": 1794133300.0800877}
+{"sample": 5, "market": "perpetual", "label": "native-cache-r3-5-perpetual", "phase": "terminal", "startedAt": 1794133300.0800877, "exitCode": 0, "finishedAt": 1794133347.9196708, "result": "../warm-route-native-cache-r3-5-perpetual/run-1.json"}

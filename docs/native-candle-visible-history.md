@@ -24,6 +24,31 @@ Requests beyond4,998eligible closed bars explicitly report capacity-limited
 coverage. Missing returned slots remain partial, never known-empty coverage.
 Native history does not enter a footprint's mutable execution accumulator.
 
+Warm reopen can restore closed prices from a separate service-owned presentation
+cache: at most two exact series/window entries,1,000bars total,1MiB conservative
+accounting and60s idle TTL. This is additional bounded presentation storage; it does
+not raise the1,000current replay or5,000chart budgets. It stores detached flat
+source fields, including quote volume, and never forming bars or live cursors.
+Cache hits do not extend idle TTL. Active views hold bounded key/token leases
+(maximum128), so a long-open chart does not lose reusable prices before it is
+closed. Final release starts the60s idle TTL; active entries remain evictable
+under the same entry/row/byte caps. Leases retain no bar arrays or feed groups,
+and pan/unsubscribe/dispose releases them. An entry that cannot fit is simply not cached;
+the normal exact loader still serves the view. Actual retained heap is measured
+separately from this accounting limit.
+
+A cached bar is presentation, not validated coverage. The footer exposes cached
+slots separately; loaded/requested still counts validated slots. Each warm view
+independently requests its native revision. Echoing displayed timestamps back
+from the viewport cannot cancel this validation or certify cached slots. A fresh
+authoritative bootstrap or closed stream bar can validate its own slots and
+correct cached values without extending other slots' original TTL. Failure
+retains good displayed bars with failed/partial coverage and scoped Retry; a
+fresh empty response never certifies the cached view and evicts its reusable
+entry. Historical imports, including cache delivery, cannot freshen a live
+connection indicator. Worker disposal clears the cache and the existing refresh
+timer expires idle entries; release does not retain the old group or socket.
+
 REST request order and local stream sequence are tracked separately. A delayed
 REST read cannot overwrite a subsequently observed stream update, and a closed
 bar cannot be reopened. Base and quote volume remain source values, not added
@@ -36,6 +61,20 @@ view; a remaining native partial keeps its own Retry action. Simultaneous actual
 failures receive their scoped retries without reconnecting healthy streams. A subsequent bootstrap can satisfy an outstanding history view
 and clear its recovered error. Pan, unsubscribe, offline and disposal release
 obsolete consumer interests; coalesced peers retain their own requests.
+
+A saved wall-history range starts loading before current bootstrap succeeds,
+including ranges inside the usual1,000bar bootstrap window. If bootstrap wins
+the history-page race, its accepted closed bars seed the presentation cache and
+acknowledge only their own slots. Already-owned native bars can satisfy a new
+consumer without a redundant HTTP read. An empty or mismatched response cannot
+acknowledge old retained values.
+
+Viewport boundaries within1ms of an interval boundary are snapped before slot
+alignment; genuine partial slots remain included. The current source clock is
+never snapped forward. Saved restoration retries after the initial chart resize,
+and the first independent current update preserves an explicitly historical
+time range. This prevents early cached prices from restoring into a narrow
+initial container and then being shifted back to the current tail.
 
 A saved wall-history range starts loading before current bootstrap succeeds.
 If the saved range exceeds minimum chart zoom spacing, it stays an explicit
