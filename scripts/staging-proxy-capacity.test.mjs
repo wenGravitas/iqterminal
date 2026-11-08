@@ -30,8 +30,13 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
   else server=await preview({...config,configFile:false,mode:'staging',preview:{host:'127.0.0.1',port:0,strictPort:true,proxy}});
   const base=`http://127.0.0.1:${server.httpServer.address().port}`,samples=[];
   for(let run=1;run<=5;run++){
-   const before=received.length,prefix=mode+'-'+run,held=Array.from({length:4},(_,i)=>request(`${base}/market-data/v1/native-candles?id=${prefix}-${i}`));opened.push(...held);
-   await until(()=>received.length===before+4,'Four bounded history sockets did not reach the upstream');
+   const before=received.length,prefix=mode+'-'+run;
+   const bulk=Array.from({length:2},(_,i)=>request(`${base}/market-data/v2/history/walls/batch?id=${prefix}-${i+2}`));opened.push(...bulk);
+   await until(()=>received.length===before+2,'Two bulk history slots did not reach the upstream');
+   const bulkQueued=request(`${base}/market-data/v2/history/walls/batch?id=${prefix}-bulk-queued`);opened.push(bulkQueued);
+   await new Promise(r=>setTimeout(r,30));assert.equal(received.length,before+2,'Bulk history consumed a reserved native slot');
+   const native=Array.from({length:2},(_,i)=>request(`${base}/market-data/v1/native-candles?id=${prefix}-${i}`)),held=[...native,...bulk];opened.push(...native);
+   await until(()=>received.length===before+4,'Reserved native sockets queued behind saturated bulk history');
    const canceled=request(`${base}/market-data/v1/native-candles?id=${prefix}-canceled`),next=request(`${base}/market-data/v1/native-candles?id=released`);opened.push(canceled,next);
    await new Promise(r=>setTimeout(r,50));assert.equal(received.length,before+4,'Historical socket budget was exceeded');
    const health=request(`${base}/market-data/v2/history/health`);opened.push(health);
@@ -40,9 +45,10 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    assert.equal(health.headers['x-iq-request-id'],'fixture-current');
    assert.match(health.headers['server-timing'],/fixture;dur=1.*proxyqueue;dur=.*proxyheader;dur=/);
    assert.ok(Number(health.headers['x-iq-proxy-queue-ms'])>=0);
-   canceled.req.destroy();await new Promise(r=>setTimeout(r,30));
+   bulkQueued.req.destroy();canceled.req.destroy();await new Promise(r=>setTimeout(r,30));
    held[0].req.destroy();await until(()=>closed.includes(prefix+'-0'),'Active cancellation did not reach upstream');
    await until(()=>next.body==='{"ready":true}','Released upstream socket did not serve the surviving queued request');
+   assert.ok(!received.includes(prefix+'-bulk-queued'),'Canceled queued bulk request reached the upstream');
    assert.ok(!received.includes(prefix+'-canceled'),'Canceled queued request reached the upstream');
    assert.equal(next.headers['x-iq-request-id'],'fixture-upstream');
    const queueMs=Number(next.headers['x-iq-proxy-queue-ms']);assert.ok(queueMs>=50,`Queued history wait missing: ${queueMs}`);
@@ -50,7 +56,7 @@ for(const mode of ['dev','production-preview'])test(`${mode}: reserved current s
    await until(()=>held.every((_,i)=>closed.includes(prefix+'-'+i)),'History requests leaked after consumer cancellation');
    samples.push({run,currentMs,survivingQueueMs:queueMs,currentHeaders:health.headers,historyHeaders:next.headers,queuedCancellationNeverOnWire:true,activeCancellationReachedUpstream:true});
   }
-  receipts.push({mode,samples,historyMaxSockets:4,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
+  receipts.push({mode,samples,historyMaxSockets:4,nativeHistoryMaxSockets:2,bulkHistoryMaxSockets:2,currentMaxSockets:4,received,closed,scope:'Real Vite HTTP proxy with isolated fixture upstreams; no exchange, browser paint, Pi route or financial coverage acceptance'});
  }finally{
   for(const item of opened)item.req.destroy();
   if(proxy)for(const option of Object.values(proxy))if(typeof option==='object'&&option.agent&&typeof option.agent.destroy==='function')option.agent.destroy();

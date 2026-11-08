@@ -2188,3 +2188,37 @@ workspace 1. Chromium ignored an experimental `--name` flag, which was removed.
 The isolated check demonstrates assignment with the forced X11 path; it does
 not establish the cause of the previously reported intermittent desktop leak or
 certify normal foreground rendering/performance acceptance.
+
+### Small native-history proxy reservation and optional transport experiment
+
+The local staging proxy now reserves two of its four historical HTTP slots for
+native candle reads, with two for bulk history; current reads retain their own
+four-slot agent and streaming routes are unchanged. No aggregate history socket
+limit was raised. `VITE_NATIVE_HISTORY_API_URL` optionally routes native candle
+reads to a separate loopback HTTP target; the default remains18780. This is a
+local Vite proxy setting, not a client build/data-source override. Non-loopback
+or non-HTTP targets are rejected. No exchange connections were added.
+
+Development and production-preview real HTTP fixture checks each perform five
+saturation/cancellation rounds: two held bulk reads plus a queued bulk read
+cannot consume the two reserved native slots, current health still returns,
+cancelled queued requests never reach upstream, and active cancellation closes
+the upstream request. Typecheck passes. These prove proxy admission and
+cancellation, not Pi route or paint latency.
+
+The headless actual-route harness `scripts/pi-warm-wall-route.mjs` restores the
+full pinned saved view, measures native slots and actual renderer revisions,
+and checks all financial walls/points against the independent reference hash.
+It collects raw request phases/resources/screenshots and separates cold context
+from same-worker reopen. A45s seed observation is supplemental; time beyond the
+original latency targets never passes the gate. Unseeded warm runs are omitted
+with an explicit reason. This harness is not normal foreground Pi acceptance.
+
+An experimental third SSH transport at18795 forwards to the same staging18780
+API and is used only by preview4184 through the optional setting; the existing
+18780 history and18781 live tunnels remain running. This changes two SSH TCP
+connections to three for this experiment, while keeping historical HTTP slots
+at four. Default tunnel tooling is unchanged pending comparable repeated runs.
+Rollback: unset the optional target and restart the owned preview, then close
+only the explicitly owned18795 SSH process after checking its identity. Revert
+the proxy commit to restore the former shared four-slot history agent.
