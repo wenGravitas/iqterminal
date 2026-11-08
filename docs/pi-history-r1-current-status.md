@@ -40,7 +40,7 @@ The earlier footprint coverage, independent materialization, incremental walls a
 bounded batched-delivery work remain documented in the [detailed report](pi-history-performance-r1.md).
 Their earlier checks are not substituted for the current release gates below.
 
-## Current loading gates
+## Earlier loading cohort (API18579d9)
 
 Five empty-browser-cache samples per case used fixed, already-prepared server windows.
 Every failed sample is retained. Targets were not raised; requested ranges were not
@@ -212,3 +212,41 @@ screenshots are retained in `use-821092d-full-history-r4` and
 `use-821092d-sequential-retention-r5`. The latter was a memory setup protocol
 change, not a new latency cohort. Local821092d validation logs and the pre-fix
 red regression are in `wall-idle-821092d`.
+
+## Updated footprint loading cohort:821092d/95114d0
+
+Five fresh empty-browser-cache samples per pinned scenario used the current shared
+proxy and serving stack. All requested closed slots were independently validated
+and present in the actual painted viewport, with rowPrice25 unchanged. Every chart
+reports canvas2d; tests were headless on the Pi. Normal foreground UX remains
+unproven. This comparison does not isolate a code change from route variability.
+
+|Case|All five completion times (ms)|Median/max (ms)|Closed-view loading gate|
+|---|---|---|---|
+|24h,1h/$25|8141.6,5742.1,9876.0,6429.1,5592.8|6429.1/9876.0|FAIL:median>5000|
+|4h,5m/$25|4211.0,3190.8,3509.1,3772.1,2822.1|3509.1/4211.0|PASS|
+
+Coverage is24/24bars and530cells in every24h sample;48/48bars and354cells in
+every4h sample. The gate evaluator rejects missing or unpainted slots, changed
+row size, shortened ranges, mismatched versions/viewports, unobserved completion,
+and long supplemental observation windows. It exits1for a failed gate and never
+reports a finite-subset median or p95. Eleven focused evaluator tests pass.
+
+The4h history-only pass does not certify current health: one sample completed
+history while current bootstrap still reported loading; two retained an explicit
+current coverage-gap message. This is useful bootstrap-independence evidence,
+not a healthy-current baseline. The separate current freshness/concurrency gates
+remain incomplete. Wall loading, warm revisit and heap plateau remain incomplete
+as recorded above. Thresholds and requested windows were unchanged.
+
+The24h traces show6,8,7,7,8history HTTP reads and1,2,2,2,2view IDs, despite
+the same final requested bounds. Repeated reads raised canonical database rows
+from1,673,129to as many as2,252,918; individual proxy header waits reached5367ms.
+This identifies redundant view work and route/header wait as follow-up targets;
+the cause of the second view lifecycle is not yet isolated. No change is attributed
+to an unverified cause, and canonical validation was not skipped.
+
+See [final-stack manifest](../artifacts/pi-history-r1/final-stack-821-951-footprint-cohort/manifest.json),
+[request work and current state](../artifacts/pi-history-r1/final-stack-821-951-footprint-cohort/request-work.json),
+and the linked raw samples/screenshots for every run. Post-cohort health identifies
+serving95114d0; the API-only deployment receipt retains protected container IDs.

@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: all five exact coverage samples produce median and maximum without p95
+ok 1 - all five exact coverage samples produce median and maximum without p95
+  ---
+  duration_ms: 16.326713
+  type: 'test'
+  ...
+# Subtest: early completion cannot conceal an unpainted slot or unvalidated ready tile
+ok 2 - early completion cannot conceal an unpainted slot or unvalidated ready tile
+  ---
+  duration_ms: 1.880294
+  type: 'test'
+  ...
+# Subtest: known-empty authoritative slot may be covered without a painted bar
+ok 3 - known-empty authoritative slot may be covered without a painted bar
+  ---
+  duration_ms: 0.744196
+  type: 'test'
+  ...
+# Subtest: one unobserved completion fails the full cohort without reporting subset timing
+ok 4 - one unobserved completion fails the full cohort without reporting subset timing
+  ---
+  duration_ms: 0.590845
+  type: 'test'
+  ...
+# Subtest: median and maximum targets are independently enforced
+ok 5 - median and maximum targets are independently enforced
+  ---
+  duration_ms: 3.768682
+  type: 'test'
+  ...
+# Subtest: shortened views, wrong viewport and changed row size fail coverage
+ok 6 - shortened views, wrong viewport and changed row size fail coverage
+  ---
+  duration_ms: 1.780388
+  type: 'test'
+  ...
+# Subtest: mixed versions, duplicated samples and incomplete cohorts are rejected
+ok 7 - mixed versions, duplicated samples and incomplete cohorts are rejected
+  ---
+  duration_ms: 1.288486
+  type: 'test'
+  ...
+# Subtest: epoch coverage uses the captured closed boundary, never a monotonic duration
+ok 8 - epoch coverage uses the captured closed boundary, never a monotonic duration
+  ---
+  duration_ms: 0.722696
+  type: 'test'
+  ...
+# Subtest: a long supplemental observation cannot become a loading acceptance sample
+ok 9 - a long supplemental observation cannot become a loading acceptance sample
+  ---
+  duration_ms: 1.160987
+  type: 'test'
+  ...
+# Subtest: the 4h/5m gate requires all48slots at the same row size
+ok 10 - the 4h/5m gate requires all48slots at the same row size
+  ---
+  duration_ms: 2.527528
+  type: 'test'
+  ...
+# Subtest: a subsequent live redraw does not invalidate the earlier observed complete paint
+ok 11 - a subsequent live redraw does not invalidate the earlier observed complete paint
+  ---
+  duration_ms: 1.547595
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 261.187761
