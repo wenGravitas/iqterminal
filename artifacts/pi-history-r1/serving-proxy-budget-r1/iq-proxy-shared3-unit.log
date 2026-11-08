@@ -1,0 +1,13 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./scripts/staging-proxy-budget" without a file extension (vite.config.ts:1:36). Add the file extension
+  - import "./staging-proxy-observability" without a file extension (scripts/staging-proxy-budget.ts:3:34). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  14:00:20
+   Duration  610ms (transform 63%, import 21%, tests 12%, worker 3%)
+

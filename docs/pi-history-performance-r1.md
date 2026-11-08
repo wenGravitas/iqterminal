@@ -4,16 +4,17 @@
 
 Implementation and performance acceptance are separate. No production deployment or merge is authorized by this release.
 
-Current continuation build1ef788c fixes native-price warm-cache lifecycle and saved
-viewport restoration, with1,182unit tests passing/2skipped. Refreshed five-sample
+Current review frontend638caabincludes native-price cache/lifecycle and bounded proxy
+admission, with1,185unit tests passing/2skipped. The earlier five-run loading build is1ef788c. Refreshed five-sample
 headless Pi-route cohorts FAIL both footprint and both30h wall loading gates;
 warm revisit and normal foreground acceptance remain unproven. Exact samples,
 route diagnostics and prior failed experiments are retained below. No failed
 sample is replaced, range shortened or missing prepared history relabelled absent.
 
-Current staging serving build remains `18579d938364e5fd5a9c7631bb19681a043f1b66`;
-collectors are unchanged. The isolated gateway and materializer experiments below
-have not replaced serving, activated the preparation/GC bridge, or changed production.
+Current staging API serves `95114d0cb236e9de54fb535d58b901d5ac4a2d79` after the API-only rollout.
+Collectors and all five background workers are unchanged; workers remain on18579d9.
+The earlier measured cohorts below used18579d9 unless explicitly identified otherwise. The historical isolated probe containers below remain separate; the preparation/GC
+bridge stays disabled and production is unchanged.
 
 An earlier isolated full-chart cohort is client `46ea11d` against the isolated `253ed22`
 gateway, with default Fit Walls disabled. All five Spot30h samples fail complete
@@ -2473,3 +2474,47 @@ determinism repair, not an additional production performance fix. The measured
 app source remains1ef788c; later test/document/evidence commits are not silently
 reported as the deployed build. The remaining26UI checks passed in the initial
 run; no single27/27rerun is claimed.
+
+
+### Serving admission rollout and shared proxy cap
+
+The current compact-status document records the API-only95114d0rollout and
+five-round real serving/cancellation proofs, including the retained3.90sPi-route
+health outlier. Backend raw receipts identify every unchanged collector/worker
+and the exact immutable API image/rollback plan. These health tests are separate
+from chart loading or confirmation continuity. Backend source b81d0b5 contains
+the reproducible probe; only95114d0is deployed. No production deployment or
+main merge occurred.
+
+A new local admission queue in3ee4531matches the serving gateway's3historical
+slots while retaining2native and2bulk agent maxima. Current/stream routes bypass
+it. The intermediate e69dd13static-native1prototype is not retained: its one
+Spot pilot failed5234.6msfirst/45suncompleted and ran no warm revisit. The final
+shared queue avoids coupling independent native loads behind that static cap.
+Queue wait is measured on the proxy monotonic clock from admission, not just
+from upstream socket creation. Five wire-fixture rounds in each dev/preview
+mode exercise aggregate3, current reservation, both native lanes, bulk progress,
+queued cancellation and release. These are contract checks, not latency passes.
+
+
+The final638caabproxy adds a4request aggregate bound, retaining3historical
+slots, current priority and separately bounded16current/128historical pending
+interests. It preserves2native/2bulk agent maxima and all streaming routes.
+Strict dev/preview wire checks enforce the real upstream4/3limits and report
+0admission rejections through5rounds per mode. Resource tests cover waiting
+bounds and listener release. Full1,185unit tests/2skipped, typecheck/build and
+4focused headless native-history browser tests pass. Earlier static-native1
+and history-only prototypes plus their failures remain identifiable; the
+final code does not retain their weaker admission policies. New stack loading,
+normal foreground, full confirmation/custom-workload and heap-plateau gates
+remain incomplete.
+
+
+A genuine-source headless native-candle smoke on638caab/95114d0observed a
+rendered current chart and a subsequent live update with no page errors. Worker
+diagnostics verify staging/history enabled, fixture false and the full client
+commit; Vite health verifies the exact API commit. The first observation was
+2895.826msin this one smoke. It is native-candle compatibility evidence, not
+a footprint/wall first-useful, five-sample, historical coverage, confirmation-gap
+or foreground acceptance result. Its real-chart screenshot and effective GPU
+metadata are retained with the source script.
