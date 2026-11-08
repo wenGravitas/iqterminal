@@ -1,5 +1,5 @@
 /** Actual Chromium HTTP/gzip framing probe. No chart/latency acceptance claim. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {readFileSync,writeFileSync,appendFileSync,mkdirSync} from 'node:fs';
 const [manifestFile,output]=process.argv.slice(2);if(!manifestFile||!output)throw Error('manifest evidence and output JSONL required');

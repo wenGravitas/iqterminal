@@ -1,4 +1,4 @@
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {readFileSync,writeFileSync,appendFileSync} from 'node:fs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',end=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end;

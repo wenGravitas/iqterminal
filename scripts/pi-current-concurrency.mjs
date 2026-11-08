@@ -1,6 +1,6 @@
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 /** Real staging traffic. Current-only execution subscriber receives no viewport demand. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {readFileSync,writeFileSync,appendFileSync} from 'node:fs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',end=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end;
 const output=`${dir}/${process.env.IQ_BENCH_LABEL??'current-concurrency'}.jsonl`;writeFileSync(output,'');

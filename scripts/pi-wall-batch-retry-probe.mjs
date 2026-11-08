@@ -1,5 +1,5 @@
 /** Explicit offline protocol probe. It does not connect to retained/live source. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';

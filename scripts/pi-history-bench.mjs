@@ -2,7 +2,7 @@ import {finishResponseTraces,loadingObservationComplete,nativeClosedCoverage} fr
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 /** Actual Pi/client-route benchmark. No fixtures; bounded observations are failures,
  * not eventual-completion acceptance. Run against an explicitly started build. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {mkdirSync,writeFileSync,readFileSync,appendFileSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {performance} from 'node:perf_hooks';

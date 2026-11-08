@@ -1,5 +1,5 @@
 /** Explicit offline browser protocol check, not real-chart/source/performance acceptance. */
-import {chromium} from '@playwright/test';import {build} from 'vite';
+import {chromium} from './test-browser-launch.mjs';import {build} from 'vite';
 import {mkdtemp,writeFile,readFile,mkdir,copyFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join,resolve,dirname} from 'node:path';
 import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';import assert from 'node:assert/strict';
 import {routeTestBrowser} from './test-browser-workspace.mjs';

@@ -1,5 +1,5 @@
 /** Real staging coverage/screenshots. No fixture data or fake clock. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 const base='http://127.0.0.1:4181',dir='artifacts/pi-history-r1',fixed=JSON.parse(readFileSync(`${dir}/windows.json`,'utf8')).end,prefix=process.env.IQ_BENCH_LABEL??'real';

@@ -1,5 +1,5 @@
 /** Explicit offline browser protocol check; no chart/source/performance gate. */
-import {chromium} from '@playwright/test';import {execFileSync} from 'node:child_process';
+import {chromium} from './test-browser-launch.mjs';import {execFileSync} from 'node:child_process';
 import {mkdirSync,writeFileSync,readFileSync,mkdtempSync} from 'node:fs';import {tmpdir} from 'node:os';import {resolve,join} from 'node:path';import {createHash} from 'node:crypto';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 const output='artifacts/pi-history-r1/wall-reader-browser';mkdirSync(output,{recursive:true});

@@ -1,5 +1,5 @@
 /** Explicit deterministic Pi chart-kernel diagnostic, not a source/latency gate. */
-import {chromium} from '@playwright/test';
+import {chromium} from './test-browser-launch.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';

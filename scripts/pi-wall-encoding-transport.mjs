@@ -1,6 +1,6 @@
 /** Native Pi browser transport probe, exact pinned batches through Vite/SSH.
  * This does not paint a chart and cannot pass a history-loading gate. */
-import {preview} from 'vite';import {chromium} from '@playwright/test';
+import {preview} from 'vite';import {chromium} from './test-browser-launch.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';
 const [referencePath,output]=process.argv.slice(2);if(!referencePath||!output)throw Error('Pinned encoding reference and new output directory required');

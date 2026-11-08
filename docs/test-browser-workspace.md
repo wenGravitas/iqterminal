@@ -23,3 +23,14 @@ Three consecutive fresh Chromium contexts, including explicit Playwright
 focused. This check did not reproduce the reported intermittent escape; retain
 placement monitoring rather than treating that observation as proof it cannot
 recur. Browser placement/focus checks do not certify chart performance.
+
+Standalone Pi probes now use `test-browser-launch.mjs`, which checks the loaded
+class and temporary-profile instance assignment/no-focus rules **before** calling
+Chromium. The old post-launch placement check remains an additional check.
+The guard also detects i3 when a child runner omits `I3SOCK`.
+
+A fresh three-browser check kept all 30 placement samples on workspace9 and
+left workspace3 focused, including activation requests. Chromium on this Pi
+ignores `--name` for its X11 instance, so routing uses the observed Playwright
+profile instance plus the dedicated class. This check did not reproduce the
+reported escape; it does not establish that every other launcher is guarded.
