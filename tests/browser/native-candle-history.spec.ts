@@ -17,8 +17,8 @@ test('native30hpricecontext paints before bootstrap and retains current volume a
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){
    requests.push(u.pathname+u.search);
-   if(u.searchParams.has('from'))return json({source:'binance-native-kline',market:'spot',instrument:'BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(Number(u.searchParams.get('from'))+i*STEP))});
-   await gate;return json({source:'binance-native-kline',market:'spot',instrument:'BTCUSDT',candles:Array.from({length:1000},(_,i)=>({...bar(current-(999-i)*STEP,80010,i<999),revision:9999999999999,v:1}))});
+   if(u.searchParams.has('from'))return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(Number(u.searchParams.get('from'))+i*STEP))});
+   await gate;return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>({...bar(current-(999-i)*STEP,80010,i<999),revision:9999999999999,v:1}))});
   }
   return json({version:1,cursor:0,watches:[],events:[]});
  });
@@ -49,7 +49,7 @@ test('nativepricepan preserves the requested past and current bars within the500
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){
    const start=u.searchParams.has('from')?Number(u.searchParams.get('from')):current-999*STEP;
-   return json({source:'binance-native-kline',market:'spot',instrument:'BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(start+i*STEP,80040,start+i*STEP+STEP<=current))});
+   return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(start+i*STEP,80040,start+i*STEP+STEP<=current))});
   }
   return json({version:1,cursor:0,watches:[],events:[]});
  });

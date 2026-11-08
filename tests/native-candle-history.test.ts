@@ -1,3 +1,4 @@
+import capturedSpot from './fixtures/native-candles-spot-canonical.json';
 import {expect,test,vi} from 'vitest';
 import {NativeCandleHistory} from '../src/feed/native-candle-history';
 import {NativeCandleVersions,retainNativeViewport,NATIVE_CHART_BAR_BUDGET,NATIVE_VISIBLE_BAR_BUDGET} from '../src/feed/native-candle-state';
@@ -6,7 +7,7 @@ import type {Candle,Series} from '../src/feed/protocol';
 const from=Date.UTC(2026,10,3,11),step=300000,series={venue:'binance',market:'spot',interval:'5m'} as const;
 const candle=(t:number):Candle&{quoteVolume:number}=>({t,o:80000,h:80010,l:79990,c:80001,v:2,quoteVolume:160002,revision:1,closed:true});
 const rows=(start:number,count:number,interval=step)=>Array.from({length:count},(_,i)=>candle(start+i*interval));
-const reply=(candles:Candle[],extra={})=>new Response(JSON.stringify({source:'binance-native-kline',market:'spot',instrument:'BTCUSDT',candles,...extra}));
+const reply=(candles:Candle[],extra={})=>new Response(JSON.stringify({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles,...extra}));
 function harness(request?:typeof fetch,s:Series=series,now=from+40*86400000){
  const applied:Array<{id:string;bars:Candle[];version:unknown}>=[],urls:string[]=[],states:any[]=[];let version=0;
  const history=new NativeCandleHistory(s,{now:()=>now,version:()=>({stream:0,request:++version}),scheduler:new HistoryScheduler(2),
@@ -116,4 +117,17 @@ test('offline cancels native work and resumes only missing slots without duplica
   await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));finish(reply(rows(from,1000)));await new Promise(r=>setTimeout(r,0));
   const times=h.applied.flatMap(p=>p.bars.map(c=>c.t));expect(times).toHaveLength(1500);expect(new Set(times).size).toBe(1500);
  }finally{h.history.dispose();}
+});
+
+test('captured staging native identity accepts exact Spot OHLC and base/quote volume',async()=>{
+ const source=capturedSpot,first=source.candles[0]!,h=harness((async()=>new Response(JSON.stringify(source))) as typeof fetch);
+ try{h.history.viewport('a',first.t,first.t+2*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(h.applied.flatMap(p=>p.bars)).toEqual(source.candles);}finally{h.history.dispose();}
+});
+test('the canonical USD-M namespace is accepted independently of Spot',async()=>{
+ const h=harness((async()=>reply(rows(from,2),{market:'perpetual',instrument:'binance:perpetual:BTCUSDT'})) as typeof fetch,{venue:'binance',market:'perpetual',interval:'5m'});
+ try{h.history.viewport('a',from,from+2*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('ready'));expect(h.applied.flatMap(p=>p.bars)).toEqual(rows(from,2));}finally{h.history.dispose();}
+});
+test('a different canonical market cannot be smuggled through a native symbol match',async()=>{
+ const h=harness((async()=>reply(rows(from,2),{instrument:'binance:perpetual:BTCUSDT'})) as typeof fetch);
+ try{h.history.viewport('a',from,from+2*step,[]);await vi.waitFor(()=>expect(h.history.progress('a')?.state).toBe('failed'));expect(h.applied).toHaveLength(0);}finally{h.history.dispose();}
 });

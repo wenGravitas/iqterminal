@@ -1,4 +1,4 @@
-import {duration,instrumentOf,marketOf,validCandle,type Candle,type Series} from './protocol';
+import {duration,instrumentKey,instrumentOf,marketOf,validCandle,type Candle,type Series} from './protocol';
 import {historyScheduler,type HistoryScheduler} from './history-scheduler';
 import {NATIVE_CHART_BAR_BUDGET,NATIVE_VISIBLE_BAR_BUDGET,type NativeCandleVersion} from './native-candle-state';
 import {historyViewId,tracedHistoryJson} from './history-trace';
@@ -77,7 +77,7 @@ export class NativeCandleHistory {
     const page=await (this.options.scheduler??historyScheduler).read(url,'candles',v.abort.signal,async signal=>{
      const version=this.options.version(),at=this.options.now();this.metrics.requests++;
      const data=await tracedHistoryJson(this.options.request,url,AbortSignal.any([signal,AbortSignal.timeout(60000)]),v.trace,eligibleAt,{maxDecodedBytes:2*1024*1024});
-     if(data.source!=='binance-native-kline'||data.instrument!==undefined&&data.instrument!==instrumentOf(this.series).native||data.market!==undefined&&data.market!==marketOf(this.series)||!Array.isArray(data.candles)||data.candles.length>1000||!data.candles.every(validCandle))throw Error('Invalid native candle history identity');
+     if(data.source!=='binance-native-kline'||data.instrument!==undefined&&data.instrument!==`${instrumentKey(this.series)}:${instrumentOf(this.series).native}`||data.market!==undefined&&data.market!==marketOf(this.series)||!Array.isArray(data.candles)||data.candles.length>1000||!data.candles.every(validCandle))throw Error('Invalid native candle history identity');
      let prior=-1;for(const c of data.candles as Candle[]){if(c.t<from||c.t%step||c.t<=prior)throw Error('Invalid native candle history time ordering');prior=c.t;}
      return {candles:data.candles,version,at} as Page;
     });

@@ -14,6 +14,9 @@ the current/health reserve; native live streams retain their existing routes.
 The local history and current proxy agents remain separate. No collector, source
 retention, collector connection or raw schema is changed.
 
+The R2 API identifies instruments canonically as `binance:spot:BTCUSDT` or
+`binance:perpetual:BTCUSDT`; the public symbol alone is not that API identity.
+Market/instrument metadata, when supplied, must match the requested series.
 Closed bars are merged into the requesting chart only. The shared current
 bootstrap/replay cache remains at1,000bars; the chart remains at5,000. Visible
 history receives priority within that chart budget, reserving two latest bars.
