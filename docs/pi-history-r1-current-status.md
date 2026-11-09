@@ -18,7 +18,15 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
 |Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
-|Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
+|Default wall preparation/rollover serving|Isolated coordinator build/resume and exact canonical overlap/tail reuse proven; closed projection/serving/live handoff unfinished; serving bridge/GC disabled|
+
+Backend472f8acadds exact canonical overlap plus a persisted bounded target tail.
+330backend tests,85focused tests, typecheck/build pass. Two isolated real-source
+cohorts preserve exact canonical bytes and projected state on both default
+advances. In the follow-up single comparison, canonical query counts drop56to19
+Spot/122to42USD-M; source-proof costs are separately recorded. This is materializer
+work, not browser acceptance. Backend remains undeployed and API/collectors retain
+all identities. [Every sample, source range, failure and limitation](wall-canonical-overlap-results.md).
 
 Lateste2faadmits a saved wall chart's native viewport during the early restore
 phase, preserving independent validation and consumer-specific cancellation.

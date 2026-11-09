@@ -1,0 +1,145 @@
+{
+  "files": [
+    {
+      "path": "327-tests.txt",
+      "bytes": 80695,
+      "sha256": "ae7f5634559ac0c1a41d2076352414435814fc4e60b2042592f79fd00cb35e8c"
+    },
+    {
+      "path": "82-focused-tests.txt",
+      "bytes": 20834,
+      "sha256": "cd295413fd3a7c95048e48567a9c2da7c9b49fb7661f03317eeff4add08c369b"
+    },
+    {
+      "path": "budget-tests.txt",
+      "bytes": 1240,
+      "sha256": "83cda05d2f9a23c26adb6d35faab45b59fe464cd5109c41618210f2174e0f076"
+    },
+    {
+      "path": "build-identity.json",
+      "bytes": 347,
+      "sha256": "a9c2518644532afc985109433691b4987c3c86a18d802b6e59656573d45d53e7"
+    },
+    {
+      "path": "build.txt",
+      "bytes": 1897,
+      "sha256": "0ae15ece6dfc444f7c23f964b6473c78dde68d3c8ba00515d8f42a75fdddaff3"
+    },
+    {
+      "path": "cross-cohort-identity.json",
+      "bytes": 1072,
+      "sha256": "c9974a8b5174aac98829e182d2b8dfff10931f0e21313340494e93e7cadd15c2"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 98247,
+      "sha256": "484ad3a6573cf78fd96bb341f1f80b2431435040fca417482924535e8df0afc0"
+    },
+    {
+      "path": "implementation-and-rollback.md",
+      "bytes": 5179,
+      "sha256": "c142eb95566045470cbf7c7e8fc051b6923c4777e91520a04758bc18ea3b3586"
+    },
+    {
+      "path": "initial-invocation-syntax-error.txt",
+      "bytes": 412,
+      "sha256": "ba19e501ca3c6d85bc7df2764b859fe2a3a2f90c4b740abdb449ee27da26cfd2"
+    },
+    {
+      "path": "initial-test-typecheck.txt",
+      "bytes": 817,
+      "sha256": "f87b47587f33ff1125bd55e1722c31a4224517f7bba45a8f942149e9539ed58c"
+    },
+    {
+      "path": "measurement-summary.json",
+      "bytes": 10611,
+      "sha256": "dcd617ac8ed349a05678d0c0f2eb107de985fc2f26908a4b4188bbee3f971ef5"
+    },
+    {
+      "path": "observer-stop.txt",
+      "bytes": 160,
+      "sha256": "682e672c27e36438641c9cd351f665e9a27fe20be074286eaac07e8af6401698"
+    },
+    {
+      "path": "perpetual-reference-manifest.json",
+      "bytes": 25736,
+      "sha256": "05b49e2e728a00331cae784364af45ff504669f2d5a66b12195f6fbd702d6bfe"
+    },
+    {
+      "path": "perpetual-reuse-manifest.json",
+      "bytes": 25736,
+      "sha256": "05b49e2e728a00331cae784364af45ff504669f2d5a66b12195f6fbd702d6bfe"
+    },
+    {
+      "path": "proof-build.txt",
+      "bytes": 72,
+      "sha256": "cb1748ee81d4cf4fb9f7e9bc925721ce612b605e3bf8398007a8801322211457"
+    },
+    {
+      "path": "protected-check.json",
+      "bytes": 1620,
+      "sha256": "c0e591b1b16ed2fefe89299713457110b8a9030103bc38514f4d3f1f30347953"
+    },
+    {
+      "path": "remote-invocation.py",
+      "bytes": 1101,
+      "sha256": "174e9a2bd5d9a35520619a2b99fd6788528d20c1c63da0050ece0011da0d94b4"
+    },
+    {
+      "path": "resource-observer-executed.mjs",
+      "bytes": 2746,
+      "sha256": "23dab06705cdea3b0ad1ddcab077d82a522b1ebc8824b3a919c8652de154a53c"
+    },
+    {
+      "path": "result.json",
+      "bytes": 5549,
+      "sha256": "046bdb3a8967d7143a7e8cc437e955fa36afb05dd96c0d7296d5cd92264e8663"
+    },
+    {
+      "path": "runner-console.jsonl",
+      "bytes": 62386,
+      "sha256": "5c9a97ccd8391b473ae888d89efb84064f51750b7fcca757f221ec13a95ba4a9"
+    },
+    {
+      "path": "runtime.json",
+      "bytes": 68,
+      "sha256": "2e9e38e58fb20489b83aa7074bb99a8273205d3e2631d55abdf53a6daefd6110"
+    },
+    {
+      "path": "server-resources.jsonl",
+      "bytes": 227300,
+      "sha256": "a1f3c38d317cf218bd7872874ba7b0e2f69649f30333dbec2285e13e1b334919"
+    },
+    {
+      "path": "serving-postcheck.txt",
+      "bytes": 4258,
+      "sha256": "b291d924cc5fbaa8c9a73527233ae2a86c106f11694220ff11501c2c1bace88d"
+    },
+    {
+      "path": "serving-precheck.txt",
+      "bytes": 4241,
+      "sha256": "0e18b0e02e708052ad1174ee5a4469fc824c5bc470e2374d712ecffc17f615bf"
+    },
+    {
+      "path": "source.mjs",
+      "bytes": 5819,
+      "sha256": "654aef275ed8aaf2b202cba8eb7aaf6f9ce9c6250b5357adbb30452b9f5cf5fb"
+    },
+    {
+      "path": "spot-reference-manifest.json",
+      "bytes": 17292,
+      "sha256": "644698517d8ff045c3e1862d65fda0720997d169faa0af005021c0faecac53ce"
+    },
+    {
+      "path": "spot-reuse-manifest.json",
+      "bytes": 17292,
+      "sha256": "644698517d8ff045c3e1862d65fda0720997d169faa0af005021c0faecac53ce"
+    },
+    {
+      "path": "typecheck.txt",
+      "bytes": 103,
+      "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
+    }
+  ],
+  "externalFiles": []
+}

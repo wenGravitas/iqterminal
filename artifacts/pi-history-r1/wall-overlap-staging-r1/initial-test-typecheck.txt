@@ -1,0 +1,7 @@
+
+> iqterminal-server@0.1.0 typecheck /home/daz/workarea/iqterminal-server-perf-history
+> tsc --noEmit
+
+tests/wall-canonical-overlap.test.ts(53,42): error TS2339: Property 'seed' does not exist on type '{ version: number; profile: ArchiveProfile | { id: string; exactDerivations: { bandPercent: number[]; topNMax: 0; minimumNotional: boolean; confirmation: boolean; }; version: 1; ... 12 more ...; schemaVersion: 1; }; ... 8 more ...; coverage: { ...; }; } | { ...; }'.
+  Property 'seed' does not exist on type '{ version: number; profile: ArchiveProfile | { id: string; exactDerivations: { bandPercent: number[]; topNMax: 0; minimumNotional: boolean; confirmation: boolean; }; version: 1; ... 12 more ...; schemaVersion: 1; }; ... 8 more ...; coverage: { ...; }; }'.
+ ELIFECYCLE  Command failed with exit code 2.

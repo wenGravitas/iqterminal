@@ -1,0 +1,325 @@
+{
+  "scope": "One isolated default advance per market and mode. Canonical-only elapsed includes fixed25ms inter-page yielding and final source proof; no five-run gate, browser loading, complete projection-build latency or CPU-exclusive phase claim. Initial SQL/raw caches may be warm. Fresh overlap validation and target pin are separately recorded, not hidden.",
+  "canonical": [
+    {
+      "market": "spot",
+      "mode": "reference",
+      "pages": 17,
+      "canonicalElapsedMs": 13360.875554,
+      "stepElapsedSumMs": 12922.177294000003,
+      "queries": 56,
+      "readRows": 17433684,
+      "readBytes": 1180970460,
+      "responseBytes": 91648612,
+      "maxSampledRssBytes": 165617664
+    },
+    {
+      "market": "spot",
+      "mode": "reuse",
+      "pages": 17,
+      "canonicalElapsedMs": 7226.562887,
+      "stepElapsedSumMs": 6787.9313899999925,
+      "queries": 19,
+      "readRows": 4506245,
+      "readBytes": 594789385,
+      "responseBytes": 689228,
+      "maxSampledRssBytes": 166301696
+    },
+    {
+      "market": "perpetual",
+      "mode": "reference",
+      "pages": 39,
+      "canonicalElapsedMs": 26226.741683000007,
+      "stepElapsedSumMs": 25220.68660700001,
+      "queries": 122,
+      "readRows": 53358685,
+      "readBytes": 3004205649,
+      "responseBytes": 250489043,
+      "maxSampledRssBytes": 197693440
+    },
+    {
+      "market": "perpetual",
+      "mode": "reuse",
+      "pages": 39,
+      "canonicalElapsedMs": 16829.097168,
+      "stepElapsedSumMs": 15820.950604999987,
+      "queries": 42,
+      "readRows": 16311949,
+      "readBytes": 1213185814,
+      "responseBytes": 2064374,
+      "maxSampledRssBytes": 190132224
+    }
+  ],
+  "admission": [
+    {
+      "kind": "step",
+      "label": "spot-validate-overlap",
+      "elapsedMs": 485.170534,
+      "cpu": {
+        "user": 57103,
+        "system": 16315
+      },
+      "timing": {
+        "priority": "background",
+        "dbMs": 483.24367199999995,
+        "decodeMs": 0.3185500000000303,
+        "queries": 3,
+        "bytes": 268234,
+        "readRows": 356069,
+        "readBytes": 241135600,
+        "sqlQueueMs": 221.15,
+        "requestId": "wall-overlap-spot-validate-overlap",
+        "sequence": 3
+      },
+      "memory": {
+        "rss": 65138688,
+        "heapTotal": 13209600,
+        "heapUsed": 9496320,
+        "external": 4707490,
+        "arrayBuffers": 1082100
+      }
+    },
+    {
+      "kind": "step",
+      "label": "spot-pin-target",
+      "elapsedMs": 837.3766740000001,
+      "cpu": {
+        "user": 9491,
+        "system": 1456
+      },
+      "timing": {
+        "priority": "background",
+        "dbMs": 835.8911439999998,
+        "decodeMs": 0.31140399999992496,
+        "queries": 3,
+        "bytes": 268199,
+        "readRows": 356069,
+        "readBytes": 241183928,
+        "sqlQueueMs": 562,
+        "requestId": "wall-overlap-spot-pin-target",
+        "sequence": 3
+      },
+      "memory": {
+        "rss": 67469312,
+        "heapTotal": 13447168,
+        "heapUsed": 8823512,
+        "external": 3698461,
+        "arrayBuffers": 73031
+      }
+    },
+    {
+      "kind": "step",
+      "label": "perpetual-validate-overlap",
+      "elapsedMs": 503.57778899999903,
+      "cpu": {
+        "user": 4350,
+        "system": 0
+      },
+      "timing": {
+        "priority": "background",
+        "dbMs": 502.47576200000185,
+        "decodeMs": 0.2705760000026203,
+        "queries": 3,
+        "bytes": 248251,
+        "readRows": 614323,
+        "readBytes": 343085290,
+        "sqlQueueMs": 161.353,
+        "requestId": "wall-overlap-perpetual-validate-overlap",
+        "sequence": 3
+      },
+      "memory": {
+        "rss": 176189440,
+        "heapTotal": 62840832,
+        "heapUsed": 38353776,
+        "external": 11891721,
+        "arrayBuffers": 8230692
+      }
+    },
+    {
+      "kind": "step",
+      "label": "perpetual-pin-target",
+      "elapsedMs": 356.2333060000019,
+      "cpu": {
+        "user": 3833,
+        "system": 0
+      },
+      "timing": {
+        "priority": "background",
+        "dbMs": 355.180177000002,
+        "decodeMs": 0.2686250000006112,
+        "queries": 3,
+        "bytes": 248251,
+        "readRows": 619935,
+        "readBytes": 336420805,
+        "sqlQueueMs": 11.591000000000001,
+        "requestId": "wall-overlap-perpetual-pin-target",
+        "sequence": 3
+      },
+      "memory": {
+        "rss": 177000448,
+        "heapTotal": 63561728,
+        "heapUsed": 39410096,
+        "external": 12826266,
+        "arrayBuffers": 9165237
+      }
+    }
+  ],
+  "exactResults": [
+    {
+      "kind": "exact-canonical-overlap",
+      "market": "spot",
+      "request": {
+        "market": "spot",
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794097500000,
+        "to": 1794206100000
+      },
+      "oldSourceKey": "b306e8ba5060dc20b1051f855f15ff900cba57f317fc8892ba6785747b81f599",
+      "newSourceKey": "a2ad810f1f0f1c96f0458e0b47687e3c41ea80d002b657580babc240fde028b8",
+      "oldSourceToken": "da388bdbed990f387f0c06ec541403fc5b569385fb072ba815117dbef290f5c0",
+      "newSourceToken": "2dbcf5fdc3f704fc45c55a50a51d910beaecf9333b00147c12e0162d543ada6a",
+      "oldWatermark": 19689198,
+      "newWatermark": 20030556,
+      "pages": 17,
+      "financialHash": "340dddd5957bc1de8e89adc06fc241043f16817d62c58bedfbadf84efdb73111",
+      "selectedHash": "5cc29c293b91e5133d89356084cf0cb3129ef0cd361cb01c84f83f10777288a1",
+      "segments": 3202,
+      "valueRuns": 24533,
+      "coverage": {
+        "availableFrom": 1793521565645,
+        "requestedFrom": 1794097500000,
+        "requestedTo": 1794206100000,
+        "confirmedTo": 1794206100000,
+        "gaps": [
+          {
+            "cursor": 18753165,
+            "epoch": 1794058509223,
+            "at": 1794112010851,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 19228189,
+            "epoch": 1794112042493,
+            "at": 1794159681152,
+            "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+          },
+          {
+            "cursor": 19379648,
+            "epoch": 1794159682961,
+            "at": 1794174883949,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19384515,
+            "epoch": 1794174885753,
+            "at": 1794175373442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19425673,
+            "epoch": 1794175375577,
+            "at": 1794179481442,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19451023,
+            "epoch": 1794179483104,
+            "at": 1794182010954,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19492652,
+            "epoch": 1794182013063,
+            "at": 1794186164248,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19546455,
+            "epoch": 1794186166116,
+            "at": 1794191532448,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "cursor": 19638026,
+            "epoch": 1794191534598,
+            "at": 1794200696134,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One real-source reference/reuse materialization per market; includes fresh source proofs, exact canonical bytes, closed-wall financial and selected state. Not five-run chart latency/current/foreground acceptance."
+    },
+    {
+      "kind": "exact-canonical-overlap",
+      "market": "perpetual",
+      "request": {
+        "market": "perpetual",
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "from": 1794096900000,
+        "to": 1794206700000
+      },
+      "oldSourceKey": "5693eea94728f5e64c472d2d1cd5e8970a0cbc40f5f643bd12ecc21bc9fb14b8",
+      "newSourceKey": "4f7e28b1bff713525694cc526347ddd24beb316e3169ed914cc9b85c32e9661b",
+      "oldSourceToken": "fe5d732218842654f50e38560b39525b36f7829cc11425f046c145c7e8903520",
+      "newSourceToken": "2a1f1b2dbd32a15be400a82640d720a6fffe6a012c666eeea9120e3e93cb9098",
+      "oldWatermark": 23644878,
+      "newWatermark": 23980128,
+      "pages": 39,
+      "financialHash": "d0a9b4e40b03427c102f2e931cfcd34e14655e8d102cb32b7f9da773b8d7934c",
+      "selectedHash": "313e05016f9c29cf6cee2aa4310f0e814658f5d7dfe4ef1f0f469283618fe99b",
+      "segments": 8317,
+      "valueRuns": 65425,
+      "coverage": {
+        "availableFrom": 1793506604584,
+        "requestedFrom": 1794096900000,
+        "requestedTo": 1794206700000,
+        "confirmedTo": 1794206700000,
+        "gaps": [
+          {
+            "cursor": 23034368,
+            "epoch": 1794074271599,
+            "at": 1794143691132,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 23454802,
+            "epoch": 1794143722831,
+            "at": 1794186475153,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One real-source reference/reuse materialization per market; includes fresh source proofs, exact canonical bytes, closed-wall financial and selected state. Not five-run chart latency/current/foreground acceptance."
+    }
+  ],
+  "resources": {
+    "samples": 29,
+    "errors": [],
+    "start": {
+      "kind": "start",
+      "pid": 1291866,
+      "label": "wall-overlap-tail-staging-r1",
+      "seconds": 300,
+      "at": "2026-11-09T15:57:47.568Z",
+      "scope": "Read-only serving observer started before client cohort. Actual process boundaries determine coverage; no cross-host phase subtraction or current execution-confirmation claim."
+    },
+    "end": {
+      "kind": "end",
+      "label": "wall-overlap-tail-staging-r1",
+      "elapsedMs": 142547.80830900001,
+      "stopping": true
+    }
+  }
+}

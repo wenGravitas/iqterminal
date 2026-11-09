@@ -1,0 +1,20 @@
+[
+  {
+    "market": "spot",
+    "sourceTokensAndFinancialHashEqual": true,
+    "initialSelectedHash": "4062e78f7f308091b679c24b5e1cecd0801940167869979a9cec78676d75dd05",
+    "followupSelectedHash": "5cc29c293b91e5133d89356084cf0cb3129ef0cd361cb01c84f83f10777288a1",
+    "initialWatermark": 20027454,
+    "followupWatermark": 20030556,
+    "scope": "Selected-state equality is asserted reference/reuse within each pinned cohort, not across different global horizons. Never seed a current cursor from a closed time-filtered view."
+  },
+  {
+    "market": "perpetual",
+    "sourceTokensAndFinancialHashEqual": true,
+    "initialSelectedHash": "6a89451eb4ffd3f5fb70db7d0ff46e7020074fbca56deb82e43b82b95a894b45",
+    "followupSelectedHash": "313e05016f9c29cf6cee2aa4310f0e814658f5d7dfe4ef1f0f469283618fe99b",
+    "initialWatermark": 23977138,
+    "followupWatermark": 23980128,
+    "scope": "Selected-state equality is asserted reference/reuse within each pinned cohort, not across different global horizons. Never seed a current cursor from a closed time-filtered view."
+  }
+]
