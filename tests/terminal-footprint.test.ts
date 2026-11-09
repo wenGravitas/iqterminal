@@ -27,6 +27,23 @@ function expectPocMarkers(path: RecordedPath2D) {
   expect(right).toBeGreaterThan(left);
 }
 
+test('font reuse respects native normalization, restore and external writes between draws',()=>{
+ const p=new TerminalFootprint({...DEFAULT_FOOTPRINT_OPTIONS,font:9,showCandle:false,showPoc:false,showValueArea:false,statsRows:[],tableRows:[]});
+ p.setBars([{time:0,rowSize:25,delta:1,cells:[{price:100,bidVol:2,askVol:3}]}]);
+ let font='initial',writes=0;const saved:string[]=[],paintedFonts:string[]=[];
+ const canvas:any={globalAlpha:1,fillStyle:'#ffffff',textAlign:'center',fillText(){paintedFonts.push(font);},measureText:(s:string)=>({width:s.length*6}),save(){saved.push(font);},restore(){font=saved.pop()??font;}};
+ Object.defineProperty(canvas,'font',{get:()=>font,set:(value:string)=>{writes++;font='normalized:'+value;}});
+ const ctx=new Proxy(canvas,{get:(target,key)=>key in target?target[key]:()=>{}});
+ const rc:any={dpr:1,plotWidth:600,plotHeight:400,theme:{background:'#090909',axisText:'#cccccc',upColor:'#58a65c',downColor:'#ad5858'},timeScale:{barSpacing:200,visibleRange:()=>({from:0,to:1}),indexToX:()=>150},priceScale:{priceRange:()=>({min:75,max:150}),priceToY:(v:number)=>600-v*4},dataLayer:{timeToIndex:()=>0}};
+ p.draw(ctx,rc);
+ const proxy=(p as any).contexts.get(ctx) as CanvasRenderingContext2D,input='9px ui-monospace, SFMono-Regular, Menlo, monospace';
+ proxy.font='12px serif';const before=writes;proxy.font=input;const accepted=canvas.font;expect(writes).toBe(before+1);
+ proxy.font=input;expect(writes).toBe(before+1);expect(canvas.font).toBe(accepted);
+ proxy.save();proxy.font='13px serif';proxy.restore();const restoredWrites=writes;
+ proxy.font='13px serif';expect(writes).toBe(restoredWrites+1);expect(canvas.font).toBe('normalized:13px serif');
+ canvas.font='external again';const directWrites=writes;paintedFonts.length=0;p.draw(ctx,rc);expect(writes).toBeGreaterThan(directWrites);expect(paintedFonts.length).toBeGreaterThan(0);expect(paintedFonts.every(font=>font===accepted)).toBe(true);
+});
+
 test('installed footprint draws larger fitted text and translucent cells without fading text or footer', () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, font: 9, widthFactor: .96, pocStyle: 'outline', statsPosition: 'bottom', statsRows: ['volume', 'delta'] });
   p.setBars([{ time: 0, delta: 32710, rowSize: 25, open: 100, high: 110, low: 100, close: 110, cells: [{ price: 112.5, bidVol: 3990, askVol: 36700 }] }]);

@@ -9,6 +9,7 @@ assert.match(label??'',/^[a-zA-Z0-9_-]{1,80}$/);for(const commit of [build,backe
 const windowFile=process.env.IQ_CURRENT_WINDOWS??'artifacts/pi-history-r1/windows.json',end=JSON.parse(readFileSync(windowFile,'utf8')).end;assert.ok(Number.isSafeInteger(end)&&end>0&&end%3600000===0,'Pinned closed-hour window required');
 const dir=`artifacts/pi-history-r1/${label}`,observationMs=20000;mkdirSync(dir,{recursive:false});
 writeFileSync(dir+'/executed.mjs',readFileSync(new URL(import.meta.url)));writeFileSync(dir+'/input-windows.json',JSON.stringify({end},null,2));
+const sampleCount=Number(process.env.IQ_CURRENT_SAMPLES??5),cpuProfile=process.env.IQ_CURRENT_CPU_PROFILE==='1';assert.ok(Number.isInteger(sampleCount)&&sampleCount>=1&&sampleCount<=5,'One to five explicitly scoped samples required');
 const output=`${dir}/samples.jsonl`;writeFileSync(output,'');
 const resource=()=>({load:readFileSync('/proc/loadavg','utf8'),memory:readFileSync('/proc/meminfo','utf8'),cpu:readFileSync('/proc/stat','utf8').split('\n').filter(s=>/^cpu\b/.test(s)),vmstat:readFileSync('/proc/vmstat','utf8').split('\n').filter(s=>/^(pswpin|pswpout|pgmajfault) /.test(s))});
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
@@ -27,7 +28,7 @@ async function health(context,path){
   const body=JSON.parse(text);return response.ok()?{...body,_probe:probe}:{error:`Health HTTP ${response.status()}`,body,_probe:probe};
  }catch(error){return {error:String(error),_probe:probe??{elapsedMs:performance.now()-start}};}
 }
-try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','concurrent-history']:['concurrent-history','current-only'])){
+try{for(let run=1;run<=sampleCount;run++)for(const scenario of (run%2?['current-only','concurrent-history']:['concurrent-history','current-only'])){
  if(scenario==='concurrent-history'&&!custom){
   const profile='binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1';
   const params=new URLSearchParams({market:'perpetual',profile,from:String(end-30*3600000),to:String(end),limit:'1'});
@@ -39,6 +40,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  const finish=(r,state)=>{const record=pending.get(r);if(!record)return;pending.delete(r);requests.push({...record,elapsedMs:performance.now()-record.at,state,timing:r.timing()});};
  context.on('requestfinished',r=>finish(r,'finished'));context.on('requestfailed',r=>finish(r,'failed'));
  context.on('requestfailed',r=>{if(r.url().includes('/market-data/'))failures.push({url:r.url(),error:r.failure()?.errorText});});
+ const profiler=cpuProfile?await context.newCDPSession(page):null;if(profiler)await profiler.send('Profiler.enable');
  const derivedBefore=await health(context,'/v2/history/health');
  const sourceBefore=await health(context,'/v1/health'),hostBefore=resource();
  let error,baselineDiagnostics;
@@ -58,6 +60,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
   const confirmationDeadline=performance.now()+5000;
   do{baselineDiagnostics=await diagnostics(page);if(executionStream(baselineDiagnostics)?.executionProof?.confirmedAckBatches>=1)break;await new Promise(resolve=>setTimeout(resolve,200));}while(performance.now()<confirmationDeadline);
   assert.ok(executionStream(baselineDiagnostics)?.executionProof?.confirmedAckBatches>=1,'Live badge without a confirmed execution ACK chain');
+  if(profiler)await profiler.send('Profiler.start');
   await page.evaluate(({scenario,end})=>{
    const t=window.__terminal,p=window.__probe;p.observeStart=performance.now();p.updates=[];
    if(scenario==='concurrent-history'){
@@ -69,6 +72,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
   await page.waitForTimeout(observationMs);
   await diagnostics(page);
  }catch(e){error=String(e);}
+ if(profiler){try{const {profile}=await profiler.send('Profiler.stop');writeFileSync(`${dir}/${scenario}-${run}.cpuprofile`,JSON.stringify(profile));}catch(profileError){error??=String(profileError);}finally{await profiler.detach();}}
  const measurement=await page.evaluate(()=>{
   const p=window.__probe;if(!p)return null;const now=performance.now(),times=[p.observeStart??p.started,...p.updates.map(e=>e.at),now],gaps=times.slice(1).map((t,i)=>t-times[i]);
   return {...p,now,bootstrapMs:p.firstAt===null?null:p.firstAt-p.started,maxReceiveGapMs:Math.max(...gaps),heap:performance.memory?.usedJSHeapSize,diagnostics:window.__terminal.feed.diagnostics,panels:[...window.__terminal.panels.values()].map(p=>({id:p.params.api.id,footprint:p.diagnostics().footprint,renderer:p.diagnostics().renderer}))};
@@ -80,6 +84,6 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  await page.screenshot({path:`${dir}/${scenario}-${run}.png`}).catch(()=>{});
  await page.evaluate(()=>{window.__probeRelease?.();for(const panel of [...window.__terminal.dock.panels])if(panel.id!=='chart-current-probe')window.__terminal.dock.removePanel(panel);window.__terminal.feed.send({type:'diagnostics'});}).catch(()=>{});await page.waitForTimeout(250);
  const released=await diagnostics(page).catch(()=>null);
- const result={currentExecutionConnected:executionStream(measurement?.diagnostics)?.connected===true,baselineDiagnostics,currentExecutionProof:executionStream(measurement?.diagnostics)?.executionProof,baselineExecutionProof:executionStream(baselineDiagnostics)?.executionProof,windowFile,scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,hostBefore,host:resource()};
+ const result={cpuProfile,sampleCount,currentExecutionConnected:executionStream(measurement?.diagnostics)?.connected===true,baselineDiagnostics,currentExecutionProof:executionStream(measurement?.diagnostics)?.executionProof,baselineExecutionProof:executionStream(baselineDiagnostics)?.executionProof,windowFile,scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,hostBefore,host:resource()};
  if(error)process.exitCode=1;appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({scenario,run,bootstrapMs:measurement?.bootstrapMs,updates:measurement?.updates.length,maxReceiveGapMs:measurement?.maxReceiveGapMs,error}));await context.close();
 }}finally{await browser.close();}

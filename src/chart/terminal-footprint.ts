@@ -35,12 +35,15 @@ export class TerminalFootprint extends Footprint {
   private opacity = .85;
   cellFont = 10;
   private cellFontPx = 10;
+  private nativeCellFont = '';
+  private paintedCellFont = '';
   private dpr = 1;
   private bars: readonly FootprintBar[] = [];
   private rc?: PrimitiveRenderContext;
   override detached() { super.detached(); this.rc = undefined; this.bars = []; this.centres = []; this.gap = 0; }
   private gap = 0;
   private renderWidth = -1;
+  private fontEpoch = 0;
   private statsHeight = 15;
   private configuringDraw = false;
   override attached(host: PrimitiveHost) {
@@ -128,6 +131,7 @@ export class TerminalFootprint extends Footprint {
   }
   override draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
     const paintStarted=performance.now();
+    this.fontEpoch++;
     this.dpr = rc.dpr;
     this.valueAreaPath = false;
     this.pendingCellRect = null;
@@ -158,21 +162,36 @@ export class TerminalFootprint extends Footprint {
     const minDeviceFont = Math.ceil(9 * this.dpr), maxDeviceFont = Math.floor(24 * this.dpr);
     this.cellFontPx = Math.min(maxDeviceFont, Math.max(minDeviceFont, Math.floor(fittedFont * this.dpr)));
     this.cellFont = this.cellFontPx / this.dpr;
+    this.nativeCellFont = `${o.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+    this.paintedCellFont = `600 ${this.cellFontPx}px ${FOOTPRINT_FONT_FAMILY}`;
     let proxy = this.contexts.get(ctx);
     if (!proxy) {
       // Keep renderer-specific presentation corrections at the footprint boundary.
       // Canvas methods need their real receiver or the native context rejects the call.
       const methods = new Map<PropertyKey, unknown>();
+      let assignedFont:unknown,assignedFontEpoch=-1;
       proxy = new Proxy(ctx, {
         set: (target, key, value) => {
           if (key === 'strokeStyle') this.valueAreaPath = this.style.showValueArea && value === this.style.valueAreaColor;
-          this.cellText = key === 'font' ? value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace` : this.cellText;
-          if (key === 'font' && value === `${this.style.font * this.dpr}px ui-monospace, SFMono-Regular, Menlo, monospace`) {
-            value = `600 ${this.cellFontPx}px ${FOOTPRINT_FONT_FAMILY}`;
+          if(key==='font'){
+            this.cellText=value===this.nativeCellFont;
+            if(this.cellText)value=this.paintedCellFont;
+            // This synchronous draw owns the context. Start a new epoch each
+            // draw (external writers may have changed it), and invalidate on
+            // restore. Re-reading native font per cell serializes its CSS value.
+            // Keep cellText phase tracking above even when the write skips.
+            if(assignedFontEpoch===this.fontEpoch&&value===assignedFont)return true;
+            const accepted=Reflect.set(target,key,value,target);
+            if(accepted){assignedFont=value;assignedFontEpoch=this.fontEpoch;}
+            return accepted;
           }
           return Reflect.set(target, key, value, target);
         },
         get: (target, key) => {
+          if(key==='restore'){
+            if(!methods.has(key))methods.set(key,()=>{assignedFontEpoch=-1;target.restore();});
+            return methods.get(key);
+          }
           if (key === 'moveTo' || key === 'lineTo' || key === 'stroke') {
             if (!methods.has(key)) methods.set(key, (...args: any[]) => {
               if (this.valueAreaPath) {
