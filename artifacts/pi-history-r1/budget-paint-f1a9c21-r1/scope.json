@@ -1,0 +1,10 @@
+{
+  "candidate": "f1a9c21",
+  "baseline": "ae22752",
+  "spotCompletedStages": 85,
+  "spotFinancialAndPixelEquality": true,
+  "perpetualCompleted": false,
+  "disposition": "RAF-only scheduling rejected due multi-second completed preparation; intentionally stopped obsolete USD-M remainder, no full-suite or USD-M equality claim",
+  "browserAndDriverTerminal": true,
+  "apiOrSourceMutations": false
+}

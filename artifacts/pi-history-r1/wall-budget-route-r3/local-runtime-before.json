@@ -1,0 +1,10 @@
+{
+  "appBuild": "1fcacc9e00ade0c3ff9d33e06c75fe0762a1f97a",
+  "assets": {
+    "/assets/index-DEKUyu9D.js": "a66434e3034e59b50d606e1b9ca1e4eea61bfe6bd54e7f6ee0cb140712750be7"
+  },
+  "sourceMode": "VITE_DATA_MODE=staging VITE_HISTORY_TILES=1 VITE_DIAGNOSTICS=1 production build",
+  "preview": 4187,
+  "ssh": "    PID    PPID                  STARTED COMMAND\n 188916   55041 Mon Nov  9 10:55:28 2026 ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o IPQoS=none -L 127.0.0.1:18780:127.0.0.1:18780 staging\n 188974   55042 Mon Nov  9 10:55:40 2026 ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -L 127.0.0.1:18781:127.0.0.1:18780 staging\n",
+  "listenerScope": "Private loopback; existing managed forwards were reused. History IPQoS=none, current inherits default. New forward PIDs since earlier cohorts; not a matched route comparison."
+}

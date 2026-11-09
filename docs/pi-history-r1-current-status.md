@@ -1,3 +1,10 @@
+Latest update: [bounded wall preparation results](wall-render-work-budget-results.md).
+Client1fc/API f82: 170 offline exact comparisons pass; full1238 tests pass/2skip.
+Actual Pi Spot30h completes all5 exact views but fails latency (median21.71s,
+max25.46s). USD-M completes4/5; one remains incomplete at45s. Both loading gates
+FAIL. Transfer waits substantially exceed measured server DB work; investigation
+continues. Overall release acceptance remains incomplete.
+
 # Pi history R1: current evidence
 
 **Release acceptance is incomplete.** No production deployment or main merge has occurred.
