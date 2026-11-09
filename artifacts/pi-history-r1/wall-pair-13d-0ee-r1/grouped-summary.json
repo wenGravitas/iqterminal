@@ -1,0 +1,97 @@
+{
+  "case": "walls-30h-perp-15m",
+  "build": "0ee81ebba15b2d5d4ffb2c6caa7a18c4e6918317",
+  "route": "http://127.0.0.1:4187",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1793696400000,
+    "to": 1793804400000
+  },
+  "reference": {
+    "from": 1793696400000,
+    "to": 1793804400000,
+    "sourceFrom": 1793695500000,
+    "sourceTo": 1793805300000,
+    "sourceToken": "96b070b7571b23df67826ad0c2d0364f8e891205f5d1115ee79932b96333a70e",
+    "segments": 23850,
+    "valueRuns": 104112,
+    "gaps": 47,
+    "evidence": "backend 5dd8b93 wall-preparation-coordinator original-projector exact reference"
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 3772.5,
+      "firstUsefulValid": true,
+      "completeMs": 10094.599999999627,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": 5782.9000000003725,
+      "firstUsefulValid": true,
+      "completeMs": 12474,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": 5265.5999999996275,
+      "firstUsefulValid": true,
+      "completeMs": 11396.700000001118,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 5095,
+      "firstUsefulValid": true,
+      "completeMs": 9789.300000000745,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": 4254.300000000745,
+      "firstUsefulValid": true,
+      "completeMs": 10685.300000000745,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
+    }
+  ],
+  "firstUseful": {
+    "medianMs": 5095,
+    "maximumMs": 5782.9000000003725,
+    "targetMaximumMs": 3000,
+    "pass": false
+  },
+  "complete": {
+    "medianMs": 10685.300000000745,
+    "maximumMs": 12474,
+    "targetMedianMs": 5000,
+    "targetMaximumMs": 10000,
+    "pass": false
+  },
+  "scope": "Five pinned empty-browser-cache/already-prepared real-chart samples. No p95, finite-subset medians, current/warm/cold-build or foreground acceptance. Supplemental observation time does not widen latency targets."
+}

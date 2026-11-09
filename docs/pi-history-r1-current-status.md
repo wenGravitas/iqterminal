@@ -3,6 +3,16 @@
 **Release acceptance is incomplete.** No production deployment or main merge has occurred.
 The active goal remains implementation and validation of the full release.
 
+## Nov9 completion-scheduling follow-up
+
+Client13d30ec overlaps the final independent source check with checkpoint assembly;
+completion still requires both. Eight-part publication grouping0ee81eb was measured
+and reverted byfa9d40e: five alternating pairs reduced completion median but worsened
+maximum chart draws in every pair. All20unprofiled observations have exact coverage;
+all wall latency cohorts still FAIL. Full-suite vault timeouts remain recorded;
+no green full-suite or foreground/concurrency acceptance is claimed.
+[Every sample, rejected experiment, validation and remaining work](wall-pi-nov9-followup.md).
+
 ## Latest wall follow-up
 
 Automatic closed default preparation and cold-build ownership/recovery are
