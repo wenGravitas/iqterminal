@@ -688,7 +688,7 @@ export class OpenAlgoCandleChart {
       return;
     }
     if (!this.orderWalls) {
-      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs);
+      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs, true, 6, () => this.visible && !document.hidden && !this.disposed);
       this.chart.addPrimitive(this.orderWalls, { anchor: 'primary-pane' });
       this.orderWalls.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
     } else {

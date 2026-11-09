@@ -1,7 +1,7 @@
 /** Explicit offline real-wall closed-paint equivalence/CPU check. Not route, GPU-completion,
  * frame-rate or foreground Pi loading acceptance. Never opens a headed window. */
 import assert from 'node:assert/strict';
-import {readFile,writeFile,mkdir,mkdtemp,rm} from 'node:fs/promises';
+import {readFile,writeFile,appendFile,mkdir,mkdtemp,rm} from 'node:fs/promises';
 import {join,resolve,dirname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
@@ -15,6 +15,7 @@ const out=resolve('artifacts/pi-history-r1/budget-paint-'+label);await mkdir(out
 const baseline='ae22752',candidate=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 execFileSync('git',['diff','--quiet','--','src']);
 const temp=await mkdtemp(join(tmpdir(),'iq-wall-math-'));let browser;
+const resources=async()=>({at:new Date().toISOString(),load:(await readFile('/proc/loadavg','utf8')).trim(),memory:await readFile('/proc/meminfo','utf8'),cpu:await readFile('/proc/stat','utf8'),vmstat:await readFile('/proc/vmstat','utf8'),pressure:await readFile('/proc/pressure/cpu','utf8')});
 try{
  const source=resolve('src/chart/order-walls.ts'),old=execFileSync('git',['show',baseline+':src/chart/order-walls.ts'],{encoding:'utf8'}).replace(/from\s+(['"])(\.[^'"]+)\1/g,(_all,_quote,path)=>'from '+JSON.stringify(resolve(dirname(source),path)));
  await writeFile(join(temp,'baseline.ts'),old);await writeFile(join(temp,'entry.ts'),`export {OrderWallsPrimitive as Baseline} from './baseline';export {OrderWallsPrimitive as Candidate} from ${JSON.stringify(source)};export {createChart} from ${JSON.stringify(fileURLToPath(import.meta.resolve('openalgo-charts')))};`);
@@ -33,7 +34,7 @@ try{
   let segments=[...manifest.active.segments];for(const group of manifest.closed){const fragments=group.map(([part,row])=>parts[part][row]);segments.push({...fragments[0].segment,valueRuns:fragments.flatMap(row=>row.segment.valueRuns)});}
   segments.sort((a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price);const hash=createHash('sha256');for(const segment of segments)hash.update(JSON.stringify(segment));assert.equal(hash.digest('hex'),expected);
   const inputInfo={segments:segments.length,runs:segments.reduce((n,s)=>n+s.valueRuns.length,0)},inputFile=join(out,market+'-input.json.gz');await writeFile(inputFile,gzipSync(JSON.stringify({segments})));segments=undefined;parts.length=0;global.gc?.();
-  const context=await browser.newContext({viewport:{width:1600,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));await page.route('http://127.0.0.1/iq-projection-math',route=>route.fulfill({contentType:'text/html',body:'<canvas width="1600" height="1000"></canvas>'}));await page.route('http://127.0.0.1/iq-projection-input',route=>route.fulfill({path:inputFile,contentType:'application/gzip'}));await page.goto('http://127.0.0.1/iq-projection-math');await page.addScriptTag({content:bundle});
+  const context=await browser.newContext({viewport:{width:1600,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));await page.exposeFunction('iqBudgetProgress',async value=>{await appendFile(join(out,'progress.jsonl'),JSON.stringify({market,...value})+'\n');await appendFile(join(out,'resources.jsonl'),JSON.stringify({market,run:value.run,stage:value.stage,...await resources()})+'\n');});await page.route('http://127.0.0.1/iq-projection-math',route=>route.fulfill({contentType:'text/html',body:'<canvas width="1600" height="1000"></canvas>'}));await page.route('http://127.0.0.1/iq-projection-input',route=>route.fulfill({path:inputFile,contentType:'application/gzip'}));await page.goto('http://127.0.0.1/iq-projection-math');await page.addScriptTag({content:bundle});
   const measured=await page.evaluate(async({step})=>{
    const input=await fetch('/iq-projection-input');const {segments}=await new Response(input.body.pipeThrough(new DecompressionStream('gzip'))).json();
    const from=1793696400000,to=1793804400000,slots=(to-from)/step,canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),enc=new TextEncoder();
@@ -64,7 +65,9 @@ try{
      canvas.width=1600*states.Candidate.dpr;canvas.height=1000*states.Candidate.dpr;
      const pair={};
      for(const variant of run%2?['Baseline','Candidate']:['Candidate','Baseline']){
-      const s=states[variant],started=performance.now();let drawCallMs=0,maxDrawCallMs=0,frameCalls=0;
+      const s=states[variant],beforePreparation=s.primitive.diagnostics().preparation,backgroundBefore=beforePreparation?.backgroundMs??0;
+      if(s.primitive.workStats){s.primitive.workStats.maxBackgroundMs=0;s.primitive.workStats.maxSliceMs=0;}
+      const started=performance.now();let drawCallMs=0,maxDrawCallMs=0,frameCalls=0;
       for(;;){
        ctx.clearRect(0,0,canvas.width,canvas.height);const call=performance.now();s.primitive.draw(ctx,rc(s));const ms=performance.now()-call;
        drawCallMs+=ms;maxDrawCallMs=Math.max(maxDrawCallMs,ms);frameCalls++;
@@ -73,9 +76,9 @@ try{
        if(frameCalls>=2000)throw Error('Preparation did not settle '+variant+'/'+stage);
        await new Promise(requestAnimationFrame);
       }
-      const wallTimeMs=performance.now()-started;
+      const wallTimeMs=performance.now()-started,preparation=s.primitive.diagnostics().preparation,backgroundMs=(preparation?.backgroundMs??0)-backgroundBefore,maxBackgroundMs=preparation?.maxBackgroundMs??0;
       const pixels=await digest(ctx.getImageData(0,0,canvas.width,canvas.height).data);
-      pair[variant]={drawCallMs,maxDrawCallMs,frameCalls,wallTimeMs,pixels,diagnostics:s.primitive.diagnostics()};
+      pair[variant]={drawCallMs,maxDrawCallMs,frameCalls,wallTimeMs,backgroundMs,maxBackgroundMs,pixels,diagnostics:s.primitive.diagnostics()};
      }
      const a=pair.Baseline,b=pair.Candidate,oldLines=states.Baseline.primitive.drawable,newLines=states.Candidate.primitive.drawable;
      let financialShapeEqual=oldLines.size===newLines.size,maxCoordinateDelta=0;
@@ -90,8 +93,8 @@ try{
      const oldSegments=states.Baseline.primitive.segments,newSegments=states.Candidate.primitive.segments;
      if(oldSegments.size!==newSegments.size)financialShapeEqual=false;
      for(const [id,value]of oldSegments){const other=newSegments.get(id);if(value!==other&&JSON.stringify(value)!==JSON.stringify(other))financialShapeEqual=false;}
-     const metrics={};for(const [variant,p]of Object.entries(pair))metrics[variant]={drawCallMs:p.drawCallMs,maxDrawCallMs:p.maxDrawCallMs,frameCalls:p.frameCalls,wallTimeMs:p.wallTimeMs,drawableCount:variant==='Baseline'?oldLines.size:newLines.size,pixelsSha256:p.pixels,diagnostics:p.diagnostics};
-     results.push({run,stage,financialShapeEqual,maxCoordinateDelta,equalPixels:a.pixels===b.pixels,methods:metrics});
+     const metrics={};for(const [variant,p]of Object.entries(pair))metrics[variant]={drawCallMs:p.drawCallMs,maxDrawCallMs:p.maxDrawCallMs,backgroundMs:p.backgroundMs,maxBackgroundMs:p.maxBackgroundMs,componentCallMs:p.drawCallMs+p.backgroundMs,maxComponentCallMs:Math.max(p.maxDrawCallMs,p.maxBackgroundMs),frameCalls:p.frameCalls,wallTimeMs:p.wallTimeMs,drawableCount:variant==='Baseline'?oldLines.size:newLines.size,pixelsSha256:p.pixels,diagnostics:p.diagnostics};
+     results.push({run,stage,financialShapeEqual,maxCoordinateDelta,equalPixels:a.pixels===b.pixels,methods:metrics});await window.iqBudgetProgress({run,stage,equalPixels:a.pixels===b.pixels,candidateFrames:b.frameCalls});
     }
     for(const s of Object.values(states))s.primitive.detached();
    }
@@ -103,5 +106,5 @@ try{
   for(const row of results){assert.equal(row.financialShapeEqual,true,`${market}/${row.run}/${row.stage} financial fields`);assert.ok(row.maxCoordinateDelta<=1e-8,`${market}/${row.run}/${row.stage} coordinate roundoff ${row.maxCoordinateDelta}`);assert.equal(row.equalPixels,true,`${market}/${row.run}/${row.stage} pixels`);}
   assert.deepEqual(errors,[]);cases.push({market,sourceToken:manifest.sourceToken,...inputInfo,inputFinancialHash:expected,results,errors});await context.close();console.log(JSON.stringify({market,exactFinancialFieldsAndPixels:true,stageSamples:results.length}));
  }
- const receipt={baseline:execFileSync('git',['rev-parse',baseline],{encoding:'utf8'}).trim(),candidate,browser:browser.version(),system,scope:'Offline captured canonical walls plus explicitly synthetic tail/revision exercise inputs on actual Pi; five alternating completed Canvas preparations per variant/market/stage. Both primitives are attached; Candidate yields across actual RAFs until no pending geometry/reference/paint work and the latest revision is painted. drawCallMs sums elapsed calls, maxDrawCallMs is the maximum individual call, wallTimeMs also includes RAF waits. These are overlapping measures and must not be added. No route/loading or concurrent live gate is implied. Compiler runs in a child that exits before Chromium. Gzipped financial input is read by Chromium directly rather than serialized through CDP; driver-only GC (when exposed) runs outside the measurements, never browser GC. Added renderer-only tail and correction inputs are not venue observations. Geometry is compared directly without copying it into diagnostic arrays. Internal paintOrder ordinal is excluded from geometry comparison; all incumbent drawable fields remain exact. Actual OpenAlgo DataLayer over an explicit UTC axis fixture (OHLC1 is not financial source). Original financial input hashes/geometry fields and every completed readback pixel must match; coordinate-only roundoff <=1e-8 CSS pixels is recorded, not applied to runtime data. Readback/hashing excluded from draw timing. Includes current append, close/reopen, correction/removal, reference/style/view invalidation and mixed Threshold fallback. Closed path counts and style visits are recorded; no whole-app heap plateau is inferred. Canvas2D willReadFrequently=true hint; no raster backend inference. Not app/live-route/current-concurrency, GPU completion, FPS, cold build or foreground acceptance.',cases};await writeFile(join(out,'results.json'),JSON.stringify(receipt,null,2));
+ const receipt={baseline:execFileSync('git',['rev-parse',baseline],{encoding:'utf8'}).trim(),candidate,browser:browser.version(),system,scope:'Offline captured canonical walls plus explicitly synthetic tail/revision exercise inputs on actual Pi; five alternating completed Canvas preparations per variant/market/stage. Both primitives are attached; Candidate yields through bounded preparation tasks, with actual RAFs used for drawing until no pending geometry/reference/paint work and the latest revision is painted. drawCallMs sums elapsed draw calls; backgroundMs records separate preparation tasks outside draw calls. componentCallMs sums these nonoverlapping component call durations, not whole-path latency. maxComponentCallMs is the largest of draw and background call maxima. wallTimeMs also includes task/RAF waits and must not be added to those call durations. No route/loading or concurrent live gate is implied. Compiler runs in a child that exits before Chromium. Gzipped financial input is read by Chromium directly rather than serialized through CDP; driver-only GC (when exposed) runs outside the measurements, never browser GC. Added renderer-only tail and correction inputs are not venue observations. Geometry is compared directly without copying it into diagnostic arrays. Internal paintOrder ordinal is excluded from geometry comparison; all incumbent drawable fields remain exact. Actual OpenAlgo DataLayer over an explicit UTC axis fixture (OHLC1 is not financial source). Original financial input hashes/geometry fields and every completed readback pixel must match; coordinate-only roundoff <=1e-8 CSS pixels is recorded, not applied to runtime data. Readback/hashing excluded from draw timing. Includes current append, close/reopen, correction/removal, reference/style/view invalidation and mixed Threshold fallback. Closed path counts and style visits are recorded; no whole-app heap plateau is inferred. Canvas2D willReadFrequently=true hint; no raster backend inference. Not app/live-route/current-concurrency, GPU completion, FPS, cold build or foreground acceptance.',cases};await writeFile(join(out,'results.json'),JSON.stringify(receipt,null,2));
 }finally{if(browser)await browser.close();await rm(temp,{recursive:true,force:true});}
