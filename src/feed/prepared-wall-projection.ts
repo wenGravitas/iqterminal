@@ -55,10 +55,14 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  }
  let current=acquire(0),next:ReturnType<typeof acquire>;
  try{while(current){
-  context.signal.throwIfAborted();next=acquire(current.next);
+  context.signal.throwIfAborted();
   for(const part of current.selected){
    const fetched=await current.handle.read(part.index),rows=fetched.body as RecordRow[];decodeMs+=fetched.jsonParseMs+(fetched.validationMs??0);bytes+=fetched.bytes;parts++;
    if(!Array.isArray(rows)||rows.length!==part.records)throw Error('Prepared wall projection record count mismatch');
+   // Do not fill both shared history slots before the first authenticated
+   // member arrives. Visible native prices can enter the free slot while the
+   // first wall response waits for headers/body; later batches still pipeline.
+   if(part.index===current.selected[0]!.index)next=acquire(current.next);
    const began=performance.now(),ready:Array<Omit<RecordRow,'offset'|'totalRuns'>>=[];let yielded=performance.now(),yieldMs=0;
    for(const [row,value] of rows.entries()){
     const coordinate=coordinates.get(part.index+':'+row);if(!coordinate)continue;

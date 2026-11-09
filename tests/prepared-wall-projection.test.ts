@@ -41,7 +41,7 @@ function fixture(split=false){
  const advertised={manifest,delivery:{version:1,maxParts:32,maxDecodedBytes:8*1024*1024}};
  return {manifest,texts,source,canonical,advertised,full,page,context:{sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
 }
-function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>}={}){
+function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
   if(url.pathname.endsWith('/discover'))return Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});
@@ -49,7 +49,7 @@ function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrup
   if(url.pathname.endsWith('/projection-batch')){
    const start=Number(url.searchParams.get('start')),selected=f.manifest.parts.slice(start,start+32),mode=(f.advertised.delivery as any).productTransport===1?2:(f.advertised.delivery as any).pointTransport,compact=mode===1||mode===2;expect(url.searchParams.get('version')).toBe(mode===2?'3':compact?'2':'1');
    const texts=await Promise.all(f.texts.map(async text=>{const raw=options.corrupt?text.replace('100.00000001','100.00000002'):text;return compact?JSON.stringify((await encodeWallPointTransport(JSON.parse(raw),undefined,mode===2?2:1)).value):raw;}));let i=start;
-   const body=new ReadableStream<Uint8Array>({async pull(controller){if(i>=start+selected.length){controller.close();return;}if(i>start)await options.tailGate;controller.enqueue(new TextEncoder().encode(texts[i]+'\n'));i++;}});
+   const body=new ReadableStream<Uint8Array>({async pull(controller){if(i>=start+selected.length){controller.close();return;}if(i===start)await options.firstGate;if(i>start)await options.tailGate;controller.enqueue(new TextEncoder().encode(texts[i]+'\n'));i++;}});
    return new Response(body,{headers:{...(compact?{'x-iq-wall-transport':mode===2?WALL_PRODUCT_POINT_TRANSPORT:WALL_POINT_TRANSPORT,'x-iq-wall-part-bytes':JSON.stringify(texts.slice(start,start+selected.length).map(text=>Buffer.byteLength(text))),'x-iq-canonical-bytes':String(selected.reduce((n:number,p:{bytes:number})=>n+p.bytes+1,0)),'x-iq-decoded-bytes':String(texts.slice(start,start+selected.length).reduce((n,text)=>n+Buffer.byteLength(text)+1,0))}:{}),'x-iq-wall-start':String(start),'x-iq-wall-next':String(start+selected.length),'x-iq-wall-parts':String(selected.length),'x-iq-chunk-key':f.manifest.key,'x-iq-source-revision':f.manifest.sourceToken}});
   }
   throw Error('Unexpected canonical replay request: '+url.pathname);
@@ -136,13 +136,22 @@ test('incompatible settings/core fall back before transfer and abort prevents fu
  const old={...f.advertised,manifest:{...f.manifest,core:'c'.repeat(64)}};expect(await readPreparedWallProjection(old,{...f.context,fetcher:t.fetcher,signal:signal.signal},()=>{})).toBeNull();
  let count=0;await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:signal.signal},()=>{count++;signal.abort();})).rejects.toThrow(/abort/i);expect(count).toBe(1);expect(t.calls).toHaveLength(0);
 });
-test('thirty-five immutable parts use two byte-bounded batches and retain every selected identity',async()=>{
+test('first wall member leaves admission for native prices before bounded batch pipelining',async()=>{
  const f=fixture(),closed=JSON.parse(f.texts[0]!)[0],texts:string[]=[];
  for(let i=0;i<35;i++)texts.push(JSON.stringify([{...closed,order:i,segment:{...closed.segment,id:closed.segment.id+':'+i},valueRunOrder:closed.valueRunOrder.map((n:number)=>n+i*10)}]));
  f.texts=texts;f.manifest.parts=texts.map(text=>({hash:hash(text),bytes:Buffer.byteLength(text),records:1}));f.manifest.closed=texts.map((_,i)=>[[i,0]]);
  f.manifest.activeOrder=[35];f.manifest.active.valueRunOrder=f.manifest.active.valueRunOrder.map((values:number[])=>values.map(n=>n+400));f.manifest.active.nextValueRunSequence=500;
- const t=transport(f),result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},()=>{});
- expect(result?.parts).toBe(35);expect(result?.projector.snapshot()).toHaveLength(36);expect(t.calls).toHaveLength(2);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
+ let releaseFirst!:()=>void,releaseNative!:()=>void;const firstGate=new Promise<void>(r=>releaseFirst=r),nativeGate=new Promise<void>(r=>releaseNative=r),abort=new AbortController();
+ const t=transport(f,{firstGate}),work=readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:abort.signal},()=>{});void work.catch(()=>{});
+ let native:Promise<number>|undefined,nativeStarted=false;
+ try{
+  await vi.waitFor(()=>expect(t.calls.length).toBeGreaterThan(0));
+  native=historyScheduler.read('fixture-visible-native-prices','candles',abort.signal,async()=>{nativeStarted=true;await nativeGate;return 1;});void native.catch(()=>{});
+  await vi.waitFor(()=>expect(nativeStarted).toBe(true));expect(t.calls).toHaveLength(1);
+  releaseFirst();await vi.waitFor(()=>expect(t.calls).toHaveLength(2));releaseNative();
+  const result=await work;await native;
+  expect(result?.parts).toBe(35);expect(result?.projector.snapshot()).toHaveLength(36);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
+ }finally{releaseFirst();releaseNative();abort.abort();await Promise.allSettled([work,...(native?[native]:[])]);}
 });
 test('shared service joins and Retry retain the prepared presentation until the full replacement validates',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),old=transport(f,{changed:true});let release!:()=>void;
