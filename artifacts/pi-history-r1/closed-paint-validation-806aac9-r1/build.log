@@ -1,0 +1,28 @@
+
+> terminal-t0@0.1.0 build:staging:diagnostics /home/daz/workarea/iqterminal-perf-history
+> VITE_BUILD_COMMIT="$(git rev-parse HEAD)" VITE_DATA_MODE=staging VITE_HISTORY_TILES=1 VITE_DIAGNOSTICS=1 pnpm build --mode staging
+
+
+> terminal-t0@0.1.0 build /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit && vite build --mode staging
+
+vite v8.3.4 building client environment for staging...
+transforming...
+✓ 199 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    13.00 kB │ gzip:   3.91 kB
+dist/assets/worker-BKSmN_Bs.js    319.80 kB
+dist/assets/worker-DaWyXJKB.js    362.17 kB
+dist/assets/worker-ChhGgWNq.js    512.81 kB
+dist/assets/main-DuadqPLo.css     288.39 kB │ gzip:  37.65 kB
+dist/assets/editor-IuZCbQG5.js     16.16 kB │ gzip:   4.65 kB
+dist/assets/index-BFnsuLlF.js      50.35 kB │ gzip:  14.73 kB
+dist/assets/main-e3eIh78J.js    2,352.43 kB │ gzip: 642.44 kB
+
+✓ built in 1.47s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

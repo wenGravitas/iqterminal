@@ -2840,3 +2840,131 @@ or a rolling Order Walls implementation. The serving footprint sources are
 unchanged from18579d9; API remainse122. Focused backend tests26pass; no deployment,
 collector/source retention change or main merge. Rollback simply stops the owned
 read-only observer/route probe; no service or cache mutation needs undoing.
+
+
+## Closed native wall paths through current updates:806aac9
+
+Root cause: the existing cache avoided idle work, but every changed visible open
+run invalidated its one full paint list. The next draw revisited all closed runs
+to assign styles and rebuild native paths. This remained after incremental data,
+geometry and reference updates were implemented.9f8cba3separates native closed
+paths;806aac9adds newly closed walls once and bounds cache ownership by actual
+retained geometry. Existing closed corrections, removal, scale/settings or strength
+reference changes invalidate the closed cache. Mixed Threshold geometry uses the
+incumbent renderer. Same-style closed/open paths remain one Canvas stroke,
+preserving alpha at overlap; first drawable order retains ordered style strokes.
+No financial records, price/time values, row widths, gaps or profile identity
+change. The native paint ordinal is internal metadata, not a source field.
+
+Tests cover unchanged closed style visits on open updates, closure prefixes,
+explicit old-run revisions, removal, strength references, Threshold fallback,
+ordered stroke unions, hit results and detach. A hidden-chart1000-update retention
+test verifies cached paths/membership cannot retain obsolete source segments.
+These logical bounds are not whole-app heap-plateau acceptance. Extra native closed
+paths are bounded by visible style buckets and geometry; their ownership is exposed
+through retainedClosedPaintPaths/Segments and pendingClosedPaintSegments.
+
+The first candidate passed170native geometry/pixel checks but made full cache
+misses too costly. Its raw9f8cba3-r2cohort is retained. The helper also copied large
+geometry arrays and serialized source through CDP, causing diagnostic memory
+pressure; those timings are not relabelled as the later candidate. R1 had no
+standalone frontend esbuild CLI and never opened Chromium. R3 reached Chromium
+but failed before timings because Playwright fulfilled compressed fixture bytes
+without HTTP decoding. Both setup failures remain separate.
+
+The final helper runs the existing Vite compiler in a child that exits before
+Chromium, delivers compressed input directly to Chromium's decompressor, and
+compares geometry in place. Driver-only exposed GC runs outside timings; browser
+GC is never forced. Source financial hashes are checked before transfer and after
+all exercises. Renderer-only live-tail, correction and Threshold exercise inputs
+are explicitly synthetic, not additional venue observations or a live replay.
+The public OpenAlgo DataLayer uses an explicit UTC/OHLC1axis fixture. Case data
+are the same captured8293Spot/49154points and23850USD-M/104112points references.
+Every incumbent drawable field and readback pixel matched in170paired stage
+checks, five alternating runs per stage and market. Coordinate deltas were zero.
+
+All five values, median and maximum per method/stage are in
+`closed-paint-806aac9-r4/timing-summary.json`; native readback/hashing are outside
+draw-call timing. This measures synchronous draw CPU, not GPU completion, frame
+rate, loading, source completeness, normal foreground UX or app heap plateau.
+The table gives median/maximum ms; no p95 is estimated from five samples.
+
+| Market / stage | Previous renderer |806aac9|
+| --- | --- | --- |
+| spot / initial | 190.5/363.3 | 198.9/223.8 |
+| spot / idle | 0.2/0.5 | 0.2/0.5 |
+| spot / append1 | 20.5/23.5 | 1.3/2.0 |
+| spot / append2 | 15.6/23.4 | 1.1/1.3 |
+| spot / append3 | 12.5/17.5 | 1.2/5.4 |
+| spot / append4 | 12.3/13.3 | 1.0/1.2 |
+| spot / append5 | 13.7/24.6 | 1.0/3.0 |
+| spot / close-tail | 12.7/27.6 | 1.3/2.1 |
+| spot / reopen-tail | 12.0/14.5 | 19.6/25.2 |
+| spot / closed-correction | 13.2/20.6 | 17.4/18.4 |
+| spot / remove-closed | 11.8/12.7 | 16.0/24.2 |
+| spot / reference | 13.2/16.5 | 16.9/17.2 |
+| spot / pan | 186.1/195.9 | 208.0/239.9 |
+| spot / restore | 160.5/271.8 | 200.5/222.8 |
+| spot / dpr2 | 196.5/251.5 | 189.6/224.3 |
+| spot / style | 151.1/248.1 | 179.9/228.3 |
+| spot / threshold | 14.1/22.4 | 38.2/41.0 |
+| perpetual / initial | 487.0/598.7 | 447.2/543.9 |
+| perpetual / idle | 0.3/0.3 | 0.3/0.4 |
+| perpetual / append1 | 41.0/60.2 | 1.1/1.7 |
+| perpetual / append2 | 40.4/55.5 | 1.1/1.6 |
+| perpetual / append3 | 38.6/45.3 | 1.1/1.2 |
+| perpetual / append4 | 41.9/47.5 | 1.1/1.3 |
+| perpetual / append5 | 34.2/45.6 | 1.1/1.2 |
+| perpetual / close-tail | 38.7/41.9 | 0.4/0.7 |
+| perpetual / reopen-tail | 37.8/50.9 | 46.7/53.2 |
+| perpetual / closed-correction | 30.5/38.7 | 40.3/53.7 |
+| perpetual / remove-closed | 29.3/31.4 | 37.5/40.9 |
+| perpetual / reference | 27.6/31.4 | 36.2/39.1 |
+| perpetual / pan | 446.8/533.5 | 450.5/535.0 |
+| perpetual / restore | 429.0/467.7 | 458.2/552.5 |
+| perpetual / dpr2 | 429.1/453.7 | 455.6/484.8 |
+| perpetual / style | 399.4/499.9 | 435.8/525.9 |
+| perpetual / threshold | 30.2/42.2 | 32.7/44.6 |
+
+Ordinary appends and closures improve materially without restyling unchanged
+closed runs. Full reprojections/corrections/reference changes still rebuild and
+can cost more than the previous renderer; mixed-mode fallback also has teardown
+cost. These costs are retained in the table, not excluded as outliers. In the
+first final run, closed style visits stay43887Spot/91482USD-Mthrough five appends;
+closure adds only six visits and one append, with no old-closed rescan. Final
+fallback clears the extra native paths/membership. Resource samples cover the
+owned process tree and host load/swap; RSS sums count shared pages repeatedly.
+They do not prove app memory plateau, and the sampling window excludes some
+startup/input preparation. No loading timing is inferred from this offline work.
+
+Full frontend tests1213passed/2skipped;37chart tests, typecheck/staging diagnostics
+build and4browser guard checks pass. Actual application build806aac92a7d22b999fe17c11d71c13db4bbd05d3
+was tested through existing SSH18780/18781 and preview4185 on Nov8. Fixturefalse,
+staging data and prepared history are asserted. One historical30hSpot cold/warm
+check has8293walls/49154points and the exact CF9financial fingerprint in both
+phases.33known source gaps stay explicit, with360/360native slots validated.
+This historical request has no current wall group, so it is not a live-wall
+concurrency or current paint check. App diagnostics confirm native closed-cache
+builds/appends and no pending projections at complete coverage.
+
+Cold useful history6238.5ms and complete17556.9ms **FAIL** the existing targets.
+Cached useful231.2ms and independently validated completion5390.4ms are one
+observation, not a five-run acceptance cohort. The90sseed observation is a
+functional observation bound, never a widened loading target. Full request,
+resource, screenshot, financial and paint evidence is in
+`warm-route-closedpaint806-e122-spot-r1`. No route-speed improvement is claimed
+from the standalone renderer comparison. Loading, current continuity and
+repeated app interaction/heap gates remain incomplete, as do rolling wall defaults.
+
+Validation receipts/hashes are in `closed-paint-validation-806aac9-r1`. API remains
+e122 and protected collectors/workers/admission retain all seven IDs/start times.
+Nov9 remote health was refreshed successfully; the overnight local preview and
+tunnels were absent, and that connection-refused refresh is saved separately.
+No Nov8 observation is relabelled as a running Nov9 client. No backend rollout,
+production change, source retention change or main merge. All tests headless;
+final i3 inventory has zero test windows. Legacy dirty screenshots were preserved.
+
+Rollback is client-only: use the pre-change083a8d3renderer in an isolated build,
+or revert806aac9then9f8cba3and rebuild. Native caches are ephemeral and dispose
+with the panel; persisted settings/layout and financial storage need no migration
+or cleanup. Do not restart healthy collectors or live sockets to retry history.

@@ -1,0 +1,13 @@
+{
+  "browser-guard-tests.log": "dd1c394a33ddf21c5cd70249d40ceb267ef3ae8c7d7bf713796073ae5596bde7",
+  "browser-isolation-after.json": "f88258ed65f70d8425408704910fe0a160aa977396005d2a7ce3104ab0c58d25",
+  "build.log": "b62b2a1010db1c4dc179f3919bf6270e9e322767206e7240ee7aa0188e11cc76",
+  "health-before.json": "ca4722aadab710eee033f8b7df7c68d88ba5f9c9f27d6bce6b5a6ec08c46e273",
+  "health-refresh-nov9.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "health-remote-refresh-nov9.json": "5452a3259e89c8d70899541607faa9e8d2582039a509c55493aae42da8da6224",
+  "local-refresh-failure-nov9.json": "985b949951435f7a389cd98b2abbaa8d8028d21f6f5d63e72f08cfb0625ac451",
+  "manifest.json": "0c5046c4535c8c98a639d6383578a914c22cc21f0476808e3b24e0d0832124da",
+  "protected-after.txt": "cb33be9b9c095d04ac4efd45f2732d3b43627d21c84071d89cbc1ac1469d7d47",
+  "protected-refresh-nov9.txt": "cb33be9b9c095d04ac4efd45f2732d3b43627d21c84071d89cbc1ac1469d7d47",
+  "unit.log": "d31c8c6be088a5dce3daf8c67ffc460571f7a9e4909a4d117ee17b8a95255d43"
+}

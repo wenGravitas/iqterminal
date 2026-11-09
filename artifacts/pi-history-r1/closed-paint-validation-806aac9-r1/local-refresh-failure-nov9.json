@@ -1,0 +1,5 @@
+{
+  "route": "http://127.0.0.1:4185/market-data/v2/history/health",
+  "error": "Connection refused: isolated preview and both local test tunnels absent after overnight gap. No active test process was inferred from old receipt files.",
+  "scope": "Readiness refresh, not a benchmark sample. Saved Nov8 validation remains labelled with its original build/time."
+}

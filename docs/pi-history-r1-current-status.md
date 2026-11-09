@@ -6,7 +6,7 @@ The active goal remains implementation and validation of the full release.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Current application build: `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
+- Latest validated application build: `806aac92a7d22b999fe17c11d71c13db4bbd05d3` (closed native paths9f8cba3/806aac9; isolated preview was absent at the Nov9 refresh). Previous build `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
 - Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` force standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
 - Staging API now serves `e122f9d8d3995d5b6b907a1519cd6b2f639fa751` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not the current API. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix remains included in current serving.
@@ -543,3 +543,31 @@ narrow5m automatic-rollover observation; hourly rollover timing and rolling wall
 defaults remain unverified/unfinished. A separate five-pair small-health QoS
 comparison did not reproduce the timeout and had unequal backend times; current
 transport configuration is preserved. Concurrency acceptance remains incomplete.
+
+
+## Closed-path rendering:806aac9
+
+Ordinary Top Levels appends reuse native closed paths; new closures append their
+geometry once. Old closed corrections/removals and strength/scale changes rebuild
+exactly; mixed Threshold rendering uses its original ordered path. Retention and
+detach release native paths and membership; hidden retention is covered by tests.
+
+Five alternating paired samples per stage/market (170total) match every incumbent
+financial geometry field and pixel, with unchanged captured source hashes.
+Renderer-only tail/correction fixtures are explicitly synthetic. Representative
+append1 median draw-call CPU: Spot20.5→1.3ms; USD-M41→1.1ms. Closure medians:
+Spot12.7→1.3ms; USD-M38.7→0.4ms. Raster readback is outside these CPU timings;
+no FPS/frame/loading/whole-app heap gate is inferred. Full corrections/references
+still cost more, and all samples/medians/maxima are retained in closed-paint-
+806aac9-r4/timing-summary.json. Both earlier candidates and setup failures remain.
+
+Full tests1213pass/2skip,37chart tests, typecheck/staging build and4browser guard
+checks pass. One actual-route historical Spot check paints8293walls/49154points
+with the exact cold/warm financial hash;33known gaps remain explicit. Cold useful
+6.239s/complete17.557s FAIL the loading targets. Cached useful231ms and fresh
+validation5.390s are one observation, not five-run acceptance. Current wall groups
+were absent for this historical request, so it does not certify live-wall updates.
+
+Nov9 remote API remains e122 and all seven protected IDs/start times match. Local
+test listeners were absent after the overnight gap; that refresh failure is saved
+separately from the Nov8 validation. No serving or collector rollout occurred.
