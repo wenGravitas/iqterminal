@@ -2968,3 +2968,15 @@ Rollback is client-only: use the pre-change083a8d3renderer in an isolated build,
 or revert806aac9then9f8cba3and rebuild. Native caches are ephemeral and dispose
 with the panel; persisted settings/layout and financial storage need no migration
 or cleanup. Do not restart healthy collectors or live sockets to retry history.
+# Exact footprint row-width cache identity
+
+Footprint presentation tiles now use cache namespace2 and the exact numeric row
+width in their keys; analysis summaries use the same exact width identity.
+Previously rounding `rowPrice * 10` aliased valid Spot widths such as `.01` and
+`.02`, allowing cells and known-revision hints from another geometry to appear
+before validation. The focused regression checks both geometries, retained base
+and quote volumes, and absence of cross-width cache or summary reuse. All12
+prepared-footprint tests and frontend typecheck pass. This is a client cache
+correctness fix, not a loading-latency result. Old namespace1 entries expire under
+existing cache retention; no source data or persistent server migration changes.
+

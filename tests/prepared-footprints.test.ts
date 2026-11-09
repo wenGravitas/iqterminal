@@ -115,3 +115,14 @@ test('a failed revision range does not revoke a separately validated sibling til
  await expect(new PreparedFootprints(request,new Cache()).load(from,from+2*step,'1h',25,new AbortController().signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('One expired source interval');
  expect(events.at(-1).bars).toHaveLength(2);expect(events.at(-1).progress).toMatchObject({validatedSlots:1,slots:[{state:'unavailable',validated:false},{state:'ready',validated:true}]});
 });
+
+test('Spot native cent widths never share cached cells, summaries or known-revision hints',async()=>{
+ const cache=new Cache(),spot='binance:spot:BTCUSDT:aggregate-trade',calls:URL[]=[];let release!:(response:Response)=>void;
+ const response=(width:number)=>new Response(JSON.stringify({version:1,feed:spot,state:'ready',tiles:[{from:900000,revision:1,bar:{time:900,rowSize:width,delta:-3,quoteDelta:-300.02,source:'binance-spot-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false,cells:width===.01?[{price:100,bidVol:1,askVol:0,bidNotional:100,askNotional:0},{price:100.01,bidVol:2,askVol:0,bidNotional:200.02,askNotional:0}]:[{price:100,bidVol:3,askVol:0,bidNotional:300.02,askNotional:0}]},coverage:{from:900000,to:1200000,complete:true,gaps:[]}}]}));
+ const request:any=async(url:string)=>{const u=new URL(url,'http://localhost');calls.push(u);return calls.length===1?response(.01):new Promise<Response>(resolve=>{release=resolve;});};
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal,first:any[]=[],second:any[]=[];
+ await client.load(900000,1200000,'5m',.01,signal,(bars,complete)=>first.push({bars,complete}),'spot');expect(first.at(-1).bars[0].cells).toHaveLength(2);
+ const work=client.load(900000,1200000,'5m',.02,signal,(bars,complete)=>second.push({bars,complete}),'spot');await new Promise(resolve=>setTimeout(resolve,0));
+ expect(second).toEqual([]);expect(calls[1]!.searchParams.get('known')).toBe('');release(response(.02));await work;
+ expect(second.at(-1).bars[0]).toMatchObject({rowSize:.02,delta:-3,quoteDelta:-300.02,cells:[{price:100,bidVol:3,bidNotional:300.02}]});expect(cache.values.size).toBe(2);
+});

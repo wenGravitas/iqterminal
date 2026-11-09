@@ -47,8 +47,8 @@ export class PreparedFootprints {
     const step = duration[interval];
     const feed = footprintFeed(market);
     const sourceKey = footprintAnalysisSourceKey(market, interval);
-    const summaryKey = `${sourceKey}:p${Math.round(rowPrice * 10)}`;
-    const tileKey = (start: number) => `footprint:${feed}:1:${step}:${Math.round(rowPrice * 10)}:${start}`;
+    const summaryKey = `${sourceKey}:p${String(rowPrice)}`;
+    const tileKey = (start: number) => `footprint:${feed}:2:${step}:${String(rowPrice)}:${start}`;
     const visibleFrom = Math.floor(from / step) * step;
     const visibleTo = Math.ceil(to / step) * step;
     const summaryFrom = Math.floor(Math.min(analysisFrom, visibleFrom) / step) * step;
