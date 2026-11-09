@@ -1,3 +1,4 @@
+import {yieldHistoryTask} from './history-task-yield';
 import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallSegment,type WallProjectionCheckpoint,type OrderWallsArchiveCoverage,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import {acquireWallBatch} from './prepared-wall-batch';
@@ -10,7 +11,7 @@ const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const digest=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const normalized=(s:OrderWallsProjectionSettings)=>({topLevels:s.topLevels,minimumNotionalEnabled:s.minimumNotionalEnabled,minimumNotionalUsd:s.minimumNotionalEnabled?s.minimumNotionalUsd:0,minDurationMs:s.minDurationMs});
-const yieldTask=()=>new Promise<void>(resolve=>setTimeout(resolve,0));
+const yieldTask=yieldHistoryTask;
 /** Configuration mismatch is a compatible fallback. A malformed advertised
  * snapshot is an explicit failure, never an excuse to claim empty coverage. */
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){
@@ -75,7 +76,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
     if(count!==first.totalRuns)throw Error('Prepared wall projection fragment coverage mismatch');
     const completed={order:first.order,segment:{...first.segment,valueRuns:(group as RecordRow[]).flatMap(record=>record.segment.valueRuns)},valueRunOrder:(group as RecordRow[]).flatMap(record=>record.valueRunOrder)};
     ready.push(completed);retained.push(completed);fragments[coordinate.group]=[];
-    if(performance.now()-yielded>=8){const before=performance.now();await yieldTask();yieldMs+=performance.now()-before;context.signal.throwIfAborted();yielded=performance.now();}
+    if(performance.now()-yielded>=8){const before=performance.now();await yieldTask(context.signal);yieldMs+=performance.now()-before;context.signal.throwIfAborted();yielded=performance.now();}
    }
    if(ready.length){
     runs+=ready.reduce((n,record)=>n+record.segment.valueRuns.length,0);if(runs>1000000)throw Error('Prepared wall projection retained capacity');
@@ -84,7 +85,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
     OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,candidates:[],seenGaps:[],segments:ready.map(row=>row.segment),valueRunOrder:ready.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
     for(const record of ready){if(presentation.has(record.segment.id))throw Error('Prepared wall projection duplicate identity');presentation.set(record.segment.id,record.segment);}
    }
-   const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask();
+   const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask(context.signal);
   }
   current.handle.release();current=next;next=undefined;
  }}finally{current?.handle.release();next?.handle.release();}
@@ -94,7 +95,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  // finishes. Neither this read nor progressive presentation certifies completion
  // alone. Observe rejection immediately, including when final assembly throws.
  const validation=context.validateCompletion?.();void validation?.catch(()=>{});
- if(validation){await yieldTask();context.signal.throwIfAborted();}
+ if(validation){await yieldTask(context.signal);context.signal.throwIfAborted();}
  retained.sort((a,b)=>a.order-b.order);context.signal.throwIfAborted();
  // outputHead is the transport fence already admitted by the source-proof
  // reader. Financial rows/order and active candidates remain untouched. The
