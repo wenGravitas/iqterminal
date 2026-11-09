@@ -1,0 +1,8 @@
+{
+  "oldSourceCommit": "4efc5d0595ea77c8c6dedc11ac981a34462e0f34",
+  "oldRoutingSha256": "9c88b2195a20d41f643908a0b8647ea945da8783be70a6b4970e70dc4ced830d",
+  "candidateRoutingSha256": "48b3c2d2661be12f4c33b02e779bcd7ead7caeb7af70de0bdd849731fed2a00f",
+  "oldExitCode": 1,
+  "candidateRestored": true,
+  "scope": "Local saturated-history routing fixture; old watch GET times out. No real watch operation or Pi loading gate."
+}

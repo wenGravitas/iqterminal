@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "bytes": 2860,
+  "sha256": "458e2a8ebe87de384a6f444b7540927ca057356c42468158c33feb886a197eff",
+  "headers": {
+    "x-iq-request-id": "7d2ad4e0-658b-40a3-8305-1ed4b440552d",
+    "server-timing": "legacy;dur=2.55, proxyqueue;dur=2.01, proxyheader;dur=645.14",
+    "x-iq-proxy-queue-ms": "2.01",
+    "x-iq-proxy-header-ms": "645.14"
+  },
+  "scope": "Read-only readiness; watch bodies/definitions/session values are not retained."
+}

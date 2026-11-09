@@ -22,6 +22,7 @@ const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step
 if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 if(process.env.IQ_BENCH_BUILD)try{execFileSync('git',['cat-file','-e',process.env.IQ_BENCH_BUILD+'^{commit}'],{stdio:'ignore'});}catch{throw Error('IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser');}
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
+if(process.env.IQ_BENCH_YIELD_MODE&&!['background-post-task','timer-fallback'].includes(process.env.IQ_BENCH_YIELD_MODE))throw Error('Invalid expected history yield mode');
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
 // This extends observation/frame capture only; it does not enable a live subscription.
 const keepCurrent=process.env.IQ_BENCH_KEEP_CURRENT==='1',cpuProfile=process.env.IQ_BENCH_CPU_PROFILE==='1';
@@ -118,8 +119,8 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  const paintMarks=last?.marks??null;
  const diagnostics=await page.evaluate(()=>window.__terminal?.feed.diagnostics).catch(()=>null);
  const actualEnvironment=diagnostics?.staging?.config;
- const environmentVerification={expectedBuild:process.env.IQ_BENCH_BUILD??null,actual:actualEnvironment??null,fixture:diagnostics?.fixture??null,
-  valid:diagnostics?.fixture===false&&actualEnvironment?.dataMode==='staging'&&actualEnvironment?.historyTiles===true&&(!process.env.IQ_BENCH_BUILD||actualEnvironment?.build===process.env.IQ_BENCH_BUILD)};
+ const environmentVerification={expectedBuild:process.env.IQ_BENCH_BUILD??null,expectedYieldMode:process.env.IQ_BENCH_YIELD_MODE??null,actual:actualEnvironment??null,fixture:diagnostics?.fixture??null,
+  valid:diagnostics?.fixture===false&&actualEnvironment?.dataMode==='staging'&&actualEnvironment?.historyTiles===true&&(!process.env.IQ_BENCH_BUILD||actualEnvironment?.build===process.env.IQ_BENCH_BUILD)&&(!process.env.IQ_BENCH_YIELD_MODE||actualEnvironment?.historyTaskYield===process.env.IQ_BENCH_YIELD_MODE)};
  if(!environmentVerification.valid)exception??='Unverified or incorrect staging/history/build environment; sample cannot certify a gate';
  // Financial capture follows the timing observation; it cannot establish an earlier paint.
  let financialEvidence=null;

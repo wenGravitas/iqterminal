@@ -1,8 +1,8 @@
-## Release gate audit after client397/API dca
+## Release gate audit after client2bc/API dca
 
-The overall release is **INCOMPLETE**. Results stay tied to the exact recorded
-build, source window and headless/foreground mode; prior passes are not silently
-recertified on the current candidate.
+The overall release is **INCOMPLETE**. Latest results are in
+[client continuation/current-route results](wall-current-path-results.md).
+Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
 |---|---|
@@ -10,20 +10,25 @@ recertified on the current candidate.
 |24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
 |Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
 |Useful current walls|Current-candidate five-run gate pending|
-|30hSpot5m Top8/10%/native|FAIL on397: first median7.46s/max8.94s; complete9.41s/13.31s|
-|30hUSD-M15m Top8/10%/native|FAIL on397: first5.58s/7.39s; complete16.93s/20.46s|
+|30hSpot5m Top8/10%/native|FAIL on2bc: first median6.06s/max6.45s; complete10.62s/22.36s|
+|30hUSD-M15m Top8/10%/native|FAIL on2bc: first4.75s/5.04s; complete16.17s/17.09s|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
 |Concurrent history, no current timeouts/gaps|Prior health timeout remains failed evidence; current confirmation continuity incomplete|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
-|Normal foreground Pi UX|Unverified; only explicitly headless browser tests used|
-|Missing footprint build/recovery|Busy333999-execution exact build and resume proven;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
-|Default footprint rollover|5m and1h actual rollover exact reference checks recorded; current candidate not revalidated|
-|Default wall preparation/rollover serving|Isolated coordinator build/resume proven; overlapping-window reuse and verified tail handoff unfinished; serving bridge/GC disabled|
+|Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
+|Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
+|Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
+|Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-Both actual wall coverage gates on397 pass exact requested counts/slots and
-revision paint checks; that does not pass latency. The latest unit/source repair
-is the first-member admission change. See [its results](wall-native-admission-results.md)
-and [the preceding API rollout](wall-product-staging-results.md) for every sample.
+All20 new chart samples (4efc/2bc cohorts) validate exact requested wall counts,
+slots, revisions and actual background-task mode. Offline worker medians improve,
+but real loading gates still fail. Level Watch current reads/stream now use the
+existing current route; saturated-history wire tests prove its reserve and
+consumer-specific upstream cancellation. No limits, raw retention, collectors,
+production or financial detail change. Resource and real-source evidence remains
+separate from local fixtures and synthetic heartbeat/cancellation probes.
+
+## Earlier build-scoped observations
 
 Latest candidate: [native wall admission results](wall-native-admission-results.md).
 Client397/API dca: all10 exact historical views complete; wall loading still FAILS.

@@ -1,0 +1,269 @@
+{
+  "scope": "Five alternating samples per scheduling variant/market in actual Pi Chromium worker, after explicitly separate warmups. Same exact production decoder/product tuples/canonical parts; only checkpoint continuation differs. Decode elapsed includes JSON parse/stringify/equality/budget checks. Message counts/gaps use worker-local delivery clocks. Synthetic message heartbeats and cancellation are not actual live confirmation, chart, route or loading acceptance. No cross-host timestamps or loading p95.",
+  "results": [
+    {
+      "market": "spot",
+      "nativePostTask": true,
+      "canonicalSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "canonicalBytes": 8276300,
+      "parts": 22,
+      "warmups": [
+        {
+          "variant": "timer",
+          "run": 0,
+          "elapsedMs": 1298.699999999255,
+          "yieldMs": 331.2999999932945,
+          "yields": 42,
+          "heartbeatMessages": 233,
+          "maxHeartbeatGapMs": 84,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 0,
+          "elapsedMs": 1142.800000000745,
+          "yieldMs": 141.59999999031425,
+          "yields": 45,
+          "heartbeatMessages": 138,
+          "maxHeartbeatGapMs": 58.400000002235174,
+          "exact": true
+        }
+      ],
+      "samples": [
+        {
+          "variant": "timer",
+          "run": 1,
+          "elapsedMs": 578.5999999977648,
+          "yieldMs": 141.7000000104308,
+          "yields": 31,
+          "heartbeatMessages": 74,
+          "maxHeartbeatGapMs": 30.199999999254942,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 1,
+          "elapsedMs": 338.30000000074506,
+          "yieldMs": 18.600000005215406,
+          "yields": 21,
+          "heartbeatMessages": 41,
+          "maxHeartbeatGapMs": 18.600000001490116,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 2,
+          "elapsedMs": 462.3999999985099,
+          "yieldMs": 44.79999999701977,
+          "yields": 27,
+          "heartbeatMessages": 57,
+          "maxHeartbeatGapMs": 29.800000000745058,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 2,
+          "elapsedMs": 572.6999999992549,
+          "yieldMs": 108.09999999776483,
+          "yields": 25,
+          "heartbeatMessages": 72,
+          "maxHeartbeatGapMs": 67.19999999925494,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 3,
+          "elapsedMs": 510.8999999985099,
+          "yieldMs": 133,
+          "yields": 26,
+          "heartbeatMessages": 62,
+          "maxHeartbeatGapMs": 31.099999997764826,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 3,
+          "elapsedMs": 377.30000000074506,
+          "yieldMs": 21.100000005215406,
+          "yields": 24,
+          "heartbeatMessages": 46,
+          "maxHeartbeatGapMs": 21.300000000745058,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 4,
+          "elapsedMs": 377.30000000074506,
+          "yieldMs": 30.400000013411045,
+          "yields": 23,
+          "heartbeatMessages": 48,
+          "maxHeartbeatGapMs": 33.599999997764826,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 4,
+          "elapsedMs": 467.5999999977648,
+          "yieldMs": 106.70000000298023,
+          "yields": 24,
+          "heartbeatMessages": 59,
+          "maxHeartbeatGapMs": 31,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 5,
+          "elapsedMs": 391.79999999701977,
+          "yieldMs": 92.00000000372529,
+          "yields": 22,
+          "heartbeatMessages": 49,
+          "maxHeartbeatGapMs": 23.399999998509884,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 5,
+          "elapsedMs": 368.69999999925494,
+          "yieldMs": 19.600000001490116,
+          "yields": 27,
+          "heartbeatMessages": 46,
+          "maxHeartbeatGapMs": 25.699999999254942,
+          "exact": true
+        }
+      ],
+      "cancelled": true
+    },
+    {
+      "market": "perp",
+      "nativePostTask": true,
+      "canonicalSha256": "244fd87434f666e316059bcf400d3b4c86bc5646675366457672c8e6e45a33cb",
+      "canonicalBytes": 7879182,
+      "parts": 16,
+      "warmups": [
+        {
+          "variant": "timer",
+          "run": 0,
+          "elapsedMs": 561.1999999992549,
+          "yieldMs": 116.50000001117587,
+          "yields": 22,
+          "heartbeatMessages": 123,
+          "maxHeartbeatGapMs": 34.70000000298023,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 0,
+          "elapsedMs": 493.19999999925494,
+          "yieldMs": 33.99999999254942,
+          "yields": 22,
+          "heartbeatMessages": 63,
+          "maxHeartbeatGapMs": 58.900000002235174,
+          "exact": true
+        }
+      ],
+      "samples": [
+        {
+          "variant": "timer",
+          "run": 1,
+          "elapsedMs": 488.70000000298023,
+          "yieldMs": 95.30000001192093,
+          "yields": 21,
+          "heartbeatMessages": 62,
+          "maxHeartbeatGapMs": 49.399999998509884,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 1,
+          "elapsedMs": 264.80000000074506,
+          "yieldMs": 20.199999999254942,
+          "yields": 18,
+          "heartbeatMessages": 33,
+          "maxHeartbeatGapMs": 19.300000000745058,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 2,
+          "elapsedMs": 241,
+          "yieldMs": 12.100000005215406,
+          "yields": 16,
+          "heartbeatMessages": 29,
+          "maxHeartbeatGapMs": 20.5,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 2,
+          "elapsedMs": 375.29999999701977,
+          "yieldMs": 73.5,
+          "yields": 19,
+          "heartbeatMessages": 47,
+          "maxHeartbeatGapMs": 28.199999999254942,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 3,
+          "elapsedMs": 491.19999999925494,
+          "yieldMs": 112.1000000052154,
+          "yields": 21,
+          "heartbeatMessages": 62,
+          "maxHeartbeatGapMs": 41.399999998509884,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 3,
+          "elapsedMs": 329.70000000298023,
+          "yieldMs": 21.400000009685755,
+          "yields": 20,
+          "heartbeatMessages": 41,
+          "maxHeartbeatGapMs": 26.699999999254942,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 4,
+          "elapsedMs": 337.5,
+          "yieldMs": 40.099999994039536,
+          "yields": 18,
+          "heartbeatMessages": 43,
+          "maxHeartbeatGapMs": 34.19999999925494,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 4,
+          "elapsedMs": 366.30000000074506,
+          "yieldMs": 65.50000000372529,
+          "yields": 20,
+          "heartbeatMessages": 44,
+          "maxHeartbeatGapMs": 30.199999999254942,
+          "exact": true
+        },
+        {
+          "variant": "timer",
+          "run": 5,
+          "elapsedMs": 449.69999999925494,
+          "yieldMs": 115.99999999254942,
+          "yields": 21,
+          "heartbeatMessages": 56,
+          "maxHeartbeatGapMs": 38,
+          "exact": true
+        },
+        {
+          "variant": "background",
+          "run": 5,
+          "elapsedMs": 830.3999999985099,
+          "yieldMs": 26,
+          "yields": 33,
+          "heartbeatMessages": 100,
+          "maxHeartbeatGapMs": 130.70000000298023,
+          "exact": true
+        }
+      ],
+      "cancelled": true
+    }
+  ]
+}
