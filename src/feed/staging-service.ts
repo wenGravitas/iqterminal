@@ -411,8 +411,10 @@ export class StagingFeedService {
           data.coverage, g.appliedExecutionThroughMs ?? 0, caughtUp, this.now(), data.status?.state === 'live'));
 
         g.lastCoverage = data.coverage; g.lastUpdate = Number(data.status?.lastUpdate ?? 0);
-        const live = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
-        const status = this.footprintStatus(g, live ? 'live' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${live ? '' : ' · ingestion recovering/stale'}`, data);
+        const fresh = data.status?.state === 'live' && this.now() - g.lastUpdate < 15000;
+        // A fresh authoritative snapshot is displayable, but its cursor does
+        // not confirm that the newly opening live transport is delivering.
+        const status = this.footprintStatus(g, fresh ? 'loading' : 'stale', `Staging · retained aggTrades · ${g.bars.length} bars · ${data.coverage.gaps.length} coverage gap(s)${fresh ? ' · awaiting live execution stream' : ' · ingestion recovering/stale'}`, data);
         g.lastStatus = status;
         // Authoritative bootstrap replaces the presentation atomically, including
         // retained prepared bars. A live append would auto-follow and move a
@@ -560,7 +562,8 @@ export class StagingFeedService {
       capacityLimited: views.some(v=>v.progress?.capacityLimited===true)};
   }
   private historyMessage(g: Group, message: string) {
-    return message + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
+    const current=message.split(' · older history incomplete:')[0]!.split(' · loading older history (')[0]!;
+    return current + (g.historyError ? ` · older history incomplete: ${g.historyError} · Retry available` : g.historyBusy ? ` · loading older history (${g.bars.length} bars)` : '');
   }
   /** Load complete, disjoint older bars at one durable watermark; live bars always win. */
   private async loadOlder(g: Group) {
@@ -599,7 +602,7 @@ export class StagingFeedService {
         const merged = boundedFootprintHistory([...data.bars, ...g.bars]);
         const full = merged.length === FOOTPRINT_MAX_BARS || merged.length < data.bars.length + g.bars.length;
         g.accumulator.restore(merged); retainMutableQuoteAvailability(g, g.accumulator.snapshot()); g.bars = merged; history.next = from;
-        const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading', 'Staging · retained history and durable live executions', { coverage: g.lastCoverage, tickSize: data.tickSize });
+        const status = this.footprintStatus(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message??'Staging · awaiting live execution stream', { coverage: g.lastCoverage, tickSize: data.tickSize });
         g.lastStatus = status;
         this.publish(g, { type: 'footprint-snapshot', key: g.key, ids: [...g.ids], generation: g.generation, batchId: 0,
           bars: g.bars, analysisSummaries: [...g.analysisSummaries.values()], retentionStart: g.bars[0]?.time ?? null, status });
@@ -609,7 +612,7 @@ export class StagingFeedService {
     finally {
       g.historyBusy = false;
       if (g.historyAbort === abort) g.historyAbort = undefined;
-      if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
+      if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'loading', g.lastStatus?.message??'Staging · awaiting live execution stream');
     }
   }
   diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{historyTaskYield:historyTaskYieldMode('user-visible'),historyBackgroundYield:historyTaskYieldMode(),dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...new Set(g.views.values())].map(v=>({key:g.key,consumers:v.consumers.size,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, ...(g.executionProof?{executionProof:{generation:g.generation,...g.executionProof}}:{}), connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }

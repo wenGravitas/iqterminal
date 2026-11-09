@@ -65,14 +65,23 @@ test('native candle bootstrap identifies incomplete JSON from a successful respo
    expect(status.status.message).toContain('Staging history returned incomplete JSON');
  }finally{service.dispose();}
 });
-async function setup() {
+async function setup(bootstrap:any=response()) {
   vi.useFakeTimers(); const events: Event[] = []; const sockets: Socket[]=[];const socketUrls:string[]=[];
-  const request=vi.fn(async()=>new Response(JSON.stringify(response())));
+  const request=vi.fn(async()=>new Response(JSON.stringify(bootstrap)));
   const service=new StagingFeedService(e=>events.push(e),request,()=>900000,url=>{socketUrls.push(url);const s=new Socket();sockets.push(s);return s as unknown as WebSocket;});
   service.command({type:'footprint-subscribe',id:'a',series,rowPrice:25});await vi.advanceTimersByTimeAsync(1);
   const ack=()=>{const e:any=events.at(-1);service.command({type:'footprint-ack',key:e.key,generation:e.generation,batchId:e.batchId});};
   ack();ack();sockets[0]!.onopen?.();return {service,events,sockets,socketUrls,request,ack};
 }
+test('fresh bootstrap displays its forming bar but awaits an actual live stream confirmation',async()=>{
+ const bootstrap={...response(),bars:[{...bar,time:900}],coverage:{confirmedFrom:900000,confirmedTo:900001,gaps:[]}};
+ const {service,events,sockets,ack}=await setup(bootstrap);
+ try{
+  const seeded:any=events.find(e=>e.type==='footprint-snapshot');expect(seeded.bars).toHaveLength(1);expect(seeded.bars[0].time).toBe(900);expect(seeded.status.state).toBe('loading');expect(seeded.status.message).toContain('awaiting live execution stream');
+  expect(service.diagnostics().streams[0]!.executionProof).toMatchObject({appliedBatches:0,acksSent:0});
+  const live=packet(10,[11]);live.executions[0]!.timeMs=900001;live.coverage=bootstrap.coverage;sockets[0]!.receive(live);ack();expect((events.at(-1) as any).status.state).toBe('live');expect((events.at(-1) as any).bars[0].aggregateRecordCount).toBe(3);expect(service.diagnostics().streams[0]!.executionProof).toMatchObject({appliedBatches:1,acksSent:1,lastAppliedCursor:11});
+ }finally{service.dispose();}
+});
 test('history seeds shared accumulator; durable batches update incrementally without periodic HTTP',async()=>{
   const {service,events,sockets,socketUrls,request}=await setup();
   expect(new URL(socketUrls[0]!).pathname).toBe('/market-data/v1/stream');
@@ -303,7 +312,8 @@ test('prepared hourly history renders before a delayed live bootstrap and remain
 });
 
 test.each([undefined,'a'])('history retry (%s) retains healthy native/footprint sockets and acknowledged cursors',async(id)=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets,request}=await setup();
+ vi.stubEnv('VITE_HISTORY_TILES','1');const {service,sockets,request,ack}=await setup();
+ sockets[0]!.receive(packet(10,[11]));ack();
  request.mockImplementation(async(input?:any)=>new Response(JSON.stringify(String(input).includes('native-candles')?{source:'binance-native-kline',candles:[]}:{...response(),bars:[{...bar,time:900,rowSize:50}]})));
  service.command({type:'subscribe',id:'healthy-native',series});
  service.command({type:'footprint-subscribe',id:'healthy-footprint',series:{...series,interval:'5m'},rowPrice:50});await vi.advanceTimersByTimeAsync(0);
@@ -334,7 +344,7 @@ test('explicit bootstrap retry reaches its failed current job once, then resumes
   service.command({type:'footprint-retry',id:'current-retry'});await vi.advanceTimersByTimeAsync(0);
   expect(urls.filter(url=>new URL(url).searchParams.get('retry')==='1')).toHaveLength(1);
   now+=1001;await vi.advanceTimersByTimeAsync(1001);
-  const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('live');expect(group.cursor).toBe(10);
+  const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('loading');expect(group.lastStatus.message).toContain('awaiting live execution stream');expect(group.cursor).toBe(10);expect(group.executionProof).toMatchObject({appliedBatches:0,acksSent:0});
   expect(new URL(urls.at(-1)!).searchParams.has('retry')).toBe(false);
  }finally{service.dispose();}
 });
@@ -353,7 +363,7 @@ test('a normal bootstrap response cannot consume a Retry queued while it was in 
   service.command({type:'footprint-retry',id:'queued-retry'});release();await vi.advanceTimersByTimeAsync(0);
   now+=1001;await vi.advanceTimersByTimeAsync(1001);
   expect(urls.filter(url=>new URL(url).searchParams.get('retry')==='1')).toHaveLength(1);
-  const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('live');expect(group.cursor).toBe(10);
+  const group=[...(service as any).groups.values()][0];expect(group.lastStatus.state).toBe('loading');expect(group.lastStatus.message).toContain('awaiting live execution stream');expect(group.cursor).toBe(10);expect(group.executionProof).toMatchObject({appliedBatches:0,acksSent:0});
  }finally{service.dispose();}
 });
 
