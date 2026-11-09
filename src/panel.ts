@@ -5998,6 +5998,7 @@ export class CandlePanel implements IContentRenderer {
       renderer: this.engine ? {
         draws: this.engine.stats.draws,
         backend: this.engine.backend,
+        scheduler:this.scheduler.diagnostics(),
       } : null,
       status: this.status,
       series: this.selection,
