@@ -6,11 +6,19 @@ import {readFileSync,writeFileSync,appendFileSync} from 'node:fs';
 const base=process.env.IQ_BENCH_URL??'http://127.0.0.1:4185',label=process.env.IQ_BENCH_LABEL,build=process.env.IQ_BENCH_BUILD,backend=process.env.IQ_BENCH_BACKEND;
 assert.equal(process.env.IQ_CURRENT_CONCURRENCY,'1','Explicit staging current-concurrency opt-in required');
 assert.match(label??'',/^[a-zA-Z0-9_-]{1,80}$/);for(const commit of [build,backend])assert.match(commit??'',/^[a-f0-9]{40}$/);
-const dir=`artifacts/pi-history-r1/${label}`,end=JSON.parse(readFileSync('artifacts/pi-history-r1/windows.json','utf8')).end,observationMs=20000;mkdirSync(dir,{recursive:false});
+const windowFile=process.env.IQ_CURRENT_WINDOWS??'artifacts/pi-history-r1/windows.json',end=JSON.parse(readFileSync(windowFile,'utf8')).end;assert.ok(Number.isSafeInteger(end)&&end>0&&end%3600000===0,'Pinned closed-hour window required');
+const dir=`artifacts/pi-history-r1/${label}`,observationMs=20000;mkdirSync(dir,{recursive:false});
 writeFileSync(dir+'/executed.mjs',readFileSync(new URL(import.meta.url)));writeFileSync(dir+'/input-windows.json',JSON.stringify({end},null,2));
 const output=`${dir}/samples.jsonl`;writeFileSync(output,'');
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
 let custom;
+async function diagnostics(page){
+ await page.evaluate(()=>{window.__probeDiagnosticsPrior=window.__terminal.feed.diagnostics;window.__terminal.feed.send({type:'diagnostics'});});
+ await page.waitForFunction(()=>window.__terminal.feed.diagnostics!==window.__probeDiagnosticsPrior,null,{timeout:3000});
+ return page.evaluate(()=>{delete window.__probeDiagnosticsPrior;return window.__terminal.feed.diagnostics;});
+}
+const executionStream=d=>d?.staging?.streams?.find(s=>s.key.endsWith(':footprint:5m:p25'));
+
 async function health(context,path){
  const start=performance.now();let probe;
  try{const response=await context.request.get(`${base}/market-data${path}`,{timeout:12000}),text=await response.text();
@@ -32,7 +40,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  context.on('requestfailed',r=>{if(r.url().includes('/market-data/'))failures.push({url:r.url(),error:r.failure()?.errorText});});
  const derivedBefore=await health(context,'/v2/history/health');
  const sourceBefore=await health(context,'/v1/health');
- let error;
+ let error,baselineDiagnostics;
  try{
   assert.equal(derivedBefore.build,backend,JSON.stringify(derivedBefore));
   await page.goto(base,{waitUntil:'domcontentloaded',timeout:15000});await page.waitForFunction(()=>window.__terminal?.panels.has('chart-current-probe'),null,{timeout:15000});
@@ -46,6 +54,9 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
    });
   });
   await page.waitForFunction(()=>window.__probe.firstAt!==null,null,{timeout:12000});
+  const confirmationDeadline=performance.now()+5000;
+  do{baselineDiagnostics=await diagnostics(page);if(executionStream(baselineDiagnostics)?.executionProof?.confirmedAckBatches>=1)break;await new Promise(resolve=>setTimeout(resolve,200));}while(performance.now()<confirmationDeadline);
+  assert.ok(executionStream(baselineDiagnostics)?.executionProof?.confirmedAckBatches>=1,'Live badge without a confirmed execution ACK chain');
   await page.evaluate(({scenario,end})=>{
    const t=window.__terminal,p=window.__probe;p.observeStart=performance.now();p.updates=[];
    if(scenario==='concurrent-history'){
@@ -55,7 +66,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
    }
   },{scenario,end});
   await page.waitForTimeout(observationMs);
-  await page.evaluate(()=>window.__terminal.feed.send({type:'diagnostics'}));await page.waitForTimeout(200);
+  await diagnostics(page);
  }catch(e){error=String(e);}
  const measurement=await page.evaluate(()=>{
   const p=window.__probe;if(!p)return null;const now=performance.now(),times=[p.observeStart??p.started,...p.updates.map(e=>e.at),now],gaps=times.slice(1).map((t,i)=>t-times[i]);
@@ -68,6 +79,6 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  await page.screenshot({path:`${dir}/${scenario}-${run}.png`}).catch(()=>{});
  await page.evaluate(()=>{window.__probeRelease?.();for(const panel of [...window.__terminal.dock.panels])if(panel.id!=='chart-current-probe')window.__terminal.dock.removePanel(panel);window.__terminal.feed.send({type:'diagnostics'});}).catch(()=>{});await page.waitForTimeout(250);
  const released=await page.evaluate(()=>window.__terminal.feed.diagnostics).catch(()=>null);
- const result={scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,host:{load:readFileSync('/proc/loadavg','utf8'),memory:readFileSync('/proc/meminfo','utf8')}};
+ const result={currentExecutionConnected:executionStream(measurement?.diagnostics)?.connected===true,baselineDiagnostics,currentExecutionProof:executionStream(measurement?.diagnostics)?.executionProof,baselineExecutionProof:executionStream(baselineDiagnostics)?.executionProof,windowFile,scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,host:{load:readFileSync('/proc/loadavg','utf8'),memory:readFileSync('/proc/meminfo','utf8')}};
  if(error)process.exitCode=1;appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({scenario,run,bootstrapMs:measurement?.bootstrapMs,updates:measurement?.updates.length,maxReceiveGapMs:measurement?.maxReceiveGapMs,error}));await context.close();
 }}finally{await browser.close();}

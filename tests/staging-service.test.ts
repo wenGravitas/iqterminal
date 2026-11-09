@@ -95,6 +95,30 @@ test('invalid cursor batch preserves data and visible failure; no direct venue f
   expect(sockets[0]!.closed).toBe(true);expect((events.at(-1) as any).status.state).toBe('stale');expect(service.diagnostics().retainedBars).toBe(1);
   expect(request.mock.calls.every(([url]:any)=>url.startsWith('/market-data/'))).toBe(true);service.dispose();
 });
+test('execution proof counts validated applied batches and confirms only a prior same-socket ACK',async()=>{
+ const {service,sockets,ack}=await setup();
+ try{
+  const proof=()=>service.diagnostics().streams[0]!.executionProof!;
+  sockets[0]!.receive(packet(10,[11,12]));ack();expect(proof()).toMatchObject({socketStarts:1,appliedBatches:1,appliedExecutions:2,acksSent:1,confirmedAckBatches:0,lastAfter:10,lastAppliedCursor:12,sourceCursorJumps:0});
+  const retained=proof();sockets[0]!.receive(packet(12,[13]));ack();expect(proof()).toMatchObject({appliedBatches:2,appliedExecutions:3,acksSent:2,confirmedAckBatches:1,lastConfirmedAckCursor:12,lastAfter:12,lastAppliedCursor:13,errors:0,disconnects:0});expect(retained.appliedBatches).toBe(1);
+  sockets[0]!.close();service.command({type:'online',online:false});service.command({type:'online',online:true});sockets[1]!.onopen?.();
+  sockets[0]!.receive(packet(13,[14]));expect(proof().appliedBatches).toBe(2);
+  sockets[1]!.receive(packet(13,[14]));ack();expect(proof()).toMatchObject({socketStarts:2,disconnects:1,appliedBatches:3,confirmedAckBatches:1,lastAppliedCursor:14});
+  sockets[1]!.receive(packet(14,[15]));expect(proof()).toMatchObject({appliedBatches:4,confirmedAckBatches:2,lastConfirmedAckCursor:14});
+ }finally{service.dispose();}
+});
+test('invalid or reset streams cannot manufacture successful execution confirmation; source jumps stay explicit',async()=>{
+ for(const mode of ['invalid','reset','jump']){
+  const {service,sockets}=await setup();
+  try{
+   sockets[0]!.receive(mode==='invalid'?packet(9,[10,11]):mode==='reset'?{type:'reset',reason:'source reset'}:packet(10,[12]));
+   const proof=service.diagnostics().streams[0]!.executionProof!;
+   expect(proof.confirmedAckBatches).toBe(0);
+   if(mode==='jump')expect(proof).toMatchObject({appliedBatches:1,sourceCursorJumps:1,errors:0});
+   else expect(proof).toMatchObject({appliedBatches:0,acksSent:0,errors:1,disconnects:1,resets:mode==='reset'?1:0});
+  }finally{service.dispose();}
+ }
+});
 test('delayed UI ACK coalesces complete bounded state and subscriptions share stream',async()=>{
   const {service,events,sockets,ack,request}=await setup();sockets[0]!.receive(packet(10,[11]));sockets[0]!.receive(packet(11,[12]));
   service.command({type:'footprint-subscribe',id:'b',series,rowPrice:25});await vi.advanceTimersByTimeAsync(1);ack();

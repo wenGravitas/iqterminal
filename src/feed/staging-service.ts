@@ -11,6 +11,11 @@ import { duration, instrumentKey, instrumentOf, footprintAnalysisSourceKey, foot
 import { DEFAULT_DELTA_FLIP_LOOKBACK, MAX_DELTA_FLIP_LOOKBACK, MAX_FOOTPRINT_ANALYSIS_SUMMARIES, durableFootprintAnalysisSummary, withoutLiveFootprintPreview } from '../chart/footprint-delta-flips';
 
 type Envelope = Extract<Event, { type: 'footprint-status' | 'footprint-snapshot' | 'footprint-patch' }>;
+interface ExecutionProof {
+ socketStarts:number;disconnects:number;errors:number;resets:number;appliedBatches:number;appliedExecutions:number;
+ acksSent:number;confirmedAckBatches:number;sourceCursorJumps:number;maxApplyMs:number;maxReceiptGapMs:number;
+ lastAfter?:number;lastAppliedCursor?:number;lastConfirmedAckCursor?:number;lastReceiptMonoMs?:number;
+}
 interface View {consumers:Set<string>;retryRequested?:boolean;progress?:PreparedFootprintProgress;error?:string;retryAt?:number;from:number;to:number;candidateFrom:number;key:string;analysisEnabled:boolean;analysisLookback:number;abort?:AbortController;busy?:boolean;loaded?:boolean;validatedAt?:number;}
 async function readStagingJson(response:Response,label:string){
   const text=await response.text();let data:any;
@@ -23,6 +28,7 @@ async function readStagingJson(response:Response,label:string){
   return data;
 }
 interface Group {
+  executionProof?:ExecutionProof;pendingExecutionAck?:number;
   native?: { readOrder:number;history?:NativeCandleHistory;ready:boolean; error?:string; retryAt:number; failures:number; sequence:number; receivedAt?:number; sourceState?:string; versions:Map<number,{sequence:number;revision:number}> };
   preparedTimes:Set<number>;views:Map<string,View>;
   key: string; series: Series; rowPrice?: number; ids: Set<string>; generation: number;
@@ -65,6 +71,7 @@ export class StagingFeedService {
       if (!group) {
         if (this.groups.size >= 16) return;
         group = { preparedTimes:new Set(),views:new Map(),key, series: c.series, rowPrice, ids: new Set(), generation: ++this.sequence,
+          ...(rowPrice!==undefined?{executionProof:{socketStarts:0,disconnects:0,errors:0,resets:0,appliedBatches:0,appliedExecutions:0,acksSent:0,confirmedAckBatches:0,sourceCursorJumps:0,maxApplyMs:0,maxReceiptGapMs:0}}:{}),
           busy: false, bars: [], candles: [], lastUpdate: 0, failures: 0, retryAt: 0,
           native: rowPrice === undefined ? {readOrder:0,ready:false,retryAt:0,failures:0,sequence:0,versions:new Map()} : undefined,
           analysisSummaries: new Map(), liveSummaryVersions: new Map(), quoteAvailable: new Map(), streamRevision: 0, appliedExecutionThroughMs: null };
@@ -188,12 +195,13 @@ export class StagingFeedService {
       const url = new URL('/market-data/v1/stream', base.replace(/^http/, 'ws'));
       if (marketOf(g.series) === 'spot') url.searchParams.set('market', 'spot');
       const ws = this.socket(url.href); g.ws = ws; g.streamAt = this.now();
+      if(g.executionProof){g.executionProof.socketStarts++;g.pendingExecutionAck=undefined;}
       ws.onopen = () => { if (g.ws !== ws) return; ws.send(JSON.stringify({ type: 'subscribe', after: g.cursor ?? 0, from: Math.max(g.from ?? this.now() - 900000, this.now() - 4 * 3600000 + 1000), ...(g.rowPrice === undefined ? { interval: g.series.interval } : {}), ...(marketOf(g.series) === 'spot' ? { market: 'spot' } : {}) })); };
       ws.onmessage = event => {
         if (g.ws !== ws || this.dead || !this.online) return;
         try {
-          const receivedAt = this.now(); g.streamAt = receivedAt; const data = JSON.parse(String(event.data));
-          if (data.type === 'reset') { g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear(); g.appliedExecutionThroughMs = null; throw new Error(data.reason); }
+          const receivedAt = this.now(),receivedMono=performance.now(); g.streamAt = receivedAt; const data = JSON.parse(String(event.data));
+          if (data.type === 'reset') { if(g.executionProof)g.executionProof.resets++;g.historyAbort?.abort(); g.history = undefined; g.cursor = undefined; g.accumulator?.dispose(); g.accumulator = undefined; g.analysisSummaries.clear(); g.liveSummaryVersions.clear(); g.quoteAvailable.clear(); g.appliedExecutionThroughMs = null; throw new Error(data.reason); }
           if (data.type === 'health') {
             if(g.native){g.native.sourceState=data.collector?.state;this.nativeStatus(g);return;}
             const catchingUp = g.rowPrice !== undefined && g.cursor !== undefined && g.cursor < (data.watermark?.id ?? g.cursor);
@@ -221,7 +229,8 @@ export class StagingFeedService {
             previous = t.id;
           }
           if (previous !== data.cursor) throw new Error('Batch cursor mismatch');
-          for (const t of data.executions) { if (t.id !== g.cursor! + 1) g.accumulator.markGap(t.timeMs); g.accumulator.ingest({ ...t, quoteNotionalText: String(t.quoteNotional), market: marketOf(g.series) }); g.cursor = t.id; g.appliedExecutionThroughMs = Math.max(g.appliedExecutionThroughMs ?? 0, t.timeMs); }
+          let sourceJumps=0;
+          for (const t of data.executions) { if (t.id !== g.cursor! + 1) {sourceJumps++;g.accumulator.markGap(t.timeMs);} g.accumulator.ingest({ ...t, quoteNotionalText: String(t.quoteNotional), market: marketOf(g.series) }); g.cursor = t.id; g.appliedExecutionThroughMs = Math.max(g.appliedExecutionThroughMs ?? 0, t.timeMs); }
           g.lastUpdate = data.collector.lastUpdate; const priorGaps = g.lastCoverage?.gaps?.filter((x:any)=>x.reason !== 'not yet confirmed by durable execution watermark') ?? []; data.coverage.gaps = [...new Map([...data.coverage.gaps, ...priorGaps].map((x:any)=>[`${x.from}:${x.to}:${x.reason}`,x])).values()].slice(-512);
           g.lastCoverage = data.coverage; g.lagMs = Math.max(0, this.now() - data.sentAt);
           const caughtUp = g.cursor === data.watermark;
@@ -245,10 +254,16 @@ export class StagingFeedService {
             bars:g.bars.filter(b=>dirty.has(b.time) || previousBars.get(b.time)?.coverage !== b.coverage),
             analysisSummaries: [...g.analysisSummaries.values()], retentionStart:g.bars[0]?.time??null,status });
           ws.send(JSON.stringify({ type:'ack',cursor:g.cursor })); g.failures=0;
-        } catch (e) { this.status(g, 'stale', `Staging stream · ${e instanceof Error ? e.message : 'invalid data'} · replay pending`); ws.close(); }
+          const proof=g.executionProof!;
+          if(g.pendingExecutionAck===data.after){proof.confirmedAckBatches++;proof.lastConfirmedAckCursor=data.after;}
+          proof.appliedBatches++;proof.appliedExecutions+=data.executions.length;proof.acksSent++;proof.sourceCursorJumps+=sourceJumps;
+          proof.maxApplyMs=Math.max(proof.maxApplyMs,performance.now()-receivedMono);
+          if(proof.lastReceiptMonoMs!==undefined)proof.maxReceiptGapMs=Math.max(proof.maxReceiptGapMs,receivedMono-proof.lastReceiptMonoMs);
+          proof.lastReceiptMonoMs=receivedMono;proof.lastAfter=data.after;proof.lastAppliedCursor=g.cursor;g.pendingExecutionAck=g.cursor;
+        } catch (e) { if(g.executionProof)g.executionProof.errors++;this.status(g, 'stale', `Staging stream · ${e instanceof Error ? e.message : 'invalid data'} · replay pending`); ws.close(); }
       };
       ws.onerror = () => ws.close();
-      ws.onclose = () => { if (g.ws !== ws) return; g.ws=undefined; g.failures=Math.min(10,g.failures+1); g.retryAt=this.now()+Math.min(30000,500*2**g.failures); this.status(g,'stale','Staging · disconnected; retained data preserved; cursor replay pending'); };
+      ws.onclose = () => { if (g.ws !== ws) return; if(g.executionProof)g.executionProof.disconnects++;g.ws=undefined; g.failures=Math.min(10,g.failures+1); g.retryAt=this.now()+Math.min(30000,500*2**g.failures); this.status(g,'stale','Staging · disconnected; retained data preserved; cursor replay pending'); };
     } catch (e) { g.retryAt=this.now()+2000; this.status(g,'stale',`Staging stream unavailable · ${String(e)}`); }
   }
   private publish(g: Group, event: Envelope) {
@@ -595,7 +610,7 @@ export class StagingFeedService {
       if (!this.dead && this.groups.get(g.key) === g && !abort.signal.aborted) this.status(g, g.lastStatus?.state ?? 'live', 'Staging · retained history and durable live executions');
     }
   }
-  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{historyTaskYield:historyTaskYieldMode('user-visible'),historyBackgroundYield:historyTaskYieldMode(),dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...new Set(g.views.values())].map(v=>({key:g.key,consumers:v.consumers.size,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
+  diagnostics() { return {historyLoadAttempts:this.historyLoadAttempts.map(attempt=>({...attempt})), nativePresentation:this.nativePresentation.diagnostics(),scheduler:historyScheduler.diagnostics(),requests:historyRequestTraces(),config:{historyTaskYield:historyTaskYieldMode('user-visible'),historyBackgroundYield:historyTaskYieldMode(),dataMode:import.meta.env.VITE_DATA_MODE??'direct',historyTiles:this.usePrepared,build:import.meta.env.VITE_BUILD_COMMIT??'unknown'},views:[...this.groups.values()].flatMap(g=>[...new Set(g.views.values())].map(v=>({key:g.key,consumers:v.consumers.size,from:v.from,to:v.to,loaded:v.loaded,error:v.error,progress:v.progress}))),source: 'staging', transport: 'websocket', streams: [...this.groups.values()].map(g => ({ key:g.key, cursor:g.cursor, ...(g.executionProof?{executionProof:{...g.executionProof}}:{}), connected:!!g.ws, deliveryMs:g.lagMs, lastHeartbeat:g.streamAt, native:g.native?{historyReady:g.native.ready,historyLoading:g.busy,historyError:g.native.error,historyRetryAt:g.native.retryAt,lastCandleReceivedAt:g.native.receivedAt,retainedStreamVersions:g.native.versions.size,viewportHistory:g.native.history?.diagnostics()}:undefined })), groups: this.groups.size, subscriptions: this.clients.size, retainedLiveBars:[...this.groups.values()].reduce((n,g)=>n+(g.accumulator?.barCount??0),0),preparedClosedBars:[...this.groups.values()].reduce((n,g)=>n+g.preparedTimes.size,0),retainedBars: [...this.groups.values()].reduce((n, g) => n + g.bars.length + g.candles.length, 0) }; }
   dispose() { this.nativePresentation.clear();this.prepared.dispose();this.dead = true; clearInterval(this.timer); for (const g of this.groups.values()) { g.abort?.abort(); g.historyAbort?.abort();for(const v of g.views.values())v.abort?.abort();g.ws?.close(); g.accumulator?.dispose();g.native?.history?.dispose(); } this.groups.clear(); this.clients.clear(); }
 }
 
