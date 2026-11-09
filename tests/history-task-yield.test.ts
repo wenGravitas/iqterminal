@@ -20,3 +20,25 @@ test('visible work uses ordinary visible priority, never user-blocking priority'
  const signal=new AbortController().signal,postTask=vi.fn(async(callback:()=>void,options:unknown)=>{expect(options).toEqual({priority:'user-visible',signal});callback();});
  vi.stubGlobal('scheduler',{postTask});expect(historyTaskYieldMode('user-visible')).toBe('user-visible-post-task');await yieldHistoryTask(signal,'user-visible');expect(postTask).toHaveBeenCalledTimes(1);
 });
+test('bounded work executes in the scheduled task itself on native and timer paths',async()=>{
+ for(const native of [true,false]){
+  vi.useFakeTimers();let run!:()=>void;const callback=vi.fn(),control=new AbortController();
+  vi.stubGlobal('scheduler',native?{postTask:vi.fn((work:()=>void)=>new Promise<void>(resolve=>{run=()=>{work();resolve();};}))}:undefined);
+  const work=yieldHistoryTask(control.signal,'user-visible',callback);expect(callback).not.toHaveBeenCalled();
+  if(native)run();else vi.runAllTimers();
+  expect(callback).toHaveBeenCalledTimes(1);await work;expect(vi.getTimerCount()).toBe(0);
+ }
+});
+test('timer work failures reject without leaking a cancellation listener or timer',async()=>{
+ vi.useFakeTimers();vi.stubGlobal('scheduler',undefined);const control=new AbortController(),remove=vi.spyOn(control.signal,'removeEventListener'),error=Error('Work failed');
+ const work=yieldHistoryTask(control.signal,'user-visible',()=>{throw error;}),failed=expect(work).rejects.toBe(error);vi.runAllTimers();await failed;
+ expect(remove).toHaveBeenCalledWith('abort',expect.any(Function));expect(vi.getTimerCount()).toBe(0);
+});
+test('a returned work promise has the same completion barrier on native and timer schedulers',async()=>{
+ for(const native of [true,false]){
+  vi.useFakeTimers();let release!:()=>void,done=false;const gate=new Promise<void>(resolve=>release=resolve);
+  vi.stubGlobal('scheduler',native?{postTask:async(callback:()=>void)=>callback()}:undefined);
+  const work=yieldHistoryTask(undefined,'user-visible',()=>gate).then(()=>done=true);if(!native)vi.runAllTimers();
+  await Promise.resolve();expect(done).toBe(false);release();await work;expect(done).toBe(true);
+ }
+});

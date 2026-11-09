@@ -89,12 +89,29 @@ test('replacement during reference traversal cannot commit stale extrema or doub
  const styles=(value:any)=>[...value.drawable.values()].map((line:any)=>[line.key,value.lineStyle(line)]).sort((a,b)=>a[0].localeCompare(b[0]));expect(styles(p)).toEqual(styles(baseline));
 });
 
-test('projection evaluates price once per segment and skips time conversion for offscreen value histories',()=>{
+test.each([.1,.01])('projection evaluates price once per segment and skips offscreen time conversion at native tick%s',tickSize=>{
  setup();const walls=source().map((wall,i)=>({...wall,price:i<10?wall.price:500+i})),before=JSON.stringify(walls),rc=context();
  const price=vi.spyOn(rc.priceScale,'priceToY'),time=vi.spyOn(rc.dataLayer,'timeToIndexFloat');
- const p=new OrderWallsPrimitive(settings,60000,true,0);p.setSnapshot(walls,status);p.draw(canvas().ctx,rc);
+ const p=new OrderWallsPrimitive(settings,60000,true,0);p.setSnapshot(walls,{...status,tickSize});p.draw(canvas().ctx,rc);
+ expect([...((p as any).drawable.values())].every((line:any)=>line.high===line.low+tickSize)).toBe(true);
  expect(price).toHaveBeenCalledTimes(walls.length);
  expect(time).toHaveBeenCalledTimes(10*8*2);
  expect(p.diagnostics()).toMatchObject({retainedSegments:20,retainedDrawables:80});
  expect(JSON.stringify(walls)).toBe(before);p.detached();
+});
+test('native tasks prepare visible geometry without timer clamping and dispose cancels queued work',async()=>{
+ setup();vi.useFakeTimers({toFake:['setTimeout','clearTimeout']});const jobs:Array<{callback:()=>void;resolve:()=>void;signal:AbortSignal}>=[];
+ const postTask=vi.fn((callback:()=>void,options:{priority:string;signal:AbortSignal})=>{
+  expect(options.priority).toBe('user-visible');
+  return new Promise<void>((resolve,reject)=>{options.signal.addEventListener('abort',()=>reject(options.signal.reason),{once:true});jobs.push({callback,resolve,signal:options.signal});});
+ });
+ vi.stubGlobal('scheduler',{postTask});const {p,requestUpdate}=attached(true);p.setSnapshot(source(),status);const before=requestUpdate.mock.calls.length;
+ p.draw(canvas().ctx,context());expect(p.diagnostics().pendingPaintWork).toBe(true);expect(jobs).toHaveLength(1);expect(vi.getTimerCount()).toBe(0);
+ while(jobs.length){const job=jobs.shift()!;job.callback();job.resolve();await Promise.resolve();}
+ expect(p.diagnostics().preparation).toMatchObject({yieldMode:'user-visible-post-task'});
+ expect(p.diagnostics().pendingPaintWork).toBe(true);expect(p.diagnostics().paintedRevision).not.toBe(p.diagnostics().inputRevision);expect(requestUpdate).toHaveBeenCalledTimes(before+1);
+ const painted=complete(p),baseline=new OrderWallsPrimitive(settings,60000,true,0);baseline.setSnapshot(source(),status);const expected=complete(baseline);
+ expect(shape(p)).toEqual(shape(baseline));expect(painted.strokes).toEqual(expected.strokes);
+ p.setSnapshot(source(),status);p.draw(canvas().ctx,context());const queued=jobs.shift()!,slices=p.diagnostics().preparation.slices;p.detached();expect(queued.signal.aborted).toBe(true);
+ queued.callback();await Promise.resolve();expect(p.diagnostics().preparation.slices).toBe(slices);expect(p.diagnostics().pendingPaintWork).toBe(false);expect(vi.getTimerCount()).toBe(0);
 });
