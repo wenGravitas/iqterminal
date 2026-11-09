@@ -10,6 +10,7 @@ const windowFile=process.env.IQ_CURRENT_WINDOWS??'artifacts/pi-history-r1/window
 const dir=`artifacts/pi-history-r1/${label}`,observationMs=20000;mkdirSync(dir,{recursive:false});
 writeFileSync(dir+'/executed.mjs',readFileSync(new URL(import.meta.url)));writeFileSync(dir+'/input-windows.json',JSON.stringify({end},null,2));
 const output=`${dir}/samples.jsonl`;writeFileSync(output,'');
+const resource=()=>({load:readFileSync('/proc/loadavg','utf8'),memory:readFileSync('/proc/meminfo','utf8'),cpu:readFileSync('/proc/stat','utf8').split('\n').filter(s=>/^cpu\b/.test(s)),vmstat:readFileSync('/proc/vmstat','utf8').split('\n').filter(s=>/^(pswpin|pswpout|pgmajfault) /.test(s))});
 const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
 let custom;
 async function diagnostics(page){
@@ -39,7 +40,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  context.on('requestfinished',r=>finish(r,'finished'));context.on('requestfailed',r=>finish(r,'failed'));
  context.on('requestfailed',r=>{if(r.url().includes('/market-data/'))failures.push({url:r.url(),error:r.failure()?.errorText});});
  const derivedBefore=await health(context,'/v2/history/health');
- const sourceBefore=await health(context,'/v1/health');
+ const sourceBefore=await health(context,'/v1/health'),hostBefore=resource();
  let error,baselineDiagnostics;
  try{
   assert.equal(derivedBefore.build,backend,JSON.stringify(derivedBefore));
@@ -78,7 +79,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
  const sourceAfter=await health(context,'/v1/health');
  await page.screenshot({path:`${dir}/${scenario}-${run}.png`}).catch(()=>{});
  await page.evaluate(()=>{window.__probeRelease?.();for(const panel of [...window.__terminal.dock.panels])if(panel.id!=='chart-current-probe')window.__terminal.dock.removePanel(panel);window.__terminal.feed.send({type:'diagnostics'});}).catch(()=>{});await page.waitForTimeout(250);
- const released=await page.evaluate(()=>window.__terminal.feed.diagnostics).catch(()=>null);
- const result={currentExecutionConnected:executionStream(measurement?.diagnostics)?.connected===true,baselineDiagnostics,currentExecutionProof:executionStream(measurement?.diagnostics)?.executionProof,baselineExecutionProof:executionStream(baselineDiagnostics)?.executionProof,windowFile,scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,host:{load:readFileSync('/proc/loadavg','utf8'),memory:readFileSync('/proc/meminfo','utf8')}};
+ const released=await diagnostics(page).catch(()=>null);
+ const result={currentExecutionConnected:executionStream(measurement?.diagnostics)?.connected===true,baselineDiagnostics,currentExecutionProof:executionStream(measurement?.diagnostics)?.executionProof,baselineExecutionProof:executionStream(baselineDiagnostics)?.executionProof,windowFile,scenario,run,build:process.env.IQ_BENCH_BUILD,backend,environment,observationMs,rendering:'headless system Chromium; Canvas renderer recorded per panel; not normal foreground Pi UX acceptance',custom,requests,pendingAtObservation:[...pending.values()],measurement,sourceBefore,sourceAfter,derivedBefore,derivedAfter,failures,error,released,hostBefore,host:resource()};
  if(error)process.exitCode=1;appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({scenario,run,bootstrapMs:measurement?.bootstrapMs,updates:measurement?.updates.length,maxReceiveGapMs:measurement?.maxReceiveGapMs,error}));await context.close();
 }}finally{await browser.close();}

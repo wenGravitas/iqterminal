@@ -124,6 +124,17 @@ test('delayed UI ACK coalesces complete bounded state and subscriptions share st
   service.command({type:'footprint-subscribe',id:'b',series,rowPrice:25});await vi.advanceTimersByTimeAsync(1);ack();
   const latest:any=events.at(-1);expect(latest.type).toBe('footprint-snapshot');expect(latest.ids).toEqual(['a','b']);expect(latest.bars[0].aggregateRecordCount).toBe(4);expect(request).toHaveBeenCalledTimes(1);expect(sockets).toHaveLength(1);service.dispose();
 });
+test('a new historical viewer cannot downgrade a healthy shared live execution feed',async()=>{
+ const {service,events,sockets,ack,request}=await setup();
+ try{
+  sockets[0]!.receive(packet(10,[11]));ack();const start=events.length,proof=service.diagnostics().streams[0]!.executionProof;
+  service.command({type:'footprint-subscribe',id:'second-chart',series,rowPrice:25});ack();ack();
+  const statuses=events.slice(start).filter((e:any)=>e.status).map((e:any)=>e.status);
+  expect(statuses.length).toBeGreaterThan(0);expect(statuses.every(status=>status.state==='live')).toBe(true);
+  expect(service.diagnostics().streams[0]!.executionProof).toEqual(proof);expect(request).toHaveBeenCalledTimes(1);expect(sockets).toHaveLength(1);
+  sockets[0]!.receive(packet(11,[12]));ack();expect(service.diagnostics().streams[0]!.executionProof).toMatchObject({lastAppliedCursor:12,confirmedAckBatches:1,disconnects:0,errors:0});
+ }finally{service.dispose();}
+});
 test('restore plus replay has parity with uninterrupted aggregation, including extrema and quote volume',()=>{
   const all=new FootprintAccumulator('1m',.1,250);const resumed=new FootprintAccumulator('1m',.1,250);
   const rows=Array.from({length:100},(_,i)=>({...trade(i+1),timeMs:60001+i*1000,side:i%2?'sell':'buy'}));

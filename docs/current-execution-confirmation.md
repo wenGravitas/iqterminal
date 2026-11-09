@@ -14,6 +14,15 @@ before application and successful proof; source jumps retain incumbent gap
 marking. Last ACK is deliberately unconfirmed until another batch follows.
 No executions or financial cells are retained by the counters. They share group
 lifetime and disappear on final unsubscribe.
+The snapshot includes the group generation; before/after generations must match,
+so a replacement group with coincidentally larger counters cannot certify continuity.
+
+The first real cohort exposed a shared-subscription status bug. A new historical
+viewer unconditionally published loading to the entire acknowledged group,
+revoking live analysis previews despite uninterrupted ACKs. New subscribers now
+reuse the existing execution state/message while their separate history status
+loads. A focused old-code counterfactual fails, and the repaired test verifies
+retained cursor/counters, no HTTP replay or new socket, and subsequent confirmation.
 
 The opt-in concurrency harness waits for an independently confirmed live chain,
 captures fresh worker diagnostics before/after its observation, and compares five
@@ -23,13 +32,24 @@ wall benchmark window. Full4h5m/24h1h ranges, saved views and cancel/restore wor
 remain required. Any missing slot prevents coverage acceptance.
 
 `current-execution-proof.mjs` rejects absent/stagnant/regressed counters, invalid
-ACK relationships, reconnect/reset/error, disconnected/non-live observations and
+ACK relationships, reconnect/reset/error, disconnected or loading/stale/failed observations and
 new explicit source cursor jumps. A source jump requires attribution; it is not
 automatically a client performance failure. The chain subgate is separate from
 responsiveness, chart paint, cold custom backfill, all source health and normal
 foreground UX. Worker lifetime receipt maxima may include pre-observation time;
 callback receive gaps use the bounded observation clock. No unsynchronized
 client/server timestamps are subtracted.
+
+The incumbent `reconnecting` enum also represents ordinary durable catch-up on
+a connected socket. Such status observations are counted separately, never used
+as evidence of ACK continuity or treated alone as a physical reconnect. Socket,
+cursor and confirmed-ACK counters must independently pass. The initial report's
+broader non-live predicate is retained as a diagnostic error, not hidden.
+
+Coverage counts every requested closed slot in `[from,to)`. A forming candle at
+`to` is reported separately and cannot certify or invalidate those closed slots.
+The harness retains all painted times; it does not remove the independent live
+candle or discard good bars. Missing/duplicate/unvalidated eligible slots fail.
 
 Focused staging regressions verify advancing confirmation, detached diagnostic
 snapshots, ignored old sockets, reconnect boundaries, invalid frames, resets and
