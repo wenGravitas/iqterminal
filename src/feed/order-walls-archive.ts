@@ -402,24 +402,13 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
   try {
   if(prepared&&!after&&!prior&&!options.initialProjector){
-    let painted=false,publishedClosed=false,publishedParts=0;
-    let pendingSegments:OrderWallSegment[]=[];
+    let painted=false;
     const projected=await prepared.readProjection(settings,progress=>{
-      pendingSegments.push(...progress.segments);
-      const at=performance.now();
-      // Preserve the immediate active/first closed presentation. Thereafter
-      // coalesce at most eight immutable parts per chart publication, flushing
-      // the final part before source validation. Per-part metrics and yielding
-      // remain independent; closed geometry need not be rebuilt on every part.
-      if(progress.parts===0||!publishedClosed&&pendingSegments.some(segment=>segment.end!==null)
-        ||progress.parts-publishedParts>=8||progress.parts===progress.totalParts){
-        const archive={...archiveStatus(request,availability,'loading'),exact:true,requestComplete:false,rangeComplete:false,loadedThrough:request.from,presentationThrough:progress.presentationThrough};
-        const status=statusForArchive(archive,'loading','Loading validated prepared wall records; full range validation pending.');
-        const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:pendingSegments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:pendingSegments}),
-          presentation:progress.presentation,status,pages:progress.parts,bytes:progress.bytes};
-        options.onUpdate?.(update);painted=true;publishedParts=progress.parts;
-        publishedClosed||=pendingSegments.some(segment=>segment.end!==null);pendingSegments=[];
-      }
+      const archive={...archiveStatus(request,availability,'loading'),exact:true,requestComplete:false,rangeComplete:false,loadedThrough:request.from,presentationThrough:progress.presentationThrough};
+      const status=statusForArchive(archive,'loading','Loading validated prepared wall records; full range validation pending.');
+      const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:progress.segments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:progress.segments}),
+        presentation:progress.presentation,status,pages:progress.parts,bytes:progress.bytes};
+      const at=performance.now();options.onUpdate?.(update);painted=true;
       if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
         requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
         responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:progress.metrics.validationMs,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
