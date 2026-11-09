@@ -31,3 +31,17 @@ export function closedFootprintProof(times,progress,from,to,step){
  return {expectedSlots:expected.length,paintedSlots:eligible.length,allPaintedSlots:times.length,outsideRequestedTimes:outside,
   validatedSlots:progress?.validatedSlots??0,exact:JSON.stringify(eligible)===JSON.stringify(expected)&&progress?.requestedSlots===expected.length&&progress.loadedSlots===expected.length&&progress.validatedSlots===expected.length};
 }
+
+/** Viewport rounding can request an extra edge candle. Prove each pinned slot
+ * from explicit interval records instead of requiring identical outer bounds.
+ * Missing, building, conflicting or unvalidated slots cannot pass. */
+export function requestedFootprintProgress(ranges,from,to,step){
+ const expected=Array.from({length:(to-from)/step},(_,i)=>from+i*step);
+ const slots=expected.map(start=>{
+  const entries=ranges.flatMap(range=>range.from<=start&&range.to>=start+step
+   ?(range.progress?.slots??[]).filter(slot=>slot.from===start&&slot.to===start+step).map(slot=>({...slot,capacityLimited:range.progress?.capacityLimited})):[]);
+  const loaded=entries.length>0&&entries.every(slot=>slot.state==='ready'&&!slot.capacityLimited);
+  return {from:start,to:start+step,loaded,validated:loaded&&entries.every(slot=>slot.validated===true)};
+ });
+ return {requestedSlots:expected.length,loadedSlots:slots.filter(s=>s.loaded).length,validatedSlots:slots.filter(s=>s.validated).length,slots};
+}
