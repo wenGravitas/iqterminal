@@ -25,6 +25,7 @@ export interface PreparedFootprintProgress {
 
 type PreparedTile = { from: number; revision: number; bar?: FootprintBar | null; coverage?: unknown };
 const MAX_SUMMARY_SOURCES = 8;
+class PreparedCoverageUnavailable extends Error {}
 
 /** Loads full cells only for the visible range; older warmup is projected per 4h chunk. */
 export class PreparedFootprints {
@@ -112,7 +113,7 @@ export class PreparedFootprints {
         if (retry && !retryChunks.has(start)) { params.set('retry','1'); retryChunks.add(start); }
         return `/market-data/v2/history/footprints?${params}`;
       };
-      const runChunk = async ({ from: start, to: end, priority }: typeof chunks[number],read?:()=>Promise<any>) => {
+      const applyChunk = async ({ from: start, to: end, priority }: typeof chunks[number],read?:()=>Promise<any>) => {
         if (chunkStates.get(start) === 'ready') return;
         const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         let data: any;
@@ -127,11 +128,17 @@ export class PreparedFootprints {
           throw error;
         }
         if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-        if (data.version !== 1 || data.feed !== feed || !Array.isArray(data.tiles) || data.tiles.length > 300) {
+        if (data.version !== 1 || data.feed !== feed || !['ready','building','unavailable'].includes(data.state) || !Array.isArray(data.tiles) || data.tiles.length > 300) {
           if (priority === 1) { analysisFailed = true; return; }
           throw Error('Invalid prepared footprints');
         }
 
+        const seen=new Set<number>();
+        for(const tile of data.tiles as PreparedTile[]){
+          if(!validTileIdentity(tile)||tile.from<start||tile.from>=end||tile.from%step||seen.has(tile.from)
+            ||tile.bar!=null&&tile.bar.time!==tile.from/1000)throw Error('Invalid footprint tile identity');
+          seen.add(tile.from);
+        }
         chunkStates.set(start, data.state);
         if (retry && data.state === 'building' && data.jobs?.[0]?.id) buildJobs.set(start,data.jobs[0].id);
         const updates: Array<{ key: string; value: PreparedTile }> = [];
@@ -196,8 +203,22 @@ export class PreparedFootprints {
         else analysisPending ||= data.state === 'building';
         if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
           this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
-        if (priority === 0 && data.state === 'unavailable') throw Error(data.error ?? 'Historical footprint build unavailable; Retry available');
+        if (priority === 0 && data.state === 'unavailable') throw new PreparedCoverageUnavailable(data.error ?? 'Historical footprint build unavailable; Retry available');
         if (data.state === 'ready' && chunkStarts.some(at => !validatedTimes.has(at / 1000))) throw Error('Prepared footprint response omitted requested slots');
+      };
+      const runChunk=async(chunk:typeof chunks[number],read?:()=>Promise<any>)=>{
+        try{await applyChunk(chunk,read);}catch(error){
+          if(signal.aborted)throw error;
+          if(chunk.priority===1){analysisFailed=true;return;}
+          // A specific unavailable revision response already publishes its
+          // precise affected ranges. A failed read has no such fresh evidence.
+          if(!(error instanceof PreparedCoverageUnavailable)){
+            chunkStates.set(chunk.from,'unavailable');
+            for(const at of visibleStarts)if(at>=chunk.from&&at<chunk.to){validatedTimes.delete(at/1000);revisionStates.set(at,'unavailable');}
+            publish(this.visibleBars(visibleTiles),false,true,this.analysisBatch(summaryKey,summaryFrom,visibleTo,validatedTimes,removedTimes,revisionStates),progress());
+          }
+          throw error;
+        }
       };
       // Up to six individual 4h reads share one progressive transport. Larger
       // viewports use more waves; this is not a total chart-history limit.

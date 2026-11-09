@@ -58,3 +58,9 @@ test('a building member polls independently after ready siblings and retains the
  await new PreparedFootprints(request,{getMany:async()=>new Map(),putMany:async()=>{}}).load(from,from+24*hour,'1h',25,new AbortController().signal,(bars,complete)=>events.push({bars,complete}));
  expect(batchCalls).toBe(1);expect(getCalls).toBe(1);expect(events.some(e=>e.bars.length===20&&!e.complete)).toBe(true);expect(events.at(-1)).toMatchObject({complete:true});expect(events.at(-1).bars).toHaveLength(24);
 });
+
+test('a failed batch member exposes only its unavailable slots while every ready sibling stays validated',async()=>{
+ const request:any=async()=>response([...Array.from({length:6},(_,i)=>i===2?{version:1,kind:'error',index:i,request:members[i],error:{message:'source read failed',category:'query',retryable:true}}:chunk(i)),{...end,failed:1}].map(line).join('')),events:any[]=[];
+ await expect(new PreparedFootprints(request,{getMany:async()=>new Map(),putMany:async()=>{}}).load(from,from+24*hour,'1h',25,new AbortController().signal,(bars,complete,_valid,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('source read failed');
+ const last=events.at(-1);expect(last.bars).toHaveLength(20);expect(last.progress.validatedSlots).toBe(20);expect(last.progress.slots.filter((s:any)=>s.state==='unavailable')).toHaveLength(4);expect(last.progress.slots.filter((s:any)=>s.state==='ready'&&s.validated)).toHaveLength(20);expect(events.every(e=>!e.complete)).toBe(true);
+});

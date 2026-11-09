@@ -49,3 +49,14 @@ Rolling back this client restores legacy GET delivery. Cache namespace2 uses
 exact row widths and should be retained if reverting transport alone. No source
 retention, collector, financial aggregation or persistent server migration is
 part of this transport change.
+
+The subsequent failed-read fix publishes unavailable slots for the failed chunk
+without revoking ready sibling chunks. A specific canonical revision failure
+retains its more precise affected ranges. The regression suite caught an initial
+over-broad invalidation of that response; the corrected implementation passes
+both cases. Tile identities, duplicate starts and bar times are now checked for
+the entire member before any of its financial data replaces cached bars.
+Malformed members preserve the previous displayed data as unvalidated. This
+follow-up passes62 focused tests, the full1,223-test suite/two skipped, and
+typecheck. Its transport-independent coverage fix needs a newly identified
+production build/browser receipt; the earlier12-browser receipt remains a8eadbc.

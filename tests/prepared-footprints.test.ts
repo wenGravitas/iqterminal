@@ -128,3 +128,15 @@ test('Spot native cent widths never share cached cells, summaries or known-revis
  expect(second).toEqual([]);expect(calls[1]!.searchParams.get('known')).toBe('');release(response(.02));await work;
  expect(second.at(-1).bars[0]).toMatchObject({rowSize:.02,delta:-3,quoteDelta:-300.02,cells:[{price:100,bidVol:3,bidNotional:300.02}]});expect(cache.values.size).toBe(2);
 });
+
+test('malformed chunk identities cannot partially replace good cached financial data',async()=>{
+ const from=1800000000000,step=3600000,cache=new Cache();let mode='valid';
+ const request:any=async()=>Response.json({version:1,feed,state:'ready',tiles:[0,1].map(i=>({from:from+(mode==='duplicate'?0:i)*step,revision:mode==='valid'?1:99,bar:{time:(from+(mode==='foreign-time'?i+1:i)*step)/1000,delta:mode==='valid'?2:999},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}))});
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(from,from+2*step,'1h',25,signal,()=>{});
+ for(const invalid of ['duplicate','foreign-time']){
+  mode=invalid;const events:any[]=[];
+  await expect(client.load(from,from+2*step,'1h',25,signal,(bars,complete,_valid,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('tile identity');
+  expect(events.at(-1).bars.map((b:any)=>[b.revision,b.delta])).toEqual([[1,2],[1,2]]);expect(events.at(-1).progress.validatedSlots).toBe(0);expect(events.at(-1).progress.slots.every((s:any)=>s.state==='unavailable')).toBe(true);expect(events.every(e=>!e.complete)).toBe(true);
+ }
+});
