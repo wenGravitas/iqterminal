@@ -1,3 +1,4 @@
+import {receiveWallBatch} from './prepared-wall-batch-reader';
 import {yieldHistoryTask} from './history-task-yield';
 import {WALL_POINT_TRANSPORT,WALL_PRODUCT_POINT_TRANSPORT,decodeWallPointTransport} from '../shared/order-wall-point-transport';
 import {historyScheduler} from './history-scheduler';
@@ -52,23 +53,12 @@ export function acquireWallBatch(options:Options){
     wireBytes=wireParts.reduce((n,size)=>n+size+1,0);if(response.headers.get('x-iq-decoded-bytes')!==String(wireBytes)){await response.body?.cancel();throw Error('Prepared wall point transport byte identity mismatch');}
    }else if(response.headers.has('x-iq-wall-transport')){await response.body?.cancel();throw Error('Unexpected prepared wall point transport');}
    if(expectedBytes>8*1024*1024||parts.length>(options.maxParts??8)||!response.body){await response.body?.cancel();throw Error('Prepared wall batch byte capacity');}
-   const reader=response.body.getReader();let chunk:Uint8Array=new Uint8Array(0),offset=0,received=0,complete=false;
-   const cancelReader=()=>{void reader.cancel(aborted()).catch(()=>{});};
-   upstream.addEventListener('abort',cancelReader,{once:true});if(upstream.aborted)cancelReader();
-   async function pull(){
-    upstream.throwIfAborted();const item=await reader.read();if(item.done)return false;
-    received+=item.value.byteLength;if(received>wireBytes)throw Error('Prepared wall batch byte identity mismatch');
-    chunk=item.value;offset=0;return true;
-   }
-   async function exact(length:number){
-    const result=new Uint8Array(length);let written=0;
-    while(written<length){if(offset===chunk.byteLength&&!await pull())throw Error('Prepared wall batch byte identity mismatch');
-     const n=Math.min(length-written,chunk.byteLength-offset);result.set(chunk.subarray(offset,offset+n),written);written+=n;offset+=n;}
-    return result;
-   }
+   // Receive independently of cooperative decode. The manifest bounds this
+   // single buffer; admission stays held until validation/application finishes.
+   const receiver=receiveWallBatch(response.body,wireBytes,upstream);
    try{
     for(const [i,part] of parts.entries()){
-     const bodyStarted=performance.now(),wireSize=wireParts[i]!,framed=await exact(wireSize+1),raw=framed.subarray(0,wireSize);
+     const bodyStarted=performance.now(),wireSize=wireParts[i]!,framed=await receiver.exact(wireSize+1),raw=framed.subarray(0,wireSize);
      if(framed[wireSize]!==10)throw Error('Prepared wall batch part content hash mismatch');
      upstream.throwIfAborted();const bodyReadMs=performance.now()-bodyStarted,parse=performance.now();
      let body:unknown,canonical:Uint8Array=raw,jsonParseMs=0,validationMs=0,validationYieldMs=0;
@@ -79,12 +69,12 @@ export function acquireWallBatch(options:Options){
      upstream.throwIfAborted();
      // EOF/trailing-byte validation must precede the terminal member. Earlier
      // validated members remain an honest resumable prefix on a truncated tail.
-     if(i===parts.length-1){if(offset!==chunk.byteLength||await pull()||received!==wireBytes)throw Error('Prepared wall batch byte identity mismatch');complete=true;}
+     if(i===parts.length-1)await receiver.finish();
      const headers=new Headers(response.headers);if(i>0)headers.set('content-length','0');
      if(i===parts.length-1)work.finished=true;
      work.slots.get(part.index)!.resolve({response:i===0?response:new Response(null,{headers}),body,bytes:part.bytes,responseHeadersMs:i===0?responseHeadersMs:0,bodyReadMs,jsonParseMs,validationMs,validationYieldMs,attempts:attempt});
     }
-   }finally{upstream.removeEventListener('abort',cancelReader);if(!complete)await reader.cancel().catch(()=>{});reader.releaseLock();}
+   }finally{await receiver.close();}
   });
   void (async()=>{
    for(let attempt=1;attempt<=3;attempt++){
