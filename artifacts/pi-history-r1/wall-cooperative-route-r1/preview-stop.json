@@ -1,0 +1,6 @@
+{
+  "pid": 339073,
+  "signal": "SIGTERM",
+  "verifiedOwnedArgs": "node ./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js preview --mode staging --outDir /tmp/iqterminal-wall-c60fd13-dist --host 127.0.0.1 --port 4189 --strictPort ",
+  "scope": "Owned candidate test preview only;4187control andSSHforwards unchanged"
+}

@@ -16,12 +16,24 @@ def sample(run):
                 'dataMode': 'staging', 'historyTiles': True, 'build': BUILD}}}}
 
 class ReportTests(unittest.TestCase):
-    def report(self, rows):
+    def document(self, rows):
         with tempfile.TemporaryDirectory() as root:
             path = pathlib.Path(root) / 'samples.jsonl'
             path.write_text(''.join(json.dumps(row) + '\n' for row in rows))
             result = subprocess.check_output(['python3', str(SCRIPT), str(path)], text=True)
-            return json.loads(result)['scenarios'][0]
+            return json.loads(result)
+
+    def report(self, rows):
+        return self.document(rows)['scenarios'][0]
+
+    def test_headless_samples_are_not_described_as_normal_foreground_chromium(self):
+        rows = [sample(i) for i in range(1, 6)]
+        for row in rows:
+            row['rendering'] = 'headless-gles'
+        result = self.document(rows)
+        self.assertEqual(result['renderingModes'], ['headless-gles'])
+        self.assertNotIn('normal Chromium', result['method'])
+        self.assertIn('does not independently certify foreground', result['method'])
 
     def test_wrong_environment_never_certifies_first_history(self):
         for field, value in [('fixture', True), ('historyTiles', False), ('build', 'b' * 40)]:

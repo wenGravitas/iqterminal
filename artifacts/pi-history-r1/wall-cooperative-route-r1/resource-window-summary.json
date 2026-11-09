@@ -1,0 +1,16 @@
+{
+  "scope": "Partial90sserver window begun after several client loading observations; not whole-cohort coverage or a current execution-confirmation test. Server durations are not subtracted from client timestamps.",
+  "samples": 18,
+  "errors": [],
+  "maximumSampleMs": 2056.1206469999997,
+  "apiBuilds": [
+    "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51"
+  ],
+  "boundedHealthReadsSucceeded": true,
+  "end": {
+    "kind": "end",
+    "label": "wall-coop-c60-tail-r1",
+    "elapsedMs": 90015.700171,
+    "stopping": false
+  }
+}

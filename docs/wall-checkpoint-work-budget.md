@@ -117,3 +117,57 @@ import median185.8/272.2ms, maximum279.5/508.9ms; USD-M462.9/1099.7ms,
 maximum729.7/2018.7ms. Its raw samples and stalled intervals remain available.
 The unmeasured R1 worker-syntax failure is also retained.
 
+## Production client route validation
+
+Production clientc60fd1382fe010633b9bc59e34070dd5a46ca07a was built in staging/
+prepared/diagnostics mode into a separate owned output and served on4189, with
+the existing history18780/current18781SSH forwards. The4187control preview and
+its038build stayed unchanged. API serving remainsdca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51;
+backend sourcecabe775is committed but not deployed. The old prepared projection
+identity is consumed successfully through the explicit equivalence mapping.
+No derived rebuild, source change or collector restart was needed.
+
+Five empty-browser-cache observations per market use the unchanged frozen30h
+window1793696400000–1793804400000and exact Top8/10%/native profiles. Staging
+mode, history enabled, fixture false, exact client build and source revision are
+recorded/asserted. Browsers are explicitly headless, with Canvas2D chart work;
+normal foreground Pi UX remains unverified. A20sobservation preserves delayed
+coverage evidence without widening the3sfirst-history or5smedian/10smaximum
+completion targets. The existing generic report labels extended coverage runs
+SUPPLEMENTAL; no latency acceptance pass is inferred from them.
+
+|Scenario|First actual historical paint, ms, samples1–5|Median|Maximum|Target|
+|---|---|---|---|---|
+|walls-30h-spot-5m|3039.5,5931.1,7204.9,5084.0,6923.4|5931.1|7204.9|FAIL<=3000|
+|walls-30h-perp-15m|3695.1,4427.5,3313.1,4011.8,5473.5|4011.8|5473.5|FAIL<=3000|
+
+|Scenario|Complete validated painted coverage, ms, samples1–5|Median|Maximum|Target|
+|---|---|---|---|---|
+|walls-30h-spot-5m|10128.0,11727.2,9575.2,10314.8,7981.0|10128.0|11727.2|FAIL|
+|walls-30h-perp-15m|11628.5,14936.6,15187.4,12778.6,missing at20s|not reported|not reported|FAIL|
+
+Nine of ten samples prove the exact complete painted revision. The last USD-M
+sample receives all23,850walls/104,112points, all120native closed slots and a
+valid final source revision. Its archive requestComplete is true, but its chart
+paintedRevision remains-1with geometry/paint preparation still pending at the
+observation boundary. It cannot count as complete available visible display.
+Diagnostics retain6,929pending projection segments and13,307pending closed
+paint segments, after3,722.2msactive preparation. This directly demonstrates
+why a requestComplete flag or received count cannot certify the gate. No wall
+data was reduced and no unavailable source was substituted for pending work.
+
+All5Spot cases retain8,293walls/49,154points and360native slots, and all5USD-M
+cases retain23,850/104,112and120native slots. The35/47known historical gaps and
+exact original source tokens remain. One USD-M visible-paint completion remains
+missing; its finite four samples are not summarized as a five-run median/max.
+These results do not establish a loading speedup over prior candidates. Current
+confirmation under two concurrent wall loads, warm revisit, real heap plateau,
+normal foreground UX and default rolling composition/tail handoff remain open.
+
+Raw `wall-coop-c60-r1-*` files retain all10samples, requests, executed code,
+browser configuration, host CPU/swap/frame samples and actual chart screenshots.
+`wall-cooperative-route-r1` retains checks, build/test logs and summaries. A90s
+server observer starts after several client samples; it is a partial observation
+window, not continuous resource coverage of the cohort. Its monotonic timings
+are not subtracted from client timestamps. Both pre/post protected identity
+checks must remain attached to the evidence. No production/main merge occurred.

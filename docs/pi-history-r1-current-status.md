@@ -1,7 +1,7 @@
-## Release gate audit after client038/API dca
+## Release gate audit after clientc60/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[current scheduling and bootstrap validation](current-frame-budget-results.md).
+[cooperative wall checkpoint and production route validation](wall-checkpoint-work-budget.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -10,17 +10,19 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
 |Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
 |Useful current walls|Current-candidate five-run gate pending|
-|30hSpot5m Top8/10%/native|FAIL onde674: first median5.36s/max6.07s; complete7.75s/8.65s|
-|30hUSD-M15m Top8/10%/native|FAIL onde674: first3.75s/4.19s; complete12.47s/13.29s|
+|30hSpot5m Top8/10%/native|FAIL onc60: first median5.93s/max7.20s; complete10.13s/11.73s|
+|30hUSD-M15m Top8/10%/native|FAIL onc60: first4.01s/5.47s; fifth painted completion missing at20s; no five-run completion median/max|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
-|Concurrent history, no current timeouts/gaps|038footprint cohort:10/10generation-bound ACK chains, no health timeout and all48+24slots validated; loaded callback gaps reach3.614s and447msmedian/684msmaximum observation long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
+|Concurrent history, no current timeouts/gaps|Last038footprint cohort:10/10generation-bound ACK chains, no health timeout and all48+24slots validated; loaded callback gaps reach3.614s and447msmedian/684msmaximum observation long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
 |Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
 |Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-Latest038keeps bootstrap snapshots loading until independent stream confirmation and bounds shared RAF work between charts. Headless transport-fault checks show five closed hourly bars plus an independent forming bar in both footprint charts and ordinary-chart Totals while delivery is held, with no false live status.94focused product tests, typecheck/build and10proof/report tests pass. The font-write trial was reverted after mixed results; earlier health/startup failures remain recorded. Full release acceptance is unchanged.
+Latestc60adds cooperative exact checkpoint import with compatible prepared reuse.231focused frontend tests/one skipped and322backend tests pass; both typechecks/builds pass. Five old/new worker pairs per market preserve exact checkpoint/queue data, with shorter worker stalls but higher total import time. The10actual route observations validate all received financial records/native slots, but only9reach completed painted coverage; the last USD-M chart still has pending geometry/paint at20s. Both loading gates remain failed. Backend sourcecabe775is not deployed; API/collectors remain unchanged. Current safety under wall contention is not yet certified.
+
+Earlier038keeps bootstrap snapshots loading until independent stream confirmation and bounds shared RAF work between charts. Headless transport-fault checks show five closed hourly bars plus an independent forming bar in both footprint charts and ordinary-chart Totals while delivery is held, with no false live status.94focused product tests, typecheck/build and10proof/report tests pass. The font-write trial was reverted after mixed results; earlier health/startup failures remain recorded. Full release acceptance is unchanged.
 
 Earlier8aa fixes false shared-live loading when another historical viewer joins.
 Five alternating current-only/history pairs validate all48+24closed footprint

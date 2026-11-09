@@ -1,0 +1,11 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Error: Uncaught SyntaxError: await is only valid in async functions and the top level bodies of modules
+    at worker.onerror (eval at evaluate (:370:30), <anonymous>:13:248)
+    at /home/daz/workarea/iqterminal-perf-history/scripts/wall-checkpoint-import-benchmark.mjs:33:27 {
+  log: []
+}
+
+Node.js v22.19.0
