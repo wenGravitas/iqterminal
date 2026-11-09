@@ -1,0 +1,24 @@
+{
+  "clientBuild": "5039ea853ee5253131145accf7969d4334361d8a",
+  "servingBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "backendSource": "cabe775cbb7edce41a3f04d38191c28fea9e35c4",
+  "productionBuild": true,
+  "route": "http://127.0.0.1:4189",
+  "assets": [
+    {
+      "path": "/theme-init.js",
+      "bytes": 807,
+      "sha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae"
+    },
+    {
+      "path": "/assets/index-BV2nE-nk.js",
+      "bytes": 50354,
+      "sha256": "37f817422af9f7dbff9b61eab7923082d53ce4a7e524f5f3cf15194af9211bd5"
+    }
+  ],
+  "preview": {
+    "pid": 355170,
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "args": "node ./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js preview --mode staging --outDir /tmp/iqterminal-wall-native-tasks-dist --host 127.0.0.1 --port 4189 --strictPort "
+  }
+}

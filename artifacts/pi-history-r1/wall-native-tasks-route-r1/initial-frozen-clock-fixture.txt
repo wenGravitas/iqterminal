@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-work-budget.test.ts (13 tests | 1 failed) 697ms
+   × native tasks prepare visible geometry without timer clamping and dispose cancels queued work 37ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-work-budget.test.ts > native tasks prepare visible geometry without timer clamping and dispose cancels queued work
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/order-walls-work-budget.test.ts:108:46
+    106|  });
+    107|  vi.stubGlobal('scheduler',{postTask});const {p,requestUpdate}=attache…
+    108|  p.draw(canvas().ctx,context());expect(jobs).toHaveLength(1);expect(vi…
+       |                                              ^
+    109|  while(jobs.length){const job=jobs.shift()!;job.callback();job.resolve…
+    110|  expect(p.diagnostics().preparation).toMatchObject({yieldMode:'user-vi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 19 passed (20)
+   Start at  17:45:07
+   Duration  2.08s (transform 50%, tests 36%, import 11%, worker 3%)
+

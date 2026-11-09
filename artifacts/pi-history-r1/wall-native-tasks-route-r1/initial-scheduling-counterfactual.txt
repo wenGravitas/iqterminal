@@ -1,0 +1,69 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/history-task-yield.test.ts (7 tests | 2 failed) 110ms
+   × bounded work executes in the scheduled task itself on native and timer paths 28ms
+   × timer work failures reject without leaking a cancellation listener or timer 20ms
+ ❯ tests/order-walls-work-budget.test.ts (13 tests | 1 failed) 658ms
+   × native tasks prepare visible geometry without timer clamping and dispose cancels queued work 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/history-task-yield.test.ts > bounded work executes in the scheduled task itself on native and timer paths
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ tests/history-task-yield.test.ts:29:20
+     27|   const work=yieldHistoryTask(control.signal,'user-visible',callback);…
+     28|   if(native)run();else vi.runAllTimers();
+     29|   expect(callback).toHaveBeenCalledTimes(1);await work;expect(vi.getTi…
+       |                    ^
+     30|  }
+     31| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/history-task-yield.test.ts > timer work failures reject without leaking a cancellation listener or timer
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected:
+Error {
+  "message": "rejected promise",
+}
+
++ Received:
+undefined
+
+ ❯ tests/history-task-yield.test.ts:34:99
+     32| test('timer work failures reject without leaking a cancellation listen…
+     33|  vi.useFakeTimers();vi.stubGlobal('scheduler',undefined);const control…
+     34|  const work=yieldHistoryTask(control.signal,'user-visible',()=>{throw …
+       |                                                                                                   ^
+     35|  expect(remove).toHaveBeenCalledWith('abort',expect.any(Function));exp…
+     36| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/order-walls-work-budget.test.ts > native tasks prepare visible geometry without timer clamping and dispose cancels queued work
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/order-walls-work-budget.test.ts:108:46
+    106|  });
+    107|  vi.stubGlobal('scheduler',{postTask});const {p,requestUpdate}=attache…
+    108|  p.draw(canvas().ctx,context());expect(jobs).toHaveLength(1);expect(vi…
+       |                                              ^
+    109|  while(jobs.length){const job=jobs.shift()!;job.callback();job.resolve…
+    110|  expect(p.diagnostics().preparation).toMatchObject({yieldMode:'user-vi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 17 passed (20)
+   Start at  17:44:01
+   Duration  2.28s (transform 46%, tests 38%, import 15%, worker 2%)
+
