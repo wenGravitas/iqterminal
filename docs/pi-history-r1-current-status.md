@@ -1,7 +1,7 @@
-## Release gate audit after clientde674/API dca
+## Release gate audit after client8aa/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[visible/cache priority follow-up](wall-task-priority-results.md).
+[current confirmation and shared-view fix](current-concurrency-confirmation-results.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -13,14 +13,23 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |30hSpot5m Top8/10%/native|FAIL onde674: first median5.36s/max6.07s; complete7.75s/8.65s|
 |30hUSD-M15m Top8/10%/native|FAIL onde674: first3.75s/4.19s; complete12.47s/13.29s|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
-|Concurrent history, no current timeouts/gaps|Prior health timeout remains failed evidence; current confirmation continuity incomplete|
+|Concurrent history, no current timeouts/gaps|8aa footprint cohort:10/10generation-bound ACK chains and no health timeout; loaded receipt gaps rise to2.395s and long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
 |Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
 |Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-All10 newest unprofiled chart samples (de674 cohort) validate exact requested
+Latest8aa fixes false shared-live loading when another historical viewer joins.
+Five alternating current-only/history pairs validate all48+24closed footprint
+slots and same-generation execution/ACK progress. Source jumps/resets/disconnects
+are absent, and execution groups/history work release after unsubscribe. This is
+not full concurrency acceptance: loaded receive gaps and349–775msmain long tasks
+remain, and cold custom backfill/two wall charts are not established.58focused
+staging/analysis and23gate tests, typecheck/build pass. Initial counterfactual and
+reporting errors remain recorded.
+
+All10 prior unprofiled wall chart samples (de674 cohort) validate exact requested
 wall counts, slots, revisions and actual visible/background continuation modes.
 Optional cache encoding now yields behind visible imports/replay.101 focused
 history/priority tests plus46 staging/warm regressions pass; typecheck/build and
