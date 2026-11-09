@@ -79,13 +79,13 @@ test('independent revision read overlaps final assembly but cannot publish compl
  vi.stubEnv('VITE_HISTORY_TILES','1');
  const f=fixture(true);let release!:()=>void;
  const gateSource=new Promise<void>(resolve=>release=resolve),io=transport(f,{gateSource}),updates:any[]=[];
- const original=OrderWallsArchiveProjector.restoreCheckpoint;
- const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint');let finalRestored=false;
+ const original=OrderWallsArchiveProjector.restoreCheckpointCooperatively;
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');let finalRestored=false;
  restore.mockImplementation((...args)=>{
   if((args[0] as any).segments.length===f.full.segments.length){
    expect(io.calls.at(-1)).toMatch(/\/source$/);finalRestored=true;
   }
-  return original(...args);
+  return original.apply(OrderWallsArchiveProjector,args);
  });
  const work=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,onUpdate:u=>updates.push(u)});void work.catch(()=>{});
  try{
@@ -203,7 +203,7 @@ test.each(['newer','older'] as const)('%s quiet-head rebinding restores retained
  const anchor={cursor:1,epoch:1,at:from-1,hash:'c'.repeat(64)};Object.assign(f.source,{maxCursor:4,anchor});Object.assign(f.canonical.sourceProof,{maxCursor:4,anchor});
  const t=transport(f),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to,watermark:target.cursor,head:target},t.fetcher,new AbortController().signal,undefined,settings);
  expect(reader).not.toBeNull();
- const checkpoint=vi.spyOn(OrderWallsArchiveProjector.prototype,'checkpoint'),restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint');
+ const checkpoint=vi.spyOn(OrderWallsArchiveProjector.prototype,'checkpoint'),restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');
  try{
   const result=await reader!.readProjection(settings,()=>{});
   expect(result).not.toBeNull();expect(checkpoint).not.toHaveBeenCalled();
@@ -217,13 +217,13 @@ test.each(['newer','older'] as const)('%s quiet-head rebinding restores retained
 test('prepared warm revisits retain detached presentation without a second mutable projector or history clone',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),first=transport(f);let release!:()=>void;
  const gateSource=new Promise<void>(resolve=>release=resolve),validation=transport(f,{gateSource}),events:any[]=[];let phase=0;
- const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint'),clone=vi.spyOn(OrderWallsArchiveProjector.prototype,'cloneForLiveTail');
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively'),clone=vi.spyOn(OrderWallsArchiveProjector.prototype,'cloneForLiveTail');
  const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>(phase===0?first:validation).fetcher(input,init),()=>to+3600000);
  const subscription={market:'binance-spot' as const,from,to,settings,followLive:false};
  try{
   service.subscribe('first',subscription);await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));
   expect(clone).not.toHaveBeenCalled();expect(service.diagnostics()).toMatchObject({warmEntries:1,warmSegments:f.full.segments.length,warmRuns:f.full.segments.reduce((n,s)=>n+s.valueRuns.length,0)});
-  const completed=restore.mock.results.map(result=>result.value as OrderWallsArchiveProjector|undefined).find(projector=>projector?.diagnostics().retainedSegments===f.full.segments.length)!;
+  const completed=(await Promise.all(restore.mock.results.map(result=>result.value as Promise<OrderWallsArchiveProjector>|undefined))).find(projector=>projector?.diagnostics().retainedSegments===f.full.segments.length)!;
   // Even an active replay mutation cannot change the detached cached records.
   completed.censorOpen(to,'Test replay mutation after cache admission');
   service.unsubscribe('first');expect(service.diagnostics()).toMatchObject({projections:[],historyJobs:0});
@@ -382,7 +382,7 @@ test('an unfinished warm replay cannot certify complete presentation from a matc
  let release!:()=>void;const gate=new Promise<void>(r=>release=r),original=compactCodec.replayCompactWallPresentation;let spy:{mockRestore:()=>unknown}|undefined;
  try{
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');
-  spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImplementationOnce(async(...args)=>{await gate;return original(...args);});
+  spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImplementationOnce(async(...args)=>{await gate;return original.apply(OrderWallsArchiveProjector,args);});
   service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
   expect(service.diagnostics().warmValidatedReuses).toBe(0);const reference=f.full.segments;
   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(reference.sort((a,b)=>a.id.localeCompare(b.id)));

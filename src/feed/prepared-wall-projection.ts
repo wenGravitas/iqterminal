@@ -26,6 +26,11 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   ||m.closed.length+m.activeOrder.length>100000||await digest(new TextEncoder().encode(JSON.stringify({version:2,sourceKey:context.sourceKey,core:WALL_PROJECTION_CORE_SHA256,settings:normalized(context.settings)})))!==m.key)throw Error('Invalid prepared wall projection identity');
  if(context.outputHead&&![context.outputHead.cursor,context.outputHead.epoch].every(integer))throw Error('Invalid prepared wall output fence');
  const manifest=m as PreparedWallProjectionManifest,hashes=new Set<string>();let decodedBytes=0;
+ let restoreYieldMs=0;
+ const restore=async(value:unknown)=>OrderWallsArchiveProjector.restoreCheckpointCooperatively(value,context.settings,context.from,context.to,{
+  now:()=>performance.now(),budgetMs:8,check:()=>context.signal.throwIfAborted(),
+  yield:async()=>{const began=performance.now();await yieldTask(context.signal);restoreYieldMs+=performance.now()-began;},
+ });
  context.validateProfile?.(manifest.profile);
  for(const p of manifest.parts){if(!hex(p.hash)||hashes.has(p.hash)||!integer(p.bytes)||p.bytes<1||p.bytes>4*1024*1024||!integer(p.records)||p.records<1)throw Error('Invalid prepared wall projection part');hashes.add(p.hash);decodedBytes+=p.bytes;}
  if(decodedBytes>64*1024*1024)throw Error('Prepared wall projection byte capacity');
@@ -38,7 +43,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   }
  }
  // The active checkpoint is independently validated before any presentation.
- OrderWallsArchiveProjector.restoreCheckpoint(manifest.active,context.settings,context.from,context.to);
+ await restore(manifest.active);
  const presentation=new Map<string,OrderWallSegment>(),retained:Array<Omit<RecordRow,'offset'|'totalRuns'>>=[];
  for(const [i,segment] of manifest.active.segments.entries()){
   if(segment.end!==null||!integer(manifest.activeOrder[i]))throw Error('Invalid prepared wall projection active order');
@@ -82,7 +87,9 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
     runs+=ready.reduce((n,record)=>n+record.segment.valueRuns.length,0);if(runs>1000000)throw Error('Prepared wall projection retained capacity');
     // Validate only this bounded new batch. Previously imported closed history
     // is neither cloned nor sorted during progressive publication.
-    OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,candidates:[],seenGaps:[],segments:ready.map(row=>row.segment),valueRunOrder:ready.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
+    const priorYield=restoreYieldMs;
+    await restore({...manifest.active,candidates:[],seenGaps:[],segments:ready.map(row=>row.segment),valueRunOrder:ready.map(row=>row.valueRunOrder)});
+    yieldMs+=restoreYieldMs-priorYield;
     for(const record of ready){if(presentation.has(record.segment.id))throw Error('Prepared wall projection duplicate identity');presentation.set(record.segment.id,record.segment);}
    }
    const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask(context.signal);
@@ -100,7 +107,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  // outputHead is the transport fence already admitted by the source-proof
  // reader. Financial rows/order and active candidates remain untouched. The
  // reader still revalidates the source before returning this final projector.
- const projector=OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
+ const projector=await restore({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)});
  // Authenticate the complete presentation description, not merely its source
  // input token: corrections can change part hashes or selected metadata.
  const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));

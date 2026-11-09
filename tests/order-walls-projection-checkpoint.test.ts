@@ -76,3 +76,36 @@ test('same-timestamp corrections preserve actual retained counts and checkpoint 
  const restored=OrderWallsArchiveProjector.restoreCheckpoint(wire(source.checkpoint()),settings,from,to);
  expect(restored.diagnostics().valueRuns).toBe(actual);expect(wire(restored.snapshot())).toEqual(wire(source.snapshot()));
 });
+
+const cooperative=(onYield=async()=>{})=>{let tick=0;return {now:()=>++tick,budgetMs:1,yield:onYield,check:()=>{}};};
+test('cooperative import preserves every field, detached state, eviction order and subsequent patches',async()=>{
+ const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint());
+ // Many closed fixture identities with interleaved value sequences exercise
+ // validation, long-wall cloning and every merge-sort pass independently.
+ const closed=state.segments.find((s:any)=>s.end!==null),extra=Array.from({length:120},(_,i)=>({...wire(closed),id:'closed-'+i,valueRuns:Array.from({length:200},(_,j)=>({...closed.valueRuns[0],at:from+j}))}));
+ state.segments.push(...extra);let sequence=1;
+ state.valueRunOrder=state.segments.map((s:any)=>s.valueRuns.map(()=>sequence++));state.nextValueRunSequence=sequence;
+ // Non-monotonic global insertion order must not become the eviction order.
+ let descending=sequence-1;state.valueRunOrder=state.segments.map((s:any)=>s.valueRuns.map(()=>descending--));
+ const expected=OrderWallsArchiveProjector.restoreCheckpoint(state,settings,from,to);let yields=0;
+ const actual=await OrderWallsArchiveProjector.restoreCheckpointCooperatively(state,settings,from,to,cooperative(async()=>{yields++;}));
+ expect(yields).toBeGreaterThan(100);expect(wire(actual.checkpoint())).toEqual(wire(expected.checkpoint()));
+ expect((actual as any).valueRunQueue).toEqual((expected as any).valueRunQueue);
+ state.segments[0].valueRuns[0].quantityExact='changed';state.bookScope.snapshotLevels.bids=0;
+ expect(wire(actual.checkpoint())).toEqual(wire(expected.checkpoint()));
+ expect(wire(actual.applyPage(tail()))).toEqual(wire(expected.applyPage(tail())));
+ expect(wire(actual.checkpoint())).toEqual(wire(expected.checkpoint()));
+});
+test('cooperative validation rejects cross-segment duplicate sequences and orphan live records before returning',async()=>{
+ const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint());
+ for(const mutate of [(s:any)=>s.valueRunOrder[1][0]=s.valueRunOrder[0][0],(s:any)=>s.candidates=[],(s:any)=>s.segments[0].valueRuns[0].quantityExact='bad',(s:any)=>s.seenGaps=[5]]){
+  const bad=wire(state);mutate(bad);await expect(OrderWallsArchiveProjector.restoreCheckpointCooperatively(bad,settings,from,to,cooperative())).rejects.toThrow(/Invalid wall projection checkpoint/);
+ }
+});
+test('cancelled cooperative work returns no partial projector and leaves the input untouched',async()=>{
+ const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint()),before=wire(state);
+ state.seenGaps=Array.from({length:600},(_,i)=>String(i));const snapshot=wire(state);let calls=0;
+ await expect(OrderWallsArchiveProjector.restoreCheckpointCooperatively(state,settings,from,to,cooperative(async()=>{if(++calls===2)throw Error('Canceled import');}))).rejects.toThrow('Canceled import');
+ expect(state).toEqual(snapshot);expect(wire(source.checkpoint())).toEqual(before);
+ for(const budgetMs of [0,NaN,17])await expect(OrderWallsArchiveProjector.restoreCheckpointCooperatively(state,settings,from,to,{...cooperative(),budgetMs})).rejects.toThrow(/budget/);
+});

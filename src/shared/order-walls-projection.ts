@@ -293,6 +293,51 @@ export class OrderWallsArchiveProjector {
     return projector;
   }
 
+  /** The same financial validation, with bounded checkpoints during import.
+   * The caller supplies its worker task scheduler; no DOM/timer is owned here.
+   * Nothing is returned until validation, cloning and queue ordering finish. */
+  static async restoreCheckpointCooperatively(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,
+    work:{now:()=>number;yield:()=>Promise<void>;budgetMs:number;check:()=>void},namespace='') {
+    if(!Number.isFinite(work.budgetMs)||work.budgetMs<=0||work.budgetMs>16)throw Error('Invalid wall import work budget');
+    const steps=this.restoreCheckpointSteps(value,settings,from,to,namespace);let since=work.now();
+    work.check();
+    for(;;){
+      const next=steps.next();work.check();if(next.done)return next.value;
+      if(work.now()-since>=work.budgetMs){await work.yield();work.check();since=work.now();}
+    }
+  }
+
+  private static *restoreCheckpointSteps(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,namespace:string):Generator<void,OrderWallsArchiveProjector> {
+    yield* validateCheckpointSteps(value,settings,from,to,namespace);
+    const state=value as WallProjectionCheckpoint,projector=new OrderWallsArchiveProjector(settings,from,to,namespace);
+    projector.currentScope=state.bookScope?structuredClone(state.bookScope):undefined;projector.confirmedTo=state.confirmedTo;
+    projector.cursor=state.cursor;projector.epoch=state.epoch;projector.midpoint=state.midpoint;
+    projector.valueHistoryLimited=state.valueHistoryLimited;projector.episodeHistoryLimited=state.episodeHistoryLimited;
+    projector.nextValueRunSequence=state.nextValueRunSequence;projector.emittedRevision=state.emittedRevision;
+    let work=0;
+    for(const [i,source] of state.segments.entries()){
+      const segment={...source,valueRuns:[] as OrderWallValuePoint[]};projector.segments.set(segment.id,segment);
+      for(const [j,point] of source.valueRuns.entries()){
+        const copied={...point},sequence=state.valueRunOrder[i]![j]!;segment.valueRuns.push(copied);
+        projector.valueRunSequences.set(copied,sequence);projector.valueRunQueue.push({id:segment.id,sequence});projector.totalValueRuns++;
+        if(++work%256===0)yield;
+      }
+      projector.emittedValues.set(segment.id,{first:segment.valueRuns[0],last:segment.valueRuns.at(-1),length:segment.valueRuns.length});
+      if(++work%256===0)yield;
+    }
+    // Global retained sequence order is required for exact pressure eviction.
+    // Merge sorting yields during comparisons/copies, including one long wall.
+    yield* sortValueQueueSteps(projector.valueRunQueue);
+    for(const source of state.candidates){
+      const {segmentId,...candidate}=source;
+      projector.candidates.set(candidate.candidate.entryId,{...candidate,candidate:{...candidate.candidate},
+        ...(candidate.qualifyingCandidate?{qualifyingCandidate:{...candidate.qualifyingCandidate}}:{}),
+        ...(segmentId?{segment:projector.segments.get(segmentId)!}:{})});
+    }
+    for(const gap of state.seenGaps){projector.seenGaps.add(gap);if(++work%256===0)yield;}
+    return projector;
+  }
+
   get historyLimited() { return this.valueHistoryLimited || this.episodeHistoryLimited; }
   get valueRunsLimited() { return this.valueHistoryLimited; }
   get episodesLimited() { return this.episodeHistoryLimited; }
@@ -759,6 +804,9 @@ function finiteNonNegative(value: unknown): value is number { return typeof valu
 function isRecord(value: unknown): value is Record<string, any> { return value !== null && typeof value === 'object' && !Array.isArray(value); }
 
 function validateCheckpoint(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,namespace:string):asserts value is WallProjectionCheckpoint {
+  for(const _ of validateCheckpointSteps(value,settings,from,to,namespace)) { /* synchronous reference API */ }
+}
+function *validateCheckpointSteps(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,namespace:string):Generator<void,void> {
   const fail=()=>{throw Error('Invalid wall projection checkpoint');};
   if(!isRecord(value)||value.version!==1||value.from!==from||value.to!==to||value.namespace!==namespace||!finiteNonNegative(from)||!finiteNonNegative(to)||from>=to)fail();
   const v=value as Record<string,any>,filter=v.settings;
@@ -767,10 +815,11 @@ function validateCheckpoint(value:unknown,settings:OrderWallsProjectionSettings,
     ||!finiteNonNegative(filter.minimumNotionalUsd)||!finiteNonNegative(filter.minDurationMs)||filter.minDurationMs>60000||typeof filter.minimumNotionalEnabled!=='boolean')fail();
   if(!finiteNonNegative(v.confirmedTo)||v.confirmedTo<from||!validInt(v.cursor)||!validInt(v.epoch)||v.midpoint!==null&&!validDecimal(v.midpoint)
     ||v.bookScope!==undefined&&!isRecord(v.bookScope)||typeof v.valueHistoryLimited!=='boolean'||typeof v.episodeHistoryLimited!=='boolean'
-    ||!validInt(v.nextValueRunSequence)||!validInt(v.emittedRevision)||!Array.isArray(v.seenGaps)||!v.seenGaps.every((gap:unknown)=>typeof gap==='string')
+    ||!validInt(v.nextValueRunSequence)||!validInt(v.emittedRevision)||!Array.isArray(v.seenGaps)
     ||!Array.isArray(v.segments)||v.segments.length>ORDER_WALL_ARCHIVE_MAX_SEGMENTS||!Array.isArray(v.valueRunOrder)||v.valueRunOrder.length!==v.segments.length
     ||!Array.isArray(v.candidates)||v.candidates.length>20)fail();
-  const ids=new Map<string,OrderWallSegment>(),sequences=new Set<number>();let runs=0;
+  const ids=new Map<string,OrderWallSegment>(),sequences=new Set<number>();let runs=0,work=0;
+  for(const gap of v.seenGaps){if(typeof gap!=='string')fail();if(++work%256===0)yield;}
   for(const [i,segment] of v.segments.entries()){
     if(!isRecord(segment)||typeof segment.id!=='string'||!segment.id||ids.has(segment.id)||typeof segment.archiveEntryId!=='string'||!segment.archiveEntryId
       ||!validInt(segment.epoch)||!['bid','ask'].includes(segment.side)||!validDecimal(segment.priceExact)||segment.price!==Number(segment.priceExact)||!finiteNonNegative(segment.price)||segment.price<=0
@@ -787,8 +836,10 @@ function validateCheckpoint(value:unknown,settings:OrderWallsProjectionSettings,
         ||!validDecimal(point.quantityExact)||!validDecimal(point.notionalExact)||point.quantity!==Number(point.quantityExact)||point.usd!==Number(point.notionalExact)
         ||!finiteNonNegative(point.quantity)||!finiteNonNegative(point.usd)||!validInt(sequence)||sequence<1||sequence>v.nextValueRunSequence||sequences.has(sequence))fail();
       sequences.add(sequence);runs++;
+      if(++work%256===0)yield;
     }
     ids.set(segment.id,segment as unknown as OrderWallSegment);
+    if(++work%256===0)yield;
   }
   if(runs>ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS)fail();
   const candidateIds=new Set<string>(),activeIds=new Set<string>();
@@ -802,5 +853,29 @@ function validateCheckpoint(value:unknown,settings:OrderWallsProjectionSettings,
     if(state.segmentId!==undefined){const segment=ids.get(state.segmentId);if(typeof state.segmentId!=='string'||activeIds.has(state.segmentId)||!segment||segment.end!==null||!state.eligible||segment.archiveEntryId!==state.candidate.entryId)fail();activeIds.add(state.segmentId);}
     candidateIds.add(state.candidate.entryId);
   }
-  for(const segment of ids.values())if(segment.end===null&&!activeIds.has(segment.id))fail();
+  for(const segment of ids.values()){if(segment.end===null&&!activeIds.has(segment.id))fail();if(++work%256===0)yield;}
+}
+
+function *sortValueQueueSteps(values:Array<{id:string;sequence:number}>):Generator<void,void> {
+  const length=values.length;if(length<2)return;
+  let source=values,target=new Array<{id:string;sequence:number}>(length),work=0;
+  // Native sorting stays bounded to1024entries. Merge only those short runs,
+  // rather than executing every bottom-up sort pass in JavaScript.
+  const run=1024;
+  for(let start=0;start<length;start+=run){
+    const chunk=values.slice(start,Math.min(start+run,length)).sort((a,b)=>a.sequence-b.sequence);
+    for(let i=0;i<chunk.length;i++)values[start+i]=chunk[i]!;
+    yield;
+  }
+  for(let width=run;width<length;width*=2){
+    for(let start=0;start<length;start+=width*2){
+      const mid=Math.min(start+width,length),end=Math.min(start+width*2,length);let left=start,right=mid;
+      for(let at=start;at<end;at++){
+        target[at]=right>=end||left<mid&&source[left]!.sequence<=source[right]!.sequence?source[left++]!:source[right++]!;
+        if(++work%1024===0)yield;
+      }
+    }
+    [source,target]=[target,source];
+  }
+  if(source!==values)for(let i=0;i<length;i++){values[i]=source[i]!;if(++work%1024===0)yield;}
 }
