@@ -1,7 +1,7 @@
-## Release gate audit after client5039/API dca
+## Release gate audit after cliente2fa/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[visible wall preparation and latest route validation](wall-preparation-task-scheduling.md).
+[early native demand and latest route validation](native-restore-history-demand.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -10,8 +10,8 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
 |Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
 |Useful current walls|Current-candidate five-run gate pending|
-|30hSpot5m Top8/10%/native|FAIL on5039: first median4.63s/max7.85s; complete8.81s/10.22s|
-|30hUSD-M15m Top8/10%/native|FAIL on5039: first4.36s/5.29s; second painted completion missing at12s; no five-run completion median/max|
+|30hSpot5m Top8/10%/native|FAIL one2fa: first median4.11s/max4.66s; complete8.52s/10.74s|
+|30hUSD-M15m Top8/10%/native|FAIL one2fa: first5.36s/6.60s; all five painted completions missing at12s; no completion median/max|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
 |Concurrent history, no current timeouts/gaps|Last038footprint cohort:10/10generation-bound ACK chains, no health timeout and all48+24slots validated; loaded callback gaps reach3.614s and447msmedian/684msmaximum observation long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
@@ -20,7 +20,17 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-Latest5039shares projection context/culls offscreen geometry before point conversion and uses abortable native visible preparation tasks.237focused tests/one skipped, typecheck/build pass. Captured old/new comparisons preserve all geometry/pixels but have mixed draw-call timings. All10route samples validate received financial/native data and actual scheduling mode;9complete actual paint before the normal12sboundary. Both wall loading gates still fail. Early native viewport demand is missing from restore holders and remains a concrete next investigation.
+Lateste2faadmits a saved wall chart's native viewport during the early restore
+phase, preserving independent validation and consumer-specific cancellation.
+The predecessor fails the new regression;99focused tests, typecheck and production
+build pass. Five loads per market still fail both wall latency gates. All10native
+views cover the requested slots; five Spot paints complete and none of five USD-M
+paints complete by12s. Additional five alternating USD-M pairs complete neither
+variant under substantial Pi contention; no causal speedup/regression or healthy-
+source acceptance is established. Source/detail/thresholds are unchanged. All
+protected services retain their identities; owned previews/observers are stopped.
+
+Earlier5039shares projection context/culls offscreen geometry before point conversion and uses abortable native visible preparation tasks.237focused tests/one skipped, typecheck/build pass. Captured old/new comparisons preserve all geometry/pixels but have mixed draw-call timings. All10route samples validate received financial/native data and actual scheduling mode;9complete actual paint before the normal12sboundary. Both wall loading gates still fail. Early native viewport demand is missing from restore holders and remains a concrete next investigation.
 
 Earlierc60adds cooperative exact checkpoint import with compatible prepared reuse.231focused frontend tests/one skipped and322backend tests pass; both typechecks/builds pass. Five old/new worker pairs per market preserve exact checkpoint/queue data, with shorter worker stalls but higher total import time. The10actual route observations validate all received financial records/native slots, but only9reach completed painted coverage; the last USD-M chart still has pending geometry/paint at20s. Both loading gates remain failed. Backend sourcecabe775is not deployed; API/collectors remain unchanged. Current safety under wall contention is not yet certified.
 

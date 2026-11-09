@@ -1,0 +1,40 @@
+[
+  {
+    "pid": 368021,
+    "args": [
+      "node",
+      "./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js",
+      "preview",
+      "--mode",
+      "staging",
+      "--outDir",
+      "/tmp/iqterminal-wall-native-tasks-dist",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4188",
+      "--strictPort"
+    ],
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "action": "SIGTERM"
+  },
+  {
+    "pid": 365614,
+    "args": [
+      "node",
+      "./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js",
+      "preview",
+      "--mode",
+      "staging",
+      "--outDir",
+      "/tmp/iqterminal-native-restore-dist",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4189",
+      "--strictPort"
+    ],
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "action": "SIGTERM"
+  }
+]

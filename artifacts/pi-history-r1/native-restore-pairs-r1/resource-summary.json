@@ -1,0 +1,19 @@
+{
+  "samples": 51,
+  "errors": [],
+  "start": {
+    "kind": "start",
+    "pid": 1243028,
+    "label": "native-restore-pairs-r1",
+    "seconds": 300,
+    "at": "2026-11-09T15:32:42.820Z",
+    "scope": "Read-only serving observer started before client cohort. Actual process boundaries determine coverage; no cross-host phase subtraction or current execution-confirmation claim."
+  },
+  "end": {
+    "kind": "end",
+    "label": "native-restore-pairs-r1",
+    "elapsedMs": 252052.125224,
+    "stopping": true
+  },
+  "scope": "Serving health/resource sample window covers the process-ordered cohort, not current ACK continuity or client responsiveness acceptance."
+}
