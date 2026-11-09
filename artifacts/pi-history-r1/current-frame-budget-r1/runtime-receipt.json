@@ -1,0 +1,38 @@
+{
+  "build": "038b0b485aa5a67c0549e755e0bc405d2143428d",
+  "apiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "route": "http://127.0.0.1:4187",
+  "sourceWindowEnd": 1794225600000,
+  "hostname": "pi",
+  "machine": "aarch64",
+  "headless": true,
+  "launchGuardSha256": "f324ff7ce845f7e5900ef52b8c283c3644a54ab6008ea4d22f234ece3045affb",
+  "assets": [
+    {
+      "path": "/theme-init.js",
+      "sha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+      "bytes": 807
+    },
+    {
+      "path": "/assets/index-jFvs-_YE.js",
+      "sha256": "f1577a7cd8fa66868645c4499b235de4c7a7512ff7bf1ca19f6242cb9d151f0c",
+      "bytes": 50354
+    }
+  ],
+  "ownedPreviewPid": 263125,
+  "historyForwardPid": 188916,
+  "currentForwardPid": 265761,
+  "scope": "Build/host/runtime receipt after cohort; this is not a GPU/frame or whole-cohort resource observation.",
+  "263125": {
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "args": "node ./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js preview --mode staging --host 127.0.0.1 --port 4187 --strictPort "
+  },
+  "188916": {
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "args": "ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o IPQoS=none -L 127.0.0.1:18780:127.0.0.1:18780 staging "
+  },
+  "265761": {
+    "cwd": "/home/daz/workarea/iqterminal-perf-history",
+    "args": "ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -L 127.0.0.1:18781:127.0.0.1:18780 staging "
+  }
+}

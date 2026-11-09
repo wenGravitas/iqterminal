@@ -1,0 +1,119 @@
+{
+  "completeCohort": false,
+  "scenarios": {
+    "current-only": {
+      "bootstrapMs": {
+        "samples": [
+          923.1000000014901,
+          null,
+          283.5999999977648,
+          1089.4000000022352,
+          6235.70000000298
+        ],
+        "observations": 4,
+        "median": null,
+        "maximum": null
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          832.5,
+          null,
+          1293.2999999970198,
+          1411.6000000014901,
+          6235.800000000745
+        ],
+        "observations": 4,
+        "median": null,
+        "maximum": null
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1010,
+          null,
+          1944,
+          1276,
+          883
+        ],
+        "observations": 4,
+        "median": null,
+        "maximum": null
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          153,
+          null,
+          62,
+          62,
+          0
+        ],
+        "observations": 4,
+        "median": null,
+        "maximum": null
+      },
+      "errors": [
+        null,
+        "AssertionError [ERR_ASSERTION]: {\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - → GET http://127.0.0.1:4188/market-data/v2/history/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\",\"_probe\":{\"elapsedMs\":12015.992465}}\n+ actual - expected\n\n+ undefined\n- 'dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51'\n",
+        null,
+        null,
+        "AssertionError [ERR_ASSERTION]: Live badge without a confirmed execution ACK chain"
+      ]
+    },
+    "concurrent-history": {
+      "bootstrapMs": {
+        "samples": [
+          250.89999999850988,
+          310.30000000074506,
+          463,
+          322.30000000074506,
+          283.5
+        ],
+        "observations": 5,
+        "median": 310.30000000074506,
+        "maximum": 463
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          4601.800000000745,
+          1085.699999999255,
+          856.5,
+          3595,
+          1292.1000000014901
+        ],
+        "observations": 5,
+        "median": 1292.1000000014901,
+        "maximum": 4601.800000000745
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1121,
+          1203,
+          1324,
+          1077,
+          2402
+        ],
+        "observations": 5,
+        "median": 1203,
+        "maximum": 2402
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          651,
+          366,
+          588,
+          301,
+          594
+        ],
+        "observations": 5,
+        "median": 588,
+        "maximum": 651
+      },
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "candidate/input-windows.json",
+      "bytes": 160,
+      "sha256": "4d8e217ef63fa7b2b3fed28844abab9e9cbf43862aa866311de2cab115b22956"
+    },
+    {
+      "path": "candidate/report-console.txt",
+      "bytes": 2370,
+      "sha256": "749d357021b13d105cef0640559fe5d69e0e40a9bd822f2e98ab22df58d11ce0"
+    },
+    {
+      "path": "candidate/report-corrected-console.txt",
+      "bytes": 2370,
+      "sha256": "749d357021b13d105cef0640559fe5d69e0e40a9bd822f2e98ab22df58d11ce0"
+    },
+    {
+      "path": "candidate/samples.jsonl",
+      "bytes": 860213,
+      "sha256": "74ee3ebe69954018ef61451a574c66a6914be754233da99be996e18c0d64b964"
+    },
+    {
+      "path": "candidate/summary-before-observation-eligibility.json",
+      "bytes": 132864,
+      "sha256": "c1f3f934f429b66b90b73b501db65d9e870af636b48db694611db146646f39fd"
+    },
+    {
+      "path": "candidate/summary.json",
+      "bytes": 133215,
+      "sha256": "e334248272e71ee2409c80a793ef84eea43caa9dfd84d5a3060c9f12f3f9b320"
+    },
+    {
+      "path": "candidate-1.log",
+      "bytes": 229,
+      "sha256": "aca0b9de1be32c9d62ab5d51c6f429e0312e8dcc33085742e5646fa61f8ad683"
+    },
+    {
+      "path": "candidate-2.log",
+      "bytes": 231,
+      "sha256": "5749c607edd737c6b4f3539342f5959ee0c89ac75fc846dfb5c591d82fe1c10f"
+    },
+    {
+      "path": "candidate-3.log",
+      "bytes": 241,
+      "sha256": "02fac36920f89cc2ca782061f9434e5f153a4a9dabe1ec3f7425c740d0050d14"
+    },
+    {
+      "path": "candidate-4.log",
+      "bytes": 213,
+      "sha256": "63dd334ebd219f46dd81b1bc99a5d8e08bdd510054443840100f91ba70a53d4f"
+    },
+    {
+      "path": "candidate-5.log",
+      "bytes": 228,
+      "sha256": "cea19dc054a404ef7bb51332b5657915b52180781c0fa346e6f8c0d4ae4a8f48"
+    },
+    {
+      "path": "client-receipts.json",
+      "bytes": 1839,
+      "sha256": "cfcc008f040de781f289f80f1140cdf3df8515022d464c6f96662e1631e8bedb"
+    },
+    {
+      "path": "completed-before-observation-eligibility.json",
+      "bytes": 685,
+      "sha256": "d8d44034ae50b35f512cb01ab9abdbfe81718105b4e99665cdb2220cfb4f80e9"
+    },
+    {
+      "path": "completed.json",
+      "bytes": 712,
+      "sha256": "919a4b1371d99aaf1c9a24ae24067ae1b08cfb706730ae30288fa37f7aff8457"
+    },
+    {
+      "path": "control/input-windows.json",
+      "bytes": 160,
+      "sha256": "4d8e217ef63fa7b2b3fed28844abab9e9cbf43862aa866311de2cab115b22956"
+    },
+    {
+      "path": "control/report-console.txt",
+      "bytes": 2958,
+      "sha256": "5444e6ee2604a3848cbd6d7bad69a7c534590835c5dd071c4be0adc2c17b7bda"
+    },
+    {
+      "path": "control/report-corrected-console.txt",
+      "bytes": 2949,
+      "sha256": "96f5acc09dc290f7994d838586825e061be9d08aff10cc4d6378d943adf1f7a4"
+    },
+    {
+      "path": "control/samples.jsonl",
+      "bytes": 755421,
+      "sha256": "39d836422c46c6e3accada297d3d698baacc69dd8db57fa92a4a5945d72bd61c"
+    },
+    {
+      "path": "control/summary-before-observation-eligibility.json",
+      "bytes": 132608,
+      "sha256": "92599471523e9e9586c3cadf576d096bfcec47ce59940f9eca85f8163638d508"
+    },
+    {
+      "path": "control/summary.json",
+      "bytes": 132941,
+      "sha256": "4822b7dbad73749fc702f7e4ca082d74f0365a4314a3e67db3b446c589adaee8"
+    },
+    {
+      "path": "control-1.log",
+      "bytes": 229,
+      "sha256": "bf98478c4d91b3724edb4fa6ab5e5b74f18562f067a5542a124de700c1a66bb4"
+    },
+    {
+      "path": "control-2.log",
+      "bytes": 761,
+      "sha256": "1fed1e56f6b7f8ad290c9100e60511a509a966b4b8d2425d2bb264bc7cd8de34"
+    },
+    {
+      "path": "control-3.log",
+      "bytes": 215,
+      "sha256": "9f67039477f17cb9f3f81589ff8be61bd7ed5842d2dabc85bbe493cbc9c460a2"
+    },
+    {
+      "path": "control-4.log",
+      "bytes": 230,
+      "sha256": "8b76b4ece38a6b1ddbe755014bc60d7e9e0edbb9e6dffc3de0ca32e7cecce581"
+    },
+    {
+      "path": "control-5.log",
+      "bytes": 320,
+      "sha256": "cd67833397abb113b1599b1bdd5cf7909790b4b0be056694fe93fad02504cc93"
+    },
+    {
+      "path": "control-initial-build.txt",
+      "bytes": 153,
+      "sha256": "2aad0760a15488992b13d55a8924784d30d3038bcd3c084a49b691300f574822"
+    },
+    {
+      "path": "control-stop.json",
+      "bytes": 431,
+      "sha256": "78ff0a5293efc4af4853fc344412b4bc5786df825e1c53e862d2e968eb85bf11"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 4146,
+      "sha256": "b42846f5eadd537d882f426d9f27fbed9f3a774353c23484096da03fd1c1b5ae"
+    },
+    {
+      "path": "input-windows.json",
+      "bytes": 160,
+      "sha256": "4d8e217ef63fa7b2b3fed28844abab9e9cbf43862aa866311de2cab115b22956"
+    },
+    {
+      "path": "precheck.txt",
+      "bytes": 3516,
+      "sha256": "6b0a12e743845b362223f405d47d29c54c341c67aac62d8100bfbc8d552d407f"
+    },
+    {
+      "path": "progress.jsonl",
+      "bytes": 4048,
+      "sha256": "2a25f4bcd4eabdc008fedba1d550726655dea03c44966ebbd37b54850cc5cfad"
+    },
+    {
+      "path": "readiness-4187-history.json",
+      "bytes": 2607,
+      "sha256": "e885d5afee8908122f290780fb082ee95faa4ce52f40f378601ed4d0b857bfe4"
+    },
+    {
+      "path": "readiness-4187-v1.json",
+      "bytes": 1651,
+      "sha256": "a141336c44af9ddddd2a9beba09951539aeadac9a994c8462ee6fd8455d8839a"
+    },
+    {
+      "path": "readiness-4188-history.json",
+      "bytes": 2610,
+      "sha256": "990f6188f5dbeb70abbbf72bae9c32132eded4bb11d5da89e11dba2af49e5c95"
+    },
+    {
+      "path": "readiness-4188-v1.json",
+      "bytes": 1653,
+      "sha256": "f4382bdf58d26b92c612b41a1c8aa10d7b35570f0f4e1a550abb9ddae8b98632"
+    },
+    {
+      "path": "runner-console.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "server-resources-a.jsonl",
+      "bytes": 388590,
+      "sha256": "58e11d67bde7daa3c95b20e2baba0a5dcbc595519f21093d73387c701d2945c0"
+    },
+    {
+      "path": "server-resources-b.jsonl",
+      "bytes": 388388,
+      "sha256": "13a36f31bd46aaded97326113f9cf89bf90df020ba46c4da413b29e704166d5a"
+    }
+  ]
+}

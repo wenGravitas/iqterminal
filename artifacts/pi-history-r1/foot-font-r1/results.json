@@ -1,0 +1,721 @@
+{
+  "scope": "Actual Pi headless Chromium Canvas2D, captured canonical source. Five alternating draw pairs per scene after separate warmups; exact RGBA pixels/stats. Draw submission and explicit readback durations are separate, not FPS/history/current acceptance. Font-write counting is a separate untimed draw to avoid observer bias.",
+  "browser": "155.0.8059.79",
+  "controlCommit": "446caee3f39bdf65cc71089ec8b1ee0507fd294b",
+  "controlSha256": "b2f1dc31510fa491f6f405c05a75ea5aed4e72ed216b1ada0e91d9c5a5d68404",
+  "candidateSha256": "c474a974fbab9f34d0a527e30db7d8a3d023eab072a52353c6ca8d6496bc5f94",
+  "result": [
+    {
+      "kind": "hour",
+      "cellStyle": "ladder",
+      "dpr": 1,
+      "wide": false,
+      "bars": 24,
+      "cells": 564,
+      "warmups": {
+        "control": {
+          "drawMs": 485.8999999985099,
+          "flushMs": 1094.300000000745
+        },
+        "candidate": {
+          "drawMs": 100.19999999925494,
+          "flushMs": 58.30000000074506
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 99.5,
+            "flushMs": 11.199999999254942
+          },
+          "candidate": {
+            "drawMs": 82.19999999925494,
+            "flushMs": 7.600000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 75.40000000223517,
+            "flushMs": 11.599999997764826
+          },
+          "candidate": {
+            "drawMs": 62.5,
+            "flushMs": 6.100000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 44.399999998509884,
+            "flushMs": 6.800000000745058
+          },
+          "candidate": {
+            "drawMs": 59.899999998509884,
+            "flushMs": 8.300000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 133.5,
+            "flushMs": 8.300000000745058
+          },
+          "candidate": {
+            "drawMs": 78.30000000074506,
+            "flushMs": 11.100000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 55,
+            "flushMs": 6.400000002235174
+          },
+          "candidate": {
+            "drawMs": 47.099999997764826,
+            "flushMs": 6.5
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 561,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "hour",
+      "cellStyle": "ladder",
+      "dpr": 2,
+      "wide": true,
+      "bars": 3,
+      "cells": 71,
+      "warmups": {
+        "control": {
+          "drawMs": 92.5,
+          "flushMs": 201.19999999925494
+        },
+        "candidate": {
+          "drawMs": 51.30000000074506,
+          "flushMs": 195.10000000149012
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 47.29999999701977,
+            "flushMs": 37.80000000074506
+          },
+          "candidate": {
+            "drawMs": 18.299999997019768,
+            "flushMs": 14.600000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 22.5,
+            "flushMs": 13.600000001490116
+          },
+          "candidate": {
+            "drawMs": 17.399999998509884,
+            "flushMs": 15.400000002235174
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 27.600000001490116,
+            "flushMs": 15.100000001490116
+          },
+          "candidate": {
+            "drawMs": 33.30000000074506,
+            "flushMs": 15.199999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 39,
+            "flushMs": 26
+          },
+          "candidate": {
+            "drawMs": 24.099999997764826,
+            "flushMs": 14.600000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 12.600000001490116,
+            "flushMs": 14
+          },
+          "candidate": {
+            "drawMs": 21.800000000745058,
+            "flushMs": 16.800000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 72,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "hour",
+      "cellStyle": "profile",
+      "dpr": 1,
+      "wide": false,
+      "bars": 24,
+      "cells": 564,
+      "warmups": {
+        "control": {
+          "drawMs": 94.40000000223517,
+          "flushMs": 67.5
+        },
+        "candidate": {
+          "drawMs": 115.89999999850988,
+          "flushMs": 137.20000000298023
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 63.19999999925494,
+            "flushMs": 7.300000000745058
+          },
+          "candidate": {
+            "drawMs": 64.30000000074506,
+            "flushMs": 7.399999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 51.19999999925494,
+            "flushMs": 7.399999998509884
+          },
+          "candidate": {
+            "drawMs": 59.600000001490116,
+            "flushMs": 16.800000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 177.69999999925494,
+            "flushMs": 30.199999999254942
+          },
+          "candidate": {
+            "drawMs": 137.30000000074506,
+            "flushMs": 6.699999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 111.19999999925494,
+            "flushMs": 10.100000001490116
+          },
+          "candidate": {
+            "drawMs": 97,
+            "flushMs": 42
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 81.30000000074506,
+            "flushMs": 7.5
+          },
+          "candidate": {
+            "drawMs": 71.80000000074506,
+            "flushMs": 10
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 561,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "hour",
+      "cellStyle": "profile",
+      "dpr": 2,
+      "wide": false,
+      "bars": 24,
+      "cells": 564,
+      "warmups": {
+        "control": {
+          "drawMs": 57.100000001490116,
+          "flushMs": 135.59999999776483
+        },
+        "candidate": {
+          "drawMs": 95.5,
+          "flushMs": 144.69999999925494
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 79.5,
+            "flushMs": 87.10000000149012
+          },
+          "candidate": {
+            "drawMs": 185.69999999925494,
+            "flushMs": 18.700000002980232
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 45.80000000074506,
+            "flushMs": 17.300000000745058
+          },
+          "candidate": {
+            "drawMs": 63,
+            "flushMs": 16.699999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 68.80000000074506,
+            "flushMs": 16.800000000745058
+          },
+          "candidate": {
+            "drawMs": 72.80000000074506,
+            "flushMs": 18.599999997764826
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 78.19999999925494,
+            "flushMs": 27.100000001490116
+          },
+          "candidate": {
+            "drawMs": 42.69999999925494,
+            "flushMs": 24.899999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 49.30000000074506,
+            "flushMs": 17.300000000745058
+          },
+          "candidate": {
+            "drawMs": 79.39999999850988,
+            "flushMs": 18.5
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 561,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "five",
+      "cellStyle": "ladder",
+      "dpr": 1,
+      "wide": false,
+      "bars": 48,
+      "cells": 332,
+      "warmups": {
+        "control": {
+          "drawMs": 141.30000000074506,
+          "flushMs": 333.0999999977648
+        },
+        "candidate": {
+          "drawMs": 53,
+          "flushMs": 55.099999997764826
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 38.29999999701977,
+            "flushMs": 6.5
+          },
+          "candidate": {
+            "drawMs": 52.80000000074506,
+            "flushMs": 6.399999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 62,
+            "flushMs": 8.100000001490116
+          },
+          "candidate": {
+            "drawMs": 92.5,
+            "flushMs": 12.900000002235174
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 43.30000000074506,
+            "flushMs": 6.100000001490116
+          },
+          "candidate": {
+            "drawMs": 43.899999998509884,
+            "flushMs": 6.100000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 37.899999998509884,
+            "flushMs": 7.900000002235174
+          },
+          "candidate": {
+            "drawMs": 84.39999999850988,
+            "flushMs": 6.199999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 38.599999997764826,
+            "flushMs": 7.200000002980232
+          },
+          "candidate": {
+            "drawMs": 68.60000000149012,
+            "flushMs": 7.899999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 333,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "five",
+      "cellStyle": "ladder",
+      "dpr": 2,
+      "wide": true,
+      "bars": 3,
+      "cells": 14,
+      "warmups": {
+        "control": {
+          "drawMs": 8.199999999254942,
+          "flushMs": 88.90000000223517
+        },
+        "candidate": {
+          "drawMs": 17.199999999254942,
+          "flushMs": 88.40000000223517
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 5.399999998509884,
+            "flushMs": 14.800000000745058
+          },
+          "candidate": {
+            "drawMs": 3.900000002235174,
+            "flushMs": 12.800000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 7.600000001490116,
+            "flushMs": 13.099999997764826
+          },
+          "candidate": {
+            "drawMs": 3.5,
+            "flushMs": 14
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 6.799999997019768,
+            "flushMs": 13.100000001490116
+          },
+          "candidate": {
+            "drawMs": 8.5,
+            "flushMs": 14.600000001490116
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 5,
+            "flushMs": 13
+          },
+          "candidate": {
+            "drawMs": 6.300000000745058,
+            "flushMs": 13.300000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 21.199999999254942,
+            "flushMs": 26.100000001490116
+          },
+          "candidate": {
+            "drawMs": 16.899999998509884,
+            "flushMs": 17.200000002980232
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 15,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "five",
+      "cellStyle": "profile",
+      "dpr": 1,
+      "wide": false,
+      "bars": 48,
+      "cells": 332,
+      "warmups": {
+        "control": {
+          "drawMs": 218.09999999776483,
+          "flushMs": 102.10000000149012
+        },
+        "candidate": {
+          "drawMs": 146.5,
+          "flushMs": 125
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 55,
+            "flushMs": 6.700000002980232
+          },
+          "candidate": {
+            "drawMs": 78.89999999850988,
+            "flushMs": 14
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 30.399999998509884,
+            "flushMs": 6.099999997764826
+          },
+          "candidate": {
+            "drawMs": 44.80000000074506,
+            "flushMs": 5.899999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 61.599999997764826,
+            "flushMs": 10.699999999254942
+          },
+          "candidate": {
+            "drawMs": 31.799999997019768,
+            "flushMs": 6.5
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 28.5,
+            "flushMs": 6.300000000745058
+          },
+          "candidate": {
+            "drawMs": 34.899999998509884,
+            "flushMs": 6.699999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 36.900000002235174,
+            "flushMs": 10.099999997764826
+          },
+          "candidate": {
+            "drawMs": 47.600000001490116,
+            "flushMs": 6.399999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 333,
+        "candidate": 2
+      }
+    },
+    {
+      "kind": "five",
+      "cellStyle": "profile",
+      "dpr": 2,
+      "wide": false,
+      "bars": 48,
+      "cells": 332,
+      "warmups": {
+        "control": {
+          "drawMs": 55.099999997764826,
+          "flushMs": 137.70000000298023
+        },
+        "candidate": {
+          "drawMs": 62.20000000298023,
+          "flushMs": 139
+        }
+      },
+      "samples": [
+        {
+          "run": 1,
+          "control": {
+            "drawMs": 30.900000002235174,
+            "flushMs": 16.399999998509884
+          },
+          "candidate": {
+            "drawMs": 34.899999998509884,
+            "flushMs": 14.800000000745058
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 2,
+          "control": {
+            "drawMs": 35.80000000074506,
+            "flushMs": 16.5
+          },
+          "candidate": {
+            "drawMs": 55,
+            "flushMs": 16.699999999254942
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 3,
+          "control": {
+            "drawMs": 39.69999999925494,
+            "flushMs": 15.800000000745058
+          },
+          "candidate": {
+            "drawMs": 69.10000000149012,
+            "flushMs": 18
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 4,
+          "control": {
+            "drawMs": 32.400000002235174,
+            "flushMs": 14.899999998509884
+          },
+          "candidate": {
+            "drawMs": 26.300000000745058,
+            "flushMs": 15.5
+          },
+          "exactPixels": true,
+          "exactStats": true
+        },
+        {
+          "run": 5,
+          "control": {
+            "drawMs": 25.600000001490116,
+            "flushMs": 16.099999997764826
+          },
+          "candidate": {
+            "drawMs": 32.100000001490116,
+            "flushMs": 19.399999998509884
+          },
+          "exactPixels": true,
+          "exactStats": true
+        }
+      ],
+      "fontWrites": {
+        "control": 333,
+        "candidate": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "candle-failure.png",
+      "bytes": 71865,
+      "sha256": "a6785fe0bb11a279919aea6e815147b26a353b1dea1f628b7f62dddb0030fbd8"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 7252,
+      "sha256": "9b05c1e942a10dabc498a8c8e96ab23f22514e4587b8253ed79f2f1039de4a8e"
+    },
+    {
+      "path": "footprint-failure.png",
+      "bytes": 57982,
+      "sha256": "f3c29467065c041d73e26a6f19cac8b783aa4f77578dafce79f8495ea4fee6db"
+    },
+    {
+      "path": "results.json",
+      "bytes": 2885612,
+      "sha256": "9e3452a5d3b31c53836b1b93a338999f86bc3ef1cdb4985c85664a7ea748b05e"
+    },
+    {
+      "path": "runner-console.txt",
+      "bytes": 213,
+      "sha256": "701cc9c2c06fe99f7f13c1b6b2c15e3aa73766e4c64ac4ba1af31ef36f18affd"
+    }
+  ]
+}

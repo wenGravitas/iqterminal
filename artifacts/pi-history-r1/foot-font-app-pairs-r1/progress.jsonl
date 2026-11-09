@@ -1,0 +1,20 @@
+{"kind":"start","round":1,"variant":"control","label":"font-app-r1-control-1","build":"8aaab36a2e4c305633877de7438f6b0883f5b4c1","route":"http://127.0.0.1:4188","at":"2026-11-09T13:03:36.591Z"}
+{"kind":"end","round":1,"variant":"control","label":"font-app-r1-control-1","exitCode":0,"elapsedMs":72797.391445,"errors":[null,null]}
+{"kind":"start","round":1,"variant":"candidate","label":"font-app-r1-candidate-1","build":"c170b4be24696bb6f58c9b3de27b522f818c3757","route":"http://127.0.0.1:4187","at":"2026-11-09T13:04:49.400Z"}
+{"kind":"end","round":1,"variant":"candidate","label":"font-app-r1-candidate-1","exitCode":0,"elapsedMs":78739.29019800002,"errors":[null,null]}
+{"kind":"start","round":2,"variant":"candidate","label":"font-app-r1-candidate-2","build":"c170b4be24696bb6f58c9b3de27b522f818c3757","route":"http://127.0.0.1:4187","at":"2026-11-09T13:06:08.164Z"}
+{"kind":"end","round":2,"variant":"candidate","label":"font-app-r1-candidate-2","exitCode":0,"elapsedMs":73044.150749,"errors":[null,null]}
+{"kind":"start","round":2,"variant":"control","label":"font-app-r1-control-2","build":"8aaab36a2e4c305633877de7438f6b0883f5b4c1","route":"http://127.0.0.1:4188","at":"2026-11-09T13:07:21.227Z"}
+{"kind":"end","round":2,"variant":"control","label":"font-app-r1-control-2","exitCode":1,"elapsedMs":72269.41352499998,"errors":["AssertionError [ERR_ASSERTION]: {\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - → GET http://127.0.0.1:4188/market-data/v2/history/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\",\"_probe\":{\"elapsedMs\":12015.992465}}\n+ actual - expected\n\n+ undefined\n- 'dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51'\n",null]}
+{"kind":"start","round":3,"variant":"control","label":"font-app-r1-control-3","build":"8aaab36a2e4c305633877de7438f6b0883f5b4c1","route":"http://127.0.0.1:4188","at":"2026-11-09T13:08:33.516Z"}
+{"kind":"end","round":3,"variant":"control","label":"font-app-r1-control-3","exitCode":0,"elapsedMs":67653.13548499998,"errors":[null,null]}
+{"kind":"start","round":3,"variant":"candidate","label":"font-app-r1-candidate-3","build":"c170b4be24696bb6f58c9b3de27b522f818c3757","route":"http://127.0.0.1:4187","at":"2026-11-09T13:09:41.223Z"}
+{"kind":"end","round":3,"variant":"candidate","label":"font-app-r1-candidate-3","exitCode":0,"elapsedMs":67275.72305099998,"errors":[null,null]}
+{"kind":"start","round":4,"variant":"candidate","label":"font-app-r1-candidate-4","build":"c170b4be24696bb6f58c9b3de27b522f818c3757","route":"http://127.0.0.1:4187","at":"2026-11-09T13:10:48.534Z"}
+{"kind":"end","round":4,"variant":"candidate","label":"font-app-r1-candidate-4","exitCode":0,"elapsedMs":88158.35408199998,"errors":[null,null]}
+{"kind":"start","round":4,"variant":"control","label":"font-app-r1-control-4","build":"8aaab36a2e4c305633877de7438f6b0883f5b4c1","route":"http://127.0.0.1:4188","at":"2026-11-09T13:12:16.769Z"}
+{"kind":"end","round":4,"variant":"control","label":"font-app-r1-control-4","exitCode":0,"elapsedMs":72116.88633299997,"errors":[null,null]}
+{"kind":"start","round":5,"variant":"control","label":"font-app-r1-control-5","build":"8aaab36a2e4c305633877de7438f6b0883f5b4c1","route":"http://127.0.0.1:4188","at":"2026-11-09T13:13:28.933Z"}
+{"kind":"end","round":5,"variant":"control","label":"font-app-r1-control-5","exitCode":1,"elapsedMs":63433.98969700001,"errors":["AssertionError [ERR_ASSERTION]: Live badge without a confirmed execution ACK chain",null]}
+{"kind":"start","round":5,"variant":"candidate","label":"font-app-r1-candidate-5","build":"c170b4be24696bb6f58c9b3de27b522f818c3757","route":"http://127.0.0.1:4187","at":"2026-11-09T13:14:32.452Z"}
+{"kind":"end","round":5,"variant":"candidate","label":"font-app-r1-candidate-5","exitCode":0,"elapsedMs":68835.03829199995,"errors":[null,null]}

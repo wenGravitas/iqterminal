@@ -1,7 +1,7 @@
-## Release gate audit after client8aa/API dca
+## Release gate audit after client038/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[current confirmation and shared-view fix](current-concurrency-confirmation-results.md).
+[current scheduling and bootstrap validation](current-frame-budget-results.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -13,14 +13,16 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |30hSpot5m Top8/10%/native|FAIL onde674: first median5.36s/max6.07s; complete7.75s/8.65s|
 |30hUSD-M15m Top8/10%/native|FAIL onde674: first3.75s/4.19s; complete12.47s/13.29s|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
-|Concurrent history, no current timeouts/gaps|8aa footprint cohort:10/10generation-bound ACK chains and no health timeout; loaded receipt gaps rise to2.395s and long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
+|Concurrent history, no current timeouts/gaps|038footprint cohort:10/10generation-bound ACK chains, no health timeout and all48+24slots validated; loaded callback gaps reach3.614s and447msmedian/684msmaximum observation long tasks remain. Overall responsiveness/wall/cold-custom acceptance INCOMPLETE; prior timeout evidence retained|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
 |Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
 |Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-Latest8aa fixes false shared-live loading when another historical viewer joins.
+Latest038keeps bootstrap snapshots loading until independent stream confirmation and bounds shared RAF work between charts. Headless transport-fault checks show five closed hourly bars plus an independent forming bar in both footprint charts and ordinary-chart Totals while delivery is held, with no false live status.94focused product tests, typecheck/build and10proof/report tests pass. The font-write trial was reverted after mixed results; earlier health/startup failures remain recorded. Full release acceptance is unchanged.
+
+Earlier8aa fixes false shared-live loading when another historical viewer joins.
 Five alternating current-only/history pairs validate all48+24closed footprint
 slots and same-generation execution/ACK progress. Source jumps/resets/disconnects
 are absent, and execution groups/history work release after unsubscribe. This is
