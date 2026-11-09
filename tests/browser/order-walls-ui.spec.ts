@@ -11,7 +11,7 @@ test('historical archive gaps do not claim a live-feed continuity failure',async
   const apply=async(currentSubscribed:boolean,state:string)=>page.evaluate(({id,currentSubscribed,state})=>{const p=(window as any).__terminal.panels.get(id);p.orderWallsControls.setStatus({state,currentSubscribed,lastConfirmedAt:1800000000000,archive:{profileId:'explicit-fixture',state:'partial',from:1800000000000,to:1800000060000,confirmedTo:1800000060000,gaps:[{from:1800000001000,to:1800000002000,reason:'Recorded history gap'}],requestedBandPercent:10,profileBandPercent:10,requestedTopN:8,exact:true,requestComplete:true,reason:'Recorded history gap'}});},{id,currentSubscribed,state});
   const notice=panel.locator('.order-walls-notice');await apply(false,'gap');await expect(notice).toContainText('Historical view · history partial');await expect(notice).toContainText('1 gap');await expect(notice).not.toContainText('Live has a continuity gap');
   await apply(true,'live');await expect(notice).toContainText('Live · confirmed');await expect(notice).toContainText('history partial');await apply(true,'gap');await expect(notice).toContainText('Live has a continuity gap');
-  await page.screenshot({path:`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1'}/wall-status-live-history-scope.png`});
+  await apply(false,'gap');await page.screenshot({path:`${process.env.IQ_HISTORY_CAPTURE_DIR??'artifacts/pi-history-r1'}/wall-status-live-history-scope.png`});
 });
 
 test('Order Walls settings persist and remain a single viewport consumer alongside Heatmap', async ({ page }) => {

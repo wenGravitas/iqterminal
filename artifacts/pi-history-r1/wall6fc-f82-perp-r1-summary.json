@@ -1,0 +1,72 @@
+{
+  "case": "walls-30h-perp-15m",
+  "build": "6fc990f28fe9736d8b6270fd786996006da24702",
+  "route": "http://127.0.0.1:4187",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1793696400000,
+    "to": 1793804400000
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 3646.699999999255,
+      "completeMs": 10682.900000000373,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": 4572.300000000745,
+      "completeMs": 10431.300000000745,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": 3312,
+      "completeMs": 9683.599999999627,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 2706.10000000149,
+      "completeMs": 8424.60000000149,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": 3258.0999999996275,
+      "completeMs": 9810.900000000373,
+      "segments": 23850,
+      "valueRuns": 104112,
+      "nativeSlots": 120,
+      "failures": [],
+      "coverageValid": true
+    }
+  ],
+  "medianMs": 9810.900000000373,
+  "maximumMs": 10682.900000000373,
+  "targets": {
+    "medianMs": 5000,
+    "maximumMs": 10000,
+    "firstHistoryMs": 3000
+  },
+  "pass": false,
+  "firstHistoryPass": false,
+  "scope": "Exact available wall paint with independently validated native slots; native-body paint time, current/warm/concurrency/heap and foreground acceptance remain separate."
+}

@@ -3,6 +3,25 @@
 **Release acceptance is incomplete.** No production deployment or main merge has occurred.
 The active goal remains implementation and validation of the full release.
 
+## Latest wall follow-up
+
+Automatic closed default preparation and cold-build ownership/recovery are
+implemented and validated in an isolated real-source worker (backend d39416f/
+d38385e). Both initial windows completed; replacements resumed exact checkpoints
+and match fresh canonical folds. Serving bridge/GC remain disabled; API stays
+f82abdf, and all seven protected collector/worker identities are unchanged.
+
+Five fresh Pi/client30h loading runs still FAIL:Spot median6360ms/max8490ms;
+USD-M median9810.9ms/max10682.9ms. First-history<=3s also fails. All ten cases
+validate the exact requested wall/value/native coverage; source gaps remain
+explicit. [Full samples, preparation measurements and remaining costs](wall-defaults-pi-results.md).
+No full release acceptance is claimed.
+
+Status-only build f6fd6815437154671a5a2a985590b9ee4f90854e scopes archived gaps
+as `Historical view` when no current feed is subscribed. All1,224frontend tests
+pass/two skipped, typecheck/build and one focused headless fixture UI check pass.
+The loading results remain attributed to6fc990f; no new latency gate is inferred.
+
 ## Latest footprint results
 
 Production staging/history build6fc990f28fe9736d8b6270fd786996006da24702 and
@@ -29,7 +48,7 @@ whole-app memory plateau still require work. Test browsers remain headless.
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Latest validated application build: `6fc990f28fe9736d8b6270fd786996006da24702`; earlier closed-paint build `806aac92a7d22b999fe17c11d71c13db4bbd05d3` (closed native paths9f8cba3/806aac9; isolated preview was absent at the Nov9 refresh). Previous build `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
+- Latest measured performance build: `6fc990f28fe9736d8b6270fd786996006da24702`; latest status-only build f6fd681 above. Earlier closed-paint build `806aac92a7d22b999fe17c11d71c13db4bbd05d3` (closed native paths9f8cba3/806aac9; isolated preview was absent at the Nov9 refresh). Previous build `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
 - Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` force standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
 - Staging API now serves `f82abdfae06c61f8bccff9fea0778bbaac491b5e` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not the current API. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix remains included in current serving.
