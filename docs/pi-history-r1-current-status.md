@@ -3,39 +3,39 @@
 **Release acceptance is incomplete.** No production deployment or main merge has occurred.
 The active goal remains implementation and validation of the full release.
 
-## Progressive footprint transport follow-up
+## Latest footprint results
 
-Frontend a8eadbc2b282264191323b3765e05795b4ca2f3f builds in production staging
-mode with history/diagnostics enabled. Its complete unit suite passes1,221 tests
-with2skipped; all12 footprint lifecycle browser checks pass headlessly using
-explicit fixtures, including saved24h batch/legacy transport and delayed native
-bootstrap. Real Vite progressive POST/cancellation/current-reserve checks pass
-in development and production-preview modes. Raw logs, isolated screenshots,
-build/environment identifiers and checksums are in
-`artifacts/pi-history-r1/footprint-batch-client-r1`.
+Production staging/history build6fc990f28fe9736d8b6270fd786996006da24702 and
+serving API f82abdfae06c61f8bccff9fea0778bbaac491b5e pass five-run headless Pi
+prepared-history completion targets:24h/1h/$25 median3654.2ms/max5515.7ms,
+24/24slots every run;4h/5m/$25 median2601.9ms/max2911.6ms,48/48slots every run.
+Warm24h reopen paints all24cached bars in390.6–463.6ms, then independently
+validates revisions. Initial current paint still FAILS:median2579.4ms/max2808.5ms
+against2000/3000ms. Full release acceptance remains incomplete.
 
-Backend candidate f82abdfae06c61f8bccff9fea0778bbaac491b5e passes308 tests,
-typecheck and build. It is not deployed yet: serving remains e122f9d8. These
-protocol/fixture checks do not change any loading, live concurrency, heap or
-foreground acceptance gate. Exact Spot row-width cache identity is separately
-fixed in90a4dd6. See [transport/retry/rollback](footprint-batch-delivery.md).
+See [all samples, scope, root causes and limitations](footprint-batch-pi-results.md).
+Unit validation:1,223passed/2skipped, typecheck/build pass; five focused headless
+browser checks pass on6fc990f. Earlier12-browser results belong to a8eadbc.
+The backend's308runtime tests/typecheck/build pass, with a separately tested new
+rollout state preflight. The initial API-only rollout's empty state mount was
+corrected and exact canonical tiles/protected identities verified; the original
+failure is retained. No collector/worker restart or production change occurred.
 
-The Nov9 local route has been restored: independent SSH history18780/current18781
-and isolated production preview4187; both proxied health endpoints respond.
-History uses IPQoS=none and current retains the inherited default. These are new
-connections; earlier route measurements do not measure this pair. Test browsers
-remain explicitly headless; normal foreground Pi acceptance is still unproven.
+The restored local route is preview4187 with independent history18780/current18781
+SSH sessions. History IPQoS=none; current inherits its default. These are new
+connections. Foreground UX, wall preparation/loading, full live concurrency and
+whole-app memory plateau still require work. Test browsers remain headless.
 
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
-- Latest validated application build: `806aac92a7d22b999fe17c11d71c13db4bbd05d3` (closed native paths9f8cba3/806aac9; isolated preview was absent at the Nov9 refresh). Previous build `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
+- Latest validated application build: `6fc990f28fe9736d8b6270fd786996006da24702`; earlier closed-paint build `806aac92a7d22b999fe17c11d71c13db4bbd05d3` (closed native paths9f8cba3/806aac9; isolated preview was absent at the Nov9 refresh). Previous build `b1bb790589f14542c479e9e922122571451a5ca9` (visible wall mapping reuseaac09cf, identical-manifest handoffeddec07, unavailable-coverage guard5e2b828). The point-transport loading/warm cohorts below used the prior `42c69a6e6d83a76f95daefafb9f2be5e8e440cff` application; proxy implementation: `638caabff4d4a441c3706898dc8602274a4d41d6`; cache-disabled control `bf1d8425525306848cd9bc741c647fc3f1ba5054`. Both previews now load the final shared proxy policy. The control predates the wall-cache idle and footprint-sharing fixes; it must be aligned before another matched comparison.
 - Frontend branch: `perf/pi-history-r1`; test-launch commits `17052b4`/`6671249` force standalone headless mode, selects the headless display backend and rejects implicit DevTools windows. This is applied to the original and control worktrees too; it changes no application source. i3 inspection during the running measurement found zero visible test windows.
-- Staging API now serves `e122f9d8d3995d5b6b907a1519cd6b2f639fa751` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
+- Staging API now serves `f82abdfae06c61f8bccff9fea0778bbaac491b5e` through the guarded API-only rollout. Both collectors and all five background workers keep their prior IDs/start times; workers and SQL admission remain on18579d9.
 - The loading cohort below used API18579d9, not the current API. The stopped isolated253ed22 gateway is historical evidence; its native-admission fix remains included in current serving.
-- Normal two-SSH route: current18781, historical18780; Vite preview4185. The follow-up proxy allows2native and2bulk lanes under a shared3active-request cap, with a separate current reserve. The earlier loading/health cohort used the old4aggregate proxy; it is not relabelled as a measurement of the new cap.
+- Two-SSH route: current18781, historical18780; latest preview4187, earlier cohorts4185. The follow-up proxy allows2native and2bulk lanes under a shared3active-request cap, with a separate current reserve. The earlier loading/health cohort used the old4aggregate proxy; it is not relabelled as a measurement of the new cap.
 - Tests are headless system Chromium on the actual Pi. Per-run SystemInfo records effective hardware ANGLE/Broadcom GLES. This is not normal foreground-browser acceptance. Charts use Canvas2D; GLES describes effective Chromium configuration, not proof that each Canvas operation is hardware accelerated. Headed launches remain blocked.
-- Collector/API identities and start times match before/after; see the raw staging receipts. No collector, exchange connection, retention or production setting was changed.
+- Protected collector/worker identities and start times match before/after; see the raw staging receipts. The API has the identified serving replacement. No collector, exchange connection, retention or production setting was changed.
 
 ## Implemented in this continuation
 

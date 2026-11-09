@@ -1,0 +1,58 @@
+{
+  "case": "24h-1h-warm-reopen",
+  "build": "6fc990f28fe9736d8b6270fd786996006da24702",
+  "backend": "f82abdfae06c61f8bccff9fea0778bbaac491b5e",
+  "samples": [
+    {
+      "run": 1,
+      "coldReady": true,
+      "environmentVerified": true,
+      "usefulMs": 403.59999999962747,
+      "validationMs": 1609.2999999998137,
+      "cachedFirstPaintUnvalidated": true,
+      "error": null
+    },
+    {
+      "run": 2,
+      "coldReady": true,
+      "environmentVerified": true,
+      "usefulMs": 463.59999999962747,
+      "validationMs": 1652.5,
+      "cachedFirstPaintUnvalidated": true,
+      "error": null
+    },
+    {
+      "run": 3,
+      "coldReady": true,
+      "environmentVerified": true,
+      "usefulMs": 454.1000000005588,
+      "validationMs": 1302.1000000005588,
+      "cachedFirstPaintUnvalidated": true,
+      "error": null
+    },
+    {
+      "run": 4,
+      "coldReady": true,
+      "environmentVerified": true,
+      "usefulMs": 421.79999999981374,
+      "validationMs": 1392.5,
+      "cachedFirstPaintUnvalidated": true,
+      "error": null
+    },
+    {
+      "run": 5,
+      "coldReady": true,
+      "environmentVerified": true,
+      "usefulMs": 390.59999999962747,
+      "validationMs": 1496.8999999994412,
+      "cachedFirstPaintUnvalidated": true,
+      "error": null
+    }
+  ],
+  "medianUsefulMs": 421.79999999981374,
+  "maximumUsefulMs": 463.59999999962747,
+  "medianValidationMs": 1496.8999999994412,
+  "maximumValidationMs": 1652.5,
+  "pass": true,
+  "scope": "Five actual Pi/client-route headless reopen cycles; not foreground, whole-app heap plateau or live concurrency acceptance"
+}

@@ -31,6 +31,9 @@ const traceHelperSource=readFileSync(new URL('./benchmark-traces.mjs',import.met
 const output=`${dir}/${label}-samples.jsonl`,observations=`${dir}/${label}-observations.jsonl`;writeFileSync(output,'');writeFileSync(observations,'');
 const resource=()=>({at:new Date().toISOString(),uptime:readFileSync('/proc/uptime','utf8').trim(),load:readFileSync('/proc/loadavg','utf8').trim(),mem:readFileSync('/proc/meminfo','utf8'),cpu:readFileSync('/proc/stat','utf8').split('\n').slice(0,5),vmstat:readFileSync('/proc/vmstat','utf8').split('\n').filter(line=>/^(pswpin|pswpout|pgmajfault|pgfault) /.test(line)),temperatureMilliC:readFileSync('/sys/class/thermal/thermal_zone0/temp','utf8').trim(),cpuFrequencyKHz:readFileSync('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq','utf8').trim(),monotonicMs:performance.now(),processes:execFileSync('ps',['-eo','pid,ppid,pcpu,rss,comm','--sort=-pcpu'],{encoding:'utf8'}).split('\n').slice(0,16)});
 const browser=await chromium.launch({headless:process.env.IQ_BENCH_HEADLESS==='1',executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
+const browserSession=await browser.newBrowserCDPSession();
+const browserEnvironment={version:await browserSession.send('Browser.getVersion'),systemInfo:await browserSession.send('SystemInfo.getInfo'),scope:'Observed headless browser configuration; charts use Canvas2D, not proof of GPU acceleration for every draw'};
+writeFileSync(`${dir}/${label}-browser-environment.json`,JSON.stringify(browserEnvironment,null,2)+'\n');await browserSession.detach();
 try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for(let run=1;run<=samples;run++){
  const end=item.now?Math.floor(Date.now()/item.step)*item.step+item.step:windows.end;
  const requested={from:end-item.hours*3600000,to:end},requests=[],errors=[],before=resource();
@@ -69,7 +72,7 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  },{kind:item.kind,requested,step:item.step,wallReference});
  const requestRecords=new WeakMap();
  const relevant=request=>request.url().includes('/market-data/')&&!request.url().includes('/stream');
- context.on('request',request=>{if(!relevant(request))return;const record={url:request.url(),status:null,at:performance.now(),transferState:'request-started',viewId:request.headers()['x-iq-view-id']??null};requestRecords.set(request,record);requests.push(record);});
+ context.on('request',request=>{if(!relevant(request))return;const record={url:request.url(),method:request.method(),status:null,at:performance.now(),transferState:'request-started',viewId:request.headers()['x-iq-view-id']??null};if(new URL(request.url()).pathname.endsWith('/footprints-batch')){try{record.batchRequest=request.postDataJSON();}catch(error){record.batchRequestError=String(error);}}requestRecords.set(request,record);requests.push(record);});
  context.on('requestfailed',request=>{if(!relevant(request))return;const record=requestRecords.get(request);if(record){record.requestFailure=request.failure()?.errorText;record.transferState='failed';}});
  const responseTasks=[];context.on('response',response=>{if(!response.url().includes('/market-data/')||response.url().includes('/stream'))return;
   const record=requestRecords.get(response.request())??{url:response.url(),at:performance.now()};if(!requestRecords.has(response.request()))requests.push(record);record.status=response.status();record.headersAt=performance.now();record.transferState='headers-pending';

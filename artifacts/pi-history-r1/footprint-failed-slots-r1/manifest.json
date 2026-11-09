@@ -1,0 +1,7 @@
+{
+  "clientBuild": "6fc990f28fe9736d8b6270fd786996006da24702",
+  "unitPassed": 1223,
+  "unitSkipped": 2,
+  "focusedBrowserPassed": 5,
+  "browserScope": "explicit fixtures and software SwiftShader; no live acceptance"
+}
