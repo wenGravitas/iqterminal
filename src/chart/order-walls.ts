@@ -68,8 +68,13 @@ export class OrderWallsPrimitive implements IPrimitive {
   private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
   readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,closedPaintCacheHits:0,closedPaintCacheBuilds:0,closedPaintCacheAppends:0,closedPaintStyleVisits:0,settingsNoops:0,mappingChecks:0,mappingFallbacks:0};
   private durations:number[]=[];
+  private drawWork?:{key:string;revision:number;steps:Generator<void,boolean>};
+  private dirtyGeneration=new Map<string,number>();
+  private closedPaintEpoch=0;
+  private geometryEpoch=0;
+  private workStats={slices:0,steps:0,cancelled:0,activeMs:0,lastProjectionElapsedMs:0,lastReferenceElapsedMs:0,phase:'idle' as 'idle'|'projection'|'reference'|'paint'};
 
-  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true){this.settings={...settings};this.intervalMs=intervalMs;}
+  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6){this.settings={...settings};this.intervalMs=intervalMs;}
   zOrder(){return 'normal' as const;}
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
@@ -109,7 +114,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       this.segments.set(patch.id,next);if(next.end===null)this.openIds.add(patch.id);else this.openIds.delete(patch.id);
       const shifted=Boolean(previous&&(previous.valueRunsTruncated!==next.valueRunsTruncated||
         (previous.valueRuns[0]&&next.valueRuns[0]&&previous.valueRuns[0].at!==next.valueRuns[0].at)));
-      if(!previous||patch.replaceValueRuns===true||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.tailDirty.delete(patch.id);}
+      if(!previous||patch.replaceValueRuns===true||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.dirtyGeneration.set(patch.id,++this.geometryEpoch);this.tailDirty.delete(patch.id);}
       else this.markTail(patch.id,Math.max(0,next.valueRuns.length-(patch.valuePoints?.length??0)-1));
     }
     for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next)this.rememberClosed(next);
@@ -117,12 +122,13 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.trimHistory();this.status=this.effectiveStatus(status);this.advanceOpenTails(prior);if(!this.segments.size)this.clearEmptyProjection();this.host?.requestUpdate();
   }
   private removeProjection(id:string){
-    this.removeDrawables(id);this.dirty.delete(id);this.tailDirty.delete(id);this.referenceIds.delete(id);
+    this.removeDrawables(id);this.dirty.delete(id);this.dirtyGeneration.delete(id);this.tailDirty.delete(id);this.referenceIds.delete(id);
     this.closedPaintDirty.delete(id);if(this.closedPaintMembers.delete(id))this.invalidateClosedPaint();
     const extent=this.referenceExtents.get(id);
     if(extent){this.countReference(extent.min,-1);this.countReference(extent.max,-1);this.referenceExtents.delete(id);}
   }
   private clearEmptyProjection(){
+    if(this.drawWork)this.workStats.cancelled++;this.drawWork=undefined;this.workStats.phase='idle';this.dirtyGeneration.clear();
     this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
     this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;
     this.closedPaintMembers.clear();this.closedPaintDirty.clear();
@@ -130,7 +136,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.stats.referenceSegments=0;this.stats.referenceValueScans=0;this.stats.segments=0;this.stats.visible=0;this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
   }
   private markReference(id:string){
-    if(this.referenceDirty){this.referenceIds.clear();return;}
+    if(this.referenceDirty&&!this.drawWork){this.referenceIds.clear();return;}
     if(this.segments.has(id)||this.referenceExtents.has(id))this.referenceIds.add(id);else this.referenceIds.delete(id);
   }
   private clearReference(){
@@ -142,13 +148,15 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(count>0)this.referenceCounts.set(value,count);else this.referenceCounts.delete(value);
     this.referenceIndex.set(value,Math.max(0,count));
   }
-  private updateReference(id:string){
-    const previous=this.referenceExtents.get(id);
-    this.stats.referenceSegments++;
+  private updateReference(id:string){for(const _ of this.referenceSteps(id)){};}
+  private *referenceSteps(id:string):Generator<void,void>{
+    const source=this.segments.get(id);this.stats.referenceSegments++;
     let min=Infinity,max=0;
     const accept=(value:number|null)=>{this.stats.referenceValueScans++;if(value!==null&&value>0){min=Math.min(min,value);max=Math.max(max,value);}};
-    if(this.settings.visibleRangeOnly){for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)accept(line.usd);}}
-    else {const segment=this.segments.get(id);if(segment&&(this.settings.showHistory||segment.end===null))for(const run of segment.valueRuns)accept(run.usd);}
+    if(this.settings.visibleRangeOnly){for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)accept(line.usd);yield;}}
+    else if(source&&(this.settings.showHistory||source.end===null))for(const run of source.valueRuns){accept(run.usd);yield;}
+    if(this.segments.get(id)!==source){if(this.segments.has(id))this.referenceIds.add(id);return;}
+    const previous=this.referenceExtents.get(id);
     if(previous&&previous.min===min&&previous.max===max)return;
     if(previous){this.countReference(previous.min,-1);this.countReference(previous.max,-1);this.referenceExtents.delete(id);}
     if(max>0){this.referenceExtents.set(id,{min,max});this.countReference(min,1);this.countReference(max,1);}
@@ -175,7 +183,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(!current&&!archive)return;
     for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1));}
   }
-  private markTail(id:string,index:number){if(this.dirty.has(id))return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
+  private markTail(id:string,index:number){if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
 
   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     if(!this.settings.enabled||!this.segments.size)return;
@@ -188,31 +196,52 @@ export class OrderWallsPrimitive implements IPrimitive {
     if(mapping===undefined)this.stats.mappingFallbacks++;
     const axis=mapping??`unproven:${this.stats.mappingChecks}`;
     const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,this.width(),axis].join(':');
-    if(key!==this.transformKey){if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.closedPaintInvalid=true;this.drawable.clear();this.nonTopDrawables=0;this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
-    const projectionStarted=performance.now();
-    if(this.dirty.size){
-      for(const id of this.dirty){if(this.settings.visibleRangeOnly)this.markReference(id);this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc);this.stats.patchProjects++;}
-      this.dirty.clear();
+    if(key!==this.transformKey){if(this.drawWork){this.workStats.cancelled++;this.referenceDirty=true;}this.drawWork=undefined;this.paintPaths=undefined;this.paintCounts={historical:0,current:0};this.paintInvalid=true;this.paintKey='';this.paintedViewport=undefined;if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.closedPaintInvalid=true;this.drawable.clear();this.nonTopDrawables=0;this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
+    let preparedRevision=this.inputRevision,pending=false;
+    let budgeted=Boolean(this.host&&this.preparationBudgetMs>0&&mapping!==undefined&&this.settings.mode==='top-levels'&&this.cachePaintPaths&&typeof Path2D!=='undefined'&&typeof Path2D.prototype.addPath==='function');
+    if(budgeted){
+      this.stats.lastProjectMs=0;this.stats.lastReferenceMs=0;const sliceStarted=performance.now();
+      if(!this.drawWork)this.drawWork={key,revision:this.inputRevision,steps:this.prepareDrawSteps(rc,key,dpr)};
+      const work=this.drawWork,deadline=performance.now()+this.preparationBudgetMs;let done=false,prepared=true;
+      do{
+        // Check the clock every32 bounded units rather than for every point.
+        for(let i=0;i<32;i++){this.workStats.steps++;const next=work.steps.next();if(next.done){done=true;prepared=next.value;break;}}
+      }while(!done&&performance.now()<deadline);
+      this.workStats.slices++;this.workStats.activeMs+=performance.now()-sliceStarted;
+      if(done){preparedRevision=work.revision;this.drawWork=undefined;this.workStats.phase='idle';budgeted=prepared;
+        if(work.revision!==this.inputRevision||this.dirty.size||this.tailDirty.size||this.referenceDirty||this.referenceIds.size||this.paintInvalid)this.host?.requestUpdate();}
+      else {pending=true;preparedRevision=this.paintedRevision;this.host?.requestUpdate();}
+    }else{
+      if(this.drawWork){this.drawWork=undefined;this.workStats.cancelled++;this.referenceDirty=true;this.paintInvalid=true;this.closedPaintInvalid=true;}
+      const projectionStarted=performance.now();
+      if(this.dirty.size){
+        for(const id of this.dirty){if(this.settings.visibleRangeOnly)this.markReference(id);this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc);this.stats.patchProjects++;}
+        this.dirty.clear();this.dirtyGeneration.clear();
+      }
+      if(this.tailDirty.size){for(const[id,index]of this.tailDirty){if(this.settings.visibleRangeOnly)this.markReference(id);const segment=this.segments.get(id);if(segment)this.projectTail(segment,index,rc);this.stats.patchProjects++;}this.tailDirty.clear();}
+      this.stats.lastProjectMs=performance.now()-projectionStarted;const referenceStarted=performance.now();
+      this.stats.referenceSegments=0;this.stats.referenceValueScans=0;
+      if(this.referenceDirty){
+        this.clearReference();this.stats.referenceRebuilds++;
+        for(const id of this.settings.visibleRangeOnly?this.drawableKeys.keys():this.segments.keys())this.updateReference(id);
+        this.referenceDirty=false;
+      }else for(const id of this.referenceIds)this.updateReference(id);
+      this.referenceIds.clear();
+      const referenceMin=this.referenceIndex.min;
+      this.reference={min:referenceMin!==undefined&&Number.isFinite(referenceMin)?referenceMin:0,max:this.referenceIndex.max??0};
+      this.stats.lastReferenceMs=performance.now()-referenceStarted;
     }
-    if(this.tailDirty.size){for(const[id,index]of this.tailDirty){if(this.settings.visibleRangeOnly)this.markReference(id);const segment=this.segments.get(id);if(segment)this.projectTail(segment,index,rc);this.stats.patchProjects++;}this.tailDirty.clear();}
-    this.stats.lastProjectMs=performance.now()-projectionStarted;const referenceStarted=performance.now();
-    this.stats.referenceSegments=0;this.stats.referenceValueScans=0;
-    if(this.referenceDirty){
-      this.clearReference();this.stats.referenceRebuilds++;
-      for(const id of this.settings.visibleRangeOnly?this.drawableKeys.keys():this.segments.keys())this.updateReference(id);
-      this.referenceDirty=false;
-    }else for(const id of this.referenceIds)this.updateReference(id);
-    this.referenceIds.clear();
-    const referenceMin=this.referenceIndex.min;
-    this.reference={min:referenceMin!==undefined&&Number.isFinite(referenceMin)?referenceMin:0,max:this.referenceIndex.max??0};
-    this.stats.lastReferenceMs=performance.now()-referenceStarted;const paintStarted=performance.now();this.stats.strokes=0;
+    const paintStarted=performance.now();this.stats.strokes=0;
     this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
     this.stats.draws++;this.stats.segments=this.segments.size;this.stats.visible=this.drawable.size;
     ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*dpr,rc.plotHeight*dpr);ctx.clip();
     ctx.globalAlpha=this.settings.opacity;ctx.lineWidth=this.settings.thicknessPx*dpr;ctx.lineCap='butt';ctx.setLineDash([]);
     const paintKey=key+':'+this.reference.min+':'+this.reference.max;
     const cacheable=this.cachePaintPaths&&typeof Path2D!=='undefined';
-    if(cacheable&&!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths){
+    if(budgeted&&(pending||this.paintPaths)){
+      for(const entry of this.paintPaths??[]){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
+      this.stats.visibleHistorical=this.paintCounts.historical;this.stats.visibleCurrent=this.paintCounts.current;
+    }else if(cacheable&&!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths){
       for(const entry of this.paintPaths){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
       this.stats.visibleHistorical=this.paintCounts.historical;this.stats.visibleCurrent=this.paintCounts.current;this.stats.paintCacheHits++;
     }else{
@@ -264,23 +293,66 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
-    this.paintedRevision=this.inputRevision;
+    if(!pending&&!this.dirty.size&&!this.tailDirty.size&&!this.referenceDirty&&!this.referenceIds.size)this.paintedRevision=preparedRevision;
     this.paintedViewport={fromMs:rc.dataLayer.indexToTimeFloat(range.from)*1000,toMs:rc.dataLayer.indexToTimeFloat(range.to)*1000,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
     this.stats.lastPaintMs=performance.now()-paintStarted;
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
   }
 
+  /** RAF-owned preparation. Native paths from the last completed pass remain
+   * paintable while work yields. A new input cannot inherit this pass's painted
+   * revision, and a transform change cancels the captured render context. */
+  private *prepareDrawSteps(rc:PrimitiveRenderContext,key:string,dpr:number):Generator<void,boolean>{
+    this.workStats.phase='projection';
+    const projectionStarted=performance.now();
+    const full=[...this.dirty];
+    for(const id of full){
+      const generation=this.dirtyGeneration.get(id),segment=this.segments.get(id);
+      if(this.settings.visibleRangeOnly)this.markReference(id);
+      yield* this.removeDrawableSteps(id);
+      if(segment)yield* this.projectSteps(segment,rc,generation);
+      if(this.dirtyGeneration.get(id)===generation){this.dirty.delete(id);this.dirtyGeneration.delete(id);}
+      this.stats.patchProjects++;yield;
+    }
+    const tails=[...this.tailDirty];
+    for(const[id,index]of tails){
+      if(this.dirty.has(id))continue;
+      this.tailDirty.delete(id);if(this.settings.visibleRangeOnly)this.markReference(id);
+      const segment=this.segments.get(id);if(segment)yield* this.tailSteps(segment,index,rc);
+      this.stats.patchProjects++;yield;
+    }
+    this.workStats.lastProjectionElapsedMs=performance.now()-projectionStarted;
+    this.workStats.phase='reference';
+    const referenceStarted=performance.now();this.stats.referenceSegments=0;this.stats.referenceValueScans=0;
+    let ids:string[];
+    if(this.referenceDirty){this.clearReference();this.stats.referenceRebuilds++;ids=[...(this.settings.visibleRangeOnly?this.drawableKeys.keys():this.segments.keys())];this.referenceDirty=false;}
+    else {ids=[...this.referenceIds];this.referenceIds.clear();}
+    for(const id of ids){yield* this.referenceSteps(id);yield;}
+    const min=this.referenceIndex.min;this.reference={min:min!==undefined&&Number.isFinite(min)?min:0,max:this.referenceIndex.max??0};
+    this.workStats.lastReferenceElapsedMs=performance.now()-referenceStarted;
+    this.workStats.phase='paint';
+    const paintKey=key+':'+this.reference.min+':'+this.reference.max;
+    if(!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths)return true;
+    const epoch=this.closedPaintEpoch;
+    const paths=yield* this.topLevelPathSteps(paintKey,dpr);
+    if(paths){this.paintPaths=paths;this.paintKey=paintKey;this.paintInvalid=false;this.stats.paintCacheBuilds++;
+      this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};}
+    if(this.closedPaintEpoch!==epoch){this.paintInvalid=true;this.closedPaintInvalid=true;}
+    return Boolean(paths);
+  }
+
   /** Closed paths hold only native geometry and scalar paint metadata. Dynamic
    * tails are combined into the same style stroke, preserving alpha at overlap.
    * Mixed/Threshold geometry retains the incumbent ordered renderer. */
-  private topLevelPaintPaths(key:string,dpr:number):Array<{color:string;thickness:number;path:Path2D}>|undefined {
+  private topLevelPaintPaths(key:string,dpr:number){const steps=this.topLevelPathSteps(key,dpr);for(;;){const next=steps.next();if(next.done)return next.value;}}
+  private *topLevelPathSteps(key:string,dpr:number):Generator<void,Array<{color:string;thickness:number;path:Path2D}>|undefined> {
     if(this.nonTopDrawables){this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;this.closedPaintMembers.clear();this.closedPaintDirty.clear();return;}
     if(this.closedPaintInvalid||this.closedPaintKey!==key){
       const self=this;
-      function* closed(){for(const line of self.drawable.values())if(!self.openIds.has(line.segment.id))yield line;}
-      this.closedPaintPaths=this.compileTopPaths(closed(),dpr,true);this.closedPaintKey=key;this.closedPaintInvalid=false;
+      function* closed(){for(const line of self.drawable.values())yield self.openIds.has(line.segment.id)?undefined:line;}
+      this.closedPaintPaths=(yield* this.compileTopPathSteps(closed(),dpr,true));this.closedPaintKey=key;this.closedPaintInvalid=false;
       this.closedPaintMembers.clear();this.closedPaintDirty.clear();
-      for(const [id,keys]of this.drawableKeys)if(keys.length&&!this.openIds.has(id))this.closedPaintMembers.add(id);
+      for(const [id,keys]of this.drawableKeys){if(keys.length&&!this.openIds.has(id))this.closedPaintMembers.add(id);yield;}
       if(this.closedPaintPaths)this.stats.closedPaintCacheBuilds++;
     }else if(this.closedPaintPaths)this.stats.closedPaintCacheHits++;
     if(!this.closedPaintPaths)return;
@@ -288,11 +360,11 @@ export class OrderWallsPrimitive implements IPrimitive {
       const added:WallDrawable[]=[];
       for(const id of this.closedPaintDirty)if(!this.openIds.has(id)){
         const keys=this.drawableKeys.get(id)??[];
-        for(const key of keys){const line=this.drawable.get(key);if(line)added.push(line);}
+        for(const key of keys){const line=this.drawable.get(key);if(line)added.push(line);yield;}
         if(keys.length)this.closedPaintMembers.add(id);
       }
-      added.sort((a,b)=>a.paintOrder-b.paintOrder);
-      const compiled=this.compileTopPaths(added,dpr,true)!;
+      const orderedAdded=yield* this.sortPaintSteps(added);
+      const compiled=(yield* this.compileTopPathSteps(orderedAdded,dpr,true))!;
       const paths=new Map(this.closedPaintPaths.map(path=>[`${path.color}:${path.thickness}`,path]));
       for(const entry of compiled){const id=`${entry.color}:${entry.thickness}`,previous=paths.get(id);
         if(previous){previous.path.addPath(entry.path);previous.firstOrder=Math.min(previous.firstOrder,entry.firstOrder);previous.historical+=entry.historical;previous.current+=entry.current;}
@@ -301,9 +373,9 @@ export class OrderWallsPrimitive implements IPrimitive {
       this.closedPaintPaths=[...paths.values()];this.closedPaintDirty.clear();this.stats.closedPaintCacheAppends++;
     }
     const open:WallDrawable[]=[];
-    for(const id of this.openIds)for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)open.push(line);}
-    open.sort((a,b)=>a.paintOrder-b.paintOrder);
-    const dynamic=this.compileTopPaths(open,dpr,false);if(!dynamic)return;
+    for(const id of this.openIds)for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)open.push(line);yield;}
+    const orderedOpen=yield* this.sortPaintSteps(open);
+    const dynamic=yield* this.compileTopPathSteps(orderedOpen,dpr,false);if(!dynamic)return;
     const paths=new Map<string,WallPaintBucket>();
     for(const entry of this.closedPaintPaths)paths.set(`${entry.color}:${entry.thickness}`,entry);
     for(const entry of dynamic){
@@ -316,7 +388,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     this.stats.visibleHistorical=ordered.reduce((n,p)=>n+p.historical,0);this.stats.visibleCurrent=ordered.reduce((n,p)=>n+p.current,0);
     return ordered;
   }
-  private compileTopPaths(lines:Iterable<WallDrawable>,dpr:number,closed:boolean):WallPaintBucket[]|undefined {
+  private *compileTopPathSteps(lines:Iterable<WallDrawable|undefined>,dpr:number,closed:boolean):Generator<void,WallPaintBucket[]|undefined> {
     const paths=new Map<string,WallPaintBucket>();
     let group:{line:WallDrawable;color:string;thickness:number;right:number;to:number;historical:number;current:number}|undefined;
     const flush=()=>{
@@ -328,6 +400,7 @@ export class OrderWallsPrimitive implements IPrimitive {
       bucket.path.moveTo(line.x*dpr,line.y*dpr);bucket.path.lineTo(right*dpr,line.y*dpr);group=undefined;
     };
     for(const line of lines){
+      yield;if(!line)continue;
       if(line.segment.detectionMode!=='top-levels')return;
       this.stats.paintStyleVisits++;if(closed)this.stats.closedPaintStyleVisits++;
       const {color,thickness}=this.lineStyle(line);
@@ -340,6 +413,22 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     flush();return [...paths.values()];
   }
+  /** Stable ordering without an uninterruptible history-sized Array.sort. Most
+   * incremental arrivals already follow creation order and take one linear pass. */
+  private *sortPaintSteps(values:WallDrawable[]):Generator<void,WallDrawable[]>{
+    let sorted=true;for(let i=1;i<values.length;i++){if(values[i-1]!.paintOrder>values[i]!.paintOrder)sorted=false;yield;}
+    if(sorted)return values;
+    let source=values,target=new Array<WallDrawable>(values.length);
+    for(let width=1;width<values.length;width*=2){
+      for(let start=0;start<values.length;start+=width*2){
+        let left=start,right=Math.min(start+width,values.length);const mid=right,end=Math.min(start+width*2,values.length);
+        for(let at=start;at<end;at++){target[at]=right>=end||left<mid&&source[left]!.paintOrder<=source[right]!.paintOrder?source[left++]!:source[right++]!;yield;}
+      }
+      [source,target]=[target,source];
+    }
+    return source;
+  }
+
   private setDrawable(line:WallDrawable){
     const previous=this.drawable.get(line.key);line.paintOrder=previous?.paintOrder??this.nextPaintOrder++;
     if(previous&&previous.segment.detectionMode!=='top-levels')this.nonTopDrawables--;
@@ -351,7 +440,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const line=this.drawable.get(key);if(line&&line.segment.detectionMode!=='top-levels')this.nonTopDrawables--;
     if(line&&(line.segment.end!==null||!this.openIds.has(line.segment.id)||this.closedPaintMembers.has(line.segment.id)))this.changedClosedPaint(line.segment.id);this.drawable.delete(key);
   }
-  private invalidateClosedPaint(){this.closedPaintInvalid=true;this.closedPaintPaths=undefined;this.paintPaths=undefined;this.closedPaintDirty.clear();}
+  private invalidateClosedPaint(){this.closedPaintEpoch++;this.closedPaintInvalid=true;this.closedPaintPaths=undefined;this.paintPaths=undefined;this.closedPaintDirty.clear();}
   private changedClosedPaint(id:string){
     if(this.closedPaintMembers.has(id))this.invalidateClosedPaint();
     else if(!this.closedPaintInvalid)this.closedPaintDirty.add(id);
@@ -404,7 +493,9 @@ export class OrderWallsPrimitive implements IPrimitive {
     return {color:(this.settings.colorMode==='heat'?heat:side)[tier]!,thickness:this.settings.strengthThickness?1+(this.settings.thicknessPx-1)*tier/3:this.settings.thicknessPx};
   }
 
-  private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){
+  private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){for(const _ of this.projectSteps(segment,rc)){};}
+  private *projectSteps(segment:OrderWallSegment,rc:PrimitiveRenderContext,generation=this.dirtyGeneration.get(segment.id)):Generator<void,void>{
+    if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
     if(segment.detectionMode==='top-levels'&&segment.valueRunsTruncated&&segment.valueRuns.length>0&&segment.valueRuns[0]!.at>segment.start){
       const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,rc);
       if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
@@ -414,21 +505,31 @@ export class OrderWallsPrimitive implements IPrimitive {
       const visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
       const first=Math.max(0,lowerBoundRun(segment.valueRuns,visibleFrom)-1);
       const afterLast=Math.min(segment.valueRuns.length,Math.max(first+1,upperBoundRun(segment.valueRuns,visibleTo)));
-      for(let index=first;index<afterLast;index++)this.projectIndex(segment,index,rc);
+      for(let index=first;index<afterLast;index++){if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;this.projectIndex(segment,index,rc);yield;}
       return;
     }
     const to=this.segmentTo(segment);
     const line=this.project(segment,0,segment.start,to,null,rc);
     if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
   }
-  private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){
-    if(!segment.valueRuns.length){this.removeDrawables(segment.id);this.projectAll(segment,rc);return;}
+  private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){for(const _ of this.tailSteps(segment,fromIndex,rc)){};}
+  private *tailSteps(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext):Generator<void,void>{
+    const generation=this.dirtyGeneration.get(segment.id);
+    if(!segment.valueRuns.length){yield* this.removeDrawableSteps(segment.id);yield* this.projectSteps(segment,rc,generation);return;}
     const keys=this.drawableKeys.get(segment.id)??[];
-    for(const key of keys){const drawable=this.drawable.get(key);if(drawable&&drawable.runIndex>=fromIndex){this.paintInvalid=true;this.deleteDrawable(key);}}
-    this.drawableKeys.set(segment.id,keys.filter(key=>this.drawable.has(key)));
-    for(let i=fromIndex;i<segment.valueRuns.length;i++)this.projectIndex(segment,i,rc);
+    // Projected keys retain run-index order. An appended tail should not scan
+    // or copy a100,000-value immutable prefix merely to replace its last point.
+    let lo=0,hi=keys.length;
+    while(lo<hi){const mid=(lo+hi)>>>1;if((this.drawable.get(keys[mid]!)?.runIndex??-Infinity)<fromIndex)lo=mid+1;else hi=mid;}
+    for(let i=lo;i<keys.length;i++){this.paintInvalid=true;this.deleteDrawable(keys[i]!);yield;}
+    keys.length=lo;this.drawableKeys.set(segment.id,keys);
+    for(let i=fromIndex;i<segment.valueRuns.length;i++){
+      if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
+      this.projectIndex(segment,i,rc);yield;
+    }
   }
-  private removeDrawables(id:string){const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;for(const key of keys)this.deleteDrawable(key);this.drawableKeys.delete(id);}
+  private removeDrawables(id:string){for(const _ of this.removeDrawableSteps(id)){};}
+  private *removeDrawableSteps(id:string):Generator<void,void>{const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;for(const key of keys){this.deleteDrawable(key);yield;}this.drawableKeys.delete(id);}
   private projectIndex(segment:OrderWallSegment,index:number,rc:PrimitiveRenderContext){
     const value=segment.valueRuns[index];if(!value)return;
     const next=segment.valueRuns[index+1],from=value.at,to=Math.min(next?.at??this.segmentTo(segment),this.segmentTo(segment));
@@ -464,6 +565,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
 
   orderWallAt(x:number,y:number):OrderWallHit|null{
+    if(this.drawWork)return null;
     let best:WallDrawable|undefined,bestDistance=Infinity;
     const tolerance=Math.max(4,this.settings.thicknessPx/2+2);
     for(const line of this.drawable.values()){
@@ -477,7 +579,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size,retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size+(this.drawWork?1:0),pendingPaintWork:Boolean(this.drawWork),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }
