@@ -154,6 +154,10 @@
     "wall13d-f82-perp-profile-r1-samples.jsonl": "52cf1f1fb4d169acd4cb27e071220768fc8c56721d7776beae3851a7d4b66d6c",
     "wall13d-f82-perp-profile-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
     "wall13d-f82-perp-profile-r1-walls-30h-perp-15m-1.cpuprofile": "6c7a989e4e163d4ba0c37a3a1dbd5e2af9bf85dab4c9b01fce509e98d17061d7",
-    "wall13d-f82-perp-profile-r1-walls-30h-perp-15m-1.png": "69a7381c0b7cc63b8b7d5e364a41ca19894a4f23c91b98aa614fa0dbc05024bb"
-  }
+    "wall13d-f82-perp-profile-r1-walls-30h-perp-15m-1.png": "69a7381c0b7cc63b8b7d5e364a41ca19894a4f23c91b98aa614fa0dbc05024bb",
+    "wall-pair-13d-0ee-r1/post-health.json": "58f0621abcc60daf9ad9d17327d17691f220bf40b6ddc2cb3929b1a4102ac409",
+    "wall-pair-13d-0ee-r1/retained-build.log": "2b9f614952f3ea3ec1510ade2bbe106c954443737f32ce2ef32630913ccacdb3",
+    "wall-pair-13d-0ee-r1/retained-build-receipt.json": "292edc81e5d1d7f6786d532de606f5b247d0428443e941c0d6bccfc6a88f9b3d"
+  },
+  "rebuiltRetainedClient": "c240f825a40a9347bdf0af627dbc9c20a9edae06"
 }
