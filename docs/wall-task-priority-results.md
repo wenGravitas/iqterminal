@@ -5,6 +5,11 @@ separates ordinary visible imports/replay from optional background cache encodin
 API stays `dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51`. No server rollout, collector
 restart, retention/source change or production change occurred. Both SSH forwards,
 the proxy configuration and the owned4187 preview process remain unchanged.
+Final process audit verifies history SSH188916/current SSH265761/preview263125.
+The current forward's supervisor replaced the formerly recorded188974 before
+these cohorts. That old PID is obsolete; this audit did not restart the tunnel.
+`local-process-check.json` records actual process start times and route arguments.
+This correction does not establish current-feed continuity for older cohorts.
 
 ## Diagnostic and implementation
 

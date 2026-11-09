@@ -3,8 +3,12 @@
 Serving API stays `dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51`. Client `4efc5d0`
 adds cancellable background-task continuation; `2bcf73d` additionally moves
 watch control/stream onto the existing current route. Only the owned4187 preview
-was restarted for the proxy change; SSH PIDs188916/188974 and all seven protected
-server service IDs/start times stay unchanged. API health is200, backlog/error
+was restarted for the proxy change. A later process audit corrects the old SSH
+identity claim: history188916 remains; the supervisor replaced current188974
+with265761 before the later87e/de674 cohorts. See the exact start-time receipt in
+wall-task-priority-r1/local-process-check.json. No continuous188974 lifetime is
+claimed. All seven protected server service IDs/start times stay unchanged.
+API health is200, backlog/error
 absent. No production, exchange collector, raw retention, source schema or limit
 change. Normal foreground Pi UX remains unverified.
 

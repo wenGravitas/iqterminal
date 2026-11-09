@@ -313,6 +313,11 @@
       "path": "artifacts/pi-history-r1/wall-worker-profile-r1/worker-DaWyXJKB.js",
       "bytes": 362171,
       "sha256": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9"
+    },
+    {
+      "path": "artifacts/pi-history-r1/wall-task-priority-r1/local-process-check.json",
+      "bytes": 2151,
+      "sha256": "c441492c34206912a2ecc0d4060819c2ee7d73c8cf3ee115ef136098782e17c3"
     }
   ]
 }
