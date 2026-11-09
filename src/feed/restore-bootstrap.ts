@@ -14,14 +14,20 @@ export function restoredHistoryViewport(selection:RestoreFeedSelection){
 }
 /** Join the same worker groups before synchronous chart construction. Temporary
  * consumers hold the cursor until the real visible panels have subscribed. */
-export function startVisibleChartFeeds(feed:Pick<FeedClient,'subscribe'|'subscribeFootprint'|'subscribeOrderWalls'>&Partial<Pick<FeedClient,'requestFootprintViewport'>>,layout:SerializedDockview,normalize:(value:unknown)=>RestoreFeedSelection,preloadHistory=false){
+export function startVisibleChartFeeds(feed:Pick<FeedClient,'subscribe'|'subscribeFootprint'|'subscribeOrderWalls'>&Partial<Pick<FeedClient,'requestFootprintViewport'|'requestCandleViewport'>>,layout:SerializedDockview,normalize:(value:unknown)=>RestoreFeedSelection,preloadHistory=false){
  const scope=`restore-${++restoreSequence}`;
  const visible=new Set<string>(),releases:Array<()=>void>=[];
  const visit=(node:any)=>{if(node?.type==='leaf'){const id=node.data?.activeView??node.data?.views?.[0];if(typeof id==='string')visible.add(id);}else for(const child of node?.data??[])visit(child);};visit(layout.grid.root);
  try{for(const id of [...visible].slice(0,8)){
   const panel=layout.panels[id];if(panel?.contentComponent!=='candle')continue;
   const selection=normalize(panel.params);if(selection.venue!=='binance')continue;
-  releases.push(feed.subscribe(`${scope}:native:${id}`,selection,()=>{}));
+  const nativeToken=`${scope}:native:${id}`;
+  releases.push(feed.subscribe(nativeToken,selection,()=>{}));
+  // Saved wall charts need native OHLC context before panel construction too.
+  // Keep footprint-only ranges out of ordinary candle restoration and let the
+  // shared native loader own bounded chunks, validation and consumer release.
+  const nativeRange=selection.type==='candle'?restoredHistoryViewport(selection):undefined;
+  if(preloadHistory&&nativeRange)feed.requestCandleViewport?.(nativeToken,nativeRange.from,nativeRange.to,[]);
   if(selection.type==='footprint'||selection.indicators.some(i=>i.definitionId==='native.footprint-totals'&&i.visible)){
    const token=`${scope}:footprint:${id}`;releases.push(feed.subscribeFootprint(token,selection,selection.rowPrice,()=>{}));
    if(preloadHistory){const end=Math.floor(Date.now()/duration[selection.interval])*duration[selection.interval],range=restoredHistoryViewport(selection)??{from:end-4*3600000,to:end};feed.requestFootprintViewport?.(token,range.from,range.to);}

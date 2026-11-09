@@ -1,7 +1,7 @@
 import {test,expect,vi} from 'vitest';
 import {startVisibleChartFeeds,restoredHistoryViewport,restoreFeedPlan} from '../src/feed/restore-bootstrap';
 const selection=(patch:any={})=>({venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,indicators:[],...patch}) as any;
-function source(){const released:unknown[]=[],calls:unknown[][]=[];const sub=(...args:unknown[])=>{calls.push(args);return()=>released.push(args[0]);};return {feed:{subscribe:vi.fn(sub),subscribeFootprint:vi.fn(sub),subscribeOrderWalls:vi.fn(sub)} as any,calls,released};}
+function source(){const released:unknown[]=[],calls:unknown[][]=[];const sub=(...args:unknown[])=>{calls.push(args);return()=>released.push(args[0]);};return {feed:{subscribe:vi.fn(sub),subscribeFootprint:vi.fn(sub),subscribeOrderWalls:vi.fn(sub),requestCandleViewport:vi.fn()} as any,calls,released};}
 const layout=(panels:any,views:string[],activeView=views[0])=>({panels,grid:{root:{type:'leaf',data:{views,activeView}}}}) as any;
 test.each([true,false])('saved candle Top Levels starts its padded view through both restore phases (preload=%s)',preload=>{
  const {feed,released}=source();feed.requestFootprintViewport=vi.fn();const saved={from:10*3600000,to:40*3600000};
@@ -36,4 +36,25 @@ test('early history demand uses saved footprint ranges and a bounded past range 
  const totals=selection({type:'candle',historyViewport:saved,indicators:[{definitionId:'native.footprint-totals',visible:true}]});
  startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:totals}},['a']),x=>x as any,true)();
  const [,from,to]=feed.requestFootprintViewport.mock.calls[0];expect(to-from).toBe(4*3600000);expect(Math.abs(to-now)).toBeLessThan(3600000);
+});
+
+test.each([true,false])('saved wall chart preloads native context before derived requests only in early history phase (%s)',preload=>{
+ const {feed,released}=source(),saved={from:10*3600000,to:40*3600000};
+ const s=selection({type:'candle',historyViewport:saved,indicators:[{definitionId:'native.order-walls',visible:true,settings:{enabled:true,mode:'top-levels',showHistory:true}}]});
+ const release=startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:s}},['a']),x=>x as any,preload);
+ if(preload){
+  const token=feed.subscribe.mock.calls[0][0];expect(feed.requestCandleViewport).toHaveBeenCalledExactlyOnceWith(token,saved.from,saved.to,[]);
+  expect(feed.subscribe.mock.invocationCallOrder[0]).toBeLessThan(feed.requestCandleViewport.mock.invocationCallOrder[0]);
+  expect(feed.requestCandleViewport.mock.invocationCallOrder[0]).toBeLessThan(feed.subscribeOrderWalls.mock.invocationCallOrder[0]);
+ }else expect(feed.requestCandleViewport).not.toHaveBeenCalled();
+ release();release();expect(released).toHaveLength(2);
+});
+test.each([
+ {type:'footprint'},
+ {type:'candle',indicators:[{definitionId:'native.footprint-totals',visible:true}]},
+ {type:'candle',indicators:[{definitionId:'native.order-walls',visible:true,settings:{enabled:true,mode:'top-levels',showHistory:false}}]},
+ {type:'candle',indicators:[{definitionId:'native.order-walls',visible:false,settings:{enabled:true,mode:'top-levels',showHistory:true}}]},
+])('early native preload respects owned candle-history selection %j',patch=>{
+ const {feed}=source(),s=selection({historyViewport:{from:3600000,to:7200000},...patch});
+ startVisibleChartFeeds(feed,layout({a:{contentComponent:'candle',params:s}},['a']),x=>x as any,true)();expect(feed.requestCandleViewport).not.toHaveBeenCalled();
 });

@@ -623,3 +623,37 @@ test('an aborted shared footprint attempt cannot publish through a replacement a
   calls[0][5]([{...bar,revision:9999}],true,true);expect(g.bars.find((b:any)=>b.time===60).revision).toBe(2000);expect(g.views.get('a').busy).toBe(true);
  }finally{for(const resolve of finish)resolve();service.dispose();}
 });
+
+for(const finishedBeforeJoin of [false,true])test(`native restore handoff retains independent validation and current connection (finished=${finishedBeforeJoin})`,async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+ const from=Date.UTC(2026,10,3,11),step=300000,now=from+10*86400000,series={venue:'binance',market:'spot',interval:'5m'} as const;
+ const past=Array.from({length:5},(_,i)=>({t:from+i*step,o:80000,h:80010,l:79990,c:80001,v:2,quoteVolume:160002,revision:1,closed:true}));
+ const events:Event[]=[],sockets:Socket[]=[],reads:Array<{resolve:(r:Response)=>void;signal:AbortSignal}>=[];
+ const request=vi.fn(async(url:RequestInfo|URL,init?:RequestInit)=>{
+  if(!new URL(String(url),'http://test').searchParams.has('from'))return new Promise<Response>(()=>{});
+  return new Promise<Response>(resolve=>reads.push({resolve,signal:init!.signal as AbortSignal}));
+ });
+ const service=new StagingFeedService(e=>events.push(e),request,()=>now,()=>{const s=new Socket();sockets.push(s);return s as any;});
+ const viewport=(id:string,known:number[]=[])=>service.command({type:'candle-viewport',id,from,to:from+5*step,known});
+ const response=(candles:typeof past)=>new Response(JSON.stringify({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles}));
+ try{
+  service.command({type:'subscribe',id:'restore',series});viewport('restore');await vi.waitFor(()=>expect(reads).toHaveLength(1));
+  if(finishedBeforeJoin){reads[0].resolve(response(past));await vi.waitFor(()=>expect((service.diagnostics().streams[0] as any).native.viewportHistory.receivedBars).toBe(5));}
+  service.command({type:'subscribe',id:'panel',series});viewport('panel');
+  service.command({type:'unsubscribe',id:'restore'});
+  expect(sockets).toHaveLength(1);expect(sockets[0].closed).toBe(false);
+  sockets[0].receive({type:'native-candle',source:'binance-native-kline',interval:'5m',candle:{...past[0],t:Math.floor(now/step)*step,closed:false,revision:2}});
+  if(finishedBeforeJoin){
+   expect(events.find((e:any)=>e.type==='snapshot'&&e.ids.includes('panel')&&e.nativeVersion?.request===0)).toMatchObject({candles:past});
+   // The chart echoes displayed cached slots. They must not certify the source.
+   viewport('panel',past.map(c=>c.t));await vi.waitFor(()=>expect(reads).toHaveLength(2));
+   expect((events.filter(e=>e.type==='status').at(-1) as any).status.nativeHistory.viewport).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:5});
+  }else expect(reads).toHaveLength(1);
+  const active=reads.at(-1)!;expect(active.signal.aborted).toBe(false);
+  const corrected=past.map(c=>({...c,c:80002,quoteVolume:160004,revision:3}));active.resolve(response(corrected));
+  await vi.waitFor(()=>expect((events.filter(e=>e.type==='status').at(-1) as any).status).toMatchObject({state:'live',nativeHistory:{viewport:{state:'ready',loadedSlots:5}}}));
+  expect(events.filter((e:any)=>e.type==='snapshot'&&e.ids.includes('panel')&&e.nativeVersion?.request>0).at(-1)).toMatchObject({candles:corrected});
+  expect((service.diagnostics().streams[0] as any).native.viewportHistory).toMatchObject({views:1,busy:0});
+  service.command({type:'unsubscribe',id:'panel'});expect(service.diagnostics()).toMatchObject({groups:0,subscriptions:0});expect(sockets[0].closed).toBe(true);
+ }finally{service.dispose();}
+});
