@@ -13,7 +13,8 @@ import {chromium} from './test-browser-launch.mjs';
 if(process.env.IQ_WALL_PROJECTION_MATH!=='1')throw Error('Explicit offline projection benchmark opt-in required');
 const label=process.env.IQ_PROJECTION_LABEL;assert.ok(label&&/^[a-zA-Z0-9_-]{1,80}$/.test(label));
 const out=resolve('artifacts/pi-history-r1/projection-math-'+label);await mkdir(out,{recursive:false});
-const baseline='563904d',candidate=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const baseline=process.env.IQ_PROJECTION_BASELINE??'563904d',candidate=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+assert.match(baseline,/^[a-f0-9]{7,40}$/);execFileSync('git',['cat-file','-e',baseline+'^{commit}']);
 execFileSync('git',['diff','--quiet','--','src']);
 const temp=await mkdtemp(join(tmpdir(),'iq-wall-math-'));let browser;
 try{

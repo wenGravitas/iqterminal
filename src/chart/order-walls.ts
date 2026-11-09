@@ -8,6 +8,7 @@ const TOP_SIDE={bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#b
 
 interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number; paintOrder:number }
 interface WallPaintBucket {color:string;thickness:number;path:Path2D;firstOrder:number;historical:number;current:number}
+interface WallProjectionContext {rc:PrimitiveRenderContext;visibleFrom:number;visibleTo:number;low:number;high:number;y:number;timeToIndexFloat:(seconds:number)=>number}
 
 /** The chart data layer preserves sub-candle event times as fractional logical indices. */
 export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:number)=>number):number|null {
@@ -531,20 +532,20 @@ export class OrderWallsPrimitive implements IPrimitive {
   private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){for(const _ of this.projectSteps(segment,rc)){};}
   private *projectSteps(segment:OrderWallSegment,rc:PrimitiveRenderContext,generation=this.dirtyGeneration.get(segment.id)):Generator<void,void>{
     if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
+    const projection=this.projectionContext(segment,rc);if(!projection)return;
     if(segment.detectionMode==='top-levels'&&segment.valueRunsTruncated&&segment.valueRuns.length>0&&segment.valueRuns[0]!.at>segment.start){
-      const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,rc);
+      const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,projection);
       if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
     }
     if(segment.valueRuns.length){
-      const range=rc.timeScale.visibleRange();
-      const visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
+      const {visibleFrom,visibleTo}=projection;
       const first=Math.max(0,lowerBoundRun(segment.valueRuns,visibleFrom)-1);
       const afterLast=Math.min(segment.valueRuns.length,Math.max(first+1,upperBoundRun(segment.valueRuns,visibleTo)));
-      let units=0;for(let index=first;index<afterLast;index++){if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;this.projectIndex(segment,index,rc);if(++units%32===0)yield;}
+      let units=0;for(let index=first;index<afterLast;index++){if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;this.projectIndex(segment,index,projection);if(++units%32===0)yield;}
       return;
     }
     const to=this.segmentTo(segment);
-    const line=this.project(segment,0,segment.start,to,null,rc);
+    const line=this.project(segment,0,segment.start,to,null,projection);
     if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
   }
   private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){for(const _ of this.tailSteps(segment,fromIndex,rc)){};}
@@ -560,17 +561,18 @@ export class OrderWallsPrimitive implements IPrimitive {
     for(let i=keys.length-1;i>=lo;i--){this.paintInvalid=true;this.deleteDrawable(keys.pop()!);if(++units%32===0)yield;}
     if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
     this.drawableKeys.set(segment.id,keys);
+    const projection=this.projectionContext(segment,rc);if(!projection)return;
     for(let i=fromIndex;i<segment.valueRuns.length;i++){
       if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
-      this.projectIndex(segment,i,rc);if(++units%32===0)yield;
+      this.projectIndex(segment,i,projection);if(++units%32===0)yield;
     }
   }
   private removeDrawables(id:string){for(const _ of this.removeDrawableSteps(id)){};}
   private *removeDrawableSteps(id:string):Generator<void,void>{const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;let units=0;for(const key of keys){this.deleteDrawable(key);if(++units%32===0)yield;}this.drawableKeys.delete(id);}
-  private projectIndex(segment:OrderWallSegment,index:number,rc:PrimitiveRenderContext){
+  private projectIndex(segment:OrderWallSegment,index:number,projection:WallProjectionContext){
     const value=segment.valueRuns[index];if(!value)return;
-    const next=segment.valueRuns[index+1],from=value.at,to=Math.min(next?.at??this.segmentTo(segment),this.segmentTo(segment));
-    const line=this.project(segment,index,from,to,value.percentile,rc);if(!line)return;
+    const next=segment.valueRuns[index+1],from=value.at,limit=this.segmentTo(segment),to=Math.min(next?.at??limit,limit);
+    const line=this.project(segment,index,from,to,value.percentile,projection);if(!line)return;
     this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
   private segmentTo(segment:OrderWallSegment){
@@ -583,19 +585,27 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     return this.status.lastConfirmedAt??segment.start;
   }
-  private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,rc:PrimitiveRenderContext):WallDrawable|null{
+  private projectionContext(segment:OrderWallSegment,rc:PrimitiveRenderContext):WallProjectionContext|null{
     if(!this.settings.showHistory&&segment.end!==null||segment.durationMs<this.settings.minDurationMs)return null;
+    const low=segment.price,high=low+this.width(),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
+    // This is the incumbent per-point pixel cull, evaluated before traversing
+    // an offscreen wall's exact retained value history. Data remains retained.
+    if(!Number.isFinite(y)||y<0||y>rc.plotHeight)return null;
+    const range=rc.timeScale.visibleRange();
+    return {rc,low,high,y,visibleFrom:rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo:rc.dataLayer.indexToTimeFloat(range.to)*1000,
+      timeToIndexFloat:rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer)};
+  }
+  private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
+    const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
     from=Math.max(from,segment.start+this.settings.minDurationMs);
     // A current seed is an observed point, not an observed duration. Use the
     // existing one-pixel minimum stroke without extending its source time.
     if(to<from||to===from&&segment.currentSelection!==true)return null;
-    const priceWidth=this.width(),low=segment.price,high=low+priceWidth;
-    const range=rc.timeScale.visibleRange(),visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
     if(to<visibleFrom||from>visibleTo)return null;
-    const startLogical=wallTimestampToLogical(from,rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer));
-    const endLogical=wallTimestampToLogical(to,rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer));
+    const startLogical=wallTimestampToLogical(from,timeToIndexFloat);
+    const endLogical=wallTimestampToLogical(to,timeToIndexFloat);
     if(startLogical===null||endLogical===null)return null;
-    const x=rc.timeScale.indexToX(startLogical),right=rc.timeScale.indexToX(endLogical),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
+    const x=rc.timeScale.indexToX(startLogical),right=rc.timeScale.indexToX(endLogical);
     if(![x,right,y].every(Number.isFinite)||y<0||y>rc.plotHeight||right<0||x>rc.plotWidth)return null;
     const key=`${segment.id}@${from}`;
     return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high,paintOrder:0};

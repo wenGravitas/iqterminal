@@ -88,3 +88,13 @@ test('replacement during reference traversal cannot commit stale extrema or doub
  expect(shape(p)).toEqual(shape(baseline));expect(p.diagnostics().referenceMinimum).toBe(baseline.diagnostics().referenceMinimum);expect(p.diagnostics().referenceMaximum).toBe(baseline.diagnostics().referenceMaximum);
  const styles=(value:any)=>[...value.drawable.values()].map((line:any)=>[line.key,value.lineStyle(line)]).sort((a,b)=>a[0].localeCompare(b[0]));expect(styles(p)).toEqual(styles(baseline));
 });
+
+test('projection evaluates price once per segment and skips time conversion for offscreen value histories',()=>{
+ setup();const walls=source().map((wall,i)=>({...wall,price:i<10?wall.price:500+i})),before=JSON.stringify(walls),rc=context();
+ const price=vi.spyOn(rc.priceScale,'priceToY'),time=vi.spyOn(rc.dataLayer,'timeToIndexFloat');
+ const p=new OrderWallsPrimitive(settings,60000,true,0);p.setSnapshot(walls,status);p.draw(canvas().ctx,rc);
+ expect(price).toHaveBeenCalledTimes(walls.length);
+ expect(time).toHaveBeenCalledTimes(10*8*2);
+ expect(p.diagnostics()).toMatchObject({retainedSegments:20,retainedDrawables:80});
+ expect(JSON.stringify(walls)).toBe(before);p.detached();
+});
