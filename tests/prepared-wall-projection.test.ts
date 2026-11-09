@@ -144,6 +144,25 @@ test('thirty-five immutable parts use two byte-bounded batches and retain every 
  const t=transport(f),result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},()=>{});
  expect(result?.parts).toBe(35);expect(result?.projector.snapshot()).toHaveLength(36);expect(t.calls).toHaveLength(2);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
 });
+test('thirty-five parts publish the first closed record immediately then bounded exact groups before validation',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),closed=JSON.parse(f.texts[0]!)[0];
+ const records=Array.from({length:35},(_,i)=>({...closed,order:i,segment:{...closed.segment,id:closed.segment.id+':'+i},valueRunOrder:closed.valueRunOrder.map((n:number)=>n+i*10)}));
+ f.texts=records.map(record=>JSON.stringify([record]));f.manifest.parts=f.texts.map(text=>({hash:hash(text),bytes:Buffer.byteLength(text),records:1}));f.manifest.closed=records.map((_,i)=>[[i,0]]);
+ f.manifest.activeOrder=[35];f.manifest.active.valueRunOrder=f.manifest.active.valueRunOrder.map((values:number[])=>values.map(n=>n+400));f.manifest.active.nextValueRunSequence=500;
+ const reference=OrderWallsArchiveProjector.restoreCheckpoint({...f.manifest.active,segments:[...records.map(row=>row.segment),...f.manifest.active.segments],valueRunOrder:[...records.map(row=>row.valueRunOrder),...f.manifest.active.valueRunOrder]},settings,from,to).snapshot();
+ let release!:()=>void;const gateSource=new Promise<void>(resolve=>release=resolve),io=transport(f,{gateSource}),updates:any[]=[],metrics:any[]=[];
+ const work=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,onUpdate:u=>updates.push(u),onPageMetrics:m=>metrics.push(m)});void work.catch(()=>{});
+ try{
+  await vi.waitFor(()=>expect(io.calls.at(-1)).toMatch(/\/source$/));
+  const progressive=updates.filter(u=>u.pages>0);
+  expect(progressive.map(u=>u.pages)).toEqual([1,9,17,25,33,35]);
+  expect(progressive.flatMap(u=>u.patches.map((p:any)=>p.id))).toEqual(records.map(row=>row.segment.id));
+  expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
+  expect(metrics).toHaveLength(35);expect(updates.at(-1).presentation.size).toBe(36);
+  release();const result=await work;expect(result.segments).toEqual(reference);expect(result.status.archive?.requestComplete).toBe(true);
+ }finally{release();}
+});
+
 test('shared service joins and Retry retain the prepared presentation until the full replacement validates',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),old=transport(f,{changed:true});let release!:()=>void;
  const gateSource=new Promise<void>(resolve=>release=resolve),next=transport(f,{gateSource});let phase=0;

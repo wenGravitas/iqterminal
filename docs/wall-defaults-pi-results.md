@@ -123,3 +123,19 @@ financial algorithm, preparation ownership or serving configuration. Reverting
 the client commit restores serial completion without invalidating prepared data.
 Timing benefit remains unproven until a measured cohort; do not infer a passed
 loading gate from unit tests.
+
+A subsequent CPU-profiled diagnostic on13d30ec found repeated progressive chart
+work:24draws and5082.8ms cumulative chart-reported rendering, with953.8ms sampled
+GC self time. Its15189.5ms completion is a single profiled observation under
+substantial other Pi application load, not an acceptance cohort or a matched
+before/after speed comparison. Raw profile, requests, coverage, screenshots,
+client resources and enclosing read-only serving resources are retained.
+
+The follow-up groups subsequent validated closed records into publications of at
+most eight parts, while publishing initial active state and the first closed part
+immediately. The final part flushes before independent source validation. All
+per-part diagnostics and client yields remain; no financial record or requested
+range is reduced. The35-part regression proves exact once-only delivery in
+publication boundaries1/9/17/25/33/35, with completion still held by source
+validation. Revert the client commit to restore per-part publication; no server
+or persistent format changes are involved.
