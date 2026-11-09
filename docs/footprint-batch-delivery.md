@@ -32,7 +32,9 @@ Request traces include correlated view/request IDs, requested time bounds/member
 count, scheduler/header latency, decoded bytes, available compressed body bytes,
 SQL counts/rows/bytes and local decode/application durations. `streamMs` includes
 overlapping processing/yields; do not add it to decode/apply as exclusive phases.
-Resource Timing may omit encoded bytes; absent measurements stay unspecified.
+Chunked gzip has no Content-Length. Its compressed size is captured in correlated
+browser network receipts; URL-only Resource Timing cannot safely attribute bytes
+between concurrent batches, so the worker leaves that value unspecified.
 
 Local validation:1,221 unit tests pass/two skipped and typecheck passes, including
 seven focused batch tests and the exact Spot cache-geometry regression. Fixtures

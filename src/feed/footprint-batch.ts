@@ -85,10 +85,8 @@ export function readFootprintBatch(request:typeof fetch,urls:string[],signal:Abo
     trace.receivedAt=performance.now();trace.streamMs=trace.receivedAt-trace.headersAt;
     // Stream elapsed overlaps decode/apply and yielding; never sum as exclusive phases.
     const length=response.headers.get('content-length');if(length!==null)trace.encodedBytes=Number(length);
-    else if(typeof location!=='undefined'){
-     const entries=performance.getEntriesByName(new URL(path,location.href).href,'resource')as PerformanceResourceTiming[];
-     const entry=entries.reverse().find(entry=>entry.startTime>=wireAt&&entry.encodedBodySize>0);if(entry)trace.encodedBytes=entry.encodedBodySize;
-    }
+    // Concurrent batches share a URL; Resource Timing alone cannot correlate
+    // their encoded bytes safely. Browser network receipts capture those sizes.
    }catch(error){trace.error=error instanceof Error?error.message:String(error);throw error;}
   },priority).then(()=>{terminal=true;for(const c of [...shared.consumers])remove(c);},error=>{terminal=true;for(const c of [...shared.consumers])remove(c,error);}).finally(()=>{if(pool!.get(key)===shared)pool!.delete(key);shared.frames.length=0;});
  }

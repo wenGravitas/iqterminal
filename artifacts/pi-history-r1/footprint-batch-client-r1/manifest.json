@@ -1,0 +1,41 @@
+{
+  "clientBuild": "a8eadbc2b282264191323b3765e05795b4ca2f3f",
+  "backendCandidate": "f82abdfae06c61f8bccff9fea0778bbaac491b5e",
+  "servingApi": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "unitTests": {
+    "passed": 1221,
+    "skipped": 2
+  },
+  "browserLifecycle": {
+    "passed": 12,
+    "fixture": true,
+    "headless": true,
+    "renderer": "software SwiftShader",
+    "scope": "Chart lifecycle correctness, not venue or latency acceptance"
+  },
+  "vitePostProxy": {
+    "passed": 2,
+    "modes": [
+      "dev",
+      "production-preview"
+    ],
+    "fixture": true
+  },
+  "preview": {
+    "port": 4187,
+    "pid": 55304
+  },
+  "tunnels": {
+    "history": {
+      "port": 18780,
+      "pid": 55043,
+      "IPQoS": "none"
+    },
+    "current": {
+      "port": 18781,
+      "pid": 55044,
+      "IPQoS": "inherited default"
+    }
+  },
+  "noReleaseGateClaim": true
+}

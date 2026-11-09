@@ -3,6 +3,29 @@
 **Release acceptance is incomplete.** No production deployment or main merge has occurred.
 The active goal remains implementation and validation of the full release.
 
+## Progressive footprint transport follow-up
+
+Frontend a8eadbc2b282264191323b3765e05795b4ca2f3f builds in production staging
+mode with history/diagnostics enabled. Its complete unit suite passes1,221 tests
+with2skipped; all12 footprint lifecycle browser checks pass headlessly using
+explicit fixtures, including saved24h batch/legacy transport and delayed native
+bootstrap. Real Vite progressive POST/cancellation/current-reserve checks pass
+in development and production-preview modes. Raw logs, isolated screenshots,
+build/environment identifiers and checksums are in
+`artifacts/pi-history-r1/footprint-batch-client-r1`.
+
+Backend candidate f82abdfae06c61f8bccff9fea0778bbaac491b5e passes308 tests,
+typecheck and build. It is not deployed yet: serving remains e122f9d8. These
+protocol/fixture checks do not change any loading, live concurrency, heap or
+foreground acceptance gate. Exact Spot row-width cache identity is separately
+fixed in90a4dd6. See [transport/retry/rollback](footprint-batch-delivery.md).
+
+The Nov9 local route has been restored: independent SSH history18780/current18781
+and isolated production preview4187; both proxied health endpoints respond.
+History uses IPQoS=none and current retains the inherited default. These are new
+connections; earlier route measurements do not measure this pair. Test browsers
+remain explicitly headless; normal foreground Pi acceptance is still unproven.
+
 ## Exact versions and scope
 
 - Earlier five-run loading frontend: `1ef788c439499b815fa2328e88b7712f9da9335d`, production staging/history/diagnostics build against API18579d9.
