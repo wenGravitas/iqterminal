@@ -1,3 +1,13 @@
+Latest candidate: [exact product transport](wall-product-point-transport.md), frontend18c95e3/backenddca1bb8.
+No staging API deployment yet. Five alternating production-codec CPU samples on
+actual first bounded batches restore every canonical byte: compressed bytes fall
+23.2% Spot and11.0% USD-M, with extra encode/decode CPU. These are not loading
+passes. Backend serial suite321/321 passes; the parallel run retains one gateway
+shutdown failure. Frontend focused44 tests pass; full run1240pass/2skip with two
+vault deadline failures; isolated vault recovery8/8passes without a deadline change. Exact logs/samples are in product-codec-frames-r2/.
+Previously failed Pi wall loading, current/concurrency and default composition
+gates remain unresolved. No browser launched or protected service changed.
+
 Latest update: [bounded wall preparation results](wall-render-work-budget-results.md).
 Client1fc/API f82: 170 offline exact comparisons pass; full1238 tests pass/2skip.
 Actual Pi Spot30h completes all5 exact views but fails latency (median21.71s,

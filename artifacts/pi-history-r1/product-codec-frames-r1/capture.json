@@ -1,0 +1,60 @@
+[
+  {
+    "market": "spot",
+    "url": "http://127.0.0.1:18780/v2/history/walls/projection-batch?market=spot&key=efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0&start=0&version=1",
+    "headers": {
+      "x-iq-request-id": "540630da-7945-484a-9c8b-bae92f7ea9a6",
+      "content-type": "application/x-ndjson",
+      "cache-control": "private, max-age=31536000, immutable",
+      "vary": "Accept-Encoding",
+      "etag": "\"0132ac6889d228afc7e9e1bc6b6522a269da52c5b1a7291141c684af596e4493\"",
+      "x-iq-batch-cache": "miss",
+      "x-iq-decoded-bytes": "8276300",
+      "x-iq-wall-start": "0",
+      "x-iq-wall-next": "22",
+      "x-iq-wall-parts": "22",
+      "x-iq-source-revision": "d211a7666f7c1231a2deaaea305e82b27f69536628244a72fb4e516bd621e394",
+      "x-iq-chunk-key": "efa5629adec8fcb0e7ffc93297bd273d178fae996fad4bae79b30862872863b0",
+      "x-iq-db-queries": "0",
+      "x-iq-db-read-rows": "0",
+      "x-iq-db-read-bytes": "0",
+      "content-encoding": "gzip",
+      "content-length": "924807",
+      "server-timing": "preparedread;dur=147.42, db;dur=0",
+      "date": "Mon, 09 Nov 2026 09:58:47 GMT",
+      "connection": "keep-alive",
+      "keep-alive": "timeout=60"
+    },
+    "encodedSha256": "0132ac6889d228afc7e9e1bc6b6522a269da52c5b1a7291141c684af596e4493",
+    "scope": "Read-only actual immutable native projection batch; captured outside CPU timing. Not a route/loading sample."
+  },
+  {
+    "market": "perp",
+    "url": "http://127.0.0.1:18780/v2/history/walls/projection-batch?market=perpetual&key=a6d39a0a5e53f05455032059e17d7586fb17e6b332d648fea25701ded1c9831d&start=0&version=1",
+    "headers": {
+      "x-iq-request-id": "68f968ca-83fe-4b5c-b2b5-092bff5e26d9",
+      "content-type": "application/x-ndjson",
+      "cache-control": "private, max-age=31536000, immutable",
+      "vary": "Accept-Encoding",
+      "etag": "\"a78744a22a21792ca83c627ca230c52088707555c44984617ae66435ddb51e96\"",
+      "x-iq-batch-cache": "miss",
+      "x-iq-decoded-bytes": "7879182",
+      "x-iq-wall-start": "0",
+      "x-iq-wall-next": "16",
+      "x-iq-wall-parts": "16",
+      "x-iq-source-revision": "96b070b7571b23df67826ad0c2d0364f8e891205f5d1115ee79932b96333a70e",
+      "x-iq-chunk-key": "a6d39a0a5e53f05455032059e17d7586fb17e6b332d648fea25701ded1c9831d",
+      "x-iq-db-queries": "0",
+      "x-iq-db-read-rows": "0",
+      "x-iq-db-read-bytes": "0",
+      "content-encoding": "gzip",
+      "content-length": "653301",
+      "server-timing": "preparedread;dur=79.13, db;dur=0",
+      "date": "Mon, 09 Nov 2026 09:58:49 GMT",
+      "connection": "keep-alive",
+      "keep-alive": "timeout=60"
+    },
+    "encodedSha256": "a78744a22a21792ca83c627ca230c52088707555c44984617ae66435ddb51e96",
+    "scope": "Read-only actual immutable native projection batch; captured outside CPU timing. Not a route/loading sample."
+  }
+]

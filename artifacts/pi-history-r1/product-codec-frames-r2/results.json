@@ -1,0 +1,421 @@
+{
+  "scope": "Five alternating Pi Node production-codec CPU comparisons per captured immutable bounded batch. Actual canonical server frames; exact JSON and byte expansion checked per part. Encode includes JSON and counting; decode includes parsing, canonical equality and expansion accounting. Compression quality5 matches server. Checkpoints yield via setImmediate after8ms, every256 points. JSON/native/GC work can exceed soft budget. No browser, route, loading, whole-view or live acceptance.",
+  "results": [
+    {
+      "market": "spot",
+      "canonicalBytes": 8276300,
+      "canonicalSha256": "74854fde0e5048f5ebde33fc9b8137fd3f4063671d24644ffad9329e87c2b70c",
+      "parts": 22,
+      "samples": [
+        {
+          "run": 1,
+          "version": 1,
+          "points": 32329,
+          "omitted": 0,
+          "decodedBytes": 4745124,
+          "compressedBytes": 640872,
+          "encodeMs": 594.260862,
+          "encodeSlices": {
+            "yields": 28,
+            "maxSliceMs": 65.35012
+          },
+          "compressionMs": 798.9850839999999,
+          "decodeMs": 331.301475,
+          "decodeSlices": {
+            "yields": 24,
+            "maxSliceMs": 20.028561999999965
+          },
+          "exact": true
+        },
+        {
+          "run": 1,
+          "version": 2,
+          "points": 32329,
+          "omitted": 32329,
+          "decodedBytes": 4259744,
+          "compressedBytes": 491937,
+          "encodeMs": 558.0897239999997,
+          "encodeSlices": {
+            "yields": 34,
+            "maxSliceMs": 35.238674000000174
+          },
+          "compressionMs": 405.06345599999986,
+          "decodeMs": 528.303872,
+          "decodeSlices": {
+            "yields": 33,
+            "maxSliceMs": 29.89831600000025
+          },
+          "exact": true
+        },
+        {
+          "run": 2,
+          "version": 2,
+          "points": 32329,
+          "omitted": 32329,
+          "decodedBytes": 4259744,
+          "compressedBytes": 491937,
+          "encodeMs": 423.8198689999999,
+          "encodeSlices": {
+            "yields": 28,
+            "maxSliceMs": 28.022721000000274
+          },
+          "compressionMs": 354.8236700000002,
+          "decodeMs": 435.0464579999998,
+          "decodeSlices": {
+            "yields": 32,
+            "maxSliceMs": 35.03585899999962
+          },
+          "exact": true
+        },
+        {
+          "run": 2,
+          "version": 1,
+          "points": 32329,
+          "omitted": 0,
+          "decodedBytes": 4745124,
+          "compressedBytes": 640872,
+          "encodeMs": 221.49492800000007,
+          "encodeSlices": {
+            "yields": 19,
+            "maxSliceMs": 16.895040000000336
+          },
+          "compressionMs": 969.1950399999996,
+          "decodeMs": 306.48735099999976,
+          "decodeSlices": {
+            "yields": 23,
+            "maxSliceMs": 21.36971199999971
+          },
+          "exact": true
+        },
+        {
+          "run": 3,
+          "version": 1,
+          "points": 32329,
+          "omitted": 0,
+          "decodedBytes": 4745124,
+          "compressedBytes": 640872,
+          "encodeMs": 435.73799599999984,
+          "encodeSlices": {
+            "yields": 21,
+            "maxSliceMs": 40.217162000000826
+          },
+          "compressionMs": 727.43966,
+          "decodeMs": 348.53678800000034,
+          "decodeSlices": {
+            "yields": 23,
+            "maxSliceMs": 31.23535400000037
+          },
+          "exact": true
+        },
+        {
+          "run": 3,
+          "version": 2,
+          "points": 32329,
+          "omitted": 32329,
+          "decodedBytes": 4259744,
+          "compressedBytes": 491937,
+          "encodeMs": 416.4543619999995,
+          "encodeSlices": {
+            "yields": 28,
+            "maxSliceMs": 25.955353999999716
+          },
+          "compressionMs": 409.199196999999,
+          "decodeMs": 357.3706510000011,
+          "decodeSlices": {
+            "yields": 26,
+            "maxSliceMs": 17.77993400000014
+          },
+          "exact": true
+        },
+        {
+          "run": 4,
+          "version": 2,
+          "points": 32329,
+          "omitted": 32329,
+          "decodedBytes": 4259744,
+          "compressedBytes": 491937,
+          "encodeMs": 411.6241090000003,
+          "encodeSlices": {
+            "yields": 30,
+            "maxSliceMs": 21.15107199999875
+          },
+          "compressionMs": 416.1044180000008,
+          "decodeMs": 426.7678329999999,
+          "decodeSlices": {
+            "yields": 32,
+            "maxSliceMs": 19.721535000000586
+          },
+          "exact": true
+        },
+        {
+          "run": 4,
+          "version": 1,
+          "points": 32329,
+          "omitted": 0,
+          "decodedBytes": 4745124,
+          "compressedBytes": 640872,
+          "encodeMs": 233.85804499999904,
+          "encodeSlices": {
+            "yields": 19,
+            "maxSliceMs": 19.53070900000057
+          },
+          "compressionMs": 966.9136399999988,
+          "decodeMs": 280.89493500000026,
+          "decodeSlices": {
+            "yields": 21,
+            "maxSliceMs": 16.392805999999837
+          },
+          "exact": true
+        },
+        {
+          "run": 5,
+          "version": 1,
+          "points": 32329,
+          "omitted": 0,
+          "decodedBytes": 4745124,
+          "compressedBytes": 640872,
+          "encodeMs": 213.20553699999982,
+          "encodeSlices": {
+            "yields": 17,
+            "maxSliceMs": 22.267265000000407
+          },
+          "compressionMs": 686.9676319999999,
+          "decodeMs": 286.8063490000004,
+          "decodeSlices": {
+            "yields": 22,
+            "maxSliceMs": 18.740653000000748
+          },
+          "exact": true
+        },
+        {
+          "run": 5,
+          "version": 2,
+          "points": 32329,
+          "omitted": 32329,
+          "decodedBytes": 4259744,
+          "compressedBytes": 491937,
+          "encodeMs": 359.9449489999988,
+          "encodeSlices": {
+            "yields": 25,
+            "maxSliceMs": 23.006679000000076
+          },
+          "compressionMs": 641.9067610000002,
+          "decodeMs": 510.3121310000006,
+          "decodeSlices": {
+            "yields": 33,
+            "maxSliceMs": 30.91183699999965
+          },
+          "exact": true
+        }
+      ]
+    },
+    {
+      "market": "perp",
+      "canonicalBytes": 7879182,
+      "canonicalSha256": "244fd87434f666e316059bcf400d3b4c86bc5646675366457672c8e6e45a33cb",
+      "parts": 16,
+      "samples": [
+        {
+          "run": 1,
+          "version": 1,
+          "points": 22994,
+          "omitted": 0,
+          "decodedBytes": 5473544,
+          "compressedBytes": 459712,
+          "encodeMs": 339.79155700000047,
+          "encodeSlices": {
+            "yields": 16,
+            "maxSliceMs": 61.303061000000525
+          },
+          "compressionMs": 675.9392339999995,
+          "decodeMs": 283.3403049999997,
+          "decodeSlices": {
+            "yields": 17,
+            "maxSliceMs": 26.155071999999564
+          },
+          "exact": true
+        },
+        {
+          "run": 1,
+          "version": 2,
+          "points": 22994,
+          "omitted": 22994,
+          "decodedBytes": 5191620,
+          "compressedBytes": 409069,
+          "encodeMs": 352.1149810000006,
+          "encodeSlices": {
+            "yields": 21,
+            "maxSliceMs": 23.85413200000039
+          },
+          "compressionMs": 463.2533399999993,
+          "decodeMs": 277.06882100000075,
+          "decodeSlices": {
+            "yields": 18,
+            "maxSliceMs": 19.523785999997926
+          },
+          "exact": true
+        },
+        {
+          "run": 2,
+          "version": 2,
+          "points": 22994,
+          "omitted": 22994,
+          "decodedBytes": 5191620,
+          "compressedBytes": 409069,
+          "encodeMs": 283.5628539999998,
+          "encodeSlices": {
+            "yields": 18,
+            "maxSliceMs": 23.71910299999945
+          },
+          "compressionMs": 412.74867500000255,
+          "decodeMs": 382.8585959999982,
+          "decodeSlices": {
+            "yields": 22,
+            "maxSliceMs": 32.88731700000062
+          },
+          "exact": true
+        },
+        {
+          "run": 2,
+          "version": 1,
+          "points": 22994,
+          "omitted": 0,
+          "decodedBytes": 5473544,
+          "compressedBytes": 459712,
+          "encodeMs": 211.40133200000128,
+          "encodeSlices": {
+            "yields": 14,
+            "maxSliceMs": 20.933020000000397
+          },
+          "compressionMs": 623.8078859999987,
+          "decodeMs": 536.4575079999995,
+          "decodeSlices": {
+            "yields": 21,
+            "maxSliceMs": 52.69478000000163
+          },
+          "exact": true
+        },
+        {
+          "run": 3,
+          "version": 1,
+          "points": 22994,
+          "omitted": 0,
+          "decodedBytes": 5473544,
+          "compressedBytes": 459712,
+          "encodeMs": 349.49440799999866,
+          "encodeSlices": {
+            "yields": 16,
+            "maxSliceMs": 63.17947899999854
+          },
+          "compressionMs": 1252.4017280000007,
+          "decodeMs": 238.25398000000132,
+          "decodeSlices": {
+            "yields": 18,
+            "maxSliceMs": 22.565818999999465
+          },
+          "exact": true
+        },
+        {
+          "run": 3,
+          "version": 2,
+          "points": 22994,
+          "omitted": 22994,
+          "decodedBytes": 5191620,
+          "compressedBytes": 409069,
+          "encodeMs": 353.89154100000087,
+          "encodeSlices": {
+            "yields": 19,
+            "maxSliceMs": 31.505980999998428
+          },
+          "compressionMs": 554.6823470000018,
+          "decodeMs": 358.26220099999773,
+          "decodeSlices": {
+            "yields": 22,
+            "maxSliceMs": 26.344363999996858
+          },
+          "exact": true
+        },
+        {
+          "run": 4,
+          "version": 2,
+          "points": 22994,
+          "omitted": 22994,
+          "decodedBytes": 5191620,
+          "compressedBytes": 409069,
+          "encodeMs": 375.0960869999981,
+          "encodeSlices": {
+            "yields": 21,
+            "maxSliceMs": 37.2647939999988
+          },
+          "compressionMs": 401.17239699999845,
+          "decodeMs": 319.00643500000297,
+          "decodeSlices": {
+            "yields": 23,
+            "maxSliceMs": 22.039669999998296
+          },
+          "exact": true
+        },
+        {
+          "run": 4,
+          "version": 1,
+          "points": 22994,
+          "omitted": 0,
+          "decodedBytes": 5473544,
+          "compressedBytes": 459712,
+          "encodeMs": 183.91554100000212,
+          "encodeSlices": {
+            "yields": 15,
+            "maxSliceMs": 24.839006999998674
+          },
+          "compressionMs": 402.5641829999986,
+          "decodeMs": 210.297634999999,
+          "decodeSlices": {
+            "yields": 16,
+            "maxSliceMs": 16.81594000000041
+          },
+          "exact": true
+        },
+        {
+          "run": 5,
+          "version": 1,
+          "points": 22994,
+          "omitted": 0,
+          "decodedBytes": 5473544,
+          "compressedBytes": 459712,
+          "encodeMs": 181.96750699999757,
+          "encodeSlices": {
+            "yields": 13,
+            "maxSliceMs": 24.04290299999775
+          },
+          "compressionMs": 418.91228299999784,
+          "decodeMs": 214.01643599999807,
+          "decodeSlices": {
+            "yields": 16,
+            "maxSliceMs": 29.222216999998636
+          },
+          "exact": true
+        },
+        {
+          "run": 5,
+          "version": 2,
+          "points": 22994,
+          "omitted": 22994,
+          "decodedBytes": 5191620,
+          "compressedBytes": 409069,
+          "encodeMs": 267.08353999999963,
+          "encodeSlices": {
+            "yields": 19,
+            "maxSliceMs": 24.404348000000027
+          },
+          "compressionMs": 405.8368029999983,
+          "decodeMs": 311.83704899999793,
+          "decodeSlices": {
+            "yields": 19,
+            "maxSliceMs": 23.53749600000083
+          },
+          "exact": true
+        }
+      ]
+    }
+  ]
+}
