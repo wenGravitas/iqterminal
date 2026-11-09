@@ -1,5 +1,6 @@
 import {finishResponseTraces,loadingObservationComplete,nativeClosedCoverage} from './benchmark-traces.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
+import {profileBrowserWorkers} from './profile-browser-workers.mjs';
 /** Actual Pi/client-route benchmark. No fixtures; bounded observations are failures,
  * not eventual-completion acceptance. Run against an explicitly started build. */
 import {chromium} from './test-browser-launch.mjs';
@@ -22,7 +23,7 @@ const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step
 if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 if(process.env.IQ_BENCH_BUILD)try{execFileSync('git',['cat-file','-e',process.env.IQ_BENCH_BUILD+'^{commit}'],{stdio:'ignore'});}catch{throw Error('IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser');}
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
-if(process.env.IQ_BENCH_YIELD_MODE&&!['background-post-task','timer-fallback'].includes(process.env.IQ_BENCH_YIELD_MODE))throw Error('Invalid expected history yield mode');
+if(process.env.IQ_BENCH_YIELD_MODE&&!['user-visible-post-task','background-post-task','timer-fallback'].includes(process.env.IQ_BENCH_YIELD_MODE))throw Error('Invalid expected history yield mode');
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
 // This extends observation/frame capture only; it does not enable a live subscription.
 const keepCurrent=process.env.IQ_BENCH_KEEP_CURRENT==='1',cpuProfile=process.env.IQ_BENCH_CPU_PROFILE==='1';
@@ -79,6 +80,7 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   const record=requestRecords.get(response.request())??{url:response.url(),at:performance.now()};if(!requestRecords.has(response.request()))requests.push(record);record.status=response.status();record.headersAt=performance.now();record.transferState='headers-pending';
   responseTasks.push((async()=>{try{record.headers=await response.allHeaders();record.requestTiming=response.request().timing();record.transferState='receiving';const finished=await response.finished().catch(error=>error);record.sizes=await response.request().sizes().catch(()=>null);record.requestTiming=response.request().timing();record.finishedError=finished?String(finished):null;record.transferState=finished?'failed':'complete';}catch(error){record.traceError=String(error);record.transferState='trace-error';}})());
  });page.on('pageerror',error=>errors.push(error.message));
+ const workerProfiler=process.env.IQ_BENCH_WORKER_CPU_PROFILE==='1'?await profileBrowserWorkers(browser):null;
  const profiler=cpuProfile?await context.newCDPSession(page):null;if(profiler){await profiler.send('Profiler.enable');await profiler.send('Profiler.start');}
  const started=performance.now();let firstCurrentMs=null,firstHistoryMs=null,completeMs=null,nativeContextObservedMs=null,nativeCoverage=null,viewportAt=null,last=null,exception=null;const referenceFrames=[];
  try{
@@ -108,6 +110,7 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
   await page.screenshot({path:`${dir}/${label}-${item.name}-${run}.png`});
  }catch(error){exception=String(error);await page.screenshot({path:`${dir}/${label}-${item.name}-${run}-failure.png`}).catch(()=>{});}
  if(profiler){const {profile}=await profiler.send('Profiler.stop');writeFileSync(`${dir}/${label}-${item.name}-${run}.cpuprofile`,JSON.stringify(profile));}
+ if(workerProfiler)writeFileSync(`${dir}/${label}-${item.name}-${run}-workers.json`,JSON.stringify(await workerProfiler.stop()));
  const browserTimings=await page.evaluate(()=>({timeOrigin:performance.timeOrigin,navigation:performance.getEntriesByType('navigation').map(e=>e.toJSON()),resources:performance.getEntriesByType('resource').slice(0,256).map(e=>e.toJSON())})).catch(()=>null);
  // Diagnostics are post-observation metadata. Waiting for the worker reply
  // must not re-read paint/coverage or extend the loading observation deadline.

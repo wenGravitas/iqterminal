@@ -11,7 +11,7 @@ const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const digest=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const normalized=(s:OrderWallsProjectionSettings)=>({topLevels:s.topLevels,minimumNotionalEnabled:s.minimumNotionalEnabled,minimumNotionalUsd:s.minimumNotionalEnabled?s.minimumNotionalUsd:0,minDurationMs:s.minDurationMs});
-const yieldTask=yieldHistoryTask;
+const yieldTask=(signal:AbortSignal)=>yieldHistoryTask(signal,'user-visible');
 /** Configuration mismatch is a compatible fallback. A malformed advertised
  * snapshot is an explicit failure, never an excuse to claim empty coverage. */
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){

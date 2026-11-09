@@ -16,3 +16,7 @@ test('canceling fallback work clears its timer and preserves the cancellation re
 test('already canceled work schedules no native task',async()=>{
  const postTask=vi.fn(),control=new AbortController();vi.stubGlobal('scheduler',{postTask});control.abort();await expect(yieldHistoryTask(control.signal)).rejects.toMatchObject({name:'AbortError'});expect(postTask).not.toHaveBeenCalled();
 });
+test('visible work uses ordinary visible priority, never user-blocking priority',async()=>{
+ const signal=new AbortController().signal,postTask=vi.fn(async(callback:()=>void,options:unknown)=>{expect(options).toEqual({priority:'user-visible',signal});callback();});
+ vi.stubGlobal('scheduler',{postTask});expect(historyTaskYieldMode('user-visible')).toBe('user-visible-post-task');await yieldHistoryTask(signal,'user-visible');expect(postTask).toHaveBeenCalledTimes(1);
+});

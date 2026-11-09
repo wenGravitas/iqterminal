@@ -1,5 +1,9 @@
 # Cooperative history continuation
 
+This page records the4efc-era background-continuation implementation and its
+measurements. The later [visible/cache priority separation](wall-task-priorities.md)
+supersedes the call-site priorities; the old cohorts retain their original scope.
+
 Prepared wall decode and progressive import keep their existing8ms/256-point
 checkpoints. On supported browsers the continuation now uses
 `scheduler.postTask` at explicit `background` priority. Current/input tasks can

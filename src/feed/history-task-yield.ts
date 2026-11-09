@@ -1,13 +1,14 @@
-/** Cooperatively resume history behind normal current/input tasks. Native
- * background tasks avoid chained zero-delay timer clamping where supported.
+/** Cooperatively resume bounded history slices. Visible imports share normal
+ * task priority; optional cache preparation stays behind visible/current work.
  * No persistent channel, worker or queue is owned by this helper. */
-interface BackgroundScheduler {
- postTask(callback:()=>void,options:{priority:'background';signal?:AbortSignal}):Promise<void>;
+export type HistoryTaskPriority='user-visible'|'background';
+interface TaskScheduler {
+ postTask(callback:()=>void,options:{priority:HistoryTaskPriority;signal?:AbortSignal}):Promise<void>;
 }
-export function yieldHistoryTask(signal?:AbortSignal):Promise<void>{
+export function yieldHistoryTask(signal?:AbortSignal,priority:HistoryTaskPriority='background'):Promise<void>{
  if(signal?.aborted)return Promise.reject(signal.reason);
- const scheduler=(globalThis as unknown as {scheduler?:BackgroundScheduler}).scheduler;
- if(typeof scheduler?.postTask==='function')return scheduler.postTask(()=>{}, {priority:'background',...(signal?{signal}:{})});
+ const scheduler=(globalThis as unknown as {scheduler?:TaskScheduler}).scheduler;
+ if(typeof scheduler?.postTask==='function')return scheduler.postTask(()=>{}, {priority,...(signal?{signal}:{})});
  return new Promise<void>((resolve,reject)=>{
   const cancel=()=>{clearTimeout(timer);signal?.removeEventListener('abort',cancel);reject(signal?.reason);};
   const timer=setTimeout(()=>{signal?.removeEventListener('abort',cancel);resolve();},0);
@@ -15,6 +16,6 @@ export function yieldHistoryTask(signal?:AbortSignal):Promise<void>{
  });
 }
 
-export function historyTaskYieldMode(){
- return typeof (globalThis as unknown as {scheduler?:BackgroundScheduler}).scheduler?.postTask==='function'?'background-post-task':'timer-fallback';
+export function historyTaskYieldMode(priority:HistoryTaskPriority='background'){
+ return typeof (globalThis as unknown as {scheduler?:TaskScheduler}).scheduler?.postTask==='function'?priority+'-post-task':'timer-fallback';
 }

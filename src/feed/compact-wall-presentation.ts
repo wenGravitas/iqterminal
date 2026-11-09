@@ -1,8 +1,8 @@
 import type {OrderWallSegment} from '../shared/order-walls-projection';
+import {yieldHistoryTask} from './history-task-yield';
 export interface CompactWallPresentation {version:1;identity:string;segments:number;runs:number;bytes:number;retainedBytes:number;decodedBytes:number;chunks:Array<{body:Uint8Array;hash:string;decodedBytes:number;rows:number}>}
 interface Row {index:number;offset:number;total:number;segment:OrderWallSegment}
 const MAX_DECODED=64*1024*1024,MAX_ENCODED=16*1024*1024,MAX_PART=1024*1024,TARGET=128*1024;
-const yieldTask=()=>new Promise<void>(resolve=>setTimeout(resolve,0));
 const hash=async(bytes:Uint8Array)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>)),v=>v.toString(16).padStart(2,'0')).join('');
 const integer=(n:unknown):n is number=>Number.isSafeInteger(n)&&Number(n)>=0;
 async function transform(bytes:Uint8Array,compress:boolean,max:number,signal:AbortSignal){
@@ -29,6 +29,7 @@ function metadataBound(value:object,omitRuns=false){
  * presentation only; no cursor/accumulator or display-resolution reduction. */
 export async function compactWallPresentation(identity:string,segments:readonly OrderWallSegment[],signal:AbortSignal):Promise<CompactWallPresentation>{
  if(typeof CompressionStream!=='function'||!identity||identity.length>8192||segments.length>100000)throw Error('Compact wall cache unavailable or capacity');
+ await yieldHistoryTask(signal,'background');signal.throwIfAborted();
  const result:CompactWallPresentation={version:1,identity,segments:segments.length,runs:0,bytes:0,retainedBytes:0,decodedBytes:0,chunks:[]};
  let rows:string[]=[],size=2,yielded=performance.now();
  const flush=async()=>{
@@ -36,7 +37,7 @@ export async function compactWallPresentation(identity:string,segments:readonly 
   if(raw.length>MAX_PART||result.decodedBytes+raw.length>MAX_DECODED||result.chunks.length>=1024)throw Error('Compact wall cache decoded capacity');
   const body=await transform(raw,true,MAX_ENCODED-result.bytes,signal);
   if(result.bytes+body.length>MAX_ENCODED)throw Error('Compact wall cache encoded capacity');
-  result.chunks.push({body,hash:await hash(raw),decodedBytes:raw.length,rows:rows.length});result.bytes+=body.length;result.decodedBytes+=raw.length;rows=[];size=2;await yieldTask();signal.throwIfAborted();yielded=performance.now();
+  result.chunks.push({body,hash:await hash(raw),decodedBytes:raw.length,rows:rows.length});result.bytes+=body.length;result.decodedBytes+=raw.length;rows=[];size=2;await yieldHistoryTask(signal,'background');signal.throwIfAborted();yielded=performance.now();
  };
  for(const [index,segment] of segments.entries()){
   const total=segment.valueRuns.length,headerBytes=metadataBound(segment,true)+128;result.runs+=total;if(result.runs>1000000)throw Error('Compact wall cache value capacity');let offset=0;
@@ -46,7 +47,7 @@ export async function compactWallPresentation(identity:string,segments:readonly 
    const row:Row={index,offset,total,segment:{...segment,valueRuns:segment.valueRuns.slice(offset,offset+count)}},text=JSON.stringify(row),bytes=new TextEncoder().encode(text).length;
    if(bytes+2>MAX_PART)throw Error('Compact wall cache fragment capacity');
    if(size+bytes+1>TARGET)await flush();rows.push(text);size+=bytes+1;offset+=count;
-   if(performance.now()-yielded>=8){await yieldTask();signal.throwIfAborted();yielded=performance.now();}
+   if(performance.now()-yielded>=8){await yieldHistoryTask(signal,'background');signal.throwIfAborted();yielded=performance.now();}
   }while(offset<total);
  }
  await flush();result.retainedBytes=result.bytes+result.chunks.length*256+identity.length*2+256;if(result.retainedBytes>MAX_ENCODED)throw Error('Compact wall cache metadata capacity');return result;
@@ -72,7 +73,7 @@ export async function replayCompactWallPresentation(value:CompactWallPresentatio
    pending.segment.valueRuns.push(...valueRuns);
    if(pending.segment.valueRuns.length===pending.total){ready.push(pending.segment);ids.add(pending.segment.id);runs+=pending.total;if(runs>value.runs)throw Error('Invalid compact wall cache value total');pending=undefined;header=undefined;index++;}
   }
-  signal.throwIfAborted();if(ready.length)publish(ready);await yieldTask();
+  signal.throwIfAborted();if(ready.length)publish(ready);await yieldHistoryTask(signal,'user-visible');
  }
  signal.throwIfAborted();if(pending||index!==value.segments||runs!==value.runs||decoded!==value.decodedBytes||encoded!==value.bytes)throw Error('Incomplete compact wall cache coverage');
 }
