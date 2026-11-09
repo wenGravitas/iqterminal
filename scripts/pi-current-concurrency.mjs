@@ -62,7 +62,7 @@ try{for(let run=1;run<=5;run++)for(const scenario of (run%2?['current-only','con
   return {...p,now,bootstrapMs:p.firstAt===null?null:p.firstAt-p.started,maxReceiveGapMs:Math.max(...gaps),heap:performance.memory?.usedJSHeapSize,diagnostics:window.__terminal.feed.diagnostics,panels:[...window.__terminal.panels.values()].map(p=>({id:p.params.api.id,footprint:p.diagnostics().footprint,renderer:p.diagnostics().renderer}))};
  }).catch(()=>null);
  const environment=await page.evaluate(()=>({fixture:window.__terminal.feed.diagnostics?.fixture,config:window.__terminal.feed.diagnostics?.staging?.config})).catch(()=>null);
- if(!error)try{assert.equal(environment.fixture,false);assert.deepEqual(environment.config,{dataMode:'staging',historyTiles:true,build});}catch(e){error=String(e);}
+ if(!error)try{assert.equal(environment.fixture,false);assert.equal(environment.config?.dataMode,'staging');assert.equal(environment.config?.historyTiles,true);assert.equal(environment.config?.build,build);if(process.env.IQ_BENCH_YIELD_MODE)assert.equal(environment.config?.historyTaskYield,process.env.IQ_BENCH_YIELD_MODE);}catch(e){error=String(e);}
  const derivedAfter=await health(context,'/v2/history/health');
  const sourceAfter=await health(context,'/v1/health');
  await page.screenshot({path:`${dir}/${scenario}-${run}.png`}).catch(()=>{});

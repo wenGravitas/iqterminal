@@ -16,6 +16,7 @@ export function wallLoadingGate(samples,reference){
   const settings=c.indicators?.find(i=>i.definitionId==='native.order-walls')?.settings;
   if(s.requested?.from!==reference.from||s.requested?.to!==reference.to||reference.from%spec.step||reference.to>last.nativeCandles?.closedBoundary)failures.push('incorrect or non-past requested window');
   if(!/^[a-f0-9]{40}$/.test(s.build??'')||s.environmentVerification?.valid!==true||s.environmentVerification.fixture!==false||s.environmentVerification.actual?.build!==s.build||s.environmentVerification.actual?.dataMode!=='staging'||s.environmentVerification.actual?.historyTiles!==true||!s.appVisibilityGuard||!s.emptyBrowserCache||s.exception||s.errors?.length)failures.push('unverified environment or failed observation');
+  if(s.cpuProfile||s.workerCpuProfile)failures.push('profiled observations cannot certify loading latency');
   if(c.venue!=='binance'||c.market!==spec.market||c.interval!==spec.interval||c.type!=='candle'||settings?.mode!=='top-levels'||settings.topLevels!==8||settings.searchRangePercent!==10||settings.aggregation!=='native'||settings.showHistory!==true)failures.push('incorrect default profile');
   if(last.visibility!=='visible'||!v||Math.abs(v.from*1000-reference.from)>=1||Math.abs(v.to*1000-reference.to)>=1||!p||Math.abs(p.fromMs-reference.from)>=1||Math.abs(p.toMs-reference.to)>=1)failures.push('requested viewport not painted');
   const presentationValid=failures.length===0;
