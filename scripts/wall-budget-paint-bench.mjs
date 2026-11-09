@@ -15,7 +15,7 @@ const out=resolve('artifacts/pi-history-r1/budget-paint-'+label);await mkdir(out
 const baseline='ae22752',candidate=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 execFileSync('git',['diff','--quiet','--','src']);
 const temp=await mkdtemp(join(tmpdir(),'iq-wall-math-'));let browser;
-const resources=async()=>({at:new Date().toISOString(),load:(await readFile('/proc/loadavg','utf8')).trim(),memory:await readFile('/proc/meminfo','utf8'),cpu:await readFile('/proc/stat','utf8'),vmstat:await readFile('/proc/vmstat','utf8'),pressure:await readFile('/proc/pressure/cpu','utf8')});
+const resources=async()=>({at:new Date().toISOString(),load:(await readFile('/proc/loadavg','utf8')).trim(),memory:await readFile('/proc/meminfo','utf8'),cpu:await readFile('/proc/stat','utf8'),vmstat:await readFile('/proc/vmstat','utf8'),pressure:await readFile('/proc/pressure/cpu','utf8').catch(error=>({unavailable:true,code:error.code??'UNKNOWN',message:String(error.message)}))});
 try{
  const source=resolve('src/chart/order-walls.ts'),old=execFileSync('git',['show',baseline+':src/chart/order-walls.ts'],{encoding:'utf8'}).replace(/from\s+(['"])(\.[^'"]+)\1/g,(_all,_quote,path)=>'from '+JSON.stringify(resolve(dirname(source),path)));
  await writeFile(join(temp,'baseline.ts'),old);await writeFile(join(temp,'entry.ts'),`export {OrderWallsPrimitive as Baseline} from './baseline';export {OrderWallsPrimitive as Candidate} from ${JSON.stringify(source)};export {createChart} from ${JSON.stringify(fileURLToPath(import.meta.resolve('openalgo-charts')))};`);
