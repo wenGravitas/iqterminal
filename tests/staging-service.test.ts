@@ -243,6 +243,7 @@ test('prepared hourly history renders before a delayed live bootstrap and remain
  const hour=3600000,day=Date.UTC(2026,10,4),now=day+16*hour+19*60000,events:Event[]=[],sockets:Socket[]=[];
  let finishBootstrap!:(response:Response)=>void;
  const request:any=async(url:string)=>{
+  if(url.endsWith('/footprints-batch'))return new Response(null,{status:405});
   if(!url.includes('/v2/history/footprints'))return new Promise<Response>(resolve=>finishBootstrap=resolve);
   const q=new URL(url,'http://localhost').searchParams,from=Number(q.get('from')),to=Number(q.get('to'));
   return new Response(JSON.stringify({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(to-from)/hour},(_,i)=>{

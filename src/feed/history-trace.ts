@@ -1,6 +1,7 @@
 export interface HistoryRequestTrace {
  id:string;url:string;eligibleAt:number;wireAt:number;headersAt?:number;receivedAt?:number;decodedAt?:number;
  queueMs:number;headerMs?:number;transferMs?:number;decodeMs?:number;encodedBytes?:number;decodedBytes?:number;
+ streamMs?:number;applyMs?:number;requestedFrom?:number;requestedTo?:number;chunks?:number;
  jobs?:Array<{id:string;lastQueryId?:string;queuePosition?:number|null;pages?:number;records?:number;category?:string;retryable?:boolean}>;
  receivedBars?:number;receivedFrom?:number;receivedLast?:number;
  requestId?:string;serverTiming?:string;proxyQueueMs?:number;proxyHeaderMs?:number;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;slots?:number;state?:string;error?:string;
@@ -10,6 +11,7 @@ let sequence=0;
 const traces:HistoryRequestTrace[]=[];
 export const historyViewId=()=>`view-${sessionId}-${++sequence}`;
 export function historyRequestTraces(){return traces.map(trace=>({...trace}));}
+export function recordHistoryTrace(trace:HistoryRequestTrace){traces.push(trace);if(traces.length>256)traces.shift();}
 /** All phase durations use this worker's monotonic clock. Server durations are separate. */
 export async function tracedHistoryJson(request:typeof fetch,url:string,signal:AbortSignal,id:string,eligibleAt:number,options:{maxDecodedBytes?:number}={}){
  const wireAt=performance.now(),trace:HistoryRequestTrace={id,url,eligibleAt,wireAt,queueMs:wireAt-eligibleAt};

@@ -35,6 +35,7 @@ for(const mode of ['footprint','candle-totals'] as const)test(`prepared ${mode} 
   const json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles'))return json({source:'binance-native-kline',candles:Array.from({length:100},(_,i)=>{const t=Math.floor(now/step)*step-(99-i)*step;return {t,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:t<Math.floor(now/step)*step};})});
   if(u.pathname.endsWith('/footprint-current')){await currentGate;return json({version:1,state:'building'});}
+  if(u.pathname.endsWith('/footprints-batch'))return route.fulfill({status:405});
   if(u.pathname.endsWith('/footprints')){
    const from=Number(u.searchParams.get('from')),to=Number(u.searchParams.get('to'));requests.push({from,to});
    const tiles=[];for(let at=from;at<to;at+=step)tiles.push({from:at,revision:1,bar:executionBar(at,step),coverage:{from:at,to:at+step,complete:true,gaps:[]}});
@@ -60,9 +61,9 @@ for(const mode of ['footprint','candle-totals'] as const)test(`prepared ${mode} 
  releaseCurrent();
 });
 
-test('a late native candle snapshot cannot move a restored 24h footprint range',async({page,context})=>{
+for(const transport of ['legacy','batch'] as const)test(`a late native candle snapshot cannot move a restored 24h footprint range (${transport})`,async({page,context})=>{
  test.setTimeout(45000);const end=Math.floor(Date.now()/HOUR)*HOUR,from=end-24*HOUR;
- let releaseNative!:()=>void;const nativeGate=new Promise<void>(resolve=>releaseNative=resolve);
+ const batchReads:any[]=[];let releaseNative!:()=>void;const nativeGate=new Promise<void>(resolve=>releaseNative=resolve);
  await page.addInitScript(({from,to})=>{
   const id='chart-delayed-native',layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params:{venue:'binance',market:'perpetual',interval:'1h',type:'footprint',rowPrice:25,historyViewport:{from,to},studies:[]},minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
   localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));
@@ -71,6 +72,12 @@ test('a late native candle snapshot cannot move a restored 24h footprint range',
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){await nativeGate;return json({source:'binance-native-kline',candles:Array.from({length:1000},(_,i)=>({t:end-(999-i)*HOUR,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:i<999}))});}
   if(u.pathname.endsWith('/footprint-current'))return json({version:1,state:'building'});
+  if(u.pathname.endsWith('/footprints-batch')){
+   if(transport==='legacy')return route.fulfill({status:405});
+   const input=route.request().postDataJSON();expect(input.version).toBe(1);expect(input.requests.length).toBeLessThanOrEqual(6);batchReads.push(input);
+   const frames=input.requests.map((request:any,index:number)=>{const {from:a,to:b,interval,rowPrice,market}=request;expect(b-a).toBeLessThanOrEqual(4*HOUR);return {version:1,kind:'chunk',index,request:{from:a,to:b,interval,rowPrice,market},data:{version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))}};});
+   frames.push({version:1,kind:'end',members:input.requests.length,failed:0});return route.fulfill({contentType:'application/x-ndjson',headers:{'x-iq-footprint-batch':'1','x-iq-batch-chunks':String(input.requests.length)},body:frames.map((frame:any)=>JSON.stringify(frame)+'\n').join('')});
+  }
   if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))});}
   return json({version:1,cursor:0,watches:[],events:[]});
  });
@@ -78,8 +85,8 @@ test('a late native candle snapshot cannot move a restored 24h footprint range',
  const view=()=>page.evaluate(()=>{const p=(window as any).__terminal.panels.get('chart-delayed-native');return p.engine.visibleTimeRange();});
  expect(await view()).toEqual({from:from/1000,to:end/1000});releaseNative();
  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.panels.get('chart-delayed-native').candles.length)).toBe(1000);
- expect(await view()).toEqual({from:from/1000,to:end/1000});
- await page.screenshot({path:capturePath('late-native-24h-footprint.png')});
+ expect(await view()).toEqual({from:from/1000,to:end/1000});if(transport==='batch')expect(batchReads.length).toBeGreaterThan(0);
+ await page.screenshot({path:capturePath(`late-native-24h-footprint-${transport}.png`)});
 });
 
 for(const future of [false,true])test(future?'a delayed current bootstrap retains five closed bars and future whitespace':'a delayed current bootstrap cannot expand a restored past footprint range',async({page,context})=>{
@@ -91,6 +98,7 @@ for(const future of [false,true])test(future?'a delayed current bootstrap retain
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles'))return json({source:'binance-native-kline',candles:[]});
   if(u.pathname.endsWith('/footprint-current')){await gate;return json({version:1,state:'ready',source:'binance-usdm-aggtrade',market:'perpetual',tickSize:.1,watermark:1,cursor:1,coverage:{from:current,to:now,confirmedFrom:from,confirmedTo:now,gaps:[],complete:true},bars:[executionBar(current,HOUR)],status:{state:'live',lastUpdate:now}});}
+  if(u.pathname.endsWith('/footprints-batch'))return route.fulfill({status:405});
   if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))});}
   return json({version:1,cursor:0,watches:[],events:[]});
  });
@@ -111,6 +119,7 @@ test('candle-chart Footprint Totals follows the visible range instead of a saved
  await context.route('**/market-data/**',route=>{const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles'))return json({source:'binance-native-kline',candles:Array.from({length:100},(_,i)=>({t:end-(99-i)*HOUR,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:i<99}))});
   if(u.pathname.endsWith('/footprint-current'))return json({version:1,state:'building'});
+  if(u.pathname.endsWith('/footprints-batch'))return route.fulfill({status:405});
   if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))});}
   return json({version:1,cursor:0,watches:[],events:[]});
  });
@@ -127,6 +136,7 @@ test('failed live Totals exposes scoped Retry while healthy native candles and c
  await context.route('**/market-data/**',route=>{const u=new URL(route.request().url()),step=u.searchParams.get('interval')==='1h'?HOUR:300000,json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){nativeRequests++;return json({source:'binance-native-kline',candles:Array.from({length:100},(_,i)=>({t:Math.floor(now/step)*step-(99-i)*step,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:i<99}))});}
   if(u.pathname.endsWith('/footprint-current')){if(u.searchParams.get('retry')!=='1'&&!retries)return json({version:1,state:'unavailable',error:'Retained current job failed',job:{failed:true,retryable:true}});if(u.searchParams.get('retry')==='1')retries++;return json({version:1,state:'ready',source:'binance-usdm-aggtrade',market:'perpetual',tickSize:.1,watermark:1,cursor:1,coverage:{from:current,to:now,confirmedFrom:current-24*HOUR,confirmedTo:now,gaps:[],complete:true},bars:[executionBar(current,HOUR)],status:{state:'live',lastUpdate:now}});}
+  if(u.pathname.endsWith('/footprints-batch'))return route.fulfill({status:405});
   if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/step},(_,i)=>({from:a+i*step,revision:1,bar:executionBar(a+i*step,step),coverage:{from:a+i*step,to:a+(i+1)*step,complete:true,gaps:[]}}))});}
   return json({version:1,cursor:0,watches:[],events:[]});
  });
@@ -227,6 +237,7 @@ test('saved footprint reads start before the delayed UI bundle and hand off one 
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){nativeRequests++;return json({source:'binance-native-kline',candles:[{t:end,o:80000,h:80025,l:79975,c:80010,v:8,revision:1,closed:false}]});}
   if(u.pathname.endsWith('/footprint-current')){currentRequests++;return json({version:1,state:'ready',source:'binance-usdm-aggtrade',market:'perpetual',tickSize:.1,watermark:1,cursor:1,coverage:{from:end,to:now,confirmedFrom:from,confirmedTo:now,gaps:[],complete:true},bars:[executionBar(end,HOUR)],status:{state:'live',lastUpdate:Date.now()}});}
+  if(u.pathname.endsWith('/footprints-batch'))return route.fulfill({status:405});
   if(u.pathname.endsWith('/footprints')){const a=Number(u.searchParams.get('from')),b=Number(u.searchParams.get('to'));ranges.push({from:a,to:b});return json({version:1,feed:'binance:perpetual:BTCUSDT:aggregate-trade',state:'ready',tiles:Array.from({length:(b-a)/HOUR},(_,i)=>({from:a+i*HOUR,revision:1,bar:executionBar(a+i*HOUR,HOUR),coverage:{from:a+i*HOUR,to:a+(i+1)*HOUR,complete:true,gaps:[]}}))});}
   return json({version:1,cursor:0,watches:[],events:[]});
  });

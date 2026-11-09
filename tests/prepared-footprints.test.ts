@@ -49,6 +49,7 @@ test('24h of hourly tiles remains partial until every chunk validates, nearest h
  const hour=3600000,from=1800000000000,to=from+24*hour,requests:Array<{from:number;to:number}>=[],events:any[]=[];
  let release!:()=>void; const held=new Promise<void>(resolve=>release=resolve);
  const request:any=async(url:string)=>{
+  if(url.endsWith('/footprints-batch'))return new Response(null,{status:405});
   const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from')),end=Number(q.get('to'));
   requests.push({from:start,to:end}); if(start===from)await held;
   const tiles=[];for(let at=start;at<end;at+=hour)tiles.push({from:at,revision:1,bar:{time:at/1000},coverage:{from:at,to:at+hour,complete:true,gaps:[]}});
@@ -67,6 +68,7 @@ test('24h of hourly tiles remains partial until every chunk validates, nearest h
 test('known empty, source gaps and failed sibling chunks retain precise independent coverage',async()=>{
  const hour=3600000,from=1800000000000,to=from+8*hour,events:any[]=[];
  const request:any=async(url:string)=>{
+  if(url.endsWith('/footprints-batch'))return new Response(null,{status:405});
   const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from'));
   if(start===from)return new Response(JSON.stringify({error:'retryable source read'}),{status:503});
   return new Response(JSON.stringify({version:1,feed,state:'ready',tiles:Array.from({length:4},(_,i)=>({from:start+i*hour,revision:1,bar:i===0?null:{time:(start+i*hour)/1000},coverage:{from:start+i*hour,to:start+(i+1)*hour,complete:i!==1,gaps:i===1?[{from:start+hour,to:start+hour+1000,reason:'not recorded'}]:[]}}))}));

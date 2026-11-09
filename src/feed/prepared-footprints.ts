@@ -1,4 +1,5 @@
 import {historyViewId,tracedHistoryJson} from './history-trace';
+import {readFootprintBatch,FootprintBatchUnsupported} from './footprint-batch';
 import { historyScheduler } from './history-scheduler';
 import { HistoryTileCache, type TileCache } from './history-tile-cache';
 import { duration, footprintAnalysisSourceKey, type FootprintAnalysisSummary, type FootprintBar, type Interval, type Market } from './protocol';
@@ -96,8 +97,7 @@ export class PreparedFootprints {
     for (;;) {
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
       let visiblePending = false, analysisPending = false, analysisFailed = false;
-      const runChunk = async ({ from: start, to: end, priority }: typeof chunks[number]) => {
-        if (chunkStates.get(start) === 'ready') return;
+      const chunkUrl = ({from:start,to:end}:typeof chunks[number]) => {
         const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         const known = chunkStarts.flatMap(at => {
           const visible = visibleTiles.get(at);
@@ -110,12 +110,17 @@ export class PreparedFootprints {
         if (market === 'spot') params.set('market', 'spot');
         if (buildJobs.has(start)) params.set('job', buildJobs.get(start)!);
         if (retry && !retryChunks.has(start)) { params.set('retry','1'); retryChunks.add(start); }
-        const url = `/market-data/v2/history/footprints?${params}`;
+        return `/market-data/v2/history/footprints?${params}`;
+      };
+      const runChunk = async ({ from: start, to: end, priority }: typeof chunks[number],read?:()=>Promise<any>) => {
+        if (chunkStates.get(start) === 'ready') return;
+        const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         let data: any;
         try {
           const eligibleAt = performance.now();
-          data = await historyScheduler.read(url, 'footprint', signal, shared => tracedHistoryJson(this.request,url,
-            AbortSignal.any([shared, AbortSignal.timeout(30_000)]),viewId,eligibleAt), priority);
+          if(read)data=await read();
+          else{const url=chunkUrl({from:start,to:end,priority});data = await historyScheduler.read(url, 'footprint', signal, shared => tracedHistoryJson(this.request,url,
+            AbortSignal.any([shared, AbortSignal.timeout(30_000)]),viewId,eligibleAt), priority);}
         } catch (error) {
           if (signal.aborted) throw error;
           if (priority === 1) { analysisFailed = true; return; }
@@ -194,9 +199,27 @@ export class PreparedFootprints {
         if (priority === 0 && data.state === 'unavailable') throw Error(data.error ?? 'Historical footprint build unavailable; Retry available');
         if (data.state === 'ready' && chunkStarts.some(at => !validatedTimes.has(at / 1000))) throw Error('Prepared footprint response omitted requested slots');
       };
-      // Shared admission keeps two chunks on wire at most, across all charts.
-      // Await all visible chunks so an early failure cannot suppress useful siblings.
-      const visibleResults = await Promise.allSettled(chunks.filter(chunk => chunk.priority === 0).map(runChunk));
+      // Up to six individual 4h reads share one progressive transport. Larger
+      // viewports use more waves; this is not a total chart-history limit.
+      // Older APIs fall back only on an explicit unsupported HTTP status.
+      const pendingVisible=chunks.filter(chunk=>chunk.priority===0&&chunkStates.get(chunk.from)!=='ready');
+      const visibleResults:PromiseSettledResult<void>[]=[];
+      for(let offset=0;offset<pendingVisible.length;offset+=6){
+        const wave=pendingVisible.slice(offset,offset+6);
+        if(wave.length===1){visibleResults.push(...await Promise.allSettled(wave.map(chunk=>runChunk(chunk))));continue;}
+        const urls=wave.map(chunkUrl);
+        try{await readFootprintBatch(this.request,urls,signal,async(index,data,error)=>{
+          try{await runChunk(wave[index]!,()=>error?Promise.reject(error):Promise.resolve(data));visibleResults.push({status:'fulfilled',value:undefined});}
+          catch(reason){visibleResults.push({status:'rejected',reason});}
+        },viewId);}
+        catch(error){if(error instanceof FootprintBatchUnsupported){
+          // Retry commands were consumed when the batch URL was constructed.
+          // Use those exact commands on the legacy path, once per chunk.
+          visibleResults.push(...await Promise.allSettled(wave.map((chunk,i)=>runChunk(chunk,()=>{
+            const eligibleAt=performance.now(),url=urls[i]!;return historyScheduler.read(url,'footprint',signal,shared=>tracedHistoryJson(this.request,url,AbortSignal.any([shared,AbortSignal.timeout(30_000)]),viewId,eligibleAt));
+          }))));
+        }else visibleResults.push({status:'rejected',reason:error});}
+      }
       const failed = visibleResults.find(result => result.status === 'rejected');
       if (failed?.status === 'rejected') throw failed.reason;
       for (const chunk of chunks.filter(chunk => chunk.priority === 1)) {
