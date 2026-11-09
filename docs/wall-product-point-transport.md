@@ -30,7 +30,10 @@ most one prior quantity/product pair, adding no history-sized cache. JSON/native
 strict time guarantee. Encoding yields on the existing serving event loop; compression uses the existing
 libuv worker pool and bounded shared cache. No exchange or database connection is added.
 
-The candidate is not deployed. Focused codec/delivery/hash/cancellation tests,
+The API is staged at `dca1bb8` through the guarded API-only rollout, with all
+seven protected identities unchanged. Client `c68989c` uses the new capability
+in the pinned headless Pi cohorts. Both full-view latency gates still fail; see
+[staging results](wall-product-staging-results.md). Focused codec/delivery/hash/cancellation tests,
 typecheck/build and captured actual bounded-frame measurements must precede any
 staging API-only rollout. Follow the existing staging workflow and preserve all
 protected collector/materializer/admission identities. Real five-run Pi loading

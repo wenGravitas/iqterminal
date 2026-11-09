@@ -1,3 +1,44 @@
+## Release gate audit after client397/API dca
+
+The overall release is **INCOMPLETE**. Results stay tied to the exact recorded
+build, source window and headless/foreground mode; prior passes are not silently
+recertified on the current candidate.
+
+|Gate|Evidence and current acceptance|
+|---|---|
+|4h5m/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
+|24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
+|Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
+|Useful current walls|Current-candidate five-run gate pending|
+|30hSpot5m Top8/10%/native|FAIL on397: first median7.46s/max8.94s; complete9.41s/13.31s|
+|30hUSD-M15m Top8/10%/native|FAIL on397: first5.58s/7.39s; complete16.93s/20.46s|
+|Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
+|Concurrent history, no current timeouts/gaps|Prior health timeout remains failed evidence; current confirmation continuity incomplete|
+|Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
+|Normal foreground Pi UX|Unverified; only explicitly headless browser tests used|
+|Missing footprint build/recovery|Busy333999-execution exact build and resume proven;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
+|Default footprint rollover|5m and1h actual rollover exact reference checks recorded; current candidate not revalidated|
+|Default wall preparation/rollover serving|Isolated coordinator build/resume proven; overlapping-window reuse and verified tail handoff unfinished; serving bridge/GC disabled|
+
+Both actual wall coverage gates on397 pass exact requested counts/slots and
+revision paint checks; that does not pass latency. The latest unit/source repair
+is the first-member admission change. See [its results](wall-native-admission-results.md)
+and [the preceding API rollout](wall-product-staging-results.md) for every sample.
+
+Latest candidate: [native wall admission results](wall-native-admission-results.md).
+Client397/API dca: all10 exact historical views complete; wall loading still FAILS.
+Spot completion median9.41s/max13.31s; USD-M16.93s/max20.46s. The first-response
+admission regression is repaired (old fixture fails/new passes), but native
+run5still waits1.014s and worker/transfer/render costs remain. Protected services
+are unchanged; normal foreground UX and overall release acceptance are incomplete.
+
+Latest staging evidence: [product transport Pi results](wall-product-staging-results.md).
+API dca1bb8/client c68989c: all10 historical views paint exact requested coverage,
+but Spot completion median11.55s/max12.89s and USD-M18.25s/max26.57s FAIL.
+All seven protected services retain exact IDs/start times. A native viewport read
+waits2.8s behind eager wall prefetch in one trace; a separate client admission
+candidate is under validation. No performance acceptance or production release.
+
 Latest candidate: [exact product transport](wall-product-point-transport.md), frontend18c95e3/backenddca1bb8.
 No staging API deployment yet. Five alternating production-codec CPU samples on
 actual first bounded batches restore every canonical byte: compressed bytes fall

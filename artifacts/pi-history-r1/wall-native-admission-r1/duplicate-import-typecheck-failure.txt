@@ -1,0 +1,7 @@
+
+> terminal-t0@0.1.0 typecheck /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit
+
+tests/prepared-wall-projection.test.ts(1,9): error TS2300: Duplicate identifier 'historyScheduler'.
+tests/prepared-wall-projection.test.ts(13,9): error TS2300: Duplicate identifier 'historyScheduler'.
+ ELIFECYCLE  Command failed with exit code 1.

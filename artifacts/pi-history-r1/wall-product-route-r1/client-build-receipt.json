@@ -1,0 +1,10 @@
+{
+  "build": "c68989c5ed1ca6b8f6ebe1e873df7cc1f64b225b",
+  "url": "http://127.0.0.1:4187",
+  "indexSha256": "d9f76fb58e10bb1ca34698c3a46551900539b79cffb1fb4f359ae58054c5fcb5",
+  "mainAsset": "/theme-init.js",
+  "mainSha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+  "dataMode": "staging",
+  "historyTiles": true,
+  "scope": "Served index/main byte equality; worker runtime config is separately required by each sample."
+}
