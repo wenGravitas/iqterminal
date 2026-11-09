@@ -18,7 +18,7 @@
     "wall6fc-f82-perp-r1-executed.mjs": "92fc99f9e66829cd6e2532d273366097901d826ffea730bcf4039adbcf1b0db9",
     "wall6fc-f82-perp-r1-observations.jsonl": "3cc73326cfa1515defe9f69b943bb029e39e89f057123f0a624b3908528ac71e",
     "wall6fc-f82-perp-r1-samples.jsonl": "ebaf4edfc8577cf127e719ab2b17d5eb6d037400ad7c8f94346ac0d15efb5bf4",
-    "wall6fc-f82-perp-r1-summary.json": "0ccd30ba750d7d238e2dfe081a864c63fa5218bb76cfa7e83b230ecf8d993636",
+    "wall6fc-f82-perp-r1-summary.json": "8e34dcb4cb04ae62fa42b623a4452c3239cc50a0774c594a3048c4d175747880",
     "wall6fc-f82-perp-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
     "wall6fc-f82-perp-r1-walls-30h-perp-15m-1.png": "59ffed74a411c3771a0c0c0b067c9c7022c305ee47bd30fc4c525e0da90f4b20",
     "wall6fc-f82-perp-r1-walls-30h-perp-15m-2.png": "1ad2f1e77559b46e2f37f0584fc77a3604a4ba3582517899d944776de13d038a",
@@ -30,12 +30,15 @@
     "wall6fc-f82-spot-r1-executed.mjs": "92fc99f9e66829cd6e2532d273366097901d826ffea730bcf4039adbcf1b0db9",
     "wall6fc-f82-spot-r1-observations.jsonl": "a7194ca0c6bdb3783ecdd430092ca9657133f5b6c505b970778d73070d628b05",
     "wall6fc-f82-spot-r1-samples.jsonl": "3075f41d2a961ff485294495b85b89032f9232535246373fd236aa8649cf479a",
-    "wall6fc-f82-spot-r1-summary.json": "5c09f9c33a0850f4960099454dc697befd103d484358d42b2131b2d8e4532063",
+    "wall6fc-f82-spot-r1-summary.json": "6e694ee6e12cd19c533e88ffed36ba69ce7a802b93e3175ca49e45e15f09b6d4",
     "wall6fc-f82-spot-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
     "wall6fc-f82-spot-r1-walls-30h-spot-5m-1.png": "8cda95f75d88afe859457c7a59faeb860b132dc0b9233cd64522589078d146a5",
     "wall6fc-f82-spot-r1-walls-30h-spot-5m-2.png": "2c5df2de0960a11c19db221a41f920b6ed77a79af8ba680030b7e2d63486c3bd",
     "wall6fc-f82-spot-r1-walls-30h-spot-5m-3.png": "ba8e3fe6c6c9485a019ed230a5184dddce122076fa72ba3f7fe95168dc9beb24",
     "wall6fc-f82-spot-r1-walls-30h-spot-5m-4.png": "fc632e4f14fb52b577a975a3190215933d08fb9693dc46fefbc3ecd302d3c8d1",
     "wall6fc-f82-spot-r1-walls-30h-spot-5m-5.png": "0f92a84b1e53e6e9246b7b0d4ba7422136a5ea9d29e0bc116c5682efc786fb5d"
-  }
+  },
+  "gateCheckerScope": "Incumbent independent-reference/settings/painted-viewport assertions retained; added raw native slots and response revision checks",
+  "gateCheckerTests": 9,
+  "gateCheckerSha256": "cdf66868d3475b089b64a6a34a6f3131d73e16fd49b122078da7ee65c4a5e577"
 }

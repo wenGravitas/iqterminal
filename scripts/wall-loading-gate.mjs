@@ -1,30 +1,40 @@
 import {readFileSync,writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
-const specs={'walls-30h-spot-5m':{market:'spot',step:300000},'walls-30h-perp-15m':{market:'perpetual',step:900000}};
-/** Five comparable ready-server/cold-client wall observations. Independent
- * source/paint counts and native slots are required; a completion flag alone
- * cannot certify a view. Source gaps remain part of the exact reference. */
-export function wallLoadingGate(samples){
- const first=samples[0],spec=specs[first?.case];
- if(!spec||samples.length!==5||new Set(samples.map(r=>r.run)).size!==5||samples.some(r=>!Number.isInteger(r.run)||r.run<1||r.run>5))throw Error('Expected five distinct runs of one wall scenario');
- const identity=r=>JSON.stringify([r.case,r.build,r.route,r.rendering,r.requested,r.wallCoverageVerification?.reference]);
- if(samples.some(r=>identity(r)!==identity(first)))throw Error('Mixed wall scenario/build/route/reference/window');
- const rows=[...samples].sort((a,b)=>a.run-b.run).map(r=>{
-  const failures=[],last=r.last,wall=last?.wall,d=wall?.render,a=wall?.status?.archive,reference=r.wallCoverageVerification?.reference,{from,to}=r.requested??{},step=spec.step;
-  if(!Number.isSafeInteger(from)||from%step||to-from!==30*3600000||!Number.isSafeInteger(last?.nativeCandles?.closedBoundary)||to>last.nativeCandles.closedBoundary)failures.push('incorrect or non-past30h range');
-  if(!/^[a-f0-9]{40}$/.test(r.build??'')||!r.environmentVerification?.valid||r.environmentVerification.fixture!==false||r.environmentVerification.actual?.build!==r.build||r.environmentVerification.actual?.dataMode!=='staging'||r.environmentVerification.actual?.historyTiles!==true||!r.appVisibilityGuard||!r.emptyBrowserCache||r.exception||r.cpuProfile||r.fitWalls||r.extendedCoverageObservation||r.keepCurrent)failures.push('unverified environment or supplemental observation');
-  if(last?.config?.venue!=='binance'||last.config.market!==spec.market||last.config.interval!==(step===300000?'5m':'15m')||last.config.type!=='candle'||last.visibility!=='visible'||!Number.isFinite(last.viewport?.from)||!Number.isFinite(last.viewport?.to)||Math.abs(last.viewport.from*1000-from)>=1||Math.abs(last.viewport.to*1000-to)>=1)failures.push('wrong chart configuration/visible range');
-  const revisionRequests=(r.requests??[]).filter(q=>q.url.includes('/walls/projection-batch')&&q.status===200);
-  if(!reference||!/^[a-f0-9]{64}$/.test(reference.sourceToken??'')||reference.from!==from||reference.to!==to||reference.sourceFrom!==from-step||reference.sourceTo!==to+step||!revisionRequests.length||revisionRequests.some(q=>q.headers?.['x-iq-source-revision']!==reference.sourceToken)||r.wallCoverageVerification?.valid!==true)failures.push('unverified exact canonical source revision');
-  if(!a||a.requestComplete!==true||a.exact!==true||!['complete','partial'].includes(a.state)||a.from!==reference?.sourceFrom||a.to!==reference?.sourceTo||a.loadedThrough<a.to||!Array.isArray(a.gaps)||a.gaps.length!==reference?.gaps||a.market!==spec.market||a.aggregation!=='native'||a.requestedTopN!==8||a.requestedBandPercent!==10)failures.push('incomplete or altered archive coverage/profile');
-  if(!d?.mounted||!Number.isSafeInteger(d.visibleHistorical)||d.visibleHistorical<=0||!Number.isSafeInteger(d.draws)||d.draws<=0||d.archiveSegments!==reference?.segments||d.segments!==reference?.segments||d.archiveValueRuns!==reference?.valueRuns||d.pendingProjectionSegments!==0||d.pendingReferenceSegments!==0||!Number.isInteger(d.inputRevision)||d.inputRevision<0||d.inputRevision!==d.paintedRevision||d.valueHistoryLimited||d.episodeHistoryLimited)failures.push('incomplete latest exact wall paint');
-  const native=new Set(last?.nativeCandles?.visibleClosed??[]);let missingNative=0;for(let at=from;at<to;at+=step)if(!native.has(at))missingNative++;
-  if(missingNative||r.nativeCoverage?.valid!==true)failures.push('incomplete validated native price slots');
-  if(typeof r.completeMs!=='number'||!Number.isFinite(r.completeMs)||r.completeMs<0||!Number.isFinite(r.deadlineMs)||r.deadlineMs<=0||r.completeMs>r.deadlineMs||r.deadlineMs>12000||!Number.isFinite(last?.now)||r.completeMs>last.now||r.paintMarks?.completeAt!==r.completeMs||r.paintMarks?.firstHistoryAt!==r.firstHistoryMs||r.timingBasis!=='navigation-relative-painted-content-observation-v4-scenario-stop')failures.push('no timely observed complete paint');
-  return {run:r.run,firstUsefulHistoryMs:r.firstHistoryMs,completeMs:r.completeMs,segments:d?.archiveSegments,valueRuns:d?.archiveValueRuns,nativeSlots:(to-from)/step-missingNative,failures,coverageValid:failures.length===0};
+const specifications={'walls-30h-spot-5m':{market:'spot',interval:'5m',step:300000,slots:360},'walls-30h-perp-15m':{market:'perpetual',interval:'15m',step:900000,slots:120}};
+const finite=n=>typeof n==='number'&&Number.isFinite(n)&&n>=0;
+const stats=values=>values.every(finite)?{medianMs:[...values].sort((a,b)=>a-b)[2],maximumMs:Math.max(...values)}:{medianMs:null,maximumMs:null};
+/** Five identical pinned real-chart observations. Missing completion is never
+ * omitted from a median. Long observation deadlines do not widen gate targets. */
+export function wallLoadingGate(samples,reference){
+ const first=samples[0],spec=specifications[first?.case];
+ if(!spec||samples.length!==5||new Set(samples.map(s=>s.run)).size!==5||samples.some(s=>!Number.isInteger(s.run)||s.run<1||s.run>5))throw Error('Expected five distinct runs of one supported wall scenario');
+ if(!reference||!Number.isSafeInteger(reference.from)||reference.to-reference.from!==30*3600000||!Number.isSafeInteger(reference.sourceFrom)||!Number.isSafeInteger(reference.sourceTo)||reference.sourceFrom>reference.from||reference.sourceTo<reference.to||!Number.isSafeInteger(reference.segments)||reference.segments<1||!Number.isSafeInteger(reference.valueRuns)||reference.valueRuns<1||!Number.isSafeInteger(reference.gaps)||reference.gaps<0||!/^[a-f0-9]{64}$/.test(reference.sourceToken??''))throw Error('Expected independently pinned exact wall reference');
+ const identity=s=>JSON.stringify([s.case,s.build,s.route,s.rendering,s.requested]);
+ if(samples.some(s=>identity(s)!==identity(first)))throw Error('Mixed case/build/route/rendering/requested window');
+ const rows=[...samples].sort((a,b)=>a.run-b.run).map(s=>{
+  const failures=[],last=s.last??{},r=last.wall?.render??{},a=last.wall?.status?.archive??{},c=last.config??{},v=last.viewport,n=s.nativeCoverage??{},p=r.paintedViewport;
+  const settings=c.indicators?.find(i=>i.definitionId==='native.order-walls')?.settings;
+  if(s.requested?.from!==reference.from||s.requested?.to!==reference.to||reference.from%spec.step||reference.to>last.nativeCandles?.closedBoundary)failures.push('incorrect or non-past requested window');
+  if(!/^[a-f0-9]{40}$/.test(s.build??'')||s.environmentVerification?.valid!==true||s.environmentVerification.fixture!==false||s.environmentVerification.actual?.build!==s.build||s.environmentVerification.actual?.dataMode!=='staging'||s.environmentVerification.actual?.historyTiles!==true||!s.appVisibilityGuard||!s.emptyBrowserCache||s.exception||s.errors?.length)failures.push('unverified environment or failed observation');
+  if(c.venue!=='binance'||c.market!==spec.market||c.interval!==spec.interval||c.type!=='candle'||settings?.mode!=='top-levels'||settings.topLevels!==8||settings.searchRangePercent!==10||settings.aggregation!=='native'||settings.showHistory!==true)failures.push('incorrect default profile');
+  if(last.visibility!=='visible'||!v||Math.abs(v.from*1000-reference.from)>=1||Math.abs(v.to*1000-reference.to)>=1||!p||Math.abs(p.fromMs-reference.from)>=1||Math.abs(p.toMs-reference.to)>=1)failures.push('requested viewport not painted');
+  const presentationValid=failures.length===0;
+  if(!r.mounted||r.visibleHistorical<=0||r.archiveSegments!==reference.segments||r.segments!==reference.segments||r.archiveValueRuns!==reference.valueRuns||r.pendingProjectionSegments!==0||r.pendingReferenceSegments!==0||!Number.isInteger(r.inputRevision)||r.inputRevision!==r.paintedRevision||r.valueHistoryLimited||r.episodeHistoryLimited)failures.push('incomplete exact wall paint');
+  if(!Number.isSafeInteger(r.draws)||r.draws<=0||!['complete','partial'].includes(a.state))failures.push('unpainted or unavailable archive');
+  const responses=(s.requests??[]).filter(q=>q.url.includes('/walls/projection-batch')&&q.status===200);
+  if(!responses.length||responses.some(q=>q.headers?.['x-iq-source-revision']!==reference.sourceToken))failures.push('response revision differs from independent source reference');
+  if(!a.requestComplete||!a.exact||a.from!==reference.sourceFrom||a.to!==reference.sourceTo||a.loadedThrough<reference.to||a.gaps?.length!==reference.gaps||a.requestedTopN!==8||a.requestedBandPercent!==10||a.aggregation!=='native'||a.market!==spec.market||!s.wallCoverageVerification?.valid||!s.wallCoverageVerification.sourceVerified||s.wallCoverageVerification.reference?.sourceToken!==reference.sourceToken)failures.push('incomplete validated source coverage');
+  if(!n.valid||n.capacityLimited||n.from!==reference.from||n.to!==reference.to||n.requestedSlots!==spec.slots||n.loadedSlots!==spec.slots||n.missing?.length)failures.push('incomplete native candle slots');
+  const native=new Set(last.nativeCandles?.visibleClosed??[]);for(let at=reference.from;at<reference.to;at+=spec.step)if(!native.has(at)){failures.push('missing raw native candle slot');break;}
+  if(!finite(s.firstHistoryMs)||s.firstHistoryMs>s.completeMs||!finite(s.completeMs)||!finite(last.now)||s.completeMs>s.deadlineMs||s.completeMs>last.now||s.paintMarks?.completeAt!==s.completeMs||s.timingBasis!=='navigation-relative-painted-content-observation-v4-scenario-stop')failures.push('no observed complete paint');
+  const firstUsefulValid=presentationValid&&finite(s.firstHistoryMs)&&s.firstHistoryMs<=s.deadlineMs&&s.paintMarks?.firstHistoryAt===s.firstHistoryMs&&r.visibleHistorical>0;
+  return {run:s.run,firstUsefulHistoryMs:s.firstHistoryMs,firstUsefulValid,completeMs:s.completeMs,segments:r.archiveSegments,valueRuns:r.archiveValueRuns,nativeSlots:n.loadedSlots,requestedNativeSlots:spec.slots,coverageValid:failures.length===0,failures};
  });
- const good=rows.every(r=>r.coverageValid),times=rows.map(r=>r.completeMs).sort((a,b)=>a-b),firstTimes=rows.map(r=>r.firstUsefulHistoryMs);
- const medianMs=good?times[2]:null,maximumMs=good?times[4]:null;
- return {case:first.case,build:first.build,route:first.route,rendering:first.rendering,requested:first.requested,samples:rows,medianMs,maximumMs,targets:{medianMs:5000,maximumMs:10000,firstHistoryMs:3000},pass:good&&medianMs<=5000&&maximumMs<=10000,firstHistoryPass:good&&firstTimes.every(t=>typeof t==='number'&&Number.isFinite(t)&&t>=0&&t<=3000),scope:'Exact available wall paint with independently validated native slots; native-body paint time, current/warm/concurrency/heap and foreground acceptance remain separate.'};
+ const complete=stats(rows.map(s=>s.coverageValid?s.completeMs:null)),useful=stats(rows.map(s=>s.firstUsefulValid?s.firstUsefulHistoryMs:null));
+ return {case:first.case,build:first.build,route:first.route,rendering:first.rendering,requested:first.requested,reference,samples:rows,firstUseful:{...useful,targetMaximumMs:3000,pass:useful.maximumMs!==null&&useful.maximumMs<=3000},complete:{...complete,targetMedianMs:5000,targetMaximumMs:10000,pass:complete.medianMs!==null&&complete.medianMs<=5000&&complete.maximumMs<=10000},scope:'Five pinned empty-browser-cache/already-prepared real-chart samples. No p95, finite-subset medians, current/warm/cold-build or foreground acceptance. Supplemental observation time does not widen latency targets.'};
 }
-if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const [input,output]=process.argv.slice(2);if(!input||!output)throw Error('Usage: wall-loading-gate samples.jsonl summary.json');const result=wallLoadingGate(readFileSync(input,'utf8').trim().split('\n').map(JSON.parse));writeFileSync(output,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({pass:result.pass,firstHistoryPass:result.firstHistoryPass,medianMs:result.medianMs,maximumMs:result.maximumMs,samples:result.samples}));if(!result.pass||!result.firstHistoryPass)process.exitCode=1;}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
+ const [input,output]=process.argv.slice(2);if(!input||!output)throw Error('Usage: node scripts/wall-loading-gate.mjs samples.jsonl summary.json');
+ const samples=readFileSync(input,'utf8').trim().split('\n').map(line=>JSON.parse(line)),refs=JSON.parse(readFileSync(new URL('./pi-wall-reference.json',import.meta.url),'utf8'));
+ const result=wallLoadingGate(samples,refs.cases[samples[0]?.case]);writeFileSync(output,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({case:result.case,firstUseful:result.firstUseful,complete:result.complete}));if(!result.complete.pass||!result.firstUseful.pass)process.exitCode=1;
+}

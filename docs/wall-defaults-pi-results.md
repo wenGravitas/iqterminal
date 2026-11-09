@@ -68,7 +68,9 @@ paint of8,293walls/49,154points Spot and23,850/104,112USD-M,360/120validated nat
 slots, unchanged requested ranges and default profile. Historical gaps35/47 remain
 explicit. The strict loading verifier separately tests source revision, profile,
 native slots, retained wall/value counts and latest painted revision; it cannot
-pass on `requestComplete` alone. Its four tests pass. No p95, shortened ranges or
+pass on `requestComplete` alone. Its nine tests pass. The incumbent painted-view,
+settings and independently pinned-reference assertions are retained alongside
+the additional raw native-slot/response-revision checks. No p95, shortened ranges or
 relaxed targets are used. Native-body paint time is not separately certified.
 
 Serving-resource observation windows contain each client cohort and capture host

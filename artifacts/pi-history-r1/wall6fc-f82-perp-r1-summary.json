@@ -7,66 +7,91 @@
     "from": 1793696400000,
     "to": 1793804400000
   },
+  "reference": {
+    "from": 1793696400000,
+    "to": 1793804400000,
+    "sourceFrom": 1793695500000,
+    "sourceTo": 1793805300000,
+    "sourceToken": "96b070b7571b23df67826ad0c2d0364f8e891205f5d1115ee79932b96333a70e",
+    "segments": 23850,
+    "valueRuns": 104112,
+    "gaps": 47,
+    "evidence": "backend 5dd8b93 wall-preparation-coordinator original-projector exact reference"
+  },
   "samples": [
     {
       "run": 1,
       "firstUsefulHistoryMs": 3646.699999999255,
+      "firstUsefulValid": true,
       "completeMs": 10682.900000000373,
       "segments": 23850,
       "valueRuns": 104112,
       "nativeSlots": 120,
-      "failures": [],
-      "coverageValid": true
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
     },
     {
       "run": 2,
       "firstUsefulHistoryMs": 4572.300000000745,
+      "firstUsefulValid": true,
       "completeMs": 10431.300000000745,
       "segments": 23850,
       "valueRuns": 104112,
       "nativeSlots": 120,
-      "failures": [],
-      "coverageValid": true
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
     },
     {
       "run": 3,
       "firstUsefulHistoryMs": 3312,
+      "firstUsefulValid": true,
       "completeMs": 9683.599999999627,
       "segments": 23850,
       "valueRuns": 104112,
       "nativeSlots": 120,
-      "failures": [],
-      "coverageValid": true
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
     },
     {
       "run": 4,
       "firstUsefulHistoryMs": 2706.10000000149,
+      "firstUsefulValid": true,
       "completeMs": 8424.60000000149,
       "segments": 23850,
       "valueRuns": 104112,
       "nativeSlots": 120,
-      "failures": [],
-      "coverageValid": true
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
     },
     {
       "run": 5,
       "firstUsefulHistoryMs": 3258.0999999996275,
+      "firstUsefulValid": true,
       "completeMs": 9810.900000000373,
       "segments": 23850,
       "valueRuns": 104112,
       "nativeSlots": 120,
-      "failures": [],
-      "coverageValid": true
+      "requestedNativeSlots": 120,
+      "coverageValid": true,
+      "failures": []
     }
   ],
-  "medianMs": 9810.900000000373,
-  "maximumMs": 10682.900000000373,
-  "targets": {
-    "medianMs": 5000,
-    "maximumMs": 10000,
-    "firstHistoryMs": 3000
+  "firstUseful": {
+    "medianMs": 3312,
+    "maximumMs": 4572.300000000745,
+    "targetMaximumMs": 3000,
+    "pass": false
   },
-  "pass": false,
-  "firstHistoryPass": false,
-  "scope": "Exact available wall paint with independently validated native slots; native-body paint time, current/warm/concurrency/heap and foreground acceptance remain separate."
+  "complete": {
+    "medianMs": 9810.900000000373,
+    "maximumMs": 10682.900000000373,
+    "targetMedianMs": 5000,
+    "targetMaximumMs": 10000,
+    "pass": false
+  },
+  "scope": "Five pinned empty-browser-cache/already-prepared real-chart samples. No p95, finite-subset medians, current/warm/cold-build or foreground acceptance. Supplemental observation time does not widen latency targets."
 }
