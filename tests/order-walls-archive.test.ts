@@ -58,6 +58,16 @@ const archivePatch = (cursor: number, at: number, patch: Partial<OrderWallsArchi
 });
 
 describe('Order Walls archive profile selection', () => {
+  it('historical gaps are explicitly scoped to a view with no current subscription',async()=>{
+    const events:any[]=[],ready=page({coverage:coverage({status:'partial',partial:true,gaps:[{at:from+100,reason:'Recorded history gap'}]})});
+    const service=new OrderWallsArchiveService(event=>events.push(event),(async()=>Response.json(ready))as any,()=>to);
+    try{
+      service.subscribe('history-only',{market:'binance-spot',from,to,settings:request().settings,followLive:false});for(let i=0;i<100;i++)await Promise.resolve();
+      const history=events.filter(event=>event.ids?.includes('history-only'));expect(history.every(event=>event.status.currentSubscribed===false)).toBe(true);
+      expect(history.at(-1).status.archive).toMatchObject({state:'partial',requestComplete:true});
+      service.subscribe('current',{market:'binance-spot',from,to,settings:request().settings,followLive:true});expect(events.filter(event=>event.ids?.includes('current'))[0].status.currentSubscribed).toBe(true);
+    }finally{service.dispose();}
+  });
   it('selects the exact native Top10 profile for Binance spot and USD-M perpetual', () => {
     for (const market of ['binance-spot', 'binance-perp'] as const) {
       expect(orderWallsArchiveAvailability(market, request({ market }).settings)).toMatchObject({ exact: true, profileId: profiles[market].id, requestedBandPercent: 10 });

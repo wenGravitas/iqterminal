@@ -878,6 +878,7 @@ export class OrderWallsArchiveService {
 
   private publish(sub: Subscription, kind: 'snapshot' | 'patch', value: OrderWallSegment[] | OrderWallPatch[], status: OrderWallStatus) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub) return;
+    status={...status,currentSubscribed:sub.request.followLive===true};
     const event: Event = { type: 'order-wall-batch', ids: [sub.id], key: sub.key, generation: sub.generation,
       batchId: ++sub.batch, kind, ...(kind === 'snapshot' ? { segments: value as OrderWallSegment[] } : { patches: value as OrderWallPatch[] }), status };
     this.emit(event); sub.initialPublished = true;

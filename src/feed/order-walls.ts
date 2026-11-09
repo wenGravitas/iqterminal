@@ -125,6 +125,8 @@ export interface OrderWallBookScope {
 }
 export interface OrderWallStatus {
   state: 'loading' | 'live' | 'stale' | 'gap' | 'unavailable';
+  /** False for a historical-only archive view with no current subscription. */
+  currentSubscribed?: boolean;
   message?: string;
   tickSize?: number;
   /** Effective quote-price bucket width used for detection and display. */

@@ -170,7 +170,7 @@ export class OrderWallsControls {
         canResumeHistory = this.noticeAllowed && this.supported && this.current.mode === 'top-levels'
           && archive.market === this.currentMarket && archive.state === 'partial'
           && archive.requestComplete === false && (archive.resumeAfter !== undefined || archive.retryable === true);
-        const live = status.state === 'live' ? `Live · confirmed ${archiveTime(status.lastConfirmedAt)}`
+        const live = status.currentSubscribed === false ? 'Historical view' : status.state === 'live' ? `Live · confirmed ${archiveTime(status.lastConfirmedAt)}`
           : status.state === 'stale' ? `Live stale · last confirmed ${archiveTime(status.lastConfirmedAt)}`
           : status.state === 'gap' ? 'Live has a continuity gap' : `Live ${status.state}`;
         const exactness = archive.exact ? 'exact profile' : archive.state === 'unavailable' || archive.profileStatus === 'unavailable'
