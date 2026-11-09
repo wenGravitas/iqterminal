@@ -1,8 +1,8 @@
-import {WALL_POINT_TRANSPORT,decodeWallPointTransport} from '../shared/order-wall-point-transport';
+import {WALL_POINT_TRANSPORT,WALL_PRODUCT_POINT_TRANSPORT,decodeWallPointTransport} from '../shared/order-wall-point-transport';
 import {historyScheduler} from './history-scheduler';
 import type {PreparedWallFetched} from './prepared-wall-history';
 interface Part {index:number;bytes:number;hash:string}
-interface Options {url:string;key:string;revision:string;parts:Part[];fetcher:typeof fetch;signal:AbortSignal;maxParts?:8|32;pointTransport?:boolean}
+interface Options {url:string;key:string;revision:string;parts:Part[];fetcher:typeof fetch;signal:AbortSignal;maxParts?:8|32;pointTransport?:boolean|2}
 interface Slot {promise:Promise<PreparedWallFetched>;resolve:(value:PreparedWallFetched)=>void;reject:(reason:unknown)=>void}
 interface Group {identity:string;abort:AbortController;slots:Map<number,Slot>;refs:number;finished?:boolean}
 const groups=new Map<string,Group>();
@@ -23,7 +23,7 @@ function deferred():Slot {let resolve!:Slot['resolve'],reject!:Slot['reject'];co
  * retained per reader. Cancellation removes only that reader's reference. */
 export function acquireWallBatch(options:Options){
  const {url,parts,signal,fetcher}=options;if(signal.aborted)throw aborted();
- const identity=JSON.stringify([options.key,options.revision,parts,Boolean(options.pointTransport)]);let group=groups.get(url);
+ const identity=JSON.stringify([options.key,options.revision,parts,options.pointTransport??false]);let group=groups.get(url);
  if(group&&group.identity!==identity)throw Error('Prepared wall shared batch identity mismatch');
  if(!group){
   group={identity,abort:new AbortController(),slots:new Map(parts.map(p=>[p.index,deferred()])),refs:0};groups.set(url,group);
@@ -47,7 +47,7 @@ export function acquireWallBatch(options:Options){
     ||response.headers.get('x-iq-source-revision')!==options.revision){await response.body?.cancel();throw Error('Prepared wall batch identity mismatch');}
    let wireParts=parts.map(p=>p.bytes),wireBytes=expectedBytes;
    if(options.pointTransport){const sizes=response.headers.get('x-iq-wall-part-bytes');try{wireParts=sizes&&sizes.length<=512?JSON.parse(sizes):[];}catch{wireParts=[];}
-    if(response.headers.get('x-iq-wall-transport')!==WALL_POINT_TRANSPORT||response.headers.get('x-iq-canonical-bytes')!==String(expectedBytes)||!Array.isArray(wireParts)||wireParts.length!==parts.length||wireParts.some((size,i)=>!Number.isSafeInteger(size)||size<2||size>parts[i]!.bytes)) {await response.body?.cancel();throw Error('Prepared wall point transport identity mismatch');}
+    if(response.headers.get('x-iq-wall-transport')!==(options.pointTransport===2?WALL_PRODUCT_POINT_TRANSPORT:WALL_POINT_TRANSPORT)||response.headers.get('x-iq-canonical-bytes')!==String(expectedBytes)||!Array.isArray(wireParts)||wireParts.length!==parts.length||wireParts.some((size,i)=>!Number.isSafeInteger(size)||size<2||size>parts[i]!.bytes)) {await response.body?.cancel();throw Error('Prepared wall point transport identity mismatch');}
     wireBytes=wireParts.reduce((n,size)=>n+size+1,0);if(response.headers.get('x-iq-decoded-bytes')!==String(wireBytes)){await response.body?.cancel();throw Error('Prepared wall point transport byte identity mismatch');}
    }else if(response.headers.has('x-iq-wall-transport')){await response.body?.cancel();throw Error('Unexpected prepared wall point transport');}
    if(expectedBytes>8*1024*1024||parts.length>(options.maxParts??8)||!response.body){await response.body?.cancel();throw Error('Prepared wall batch byte capacity');}
@@ -72,7 +72,7 @@ export function acquireWallBatch(options:Options){
      upstream.throwIfAborted();const bodyReadMs=performance.now()-bodyStarted,parse=performance.now();
      let body:unknown,canonical:Uint8Array=raw,jsonParseMs=0,validationMs=0,validationYieldMs=0;
      if(options.pointTransport){body=JSON.parse(new TextDecoder().decode(raw));jsonParseMs=performance.now()-parse;const validationAt=performance.now();let yielded=performance.now();
-      const decoded=await decodeWallPointTransport(body,async()=>{upstream.throwIfAborted();if(performance.now()-yielded>=8){const at=performance.now();await new Promise<void>(resolve=>setTimeout(resolve,0));validationYieldMs+=performance.now()-at;yielded=performance.now();}},{bytes:raw.byteLength,max:part.bytes});body=decoded.value;if(decoded.changed)canonical=new TextEncoder().encode(JSON.stringify(body));
+      const decoded=await decodeWallPointTransport(body,async()=>{upstream.throwIfAborted();if(performance.now()-yielded>=8){const at=performance.now();await new Promise<void>(resolve=>setTimeout(resolve,0));validationYieldMs+=performance.now()-at;yielded=performance.now();}},{bytes:raw.byteLength,max:part.bytes},options.pointTransport===2?2:1);body=decoded.value;if(decoded.changed)canonical=new TextEncoder().encode(JSON.stringify(body));
       if(canonical.byteLength!==part.bytes||await digest(canonical)!==part.hash)throw Error('Prepared wall batch part content hash mismatch');validationMs=performance.now()-validationAt;
      }else{const validationAt=performance.now();if(await digest(raw)!==part.hash)throw Error('Prepared wall batch part content hash mismatch');validationMs=performance.now()-validationAt;const at=performance.now();body=JSON.parse(new TextDecoder().decode(raw));jsonParseMs=performance.now()-at;}
      upstream.throwIfAborted();

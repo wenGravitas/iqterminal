@@ -16,6 +16,7 @@ const yieldTask=()=>new Promise<void>(resolve=>setTimeout(resolve,0));
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){
  if(!advertised)return null;
  const {manifest:m,delivery}=advertised;
+ const pointTransport=delivery?.productTransport===1?2:delivery?.pointTransport===1?1:0;
  if(m?.core!==WALL_PROJECTION_CORE_SHA256||JSON.stringify(m.settings)!==JSON.stringify(normalized(context.settings)))return null;
  if(delivery?.version!==1||delivery.maxParts!==32||delivery.maxDecodedBytes!==8*1024*1024)return null;
  if(m.version!==2||!hex(m.key)||!m.complete||m.sourceKey!==context.sourceKey||m.sourceToken!==context.sourceToken||m.profile?.id!==context.profile||m.profile.market!==context.market
@@ -49,8 +50,8 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   const selected:Array<Part&{index:number}>=[];let size=0;
   for(let i=start;i<Math.min(start+32,manifest.parts.length);i++){const part=manifest.parts[i]!;if(size+part.bytes+1>8*1024*1024)break;selected.push({...part,index:i});size+=part.bytes+1;}
   if(!selected.length)throw Error('Prepared wall projection batch capacity');
-  const url='/market-data/v2/history/walls/projection-batch?'+new URLSearchParams({market:context.market,key:manifest.key,start:String(start),version:delivery.pointTransport===1?'2':'1'});
-  return {selected,next:start+selected.length,handle:acquireWallBatch({url,key:manifest.key,revision:manifest.sourceToken,parts:selected,fetcher:context.fetcher,signal:context.signal,maxParts:32,pointTransport:delivery.pointTransport===1})};
+  const url='/market-data/v2/history/walls/projection-batch?'+new URLSearchParams({market:context.market,key:manifest.key,start:String(start),version:pointTransport===2?'3':pointTransport===1?'2':'1'});
+  return {selected,next:start+selected.length,handle:acquireWallBatch({url,key:manifest.key,revision:manifest.sourceToken,parts:selected,fetcher:context.fetcher,signal:context.signal,maxParts:32,pointTransport:pointTransport===2?2:pointTransport===1})};
  }
  let current=acquire(0),next:ReturnType<typeof acquire>;
  try{while(current){
