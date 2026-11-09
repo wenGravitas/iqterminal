@@ -75,13 +75,60 @@ test('painted prepared records remain incomplete while final independent source 
  await vi.waitFor(()=>expect(t.calls.at(-1)).toMatch(/\/source$/));expect(updates.at(-1).presentation.size).toBe(f.full.segments.length);expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
  const before=[...updates.at(-1).presentation.values()];release();await expect(work).rejects.toThrow(/source changed/);expect([...updates.at(-1).presentation.values()]).toEqual(before);
 });
+test('independent revision read overlaps final assembly but cannot publish completion until validated',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+ const f=fixture(true);let release!:()=>void;
+ const gateSource=new Promise<void>(resolve=>release=resolve),io=transport(f,{gateSource}),updates:any[]=[];
+ const original=OrderWallsArchiveProjector.restoreCheckpoint;
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpoint');let finalRestored=false;
+ restore.mockImplementation((...args)=>{
+  if((args[0] as any).segments.length===f.full.segments.length){
+   expect(io.calls.at(-1)).toMatch(/\/source$/);finalRestored=true;
+  }
+  return original(...args);
+ });
+ const work=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,onUpdate:u=>updates.push(u)});void work.catch(()=>{});
+ try{
+  await vi.waitFor(()=>expect(finalRestored).toBe(true));
+  expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
+  release();const result=await work;expect(result.status.archive?.requestComplete).toBe(true);
+  restore.mockRestore();expect(result.segments).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).snapshot());
+  expect(io.calls.filter(path=>path.endsWith('/source'))).toHaveLength(1);
+ }finally{release();restore.mockRestore();}
+});
+
+test('cancel during overlapped source validation retains partial data and prevents completion',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+ const f=fixture(true);let release!:()=>void;const controller=new AbortController();
+ const gateSource=new Promise<void>(resolve=>release=resolve),io=transport(f,{gateSource}),updates:any[]=[];
+ const work=loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,signal:controller.signal,onUpdate:u=>updates.push(u)});void work.catch(()=>{});
+ try{
+  await vi.waitFor(()=>expect(io.calls.at(-1)).toMatch(/\/source$/));
+  controller.abort();release();await expect(work).rejects.toThrow(/abort/i);
+  expect(updates.at(-1).presentation.size).toBe(f.full.segments.length);
+  expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
+ }finally{release();}
+});
+
+test('global checkpoint failure remains fatal when overlapping source validation also rejects',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),rows=JSON.parse(f.texts[0]!);
+ // Each part is valid on its own, but this closed value collides with an active
+ // value's global retention sequence. Only the final full restore can reject it.
+ rows[0].valueRunOrder[0]=f.manifest.active.valueRunOrder[0][0];
+ f.texts[0]=JSON.stringify(rows);Object.assign(f.manifest.parts[0],{hash:hash(f.texts[0]!),bytes:Buffer.byteLength(f.texts[0]!)});
+ const io=transport(f,{changed:true}),updates:any[]=[];
+ await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:io.fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/Invalid wall projection checkpoint/);
+ expect(io.calls.filter(path=>path.endsWith('/source'))).toHaveLength(1);
+ expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
+});
+
 test('fragment holes, wrong order, duplicate coordinates and corrupted content never publish completion',async()=>{
  for(const mutate of [(f:ReturnType<typeof fixture>)=>f.manifest.closed[0].reverse(),(f:ReturnType<typeof fixture>)=>f.manifest.closed.push(f.manifest.closed[0])]){
   const f=fixture(true);mutate(f);const t=transport(f);await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},()=>{})).rejects.toThrow(/fragment|coordinates/);
  }
  const f=fixture(),t=transport(f,{corrupt:true}),updates:any[]=[];
  await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},u=>updates.push(u))).rejects.toThrow(/hash mismatch/);
- expect(updates).toHaveLength(1);expect(updates[0].segments.every((s:any)=>s.end===null)).toBe(true);
+ expect(updates).toHaveLength(1);expect(updates[0].segments.every((s:any)=>s.end===null)).toBe(true);expect(t.calls.some(path=>path.endsWith('/source'))).toBe(false);
 });
 test('incompatible settings/core fall back before transfer and abort prevents further progressive publication',async()=>{
  const f=fixture(),t=transport(f),signal=new AbortController();

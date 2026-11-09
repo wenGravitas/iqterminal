@@ -4,7 +4,7 @@ import {acquireWallBatch} from './prepared-wall-batch';
 interface Part {hash:string;bytes:number;records:number}
 interface RecordRow {order:number;segment:OrderWallSegment;valueRunOrder:number[];offset:number;totalRuns:number}
 export interface PreparedWallProjectionManifest {version:2;key:string;sourceKey:string;sourceToken:string;core:string;complete:true;settings:OrderWallsProjectionSettings;active:WallProjectionCheckpoint;activeOrder:number[];closed:Array<Array<[number,number]>>;parts:Part[];coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile}
-interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void}
+interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>}
 export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;requestId?:string}}
 const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
@@ -84,6 +84,12 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   current.handle.release();current=next;next=undefined;
  }}finally{current?.handle.release();next?.handle.release();}
  if(retained.length!==manifest.closed.length+manifest.active.segments.length||new Set(retained.map(record=>record.order)).size!==retained.length)throw Error('Prepared wall projection incomplete identities');
+ // All immutable records have passed content and per-part financial checks. Start the
+ // independent source read now so transport can run while final CPU assembly
+ // finishes. Neither this read nor progressive presentation certifies completion
+ // alone. Observe rejection immediately, including when final assembly throws.
+ const validation=context.validateCompletion?.();void validation?.catch(()=>{});
+ if(validation){await yieldTask();context.signal.throwIfAborted();}
  retained.sort((a,b)=>a.order-b.order);context.signal.throwIfAborted();
  // outputHead is the transport fence already admitted by the source-proof
  // reader. Financial rows/order and active candidates remain untouched. The
@@ -91,6 +97,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  const projector=OrderWallsArchiveProjector.restoreCheckpoint({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)},context.settings,context.from,context.to);
  // Authenticate the complete presentation description, not merely its source
  // input token: corrections can change part hashes or selected metadata.
- const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));context.signal.throwIfAborted();
+ const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));
+ await validation;context.signal.throwIfAborted();
  return {projector,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
 }

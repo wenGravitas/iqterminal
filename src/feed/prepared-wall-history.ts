@@ -124,13 +124,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  }
  return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
   const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
-   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
-  if(result){
-   // The independently proven transport fence is installed during the one
-   // final restore. Re-check source before publishing; do not clone and restore
-   // the entire closed history again merely to replace cursor/epoch metadata.
-   await validateRevision();
-  }
+   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{
   assertActive();

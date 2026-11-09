@@ -110,3 +110,16 @@ pass/two skipped, typecheck/build pass,67focused archive/lifecycle tests pass an
 one explicit headless fixture UI regression passes. Its screenshot verifies the
 status wording; the loading cohorts above remain measurements of6fc990f. No
 financial geometry, profile, gaps, settings or source accumulation changed.
+Prepared projection completion now starts the independent source-revision read
+only after all immutable parts and per-part financial records have validated,
+then overlaps that transport with the final full checkpoint reconstruction and
+presentation digest. The final checkpoint still validates global identities and
+retention sequences. Neither step can publish completion alone. Source mismatch,
+abort and final reconstruction failure retain incomplete presentation; a rejected
+validation promise is observed even when reconstruction fails first.
+
+This changes client scheduling only. It adds no source connection, cache format,
+financial algorithm, preparation ownership or serving configuration. Reverting
+the client commit restores serial completion without invalidating prepared data.
+Timing benefit remains unproven until a measured cohort; do not infer a passed
+loading gate from unit tests.
