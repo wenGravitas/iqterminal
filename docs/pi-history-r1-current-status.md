@@ -1,7 +1,7 @@
-## Release gate audit after client2bc/API dca
+## Release gate audit after client87e/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[client continuation/current-route results](wall-current-path-results.md).
+[bounded receive-ahead results](wall-batch-receive-results.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -10,8 +10,8 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
 |Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
 |Useful current walls|Current-candidate five-run gate pending|
-|30hSpot5m Top8/10%/native|FAIL on2bc: first median6.06s/max6.45s; complete10.62s/22.36s|
-|30hUSD-M15m Top8/10%/native|FAIL on2bc: first4.75s/5.04s; complete16.17s/17.09s|
+|30hSpot5m Top8/10%/native|FAIL on87e: first median5.11s/max9.09s; complete6.98s/9.09s|
+|30hUSD-M15m Top8/10%/native|FAIL on87e: first3.63s/7.17s; complete11.43s/16.30s|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
 |Concurrent history, no current timeouts/gaps|Prior health timeout remains failed evidence; current confirmation continuity incomplete|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
@@ -20,7 +20,14 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-All20 new chart samples (4efc/2bc cohorts) validate exact requested wall counts,
+All10 newest chart samples (87e cohort) validate exact requested wall counts,
+slots, revisions and all native candles. A bounded receiver drains the body
+while members decode, retaining scheduler admission and progressive/EOF fences.
+93 focused history tests, typecheck/build and old-source counterfactual checks
+support the change. The latency gates remain failed; sequential cohort changes
+are not a controlled causal speedup or foreground/current/heap acceptance.
+
+All20 prior chart samples (4efc/2bc cohorts) validate exact requested wall counts,
 slots, revisions and actual background-task mode. Offline worker medians improve,
 but real loading gates still fail. Level Watch current reads/stream now use the
 existing current route; saturated-history wire tests prove its reserve and
