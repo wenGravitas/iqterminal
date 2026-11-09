@@ -1,7 +1,7 @@
-## Release gate audit after client87e/API dca
+## Release gate audit after clientde674/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in
-[bounded receive-ahead results](wall-batch-receive-results.md).
+[visible/cache priority follow-up](wall-task-priority-results.md).
 Prior build-scoped passes are not silently recertified on this candidate.
 
 |Gate|Evidence and current acceptance|
@@ -10,8 +10,8 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |24h1h/$25 footprints|Prior5-run PASS on6fc/API f82; current candidate revalidation pending|
 |Useful current footprint|Prior median2.58s FAIL<=2s; current candidate pending|
 |Useful current walls|Current-candidate five-run gate pending|
-|30hSpot5m Top8/10%/native|FAIL on87e: first median5.11s/max9.09s; complete6.98s/9.09s|
-|30hUSD-M15m Top8/10%/native|FAIL on87e: first3.63s/7.17s; complete11.43s/16.30s|
+|30hSpot5m Top8/10%/native|FAIL onde674: first median5.36s/max6.07s; complete7.75s/8.65s|
+|30hUSD-M15m Top8/10%/native|FAIL onde674: first3.75s/4.19s; complete12.47s/13.29s|
 |Warm revisit<=1s + independent validation|Prior footprint useful PASS; wall/current-candidate gates incomplete|
 |Concurrent history, no current timeouts/gaps|Prior health timeout remains failed evidence; current confirmation continuity incomplete|
 |Retained heap/queues/requests plateau|Release/cancellation observations exist; actual interaction plateau incomplete|
@@ -20,7 +20,15 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume proven; composition and verified tail handoff unfinished; serving bridge/GC disabled|
 
-All10 newest chart samples (87e cohort) validate exact requested wall counts,
+All10 newest unprofiled chart samples (de674 cohort) validate exact requested
+wall counts, slots, revisions and actual visible/background continuation modes.
+Optional cache encoding now yields behind visible imports/replay.101 focused
+history/priority tests plus46 staging/warm regressions pass; typecheck/build and
+16 gate/trace tests pass. New completion medians are higher than the prior cohort;
+no loading speedup or concurrency acceptance is established. Both loading gates
+remain failed. CPU-profiled runs are now explicitly excluded from acceptance.
+
+All10 prior chart samples (87e cohort) validate exact requested wall counts,
 slots, revisions and all native candles. A bounded receiver drains the body
 while members decode, retaining scheduler admission and progressive/EOF fences.
 93 focused history tests, typecheck/build and old-source counterfactual checks

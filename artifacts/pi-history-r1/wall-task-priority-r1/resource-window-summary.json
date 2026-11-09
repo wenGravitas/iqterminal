@@ -1,0 +1,24 @@
+[
+  {
+    "file": "server-perp-resources.jsonl",
+    "samples": 26,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "priority-de674-perp-r1",
+      "elapsedMs": 128562.839411,
+      "stopping": true
+    }
+  },
+  {
+    "file": "server-spot-resources.jsonl",
+    "samples": 18,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "priority-de674-spot-r1",
+      "elapsedMs": 88543.066872,
+      "stopping": true
+    }
+  }
+]

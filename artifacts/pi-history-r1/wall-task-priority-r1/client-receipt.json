@@ -1,0 +1,16 @@
+{
+  "build": "de67453580c7c7cf1ecfa29405e288454fc55503",
+  "apiBuild": "dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51",
+  "previewPID": 263125,
+  "cwd": "/home/daz/workarea/iqterminal-perf-history",
+  "indexSha256": "4fb2c081e9da4bc613032481fe5326db2d5bf37a5853ae451a22699cda806e94",
+  "assets": {
+    "worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "worker-DKIWQXVk.js": "9c40f8dc158c056889638e9981c8bc95cea1101ab1d2666123209f96ada92692",
+    "worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9",
+    "main-7-QXASbn.js": "d869ae14226653d93b08101e5db2643662ec01ff5af983cddad42c75afd85c56",
+    "index-CruOFrfL.js": "e6a2313c68e3ede180bc3fecd592521841b3eba56fcb7405e0ae073c85c23b7e",
+    "editor-CqfApnCc.js": "01489dabb01219ad113698b6bdf3417e7bc079402b2fa6bd56524343de310504"
+  },
+  "proxySha256": "48b3c2d2661be12f4c33b02e779bcd7ead7caeb7af70de0bdd849731fed2a00f"
+}
