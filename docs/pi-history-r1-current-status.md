@@ -20,6 +20,13 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
 |Default wall preparation/rollover serving|Isolated coordinator build/resume and exact canonical overlap/tail reuse proven; closed projection/serving/live handoff unfinished; serving bridge/GC disabled|
 
+Backend40d15aeselects exact nonterminal projection prefixes for missing projections,
+including already-prepared canonical inputs.337tests/typecheck/build pass. Real
+builder reference comparisons reuse16/17Spot and38/40USD-M pages with exact
+financial/state output. The retained SQL transport failure and explicit checkpoint
+resume are documented; these single materialization observations do not pass any
+browser gate. [Prefix evidence and rollback](wall-projection-prefix-results.md).
+
 Backend472f8acadds exact canonical overlap plus a persisted bounded target tail.
 330backend tests,85focused tests, typecheck/build pass. Two isolated real-source
 cohorts preserve exact canonical bytes and projected state on both default

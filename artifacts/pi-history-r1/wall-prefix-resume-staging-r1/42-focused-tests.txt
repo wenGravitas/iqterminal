@@ -1,0 +1,262 @@
+TAP version 13
+# Subtest: bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+ok 1 - bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+  ---
+  duration_ms: 650.637196
+  type: 'test'
+  ...
+# Subtest: source and content failures preserve the validated prefix and explicit gaps through retry
+ok 2 - source and content failures preserve the validated prefix and explicit gaps through retry
+  ---
+  duration_ms: 306.033257
+  type: 'test'
+  ...
+# Subtest: aggregate retained capacity includes closed records outside the active checkpoint
+ok 3 - aggregate retained capacity includes closed records outside the active checkpoint
+  ---
+  duration_ms: 104.555492
+  type: 'test'
+  ...
+# Subtest: a closed wall larger than one transport part preserves every exact point across fragments
+ok 4 - a closed wall larger than one transport part preserves every exact point across fragments
+  ---
+  duration_ms: 1823.418377
+  type: 'test'
+  ...
+# Subtest: identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+ok 5 - identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+  ---
+  duration_ms: 454.591247
+  type: 'test'
+  ...
+# Subtest: changed event input rejects prefix reuse and folds from the first canonical page
+ok 6 - changed event input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 719.237874
+  type: 'test'
+  ...
+# Subtest: changed epoch input rejects prefix reuse and folds from the first canonical page
+ok 7 - changed epoch input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 676.685883
+  type: 'test'
+  ...
+# Subtest: changed gap input rejects prefix reuse and folds from the first canonical page
+ok 8 - changed gap input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 812.698121
+  type: 'test'
+  ...
+# Subtest: corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+ok 9 - corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+  ---
+  duration_ms: 633.971298
+  type: 'test'
+  ...
+# Subtest: visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+ok 10 - visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+  ---
+  duration_ms: 205.593757
+  type: 'test'
+  ...
+# Subtest: capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+ok 11 - capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+  ---
+  duration_ms: 289.021086
+  type: 'test'
+  ...
+# Subtest: expired view leases yield processing capacity without pausing manual default work
+ok 12 - expired view leases yield processing capacity without pausing manual default work
+  ---
+  duration_ms: 83.079073
+  type: 'test'
+  ...
+# Subtest: paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+ok 13 - paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+  ---
+  duration_ms: 388.885696
+  type: 'test'
+  ...
+# Subtest: control admission bounds consumers and cannot reset failed builds through ordinary polling
+ok 14 - control admission bounds consumers and cannot reset failed builds through ordinary polling
+  ---
+  duration_ms: 210.227342
+  type: 'test'
+  ...
+# Subtest: internal admission uses loopback, bounded commands and no source queries on enqueue/release
+ok 15 - internal admission uses loopback, bounded commands and no source queries on enqueue/release
+  ---
+  duration_ms: 86.566258
+  type: 'test'
+  ...
+# Subtest: worker health is bounded metadata and never admits, resumes, or reads financial source
+ok 16 - worker health is bounded metadata and never admits, resumes, or reads financial source
+  ---
+  duration_ms: 214.096075
+  type: 'test'
+  ...
+# Subtest: worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+ok 17 - worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+  ---
+  duration_ms: 390.869377
+  type: 'test'
+  ...
+# Subtest: readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+ok 18 - readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+  ---
+  duration_ms: 8.954034
+  type: 'test'
+  ...
+# Subtest: pending manifest validation is protected and late completion cannot resurrect a released reader
+ok 19 - pending manifest validation is protected and late completion cannot resurrect a released reader
+  ---
+  duration_ms: 22.682674
+  type: 'test'
+  ...
+# Subtest: read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+ok 20 - read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+  ---
+  duration_ms: 72.089206
+  type: 'test'
+  ...
+# Subtest: loopback read lease commands do not admit jobs and match reserved current/health routes
+ok 21 - loopback read lease commands do not admit jobs and match reserved current/health routes
+  ---
+  duration_ms: 33.148138
+  type: 'test'
+  ...
+# Subtest: last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+ok 22 - last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+  ---
+  duration_ms: 458.637821
+  type: 'test'
+  ...
+# Subtest: all requested views advance fairly in bounded steps across restart, without source repinning
+ok 23 - all requested views advance fairly in bounded steps across restart, without source repinning
+  ---
+  duration_ms: 379.731625
+  type: 'test'
+  ...
+# Subtest: ordinary admission retains failure and progress; explicit Retry resumes the exact step
+ok 24 - ordinary admission retains failure and progress; explicit Retry resumes the exact step
+  ---
+  duration_ms: 85.749913
+  type: 'test'
+  ...
+# Subtest: existing CLI ownership defers a job, retains its lock and lets other views progress
+ok 25 - existing CLI ownership defers a job, retains its lock and lets other views progress
+  ---
+  duration_ms: 139.350142
+  type: 'test'
+  ...
+# Subtest: pending capacity is explicit and duplicate polling cannot allocate more work
+ok 26 - pending capacity is explicit and duplicate polling cannot allocate more work
+  ---
+  duration_ms: 449.928979
+  type: 'test'
+  ...
+# Subtest: a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+ok 27 - a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+  ---
+  duration_ms: 126.076644
+  type: 'test'
+  ...
+# Subtest: persisted Retry commands execute once even when the same admission file is replayed after restart
+ok 28 - persisted Retry commands execute once even when the same admission file is replayed after restart
+  ---
+  duration_ms: 164.253172
+  type: 'test'
+  ...
+# Subtest: a repeated explicit revision command cannot reset a healthy newly pinned build
+ok 29 - a repeated explicit revision command cannot reset a healthy newly pinned build
+  ---
+  duration_ms: 145.662621
+  type: 'test'
+  ...
+# Subtest: validated canonical cache reuse keeps its original horizon and skips full replay
+ok 30 - validated canonical cache reuse keeps its original horizon and skips full replay
+  ---
+  duration_ms: 85.108338
+  type: 'test'
+  ...
+# Subtest: specific failures remain separate from successful build/coverage state
+ok 31 - specific failures remain separate from successful build/coverage state
+  ---
+  duration_ms: 292.79523
+  type: 'test'
+  ...
+# Subtest: a concurrent tick cannot acquire a second build, while admission remains durable
+ok 32 - a concurrent tick cannot acquire a second build, while admission remains durable
+  ---
+  duration_ms: 54.219495
+  type: 'test'
+  ...
+# Subtest: completed immutable projection reuse validates source again without folding closed history
+ok 33 - completed immutable projection reuse validates source again without folding closed history
+  ---
+  duration_ms: 165.660051
+  type: 'test'
+  ...
+# Subtest: ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+ok 34 - ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+  ---
+  duration_ms: 190.745138
+  type: 'test'
+  ...
+# Subtest: Retry cannot move a ready view past pending capacity or damage its saved cache state
+ok 35 - Retry cannot move a ready view past pending capacity or damage its saved cache state
+  ---
+  duration_ms: 766.355429
+  type: 'test'
+  ...
+# Subtest: request pins require a same-key live reader, bound capacity and expire independently of reader release
+ok 36 - request pins require a same-key live reader, bound capacity and expire independently of reader release
+  ---
+  duration_ms: 5.075805
+  type: 'test'
+  ...
+# Subtest: cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+ok 37 - cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+  ---
+  duration_ms: 10.470837
+  type: 'test'
+  ...
+# Subtest: ordinary admission cannot consume the health and cleanup control reserve
+ok 38 - ordinary admission cannot consume the health and cleanup control reserve
+  ---
+  duration_ms: 54.402328
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+ok 39 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+  ---
+  duration_ms: 368.56129
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+ok 40 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+  ---
+  duration_ms: 293.495519
+  type: 'test'
+  ...
+# Subtest: projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+ok 41 - projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+  ---
+  duration_ms: 294.627468
+  type: 'test'
+  ...
+# Subtest: prepared canonical discovery still selects and pins an exact same-start projection prefix
+ok 42 - prepared canonical discovery still selects and pins an exact same-start projection prefix
+  ---
+  duration_ms: 159.944984
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8405.092772

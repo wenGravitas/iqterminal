@@ -1,0 +1,51 @@
+[
+  {
+    "name": "/iqterminal-server",
+    "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+    "startedAt": "2026-10-25T10:58:27.590796454Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-spot-server",
+    "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+    "startedAt": "2026-10-25T10:58:53.322433531Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-history-materializer",
+    "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+    "startedAt": "2026-11-06T16:53:52.644213859Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-spot-history-materializer",
+    "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+    "startedAt": "2026-11-06T16:53:52.682114009Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-footprint-materializer",
+    "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+    "startedAt": "2026-11-06T16:53:52.623715016Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-spot-footprint-materializer",
+    "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+    "startedAt": "2026-11-06T16:53:52.693763579Z",
+    "running": true,
+    "matches": true
+  },
+  {
+    "name": "/iqterminal-sql-admission",
+    "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+    "startedAt": "2026-11-06T16:53:48.880958761Z",
+    "running": true,
+    "matches": true
+  }
+]

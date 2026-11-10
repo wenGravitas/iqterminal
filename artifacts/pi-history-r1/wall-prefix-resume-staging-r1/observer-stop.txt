@@ -1,0 +1,1 @@
+{"pid": 1353974, "action": "SIGTERM on user pause", "args": ["/home/daz/.nvm/versions/node/v22.23.4/bin/node", "--input-type=module", "-", "wall-prefix-resume-staging-r1", "300"]}
