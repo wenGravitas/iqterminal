@@ -1,4 +1,5 @@
 import {wallReadControlScheduler} from './prepared-wall-read-lease';
+import {historyHttpError} from './history-http-error';
 import {historyScheduler} from './history-scheduler';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import type {PreparedWallRequest} from './prepared-wall-history';
@@ -51,7 +52,7 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
    const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),
     ...(options.retry?{'X-IQ-Wall-Retry':options.retry.token,...(options.retry.newRevision?{'X-IQ-Wall-New-Revision':'1'}:{})}:{})};
    const response=await fetcher(url,{signal:upstream,headers});
-   if(!response.ok){await response.body?.cancel();if(response.status===404)return null;throw Error('Prepared wall discovery HTTP '+response.status);}
+   if(!response.ok){if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}
    return options.decode(response,projection?8*1024*1024:128*1024);
   });
   signal.throwIfAborted();if(!found?.preparation)return found;

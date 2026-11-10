@@ -131,6 +131,14 @@ test('a changed source never completes a painted prefix or resets its financial 
  await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/source changed/);
  expect(updates).toHaveLength(2);expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);expect(updates.at(-1).resume.after).toBe(20);expect(updates[0].segments.length).toBeGreaterThan(0);
 });
+test('failed final source validation retains the good prefix and exposes the specific server failure',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const t=transport(fixture()),updates:any[]=[];
+ const fetcher:typeof fetch=(input,init)=>String(input).includes('/walls/source?')
+  ?Promise.resolve(new Response(JSON.stringify({error:'ClickHouse 500: source query time budget'}),{status:503})):t.fetcher(input,init);
+ await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow('Prepared wall source validation HTTP 503: ClickHouse 500: source query time budget');
+ expect(updates).toHaveLength(2);expect(updates.every(u=>u.status.archive.requestComplete===false)).toBe(true);
+ expect(updates.at(-1).resume.after).toBe(20);expect(updates[0].segments.length).toBeGreaterThan(0);
+});
 test('content mismatch is rejected before the corrupted page reaches the projector',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const t=transport(fixture(),{corrupt:true}),updates:any[]=[];
  await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/hash mismatch/);

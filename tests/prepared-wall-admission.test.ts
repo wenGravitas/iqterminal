@@ -6,6 +6,11 @@ const request={market:'spot' as const,profile:'exact-profile',from:1000,to:2000}
 const job=(phase='canonical',extra:Record<string,unknown>={})=>({id:'a'.repeat(64),request,phase,state:phase==='ready'?'ready':'building',pages:3,projectionPages:0,...extra});
 const reply=(j=job())=>({state:'building',preparation:{version:1,leaseMs:15000,pollMs:250,job:j}});
 const run=(fetcher:typeof fetch,signal=new AbortController().signal,extra:Record<string,unknown>={})=>discoverPreparedWallAdmission({request,url,projection:false,fetcher,signal,decode:response=>response.json(),...extra});
+test('failed discovery preserves the bounded server reason and releases shared history admission',async()=>{
+ const fetcher=vi.fn(async()=>new Response(JSON.stringify({error:'ClickHouse 500: source query exceeded its time budget'}),{status:503}));
+ await expect(run(fetcher as typeof fetch)).rejects.toThrow('Prepared wall discovery HTTP 503: ClickHouse 500: source query exceeded its time budget');
+ expect(fetcher).toHaveBeenCalledOnce();expect(historyScheduler.diagnostics().active).toBe(0);
+});
 test('preparation renews the same consumer/job, yields its scheduler slot and releases after ready',async()=>{
  vi.useFakeTimers();const calls:RequestInit[]=[],updates:any[]=[];let reads=0;
  const fetcher=(async(_url,init)=>{calls.push(init!);return new Response(JSON.stringify(init?.method==='DELETE'?{}:++reads===1?reply():reads===2?reply(job('projection')):{...reply(job('ready')),state:'ready'}));}) as typeof fetch;

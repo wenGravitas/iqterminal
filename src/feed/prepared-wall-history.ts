@@ -1,4 +1,5 @@
 import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
+import {historyHttpError} from './history-http-error';
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
 import {type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
@@ -94,7 +95,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  async function validateRevision(){
   assertActive();
   const latest=await historyScheduler.read(sourceUrl('source',request),'order-walls',consumer,async upstream=>{
-   const response=await fetcher(sourceUrl('source',request),{signal:upstream});if(!response.ok){await response.body?.cancel();throw Error('Prepared wall source validation HTTP '+response.status);}
+   const response=await fetcher(sourceUrl('source',request),{signal:upstream});if(!response.ok)throw await historyHttpError(response,upstream,'Prepared wall source validation');
    return (await readBody(response,128*1024)).body;
   }).catch(leaseFailure);
   assertActive();
