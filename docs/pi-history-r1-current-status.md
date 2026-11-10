@@ -1,3 +1,20 @@
+## Latest failure lifecycle repair: client f25c76e
+
+Saved-view restore could lose an early shared wall-history failure: later chart
+consumers joined a settled job but received only its initial loading status.
+The shared job now replays its failure, retains good data, clears that failure on
+Retry and prevents late joins from treating an old revision as newly validated.
+Historical-only failures leave the spinner; healthy live status stays separate.
+Bounded HTTP error receipt preserves the specific server reason. 74 focused tests, the full 1304-test suite (two skipped),
+typecheck/build and an explicit headless fault-injection UI check pass; both old
+implementations fail the new regressions. [Root cause, every attempt and scope](wall-history-failure-handoff.md).
+
+This is not a new loading-time pass. The real503category remains unresolved;
+loopback diagnostics later return ready. Earlier failed five-run latency gates,
+current/concurrency, warm wall, heap plateau, foreground Pi and default current-tail
+composition acceptance remain incomplete. All eight protected service identities
+are unchanged; no production change or merge occurred.
+
 ## Latest isolated serving check: client 7e93038
 
 The Nov10 five-run headless Pi cohorts against isolated gateway71f62d2/worker0811e74
