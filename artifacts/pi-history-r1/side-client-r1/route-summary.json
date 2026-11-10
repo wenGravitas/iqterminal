@@ -1,0 +1,188 @@
+[
+  {
+    "route": "loopback",
+    "market": "spot",
+    "valid": true,
+    "hashes": [
+      "f0097e4b9c4ab22ea7849266284df2eab182a677d85251e0b1672bd3299ce198"
+    ],
+    "headers": {
+      "samplesMs": [
+        3.9413710000000037,
+        2.763152000000005,
+        2.7598979999999997,
+        2.402407999999994,
+        2.9465550000000036
+      ],
+      "medianMs": 2.763152000000005,
+      "maximumMs": 3.9413710000000037
+    },
+    "total": {
+      "samplesMs": [
+        5.615770000000005,
+        3.5602110000000025,
+        3.4924549999999996,
+        3.127740000000003,
+        3.9150450000000063
+      ],
+      "medianMs": 3.5602110000000025,
+      "maximumMs": 5.615770000000005
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  },
+  {
+    "route": "loopback",
+    "market": "perpetual",
+    "valid": true,
+    "hashes": [
+      "8594960f1eae2945aee07771616e49f4ee9321c2c994428fad17a1d3950559f3"
+    ],
+    "headers": {
+      "samplesMs": [
+        26.551813999999993,
+        79.43524100000002,
+        20.147348000000022,
+        16.090239999999994,
+        96.84710199999995
+      ],
+      "medianMs": 26.551813999999993,
+      "maximumMs": 96.84710199999995
+    },
+    "total": {
+      "samplesMs": [
+        27.640970999999993,
+        80.39801799999998,
+        21.00550099999998,
+        17.47103800000002,
+        97.839609
+      ],
+      "medianMs": 27.640970999999993,
+      "maximumMs": 97.839609
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  },
+  {
+    "route": "ssh",
+    "market": "spot",
+    "valid": true,
+    "hashes": [
+      "f0097e4b9c4ab22ea7849266284df2eab182a677d85251e0b1672bd3299ce198"
+    ],
+    "headers": {
+      "samplesMs": [
+        953.9020530000001,
+        1915.3777619999996,
+        1033.4086449999995,
+        723.309319,
+        1481.0124990000004
+      ],
+      "medianMs": 1033.4086449999995,
+      "maximumMs": 1915.3777619999996
+    },
+    "total": {
+      "samplesMs": [
+        1100.14057,
+        1922.672462,
+        1562.139638999999,
+        1033.7785089999998,
+        2068.5462620000017
+      ],
+      "medianMs": 1562.139638999999,
+      "maximumMs": 2068.5462620000017
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  },
+  {
+    "route": "ssh",
+    "market": "perpetual",
+    "valid": true,
+    "hashes": [
+      "8594960f1eae2945aee07771616e49f4ee9321c2c994428fad17a1d3950559f3"
+    ],
+    "headers": {
+      "samplesMs": [
+        1396.539036000002,
+        825.6958690000029,
+        791.942235999999,
+        1363.6252959999983,
+        1380.4342069999984
+      ],
+      "medianMs": 1363.6252959999983,
+      "maximumMs": 1396.539036000002
+    },
+    "total": {
+      "samplesMs": [
+        2649.401700999999,
+        2635.992996000001,
+        3119.1485900000007,
+        12678.265885,
+        8886.040344000001
+      ],
+      "medianMs": 3119.1485900000007,
+      "maximumMs": 12678.265885
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  },
+  {
+    "route": "preview",
+    "market": "spot",
+    "valid": true,
+    "hashes": [
+      "f0097e4b9c4ab22ea7849266284df2eab182a677d85251e0b1672bd3299ce198"
+    ],
+    "headers": {
+      "samplesMs": [
+        1182.4221120000002,
+        1706.6378799999993,
+        1540.1640910000006,
+        1766.718929999999,
+        1036.1173370000033
+      ],
+      "medianMs": 1540.1640910000006,
+      "maximumMs": 1766.718929999999
+    },
+    "total": {
+      "samplesMs": [
+        1837.6020040000003,
+        8392.971407,
+        13310.127835,
+        6767.086714999998,
+        13525.633256000001
+      ],
+      "medianMs": 8392.971407,
+      "maximumMs": 13525.633256000001
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  },
+  {
+    "route": "preview",
+    "market": "perpetual",
+    "valid": true,
+    "hashes": [
+      "8594960f1eae2945aee07771616e49f4ee9321c2c994428fad17a1d3950559f3"
+    ],
+    "headers": {
+      "samplesMs": [
+        1326.226493999995,
+        3761.140492999999,
+        1752.3547719999915,
+        1656.1048609999998,
+        1818.6961079999892
+      ],
+      "medianMs": 1752.3547719999915,
+      "maximumMs": 3761.140492999999
+    },
+    "total": {
+      "samplesMs": [
+        9930.836283999997,
+        23880.456095,
+        18391.259999999995,
+        19201.595031999997,
+        12527.496870000017
+      ],
+      "medianMs": 18391.259999999995,
+      "maximumMs": 23880.456095
+    },
+    "scope": "First immutable batch only; sequential routes, no causal proxy overhead or chart acceptance claim"
+  }
+]

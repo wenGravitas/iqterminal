@@ -1,3 +1,19 @@
+## Latest isolated serving check: client 7e93038
+
+The Nov10 five-run headless Pi cohorts against isolated gateway71f62d2/worker0811e74
+**FAIL both 30h wall loading gates**. No run in either market completed painted
+coverage within12s. Spot first-history samples are4393/missing/4145/4492/missing ms;
+USD-M3834/missing/missing/7291/missing ms. There are no finite-subset medians.
+Two USD-M discovery responses are503; the exact error category is under
+investigation. Original API plus seven protected service identities remain intact.
+The optional loopback current target keeps reader/control requests on the isolated
+API;11proxy tests pass. [Pinned references, every run and route diagnosis](wall-side-client-results.md).
+
+The full release remains **INCOMPLETE**. Earlier footprint passes retain their
+original build scope. Current/concurrency, warm wall, heap plateau, live-tail
+handoff and normal foreground Pi checks remain unfinished. Headless browser
+launches cannot map a window onto the user's working i3 workspace.
+
 ## Release gate audit after cliente2fa/API dca
 
 The overall release is **INCOMPLETE**. Latest results are in

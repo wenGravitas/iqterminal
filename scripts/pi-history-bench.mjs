@@ -10,10 +10,11 @@ import {performance} from 'node:perf_hooks';
 import {createHash} from 'node:crypto';
 const base=process.env.IQ_BENCH_URL??'http://127.0.0.1:4180',label=process.env.IQ_BENCH_LABEL??'baseline';
 const dir='artifacts/pi-history-r1';mkdirSync(dir,{recursive:true});
-const windowFile=`${dir}/windows.json`;
+const windowFile=process.env.IQ_BENCH_WINDOWS??`${dir}/windows.json`;
+if(process.env.IQ_BENCH_WINDOWS&&!existsSync(windowFile))throw Error('Explicit benchmark windows file missing');
 const windows=existsSync(windowFile)?JSON.parse(readFileSync(windowFile,'utf8')):{end:Math.floor(Date.now()/3600000)*3600000-3600000};
 const wallReferences=JSON.parse(readFileSync(process.env.IQ_BENCH_WALL_REFERENCES??new URL('./pi-wall-reference.json',import.meta.url),'utf8'));if(wallReferences.version!==1)throw Error('Unknown wall reference version');
-writeFileSync(windowFile,JSON.stringify(windows,null,2)+'\n');
+if(!process.env.IQ_BENCH_WINDOWS)writeFileSync(windowFile,JSON.stringify(windows,null,2)+'\n');
 const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'perpetual'},
  {name:'footprint-24h-1h',kind:'footprint',hours:24,interval:'1h',step:3600000,market:'perpetual'},
  {name:'walls-30h-spot-5m',kind:'walls',hours:30,interval:'5m',step:300000,market:'spot'},
@@ -78,7 +79,7 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  context.on('requestfailed',request=>{if(!relevant(request))return;const record=requestRecords.get(request);if(record){record.requestFailure=request.failure()?.errorText;record.transferState='failed';}});
  const responseTasks=[];context.on('response',response=>{if(!response.url().includes('/market-data/')||response.url().includes('/stream'))return;
   const record=requestRecords.get(response.request())??{url:response.url(),at:performance.now()};if(!requestRecords.has(response.request()))requests.push(record);record.status=response.status();record.headersAt=performance.now();record.transferState='headers-pending';
-  responseTasks.push((async()=>{try{record.headers=await response.allHeaders();record.requestTiming=response.request().timing();record.transferState='receiving';const finished=await response.finished().catch(error=>error);record.sizes=await response.request().sizes().catch(()=>null);record.requestTiming=response.request().timing();record.finishedError=finished?String(finished):null;record.transferState=finished?'failed':'complete';}catch(error){record.traceError=String(error);record.transferState='trace-error';}})());
+  responseTasks.push((async()=>{try{record.headers=await response.allHeaders();record.requestTiming=response.request().timing();record.transferState='receiving';const finished=await response.finished().catch(error=>error);record.sizes=await response.request().sizes().catch(()=>null);record.requestTiming=response.request().timing();record.finishedError=finished?String(finished):null;record.transferState=finished?'failed':'complete';if(response.status()>=400&&!finished&&record.sizes?.responseBodySize<=16384){const body=await response.body();if(body.byteLength<=16384)record.errorResponse=body.toString('utf8');}}catch(error){record.traceError=String(error);record.transferState='trace-error';}})());
  });page.on('pageerror',error=>errors.push(error.message));
  const workerProfiler=workerCpuProfile?await profileBrowserWorkers(browser):null;
  const profiler=cpuProfile?await context.newCDPSession(page):null;if(profiler){await profiler.send('Profiler.enable');await profiler.send('Profiler.start');}
