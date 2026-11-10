@@ -56,3 +56,9 @@ The real proof exercises the builder with explicit verified inputs; coordinator
 selection/protocol recovery is covered by focused tests. Automatic serving rollout,
 verified live-tail joining, current concurrency and all previously failed browser
 loading gates remain incomplete. Nothing here recertifies those gates.
+
+Staging configuration follow-up: the opt-in Compose override forwards the rolling
+defaults flag (off unless selected) and requires an explicit worker build commit.
+Rendering with defaults and with rolling/retention enabled preserves all seven
+protected service configurations, the0.5CPUlimit and384MiBworker memory limit.
+No service was started by this render check. Evidence: `wall-staging-config-r1/`.
