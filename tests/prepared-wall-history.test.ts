@@ -268,6 +268,67 @@ test('busy prepared discovery does not multiply load through a serial canonical 
  await expect(loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:fetcher as typeof fetch})).rejects.toThrow(/discovery HTTP 503/);
  expect(fetcher).toHaveBeenCalledTimes(1);
 });
+test('the first discovery failure replaces the initial historical loading status before any good page exists',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[];
+ const service=new OrderWallsArchiveService(e=>events.push(e),(async()=>new Response(JSON.stringify({error:'Diagnostic source query budget exceeded'}),{status:503})) as typeof fetch,()=>to+100000);
+ try{
+  service.subscribe('first-discovery-failure',{market:'binance-spot',from,to,settings,followLive:false});
+  await vi.waitFor(()=>expect(events.at(-1)?.status.archive?.reason).toContain('Diagnostic source query budget exceeded'));
+  expect(events.at(-1).status.archive.requestComplete).toBe(false);
+  expect(events.at(-1).status.state).toBe('gap');
+  expect(events.at(-1).status.archive.retryable).toBe(true);expect(events.at(-1).status.archive.state).toBe('partial');
+ }finally{service.dispose();}
+});
+test.each(['binance-spot','binance-perp'] as const)('late restore/chart consumers inherit a settled %s history failure without restarting it',async market=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[];
+ const fetcher=vi.fn(async()=>new Response(JSON.stringify({error:'Diagnostic source query budget exceeded'}),{status:503}));
+ const service=new OrderWallsArchiveService(e=>events.push(e),fetcher as typeof fetch,()=>to+100000),req={market,from,to,settings,followLive:false};
+ try{
+  service.subscribe('restore-one',req);await vi.waitFor(()=>expect(service.stats.failures).toBe(1));
+  service.subscribe('restore-two',req);service.subscribe('chart',req);
+  service.unsubscribe('restore-one');service.unsubscribe('restore-two');
+  const latest=events.filter(e=>e.ids.includes('chart')).at(-1);
+  expect(latest.status.archive.reason).toContain('Diagnostic source query budget exceeded');
+  expect(latest.status.archive).toMatchObject({state:'partial',requestComplete:false,retryable:true});
+  expect(latest.status.state).toBe('gap');
+  expect(fetcher).toHaveBeenCalledOnce();expect(service.diagnostics().historyConsumers).toBe(1);
+ }finally{service.dispose();}
+});
+test('late join during Retry clears the shared failure and awaits fresh validation before completion',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],t=transport(fixture());let failed=true,release!:()=>void;
+ const held=new Promise<void>(r=>{release=r;});
+ const fetcher:typeof fetch=async(input,init)=>{
+  if(String(input).includes('/walls/discover?')){
+   if(failed)return new Response(JSON.stringify({error:'Diagnostic source query budget exceeded'}),{status:503});
+   await held;
+  }
+  return t.fetcher(input,init);
+ };
+ const service=new OrderWallsArchiveService(e=>events.push(e),fetcher,()=>to+100000),req={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('first',req);await vi.waitFor(()=>expect(service.stats.failures).toBe(1));service.subscribe('second',req);
+  failed=false;service.retry('first');service.subscribe('third',req);
+  const waiting=events.filter(e=>e.ids.includes('third')).at(-1);
+  expect(waiting.status.archive.requestComplete).toBe(false);expect(waiting.status.archive.reason).toBeUndefined();
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids.includes('third')).at(-1).status.archive.requestComplete).toBe(true));
+  for(const id of ['first','second','third'])expect(events.filter(e=>e.ids.includes(id)).at(-1).status.archive.reason??'').not.toContain('Diagnostic source query budget exceeded');
+  expect(service.stats.historyRequests).toBe(1);expect(t.calls.filter(p=>p.endsWith('/discover'))).toHaveLength(1);
+ }finally{release();service.dispose();}
+});
+test('Retry of a previously ready shared view never presents its old revision as validated to a late consumer',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],t=transport(fixture());let hold=false,release!:()=>void;
+ const held=new Promise<void>(r=>{release=r;});
+ const fetcher:typeof fetch=async(input,init)=>{if(hold&&String(input).includes('/walls/discover?'))await held;return t.fetcher(input,init);};
+ const service=new OrderWallsArchiveService(e=>events.push(e),fetcher,()=>to+100000),req={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('ready-view',req);await vi.waitFor(()=>expect(events.at(-1).status.archive.requestComplete).toBe(true));
+  hold=true;service.retry('ready-view');service.subscribe('late-view',req);
+  const late=events.filter(e=>e.ids.includes('late-view'));
+  expect(late.length).toBeGreaterThan(0);expect(late.every(e=>e.status.archive.requestComplete===false)).toBe(true);
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids.includes('late-view')).at(-1).status.archive.requestComplete).toBe(true));
+  expect(service.stats.historyRequests).toBe(1);expect(t.calls.filter(p=>p.endsWith('/discover'))).toHaveLength(2);
+ }finally{release();service.dispose();}
+});
 
 test('advertised bounded batches preserve the canonical projection with fewer requests',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture();(f.discovery as any).delivery={version:2,maxDecodedBytes:8*1024*1024,maxParts:8};

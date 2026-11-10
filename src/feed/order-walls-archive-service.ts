@@ -94,6 +94,7 @@ interface SharedHistoryJob {
   latest?: OrderWallsArchiveUpdate;
   resume?: OrderWallsArchiveResumeState;
   settled: boolean;
+  failure?: {message:string;retryable:boolean};
   initialProjector?: OrderWallsArchiveProjector;
 }
 
@@ -490,6 +491,7 @@ export class OrderWallsArchiveService {
       sub.historyFenceState = job.fenceState ? copySelectedState(job.fenceState) : undefined;
       sub.historyJob = job; job.subscribers.add(sub);
       if (job.latest) this.publishSharedHistorySnapshot(sub, job.latest);
+      if (job.failure) this.publishHistoryFailure(sub, job);
       return;
     }
     job = { key, request, fence: sub.historyFence,
@@ -545,6 +547,15 @@ export class OrderWallsArchiveService {
 
   private runHistoryJob(job: SharedHistoryJob, resume?: OrderWallsArchiveResumeState) {
     job.settled = false;
+    job.failure = undefined;
+    if(job.latest){
+      // A late restore/chart consumer may join during Retry. Good data remains
+      // present, but the previous revision is not newly validated by that join.
+      const previous=job.latest.status;
+      job.latest={...job.latest,status:{...previous,state:'loading',message:'Validating retained Order Walls history.',
+        ...(previous.coverage?{coverage:{...previous.coverage,complete:false,partial:true,reason:undefined}}:{}),
+        ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
+    }
     void loadOrderWallsArchive({ request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       ...(job.initialProjector ? { initialProjector: job.initialProjector.cloneForLiveTail(job.request.to) } : {}), onUpdate: update => {
@@ -580,21 +591,28 @@ export class OrderWallsArchiveService {
         }
       }
       const message = error instanceof Error ? error.message : String(error);
+      job.failure={message,retryable};
       for (const subscriber of job.subscribers) {
-        const previous = subscriber.historyStatus ?? job.latest?.status;
-        if (job.resume && previous) {
-          const archive = { ...(previous.archive ?? emptyArchiveStatus(subscriber.request, 'partial')),
-            state: 'partial' as const, requestComplete: false, retryable, resumeAfter: job.resume.after, reason: message };
-          subscriber.historyStatus = { ...previous, state: 'loading', message: `Order Walls history incomplete; validated prefix retained and can be resumed. ${message}`,
-            coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message }, archive };
-        } else {
-          subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
-            coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
-            archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...(subscriber.cachedHistory?subscriber.historyStatus?.archive:{}), state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
-        }
-        this.publish(subscriber, 'patch', [], this.status(subscriber));
+        this.publishHistoryFailure(subscriber,job);
       }
     });
+  }
+
+  private publishHistoryFailure(subscriber:Subscription,job:SharedHistoryJob){
+    if(!job.failure)return;
+    const {message,retryable}=job.failure;
+    const previous = subscriber.historyStatus ?? job.latest?.status;
+    if (job.resume && previous) {
+      const archive = { ...(previous.archive ?? emptyArchiveStatus(subscriber.request, 'partial')),
+        state: 'partial' as const, requestComplete: false, retryable, resumeAfter: job.resume.after, reason: message };
+      subscriber.historyStatus = { ...previous, state: 'gap', message: `Order Walls history incomplete; validated prefix retained and can be resumed. ${message}`,
+        coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message }, archive };
+    } else {
+      subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
+        coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
+        archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...(subscriber.cachedHistory?subscriber.historyStatus?.archive:{}), state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
+    }
+    this.publish(subscriber, 'patch', [], this.status(subscriber));
   }
 
   private showWarmHistory(sub:Subscription){
@@ -866,7 +884,7 @@ export class OrderWallsArchiveService {
         to: sub.pendingViewport!.to, reason: 'Continuing fixed-watermark history through the advancing chart range.' };
       delete archive.resumeAfter;
     }
-    const state = sub.currentState === 'live' ? 'live' : sub.currentState === 'unavailable' ? 'unavailable'
+    const state = !sub.request.followLive ? status.state : sub.currentState === 'live' ? 'live' : sub.currentState === 'unavailable' ? 'unavailable'
       : sub.currentState === 'stale' ? 'gap' : 'loading';
     const message = sub.currentMessage ?? (priorArchive.requestComplete === false ? status.message : sub.group && priorArchive.state !== 'complete'
       ? 'Current selected-profile walls are updating while archive history loads.' : status.message);
