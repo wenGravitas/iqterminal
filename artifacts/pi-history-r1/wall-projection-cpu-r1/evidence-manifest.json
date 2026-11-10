@@ -1,0 +1,127 @@
+{
+  "backendCommit": "990e14630b27b96cd3b5c5188c5055b5235e2ec4",
+  "sourceWorkerBuild": "13730f76752ec9db7f2253aa541fd4131e578141",
+  "scope": "Offline CPU profile and fixed-source projection component comparison; no loading gate or source/collector change",
+  "files": [
+    {
+      "path": "analyze.py",
+      "bytes": 3809,
+      "sha256": "a87ebc744b579bc3b1af2f86f827e1317ea7c9fd6a5ef2faa18b2465c77a8c21"
+    },
+    {
+      "path": "baseline-executed.mjs",
+      "bytes": 83377,
+      "sha256": "eea5fc6b4520a063fdf1d9929d1006fb447e35e8feae3188bb4e4b5134db5d9b"
+    },
+    {
+      "path": "baseline-fixed-executed.mjs",
+      "bytes": 83416,
+      "sha256": "980e7ba3650dedd8a91e40488942b4655601eb19e08edf29ae75e5dd77ba64fc"
+    },
+    {
+      "path": "baseline.cpuprofile",
+      "bytes": 292949,
+      "sha256": "4128d9e5fe8ac11fe5e3e0f4491702284ade49cb191f8c4c192b1d19405cfbbe"
+    },
+    {
+      "path": "baseline.jsonl",
+      "bytes": 29939,
+      "sha256": "ce405a8446851783bdf25fbef14d031e2c138ae22d4dca9e04cd6646b45aff40"
+    },
+    {
+      "path": "baseline.stderr",
+      "bytes": 65723,
+      "sha256": "618f547038b449263c8ded8ae42f97c9edfc6859c23535bbd0073e5183f0d5a5"
+    },
+    {
+      "path": "build.log",
+      "bytes": 1901,
+      "sha256": "ac2857bfa59de2eb29c61281c7e2691fe5b1fa5f305b1f35913fbd195e2aee99"
+    },
+    {
+      "path": "candidate-executed.mjs",
+      "bytes": 83971,
+      "sha256": "5cc5e29c6002bcba0f6b6eea6b67e90f322ae7f8ffac4be6be9ae17ea4e484d7"
+    },
+    {
+      "path": "cohort.jsonl",
+      "bytes": 30827,
+      "sha256": "0579ccf7fd1c1db49d60ccfd3411678a7be116b7649de667ae465f597de2ab8d"
+    },
+    {
+      "path": "cohort.py",
+      "bytes": 4913,
+      "sha256": "e4f3d25be7a8dfd39730d8254fb267153eb9a445bc897bf386a337a2def63707"
+    },
+    {
+      "path": "cohort.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "finish.py",
+      "bytes": 4194,
+      "sha256": "d211a786ae3c1617fe63de4cfbabf4e53e3063b77ce78709b53df881b45fc4c7"
+    },
+    {
+      "path": "focused-tests.log",
+      "bytes": 3125,
+      "sha256": "99471f1632439b312c8c69fb4c6e1024ebe9d8583c72d9831061738d8dbadabc"
+    },
+    {
+      "path": "full-tests.log",
+      "bytes": 85560,
+      "sha256": "c0b265f9e1f9adb2d8cc889217c41a2098dc5b98fa85babeedd461ddf6d9b583"
+    },
+    {
+      "path": "page-logs.tar.gz",
+      "bytes": 38997,
+      "sha256": "d4680762009c6f7e469c653a9a99a954c06cf3b4e2bb261d58f676e799d31b12"
+    },
+    {
+      "path": "pi-resource.json",
+      "bytes": 2468,
+      "sha256": "41dc9d18d4b8f5ee95ca54ac6f1932e2a8f1dfb2ea96968c75638acb4ceaeccf"
+    },
+    {
+      "path": "postflight.jsonl",
+      "bytes": 8530,
+      "sha256": "59e74afc1b529e076538e375db857092664c33640a2502b17f2c266e7a967e69"
+    },
+    {
+      "path": "postflight.py",
+      "bytes": 1963,
+      "sha256": "e422232b77d9f00b96281bacacc9e04f4a72d86a100a2032e2d056c89b8a15d9"
+    },
+    {
+      "path": "postflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "profile.py",
+      "bytes": 3754,
+      "sha256": "c471c47fafe27c6bb6cef28c014f5861c32def204b96fd735f4881a853528708"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 9079,
+      "sha256": "91b039d87f933df3a63bb3df3df096846696724c1cdd984ccc97a43acc1416e8"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 103,
+      "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
+    },
+    {
+      "path": "validation.jsonl",
+      "bytes": 1843,
+      "sha256": "8fd667ae798dd46ef4af351dc2df30cc0853c1926ce272b7c24da8f1ad2e88bd"
+    },
+    {
+      "path": "validation.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,3 +1,17 @@
+## Latest projection allocation check: backend 990e146
+
+The measured allocation change preserves every checkpoint, manifest and compressed
+part across five alternating unprofiled builds per variant over one pinned source.
+Projection-component median falls41.85s to40.23s (3.9%); maximum42.49s to41.28s.
+All346 backend tests,12 focused tests, typecheck/build pass. The code is pushed,
+while the serving worker remains13730f7. [Every sample, CPU profile, safeguards and remaining cost](wall-projection-allocation-results.md).
+
+This modest component result does not pass any loading gate. Repeated closed-index
+checkpoint JSON is still the largest measured builder hotspot. Prepared-prefix/live-tail
+coverage, current/warm-wall/concurrency/heap and foreground Pi acceptance remain
+incomplete. The preserved head-boundary patch remains unapplied. No collector,
+source retention, production deployment or merge changes occur.
+
 ## Latest backend retention recovery: worker 13730f7
 
 The exact-reuse producer files were missing from the retirement scanner's contract.

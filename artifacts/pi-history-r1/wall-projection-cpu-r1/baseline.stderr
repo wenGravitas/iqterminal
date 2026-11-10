@@ -1,0 +1,1550 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Offline build must preserve the public manifest and financial ordering
++ actual - expected
+... Skipped lines
+
+  {
+    active: {
+      bookScope: {
+        bandCoverage: {
+          asks: 'partial',
+...
+          peakUsd: 8318506.5,
++         qualifyingAt: undefined,
+          qualifyingCandidate: {
+            confirmationAt: 1794317411702,
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24742422:bids:7050000000000',
+            notional: '8318506.5',
+            price: '70500',
+...
+          },
++         qualifyingCursor: undefined,
+          qualifyingStartKnown: true,
+          usdMs: 968260127241,
+          valueSignature: '70500|117.989|8318224.5|8'
+        },
+        {
+...
+          peakUsd: 8305654.8808,
++         qualifyingAt: undefined,
+          qualifyingCandidate: {
+            confirmationAt: 1794317414244,
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24742435:bids:6988880000000',
+            notional: '8305654.8808',
+            price: '69888.8',
+...
+          },
++         qualifyingCursor: undefined,
+          qualifyingStartKnown: true,
+          usdMs: 209294197341.27924,
+          valueSignature: '69888.8|118.841|8305654.8808|8'
+        },
+        {
+...
+          peakUsd: 3783758,
++         qualifyingAt: undefined,
++         qualifyingCandidate: undefined,
++         qualifyingCursor: undefined,
+          qualifyingStartKnown: false,
+          usdMs: 0
+        },
+        {
+          candidate: {
+...
+          peakUsd: 3868497.549,
++         qualifyingAt: undefined,
++         qualifyingCandidate: undefined,
++         qualifyingCursor: undefined,
+          qualifyingStartKnown: false,
+          usdMs: 0
+        }
+      ],
+      confirmedTo: 1794320100000,
+
+    at file:///app/profile.mjs:1482:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    version: 2,
+    key: '48a1e13b45500d12c1e1d2dad9cff4fe75802d133c050574dbfe01eb91f1e26a',
+    sourceKey: '0b605de942bfbffccf5664c69d8fcb85ef4375e8af3772d267d3f61940fb509f',
+    sourceToken: 'd9685c246b411fd5ffde761d1f6732a9cebfbcc3b2fbfe726fbf161c96aeabc6',
+    core: 'c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c',
+    settings: {
+      topLevels: 8,
+      minimumNotionalEnabled: false,
+      minimumNotionalUsd: 0,
+      minDurationMs: 0
+    },
+    complete: true,
+    parts: [
+      {
+        hash: '6d8cab7245784c94fd9450a9e6f64c378bc20e9695621a8439158b41edb598c1',
+        compressedHash: '56ec8fd6b79763d912be2a28e3d109fb603977286a72390021322639a07a7b08',
+        bytes: 87487,
+        compressedBytes: 8903,
+        records: 63
+      },
+      {
+        hash: '198af7d4dd4595de3c0b285ae17c623ad973dfc896e0f9eabf161d67c176e5e5',
+        compressedHash: '1e6f4ddd0dd981d8775ae763671fafb440cd52e587e8e2415288a894d57a4990',
+        bytes: 267888,
+        compressedBytes: 22796,
+        records: 209
+      },
+      {
+        hash: '30613478e3bac89941d826cc52b9faf08b92028c522a5e0b46a7a67ce4ded0f5',
+        compressedHash: 'b6e62688ce2ab335762bfbe81eb4d9f4de5584e7d0809abbc646904e31272ec3',
+        bytes: 662594,
+        compressedBytes: 70746,
+        records: 352
+      },
+      {
+        hash: '29d98c74a8321e0091c734940812a45c636a9f06f3cc5259eb285ca1c96c9a29',
+        compressedHash: '82176c6b7e9e39c0f21b9403d7188ae086caf361cfb843e41cef3490ff0f5e46',
+        bytes: 317523,
+        compressedBytes: 30197,
+        records: 221
+      },
+      {
+        hash: '355eabe8fe0b781b0e7d3702ee17df485c1f934ecc7565b135bca73d3b7fb2d3',
+        compressedHash: '13a637b539221d2038306c6d564ae9935e59515305600af95321c94c447de382',
+        bytes: 389002,
+        compressedBytes: 35591,
+        records: 298
+      },
+      {
+        hash: 'e3fe93da989df2378681595fcdf565515cefd60dd9d96fb8d2696e4e581030bc',
+        compressedHash: '279096c51d02757647d81dcb5f3ec0c33cfa256c21d1a0c9767897920e573d3b',
+        bytes: 426693,
+        compressedBytes: 31488,
+        records: 396
+      },
+      {
+        hash: 'b26041497513e672201b51d1bb472ba63c1ea4be9c11e5a1e06ee5a993457030',
+        compressedHash: 'ae0d07af8f84dd6969facbeb2533c1c3352ad88412a247f9fc3ee885857fb442',
+        bytes: 435140,
+        compressedBytes: 29070,
+        records: 430
+      },
+      {
+        hash: '22ac4857a70db8aaa3611c0597d7b0a06a65b0b585d633de56a0d24638b61a75',
+        compressedHash: 'f4faf6d4ad8b858d04af4eac48136f7847116481b4441e752815a42d14a64b11',
+        bytes: 511101,
+        compressedBytes: 43345,
+        records: 345
+      },
+      {
+        hash: '539e9d78e4bf3dec10836478850a5cf5a44eb9d26f7de993e11833547ff27aba',
+        compressedHash: 'c88f36d065eecac3298edf1e6c2332d25c2fe972f85686d722c0d9b3b3083582',
+        bytes: 530097,
+        compressedBytes: 34490,
+        records: 549
+      },
+      {
+        hash: '3e15fae633b13781cf2bf5a0983354174a064b432f93d2d836cb29584c474ede',
+        compressedHash: 'fcc9226ffbfbcef18c51cd2402049d9dca7e735fd9464c878689f8ac546ff9c1',
+        bytes: 459790,
+        compressedBytes: 37513,
+        records: 389
+      },
+      {
+        hash: 'fa84a226634374d1d0870c56c7446f1ac40e201320f7d5c254f26e2a6e94d269',
+        compressedHash: '4a03228c0f9286a07ce5daabb14b00cd52617ca5c3e5744c1346c8970005a3e4',
+        bytes: 466340,
+        compressedBytes: 48081,
+        records: 274
+      },
+      {
+        hash: '0b732dd23efffc742614a724540a9f96d2d27974354285398f155495ea975237',
+        compressedHash: 'a6641bfc19b77da73b6e7cdd17cce523373cc02c0a24d9132873e7a4e0ed89ea',
+        bytes: 455824,
+        compressedBytes: 33655,
+        records: 424
+      },
+      {
+        hash: 'e725f93ae2caa4ed63b954d161053b1c913c3af7a4c3b68c156f7b99a9fa632b',
+        compressedHash: '5ed3f45ed5edc1d8d0a4b12aaa599f7645db2b3e1293dcc9a9f54fee2fdd535c',
+        bytes: 710760,
+        compressedBytes: 46721,
+        records: 688
+      },
+      {
+        hash: 'b94b0869628dd660be3484b3e323709a6061b2c69e04e7a0aac2935edc02d104',
+        compressedHash: '694285f6464187fd86db3a59a165b442cc761b4167850f9e71696cf43afbf13b',
+        bytes: 518601,
+        compressedBytes: 48115,
+        records: 364
+      },
+      {
+        hash: '4f0cbeecd679590917607b8c497d4600dbe817250c121c18c3b907741277c48a',
+        compressedHash: '4804ed8623256dd101ff9795a05c84eb14aca78473b907c71424f5b946c41b9d',
+        bytes: 371255,
+        compressedBytes: 26792,
+        records: 362
+      },
+      {
+        hash: 'e8c0422c24a14cbf8deaecaef2e152741dc5c5745ac902a6c85d3e934ccd2216',
+        compressedHash: 'f73acfe56bf86a4b71decbf863e4b45f46d04e10e1fa8c22ec9256263de90e18',
+        bytes: 756254,
+        compressedBytes: 49130,
+        records: 773
+      },
+      {
+        hash: 'f2395363af17f8305b4babcdedb17057388bb4b623e42ac8eb069195cd108dc1',
+        compressedHash: 'dd445df879be30fd42cc55d18d44c68347a73e109b620c31b2fa0340c20fee17',
+        bytes: 677713,
+        compressedBytes: 49085,
+        records: 549
+      },
+      {
+        hash: '08f8cdbc105360e7f3b61d93f78e2e399e467ff0b19709f00c17462b8a4c7779',
+        compressedHash: '63f8748d31c19d81417d5c3b3291f546c8259f712def8efddc6408573cfd7161',
+        bytes: 451086,
+        compressedBytes: 45210,
+        records: 293
+      },
+      {
+        hash: '028296c51b84e32facf7b3019bf81b444bd0706246504abf5e65c9933ad9b1bf',
+        compressedHash: 'fa6d466f9d6325f3b804f4a88d392b140c73d00623996cafbaedf67011e4d70f',
+        bytes: 429445,
+        compressedBytes: 37129,
+        records: 275
+      },
+      {
+        hash: 'cf101ee020259a1af01415df4b0f708db32b86a573cbc16970a9a853304dbe7c',
+        compressedHash: 'e76e14201da670324399a89e5cd909aceed21b0af90ab0aa2b89b751871c1292',
+        bytes: 361431,
+        compressedBytes: 27158,
+        records: 329
+      },
+      {
+        hash: '38577e789aef75972b9cd67b8f0423e631a07f7d28b8223bbe532d5876fca61d',
+        compressedHash: 'e9ff1ca98a2f9937347f5c878255657b1cb70da30fbf706bd747de3afab969f6',
+        bytes: 490943,
+        compressedBytes: 55234,
+        records: 245
+      },
+      {
+        hash: '4852fc521c594032eb286525ea08c1ae783e37349cb81b747b3f5abe782f7544',
+        compressedHash: 'a6349238b35a7a531e9519afb901d7bda4a70e673828f37db4d66a25056bde7d',
+        bytes: 622997,
+        compressedBytes: 42279,
+        records: 621
+      },
+      {
+        hash: '25db3a7d53418b598af375974a559ed930b51fa1eef3cd73373ad80914126400',
+        compressedHash: '1ec7ac900ef6b6438c469fae13724a6d185952729a20c66cdc7d7a3ba53a1fe7',
+        bytes: 458989,
+        compressedBytes: 29413,
+        records: 446
+      },
+      {
+        hash: '032b3e14d5a5e4b4296a6ce839f4bf4d49c7b32b784daa8abcd04850d7be8d9f',
+        compressedHash: 'edd6620565868b68ff44fedd5c96162083ec04a1bae43713d7c5d5f7054c07d1',
+        bytes: 418684,
+        compressedBytes: 27702,
+        records: 428
+      },
+      {
+        hash: 'eff01e7698b110d716ad673eda7221c44fcceccc093fcdd2f2959c17dd6283e6',
+        compressedHash: 'a00dcc0c3d37a0a697af7de6e02dfd921c7a680b200b1f9081027f60f7028a49',
+        bytes: 649282,
+        compressedBytes: 40436,
+        records: 650
+      },
+      {
+        hash: 'f53e293c1c50b3eedf2be0d32dffbadcce1b62e6fb6b9043b906cde4e823f692',
+        compressedHash: 'a7ff06930f767ae941cbee3405f511384eeccd67c996f087860b2f8037a1ba06',
+        bytes: 566372,
+        compressedBytes: 37250,
+        records: 495
+      },
+      {
+        hash: '468f329b2379ef87300d3a4f72270aaad7e29b2ca8fd03d41f89c2a4879c076a',
+        compressedHash: '0a5abec70c51a9d8dc600700689f87c6f6639bfedcff5b5a11ae9fe86f703f8c',
+        bytes: 1642532,
+        compressedBytes: 165154,
+        records: 623
+      },
+      {
+        hash: '335c1c41b7a6665a4fc34ec247e86ea42c96cd1cf34e79d46abbc35bbd50e6e4',
+        compressedHash: '880cc81e1bc58a27da15ea68764cec5388faf4c530947e085bc9ceafcaff7a94',
+        bytes: 617907,
+        compressedBytes: 40854,
+        records: 508
+      },
+      {
+        hash: '248d8c7c0915303013dcbb12fe54ca2f3db83effc2063b0b16bcf3034db2e443',
+        compressedHash: 'd31fe366e69b0b3f375c8ae0f42d6f803db7876fc66aab8ff63e986887730c0b',
+        bytes: 557141,
+        compressedBytes: 38155,
+        records: 517
+      },
+      {
+        hash: '6bb9e9cb084578481e7295337bab719050abfbdecfa2513ce84313e2beb9d178',
+        compressedHash: 'b856221876e7d085dec22030d48d5e10d0cf5f61e70fc90aad3eef1cce99ed2d',
+        bytes: 456430,
+        compressedBytes: 29386,
+        records: 488
+      },
+      {
+        hash: '6017d63416cc4782a4f33c8151a9856cf6efca6f53db04f7ab0543248c217c5c',
+        compressedHash: '57fb123c93c4c02c3cd593dde1c4d309ee02780e6d0d017bf13e5f86561c5d77',
+        bytes: 562014,
+        compressedBytes: 37430,
+        records: 566
+      },
+      {
+        hash: '6182dea49d7dc4ee6cce4decbc58f546c4389e9ee4bf3667edd8155ae429ccd6',
+        compressedHash: '6a18b585b7ec8d96ec4218d0119135bd2b4957845d102afacec867a79aa753fc',
+        bytes: 742627,
+        compressedBytes: 47876,
+        records: 756
+      },
+      {
+        hash: '2d2f75c5bc0ab79b580e0699baed6ed40c682e514caa5c0c9fc1d0e341998781',
+        compressedHash: 'ad6042f3f24585a2d5669e1c0e7d3fbbe6602217afa6633b736afe90eb5909e1',
+        bytes: 605419,
+        compressedBytes: 38012,
+        records: 606
+      },
+      {
+        hash: '4a56aacc23946f4f5948d020a883c67edf8e87b2412fcc1b83071b03d5db5351',
+        compressedHash: '68f25518bd8fc9b55dea86b1558d7b6d164cabc789c2eea34464accafba010f7',
+        bytes: 529073,
+        compressedBytes: 34926,
+        records: 547
+      },
+      {
+        hash: '45b655097d487283d9b72deec626eeb5d8b5fbe0efd178e9da0ee14810399a2f',
+        compressedHash: '5d3c58db55564ab510f6fa719f32e0fb311fa1be29abf1a5a0e836644a5db6d4',
+        bytes: 880797,
+        compressedBytes: 58941,
+        records: 862
+      },
+      {
+        hash: 'd27739df3a7b0008b6cb38a4cb4dbbfaf27aba0f4e206d417ba89ddaa8f957d4',
+        compressedHash: '945decb109a0329d8651e50843c9515e9a8ac2ecdc19739c2bcd67fdeced4a0b',
+        bytes: 617199,
+        compressedBytes: 39523,
+        records: 604
+      },
+      {
+        hash: '6f0e4b1b79044554fc95bab9adf97d64d7ec2fd316c76c3ad5a852db0d4a3776',
+        compressedHash: 'b7f7eb240fd622aad213a3d1e09181fb0eef417ce546769ace45b9e6bbc7974b',
+        bytes: 692984,
+        compressedBytes: 43001,
+        records: 714
+      },
+      {
+        hash: '690ee42a12f279e9fd6151986442b4d980bed8675562247180a9a9ee07732ad6',
+        compressedHash: 'e03c11285dc1c44699ed7c9555bdd8667f9af4c8a8af5302cda435494186c49c',
+        bytes: 896297,
+        compressedBytes: 53650,
+        records: 865
+      },
+      {
+        hash: 'f6f6750dd93aab0adf7cb61e3bdad59fb3e7734126a57332dced393a15f73abf',
+        compressedHash: '0f6f9fcd9b4f720d3ddffb6bd3ff1a6bf7d740ac61f7b8656ce8260cb4be3cb8',
+        bytes: 846437,
+        compressedBytes: 55281,
+        records: 839
+      },
+      {
+        hash: '952f4119cd593475426c7c99275211dfdb1c6bbe1695cf7f2280c5f17bccc7e1',
+        compressedHash: '7eacf12b3cd3a7df301606c1180cc493ac7d854cca54e1fd7706eaf063a3977f',
+        bytes: 820283,
+        compressedBytes: 50914,
+        records: 846
+      },
+      {
+        hash: '8c609006f6277012a4088cbe343fcd803af8e2f30b499a8af6f77083e1a60a2f',
+        compressedHash: 'f7af9f762c09ffda607c7d94b2d04c00709a9b47dfdc2cc859e88c3519233290',
+        bytes: 821683,
+        compressedBytes: 52221,
+        records: 751
+      },
+      {
+        hash: 'ca3f122e9837eb27e7d69902c169be1924aaeea8b22acfec9b7c8fb4cd290eea',
+        compressedHash: '5faf4fa1c9317ebefc1fb00572fd412a900d7c64ca683e71d1ef4653fd7498f7',
+        bytes: 677416,
+        compressedBytes: 45400,
+        records: 648
+      },
+      {
+        hash: '4f01d586f2d6f3c995b54923c7be0de8928e6f3a740645a04d9875025dd5e2f0',
+        compressedHash: '028a2c0c7b4758308e4f11750298f22bc03672ceb26fa373cc5998c6a0a32798',
+        bytes: 795168,
+        compressedBytes: 49598,
+        records: 835
+      },
+      {
+        hash: 'c624a4923ee0c7477538d52a6dff9b14093b61411aa2e5cc09fbc12ffd062998',
+        compressedHash: '94c53f1d61c3f1709fd37dcbb0c3fdfd4e1e0b44efa2b98ca69164283732ae00',
+        bytes: 701466,
+        compressedBytes: 51109,
+        records: 540
+      },
+      {
+        hash: '6bcd3d07548220611245d4ff7027b4f48ed9040a5da90da731bf16e9957950e0',
+        compressedHash: '517e870a4a8a99651592102fb725ca1acd9bdb9760511526ea35dccf0302dcfd',
+        bytes: 603071,
+        compressedBytes: 46802,
+        records: 536
+      },
+      {
+        hash: '9f8e5419a9ec1417c5127fca7815629db72c971207c6825176bed3920e0579b6',
+        compressedHash: 'b69870bab5153398acf28e8c8504a8495ad4f36b42b7d9be521457e7645cdfee',
+        bytes: 360887,
+        compressedBytes: 30386,
+        records: 301
+      },
+      {
+        hash: 'ed2cd9e8a56eb9d0e8197a2a56e86468699a79de303d2765f623b78a17da4928',
+        compressedHash: '19ad194c2d9e15836615eae3cf8624908f61116a94e9f2589ca4f569b2e4e992',
+        bytes: 1210316,
+        compressedBytes: 128189,
+        records: 424
+      },
+      {
+        hash: '99368d9c4695afac059e2729ed51c54429bd2cb0df2e7ec13ee24620619c48f6',
+        compressedHash: '6cfc0347198b2a041cfdea0de1a804825c4d2fc52290a8b6ac2e994b9636ef97',
+        bytes: 392875,
+        compressedBytes: 34797,
+        records: 322
+      },
+      {
+        hash: '57d992c248ee18344f8c151ac12f9a819bcfd2ac2bad56a2a78868e9cf305e85',
+        compressedHash: '0df48da22ccd05f1f352d4d7363126d2eba5ebd14504826a46547318d540a387',
+        bytes: 317094,
+        compressedBytes: 27475,
+        records: 272
+      },
+      {
+        hash: '3ee41ced35c4e4ca06ddee35ac610322125af2922645dc157ee7fdf2e7d8fd19',
+        compressedHash: 'd5e2cfa90ba2f319fce0e027c64c72a06ed010e8a33ed18a786aba965a41c2d4',
+        bytes: 611144,
+        compressedBytes: 40116,
+        records: 651
+      },
+      {
+        hash: '83cd22082d100bd6bafcb981b9e5b1efe81578677335955fbdd13cabafb93731',
+        compressedHash: '4dbfb4c74f67ba67da4206627f0876a567014682fda305fba75be5aefe9da251',
+        bytes: 719734,
+        compressedBytes: 47070,
+        records: 725
+      },
+      {
+        hash: 'd32477ef22b2864536668c084a2d319e110a922dfc665a638d626f21705361d9',
+        compressedHash: 'f1dbd58a6fe7acaa131367f5a888f11f51469d45963659983cad819af9a2cacb',
+        bytes: 671947,
+        compressedBytes: 46966,
+        records: 641
+      },
+      {
+        hash: '66ef02498d63d4b6f308893276d320d9237ddfffca888ffead3b5a67b299a07b',
+        compressedHash: '6afe61f85156dd8f7d368b593325749186c8dfd8714bca910df8df55ac6feb5b',
+        bytes: 418590,
+        compressedBytes: 28206,
+        records: 425
+      },
+      {
+        hash: 'f6a51ca8e784a9dce61eb10ea8ff39bbb5af26c61e3fa84bb52e256de8d2a153',
+        compressedHash: 'c8bc4050ed1187778e7b08c884a4b6c322d4b7d5edff11917e1f385940ec0a63',
+        bytes: 544749,
+        compressedBytes: 41534,
+        records: 449
+      },
+      {
+        hash: 'efff025dbbba637307d7aa9aafd4b2311a96ec2d6c8804be483cb131aa5ff949',
+        compressedHash: 'c8e7bee907730ca651870aad3890b2b121296b7e18e185d8bde8ff782c10bce7',
+        bytes: 455468,
+        compressedBytes: 32945,
+        records: 433
+      },
+      {
+        hash: '70dd2c9f54c7cea47552cfd666625c3706cb2f6deeb11ee4959f219e5b827640',
+        compressedHash: '2c613768a2e7f819ae5b68b0aedf24718e72d9da11ab1ccb275764498ec877f4',
+        bytes: 681240,
+        compressedBytes: 43032,
+        records: 698
+      },
+      {
+        hash: '23912aa953cc5010598776951b4904a78a9dc1344d1191b8a7154c55bc2842ec',
+        compressedHash: '4417d6b01300a75cc3e47b7967bbb7205840556b173f23765353be5cfb03823e',
+        bytes: 743964,
+        compressedBytes: 46717,
+        records: 726
+      },
+      {
+        hash: '49fab2c0e45ef0129ac1a6dc6cf2b6dab53df7721fa66ab88d6e9bbed0d05d85',
+        compressedHash: '673dcc5d9297e4f62463ba27b329292d5f56a49117c135265eb578a7ad7aef9a',
+        bytes: 666481,
+        compressedBytes: 45047,
+        records: 675
+      },
+      {
+        hash: '1c648e6dc1bce0fbd9938f2c1c936e9b460dae0e3ff8782c75dee028d39ef73c',
+        compressedHash: '57d5604a89d68413275c3fda148747930fba215c1147015fe4973747c7fbf174',
+        bytes: 656161,
+        compressedBytes: 44817,
+        records: 613
+      },
+      {
+        hash: 'bffa05f0e4b66b926c812b55e2c461e1291336fbad1b0d13b23772f2482218c9',
+        compressedHash: '0be71927b839f683ef7b40f90e3140648236ec69aa643cde569a76e6185b9e7d',
+        bytes: 616862,
+        compressedBytes: 40880,
+        records: 641
+      },
+      {
+        hash: '792ec77424718910ec69fe4849ca1dcd2e9c01463a5fd568ac0ecf9f3a689afc',
+        compressedHash: '741b77029acf7962a4408a105d943f8628fdcaf3d13253df459526d964d0be3c',
+        bytes: 673392,
+        compressedBytes: 44389,
+        records: 686
+      },
+      {
+        hash: 'f31450de427a0039d9d695c6616ebc3f1683110e590238c1af8938e2b97fd355',
+        compressedHash: '31e08b4b1b627801c7fb33e32780ff52bd887d588f3351fddedb6e88dd730e63',
+        bytes: 553250,
+        compressedBytes: 37323,
+        records: 581
+      },
+      {
+        hash: '32dfbc085482995246caf88fdbbf802d64b37c7cbad7c522f6cd332a963d4149',
+        compressedHash: 'f8350c7b4a59c53b8a78a91f869b64500eecc2f827bb3a9359acb74877246b42',
+        bytes: 740657,
+        compressedBytes: 46729,
+        records: 812
+      },
+      {
+        hash: 'c18f2ef1f56201dd3fe227881bb3191c810261b27ea5b1839289a30cc6b36a3c',
+        compressedHash: 'cbeef34018415176f59a8aa21a22bbcd95c4d8c3b19e0b32ad24350a9ab988a7',
+        bytes: 600698,
+        compressedBytes: 41381,
+        records: 505
+      },
+      {
+        hash: '63f223b267358faf64d4173bcb575d295cb0a971555ae56619f281521a03380d',
+        compressedHash: '7ef2b6226176c6b3a9576a3194f71da1b218b5d01f3563ff88f877751e9ac7ff',
+        bytes: 646855,
+        compressedBytes: 40708,
+        records: 601
+      },
+      {
+        hash: '78df4e2b23acc25c220cf0fb0fc200d397cc7bcc29e664475aeadb3d3459c495',
+        compressedHash: '049e7eeba1ffb430b2c35afa7886a0d9928b424144f37c291713c76afb5709d3',
+        bytes: 665689,
+        compressedBytes: 44006,
+        records: 691
+      },
+      {
+        hash: 'bcdeee61df0a49883a21ff31e1741888844db7e44173849734b6f4e848a95165',
+        compressedHash: '9caa1c5eca5ba407fa6fafa159bcc346c544ef3c4b603765441ac4e76bc96f6e',
+        bytes: 526103,
+        compressedBytes: 34625,
+        records: 558
+      },
+      {
+        hash: '630b0cbf2b37738a52b817fc2497add215ef3498ca20395a2440caff7456525c',
+        compressedHash: '4cc95b0b5f190285cc21a9e925b827bacffff68a1eaaaf8d8f488dd13966d37a',
+        bytes: 499357,
+        compressedBytes: 35618,
+        records: 478
+      },
+      {
+        hash: '1d89b38844c0fec0dd080f4b3f88b7301cc2709b9c28c7c283eed1ad04e2665c',
+        compressedHash: '7539702e414f3941306d60765fed652b0d95fce9e2260793bf2764e98c9cabbf',
+        bytes: 472547,
+        compressedBytes: 45369,
+        records: 314
+      },
+      {
+        hash: 'ede8e22d93ad714712408e00e19809f67533e8c47fb704b83a4f06681b302a5c',
+        compressedHash: '0782d2d23ed9df6299e5b29b77eb6f56f9d901749e2e496daab7aa198f2ab0c3',
+        bytes: 350782,
+        compressedBytes: 25166,
+        records: 348
+      },
+      {
+        hash: 'af7c3454ad1554973f4dd8f6033a404cc67f242c913c3228fb7bafa511914a1c',
+        compressedHash: '8c1ae4a4e8bce545949cbfc8736bda6e9c99be7162f2274c8256c61f7b61befd',
+        bytes: 538338,
+        compressedBytes: 34971,
+        records: 559
+      },
+      {
+        hash: 'de9a11a9d02eba34ba8d7f8ed1932e9ee20cac470f865ba14f2dae423da778c3',
+        compressedHash: '4f2fceed1300057f90e2bb796f19ed1d8eb7948e8fc9d927994fc8af3fcdbd4d',
+        bytes: 520449,
+        compressedBytes: 38223,
+        records: 522
+      },
+      {
+        hash: 'ef4e4350995754070aa6cd6d312350bf8a0e88d042680dd132919ce27b9cf1c8',
+        compressedHash: '22eb8efd78fd0bb9cf5ae3f2dbfca6d56a1a02f367b2695dcbda7dc598d242a1',
+        bytes: 687081,
+        compressedBytes: 57264,
+        records: 317
+      },
+      {
+        hash: '5e7c20565fb15b62416563e2b664c12ad2c4119c84570ceaa7f126cf17245d6b',
+        compressedHash: 'b8cf0b93053d81c8129db3676c430913def2f8ce32be0aa06ec27161cdea4800',
+        bytes: 1394239,
+        compressedBytes: 169086,
+        records: 367
+      },
+      {
+        hash: '7bfbabb2fc981bb2f671f7d696f2271ec747642b642412444b5316fbe0c4dfc5',
+        compressedHash: '2411f6888be11194f066050ec68feaca35f31818a9bc091ececc8517bc4611da',
+        bytes: 273284,
+        compressedBytes: 24504,
+        records: 238
+      },
+      {
+        hash: '269e69169c7eb74e612adff77b69a91d351101565a29168aa01c5ab781f38a0c',
+        compressedHash: '42a0e343c1dc44ceb800ca57ab78a9e37ba4facd390eef6eb6a2197d8b37a1e6',
+        bytes: 231714,
+        compressedBytes: 21947,
+        records: 153
+      },
+      {
+        hash: '5892ebccd2b0be8b4bc40e4e45a3090a0ac13f313286b85bab8cccce1fd8bfd2',
+        compressedHash: 'ad6144c28acb0de30a1266a6d31638a8291e828abd107b1c53a18b42463f2afe',
+        bytes: 483330,
+        compressedBytes: 56199,
+        records: 196
+      },
+      {
+        hash: 'fde9b095a084ed25480895ed9b4872dbf03b6cdfa4c85ea4fb0b25be015064b8',
+        compressedHash: 'e2b6a1eefa5c63653e73a05508432a5439416234cb7132ef128a712b748b4246',
+        bytes: 239228,
+        compressedBytes: 22833,
+        records: 168
+      },
+      {
+        hash: '83a6b5a4c084749d98bc0b203aa36f06fb1f51ca46fa98ee307a5f9e88c5fe12',
+        compressedHash: 'f51c706dafc43be815baf54c2ed955fa90d583a5a90940242b658275aca533d1',
+        bytes: 60040,
+        compressedBytes: 6249,
+        records: 46
+      }
+    ],
+    active: {
+      version: 1,
+      settings: {
+        topLevels: 8,
+        minimumNotionalEnabled: false,
+        minimumNotionalUsd: 0,
+        minDurationMs: 0
+      },
+      from: 1794210300000,
+      to: 1794320100000,
+      namespace: '',
+      confirmedTo: 1794320100000,
+      cursor: 24768964,
+      epoch: 1794309145901,
+      midpoint: '73910.25',
+      bookScope: {
+        outerCoverage: 'snapshot-bounded',
+        snapshotLevels: { bids: 1000, asks: 1000 },
+        snapshotBidFloor: '74175.9',
+        snapshotAskCeiling: '74437.8',
+        observedBidLow: '700',
+        observedAskHigh: '1561457.1',
+        observedLevels: { bids: 16248, asks: 13224 },
+        requestedBand: {
+          bidLow: '66519.225',
+          bidHigh: '73910.25',
+          askLow: '73910.25',
+          askHigh: '81301.275'
+        },
+        bandCoverage: { bids: 'partial', asks: 'partial' }
+      },
+      seenGaps: [
+        '1794212512502:1794212512502:ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n',
+        '1794242572858:1794242572858:ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n',
+        '1794264773086:1794264773086:ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n',
+        '1794309144116:1794309144116:ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n'
+      ],
+      segments: [
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:bids:7250000000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:bids:7250000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 72500,
+          priceExact: '72500',
+          start: 1794309154824,
+          end: null,
+          peakUsd: 14499202.5,
+          meanUsd: 12923656.981064534,
+          durationMs: 10945176,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 1,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 521 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661278:bids:7288880000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661278:bids:7288880000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 72888.8,
+          priceExact: '72888.8',
+          start: 1794309156559,
+          end: null,
+          peakUsd: 21601834.9896,
+          meanUsd: 12473484.906582277,
+          durationMs: 10943441,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 3,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 6 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661486:bids:7300000000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661486:bids:7300000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 73000,
+          priceExact: '73000',
+          start: 1794309177774,
+          end: null,
+          peakUsd: 14243468,
+          meanUsd: 12141828.074929873,
+          durationMs: 10922226,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 6,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 1065 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661727:asks:7750000000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661727:asks:7750000000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 77500,
+          priceExact: '77500',
+          start: 1794309202259,
+          end: null,
+          peakUsd: 9028207.5,
+          meanUsd: 8764449.429988977,
+          durationMs: 10897741,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 1,
+          valueRuns: [
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object]
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24703838:bids:7111100000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24703838:bids:7111100000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 71111,
+          priceExact: '71111',
+          start: 1794313483447,
+          end: null,
+          peakUsd: 10261815.077,
+          meanUsd: 10252983.106411565,
+          durationMs: 6616553,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 4,
+          valueRuns: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object]
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24735843:bids:7290000000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24735843:bids:7290000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 72900,
+          priceExact: '72900',
+          start: 1794316737469,
+          end: null,
+          peakUsd: 10296031.5,
+          meanUsd: 9656796.109565949,
+          durationMs: 3362531,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 5,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 118 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24662240:bids:7150000000000:view-8:off:0:q24742422',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24662240:bids:7150000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 71500,
+          priceExact: '71500',
+          start: 1794317411702,
+          end: null,
+          peakUsd: 9603451,
+          meanUsd: 9104905.890898814,
+          durationMs: 2688298,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 7,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 122 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661287:bids:7200000000000:view-8:off:0:q24742435',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661287:bids:7200000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 72000,
+          priceExact: '72000',
+          start: 1794317414244,
+          end: null,
+          peakUsd: 9163728,
+          meanUsd: 8782697.698489364,
+          durationMs: 2685756,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 8,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 198 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:asks:7800000000000:view-8:off:0:q24750489',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:asks:7800000000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 78000,
+          priceExact: '78000',
+          start: 1794318226474,
+          end: null,
+          peakUsd: 4418310,
+          meanUsd: 4282954.237459208,
+          durationMs: 1873526,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 5,
+          valueRuns: [
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            ... 59 more items
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24759638:asks:8100000000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24759638:asks:8100000000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 81000,
+          priceExact: '81000',
+          start: 1794319156786,
+          end: null,
+          peakUsd: 5359527,
+          meanUsd: 5358098.301692935,
+          durationMs: 943214,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 3,
+          valueRuns: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object]
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24750489:asks:7600000000000:view-8:off:0:q24764434',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24750489:asks:7600000000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 76000,
+          priceExact: '76000',
+          start: 1794319644579,
+          end: null,
+          peakUsd: 3989088,
+          meanUsd: 3981925.249858922,
+          durationMs: 455421,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 6,
+          valueRuns: [
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object], [Object], [Object], [Object],
+            [Object]
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24766110:asks:7500000000000:view-8:off:0:q24767922',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24766110:asks:7500000000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 75000,
+          priceExact: '75000',
+          start: 1794319999210,
+          end: null,
+          peakUsd: 3930600,
+          meanUsd: 3930050.3003770215,
+          durationMs: 100790,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 8,
+          valueRuns: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768524:asks:7489210000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768524:asks:7489210000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 74892.1,
+          priceExact: '74892.1',
+          start: 1794320060417,
+          end: null,
+          peakUsd: 6468805.1375,
+          meanUsd: 6447465.515005723,
+          durationMs: 39583,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 2,
+          valueRuns: [ [Object], [Object], [Object] ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768533:asks:7463460000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768533:asks:7463460000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 74634.6,
+          priceExact: '74634.6',
+          start: 1794320061336,
+          end: null,
+          peakUsd: 4939317.828,
+          meanUsd: 4939317.828000001,
+          durationMs: 38664,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 4,
+          valueRuns: [ [Object], [Object] ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768816:asks:7437600000000:view-8:off:0:carry',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768816:asks:7437600000000',
+          epoch: 1794309145901,
+          side: 'ask',
+          price: 74376,
+          priceExact: '74376',
+          start: 1794320090102,
+          end: null,
+          peakUsd: 3962678.904,
+          meanUsd: 3962678.904,
+          durationMs: 9898,
+          percentile: null,
+          scopePartial: true,
+          startKnown: false,
+          detectionMode: 'top-levels',
+          rank: 7,
+          valueRuns: [ [Object] ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        },
+        {
+          id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768848:bids:7350000000000:view-8:off:0:q24768848',
+          archiveEntryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24768848:bids:7350000000000',
+          epoch: 1794309145901,
+          side: 'bid',
+          price: 73500,
+          priceExact: '73500',
+          start: 1794320093369,
+          end: null,
+          peakUsd: 10942018.5,
+          meanUsd: 10942018.5,
+          durationMs: 6631,
+          percentile: null,
+          scopePartial: true,
+          startKnown: true,
+          detectionMode: 'top-levels',
+          rank: 2,
+          valueRuns: [ [Object] ],
+          valueRunsTruncated: false,
+          endReason: null,
+          endKnown: false
+        }
+      ],
+      valueRunOrder: [
+        [
+          107995, 108044, 108266, 108385, 108401, 108416, 108481,
+          108499, 108510, 108551, 108571, 108594, 108597, 108670,
+          108733, 108735, 108750, 108769, 108780, 108786, 108793,
+          108796, 108822, 108859, 108883, 108945, 108953, 108957,
+          109018, 109023, 109033, 109035, 109041, 109043, 109048,
+          109052, 109057, 109118, 109124, 109143, 109196, 109230,
+          109231, 109237, 109253, 109271, 109275, 109277, 109291,
+          109295, 109303, 109321, 109323, 109324, 109325, 109329,
+          109347, 109367, 109369, 109430, 109433, 109444, 109452,
+          109546, 109563, 109576, 109596, 109609, 109610, 109633,
+          109637, 109673, 109719, 109766, 109773, 109789, 109802,
+          109815, 109823, 109844, 109854, 109855, 109864, 109877,
+          109910, 109916, 109950, 109955, 109956, 109975, 109976,
+          110012, 110014, 110048, 110051, 110085, 110104, 110114,
+          110119, 110143,
+          ... 521 more items
+        ],
+        [
+          108043, 108103, 108426, 108779, 109075, 109431, 109438,
+          109503, 109510, 109857, 109868, 109953, 110242, 110364,
+          110373, 110392, 110396, 110399, 110758, 110763, 111031,
+          111071, 111106, 111116, 111319, 111784, 111792, 111805,
+          111814, 111857, 112108, 112202, 112417, 112449, 112477,
+          112586, 112604, 112606, 112620, 112644, 112647, 112657,
+          112723, 112801, 112952, 112970, 113077, 113080, 113095,
+          113222, 113604, 113661, 113696, 113698, 113699, 113704,
+          113718, 113751, 113753, 113755, 113801, 113803, 113806,
+          113836, 113874, 113891, 114228, 114246, 114251, 114257,
+          114263, 114266, 114276, 114285, 114290, 114294, 114304,
+          114314, 114415, 114438, 114488, 114832, 115176, 115245,
+          115246, 115257, 115339, 115378, 115379, 115381, 115417,
+          115693, 115755, 115757, 115773, 115824, 115826, 115855,
+          116153, 116154,
+          ... 6 more items
+        ],
+        [
+          108265, 108344, 108381, 108489, 108492, 108493, 108547,
+          108549, 108550, 108557, 108631, 108662, 108669, 108672,
+          108722, 108758, 108774, 108785, 108789, 108790, 108791,
+          108797, 108803, 108824, 108849, 108851, 108887, 108931,
+          108935, 108946, 108952, 108956, 108967, 108983, 109000,
+          109005, 109019, 109024, 109032, 109039, 109053, 109056,
+          109070, 109099, 109109, 109113, 109121, 109123, 109128,
+          109131, 109134, 109145, 109151, 109169, 109175, 109178,
+          109203, 109209, 109226, 109236, 109244, 109246, 109270,
+          109276, 109282, 109283, 109284, 109286, 109288, 109296,
+          109302, 109322, 109359, 109361, 109362, 109366, 109368,
+          109382, 109386, 109389, 109402, 109429, 109499, 109529,
+          109530, 109533, 109541, 109542, 109544, 109547, 109569,
+          109573, 109577, 109626, 109632, 109634, 109640, 109644,
+          109667, 109668,
+          ... 1065 more items
+        ],
+        [
+          108367, 108603, 109061, 109326,
+          109360, 109675, 110689, 111034,
+          111118, 111130, 111301, 111440,
+          111570, 111982, 112067, 112201,
+          112213, 112443, 112446, 112592,
+          112607, 112666, 112895, 112982,
+          113293, 113356, 113382, 113852,
+          114528, 114550, 115174, 115340,
+          115377, 115761, 115817, 115881,
+          116019, 116053
+        ],
+        [
+          110367, 110706, 110948,
+          110950, 111476, 111528,
+          111785, 111793, 111797,
+          111807, 111816, 111833,
+          111962, 112478, 112587,
+          112601, 113773, 115813,
+          115830, 115856, 116135,
+          116413
+        ],
+        [
+          111976, 111990, 112022, 112157, 112190, 112203, 112219,
+          112237, 112289, 112326, 112353, 112370, 112404, 112441,
+          112464, 112479, 112489, 112490, 112494, 112516, 112518,
+          112522, 112523, 112527, 112528, 112530, 112531, 112544,
+          112588, 112629, 112640, 112665, 112693, 112695, 112699,
+          112703, 112709, 112715, 112718, 112737, 112771, 112772,
+          112783, 112803, 112806, 112812, 112818, 112836, 112841,
+          112999, 113032, 113045, 113058, 113069, 113078, 113123,
+          113174, 113209, 113232, 113282, 113285, 113359, 113409,
+          113410, 113440, 113453, 113473, 113481, 113600, 113653,
+          113668, 113670, 113687, 113809, 113905, 113916, 113934,
+          113963, 113967, 113972, 113991, 114002, 114021, 114055,
+          114056, 114120, 114125, 114136, 114160, 114179, 114220,
+          114231, 114235, 114245, 114255, 114270, 114278, 114279,
+          114282, 114308,
+          ... 118 more items
+        ],
+        [
+          112442, 112480, 112589, 112681, 112722, 112776, 112815,
+          112838, 112891, 113009, 113043, 113066, 113073, 113076,
+          113083, 113098, 113193, 113195, 113211, 113243, 113262,
+          113267, 113302, 113316, 113318, 113336, 113361, 113424,
+          113452, 113477, 113489, 113490, 113553, 113626, 113651,
+          113675, 113694, 113702, 113712, 113745, 113781, 113828,
+          113839, 113850, 113851, 113859, 113949, 113962, 113968,
+          113990, 114008, 114061, 114067, 114076, 114084, 114094,
+          114123, 114126, 114145, 114146, 114159, 114225, 114249,
+          114258, 114259, 114265, 114273, 114274, 114275, 114280,
+          114296, 114350, 114358, 114363, 114365, 114378, 114384,
+          114417, 114427, 114434, 114459, 114468, 114490, 114573,
+          114575, 114579, 114592, 114622, 114625, 114626, 114650,
+          114662, 114671, 114673, 114678, 114684, 114700, 114711,
+          114715, 114719,
+          ... 122 more items
+        ],
+        [
+          112481, 112524, 112556, 112590, 112618, 112663, 112714,
+          112717, 112719, 112744, 112773, 112774, 112802, 112804,
+          112805, 112819, 112823, 112829, 112845, 112849, 112851,
+          112852, 112863, 112877, 112890, 112934, 112973, 113007,
+          113017, 113020, 113037, 113041, 113046, 113062, 113074,
+          113097, 113124, 113126, 113175, 113176, 113186, 113191,
+          113198, 113207, 113231, 113233, 113256, 113257, 113260,
+          113266, 113287, 113289, 113296, 113310, 113331, 113355,
+          113362, 113363, 113370, 113383, 113390, 113396, 113400,
+          113405, 113430, 113438, 113441, 113443, 113476, 113479,
+          113484, 113486, 113496, 113512, 113517, 113526, 113546,
+          113554, 113569, 113631, 113638, 113640, 113642, 113645,
+          113660, 113663, 113664, 113666, 113679, 113719, 113794,
+          113826, 113875, 113879, 113888, 113889, 113890, 113895,
+          113899, 113900,
+          ... 198 more items
+        ],
+        [
+          114495, 114516, 114518, 114553, 114560, 114580, 114589,
+          114597, 114602, 114607, 114639, 114654, 114657, 114670,
+          114687, 114695, 114728, 114754, 114762, 114786, 114801,
+          114809, 114818, 114837, 114844, 114860, 114866, 114875,
+          114878, 114883, 114886, 114893, 114896, 114908, 114912,
+          114919, 114924, 114930, 114932, 114948, 114955, 114960,
+          114971, 114973, 114977, 114980, 114982, 114986, 114988,
+          114992, 114994, 114999, 115002, 115006, 115009, 115051,
+          115056, 115067, 115081, 115107, 115134, 115139, 115157,
+          115164, 115208, 115213, 115230, 115237, 115253, 115283,
+          115290, 115306, 115386, 115393, 115396, 115401, 115405,
+          115459, 115479, 115483, 115487, 115491, 115499, 115509,
+          115516, 115523, 115533, 115537, 115551, 115560, 115565,
+          115568, 115575, 115582, 115587, 115595, 115632, 115638,
+          115647, 115651,
+          ... 59 more items
+        ],
+        [
+          115520, 115660, 115667, 115709,
+          115711, 115751, 115788, 115814,
+          115834, 115841, 115883, 115920,
+          115927, 115978, 115997, 116004,
+          116104, 116111, 116128, 116169,
+          116176, 116228, 116240, 116254,
+          116261, 116317, 116321, 116328,
+          116368, 116375, 116393
+        ],
+        [
+          116070, 116076, 116079, 116094,
+          116096, 116107, 116114, 116117,
+          116122, 116140, 116143, 116173,
+          116180, 116184, 116187, 116192,
+          116212, 116215, 116217, 116252,
+          116258, 116265, 116268, 116273,
+          116278, 116283, 116292, 116296,
+          116299, 116325, 116332, 116342,
+          116371, 116378, 116381, 116386,
+          116396
+        ],
+        [
+          116343, 116354,
+          116358, 116360,
+          116363, 116372,
+          116379, 116382,
+          116387, 116397,
+          116407, 116409
+        ],
+        [ 116374, 116392, 116402 ],
+        [ 116384, 116394 ],
+        [ 116408 ],
+        [ 116411 ]
+      ],
+      candidates: [
+        {
+          candidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:bids:7250000000000',
+            side: 'bid',
+            price: '72500',
+            quantity: '194.214',
+            notional: '14080515',
+            rank: 1,
+            startedAt: 1794309154824,
+            startCursor: 24661261,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309154824
+          },
+          eligible: true,
+          lastAt: 1794320100000,
+          usdMs: 141451700221380,
+          peakUsd: 14499202.5,
+          qualifyingAt: 1794309154824,
+          qualifyingCursor: 24661261,
+          qualifyingStartKnown: false,
+          qualifyingCandidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:bids:7250000000000',
+            side: 'bid',
+            price: '72500',
+            quantity: '172.434',
+            notional: '12501465',
+            rank: 1,
+            startedAt: 1794309154824,
+            startCursor: 24661261,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309154824
+          },
+          valueSignature: '72500|194.214|14080515|1',
+          segmentId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:bids:7250000000000:view-8:off:0:carry'
+        },
+        {
+          candidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:asks:7800000000000',
+            side: 'ask',
+            price: '78000',
+            quantity: '56.645',
+            notional: '4418310',
+            rank: 5,
+            startedAt: 1794309154824,
+            startCursor: 24661261,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309154824
+          },
+          eligible: true,
+          lastAt: 1794320100000,
+          usdMs: 8024226120690,
+          peakUsd: 4418310,
+          qualifyingAt: 1794318226474,
+          qualifyingCursor: 24750489,
+          qualifyingStartKnown: true,
+          qualifyingCandidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:asks:7800000000000',
+            side: 'ask',
+            price: '78000',
+            quantity: '56.478',
+            notional: '4405284',
+            rank: 8,
+            startedAt: 1794309154824,
+            startCursor: 24661261,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309154824
+          },
+          valueSignature: '78000|56.645|4418310|5',
+          segmentId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661261:asks:7800000000000:view-8:off:0:q24750489'
+        },
+        {
+          candidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661278:bids:7288880000000',
+            side: 'bid',
+            price: '72888.8',
+            quantity: '143.063',
+            notional: '10427690.3944',
+            rank: 3,
+            startedAt: 1794309156559,
+            startCursor: 24661278,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309156559
+          },
+          eligible: true,
+          lastAt: 1794320100000,
+          usdMs: 136502846139573.67,
+          peakUsd: 21601834.9896,
+          qualifyingAt: 1794309156559,
+          qualifyingCursor: 24661278,
+          qualifyingStartKnown: false,
+          qualifyingCandidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661278:bids:7288880000000',
+            side: 'bid',
+            price: '72888.8',
+            quantity: '296.367',
+            notional: '21601834.9896',
+            rank: 1,
+            startedAt: 1794309156559,
+            startCursor: 24661278,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309156559
+          },
+          valueSignature: '72888.8|143.063|10427690.3944|3',
+          segmentId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661278:bids:7288880000000:view-8:off:0:carry'
+        },
+        {
+          candidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661287:bids:7200000000000',
+            side: 'bid',
+            price: '72000',
+            quantity: '120.182',
+            notional: '8653104',
+            rank: 8,
+            startedAt: 1794309157477,
+            startCursor: 24661287,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309157477
+          },
+          eligible: true,
+          lastAt: 1794320100000,
+          usdMs: 23588183039904,
+          peakUsd: 9163728,
+          qualifyingStartKnown: true,
+          qualifyingCandidate: {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661287:bids:7200000000000',
+            side: 'bid',
+            price: '72000',
+            quantity: '122.238',
+            notional: '8801136',
+            rank: 8,
+            startedAt: 1794309157477,
+            startCursor: 24661287,
+            startEpoch: 1794309145901,
+            startKnown: false,
+            confirmationAt: 1794309157477
+          },
+          valueSignature: '72000|120.182|8653104|8',
+          qualifyingAt: 1794317414244,
+          qualifyingCursor: 24742435,
+          segmentId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1794309145901:24661287:bids:7200000000000:view-8:off:0:q24742435'
+        },
+        {
+      Traceback (most recent call last):
+  File "/home/daz/profile.py", line 42, in <module>
+    assert result.returncode==0,result.returncode
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1
