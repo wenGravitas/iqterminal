@@ -18,7 +18,14 @@ Prior build-scoped passes are not silently recertified on this candidate.
 |Normal foreground Pi UX|Unverified; explicitly headless browser tests only|
 |Missing footprint build/recovery|Busy333999-execution exact build/resume recorded;41.8s/32.8M DB-row read amplification remains a cold-build limitation|
 |Default footprint rollover|5m/1h exact actual-rollover references recorded; current candidate not revalidated|
-|Default wall preparation/rollover serving|Isolated coordinator build/resume and exact canonical overlap/tail reuse proven; closed projection/serving/live handoff unfinished; serving bridge/GC disabled|
+|Default wall preparation/rollover serving|Isolated coordinator build/resume and exact canonical overlap/tail reuse proven; isolated serving bridge/GC verified; client/current-tail handoff and full rollover gates unfinished|
+
+Isolated staging serving is now active: side gateway71f62d2on18880and worker0811e74
+on18791use a separate derived root. Both defaults and two Spot rollovers reached
+ready; leased immutable batch delivery passes source/part hashes with zero DB
+queries. Four checkpoint identities survive graceful owned-worker replacement;
+original API and seven protected services remain unchanged. This is component
+validation, not a browser gate. [Receipts and active service ownership](wall-isolated-serving-results.md).
 
 Backend40d15aeselects exact nonterminal projection prefixes for missing projections,
 including already-prepared canonical inputs.337tests/typecheck/build pass. Real
