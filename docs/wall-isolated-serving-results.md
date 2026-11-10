@@ -7,7 +7,9 @@ dca1bb8; production, collectors and the five protected background services were
 not replaced. This is not a production deployment or browser acceptance.
 
 The isolated gateway listens only on127.0.0.1:18880with71f62d2code. The coordinator
-control listens only on127.0.0.1:18791with0811e74code. Both use the original API's
+control now listens only on127.0.0.1:18791with13730f7code. The older0811e74
+worker was replaced after the retirement scanner rejected exact-reuse files; see
+[retirement recovery evidence](wall-retention-reuse-results.md). Both use the original API's
 immutable runtime image with their explicitly compiled bundles mounted read-only;
 this image is not claimed to contain those commits. Bundle SHA256, exact image,
 actual Nodev22.22.0runtime, container/start identities, flags, mounts and commands
@@ -19,7 +21,11 @@ Worker CPU remains0.5, memory384MiB, V8old-space256MiB; gateway limits are1CPU/
 no restart policy and10MiB/three-file log rotation. Neither creates exchange
 connections. SQL uses the existing private admission proxy/background priority.
 
-## Cold preparation and rollover observed
+The sections below retain the original 71f62d2/0811e74 component observations.
+Latest 13730f7 retirement, financial-reference and both-market rollover results
+are recorded in the linked recovery report.
+
+## Original cold preparation and rollover observed
 
 The successful worker started with an empty derived root. Initial startup refused
 because the launch receipt had incorrectly been put inside that root. The owned
@@ -71,8 +77,13 @@ launched. Previously failed client performance gates remain failed.
 
 ## Active validation services and recovery
 
-The active owned containers are `iqterminal-wall-serving-0811e74-r2` and
-`iqterminal-wall-gateway-71f62d2-r2`; exact IDs are in `active-services.json`.
+The active owned containers are `iqterminal-wall-serving-13730f7-r1`
+(`dca671725098a47d7592f9af201b4d7b2d63887d761e5caf737799da7855123c`) and
+`iqterminal-wall-gateway-71f62d2-r2`
+(`569422becf7c417d91b2ca6eb90a6a8264a0c10ae49421f352e94ccd225e60ae`).
+Latest launch and protected identities are in
+`artifacts/pi-history-r1/wall-retention-r2/upgrade.jsonl`. The earlier
+`active-services.json` is an immutable historical receipt, not the active registry.
 They intentionally remain running for the next client-route validation. Verify
 those IDs before stopping anything. Stop the side gateway before the worker,
 allowing the worker45sto finish its bounded step and release its owner lock.

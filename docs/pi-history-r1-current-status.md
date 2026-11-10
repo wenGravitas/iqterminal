@@ -1,3 +1,22 @@
+## Latest backend retention recovery: worker 13730f7
+
+The exact-reuse producer files were missing from the retirement scanner's contract.
+Old jobs accumulated toward the 128-job bound. The namespace-aware fix preserves
+all existing caps and protects the two latest ready rolling windows. All 346
+backend tests, typecheck/build and old-code counterfactual checks pass.
+
+Only the isolated worker was replaced: 118 job identities and eight cache hashes
+survive; original API plus seven protected services remain unchanged. Actual
+retirements resume (26 total by the second observation), 16 checked namespaces
+are cleaned, and Spot/USD-M rollovers complete with both latest ready manifests
+preserved. Four real-source financial folds and their independently revalidated
+source tokens match exactly. [Full recovery evidence and limitations](wall-retention-reuse-results.md).
+
+This does not pass the loading gates. USD-M rollover admission-to-ready samples
+remain about 188–207 seconds. Normal live prepared-prefix/tail composition, latest
+Pi loading/current/concurrency/warm-wall/heap and foreground acceptance remain
+incomplete. No production deployment, collector change or main merge occurred.
+
 ## Latest failure lifecycle repair: client f25c76e
 
 Saved-view restore could lose an early shared wall-history failure: later chart

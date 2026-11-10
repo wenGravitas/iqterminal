@@ -1,0 +1,19 @@
+{
+  "samplesMs": [
+    9.766746,
+    7.7213840000000005,
+    24.139746,
+    10.972923999999999,
+    8.759762999999992
+  ],
+  "medianMs": 9.766746,
+  "maximumMs": 24.139746,
+  "bytes": [
+    1076196170,
+    1076196170,
+    1076196170,
+    1076196170,
+    1076196170
+  ],
+  "scope": "Five exact production du scans inside existing worker cgroup; diagnostic only, no loading gate or exclusive phase attribution"
+}

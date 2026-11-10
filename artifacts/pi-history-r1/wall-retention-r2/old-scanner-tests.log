@@ -1,0 +1,56 @@
+TAP version 13
+# Subtest: exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+not ok 1 - exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+  ---
+  duration_ms: 99.185846
+  type: 'test'
+  location: '/home/daz/workarea/iqterminal-server-perf-history/tests/wall-cache-retention.test.ts:1:4049'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'blocked'
+    - 'retired'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'retired'
+  actual: 'blocked'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/daz/workarea/iqterminal-server-perf-history/tests/wall-cache-retention.test.ts:31:22)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: the latest two ready rolling windows survive pressure after automatic ownership advances
+not ok 2 - the latest two ready rolling windows survive pressure after automatic ownership advances
+  ---
+  duration_ms: 262.857133
+  type: 'test'
+  location: '/home/daz/workarea/iqterminal-server-perf-history/tests/wall-cache-retention.test.ts:1:7828'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'retired' !== 'idle'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'idle'
+  actual: 'retired'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/daz/workarea/iqterminal-server-perf-history/tests/wall-cache-retention.test.ts:71:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 920.197947
