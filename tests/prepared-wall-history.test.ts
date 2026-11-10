@@ -113,6 +113,39 @@ test('Retry of a retained prefix escalates a source-changed worker with a distin
   expect(events.slice(before).filter(e=>e.kind==='snapshot').every(e=>e.status.archive.requestComplete===true)).toBe(true);expect(service.diagnostics().groups).toBe(0);
  }finally{service.dispose();}
 });
+function headBoundaryFixture(){
+ const f=fixture(),head={cursor:30,epoch:2,at:to-1};
+ f.pages=f.pages.map(page=>({...page,head,coverage:{...page.coverage,confirmedTo:head.at}}));
+ const tail=f.pages[2]!;
+ for(const cursor of [29,30])tail.patches.push(patch(cursor,head.at,{epoch:2,bids:side([{...candidate,entryId:'2:bid:100',startedAt:from+3*3600000+1,startCursor:22,startEpoch:2,quantity:String(cursor),notional:String(cursor*100)}])}));
+ tail.page.lastAt=head.at;
+ f.texts=f.pages.map(page=>JSON.stringify(page));
+ f.parts=f.texts.map((text,i)=>({...f.parts[i]!,hash:digest(text),canonicalHash:digest(JSON.stringify((({profileStatus,...rest})=>rest)(f.pages[i]!))),bytes:Buffer.byteLength(text)}));
+ f.manifest={...f.manifest,head,sourceProof:{...f.manifest.sourceProof,head},parts:f.parts,
+  request:{...f.manifest.request,sourceRevision:digest(JSON.stringify(f.parts.map(part=>part.canonicalHash)))}};
+ f.discovery={...f.discovery,source:{...f.discovery.source,watermark:30,head},manifest:f.manifest};
+ return f;
+}
+test('prepared history includes the complete fixed-head millisecond and preserves the same-time final quantity and gaps',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=headBoundaryFixture(),t=transport(f),head=f.manifest.head;
+ const fetcher:typeof fetch=(input,init)=>String(input).includes('/walls/source?')?Promise.resolve(new Response(JSON.stringify(f.discovery.source))):t.fetcher(input,init);
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings,watermark:30,head},fetcher});
+ const reference=new OrderWallsArchiveProjector(settings,from,to);for(const page of f.pages)reference.applyPage(page as any);
+ expect(result.segments).toEqual(reference.snapshot());expect(result.projector!.selectedState()).toEqual(reference.selectedState());
+ expect(result.head).toEqual(head);expect(result.cursor).toBe(30);
+ expect(result.status.archive).toMatchObject({requestComplete:true,rangeComplete:false,confirmedTo:to-1});
+ expect(result.status.archive!.gaps).not.toHaveLength(0);
+ const last=result.segments.find(segment=>segment.archiveEntryId==='2:bid:100')!.valueRuns.at(-1)!;
+ expect(last).toMatchObject({at:to-1,quantityExact:'30',notionalExact:'3000'});
+ expect(t.calls.filter(path=>path.endsWith('/part'))).toHaveLength(3);
+});
+test('prepared history rejects a bootstrap one millisecond behind the required fixed-head observation',async()=>{
+ const f=headBoundaryFixture(),head={...f.manifest.head,at:to-2};
+ expect(await preparedWallReader({...request,watermark:30,head},transport(f).fetcher,new AbortController().signal)).toBeNull();
+ expect(()=>rebasePreparedWallPage(f.pages[2],f.manifest as any,f.parts[2] as any,head)).toThrow(/fence cannot cover/);
+ f.discovery.source={...f.discovery.source,head};
+ await expect(preparedWallReader(request,transport(f).fetcher,new AbortController().signal)).rejects.toThrow(/source validation/);
+});
 test('30h prepared parts preserve the independent canonical projector through timestamp regression, gaps and head progress',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),updates:any[]=[];
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u)});

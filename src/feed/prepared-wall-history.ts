@@ -29,7 +29,7 @@ function sourceFitsFence(manifest:Manifest,source:Source,target:Head){
 }
 const hash=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const sourceUrl=(path:string,r:PreparedWallRequest)=>'/market-data/v2/history/walls/'+path+'?'+new URLSearchParams({market:r.market,profile:r.profile,from:String(r.from),to:String(r.to)});
-function validSource(value:any,r:PreparedWallRequest):value is Source{return value?.version===1&&value.kind==='wall-source-sha256-xor-v1'&&value.eligible===true&&hex(value.token)&&sameRequest(value,r)&&integer(value.watermark)&&head(value.head)&&value.head.cursor===value.watermark&&value.head.at>=r.to;}
+function validSource(value:any,r:PreparedWallRequest):value is Source{return value?.version===1&&value.kind==='wall-source-sha256-xor-v1'&&value.eligible===true&&hex(value.token)&&sameRequest(value,r)&&integer(value.watermark)&&head(value.head)&&value.head.cursor===value.watermark&&value.head.at>=r.to-1;}
 /** Bounded decode remains inside the shared request admission. Browser fetch has
  * already decoded HTTP gzip; bound decoded bytes as well as the wire response. */
 async function readBytes(response:Response,max:number){
@@ -48,7 +48,7 @@ async function readBody(response:Response,max:number,expectedHash?:string){
 async function validateManifest(value:any,source:Source,r:PreparedWallRequest):Promise<Manifest>{
  if(value?.version!==5||!hex(value.key)||value.complete!==true||!sameRequest(value.request??{},r)||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token
   ||!integer(value.watermark)||value.watermark>source.watermark||value.request.watermark!==value.watermark||value.sourceProof.watermark!==value.watermark
-  ||!head(value.head)||value.head.cursor!==value.watermark||value.head.at<r.to||JSON.stringify(value.head)!==JSON.stringify(value.sourceProof.head)||value.after!==value.watermark
+  ||!head(value.head)||value.head.cursor!==value.watermark||value.head.at<r.to-1||JSON.stringify(value.head)!==JSON.stringify(value.sourceProof.head)||value.after!==value.watermark
   ||!hex(value.request.sourceRevision)||!Array.isArray(value.parts)||!value.parts.length||value.parts.length>128)throw Error('Invalid prepared wall manifest identity');
  for(let i=0;i<value.parts.length;i++){
   const part=value.parts[i];if(part.index!==i||!hex(part.hash)||!hex(part.canonicalHash)||!integer(part.bytes)||part.bytes<1||part.bytes>4*1024*1024
@@ -64,7 +64,7 @@ async function validateManifest(value:any,source:Source,r:PreparedWallRequest):P
 export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,target:Head){
  if(!sameRequest({...raw,profile:raw?.profile?.id},manifest.request)||raw.profile?.id!==manifest.request.profile||raw.watermark!==manifest.watermark||JSON.stringify(raw.head)!==JSON.stringify(manifest.head)
   ||raw.page?.after!==part.after||raw.page.nextAfter!==part.nextAfter||raw.page.hasMore!==(part.index<manifest.parts.length-1))throw Error('Prepared wall page identity mismatch');
- if(!sourceFitsFence(manifest,manifest.sourceProof,target)||target.at<manifest.request.to)throw Error('Prepared wall source fence cannot cover request');
+ if(!sourceFitsFence(manifest,manifest.sourceProof,target)||target.at<manifest.request.to-1)throw Error('Prepared wall source fence cannot cover request');
  if(target.cursor<manifest.watermark&&(raw.patches?.some((patch:any)=>!integer(patch.cursor)||patch.cursor>target.cursor)||raw.seed&&(!integer(raw.seed.cursor)||raw.seed.cursor>target.cursor)))throw Error('Prepared wall financial input exceeds bootstrap fence');
  const {profileStatus: _mutableProfileStatus,...canonical}=raw;
  return {...canonical,watermark:target.cursor,head:{...target},snapshot:`${manifest.request.profile}:${target.cursor}:${raw.from}:${raw.to}`,
@@ -84,7 +84,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
  const manifest=await validateManifest(found.manifest,source,request);
  const target=request.watermark===undefined?source.head:request.head;
- if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
+ if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to-1){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(found.readerLease&&(found.readerLease.version!==1||found.readerLease.leaseMs!==15000))throw Error('Invalid wall reader lease capability');
  const lease=found.readerLease?await acquirePreparedWallReadLease({canonicalKey:manifest.key,...(projection&&found.projection?.manifest?.key?{projectionKey:found.projection.manifest.key}:{})},fetcher,signal):undefined;
  if(lease){const original=fetcher;fetcher=(input,init)=>{const headers:Record<string,string>={};new Headers(init?.headers).forEach((value,key)=>headers[key]=value);headers['X-IQ-Wall-Reader']=lease.consumer;return original(input,{...init,headers});};}
