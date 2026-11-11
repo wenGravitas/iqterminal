@@ -44,6 +44,7 @@ function fixture(split=false){
 function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
+  if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:head,availableFrom:from-3600000});
   if(url.pathname.endsWith('/discover'))return Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});
   if(url.pathname.endsWith('/source')){await options.gateSource;return Response.json(options.changed?{...f.source,token:'c'.repeat(64)}:f.source);}
   if(url.pathname.endsWith('/projection-batch')){
@@ -404,4 +405,23 @@ test('a late shared join cannot turn unavailable prepared coverage into validate
   expect(events.filter(e=>e.ids?.includes('late')).at(-1).status.archive.requestComplete).toBe(false);
   expect(service.diagnostics().warmValidatedReuses).toBe(0);
  }finally{service.dispose();}
+});
+
+test('eligible prepared history preserves exact rows and requested bounds across future whitespace',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),calls:{url:URL;view:string|null}[]=[],updates:any[]=[];
+ const fetcher:typeof fetch=async(input,init)=>{const url=new URL(String(input),'http://test');calls.push({url,view:new Headers(init?.headers).get('X-IQ-View-Id')});
+  if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...head,at:to-1},availableFrom:from+1000});
+  return t.fetcher(input,init);
+ };
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to:to+7200000,settings},eligibleHistory:true,fetcher,onUpdate:u=>updates.push(u)});
+ const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:40,head,page:{...f.page.page,nextAfter:40}});
+ expect(result.segments).toEqual(reference.snapshot());expect(result.status.archive).toMatchObject({from,to:to+7200000,eligibleTo:to,horizonAt:to-1,requestComplete:true,rangeComplete:false,state:'partial'});
+ expect(updates.slice(0,-1).every(u=>u.status.archive.requestComplete===false)).toBe(true);
+ expect(calls.filter(c=>c.url.pathname.endsWith('/discover')).map(c=>[Number(c.url.searchParams.get('from')),Number(c.url.searchParams.get('to'))])).toEqual([[from,to]]);
+ expect(calls.some(c=>c.url.pathname.endsWith('/source'))).toBe(true);expect(new Set(calls.map(c=>c.view)).size).toBe(1);expect(calls[0].view).toBeTruthy();
+});
+test('a wholly future wall view performs metadata only and never claims retained empty coverage',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const fetcher=vi.fn(async()=>Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{cursor:1,epoch:1,at:from-1},availableFrom:null}));
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},eligibleHistory:true,fetcher});
+ expect(fetcher).toHaveBeenCalledTimes(1);expect(result.segments).toEqual([]);expect(result.status.archive).toMatchObject({from,to,eligibleTo:from,requestComplete:true,rangeComplete:false,state:'partial'});
 });

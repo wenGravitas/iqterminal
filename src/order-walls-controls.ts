@@ -182,7 +182,9 @@ export class OrderWallsControls {
         const historyRange = `${archiveTime(availableFrom)}–${archiveTime(confirmedTo)}`;
         const band = observedBandCoverage(status, archive.midpoint, archive.requestedBandPercent);
         const gaps = archive.gaps.length ? ` · ${archive.gaps.length} gap${archive.gaps.length === 1 ? '' : 's'}` : '';
-        const detail = `History ${historyRange} UTC · observed band ${band}${gaps}`;
+        const eligible = archive.eligibleTo === undefined ? '' : ` · eligible through ${archiveTime(archive.eligibleTo)}`;
+        const loaded = archive.loadedThrough === undefined ? '' : ` · loaded through ${archiveTime(archive.loadedThrough)}`;
+        const detail = `History ${historyRange} UTC · requested ${archiveTime(archive.from)}–${archiveTime(archive.to)}${eligible}${loaded} · observed band ${band}${gaps}`;
         const reason = archive.reason ?? status.message;
         message = `${line1}\n${detail}${reason && (archive.state === 'partial' || archive.state === 'unavailable') ? ` · ${reason}` : ''}`;
       } else if (replayPending) message = status.provisional

@@ -502,7 +502,7 @@ export class OrderWallsArchiveService {
         ...(previous.coverage?{coverage:{...previous.coverage,complete:false,partial:true,reason:undefined}}:{}),
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
-    void loadOrderWallsArchive({ request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+    void loadOrderWallsArchive({ eligibleHistory:true,request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
       job.latest = update; job.resume = update.resume;

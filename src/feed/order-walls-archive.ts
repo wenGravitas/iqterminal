@@ -1,3 +1,4 @@
+import {readWallHistoryHorizon,eligibleWallHistoryRange} from './wall-history-horizon';
 import {wallPreparationReason} from './prepared-wall-admission';
 import {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
 export {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
@@ -255,6 +256,8 @@ export interface OrderWallsArchiveLoadOptions {
   /** Retains the committed projector and fixed page cursor after a bounded transport failure. */
   resume?: OrderWallsArchiveResumeState;
   preparationRetry?:{token:string;newRevision?:boolean};
+  /** Resolve the archive horizon independently of the current selected book. */
+  eligibleHistory?:boolean;
   onUpdate?: (update: OrderWallsArchiveUpdate) => void;
   /** Optional bounded-page timings for acceptance diagnostics; callers decide whether to retain them. */
   onPageMetrics?: (metrics: OrderWallsArchivePageMetrics) => void;
@@ -281,6 +284,8 @@ export interface OrderWallsArchivePageMetrics {
 export interface OrderWallsArchiveResumeState {
   /** Prepared-prefix revision must be reproved before resuming its projector. */
   preparedSourceToken?:string;
+  eligibleTo?:number;
+  eligibleHorizonAt?:number;
   after: number;
   watermark?: number;
   head?: OrderWallsArchivePage['head'];
@@ -357,7 +362,38 @@ export function orderWallsArchiveCurrentRequest(request: OrderWallsArchiveReques
 }
 
 /** Fetches fixed-watermark pages and projects each selected-profile timeline into native chart segments. */
-export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOptions): Promise<OrderWallsArchiveResult> {
+export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions):Promise<OrderWallsArchiveResult>{
+ const original=options.request;
+ if(!options.eligibleHistory||import.meta.env.VITE_HISTORY_TILES!=='1'||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
+ const settings=orderWallsSettings(original.settings),availability=orderWallsArchiveAvailability(original.market,settings,original.profileId);
+ if(availability.admissionRequired||!availability.market||!availability.profileId||!Number.isSafeInteger(original.from)||!Number.isSafeInteger(original.to)||original.from>=original.to)return loadBoundedOrderWallsArchive(options);
+ const viewId=historyViewId(),fetcher=options.fetcher??fetch;
+ const horizonFetcher:typeof fetch=(input,init)=>{const headers=new Headers(init?.headers);headers.set('X-IQ-View-Id',viewId);return fetcher(input,{...init,headers});};
+ let to=options.resume?.eligibleTo,horizonAt=options.resume?.eligibleHorizonAt;
+ if(to===undefined){
+  const horizon=await readWallHistoryHorizon({market:availability.market,profile:availability.profileId},horizonFetcher,options.signal??new AbortController().signal);
+  if(!horizon)return loadBoundedOrderWallsArchive(options);
+  const range=eligibleWallHistoryRange(original,horizon);to=range.to;horizonAt=range.horizonAt;
+ }
+ if(to<=original.from){
+  const reason='This view is beyond the observed archive horizon; no past interval is eligible yet.';
+  const archive={...archiveStatus(original,availability,'partial'),requestComplete:true,rangeComplete:false,eligibleTo:to,horizonAt,reason};
+  const result:OrderWallsArchiveResult={kind:'snapshot',segments:[],status:statusForArchive(archive,'partial',reason),pages:0,bytes:0};options.onUpdate?.(result);return result;
+ }
+ const clipped=to<original.to;
+ const annotate=<T extends OrderWallsArchiveUpdate>(update:T):T=>{
+  const a=update.status.archive,complete=a?.requestComplete===true;
+  const reason=clipped&&complete?[a?.reason,'History is loaded through the archive horizon; later chart time is not covered.'].filter(Boolean).join(' '):a?.reason;
+  return {...update,...(update.resume?{resume:{...update.resume,eligibleTo:to,eligibleHorizonAt:horizonAt}}:{}),status:{...update.status,
+   ...(clipped?{coverage:{...update.status.coverage,from:original.from,to:original.to,complete:false,partial:true},...(complete?{message:reason}:{})}:{}),
+   ...(a?{archive:{...a,to:original.to,eligibleTo:to,...(horizonAt===undefined?{}:{horizonAt}),rangeComplete:!clipped&&a.rangeComplete,
+    ...(clipped&&complete?{state:'partial' as const,reason}:{})}}:{})}};
+ };
+ const result=await loadBoundedOrderWallsArchive({...options,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
+ return annotate(result);
+}
+
+async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOptions,viewId=historyViewId()): Promise<OrderWallsArchiveResult> {
   const { request } = options, settings = orderWallsSettings(request.settings), availability = orderWallsArchiveAvailability(request.market, settings, request.profileId);
   const baseStatus = archiveStatus(request, availability, 'loading');
   if (!availability.exact && !availability.admissionRequired) {
@@ -377,8 +413,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   const fetcher = options.fetcher ?? ((input, init) => fetch(input, init));
   const pageLimit = Math.max(1, Math.min(ORDER_WALL_ARCHIVE_PAGE_LIMIT, Math.floor(options.pageLimit ?? ORDER_WALL_ARCHIVE_PAGE_LIMIT)));
   const signal = options.signal;
-  const viewId = historyViewId();
-  const correlatedFetcher: typeof fetch = (input, init) => fetcher(input, {...init,headers:{...init?.headers,'X-IQ-View-Id':viewId}});
+  const correlatedFetcher: typeof fetch = (input, init) => {const headers=new Headers(init?.headers);headers.set('X-IQ-View-Id',viewId);return fetcher(input,{...init,headers});};
   const consumerSignal=signal??new AbortController().signal;
   const prior = options.resume;
   const projector = prior?.projector ?? options.initialProjector ?? new OrderWallsArchiveProjector(settings, queryFrom, request.to);

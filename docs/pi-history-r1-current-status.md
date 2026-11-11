@@ -1,3 +1,23 @@
+## Current follow-up: eligible wall-history request bounds
+
+The client now reads an independent archive horizon before default prepared
+history discovery, preserves the requested start, caps only the eligible end,
+keeps requested/eligible/loaded bounds explicit and pins partial Retry to its
+original horizon. Final canonical source validation remains mandatory. Backend
+8c7b66f exposes one bounded metadata query in the historical admission pool.
+All73 focused checks,1322 frontend tests (two skipped),367 backend tests,
+typecheck/build and one headless native-chart fixture notice check pass.
+The full-suite investigation also replaced a fixed-delay footprint test with
+an event assertion and unconditional request cleanup; no latency gate changed.
+[Contracts, failures, validation and limits](wall-history-horizon.md).
+
+This change is not yet installed in staging and does not pass any Pi loading gate.
+The pre-V3 quiescent snapshot/copy-restore drill has completed with exact files;
+implementation-level read-only compatibility checks are recorded on the backend.
+Serving still uses worker13730f7/gateway71f62d2; collectors and protected API are
+unchanged. Prepared prefix/reuse, exact default matching, canonical revision
+refresh and actual Pi acceptance remain open. The goal remains **INCOMPLETE**.
+
 ## Latest frontend correctness change: verified wall revisions
 
 Frontend8d10334/022c39c removes unproved terminal history/live joins. Full anchored

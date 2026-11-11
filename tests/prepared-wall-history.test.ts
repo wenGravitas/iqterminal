@@ -38,6 +38,7 @@ function transport(f=fixture(),options:{changed?:boolean;corrupt?:boolean;before
  const calls:string[]=[];let active=0,peak=0;
  const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
+  if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:newHead,availableFrom:from-3600000});
   if(url.pathname.endsWith('/discover'))return new Response(JSON.stringify(f.discovery));
   if(url.pathname.endsWith('/source'))return new Response(JSON.stringify(options.changed?{...current,token:'c'.repeat(64)}:current));
   if(url.pathname.endsWith('/batch')){
@@ -85,7 +86,7 @@ test.each(['query','source-changed'])('service Retry clears %s build failure wit
  }finally{service.dispose();}
 });
 test('specific nonretryable preparation failure is preserved in the chart history status',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],fetcher:typeof fetch=async(_input,init)=>new Response(JSON.stringify(init?.method==='DELETE'?{}:{state:'building',preparation:preparation('canonical',{state:'failed',category:'invalid-content',error:'Invalid prepared content',retryable:false})}));
+ vi.stubEnv('VITE_HISTORY_TILES','1');const events:any[]=[],fetcher:typeof fetch=async(input,init)=>String(input).includes('/horizon?')?Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:newHead,availableFrom:from-3600000}):new Response(JSON.stringify(init?.method==='DELETE'?{}:{state:'building',preparation:preparation('canonical',{state:'failed',category:'invalid-content',error:'Invalid prepared content',retryable:false})}));
  const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);try{
   service.subscribe('bad-preparation',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.retryable).toBe(false));
   expect(events.at(-1).status.archive.requestComplete).toBe(false);expect(events.at(-1).status.message).toMatch(/Invalid prepared content/);
@@ -480,4 +481,17 @@ test('archive correlation preserves reader identity on shared content and final 
  };
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher});
  expect(result.status.archive?.requestComplete).toBe(true);expect(identities.length).toBeGreaterThan(0);expect(identities.every(h=>h.get('x-iq-wall-reader')===token&&h.get('x-iq-view-id'))).toBe(true);await vi.waitFor(()=>expect(released).toBe(1));
+});
+
+test('eligible history Retry retains its original horizon and resumes exact immutable rows after the archive advances',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),first=transport(f,{corrupt:true}),updates:any[]=[];
+ const fetcher:typeof fetch=async(input,init)=>String(input).includes('/horizon?')?Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:{...newHead,at:to-1},availableFrom:from-3600000}):first.fetcher(input,init);
+ const request={market:'binance-spot' as const,from,to:to+7200000,settings};
+ await expect(loadOrderWallsArchive({request,eligibleHistory:true,fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/hash mismatch/);
+ const resume=updates.at(-1).resume;expect(resume).toMatchObject({eligibleTo:to,eligibleHorizonAt:to-1,after:10});
+ const next=transport(f),paths:string[]=[];
+ const result=await loadOrderWallsArchive({request,eligibleHistory:true,resume,fetcher:async(input,init)=>{paths.push(String(input));if(String(input).includes('/horizon?'))throw Error('Resume must keep the pinned horizon');return next.fetcher(input,init);}});
+ const fresh=await loadOrderWallsArchive({request:{...request,to},fetcher:transport(f).fetcher});
+ expect(result.segments).toEqual(fresh.segments);expect(result.status.archive).toMatchObject({from,to:request.to,eligibleTo:to,horizonAt:to-1,requestComplete:true,rangeComplete:false});
+ expect(paths.some(p=>p.includes('/source?'))).toBe(true);expect(next.calls.filter(path=>path.endsWith('/part'))).toHaveLength(2);
 });

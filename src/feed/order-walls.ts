@@ -154,6 +154,9 @@ export interface OrderWallStatus {
 export interface OrderWallArchiveStatus {
   /** Build/source progress is separate from received/painted historical coverage. */
   preparation?:WallPreparationProgress;
+  /** Eligible historical upper bound, distinct from requested future chart space. */
+  eligibleTo?:number;
+  horizonAt?:number;
   profileId: string;
   state: 'loading' | 'building' | 'backfilling' | 'complete' | 'partial' | 'unavailable';
   /** False while transport paging is incomplete, independently of source coverage gaps. */
