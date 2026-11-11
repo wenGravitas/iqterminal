@@ -504,8 +504,9 @@ export class OrderWallsArchiveService {
         ...(previous.coverage?{coverage:{...previous.coverage,complete:false,partial:true,reason:undefined}}:{}),
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
+    const reusePrepared=[...job.subscribers].some(sub=>sub.warmReplay?.key===warmHistoryKey(job.request)&&!sub.warmReplay.entry.expired&&sub.warmReplay.entry.signature?.startsWith('manifest:'));
     void loadOrderWallsArchive({ eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
-      reusePreparedPresentation:(revision,count)=>this.reusePreparedPresentation(job,revision,count),
+      ...(reusePrepared?{reusePreparedPresentation:(revision:string,count:number)=>this.reusePreparedPresentation(job,revision,count)}:{}),
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
       job.latest = update; job.resume = update.resume;

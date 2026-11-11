@@ -64,6 +64,14 @@ test('progressive chunks validate without throwaway restores and final restore r
   expect(result?.projector.checkpoint()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).checkpoint());
  }finally{restore.mockRestore();}
 });
+test('a cold service view fingerprints the full manifest once without a redundant warm-cache probe',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],expected=Buffer.from(JSON.stringify(f.manifest)),digest=vi.spyOn(crypto.subtle,'digest');
+ const service=new OrderWallsArchiveService(event=>events.push(event),t.fetcher,()=>to+1000);
+ try{
+  service.subscribe('cold',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
+  expect(digest.mock.calls.filter(([,bytes])=>Buffer.from(bytes as Uint8Array).equals(expected))).toHaveLength(1);
+ }finally{service.dispose();digest.mockRestore();}
+});
 test('actual archive loader imports exact prepared cells, retains gaps and rebases only the quiet head',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),updates:any[]=[],metrics:any[]=[];
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u),onPageMetrics:m=>metrics.push(m)});
