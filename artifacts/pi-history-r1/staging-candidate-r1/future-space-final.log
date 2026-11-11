@@ -1,0 +1,5 @@
+{"case":"footprint-future-space-1h","run":1,"firstCurrentMs":4296.5,"firstHistoryMs":4296.5,"completeMs":4296.5,"exception":null,"bars":6}
+{"case":"footprint-future-space-1h","run":2,"firstCurrentMs":3124.10000000149,"firstHistoryMs":3124.10000000149,"completeMs":3124.89999999851,"exception":null,"bars":6}
+{"case":"footprint-future-space-1h","run":3,"firstCurrentMs":3765.800000000745,"firstHistoryMs":3765.7000000029802,"completeMs":3765.900000002235,"exception":null,"bars":6}
+{"case":"footprint-future-space-1h","run":4,"firstCurrentMs":3403.89999999851,"firstHistoryMs":3403.800000000745,"completeMs":3404,"exception":null,"bars":6}
+{"case":"footprint-future-space-1h","run":5,"firstCurrentMs":3262,"firstHistoryMs":3261.89999999851,"completeMs":3262.300000000745,"exception":null,"bars":6}

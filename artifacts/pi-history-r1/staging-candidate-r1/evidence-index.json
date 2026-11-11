@@ -1,0 +1,28 @@
+{
+  "scope": "Pi headless route, before/after prepared-history cohorts; failures retained; release incomplete",
+  "applicationBuilds": [
+    "ce036e7a8c2e7222735916e0d7e4092b5e92108f",
+    "9a526dcbe5495405205b10da78c4328a6e3d6831",
+    "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+  ],
+  "gatewayBuild": "112bf11cadd4f521b4b65363baf52756ecd47457",
+  "workerBuild": "33c7e3a25105fdb15e28ab029765418aac08b2e8",
+  "knownFailures": [
+    "initial stage33-footprint24-five: both unsupervised SSH lanes exited255; five route failures",
+    "stage33 current footprint: startup gate failed",
+    "stage33/stage112 30h walls: latency gates failed",
+    "current-wall cohort: no selected prices visible, qualified paint latency unverified"
+  ],
+  "supplemental": [
+    "stage112-perp-profile-only: CDP CPU overhead, not loading acceptance",
+    "stage112-transport-product and canonical: intercepted capabilities, pinned later rollover snapshot, not release acceptance"
+  ],
+  "sourceWindows": "wall-references.json and transport-references.json describe distinct full30h windows; no cross-window latency percentages",
+  "unverified": [
+    "foreground normal Chromium",
+    "warm revisit gate",
+    "concurrent current freshness and custom profile",
+    "retained heap and request plateau",
+    "ordinary current-ending prepared matching"
+  ]
+}

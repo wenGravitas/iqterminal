@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  10:36:12
+   Duration  2.72s (tests 95%, transform 3%, import 2%)
+

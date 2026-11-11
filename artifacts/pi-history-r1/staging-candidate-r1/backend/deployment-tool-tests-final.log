@@ -1,0 +1,9 @@
+
+> iqterminal-server@0.1.0 test:wall-staging /home/daz/workarea/iqterminal-server-perf-history
+> python3 tests/stage-wall-derived-clone.test.py
+
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.031s
+
+OK

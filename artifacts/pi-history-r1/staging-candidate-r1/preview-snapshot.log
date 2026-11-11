@@ -1,0 +1,592 @@
+Production staging preview on loopback4193
+10:20:35 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:20:35 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:20:35 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:20:35 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:21:27 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:21:27 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:21:27 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:21:27 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:31:52 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:52 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:52 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:52 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:53 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:53 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:53 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:54 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:55 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:55 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:56 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:58 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:31:58 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:00 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:00 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:00 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:04 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:07 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:07 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:07 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:07 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:08 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:09 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:09 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:10 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:10 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:10 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:12 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:13 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:13 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:15 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:15 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:16 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:19 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:21 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:21 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:21 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:21 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:22 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:23 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:23 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:24 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:24 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:24 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:26 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:27 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:27 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:29 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:29 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:30 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:33 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:36 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:36 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:36 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:36 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:37 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:37 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:38 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:39 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:39 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:39 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:41 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:42 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:42 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:44 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:44 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:45 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:48 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:51 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:51 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:51 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:51 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:52 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:52 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:52 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:53 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:54 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:54 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:55 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:57 AM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:57 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:59 AM [vite] http proxy error: /v1/native-candles?interval=1h
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:59 AM [vite] http proxy error: /v2/history/footprint-current?interval=1h&rowPrice=25
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:32:59 AM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18881
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:33:03 AM [vite] http proxy error: /v2/history/footprints-batch
+Error: connect ECONNREFUSED 127.0.0.1:18880
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+10:37:31 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:31 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:39 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:39 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:39 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:39 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:59 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:37:59 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:38:18 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:38:18 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:02 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:02 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:02 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:02 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:30 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:39:30 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:50:28 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:50:28 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:50:33 AM [vite] ws proxy error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+10:50:33 AM [vite] ws proxy socket error:
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:572:12)
+    at _write (node:internal/streams/writable:501:10)
+    at Writable.write (node:internal/streams/writable:510:10)
+    at Socket.ondata (node:internal/streams/readable:1009:22)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)

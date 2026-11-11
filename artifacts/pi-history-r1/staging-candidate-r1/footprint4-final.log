@@ -1,0 +1,5 @@
+{"case":"footprint-4h-5m","run":1,"firstCurrentMs":null,"firstHistoryMs":3495.400000002235,"completeMs":3495.60000000149,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":2,"firstCurrentMs":null,"firstHistoryMs":3128.800000000745,"completeMs":3129.10000000149,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":3,"firstCurrentMs":null,"firstHistoryMs":3285.099999997765,"completeMs":3285.5,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":4,"firstCurrentMs":null,"firstHistoryMs":3997.5,"completeMs":3997.800000000745,"exception":null,"bars":48}
+{"case":"footprint-4h-5m","run":5,"firstCurrentMs":null,"firstHistoryMs":3863.199999999255,"completeMs":3863.39999999851,"exception":null,"bars":48}

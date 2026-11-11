@@ -1,0 +1,156 @@
+{
+  "source": "artifacts/pi-history-r1/stage33-current-footprint-supervised-samples.jsonl",
+  "method": "Pi client observations; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs. Recorded rendering labels require their browser-environment receipts; this report does not independently certify foreground execution.",
+  "renderingModes": [
+    "headless-gles"
+  ],
+  "scenarios": [
+    {
+      "case": "current-footprint-5m",
+      "samplesMs": [
+        3413,
+        3338.89999999851,
+        3283.699999999255,
+        2902.0999999996275,
+        4312.9000000003725
+      ],
+      "medianMs": 3338.89999999851,
+      "maximumMs": 4312.9000000003725,
+      "sampleCount": 5,
+      "requestedSpanVerified": true,
+      "footprintCoverage": null,
+      "environmentVerified": true,
+      "wallReferenceVerified": null,
+      "environments": [
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        },
+        {
+          "historyTaskYield": "user-visible-post-task",
+          "historyBackgroundYield": "background-post-task",
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        3413,
+        3338.7999999988824,
+        3283.5999999996275,
+        2902.0999999996275,
+        4312.9000000003725
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1794369300000,
+            "to": 1794383700000
+          },
+          "viewport": {
+            "from": 1794369300,
+            "to": 1794383700
+          },
+          "paintedClosedBars": 47,
+          "formingPainted": true,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1794369300000,
+            "to": 1794383700000
+          },
+          "viewport": {
+            "from": 1794369300,
+            "to": 1794383700
+          },
+          "paintedClosedBars": 47,
+          "formingPainted": true,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1794369300000,
+            "to": 1794383700000
+          },
+          "viewport": {
+            "from": 1794369300,
+            "to": 1794383700
+          },
+          "paintedClosedBars": 47,
+          "formingPainted": true,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1794369300000,
+            "to": 1794383700000
+          },
+          "viewport": {
+            "from": 1794369300,
+            "to": 1794383700
+          },
+          "paintedClosedBars": 47,
+          "formingPainted": true,
+          "archive": {},
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1794369300000,
+            "to": 1794383700000
+          },
+          "viewport": {
+            "from": 1794369300,
+            "to": 1794383700
+          },
+          "paintedClosedBars": 47,
+          "formingPainted": true,
+          "archive": {},
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

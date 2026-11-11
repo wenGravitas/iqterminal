@@ -1,0 +1,5 @@
+{"case":"footprint-spot-4h-5m","run":1,"firstCurrentMs":null,"firstHistoryMs":3895.39999999851,"completeMs":3904.199999999255,"exception":null,"bars":48}
+{"case":"footprint-spot-4h-5m","run":2,"firstCurrentMs":null,"firstHistoryMs":3666.199999999255,"completeMs":3666.5,"exception":null,"bars":48}
+{"case":"footprint-spot-4h-5m","run":3,"firstCurrentMs":null,"firstHistoryMs":3223.400000002235,"completeMs":3223.7000000029802,"exception":null,"bars":48}
+{"case":"footprint-spot-4h-5m","run":4,"firstCurrentMs":null,"firstHistoryMs":4119.300000000745,"completeMs":4119.60000000149,"exception":null,"bars":48}
+{"case":"footprint-spot-4h-5m","run":5,"firstCurrentMs":null,"firstHistoryMs":3062.800000000745,"completeMs":3063,"exception":null,"bars":48}

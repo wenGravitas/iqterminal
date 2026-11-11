@@ -1,0 +1,8 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 12.340349145233631, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32029.017319902778, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64048.1450650841, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96063.64675797522, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128077.76844222099, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160251.96485314518, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 192447.13095668703, "consumers": ["stage691-benchmark-perpetual"]}
+{"phase": "released", "elapsedMs": 192504.1539259255, "consumers": ["stage691-benchmark-perpetual"]}
