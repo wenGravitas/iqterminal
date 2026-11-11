@@ -192,6 +192,27 @@ test('prepared completion preserves already painted segments and a late join sti
  }finally{service.dispose();}
  await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
 });
+test('settled prepared jobs release mutable retention queues and late joins own detached exact records',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');
+ const service=new OrderWallsArchiveService(event=>events.push(event),t.fetcher,()=>to+3600000),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('first',request);await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
+  expect(service.diagnostics()).toMatchObject({historyJobs:1,historyConsumers:1,projections:[]});
+  const completed=await restore.mock.results.at(-1)!.value as OrderWallsArchiveProjector;
+  expect(completed.diagnostics().retainedSegments).toBe(f.full.segments.length);
+  // A deliberately mutated discarded replay cannot corrupt the still-open
+  // history job, its late subscribers, or the independently owned warm cache.
+  completed.censorOpen(to,'Discarded mutable replay');
+  for(const segment of completed.snapshot())for(const point of segment.valueRuns)point.quantity=0;
+  const before=t.calls.length;service.subscribe('late',request);
+  await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes('late')).at(-1)?.status?.archive?.requestComplete).toBe(true));
+  expect(t.calls).toHaveLength(before);
+  const late=events.filter(event=>event.ids?.includes('late')).at(-1);
+  expect(late.segments.sort((a:any,b:any)=>a.id.localeCompare(b.id))).toEqual([...f.full.segments].sort((a,b)=>a.id.localeCompare(b.id)));
+  expect(service.diagnostics()).toMatchObject({historyJobs:1,historyConsumers:2,projections:[]});
+  service.unsubscribe('first');service.unsubscribe('late');expect(service.diagnostics()).toMatchObject({historyJobs:0,historyConsumers:0,projections:[]});
+ }finally{service.dispose();restore.mockRestore();}
+});
 
 test('projection retry attempts reach page diagnostics and financial records publish once',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f),metrics:any[]=[],updates:any[]=[];let batches=0;

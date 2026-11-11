@@ -512,10 +512,9 @@ export class OrderWallsArchiveService {
       job.latest = result; job.resume = result.resume; job.settled = true;
       job.preparationNeedsRevision=false;job.preparationRetryToken=undefined;
       this.rememberHistory(job.request,result);
-      for (const subscriber of [...job.subscribers]) {
-        this.publishSharedHistoryUpdate(subscriber, job, result);
-        this.tryStartPendingViewportHistory(subscriber);
-      }
+      for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, result);
+      this.releasePreparedProjector(job,result);
+      for (const subscriber of [...job.subscribers]) this.tryStartPendingViewportHistory(subscriber);
     }).catch(error => {
       job.settled = true;
       if (job.abort.signal.aborted || this.disposed) return;
@@ -626,6 +625,28 @@ export class OrderWallsArchiveService {
     }
     const entry:WarmEntry={presentation,compact,status,runs,segments,bytes,signature,timer:setTimeout(()=>this.expireWarm(key,entry),60000)};
     this.warmHistory.set(key,entry);this.stats.warmAdmissions++;
+  }
+
+  /** The prepared projector exists to validate the complete financial union.
+   * History is immutable after that proof; current selection owns a separate
+   * projector. Retain detached records, not a second copy plus mutable queues. */
+  private releasePreparedProjector(job:SharedHistoryJob,result:OrderWallsArchiveResult){
+    if(job.latest!==result||!result.projector||result.resume||!result.preparedPresentationComplete
+      ||!result.status.archive?.requestComplete||!result.status.archive.exact||!result.presentation)return;
+    const presentation=wallCompactPresentation(result.segments,result.presentation);
+    if(!presentation)return;
+    const segments=result.segments.map(segment=>presentation.get(segment.id)!);
+    job.latest={...result,projector:undefined,presentation,segments};
+    for(const sub of job.subscribers){
+      if(sub.historyJob!==job||sub.historyProjector!==result.projector)continue;
+      sub.historyProjector=undefined;sub.historyPresentation=presentation;
+      for(const segment of segments){
+        const previous=sub.lastPublished.get(segment.id);
+        if(previous&&!previous.currentSelection&&previous.valueRuns!==segment.valueRuns){
+          sub.lastPublished.set(segment.id,{...segment,...(previous.currentSelection!==undefined?{currentSelection:previous.currentSelection}:{})});
+        }
+      }
+    }
   }
 
   private rememberHistory(request:OrderWallsArchiveRequest,result:OrderWallsArchiveResult){
