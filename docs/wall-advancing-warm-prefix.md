@@ -46,3 +46,13 @@ two skips and one unrelated trading-vault timeout at its existing 5-second test
 limit; all eight trading-vault tests pass on isolated rerun. That first full run
 is retained as a failure, rather than described as an entirely green run.
 Raw logs are in artifacts/pi-history-r1/warm-prefix-r1.
+
+Production build a6e253b0663e5829d3078f537ae51e1de0251fca passes with
+VITE_DATA_MODE=staging, VITE_HISTORY_TILES=1 and diagnostics enabled. Isolated
+loopback4200 preserves the established separate history18880/current18881 proxy
+routes. Six native-chart browser regressions pass in headless system Chromium
+with SwiftShader. These use explicit test responses and validate saved ranges,
+bootstrap independence, price-cache validation and retention; they are not
+financial-source or advancing-wall warm latency acceptance. The new wall-prefix
+financial/fence checks are deterministic service tests. Five actual-route
+advancing-range warm samples and normal foreground Pi UX remain unverified.
