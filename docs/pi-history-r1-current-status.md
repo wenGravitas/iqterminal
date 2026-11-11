@@ -28,8 +28,8 @@ No runtime was changed for this producer. The most recent recorded staging
 identity audit remains in projection-source-r1/postflight.json: worker33c7e3a,
 gateway112bf11 and eight protected identities/start times unchanged.
 
-The latest comparable cold-server-ready/client-empty wall series below remains
-FAILED: median8019.3ms/max8618.7ms completion, first history median3140.3ms/
+The latest comparable wall series with prepared server history and an empty
+browser cache below remains FAILED: median8019.3ms/max8618.7ms completion, first history median3140.3ms/
 max4569.2ms. The fixed-past e25cd43 warm pass remains scoped to that build;
 advancing-end warm latency, the new build's loading gates, concurrency, retained
 memory plateau, actual cold-build throughput and normal foreground Pi UX remain
