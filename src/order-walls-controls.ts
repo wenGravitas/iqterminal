@@ -240,6 +240,7 @@ export class OrderWallsControls {
       : `Resting notional $${money(observedValue)} at ${utc(hit.at)} UTC`;
     const point=orderWallValuePointAt(segment,hit.at);
     const strengthText = segment.detectionMode==='top-levels' ? ` · ${point?.rank ? `observed rank #${point.rank}` : 'outside selected ranks'}${point?.quantity!==undefined ? ` · ${point.quantity.toLocaleString('en-US',{maximumFractionDigits:8})} BTC` : ''}` : typeof hit.percentile !== 'number' ? ' · historical rank unavailable' : ` · p${hit.percentile.toFixed(1)} at that time`;
+    if(segment.presentationKind==='current-snapshot')return `${segment.side.toUpperCase()} selected Top Level · ${instrumentLabel(series)}\n$${price(hit.priceLow)} · ${segment.scopePartial?'partial book scope':'observed book'}${currentState}\n${valueText}${strengthText}\nSelected snapshot ${utc(segment.start)} UTC · ${ageText(age)} ago`;
     const startText = segment.startKnown ? `Observed from ${utc(segment.start)} UTC` : `Observed since ${utc(segment.start)} UTC · start unknown`;
     const spanText = `${segment.startKnown ? 'Duration' : 'Observed span'} ${durationText(segment.durationMs)}`;
     const endText = segment.end === null

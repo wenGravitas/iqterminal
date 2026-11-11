@@ -645,3 +645,15 @@ it('releases cached closed paths and membership when hidden retention removes th
   p.detached();expect(p.diagnostics().retainedClosedPaintSegments).toBe(0);expect(p.diagnostics().retainedClosedPaintPaths).toBe(0);
  }finally{vi.unstubAllGlobals();}
 });
+
+it('keeps a selected snapshot at its own point time through later status confirmations and duration filters',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',minDurationMs:2000,visibleRangeOnly:false},60000);
+ const point:OrderWallSegment={id:'current-only',presentationKind:'current-snapshot',currentSelection:true,epoch:1,side:'bid',price:100,start:base,end:null,
+  peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:false,startKnown:false,detectionMode:'top-levels',rank:1,
+  valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantityExact:'10.000',notionalExact:'1000.000'}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ primitive.setSnapshot([point],{state:'live',lastConfirmedAt:base+60000});primitive.draw(canvas(),context());
+ expect(primitive.orderWallAt(50,100)).toMatchObject({at:base,segment:{presentationKind:'current-snapshot',durationMs:0}});
+ expect(primitive.orderWallAt(100,100)).toBeNull();
+ primitive.setStatus({state:'live',lastConfirmedAt:base+120000});primitive.draw(canvas(),context());
+ expect(primitive.orderWallAt(50,100)).toMatchObject({at:base});expect(primitive.orderWallAt(100,100)).toBeNull();
+});

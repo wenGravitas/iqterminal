@@ -127,6 +127,8 @@ export interface OrderWallStatus {
   state: 'loading' | 'live' | 'stale' | 'gap' | 'unavailable';
   /** False for a historical-only archive view with no current subscription. */
   currentSubscribed?: boolean;
+  currentGaps?:Array<{from:number;to:number;reason:string}>;
+  currentGapsTruncated?:boolean;
   message?: string;
   tickSize?: number;
   /** Effective quote-price bucket width used for detection and display. */
@@ -192,6 +194,8 @@ export interface OrderWallSegment {
   archiveEntryId?: string;
   /** True only while this candidate is in the current live selected set; never inferred from end:null. */
   currentSelection?: boolean;
+  /** Independent selected state at one source fence, never a canonical episode. */
+  presentationKind?:'current-snapshot';
   /** Depth-book generation that bounds continuity for this segment. */
   epoch: string | number;
   side: 'bid' | 'ask';

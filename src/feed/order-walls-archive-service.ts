@@ -39,9 +39,6 @@ export interface OrderWallsArchiveSubscriptionRequest extends OrderWallsArchiveR
 
 type WallCommand = Extract<Command, { type: 'order-wall-subscribe' | 'order-wall-unsubscribe' | 'order-wall-settings' | 'order-wall-viewport' | 'order-wall-retry' }>;
 
-const MAX_CURRENT_RING_PAGES = 4_096;
-const MAX_CURRENT_RING_PATCHES = 100_000;
-const MAX_CURRENT_RING_BYTES = 16 * 1024 * 1024;
 const MAX_SUBSCRIPTION_ARCHIVE_GAPS = 256;
 
 interface Subscription {
@@ -53,21 +50,16 @@ interface Subscription {
   /** Latest chart range, separate from the immutable range of an active fixed-H job. */
   viewport: { from: number; to: number; followLive?: boolean };
   pendingViewport?: { from: number; to: number; followLive?: boolean };
-  historyCoverageCarry?: OrderWallStatus['coverage'];
-  historyArchiveCarry?: OrderWallStatus['archive'];
   settings: OrderWallsSettings;
   group?: CurrentGroup;
   historyJob?: SharedHistoryJob;
   historyProjector?: OrderWallsArchiveProjector;
   historyPresentation?:ReadonlyMap<string,OrderWallSegment>;
   cachedHistory?: boolean;
+  replacingHistory?: {status:OrderWallStatus};
+  currentSnapshotIds:Set<string>;
   warmReplay?:WarmReplay;
-  bridgeProjector?: OrderWallsArchiveProjector;
-  /** Current checkpoint ID -> canonical archive entry ID, proved at historyFence. */
-  bridgeEntryIds?: Map<string, string>;
   tailProjector?: OrderWallsArchiveProjector;
-  historyFence?: { cursor: number; at: number; epoch: number };
-  historyFenceState?: ReturnType<OrderWallsArchiveProjector['selectedState']>;
   historyStatus?: OrderWallStatus;
   currentState: 'loading' | 'live' | 'stale' | 'unavailable';
   currentMessage?: string;
@@ -78,7 +70,6 @@ interface Subscription {
   currentGapsTruncated: boolean;
   archiveStarted: boolean;
   initialPublished: boolean;
-  continuityLost: boolean;
   lastPublished: Map<string, OrderWallSegment>;
 }
 
@@ -87,15 +78,12 @@ interface SharedHistoryJob {
   preparationNeedsRevision?:boolean;
   key: string;
   request: OrderWallsArchiveRequest;
-  fence?: { cursor: number; at: number; epoch: number };
-  fenceState?: ReturnType<OrderWallsArchiveProjector['selectedState']>;
   abort: AbortController;
   subscribers: Set<Subscription>;
   latest?: OrderWallsArchiveUpdate;
   resume?: OrderWallsArchiveResumeState;
   settled: boolean;
   failure?: {message:string;retryable:boolean};
-  initialProjector?: OrderWallsArchiveProjector;
 }
 
 interface CurrentGroup {
@@ -108,13 +96,9 @@ interface CurrentGroup {
   bootstrap?: OrderWallsArchiveCurrentPage;
   head?: NonNullable<OrderWallsArchiveCurrentPage['head']>;
   cursor: number;
-  pages: OrderWallsArchiveCurrentPage[];
-  ringBytes: number;
-  ringPatches: number;
-  ringFloorCursor: number;
-  ringOverflow: boolean;
   profileExact: boolean;
   currentValid: boolean;
+  readiness:'loading'|'catching-up'|'ready'|'stale'|'unavailable';
   currentCatchingUp: boolean;
   currentMessage?: string;
   profileStatus?: OrderWallsArchiveCurrentPage['profileStatus'];
@@ -127,7 +111,7 @@ interface WarmReplay {key:string;entry:WarmEntry;abort:AbortController;presentat
 export class OrderWallsArchiveService {
   private readonly subscriptions = new Map<string, Subscription>();
   private readonly groups = new Map<string, CurrentGroup>();
-  /** Same fixed profile/range/fence shares one bounded loader and projector. */
+  /** Identical profile/range consumers share one independently fenced revision. */
   private readonly historyJobs = new Map<string, SharedHistoryJob>();
   private readonly warmHistory=new Map<string,WarmEntry>();
   private readonly warmReplays=new Set<WarmReplay>();
@@ -162,7 +146,7 @@ export class OrderWallsArchiveService {
     const sub: Subscription = { id, key: identity, generation: ++this.sequence, batch: 0, request, settings,
       viewport: { from: request.from, to: request.to, followLive: request.followLive },
       currentState: 'loading', currentGaps: [], currentGapsTruncated: false,
-      archiveStarted: false, initialPublished: false, continuityLost: false, lastPublished: new Map() };
+      archiveStarted: false, initialPublished: false, lastPublished: new Map(), currentSnapshotIds:new Set() };
     this.subscriptions.set(id, sub); this.stats.subscriptions = this.subscriptions.size;
     this.publish(sub, 'snapshot', [], this.status(sub));
     if (settings.mode !== 'top-levels') {
@@ -170,7 +154,7 @@ export class OrderWallsArchiveService {
       this.publish(sub, 'snapshot', [], this.status(sub)); return;
     }
     if(!request.currentOnly)this.showWarmHistory(sub);
-    if (request.followLive) this.attachCurrentGroup(sub);
+    if (request.followLive) {this.attachCurrentGroup(sub);this.startHistory(sub);}
     else void this.loadHistory(sub);
   }
 
@@ -196,7 +180,13 @@ export class OrderWallsArchiveService {
         // The current bootstrap can still be in flight. Keep its shared socket
         // and apply the visible bounds before it admits the historical job.
         if(!sub.archiveStarted){const previous=sub.request;sub.request={...sub.request,...nextViewport};this.releaseWarmInterests(previous);sub.pendingViewport=undefined;return;}
-        this.subscribe(id,{...sub.request,...nextViewport});return;
+        const previous=sub.request;
+        this.detachHistoryJob(sub);this.releaseWarmReplay(sub);this.releaseWarmInterests(previous);
+        sub.request={...sub.request,from,to};sub.pendingViewport=undefined;sub.archiveStarted=false;
+        // The old prefix has not reached this viewport. Retarget only history;
+        // the current subscription and its acknowledged cursor stay intact.
+        sub.historyProjector=undefined;sub.historyPresentation=undefined;sub.cachedHistory=false;sub.replacingHistory=undefined;
+        this.startHistory(sub);this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));return;
       }
       sub.pendingViewport = undefined; return;
     }
@@ -264,15 +254,15 @@ export class OrderWallsArchiveService {
 
   diagnostics() {
     const projectors=new Set<OrderWallsArchiveProjector>();
-    for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector,sub.bridgeProjector])if(p)projectors.add(p);
+    for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector])if(p)projectors.add(p);
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
-    for(const job of this.historyJobs.values())for(const p of [job.initialProjector,job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
+    for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
     return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
-      ringPages: [...this.groups.values()].reduce((sum, group) => sum + group.pages.length, 0),
-      ringBytes: [...this.groups.values()].reduce((sum, group) => sum + group.ringBytes, 0),
+      ringPages: 0,
+      ringBytes: 0,
       recentHistoryRequests:this.historyPageMetrics.slice(-16),
       historyPageTiming: summarizeArchivePageTimings(this.historyPageMetrics, this.historyPageMetricCount) };
   }
@@ -290,13 +280,12 @@ export class OrderWallsArchiveService {
         onPage: page => this.onCurrentPage(created, page), onReset: reason => this.onCurrentReset(created, reason),
         onStatus: status => this.onCurrentStatus(created, status) });
       created = { key, request, settings: groupSettings, poller, subscribers: new Set<Subscription>(), cursor: 0,
-        pages: [], ringBytes: 0, ringPatches: 0, ringFloorCursor: 0, ringOverflow: false,
-        profileExact: false, currentValid: false, currentCatchingUp: true };
+        profileExact: false, currentValid: false, readiness:'loading', currentCatchingUp: true };
       group = created; this.groups.set(key, group); group.poller.start();
     }
     sub.group = group; group.subscribers.add(sub); this.stats.groups = this.groups.size;
     if (group.projector) this.seedTail(sub, group.projector.selectedState(), group.head);
-    if (group.head) this.startHistory(sub, group.bootstrap?.head ?? group.head);
+    if (group.head) this.startHistory(sub);
   }
 
   private onCurrentPage(group: CurrentGroup, page: OrderWallsArchiveCurrentPage) {
@@ -307,6 +296,7 @@ export class OrderWallsArchiveService {
     group.profileStatus = page.profileStatus;
     group.currentValid = page.head.valid;
     group.currentCatchingUp = page.page.hasMore || page.page.nextAfter < page.watermark;
+    group.readiness=!group.currentValid?'stale':group.currentCatchingUp?'catching-up':'ready';
     group.currentMessage = !exact ? 'The server current profile cannot exactly derive these Top Levels settings.'
       : !group.currentValid ? page.coverage?.reason ?? 'Current source continuity is not confirmed.'
         : group.currentCatchingUp ? 'Current selected-profile tail is catching up through bounded cursor batches.' : undefined;
@@ -314,12 +304,11 @@ export class OrderWallsArchiveService {
       group.bootstrap = page; group.head = page.head; group.cursor = page.page.nextAfter;
       group.projector = new OrderWallsArchiveProjector(group.settings, page.head?.at ?? 0, Number.MAX_SAFE_INTEGER);
       group.projector.applyCurrentPage(page, page.head?.at ?? 0);
-      group.pages = []; group.ringBytes = 0; group.ringPatches = 0; group.ringFloorCursor = page.watermark; group.ringOverflow = false;
       for (const sub of group.subscribers) {
         this.recordCurrentGaps(sub, page);
         if (exact) this.seedTail(sub, group.projector.selectedState(), group.head);
         else { sub.currentState = 'unavailable'; sub.currentMessage = 'The current profile cannot exactly derive these Top Levels settings.'; }
-        this.startHistory(sub, group.head);
+        this.startHistory(sub);
         this.publish(sub, 'snapshot', this.visibleSegments(sub), this.status(sub));
       }
       return;
@@ -327,25 +316,17 @@ export class OrderWallsArchiveService {
     if (page.head && (!group.head || page.watermark > group.head.cursor
       || page.watermark === group.head.cursor && page.head.at > group.head.at)) group.head = page.head;
     group.cursor = Math.max(group.cursor, page.page.nextAfter);
-    this.addCurrentPage(group, page);
-    if (group.projector && exact) group.projector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);
+
+    if (group.projector && exact) {group.projector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);group.projector.takeClosedSegments();}
     const state = group.projector?.selectedState();
     for (const sub of group.subscribers) {
       this.recordCurrentGaps(sub, page);
-      const previousBridge=sub.bridgeProjector;
-      let changed:OrderWallPatch[]=[];
-      if (sub.bridgeProjector && exact) {
-        changed=sub.bridgeProjector.applyCurrentPage(remapCurrentPage(page, sub.bridgeEntryIds), group.bootstrap?.head?.at ?? page.head?.at);
+      if (state && exact && sub.tailProjector) {
+        sub.tailProjector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);
+        sub.tailProjector.takeClosedSegments();
       }
-      else if (state && exact && sub.tailProjector) changed=sub.tailProjector.applyCurrentPage(page, group.bootstrap?.head?.at ?? page.head?.at);
       this.updateCurrentMetadata(sub, page, group);
-      this.tryBridge(sub);
-      if(sub.bridgeProjector!==previousBridge&&sub.bridgeProjector){
-        this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),this.status(sub));
-      }else{
-        const patches=this.markPatches(sub,changed,true);this.stats.incrementalSegments+=patches.length;
-        this.publish(sub,'patch',patches,this.status(sub));
-      }
+      this.publish(sub,'patch',this.currentSnapshotPatches(sub),this.status(sub));
       this.tryStartPendingViewportHistory(sub);
     }
   }
@@ -354,23 +335,18 @@ export class OrderWallsArchiveService {
     if (this.disposed || this.groups.get(group.key) !== group) return;
     const resetAt = group.head?.at;
     group.projector = undefined; group.bootstrap = undefined; group.head = undefined; group.cursor = 0;
-    group.currentValid = false; group.currentCatchingUp = true; group.currentMessage = reason;
-    group.pages = []; group.ringBytes = 0; group.ringPatches = 0; group.ringFloorCursor = 0; group.ringOverflow = true;
+    group.currentValid = false; group.readiness='loading'; group.currentCatchingUp = true; group.currentMessage = reason;
     for (const sub of group.subscribers) {
       const boundary = resetAt ?? sub.currentAt;
       if (boundary !== undefined) this.recordCurrentGap(sub, { from: boundary, to: boundary, reason });
-      sub.continuityLost = true; sub.bridgeProjector?.censorOpen(sub.currentAt ?? 0, reason); sub.bridgeProjector = undefined;
-      sub.bridgeEntryIds = undefined; sub.historyFenceState = undefined;
-      sub.tailProjector?.censorOpen(sub.currentAt ?? 0, reason); sub.tailProjector = undefined;
-      sub.historyStatus = sub.historyStatus ? { ...sub.historyStatus, state: 'gap', message: reason,
-        coverage: { from: sub.request.from, to: sub.request.to, complete: false, partial: true, reason },
-        archive: sub.historyStatus.archive ? { ...sub.historyStatus.archive, state: 'partial', reason } : undefined } : undefined;
+      sub.tailProjector = undefined;
       sub.currentState = 'stale'; sub.currentMessage = reason;
-      this.publish(sub, 'patch', [], this.status(sub));
+      this.publish(sub, 'patch', this.currentSnapshotPatches(sub), this.status(sub));
     }
   }
 
   private onCurrentStatus(group: CurrentGroup, status: { state: 'loading' | 'catching-up' | 'ready' | 'stale' | 'unavailable'; message?: string; sourceValid?: boolean }) {
+    group.readiness=status.state;
     group.currentCatchingUp = status.state === 'loading' || status.state === 'catching-up';
     group.currentMessage = status.message;
     if (status.sourceValid !== undefined) group.currentValid = status.sourceValid;
@@ -386,7 +362,7 @@ export class OrderWallsArchiveService {
       } else {
         sub.currentState = 'loading'; sub.currentMessage = status.message ?? 'Checking the exact current Top Levels profile.';
       }
-      this.publish(sub, 'patch', [], this.status(sub));
+      this.publish(sub, 'patch', this.currentSnapshotPatches(sub), this.status(sub));
     }
   }
 
@@ -412,10 +388,11 @@ export class OrderWallsArchiveService {
     const profileId = orderWallsArchiveProfileId(sub.request.market, sub.settings) ?? 'unknown';
     const projector = new OrderWallsArchiveProjector(sub.settings, sub.request.from, Number.MAX_SAFE_INTEGER, `tail-${profileId}`);
     projector.seedSelectedState(state);
-    sub.tailProjector = projector; sub.bridgeProjector = undefined; sub.currentAt = head?.at ?? state.at;
+    sub.tailProjector = projector; sub.currentAt = head?.at ?? state.at;
     sub.currentScope = toOrderWallScope(head?.bookScope ?? state.bookScope); sub.currentMidpoint = head?.midpoint ?? state.midpoint;
-    sub.currentState = head?.valid === false ? 'stale' : 'live';
-    sub.currentMessage = head?.valid === false ? 'Current source continuity is not confirmed.' : undefined;
+    const group=sub.group;
+    sub.currentState=head?.valid===false||!group?.currentValid?'stale':group.readiness==='ready'&&!group.currentCatchingUp&&group.cursor>=(group.head?.cursor??Infinity)?'live':group.readiness==='unavailable'?'unavailable':group.readiness==='stale'?'stale':'loading';
+    sub.currentMessage=sub.currentState==='live'?undefined:group?.currentMessage??'Current selected-profile state is not fully confirmed.';
   }
 
   private updateCurrentMetadata(sub: Subscription, page: OrderWallsArchiveCurrentPage, group: CurrentGroup) {
@@ -459,81 +436,50 @@ export class OrderWallsArchiveService {
     }
   }
 
-  private startHistory(sub: Subscription, fence?: NonNullable<CurrentGroup['head']>,
-    requestOverride?: OrderWallsArchiveRequest, initialProjector?: OrderWallsArchiveProjector, carryHistory = false) {
+  private startHistory(sub: Subscription, requestOverride?: OrderWallsArchiveRequest) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.archiveStarted) return;
     sub.archiveStarted = true;
     if(sub.request.currentOnly)return;
-    sub.historyFence = fence ? { cursor: fence.cursor, at: fence.at, epoch: fence.epoch } : undefined;
-    const fenceState = fence ? sub.group?.projector?.selectedState() : undefined;
-    sub.historyFenceState = fence && fenceState && sameProjectorHead(fenceState, fence) ? copySelectedState(fenceState) : undefined;
-    const request: OrderWallsArchiveRequest = requestOverride ?? { market: sub.request.market, from: sub.request.from, to: sub.request.to,
-      settings: sub.settings, ...(sub.request.profileId ? { profileId: sub.request.profileId } : {}),
-      ...(fence ? { watermark: fence.cursor, head: { cursor: fence.cursor, at: fence.at, epoch: fence.epoch } } : {}) };
-    if (carryHistory) {
-      sub.historyArchiveCarry = mergeHistoryArchive(sub.historyArchiveCarry,
-        sub.historyStatus?.archive ?? emptyArchiveStatus(request, 'partial'));
-      sub.historyCoverageCarry = mergeHistoryCoverage(sub.historyCoverageCarry, sub.historyStatus?.coverage);
-    } else {
-      sub.historyArchiveCarry = undefined; sub.historyCoverageCarry = undefined;
-    }
+    const request:OrderWallsArchiveRequest=requestOverride??{market:sub.request.market,from:sub.request.from,to:sub.request.to,
+      settings:sub.settings,...(sub.request.profileId?{profileId:sub.request.profileId}:{})};
     const cachedStatus=sub.cachedHistory?sub.historyStatus:undefined;
     const archive = emptyArchiveStatus(request, 'loading');
-    sub.historyStatus = { state: 'loading', message: carryHistory
-      ? 'Extending archived Top Levels history for the advancing chart range.' : 'Loading archived Top Levels history.',
-      coverage: carryHistory ? { from: sub.request.from, to: sub.request.to, complete: false, partial: true }
-        : { from: request.from, to: request.to, complete: false, partial: true }, archive };
+    sub.historyStatus={state:'loading',message:'Loading archived Top Levels history.',
+      coverage:{from:request.from,to:request.to,complete:false,partial:true},archive};
     if(cachedStatus?.archive)sub.historyStatus={...cachedStatus,state:'loading',message:'Cached history visible; validating the current revision.',archive:{...cachedStatus.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:'Cached history visible; validating the current revision.'}};
     const key = historyJobKey(request);
     let job = this.historyJobs.get(key);
     if (job) {
-      sub.historyFence = job.fence;
-      sub.historyFenceState = job.fenceState ? copySelectedState(job.fenceState) : undefined;
       sub.historyJob = job; job.subscribers.add(sub);
       if (job.latest) this.publishSharedHistorySnapshot(sub, job.latest);
       if (job.failure) this.publishHistoryFailure(sub, job);
       return;
     }
-    job = { key, request, fence: sub.historyFence,
-      fenceState: sub.historyFenceState ? copySelectedState(sub.historyFenceState) : undefined,
-      abort: new AbortController(), subscribers: new Set([sub]), settled: false, initialProjector };
+    job = { key, request,
+      abort: new AbortController(), subscribers: new Set([sub]), settled: false };
     sub.historyJob = job; this.historyJobs.set(key, job); this.stats.historyRequests++;
     this.runHistoryJob(job);
   }
 
   private pendingViewportNeedsExtension(sub: Subscription, job = sub.historyJob) {
-    const pending = sub.pendingViewport, archive = job?.latest?.status.archive;
-    const fixed = job?.fence ?? job?.request.head, current = sub.group?.head;
-    if (!pending || !job || !archive || archive.requestComplete !== true || archive.state === 'unavailable'
-      || pending.to <= job.request.to || !fixed || !current || current.cursor < fixed.cursor) return false;
-    return current.cursor > fixed.cursor || current.at > fixed.at;
+    const pending=sub.pendingViewport,archive=job?.latest?.status.archive;
+    return Boolean(pending&&job&&archive?.requestComplete===true&&archive.state!=='unavailable'&&pending.to>job.request.to);
   }
 
   private tryStartPendingViewportHistory(sub: Subscription) {
-    const job = sub.historyJob, target = sub.pendingViewport;
-    if (!job?.settled || !target) return false;
-    const archive = job.latest?.status.archive;
-    if (archive?.state === 'unavailable' && archive.requestComplete === true) {
-      sub.pendingViewport = undefined;
-      return false;
-    }
-    if (!this.pendingViewportNeedsExtension(sub, job)) return false;
-    const fixed = job.fence ?? job.request.head, current = sub.group?.head;
-    const priorProjector = job.latest?.projector ?? sub.historyProjector;
-    if (!fixed || !current || !priorProjector || target.to <= fixed.at) return false;
-    const request: OrderWallsArchiveRequest = { market: sub.request.market, from: fixed.at, to: target.to,
-      after: fixed.cursor, settings: sub.settings, ...(sub.request.profileId ? { profileId: sub.request.profileId } : {}),
-      watermark: current.cursor, head: { cursor: current.cursor, at: current.at, epoch: current.epoch } };
-    const initialProjector = priorProjector.cloneForLiveTail(target.to);
+    const job=sub.historyJob,target=sub.pendingViewport;
+    if(!job?.settled||!target||!this.pendingViewportNeedsExtension(sub,job))return false;
+    const request:OrderWallsArchiveRequest={market:sub.request.market,from:sub.request.from,to:target.to,settings:sub.settings,
+      ...(sub.request.profileId?{profileId:sub.request.profileId}:{})};
+    const displayed=sub.historyStatus;
     this.detachHistoryJob(sub);
     const previousRequest=sub.request;
-    sub.request = { ...sub.request, from: Math.min(sub.request.from, target.from), to: target.to, followLive: target.followLive };
-    this.releaseWarmInterests(previousRequest);
-    sub.pendingViewport = undefined;
-    sub.archiveStarted = false;
-    this.startHistory(sub, current, request, initialProjector, true);
-    this.publish(sub, 'patch', [], this.status(sub));
-    return true;
+    sub.request={...sub.request,to:target.to,followLive:target.followLive};
+    this.releaseWarmInterests(previousRequest);sub.pendingViewport=undefined;sub.archiveStarted=false;
+    if(displayed)sub.replacingHistory={status:displayed};
+    this.startHistory(sub,request);
+    if(sub.replacingHistory&&displayed?.archive)sub.historyStatus={...sub.historyStatus!,archive:{...displayed.archive,from:request.from,to:request.to,state:'loading',requestComplete:false,rangeComplete:false}};
+    this.publish(sub,'patch',[],this.status(sub));return true;
   }
 
   private detachHistoryJob(sub: Subscription) {
@@ -558,7 +504,7 @@ export class OrderWallsArchiveService {
     }
     void loadOrderWallsArchive({ request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
-      ...(job.initialProjector ? { initialProjector: job.initialProjector.cloneForLiveTail(job.request.to) } : {}), onUpdate: update => {
+      onUpdate: update => {
       job.latest = update; job.resume = update.resume;
       for (const subscriber of [...job.subscribers]) this.publishSharedHistoryUpdate(subscriber, job, update);
     }, onPageMetrics: metrics => this.recordHistoryPageMetrics(metrics) }).then(result => {
@@ -566,7 +512,8 @@ export class OrderWallsArchiveService {
       job.preparationNeedsRevision=false;job.preparationRetryToken=undefined;
       this.rememberHistory(job.request,result);
       for (const subscriber of [...job.subscribers]) {
-        if (!this.tryStartPendingViewportHistory(subscriber)) this.publishSharedHistoryUpdate(subscriber, job, result);
+        this.publishSharedHistoryUpdate(subscriber, job, result);
+        this.tryStartPendingViewportHistory(subscriber);
       }
     }).catch(error => {
       job.settled = true;
@@ -610,7 +557,7 @@ export class OrderWallsArchiveService {
     } else {
       subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
         coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
-        archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...(subscriber.cachedHistory?subscriber.historyStatus?.archive:{}), state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
+        archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...((subscriber.cachedHistory||subscriber.replacingHistory)?subscriber.historyStatus?.archive:{}), state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
     }
     this.publish(subscriber, 'patch', [], this.status(subscriber));
   }
@@ -719,6 +666,16 @@ export class OrderWallsArchiveService {
 
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
+    if(sub.replacingHistory){
+      const archive=update.status.archive,prior=sub.replacingHistory.status;
+      if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
+        sub.historyStatus={...update.status,...(prior.coverage?{coverage:{...prior.coverage,complete:false,partial:true}}:{}),
+          ...(prior.archive?{archive:{...prior.archive,from:job.request.from,to:job.request.to,state:archive?.state??'loading',requestComplete:false,rangeComplete:false,reason:archive?.reason,preparation:archive?.preparation,retryable:archive?.retryable,profileStatus:archive?.profileStatus??prior.archive.profileStatus}}:{})};
+        this.publish(sub,'patch',[],this.status(sub));return;
+      }
+      sub.replacingHistory=undefined;sub.cachedHistory=false;this.releaseWarmReplay(sub);
+      update={...update,kind:'snapshot',segments:update.projector?.snapshot()??update.segments,patches:undefined};
+    }
     const forceValidatedSnapshot=forceSnapshot&&update.preparedPresentationComplete&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable';
     if(forceValidatedSnapshot){sub.cachedHistory=false;this.releaseWarmReplay(sub);}
     const priorStatus=sub.historyStatus;sub.historyStatus = update.status;
@@ -753,91 +710,31 @@ export class OrderWallsArchiveService {
     if (update.projector) {sub.historyProjector = update.projector;sub.historyPresentation=undefined;}
     else if(update.presentation)sub.historyPresentation=update.presentation;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
-    const previousBridge=sub.bridgeProjector;this.tryBridge(sub);
     const status=this.status(sub);
     if(update.kind==='snapshot')this.publish(sub,'snapshot',this.visibleSegments(sub),status);
-    else if(!sub.bridgeProjector){
-      const patches=this.markPatches(sub,update.patches??[],false);this.stats.incrementalSegments+=patches.length;
-      this.publish(sub,'patch',patches,status);
-    }else if(alreadyPresented&&previousBridge===sub.bridgeProjector)this.publish(sub,'patch',[],status);
-    else this.publish(sub,'patch',this.diff(sub,this.visibleSegments(sub)),status);
+    else {const patches=this.markPatches(sub,update.patches??[],false);this.stats.incrementalSegments+=patches.length;this.publish(sub,'patch',patches,status);}
   }
 
-  private addCurrentPage(group: CurrentGroup, page: OrderWallsArchiveCurrentPage) {
-    if (page.page.after === 0) return;
-    if (page.page.nextAfter <= group.ringFloorCursor && !page.patches.length) return;
-    const bytes = (page as OrderWallsArchiveCurrentPage & { __bytes?: number }).__bytes ?? JSON.stringify(page).length;
-    group.pages.push(page); group.ringBytes += bytes; group.ringPatches += page.patches.length;
-    while (group.pages.length > MAX_CURRENT_RING_PAGES || group.ringBytes > MAX_CURRENT_RING_BYTES || group.ringPatches > MAX_CURRENT_RING_PATCHES) {
-      const removed = group.pages.shift(); if (!removed) break;
-      group.ringBytes = Math.max(0, group.ringBytes - ((removed as OrderWallsArchiveCurrentPage & { __bytes?: number }).__bytes ?? JSON.stringify(removed).length));
-      group.ringPatches = Math.max(0, group.ringPatches - removed.patches.length); group.ringFloorCursor = Math.max(group.ringFloorCursor, removed.page.nextAfter);
-      group.ringOverflow = true; this.stats.ringDrops++;
-    }
+  private currentSnapshots(sub:Subscription):OrderWallSegment[]{
+    if(!sub.group?.profileExact||!sub.group.currentValid||sub.group.readiness!=='ready'||sub.group.currentCatchingUp||sub.group.cursor<(sub.group.head?.cursor??Infinity)||sub.currentState!=='live'||sub.currentAt===undefined)return [];
+    const at=sub.currentAt;
+    return (sub.tailProjector?.snapshot()??[]).filter(segment=>segment.end===null).flatMap(segment=>{
+      const latest=segment.valueRuns.at(-1);if(!latest)return [];
+      return [{...segment,scopePartial:sub.currentScope?!(segment.side==='bid'?sub.currentScope.bidComplete:sub.currentScope.askComplete):true,presentationKind:'current-snapshot' as const,currentSelection:true,start:at,end:null,durationMs:0,
+        startKnown:false,endKnown:false,endReason:null,peakUsd:latest.usd,meanUsd:latest.usd,valueRuns:[{...latest,at}],valueRunsTruncated:false}];
+    });
   }
 
-  private tryBridge(sub: Subscription) {
-    const group = sub.group, history = sub.historyProjector, archive = sub.historyStatus?.archive;
-    if (!group || !history || !archive || archive.state === 'loading' || archive.state === 'building' || archive.state === 'backfilling') return;
-    if (archive.requestComplete === false) return;
-    if (sub.bridgeProjector) return;
-    const fence = sub.historyFence;
-    const cursor = fence?.cursor;
-    const joinAt = fence?.at;
-    const gaps = archive.gaps.filter(gap => gap.to >= sub.request.from && gap.from <= (joinAt ?? sub.request.to));
-    // A current-state snapshot is not proof for the interval between a shorter
-    // historical request end and the captured current watermark. Bridge only
-    // when history itself covers the exact fixed watermark H.
-    const coversFence = joinAt !== undefined && sub.request.to >= joinAt
-      && archive.confirmedTo !== undefined && archive.confirmedTo >= joinAt;
-    const historyThroughFence = Boolean(archive.state === 'complete' || archive.state === 'partial'
-      && archive.requestComplete === true && archive.confirmedTo !== undefined && archive.confirmedTo >= (joinAt ?? Infinity)
-      && gaps.length === 0 && !sub.historyProjector?.historyLimited);
-    const safe = Boolean(!sub.continuityLost && archive.exact && historyThroughFence && fence && cursor !== undefined
-      && coversFence
-      && archive.availableFrom !== undefined && archive.availableFrom <= sub.request.from
-      && gaps.length === 0 && group.ringFloorCursor <= cursor);
-    if (!safe || !fence || cursor === undefined) {
-      if (sub.historyProjector) sub.historyProjector.censorOpen(archive.confirmedTo ?? joinAt ?? sub.request.to,
-        'Current selected-profile tail could not be joined through a verified archive watermark.');
-      sub.continuityLost = true;
-      return;
-    }
-    const pages = group.pages.filter(page => page.page.nextAfter > cursor).sort((a, b) => a.page.after - b.page.after);
-    const targetCursor = group.head?.cursor ?? group.cursor;
-    // Do not publish a bridge partway through a fixed-watermark catch-up batch.
-    if (group.cursor < targetCursor || pages.at(-1)?.page.hasMore) return;
-    const currentState = sub.historyFenceState;
-    const entryIds = currentState ? proveEntryIdMapping(history.selectedState(), currentState) : undefined;
-    if (!currentState || !entryIds || !pagesContinueFrom(pages, cursor, targetCursor, fence.at, fence.epoch)) {
-      history.censorOpen(archive.confirmedTo ?? joinAt ?? sub.request.to,
-        'Archive and current selected-profile entries could not be matched at the fixed watermark.');
-      sub.continuityLost = true;
-      return;
-    }
-    const merged = history.cloneForLiveTail(Number.MAX_SAFE_INTEGER);
-    merged.confirmWatermark(fence.cursor, fence.at, fence.epoch, currentState.midpoint);
-    sub.bridgeEntryIds = entryIds;
-    for (const page of pages) {
-      const clipped = page.page.after < cursor ? { ...page, page: { ...page.page, after: cursor }, patches: page.patches.filter(patch => patch.cursor > cursor) } : page;
-      merged.applyCurrentPage(remapCurrentPage(clipped, sub.bridgeEntryIds), fence.at);
-    }
-    sub.bridgeProjector = merged; sub.tailProjector = undefined; sub.continuityLost = false;
+  private currentSnapshotPatches(sub:Subscription):OrderWallPatch[]{
+    const next=new Map(this.currentSnapshots(sub).map(segment=>[segment.id,segment])),patches:OrderWallPatch[]=[];
+    for(const id of sub.currentSnapshotIds)if(!next.has(id))patches.push({id,segment:null});
+    for(const [id,segment]of next){const old=sub.lastPublished.get(id);if(!old||!sameWallSegment(old,segment))patches.push({id,segment,replaceValueRuns:true});}
+    this.stats.incrementalSegments+=patches.length;return patches;
   }
 
   private visibleSegments(sub: Subscription): OrderWallSegment[] {
-    const currentSelection = sub.group?.profileExact === true && sub.group.currentValid;
-    const markCurrent = (segments: OrderWallSegment[]) => segments.map(segment => ({ ...segment,
-      currentSelection: currentSelection && segment.end === null }));
-    if (sub.bridgeProjector) return markCurrent(sub.bridgeProjector.snapshot());
-    const tail = markCurrent(sub.tailProjector?.snapshot() ?? []);
-    const history = sub.historyProjector?.snapshot() ?? (sub.historyPresentation?[...sub.historyPresentation.values()]:[]);
-    if (!sub.group) return history.map(segment => ({ ...segment, currentSelection: false }));
-    if ((!sub.historyProjector&&!sub.historyPresentation) || !sub.historyStatus?.archive) return tail;
-    const combined = new Map<string, OrderWallSegment>();
-    for (const segment of history) combined.set(segment.id, { ...segment, currentSelection: false });
-    for (const segment of tail) combined.set(segment.id, segment);
-    return [...combined.values()].sort((a, b) => a.start - b.start || a.side.localeCompare(b.side) || a.price - b.price);
+    const history=sub.historyProjector?.snapshot()??(sub.historyPresentation?[...sub.historyPresentation.values()]:[]);
+    return [...history.map(segment=>({...segment,currentSelection:false})),...this.currentSnapshots(sub)];
   }
 
   private publishArchiveUpdate(sub: Subscription, update: OrderWallsArchiveUpdate) {
@@ -866,14 +763,14 @@ export class OrderWallsArchiveService {
     const status = sub.historyStatus ?? { state: 'loading' as const, message: 'Waiting for the current selected-profile archive.',
       archive: emptyArchiveStatus(sub.request, 'loading') };
     const baseArchive = status.archive ?? emptyArchiveStatus(sub.request, 'loading');
-    const priorArchive = mergeHistoryArchive(sub.historyArchiveCarry, baseArchive);
+    const priorArchive = baseArchive;
     const gaps = new Map<string, NonNullable<OrderWallStatus['archive']>['gaps'][number]>();
-    for (const gap of [...priorArchive.gaps, ...sub.currentGaps]) {
+    for (const gap of priorArchive.gaps) {
       if (gap.to < sub.request.from) continue;
       gaps.set(`${gap.from}:${gap.to}:${gap.reason}`, gap);
     }
     const orderedGaps = [...gaps.values()].sort((a, b) => a.from - b.from || a.to - b.to || a.reason.localeCompare(b.reason));
-    const gapsTruncated = Boolean(priorArchive.gapsTruncated || sub.currentGapsTruncated || orderedGaps.length > MAX_SUBSCRIPTION_ARCHIVE_GAPS);
+    const gapsTruncated = Boolean(priorArchive.gapsTruncated || orderedGaps.length > MAX_SUBSCRIPTION_ARCHIVE_GAPS);
     let archive: NonNullable<OrderWallStatus['archive']> = { ...priorArchive, profileId: availability ?? priorArchive.profileId,
       from: sub.request.from, to: sub.request.to,
       gaps: orderedGaps.slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS), ...(gapsTruncated ? { gapsTruncated: true } : {}),
@@ -888,8 +785,8 @@ export class OrderWallsArchiveService {
       : sub.currentState === 'stale' ? 'gap' : 'loading';
     const message = sub.currentMessage ?? (priorArchive.requestComplete === false ? status.message : sub.group && priorArchive.state !== 'complete'
       ? 'Current selected-profile walls are updating while archive history loads.' : status.message);
-    return { ...status, ...(mergeHistoryCoverage(sub.historyCoverageCarry, status.coverage)
-      ? { coverage: mergeHistoryCoverage(sub.historyCoverageCarry, status.coverage) } : {}),
+    return { ...status,
+      ...(sub.currentGaps.length?{currentGaps:sub.currentGaps,currentGapsTruncated:sub.currentGapsTruncated}:{}),
       state, ...(message ? { message } : {}), ...(sub.currentAt !== undefined ? { lastConfirmedAt: sub.currentAt } : {}),
       ...(sub.currentScope ? { bookScope: sub.currentScope } : {}), archive };
   }
@@ -900,6 +797,8 @@ export class OrderWallsArchiveService {
     const event: Event = { type: 'order-wall-batch', ids: [sub.id], key: sub.key, generation: sub.generation,
       batchId: ++sub.batch, kind, ...(kind === 'snapshot' ? { segments: value as OrderWallSegment[] } : { patches: value as OrderWallPatch[] }), status };
     this.emit(event); sub.initialPublished = true;
+    if(kind==='snapshot')sub.currentSnapshotIds=new Set((value as OrderWallSegment[]).filter(segment=>segment.presentationKind==='current-snapshot').map(segment=>segment.id));
+    else for(const patch of value as OrderWallPatch[]){if(patch.segment?.presentationKind==='current-snapshot')sub.currentSnapshotIds.add(patch.id);else sub.currentSnapshotIds.delete(patch.id);}
     if (kind === 'snapshot') sub.lastPublished = new Map((value as OrderWallSegment[]).map(segment => [segment.id, segment]));
     else for (const patch of value as OrderWallPatch[]) {
       if (patch.segment) sub.lastPublished.set(patch.id, patch.segment);
@@ -917,36 +816,6 @@ function canCoalesceLiveViewport(previous: { from: number; to: number; followLiv
   return overlap >= Math.min(previousSpan, nextSpan) * 0.9 && nextSpan >= previousSpan * 0.8 && nextSpan <= previousSpan * 1.2;
 }
 
-function mergeHistoryArchive(previous: OrderWallStatus['archive'], next: NonNullable<OrderWallStatus['archive']>)
-  : NonNullable<OrderWallStatus['archive']> {
-  if (!previous) return next;
-  const gapMap = new Map<string, NonNullable<OrderWallStatus['archive']>['gaps'][number]>();
-  for (const gap of [...previous.gaps, ...next.gaps]) gapMap.set(`${gap.from}:${gap.to}:${gap.reason}`, gap);
-  const incomplete = next.requestComplete === false;
-  const state: NonNullable<OrderWallStatus['archive']>['state'] = next.state === 'unavailable' ? 'unavailable'
-    : incomplete ? next.state : previous.state === 'partial' || next.state === 'partial' ? 'partial' : next.state;
-  const availableFrom = [previous.availableFrom, next.availableFrom].filter((value): value is number => value !== undefined);
-  const confirmedTo = [previous.confirmedTo, next.confirmedTo].filter((value): value is number => value !== undefined);
-  return { ...previous, ...next, state, requestComplete: next.requestComplete ?? previous.requestComplete,
-    rangeComplete: previous.rangeComplete === true && next.rangeComplete === true,
-    from: Math.min(previous.from, next.from), to: Math.max(previous.to, next.to),
-    ...(availableFrom.length ? { availableFrom: Math.min(...availableFrom) } : {}),
-    ...(confirmedTo.length ? { confirmedTo: Math.max(...confirmedTo) } : {}),
-    loadedThrough: next.loadedThrough ?? previous.loadedThrough,
-    gaps: [...gapMap.values()].sort((a, b) => a.from - b.from || a.to - b.to || a.reason.localeCompare(b.reason)),
-    ...(previous.gapsTruncated || next.gapsTruncated ? { gapsTruncated: true } : {}),
-    ...(!next.reason && previous.reason ? { reason: previous.reason } : {}) };
-}
-
-function mergeHistoryCoverage(previous: OrderWallStatus['coverage'], next: OrderWallStatus['coverage']) {
-  if (!previous) return next;
-  if (!next) return previous;
-  const complete = previous.complete && next.complete;
-  return { from: Math.min(previous.from, next.from), to: Math.max(previous.to, next.to), complete,
-    partial: previous.partial || next.partial || !complete, ...(next.reason ?? previous.reason ? { reason: next.reason ?? previous.reason } : {}) };
-}
-
-type SelectedArchiveState = ReturnType<OrderWallsArchiveProjector['selectedState']>;
 
 function warmHistoryKey(request:OrderWallsArchiveRequest){return historyJobKey({...request,after:0,watermark:undefined,head:undefined});}
 function historyJobKey(request: OrderWallsArchiveRequest) {
@@ -970,86 +839,6 @@ function summarizeArchivePageTimings(metrics: OrderWallsArchivePageMetrics[], to
     p50: Object.fromEntries(fields.map(field => [field, percentile(field, .5)])),
     p95: Object.fromEntries(fields.map(field => [field, percentile(field, .95)])),
     max: Object.fromEntries(fields.map(field => [field, percentile(field, 1)])) };
-}
-
-function sameProjectorHead(state: SelectedArchiveState, head: NonNullable<CurrentGroup['head']>) {
-  return state.cursor === head.cursor && state.at === head.at && state.epoch === head.epoch;
-}
-
-function copySelectedState(state: SelectedArchiveState): SelectedArchiveState {
-  return { ...state, bookScope: state.bookScope ? { ...state.bookScope } : undefined,
-    bids: state.bids.map(candidate => ({ ...candidate })), asks: state.asks.map(candidate => ({ ...candidate })) };
-}
-
-/**
- * Maps a current checkpoint's unknown-start IDs onto the archive's canonical
- * active IDs only when both projections prove the same complete state at H.
- * Start cursor/time/knownness may intentionally differ for the checkpoint;
- * the history projection remains authoritative for those fields.
- */
-function proveEntryIdMapping(history: SelectedArchiveState, current: SelectedArchiveState) {
-  if (history.cursor !== current.cursor || history.at !== current.at || history.epoch !== current.epoch
-    || history.bids.length !== current.bids.length || history.asks.length !== current.asks.length) return undefined;
-  const mapping = new Map<string, string>(), usedCurrent = new Set<string>(), usedHistory = new Set<string>();
-  for (const side of ['bid', 'ask'] as const) {
-    const historySide = side === 'bid' ? history.bids : history.asks;
-    const currentSide = side === 'bid' ? current.bids : current.asks;
-    const byPrice = new Map<string, OrderWallsArchiveCandidate>();
-    for (const candidate of currentSide) {
-      if (candidate.side !== side || byPrice.has(candidate.price) || usedCurrent.has(candidate.entryId)) return undefined;
-      byPrice.set(candidate.price, candidate); usedCurrent.add(candidate.entryId);
-    }
-    for (const archived of historySide) {
-      const live = byPrice.get(archived.price);
-      if (!live || live.side !== archived.side || live.rank !== archived.rank
-        || live.quantity !== archived.quantity || live.notional !== archived.notional
-        || live.startEpoch !== archived.startEpoch
-        || (live.confirmationAt ?? null) !== (archived.confirmationAt ?? null)
-        || usedHistory.has(archived.entryId)) return undefined;
-      if (mapping.has(live.entryId) && mapping.get(live.entryId) !== archived.entryId) return undefined;
-      mapping.set(live.entryId, archived.entryId); usedHistory.add(archived.entryId);
-    }
-  }
-  return mapping;
-}
-
-function pagesContinueFrom(pages: OrderWallsArchiveCurrentPage[], cursor: number, finalCursor: number, joinAt: number, epoch: number) {
-  let covered = cursor;
-  for (const page of pages) {
-    if (page.page.nextAfter <= covered) continue;
-    if (page.page.after > covered || page.head?.epoch !== epoch
-      || page.patches.some(patch => patch.kind === 'gap' || patch.epoch !== epoch)) return false;
-    const headAt = page.head?.at;
-    if (headAt === undefined) return false;
-    if ((page.coverage?.gaps ?? []).some(gap => {
-      const from = gap.from ?? gap.at ?? 0, to = gap.to ?? gap.at ?? from;
-      return from <= headAt && to > joinAt;
-    })) return false;
-    covered = Math.max(covered, page.page.nextAfter);
-  }
-  return covered >= finalCursor;
-}
-
-function remapCurrentPage(page: OrderWallsArchiveCurrentPage, entryIds?: Map<string, string>): OrderWallsArchiveCurrentPage {
-  if (!entryIds?.size || !page.patches.length) return page;
-  const patches = page.patches.map(patch => {
-    const removed: string[] = [];
-    const remapCandidate = (candidate: OrderWallsArchiveCandidate) => {
-      const id = entryIds.get(candidate.entryId);
-      return id ? { ...candidate, entryId: id } : candidate;
-    };
-    const remapRemoval = <T extends { entryId: string }>(removal: T) => {
-      const id = entryIds.get(removal.entryId);
-      if (!id) return removal;
-      removed.push(removal.entryId);
-      return { ...removal, entryId: id };
-    };
-    const result = { ...patch, bids: { upserts: patch.bids.upserts.map(remapCandidate), removals: patch.bids.removals.map(remapRemoval) },
-      asks: { upserts: patch.asks.upserts.map(remapCandidate), removals: patch.asks.removals.map(remapRemoval) } };
-    for (const id of removed) entryIds.delete(id);
-    return result;
-  });
-  return { ...page, patches };
 }
 
 function profileSettings(request: NonNullable<ReturnType<typeof orderWallsArchiveCurrentRequest>>) {

@@ -582,6 +582,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private segmentTo(segment:OrderWallSegment){
     if(segment.end!==null)return segment.end;
+    if(segment.presentationKind==='current-snapshot')return segment.start;
     if(segment.currentSelection===true)return this.status.lastConfirmedAt??segment.start;
     if(segment.archiveEntryId){
       const segmentConfirmed=segment.start+Math.max(0,segment.durationMs);
@@ -591,7 +592,7 @@ export class OrderWallsPrimitive implements IPrimitive {
     return this.status.lastConfirmedAt??segment.start;
   }
   private projectionContext(segment:OrderWallSegment,rc:PrimitiveRenderContext):WallProjectionContext|null{
-    if(!this.settings.showHistory&&segment.end!==null||segment.durationMs<this.settings.minDurationMs)return null;
+    if(!this.settings.showHistory&&segment.end!==null||segment.presentationKind!=='current-snapshot'&&segment.durationMs<this.settings.minDurationMs)return null;
     const low=segment.price,high=low+this.width(),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
     // This is the incumbent per-point pixel cull, evaluated before traversing
     // an offscreen wall's exact retained value history. Data remains retained.
@@ -602,7 +603,7 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
     const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
-    from=Math.max(from,segment.start+this.settings.minDurationMs);
+    from=Math.max(from,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
     // A current seed is an observed point, not an observed duration. Use the
     // existing one-pixel minimum stroke without extending its source time.
     if(to<from||to===from&&segment.currentSelection!==true)return null;
