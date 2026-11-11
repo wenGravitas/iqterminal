@@ -1,0 +1,139 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/.warm-prefix-baseline.test.ts (39 tests | 2 failed | 37 skipped) 341ms
+   × advancing same-start warm view preserves its financial fence until fresh proof (compact=false) 221ms
+   × advancing same-start warm view preserves its financial fence until fresh proof (compact=true) 115ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/.warm-prefix-baseline.test.ts > advancing same-start warm view preserves its financial fence until fresh proof (compact=false)
+ FAIL  tests/.warm-prefix-baseline.test.ts > advancing same-start warm view preserves its financial fence until fresh proof (compact=true)
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "archiveEntryId": "A",
+-     "censoredReason": "Observed disconnect",
+-     "currentSelection": false,
++     "archiveEntryId": "B",
+      "detectionMode": "top-levels",
+-     "durationMs": 2000,
+-     "end": 1800000001000,
++     "durationMs": 108056000,
++     "end": null,
+      "endKnown": false,
+-     "endReason": "censored",
+-     "epoch": 1,
+-     "id": "A:view-8:off:0:q1",
++     "endReason": null,
++     "epoch": 2,
++     "id": "B:view-8:off:0:q4",
+      "meanUsd": 200.0000000001,
+-     "peakUsd": 300.0000000003,
++     "peakUsd": 200.0000000001,
+      "percentile": null,
+      "price": 100.00000001,
+      "priceExact": "100.00000001",
+      "rank": 1,
+      "scopePartial": true,
+      "side": "bid",
+-     "start": 1799999999000,
++     "start": 1800000004000,
+      "startKnown": true,
+      "valueRuns": [
+        {
+-         "at": 1799999999000,
++         "at": 1800000004000,
+          "notionalExact": "200.0000000001",
+          "percentile": null,
+          "quantity": 2.000000000001,
+          "quantityExact": "2.000000000001",
+          "rank": 1,
+          "usd": 200.0000000001,
+-       },
+-       {
+-         "at": 1800000001000,
+-         "notionalExact": "300.0000000003",
+-         "percentile": null,
+-         "quantity": 3.000000000003,
+-         "quantityExact": "3.000000000003",
+-         "rank": 1,
+-         "usd": 300.0000000003,
+        },
+      ],
+      "valueRunsTruncated": false,
+    },
+    {
+-     "archiveEntryId": "B",
+-     "currentSelection": false,
++     "archiveEntryId": "A",
++     "censoredReason": "Observed disconnect",
+      "detectionMode": "top-levels",
+-     "durationMs": 107996000,
+-     "end": null,
++     "durationMs": 2000,
++     "end": 1800000001000,
+      "endKnown": false,
+-     "endReason": null,
+-     "epoch": 2,
+-     "id": "B:view-8:off:0:q4",
++     "endReason": "censored",
++     "epoch": 1,
++     "id": "A:view-8:off:0:q1",
+      "meanUsd": 200.0000000001,
+-     "peakUsd": 200.0000000001,
++     "peakUsd": 300.0000000003,
+      "percentile": null,
+      "price": 100.00000001,
+      "priceExact": "100.00000001",
+      "rank": 1,
+      "scopePartial": true,
+      "side": "bid",
+-     "start": 1800000004000,
++     "start": 1799999999000,
+      "startKnown": true,
+      "valueRuns": [
+        {
+-         "at": 1800000004000,
++         "at": 1799999999000,
+          "notionalExact": "200.0000000001",
+          "percentile": null,
+          "quantity": 2.000000000001,
+          "quantityExact": "2.000000000001",
+          "rank": 1,
+          "usd": 200.0000000001,
++       },
++       {
++         "at": 1800000001000,
++         "notionalExact": "300.0000000003",
++         "percentile": null,
++         "quantity": 3.000000000003,
++         "quantityExact": "3.000000000003",
++         "rank": 1,
++         "usd": 300.0000000003,
+        },
+      ],
+      "valueRunsTruncated": false,
+    },
+  ]
+
+ ❯ tests/.warm-prefix-baseline.test.ts:530:52
+    528|   await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).to…
+    529|   const reference=old.full.segments.map(segment=>({...segment,currentS…
+    530|   expect([...displayedWalls(events,'a').values()]).toEqual(reference);
+       |                                                    ^
+    531|   expect(events.filter(e=>e.ids?.includes('a')).at(-1).status.archive)…
+    532|   expect(fresh.calls.some(path=>path.endsWith('/projection-batch'))).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 37 skipped (39)
+   Start at  15:20:12
+   Duration  1.43s (transform 62%, tests 29%, import 9%, worker 1%)
+
