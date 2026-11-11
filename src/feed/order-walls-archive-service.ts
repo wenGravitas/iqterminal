@@ -74,6 +74,7 @@ interface Subscription {
 }
 
 interface SharedHistoryJob {
+  eligibleRange?:{to:number;horizonAt:number};
   preparationRetryToken?:string;
   preparationNeedsRevision?:boolean;
   key: string;
@@ -502,7 +503,7 @@ export class OrderWallsArchiveService {
         ...(previous.coverage?{coverage:{...previous.coverage,complete:false,partial:true,reason:undefined}}:{}),
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
-    void loadOrderWallsArchive({ eligibleHistory:true,request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+    void loadOrderWallsArchive({ eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
       job.latest = update; job.resume = update.resume;
@@ -557,7 +558,7 @@ export class OrderWallsArchiveService {
     } else {
       subscriber.historyStatus = { state: 'gap', message: `Order Walls history request failed: ${message}`,
         coverage: { from: subscriber.request.from, to: subscriber.request.to, complete: false, partial: true, reason: message },
-        archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...((subscriber.cachedHistory||subscriber.replacingHistory)?subscriber.historyStatus?.archive:{}), state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
+        archive: { ...emptyArchiveStatus(subscriber.request, 'partial', message), ...((subscriber.cachedHistory||subscriber.replacingHistory)?subscriber.historyStatus?.archive:{}), ...(job.eligibleRange?{eligibleTo:job.eligibleRange.to,horizonAt:job.eligibleRange.horizonAt}:{}),state:'partial',reason:message,requestComplete: false,rangeComplete:false,resumeAfter:undefined,retryable } };
     }
     this.publish(subscriber, 'patch', [], this.status(subscriber));
   }

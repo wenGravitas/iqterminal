@@ -41,11 +41,11 @@ function fixture(split=false){
  const advertised={manifest,delivery:{version:1,maxParts:32,maxDecodedBytes:8*1024*1024}};
  return {manifest,texts,source,canonical,advertised,full,page,context:{sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
 }
-function transport(f:ReturnType<typeof fixture>,options:{changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
- const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL)=>{
+function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
+ const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
   if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:head,availableFrom:from-3600000});
-  if(url.pathname.endsWith('/discover'))return Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});
+  if(url.pathname.endsWith('/discover')){const response=Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});if(new Headers(init?.headers).get('X-IQ-Wall-Resolve-Eligible')!=='1')return response;const requested={market:'spot',profile:profile.id,from:Number(url.searchParams.get('from')),to:Number(url.searchParams.get('to'))},horizon={version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...head,at:options.horizonAt??head.at},availableFrom:from-3600000},request={...requested,to:Math.max(requested.from,Math.min(requested.to,horizon.head.at+1))};return Response.json({...await response.json(),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request,horizon}});}
   if(url.pathname.endsWith('/source')){await options.gateSource;return Response.json(options.changed?{...f.source,token:'c'.repeat(64)}:f.source);}
   if(url.pathname.endsWith('/projection-batch')){
    const start=Number(url.searchParams.get('start')),selected=f.manifest.parts.slice(start,start+32),mode=(f.advertised.delivery as any).productTransport===1?2:(f.advertised.delivery as any).pointTransport,compact=mode===1||mode===2;expect(url.searchParams.get('version')).toBe(mode===2?'3':compact?'2':'1');
@@ -408,7 +408,7 @@ test('a late shared join cannot turn unavailable prepared coverage into validate
 });
 
 test('eligible prepared history preserves exact rows and requested bounds across future whitespace',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),calls:{url:URL;view:string|null}[]=[],updates:any[]=[];
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f,{horizonAt:to-1}),calls:{url:URL;view:string|null}[]=[],updates:any[]=[];
  const fetcher:typeof fetch=async(input,init)=>{const url=new URL(String(input),'http://test');calls.push({url,view:new Headers(init?.headers).get('X-IQ-View-Id')});
   if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...head,at:to-1},availableFrom:from+1000});
   return t.fetcher(input,init);
@@ -417,11 +417,18 @@ test('eligible prepared history preserves exact rows and requested bounds across
  const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:40,head,page:{...f.page.page,nextAfter:40}});
  expect(result.segments).toEqual(reference.snapshot());expect(result.status.archive).toMatchObject({from,to:to+7200000,eligibleTo:to,horizonAt:to-1,requestComplete:true,rangeComplete:false,state:'partial'});
  expect(updates.slice(0,-1).every(u=>u.status.archive.requestComplete===false)).toBe(true);
- expect(calls.filter(c=>c.url.pathname.endsWith('/discover')).map(c=>[Number(c.url.searchParams.get('from')),Number(c.url.searchParams.get('to'))])).toEqual([[from,to]]);
- expect(calls.some(c=>c.url.pathname.endsWith('/source'))).toBe(true);expect(new Set(calls.map(c=>c.view)).size).toBe(1);expect(calls[0].view).toBeTruthy();
+ expect(calls.filter(c=>c.url.pathname.endsWith('/discover')).map(c=>[Number(c.url.searchParams.get('from')),Number(c.url.searchParams.get('to'))])).toEqual([[from,to+7200000]]);
+ expect(calls.filter(c=>c.url.pathname.endsWith('/horizon'))).toHaveLength(0);expect(calls.find(c=>c.url.pathname.endsWith('/source'))?.url.searchParams.get('to')).toBe(String(to));expect(new Set(calls.map(c=>c.view)).size).toBe(1);expect(calls[0].view).toBeTruthy();
 });
 test('a wholly future wall view performs metadata only and never claims retained empty coverage',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const fetcher=vi.fn(async()=>Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{cursor:1,epoch:1,at:from-1},availableFrom:null}));
+ vi.stubEnv('VITE_HISTORY_TILES','1');const horizon={version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{cursor:1,epoch:1,at:from-1},availableFrom:null},requested={market:'spot',profile:profile.id,from,to};const fetcher=vi.fn(async()=>Response.json({state:'future',eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,to:from},horizon}}));
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},eligibleHistory:true,fetcher});
  expect(fetcher).toHaveBeenCalledTimes(1);expect(result.segments).toEqual([]);expect(result.status.archive).toMatchObject({from,to,eligibleTo:from,requestComplete:true,rangeComplete:false,state:'partial'});
+});
+
+test('an older gateway falls back to its horizon route without weakening final source validation',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),io=transport(f),paths:string[]=[];
+ const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;paths.push(path);const headers=new Headers(init?.headers);headers.delete('X-IQ-Wall-Resolve-Eligible');return io.fetcher(input,{...init,headers});};
+ const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},eligibleHistory:true,fetcher});
+ expect(result.status.archive?.requestComplete).toBe(true);expect(result.segments).toEqual(f.full.segments);expect(paths.filter(p=>p.endsWith('/discover'))).toHaveLength(2);expect(paths.filter(p=>p.endsWith('/horizon'))).toHaveLength(1);expect(paths.filter(p=>p.endsWith('/source'))).toHaveLength(1);
 });

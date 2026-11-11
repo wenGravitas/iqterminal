@@ -18,6 +18,15 @@ export async function readWallHistoryHorizon(request:{market:'spot'|'perpetual';
   return data;
  });
 }
+export interface WallEligibleDiscovery {version:1;kind:'wall-eligible-discovery-v1';requested:{market:'spot'|'perpetual';profile:string;from:number;to:number};request:{market:'spot'|'perpetual';profile:string;from:number;to:number};horizon:WallHistoryHorizon}
+export function validateWallEligibleDiscovery(value:any,requested:WallEligibleDiscovery['requested']):WallEligibleDiscovery{
+ const same=(a:any,b:any)=>a&&a.market===b.market&&a.profile===b.profile&&a.from===b.from&&a.to===b.to;
+ const h=value?.horizon;
+ if(value?.version!==1||value.kind!=='wall-eligible-discovery-v1'||!same(value.requested,requested)||h?.version!==1||h.kind!=='wall-source-horizon-v1'||h.market!==requested.market||h.profile!==requested.profile||!h.head||![h.head.cursor,h.head.epoch,h.head.at].every(integer)||h.availableFrom!==null&&!integer(h.availableFrom))throw Error('Invalid eligible wall discovery identity');
+ const range=eligibleWallHistoryRange(requested,h);
+ if(!same(value.request,{...requested,to:range.to}))throw Error('Invalid eligible wall discovery bounds');
+ return value;
+}
 export function eligibleWallHistoryRange(request:{from:number;to:number},horizon:WallHistoryHorizon){
  if(![request.from,request.to].every(integer)||request.from>=request.to||!integer(horizon.head.at)||horizon.head.at===Number.MAX_SAFE_INTEGER)throw Error('Invalid wall history eligibility range');
  const to=Math.max(request.from,Math.min(request.to,horizon.head.at+1));

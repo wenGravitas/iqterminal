@@ -1,3 +1,4 @@
+import {validateWallEligibleDiscovery,type WallEligibleDiscovery} from './wall-history-horizon';
 import {wallReadControlScheduler} from './prepared-wall-read-lease';
 import {historyHttpError} from './history-http-error';
 import {historyScheduler} from './history-scheduler';
@@ -38,8 +39,9 @@ function delay(ms:number,signal:AbortSignal){return new Promise<void>((resolve,r
 /** Waiting never holds a scheduler/socket slot. A unique interest identity avoids
  * coalescing requests with different lease ownership into one admitted consumer. */
 export async function discoverPreparedWallAdmission(options:{request:PreparedWallRequest;url:string;projection:boolean;fetcher:typeof fetch;signal:AbortSignal;
- decode:(response:Response,max:number)=>Promise<any>;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}){
- const {request,url,projection,fetcher,signal}=options,consumer=crypto.randomUUID();let job:string|undefined,leased=false;
+ resolveEligibility?:boolean;onEligibility?:(value:WallEligibleDiscovery)=>void;decode:(response:Response,max:number)=>Promise<any>;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}){
+ const {projection,fetcher,signal}=options,consumer=crypto.randomUUID();let request=options.request,url=options.url,eligibility:WallEligibleDiscovery|undefined,job:string|undefined,leased=false;
+ const result=(found:any)=>eligibility?{...found,eligibility}:found;
  const release=()=>{
   const cancel='/market-data/v2/history/walls/preparation?'+new URLSearchParams({consumer});
   void wallReadControlScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{
@@ -49,20 +51,31 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  };
  try{for(;;){
   const found=await historyScheduler.read(url+'#consumer='+consumer+(projection?'&projection='+WALL_PROJECTION_CORE_SHA256:''),'order-walls',signal,async upstream=>{
-   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),
+   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),...(options.resolveEligibility&&!eligibility?{'X-IQ-Wall-Resolve-Eligible':'1'}:{}),
     ...(options.retry?{'X-IQ-Wall-Retry':options.retry.token,...(options.retry.newRevision?{'X-IQ-Wall-New-Revision':'1'}:{})}:{})};
    const response=await fetcher(url,{signal:upstream,headers});
    if(!response.ok){if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}
    return options.decode(response,projection?8*1024*1024:128*1024);
   });
-  signal.throwIfAborted();if(!found?.preparation)return found;
+  if(found?.preparation)leased=true;
+  signal.throwIfAborted();
+  if(options.resolveEligibility&&!eligibility){
+   // Older gateways may ignore the opt-in. Let the caller use its explicit
+   // horizon compatibility path; do not poll a future unbounded legacy job.
+   if(!found?.eligibility){if(found?.preparation)leased=true;return found;}
+   eligibility=validateWallEligibleDiscovery(found.eligibility,options.request);request=eligibility.request;
+   const pinned=new URL(url,'http://localhost');pinned.searchParams.set('to',String(request.to));url=pinned.pathname+pinned.search;
+   if((found.state==='future')!==(request.to===request.from))throw Error('Invalid eligible wall discovery state');
+   options.onEligibility?.(eligibility);signal.throwIfAborted();
+  }
+  if(!found?.preparation)return result(found);
   leased=true;const p=found.preparation;
   if(p.version!==1||!integer(p.leaseMs)||p.leaseMs<1000||p.leaseMs>60000||!integer(p.pollMs)||p.pollMs<250||p.pollMs>2000||p.pollMs*2>p.leaseMs)throw Error('Invalid wall preparation polling bounds');
   const value=progress(p.job,request);job=value.id;
   if(value.state==='failed')throw new PreparedWallPreparationError(value.error??'Wall history preparation failed',value.category??'query',value.retryable!==false);
   if(value.state==='ready'){
    if(found.state!=='ready')throw new PreparedWallPreparationError('Prepared wall source changed; retry the view as a new revision','source-changed',true);
-   return found;
+   return result(found);
   }
   options.onPreparation?.(value);await delay(p.pollMs,signal);
  }}finally{if(leased)release();}

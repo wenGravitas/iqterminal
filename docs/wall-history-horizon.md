@@ -74,3 +74,29 @@ semantics, not staging connectivity, foreground responsiveness or Pi loading.
 - Final typecheck/production build pass (`frontend-build-final.log`).
 - Frontend typecheck and production build pass. Existing chunk-size build warnings
   remain. No thresholds or financial-data limits were changed.
+
+## Combined discovery follow-up
+
+A staging trace found the metadata SQL itself took about3ms while its separate
+Pi proxy header wait took about929ms. The client now opts into
+`X-IQ-Wall-Resolve-Eligible:1` on the existing prepared discovery request. The
+server resolves the archive horizon before discovery/admission and returns the
+original/pinned request identities. The client validates the exact cap, keeps the
+left boundary, pins subsequent polls to the resolved request, and passes the
+already received descriptor into the ordinary importer. There is no second
+horizon/discovery request on a supporting gateway. All normal manifest, part,
+financial-record and final independent source validation remain mandatory.
+
+Building status exposes the resolved bounds. A failed build retains its resolved
+job window before a projector exists, so explicit Retry targets that failed job
+even if the archive advances. Invalid metadata and cancellation release only the
+admitted consumer. A future-only response cannot establish covered empty history.
+Older gateways use the tested explicit horizon fallback.
+
+All1330 frontend tests (two skipped), typecheck/build and374 backend tests pass.
+Source data, public projection kernels, payload/row/cell limits and retention
+semantics are unchanged. Both ordinary initial and Retry paths have focused
+checks. The new gateway112bf11 is installed alongside worker33c7e3a on the isolated
+clone; all protected identities and worker start time are unchanged. Frontend
+installation and five-run recertification follow separately. These correctness
+results do not change the failed pre-combination wall performance gates.

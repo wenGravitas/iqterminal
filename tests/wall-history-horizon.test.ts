@@ -1,5 +1,5 @@
 import {expect,test,vi} from 'vitest';
-import {eligibleWallHistoryRange,readWallHistoryHorizon,type WallHistoryHorizon} from '../src/feed/wall-history-horizon';
+import {eligibleWallHistoryRange,readWallHistoryHorizon,validateWallEligibleDiscovery,type WallHistoryHorizon} from '../src/feed/wall-history-horizon';
 import {historyScheduler} from '../src/feed/history-scheduler';
 const request={market:'spot' as const,profile:'exact-profile'};
 const horizon:WallHistoryHorizon={version:1,kind:'wall-source-horizon-v1',...request,head:{cursor:12,epoch:2,at:1000},availableFrom:400};
@@ -29,4 +29,10 @@ test('shared horizon reads cancel obsolete consumers independently and release s
  const two=readWallHistoryHorizon(request,fetcher,b.signal);
  await vi.waitFor(()=>expect(fetcher).toHaveBeenCalledTimes(1));a.abort();await expect(one).rejects.toMatchObject({name:'AbortError'});expect(upstream.aborted).toBe(false);
  release(Response.json(horizon));expect(await two).toEqual(horizon);await vi.waitFor(()=>expect(historyScheduler.diagnostics().active).toBe(0));
+});
+
+test('combined eligibility cannot change identity, erase retained left gaps or shorten available past coverage',()=>{
+ const requested={...request,from:100,to:2000},value={version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,to:1001},horizon};
+ expect(validateWallEligibleDiscovery(value,requested)).toEqual(value);
+ for(const patch of [{version:2},{requested:{...requested,to:3000}},{request:{...requested,from:400,to:1001}},{request:{...requested,to:1000}},{request:{...requested,to:1500}},{horizon:{...horizon,profile:'other'}}])expect(()=>validateWallEligibleDiscovery({...value,...patch},requested)).toThrow(/eligible wall discovery/);
 });

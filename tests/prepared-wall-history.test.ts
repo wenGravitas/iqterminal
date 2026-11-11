@@ -1,7 +1,7 @@
 import {afterEach,expect,test,vi} from 'vitest';
 import {createHash} from 'node:crypto';
 import {loadOrderWallsArchive,OrderWallsArchiveProjector} from '../src/feed/order-walls-archive';
-import {preparedWallReader,rebasePreparedWallPage} from '../src/feed/prepared-wall-history';
+import {discoverPreparedWallHistory,preparedWallReader,rebasePreparedWallPage} from '../src/feed/prepared-wall-history';
 import {OrderWallsArchiveService} from '../src/feed/order-walls-archive-service';
 import {orderWallsSettings} from '../src/feed/order-walls';
 import {historyScheduler} from '../src/feed/history-scheduler';
@@ -34,12 +34,12 @@ function fixture(){
  const discovery={state:'ready',source:current,manifest};
  return {pages,texts,parts,manifest,discovery};
 }
-function transport(f=fixture(),options:{changed?:boolean;corrupt?:boolean;beforePart?:(index:number,signal?:AbortSignal|null)=>Promise<void>}={}){
+function transport(f=fixture(),options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;beforePart?:(index:number,signal?:AbortSignal|null)=>Promise<void>}={}){
  const calls:string[]=[];let active=0,peak=0;
  const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
   if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:newHead,availableFrom:from-3600000});
-  if(url.pathname.endsWith('/discover'))return new Response(JSON.stringify(f.discovery));
+  if(url.pathname.endsWith('/discover')){const response=new Response(JSON.stringify(f.discovery));if(new Headers(init?.headers).get('X-IQ-Wall-Resolve-Eligible')!=='1')return response;const requested={market:'spot',profile:profile.id,from:Number(url.searchParams.get('from')),to:Number(url.searchParams.get('to'))},horizon={version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...newHead,at:options.horizonAt??newHead.at},availableFrom:from-3600000},request={...requested,to:Math.max(requested.from,Math.min(requested.to,horizon.head.at+1))};return Response.json({...await response.json(),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request,horizon}});}
   if(url.pathname.endsWith('/source'))return new Response(JSON.stringify(options.changed?{...current,token:'c'.repeat(64)}:current));
   if(url.pathname.endsWith('/batch')){
    const start=Number(url.searchParams.get('start')),selected=f.parts.slice(start,start+8),body=selected.map((p,i)=>(options.corrupt&&start+i===1?f.texts[start+i]+' ':f.texts[start+i])+'\n').join('');
@@ -52,6 +52,11 @@ function transport(f=fixture(),options:{changed?:boolean;corrupt?:boolean;before
   throw Error('Prepared chart must not use serial legacy pages: '+url.pathname);
  });
  return {fetcher:fetcher as typeof fetch,calls,peak:()=>peak};
+}
+function eligibleReply(value:unknown,input:RequestInfo|URL,init?:RequestInit){
+ if(new Headers(init?.headers).get('X-IQ-Wall-Resolve-Eligible')!=='1')return value;
+ const url=new URL(String(input),'http://test'),requested={market:'spot',profile:id,from:Number(url.searchParams.get('from')),to:Number(url.searchParams.get('to'))};
+ return {...value as object,eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:requested,horizon:{version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:newHead,availableFrom:from-3600000}}};
 }
 const preparation=(phase:string,extra:Record<string,unknown>={})=>({version:1,leaseMs:15000,pollMs:250,job:{id:'d'.repeat(64),request,phase,state:'building',pages:3,projectionPages:0,
  coverage:{availableFrom:from-10000,confirmedTo:to,gapCount:1,gapsTruncated:false},...extra}});
@@ -72,8 +77,8 @@ test.each(['query','source-changed'])('service Retry clears %s build failure wit
  vi.stubEnv('VITE_HISTORY_TILES','1');const t=transport(),events:any[]=[],headers:Headers[]=[];let repair=false,renewals=0;
  const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;if(init?.method==='DELETE')return new Response('{}');
   if(path.endsWith('/discover')){
-   headers.push(new Headers(init?.headers));if(!repair)return new Response(JSON.stringify({state:'building',preparation:preparation('canonical',{state:'failed',category,error:'Failure removed by operator',retryable:true})}));
-   if(++renewals===1)return new Response(JSON.stringify({state:'building',preparation:preparation('canonical')}));
+   headers.push(new Headers(init?.headers));if(!repair)return Response.json(eligibleReply({state:'building',preparation:preparation('canonical',{state:'failed',category,error:'Failure removed by operator',retryable:true})},input,init));
+   if(++renewals===1)return Response.json(eligibleReply({state:'building',preparation:preparation('canonical')},input,init));
   }return t.fetcher(input,init);};
  const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to+3600000);
  try{
@@ -484,7 +489,7 @@ test('archive correlation preserves reader identity on shared content and final 
 });
 
 test('eligible history Retry retains its original horizon and resumes exact immutable rows after the archive advances',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),first=transport(f,{corrupt:true}),updates:any[]=[];
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),first=transport(f,{corrupt:true,horizonAt:to-1}),updates:any[]=[];
  const fetcher:typeof fetch=async(input,init)=>String(input).includes('/horizon?')?Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:{...newHead,at:to-1},availableFrom:from-3600000}):first.fetcher(input,init);
  const request={market:'binance-spot' as const,from,to:to+7200000,settings};
  await expect(loadOrderWallsArchive({request,eligibleHistory:true,fetcher,onUpdate:u=>updates.push(u)})).rejects.toThrow(/hash mismatch/);
@@ -494,4 +499,54 @@ test('eligible history Retry retains its original horizon and resumes exact immu
  const fresh=await loadOrderWallsArchive({request:{...request,to},fetcher:transport(f).fetcher});
  expect(result.segments).toEqual(fresh.segments);expect(result.status.archive).toMatchObject({from,to:request.to,eligibleTo:to,horizonAt:to-1,requestComplete:true,rangeComplete:false});
  expect(paths.some(p=>p.includes('/source?'))).toBe(true);expect(next.calls.filter(path=>path.endsWith('/part'))).toHaveLength(2);
+});
+
+test('combined discovery pins the resolved job range before polling and avoids a separate horizon/discovery round trip',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),io=transport(f),calls:{path:string;to:string|null;headers:Headers}[]=[],updates:any[]=[];
+ const original={market:'binance-spot' as const,from,to:to+7200000,settings};
+ const fetcher:typeof fetch=async(input,init)=>{
+  const url=new URL(String(input),'http://test'),headers=new Headers(init?.headers);calls.push({path:url.pathname,to:url.searchParams.get('to'),headers});
+  if(url.pathname.endsWith('/discover')&&headers.get('X-IQ-Wall-Resolve-Eligible')==='1'){
+   const requested={market:'spot',profile:id,from,to:original.to};
+   return Response.json({state:'building',preparation:preparation('canonical'),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,to},horizon:{version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:{...newHead,at:to-1},availableFrom:from+1000}}});
+  }
+  return io.fetcher(input,init);
+ };
+ const result=await loadOrderWallsArchive({request:original,eligibleHistory:true,fetcher,onUpdate:u=>updates.push(u)});
+ const discovery=calls.filter(c=>c.path.endsWith('/discover'));expect(discovery).toHaveLength(2);expect(discovery[0].to).toBe(String(original.to));expect(discovery[1].to).toBe(String(to));
+ expect(discovery[1].headers.get('X-IQ-Wall-Resolve-Eligible')).toBeNull();expect(discovery[1].headers.get('X-IQ-Wall-Job')).toBe('d'.repeat(64));expect(new Set(discovery.map(c=>c.headers.get('X-IQ-Wall-Consumer'))).size).toBe(1);
+ expect(calls.some(c=>c.path.endsWith('/horizon'))).toBe(false);expect(result.status.archive).toMatchObject({from,to:original.to,eligibleTo:to,horizonAt:to-1,requestComplete:true,rangeComplete:false});
+ expect(updates.find(u=>u.status.archive.preparation)?.status.archive).toMatchObject({from,to:original.to,eligibleTo:to,requestComplete:false,loadedThrough:from});
+ const reference=await loadOrderWallsArchive({request:{...original,to},fetcher:transport(f).fetcher});expect(result.segments).toEqual(reference.segments);
+});
+test('cancellation at eligibility resolution cannot publish a future empty result or continue preparation',async()=>{
+ const abort=new AbortController(),requested={market:'spot' as const,profile:id,from,to},fetcher=vi.fn(async()=>Response.json({state:'future',eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,to:from},horizon:{version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:{cursor:1,epoch:1,at:from-1},availableFrom:null}}}));
+ await expect(discoverPreparedWallHistory(requested,fetcher,abort.signal,settings,{resolveEligibility:true,onEligibility:()=>abort.abort()})).rejects.toMatchObject({name:'AbortError'});expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+test('a failed eligible build Retry preserves its job window even when the archive horizon advances',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),io=transport(f),events:any[]=[],calls:{to:string|null;headers:Headers}[]=[];let repaired=false;
+ const requested={market:'spot',profile:id,from,to:to+7200000};
+ const service=new OrderWallsArchiveService(event=>events.push(event),async(input,init)=>{
+  const url=new URL(String(input),'http://test'),headers=new Headers(init?.headers);
+  if(url.pathname.endsWith('/discover')){
+   calls.push({to:url.searchParams.get('to'),headers});
+   if(!repaired)return Response.json({state:'building',preparation:preparation('canonical',{state:'failed',category:'query',retryable:true,error:'Removed cause'}),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,to},horizon:{version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:{...newHead,at:to-1},availableFrom:from-1000}}});
+   expect(headers.get('X-IQ-Wall-Resolve-Eligible')).toBeNull();expect(url.searchParams.get('to')).toBe(String(to));
+  }
+  if(url.pathname.endsWith('/preparation'))return Response.json({});
+  return io.fetcher(input,init);
+ },()=>requested.to);
+ try{
+  service.subscribe('failed-eligible',{market:'binance-spot',from,to:requested.to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.retryable).toBe(true));expect(events.at(-1).status.archive).toMatchObject({to:requested.to,eligibleTo:to,horizonAt:to-1,requestComplete:false});
+  repaired=true;service.retry('failed-eligible');await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));expect(calls).toHaveLength(2);expect(calls[0].to).toBe(String(requested.to));expect(calls[1].to).toBe(String(to));expect(calls[1].headers.get('X-IQ-Wall-Retry')).toBeTruthy();expect(events.at(-1).status.message??'').not.toContain('Removed cause');
+ }finally{service.dispose();}
+});
+
+test('invalid resolved metadata releases the admitted consumer before failing the view',async()=>{
+ const requested={market:'spot' as const,profile:id,from,to},calls:{url:string;method?:string;consumer:string|null}[]=[];
+ const fetcher:typeof fetch=async(input,init)=>{const url=String(input),headers=new Headers(init?.headers);calls.push({url,method:init?.method,consumer:headers.get('X-IQ-Wall-Consumer')});if(init?.method==='DELETE')return Response.json({});
+  return Response.json({state:'building',preparation:preparation('canonical'),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request:{...requested,from:from+1},horizon:{version:1,kind:'wall-source-horizon-v1',market:'spot',profile:id,head:newHead,availableFrom:from}}});};
+ await expect(discoverPreparedWallHistory(requested,fetcher,new AbortController().signal,settings,{resolveEligibility:true})).rejects.toThrow(/bounds/);
+ await vi.waitFor(()=>expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1));expect(new URL(calls.find(c=>c.method==='DELETE')!.url,'http://test').searchParams.get('consumer')).toBe(calls[0].consumer);
 });

@@ -75,10 +75,12 @@ export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Pro
 /** At most two immutable parts are prefetched. Every read uses the shared
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
-export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
- const discovery=sourceUrl('discover',request);
+export async function discoverPreparedWallHistory(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,settings?:OrderWallsProjectionSettings,options:Omit<Parameters<typeof discoverPreparedWallAdmission>[0],'request'|'url'|'projection'|'fetcher'|'signal'|'decode'>={}){
+ return discoverPreparedWallAdmission({request,url:sourceUrl('discover',request),projection:Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0),fetcher,signal,...options,decode:async(response,max)=>(await readBody(response,max)).body});
+}
+export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{discovery?:unknown;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
  const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
- const found=await discoverPreparedWallAdmission({request,url:discovery,projection,fetcher,signal,...options,decode:async(response,max)=>(await readBody(response,max)).body});
+ const found:any=options.discovery??await discoverPreparedWallHistory(request,fetcher,signal,settings,options);
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
