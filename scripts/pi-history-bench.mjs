@@ -1,6 +1,7 @@
 import {finishResponseTraces,loadingObservationComplete,nativeClosedCoverage} from './benchmark-traces.mjs';
 import {routeTestBrowser} from './test-browser-workspace.mjs';
 import {profileBrowserWorkers} from './profile-browser-workers.mjs';
+import {selectWallTransport} from './wall-transport-experiment.mjs';
 /** Actual Pi/client-route benchmark. No fixtures; bounded observations are failures,
  * not eventual-completion acceptance. Run against an explicitly started build. */
 import {chromium} from './test-browser-launch.mjs';
@@ -16,14 +17,18 @@ const windows=existsSync(windowFile)?JSON.parse(readFileSync(windowFile,'utf8'))
 const wallReferences=JSON.parse(readFileSync(process.env.IQ_BENCH_WALL_REFERENCES??new URL('./pi-wall-reference.json',import.meta.url),'utf8'));if(wallReferences.version!==1)throw Error('Unknown wall reference version');
 if(!process.env.IQ_BENCH_WINDOWS)writeFileSync(windowFile,JSON.stringify(windows,null,2)+'\n');
 const cases=[{name:'footprint-4h-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'perpetual'},
+ {name:'footprint-spot-4h-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'spot'},
  {name:'footprint-24h-1h',kind:'footprint',hours:24,interval:'1h',step:3600000,market:'perpetual'},
  {name:'walls-30h-spot-5m',kind:'walls',hours:30,interval:'5m',step:300000,market:'spot'},
  {name:'walls-30h-perp-15m',kind:'walls',hours:30,interval:'15m',step:900000,market:'perpetual'},
  {name:'current-footprint-5m',kind:'footprint',hours:4,interval:'5m',step:300000,market:'perpetual',now:true},
- {name:'current-walls-15m',kind:'walls',hours:1,interval:'15m',step:900000,market:'perpetual',now:true}];
+ {name:'current-walls-15m',kind:'walls',hours:1,interval:'15m',step:900000,market:'perpetual',now:true},
+ {name:'footprint-future-space-1h',kind:'footprint',hours:8,interval:'1h',step:3600000,market:'perpetual',now:true,futureBars:3,requireCurrentAndHistory:true}];
 if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD))throw Error('IQ_BENCH_BUILD must be the full 40-character deployed client commit');
 if(process.env.IQ_BENCH_BUILD)try{execFileSync('git',['cat-file','-e',process.env.IQ_BENCH_BUILD+'^{commit}'],{stdio:'ignore'});}catch{throw Error('IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser');}
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
+const wallTransportExperiment=process.env.IQ_BENCH_WALL_TRANSPORT??null;
+if(wallTransportExperiment&&!['canonical','product'].includes(wallTransportExperiment))throw Error('Invalid IQ_BENCH_WALL_TRANSPORT');
 if(process.env.IQ_BENCH_YIELD_MODE&&!['user-visible-post-task','background-post-task','timer-fallback'].includes(process.env.IQ_BENCH_YIELD_MODE))throw Error('Invalid expected history yield mode');
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
 // This extends observation/frame capture only; it does not enable a live subscription.
@@ -38,13 +43,19 @@ const browserSession=await browser.newBrowserCDPSession();
 const browserEnvironment={version:await browserSession.send('Browser.getVersion'),systemInfo:await browserSession.send('SystemInfo.getInfo'),scope:'Observed headless browser configuration; charts use Canvas2D, not proof of GPU acceleration for every draw'};
 writeFileSync(`${dir}/${label}-browser-environment.json`,JSON.stringify(browserEnvironment,null,2)+'\n');await browserSession.detach();
 try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for(let run=1;run<=samples;run++){
- const end=item.now?Math.floor(Date.now()/item.step)*item.step+item.step:windows.end;
+ const end=item.now?Math.floor(Date.now()/item.step)*item.step+item.step*(item.futureBars??1):windows.end;
  const requested={from:end-item.hours*3600000,to:end},requests=[],errors=[],before=resource();
  const candidateReference=wallReferences.cases[item.name],wallReference=item.kind==='walls'&&!item.now&&candidateReference?.from===requested.from&&candidateReference?.to===requested.to?candidateReference:null;
  const params={venue:'binance',market:item.market,interval:item.interval,type:item.kind==='footprint'?'footprint':'candle',rowPrice:25,historyViewport:requested,studies:[]};
  if(item.kind==='walls')params.indicators=[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,aggregation:'native',minDurationMs:0,showHistory:true}}];
  const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:['chart-bench'],activeView:'chart-bench',id:'1'},size:1920}],size:1080},width:1920,height:1080,orientation:'HORIZONTAL'},panels:{'chart-bench':{id:'chart-bench',contentComponent:'candle',tabComponent:'compact-chart',title:'Candles',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
  const context=await browser.newContext({viewport:{width:1920,height:1080},storageState:{cookies:[],origins:[{origin:new URL(base).origin,localStorage:[{name:'basis.layout.v1',value:JSON.stringify({version:5,layout})},{name:'basis.theme.v1',value:'dark'},{name:'iqterminal:object-tree-sidebar:v1:chart-bench',value:JSON.stringify({version:1,width:280,collapsed:true})}]}]}});
+ if(wallTransportExperiment)await context.route('**/v2/history/walls/discover?*',async route=>{
+  const response=await route.fetch();
+  if(!response.ok())return route.fulfill({response});
+  const document=selectWallTransport(await response.json(),wallTransportExperiment);
+  await route.fulfill({response,json:document});
+ });
  const page=await context.newPage();await routeTestBrowser();await page.addInitScript(({kind,requested,step,wallReference})=>{
   const b=window.__bench={frames:[],tasks:[],marks:{firstHistoryAt:null,completeAt:null,firstCurrentAt:null}};let last=performance.now(),sampleAt=0;
   // RAF now is the frame start; it can predate a long chart draw. Record the
@@ -100,12 +111,14 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
    const painted=last.footprint.paint?.times?.map(t=>t*1000);
    const useful=item.kind==='footprint'?viewMatches&&last.footprint.times.length>0&&last.footprint.cells>0&&last.footprint.sets>0&&(!painted||painted.some(t=>t>=requested.from&&t<requested.to)):last.wall.render.visible>0&&last.wall.render.archiveSegments>0;
    if(firstHistoryMs===null&&last.marks.firstHistoryAt!==null)firstHistoryMs=last.marks.firstHistoryAt;
-   const all=item.kind==='footprint'?Array.from({length:item.hours*3600000/item.step},(_,i)=>requested.from+i*item.step).every(t=>last.footprint.times.includes(t)&&(!painted||painted.includes(t)))&&last.footprint.status.history?.validated===true&&viewMatches:
+   const empty=(last.footprint.status?.history?.ranges??[]).flatMap(r=>(r.progress?.slots??[]).filter(s=>s.validated&&s.state==='empty').map(s=>s.from));
+   const eligibleFootprint=item.kind==='footprint'?nativeClosedCoverage([...(painted??[]),...empty],requested,item.step,last.nativeCandles.closedBoundary):undefined;
+   const all=item.kind==='footprint'?eligibleFootprint?.valid&&!last.footprint.status.history?.capacityLimited&&last.footprint.status.history?.validated===true&&viewMatches:
     last.wall.status?.archive?.requestComplete===true&&last.wall.status.archive.from<=requested.from&&last.wall.status.archive.to>=requested.to&&['complete','partial'].includes(last.wall.status.archive.state)&&last.wall.status.archive.exact===true&&last.wall.status.archive.loadedThrough>=requested.to;
    if(all&&useful&&last.marks.completeAt!==null)completeMs??=last.marks.completeAt;
    nativeCoverage=item.kind==='walls'?nativeClosedCoverage(last.nativeCandles.visibleClosed,requested,item.step,last.nativeCandles.closedBoundary):null;
    if(nativeCoverage?.valid)nativeContextObservedMs??=last.now;
-   if(loadingObservationComplete({coverageReady:item.kind!=='walls'||nativeCoverage?.valid===true,currentCase:item.now===true,currentAt:firstCurrentMs,completeAt:completeMs,keepObserving:keepCurrent}))break;
+   if(loadingObservationComplete({coverageReady:item.kind!=='walls'||nativeCoverage?.valid===true,currentCase:item.now===true,requireCurrentAndHistory:item.requireCurrentAndHistory===true,currentAt:firstCurrentMs,completeAt:completeMs,keepObserving:keepCurrent}))break;
    await new Promise(r=>setTimeout(r,80));
   }
   await page.screenshot({path:`${dir}/${label}-${item.name}-${run}.png`});
@@ -136,5 +149,5 @@ try {for(const item of cases.filter(c=>!selected||c.name.includes(selected)))for
  await context.close();appendFileSync(observations,JSON.stringify({phase:'context-closed',label,case:item.name,run})+'\n');const traceFinalization=await finishResponseTraces(responseTasks);
  const batchRevisions=requests.filter(r=>r.url.includes('/walls/projection-batch')&&r.status===200).map(r=>r.headers?.['x-iq-source-revision']);
  const wallCoverageVerification=wallReference?{reference:wallReference,sourceVerified:batchRevisions.length>0&&batchRevisions.every(revision=>revision===wallReference.sourceToken),valid:completeMs!==null&&batchRevisions.length>0&&batchRevisions.every(revision=>revision===wallReference.sourceToken)}:null;
- const result={financialEvidence,nativeCoverage,nativeContextObservedMs,nativeCoverageTimingScope:'Data-slot observation only; completeMs remains actual wall/footprint paint, not native-body paint',traceFinalization,traceHelperSha256,timingBasis:'navigation-relative-painted-content-observation-v4-scenario-stop',observationTarget:item.now?'current-painted-live':'validated-visible-history',wallCoverageVerification,appVisibilityGuard:true,environmentVerification,diagnosticsCapture,scriptSha256,cpuProfile,workerCpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
+ const result={wallTransportExperiment,financialEvidence,nativeCoverage,nativeContextObservedMs,nativeCoverageTimingScope:'Data-slot observation only; completeMs remains actual wall/footprint paint, not native-body paint',traceFinalization,traceHelperSha256,timingBasis:'navigation-relative-painted-content-observation-v4-scenario-stop',observationTarget:item.now?'current-painted-live':'validated-visible-history',wallCoverageVerification,appVisibilityGuard:true,environmentVerification,diagnosticsCapture,scriptSha256,cpuProfile,workerCpuProfile,browserTimings,label,case:item.name,run,build:process.env.IQ_BENCH_BUILD,rendering:process.env.IQ_BENCH_HEADLESS==='1'?'headless-gles':'headed-normal-chromium-gles',route:base,emptyBrowserCache:true,requested,started,viewportAt,firstCurrentMs,firstHistoryMs,completeMs,deadlineMs:observationMs,extendedCoverageObservation:observationMs>12000,fitWalls,keepCurrent,referenceFrames,last,paintMarks,diagnostics,requests,errors,exception,before,after:resource()};appendFileSync(output,JSON.stringify(result)+'\n');console.log(JSON.stringify({case:item.name,run,firstCurrentMs,firstHistoryMs,completeMs,exception,bars:last?.footprint.times.length,wall:last?.wall.status?.archive}));
 }}finally{await browser.close();}

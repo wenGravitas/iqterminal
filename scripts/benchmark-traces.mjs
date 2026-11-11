@@ -7,7 +7,8 @@ export async function finishResponseTraces(tasks,budgetMs=1000){
 }
 
 /** Closed history is not the stopping condition for a current-display sample. */
-export function loadingObservationComplete({currentCase,currentAt,completeAt,keepObserving=false,coverageReady=true}){
+export function loadingObservationComplete({currentCase,currentAt,completeAt,keepObserving=false,coverageReady=true,requireCurrentAndHistory=false}){
+ if(requireCurrentAndHistory)return !keepObserving&&currentAt!==null&&completeAt!==null&&coverageReady;
  return !keepObserving&&(currentCase?currentAt!==null:completeAt!==null&&coverageReady);
 }
 

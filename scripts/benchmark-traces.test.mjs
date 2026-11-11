@@ -29,3 +29,11 @@ test('native coverage cannot hide a missing interior candle behind endpoints, ex
  assert.equal(nativeClosedCoverage([60000,120000,180000,240000],range,step,closed).valid,true);
  assert.equal(nativeClosedCoverage([],{from:0,to:10000*step},step,10000*step).capacityLimited,true);
 });
+
+test('future whitespace leaves five eligible closed slots and requires independent forming paint',()=>{
+ const hour=3600000,range={from:11*hour,to:19*hour},closed=16*hour;
+ assert.deepEqual(nativeClosedCoverage([11,12,13,14,15].map(h=>h*hour),range,hour,closed),{valid:true,capacityLimited:false,from:11*hour,to:16*hour,requestedSlots:5,loadedSlots:5,missing:[]});
+ assert.equal(loadingObservationComplete({currentCase:true,requireCurrentAndHistory:true,currentAt:null,completeAt:2200}),false);
+ assert.equal(loadingObservationComplete({currentCase:true,requireCurrentAndHistory:true,currentAt:1800,completeAt:null}),false);
+ assert.equal(loadingObservationComplete({currentCase:true,requireCurrentAndHistory:true,currentAt:1800,completeAt:2200}),true);
+});
