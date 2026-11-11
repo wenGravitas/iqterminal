@@ -35,6 +35,6 @@ proof, successful Retry, unfinished replay, failed replay fallback, metadata
 corrections, late joins and independent delayed current bootstrap. They do not
 certify Pi latency or a memory plateau. The Pi lifecycle evidence separately
 records forced-GC versus natural measurements, active/settled jobs and retained
-queues. Older lifecycle captures lacked active-job metadata and sometimes sampled
-while a second viewport read was still running; they cannot establish quiescent
+queues. Older lifecycle captures lacked active-job metadata and could not distinguish
+a settled view from a second viewport read still running; they cannot establish quiescent
 warm memory. No loading threshold, range, row/cell budget or source detail changed.

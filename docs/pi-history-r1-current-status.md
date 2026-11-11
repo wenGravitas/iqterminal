@@ -1,3 +1,17 @@
+## Latest client: early warm-manifest validation
+
+Frontenda147714 reuses an identical authenticated cached wall presentation before
+projection download, while retaining fresh canonical source validation. All1335
+frontend tests (two skipped),88 focused checks, typecheck and production build
+pass. Six actual cached Pi revisits use zero projection batches and fresh source
+proofs. Their first useful display remains0.289–3.080s: **warm≤1s FAILS**.
+No full release or memory-plateau acceptance is claimed. The last measured
+footprint passes below are specifically build9a526dc and require final-build
+recertification. Gateway112bf11/worker33c7e3a and protected collectors are unchanged.
+
+[Every cycle, exact new source window, heap limits and remaining gates](wall-warm-reuse-results.md).
+The goal remains **INCOMPLETE**. No production deployment or main merge occurred.
+
 ## Current staging result: footprint gates pass; wall latency remains open
 
 Frontend9a526dc, gateway112bf11 and worker33c7e3a are installed on the isolated
