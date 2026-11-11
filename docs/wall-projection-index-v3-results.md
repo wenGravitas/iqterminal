@@ -46,3 +46,18 @@ The fixed-head boundary repair is now committed in backend `e31db8d776941a25cdc5
 The release remains **INCOMPLETE**. Both latest 30h wall chart gates remain failed. Current/warm-wall/concurrency, retained heap/queues, default client-tail handoff, current-candidate footprint recertification and normal foreground Pi UX remain incomplete. Snapshot/restore rollback must be exercised before V3 serving installation. Browser checks stay headless while i3 workspace isolation is unverified. No threshold or requested range was shortened.
 
 [Raw evidence, checksums and reproduction scripts](../artifacts/pi-history-r1/wall-projection-index-v3-r1/) include all 20 per-page logs in `page-logs-verified.tar.gz`, exact bundles, every sample, source checks, postflight, tests and build logs. Run `python3 summarize.py` in that directory to reproduce the JSON summary.
+
+## Three-version follow-up cohort
+
+A new fixed source per market is shared by all three variants. It does not reuse the first cohort timings across different source windows. All30 builds match the financial checkpoint, prefix, public manifest and compressed parts exactly; source checks and terminal container bounds pass.
+
+|Market|Version|Every sample ms|Median ms|Maximum ms|
+|---|---|---|---:|---:|
+| perpetual | baseline | 27459, 28417, 27983, 27246, 27220 | 27459 | 28417 |
+| perpetual | candidate | 21581, 22596, 21747, 21041, 21261 | 21581 | 22596 |
+| perpetual | followup | 21112, 20744, 20686, 21970, 20989 | 20989 | 21970 |
+| spot | baseline | 4544, 3768, 4378, 4505, 4616 | 4505 | 4616 |
+| spot | candidate | 5992, 5994, 5761, 6050, 6275 | 5994 | 6275 |
+| spot | followup | 6751, 5915, 5907, 6410, 5759 | 5915 | 6751 |
+
+The lstat follow-up e6c64be helps USD-M slightly versus cbe0bdc, but does not repair Spot:5.915s median versus4.505s baseline, maximum6.751s versus4.616s. This failure remains explicit. The committed bounded-inline strategy fbd58b03097ba06f96a6ffd7071e327e4f3b662d passes all364 backend tests,20 focused tests, typecheck and builds; its performance cohort is separate and still pending. It keeps indexes inline up to2MiB and converts before the next page after that bound is crossed, retaining every financial limit. Exact fixture comparisons include inline, sharded and mid-build conversion. No serving upgrade or gate pass is inferred.

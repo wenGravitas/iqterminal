@@ -1,4 +1,8 @@
 {
+  "archive-logs-r2.py": {
+    "bytes": 302,
+    "sha256": "812d6a3e04b57988c9c07732c06a02569abc34ec402243b6cd0d1abc1a197993"
+  },
   "baseline-executed.mjs": {
     "bytes": 85432,
     "sha256": "dd82d2ac5c297ef1b1f5739f8f4fab62fde16b681c983061e0517c3c06706f6c"
@@ -10,6 +14,22 @@
   "candidate-executed.mjs": {
     "bytes": 107828,
     "sha256": "edd59e6e8a9e5816be57ae4e1391ac562cdeec9efbe961e6081a7199ce4c4624"
+  },
+  "cohort-r2-summary.json": {
+    "bytes": 13286,
+    "sha256": "0089de8bbd0ab113f3839a30ded6197933b9d15d145b7274fd759e85d2e8d793"
+  },
+  "cohort-r2.jsonl": {
+    "bytes": 90449,
+    "sha256": "e96ddc3fcaa7de30c9009dd3b1e04f874de252891252a9701bd9f66c21540e98"
+  },
+  "cohort-r2.py": {
+    "bytes": 6322,
+    "sha256": "78c81c8d58f7a05f65fe56bd908994a855d9d5a173f91ceacda598ac53605264"
+  },
+  "cohort-r2.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "cohort-summary.json": {
     "bytes": 11354,
@@ -51,9 +71,45 @@
     "bytes": 103,
     "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
   },
+  "inline-index-build.log": {
+    "bytes": 1893,
+    "sha256": "57e82e13e9581324b3a1e8909c62aa502f5a5f6df69842bf499ded59966d2701"
+  },
+  "inline-index-executed.mjs": {
+    "bytes": 108396,
+    "sha256": "ae27940e12448952f636fdaf834807814179e6b4dcf5484ee92ae67b9e3ae44f"
+  },
+  "inline-index-focused.log": {
+    "bytes": 5548,
+    "sha256": "37b1e7ec2c9c991303a5dddb758bb08335a7b685919fb73c56c2117147a175d4"
+  },
+  "inline-index-full-tests.log": {
+    "bytes": 90290,
+    "sha256": "1e731a7750fc70d385c75333f0ac348df67df139fd159475c7be5d4636aa65eb"
+  },
+  "inline-index-typecheck.log": {
+    "bytes": 103,
+    "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
+  },
+  "page-logs-r2.tar.gz": {
+    "bytes": 63647,
+    "sha256": "b21541253cb71a0087811d9e73aa71135035ec0e58f90374b75193a0e2357377"
+  },
   "page-logs-verified.tar.gz": {
     "bytes": 43436,
     "sha256": "6cd75c4babe12d9f64dc639ed67a0203d7dde58d8baec7574c14c23f8cd33264"
+  },
+  "postflight-r2.jsonl": {
+    "bytes": 21572,
+    "sha256": "b2d61281ee61aea11aca1d64cd3767004e561e6a77a49385c192b6c3f78a7796"
+  },
+  "postflight-r2.py": {
+    "bytes": 1933,
+    "sha256": "99fb01c62ec39ce859c8afb62f349d0d17ccb1c5013f9e0d2f4b434b849d4869"
+  },
+  "postflight-r2.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "postflight.jsonl": {
     "bytes": 15013,

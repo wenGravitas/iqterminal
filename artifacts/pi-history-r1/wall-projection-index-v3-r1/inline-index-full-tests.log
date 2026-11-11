@@ -1,0 +1,2202 @@
+
+> iqterminal-server@0.1.0 test /home/daz/workarea/iqterminal-server-perf-history
+> tsx --test tests/*.test.ts
+
+TAP version 13
+# Subtest: event payload reads keep FINAL and bounded canonical selection ahead of payload decoding
+ok 1 - event payload reads keep FINAL and bounded canonical selection ahead of payload decoding
+  ---
+  duration_ms: 4.527448
+  type: 'test'
+  ...
+# Subtest: event key selection cannot exceed the incumbent carry-in or table bounds
+ok 2 - event key selection cannot exceed the incumbent carry-in or table bounds
+  ---
+  duration_ms: 1.39186
+  type: 'test'
+  ...
+# Subtest: REST identity, source timestamps, aggregate semantics and exact notional
+ok 3 - REST identity, source timestamps, aggregate semantics and exact notional
+  ---
+  duration_ms: 7.916294
+  type: 'test'
+  ...
+# Subtest: sequence boundaries and incomplete recovery
+ok 4 - sequence boundaries and incomplete recovery
+  ---
+  duration_ms: 0.825031
+  type: 'test'
+  ...
+# Subtest: common accumulator conserves base/actual-price quote across timeframe
+ok 5 - common accumulator conserves base/actual-price quote across timeframe
+  ---
+  duration_ms: 8.461697
+  type: 'test'
+  ...
+# Subtest: bounded cursor/range validation
+ok 6 - bounded cursor/range validation
+  ---
+  duration_ms: 2.074448
+  type: 'test'
+  ...
+# Subtest: request boundaries cannot label a truncated larger-timeframe bar complete
+ok 7 - request boundaries cannot label a truncated larger-timeframe bar complete
+  ---
+  duration_ms: 5.775013
+  type: 'test'
+  ...
+# Subtest: recovery plans preserve missing intervals beyond supported history
+ok 8 - recovery plans preserve missing intervals beyond supported history
+  ---
+  duration_ms: 1.036993
+  type: 'test'
+  ...
+# Subtest: recovery pages deduplicate inclusive overlap and keep unresolved ID gaps
+ok 9 - recovery pages deduplicate inclusive overlap and keep unresolved ID gaps
+  ---
+  duration_ms: 9.782928
+  type: 'test'
+  ...
+# Subtest: corrupt checkpoints are rejected without resetting coverage
+ok 10 - corrupt checkpoints are rejected without resetting coverage
+  ---
+  duration_ms: 7.506149
+  type: 'test'
+  ...
+# Subtest: CVD projects the existing spot table with exact signed notional and a durable FINAL watermark
+ok 11 - CVD projects the existing spot table with exact signed notional and a durable FINAL watermark
+  ---
+  duration_ms: 41.252512
+  type: 'test'
+  ...
+# Subtest: live refresh replaces changed minutes and periodic repair revises older buckets without adding twice
+ok 12 - live refresh replaces changed minutes and periodic repair revises older buckets without adding twice
+  ---
+  duration_ms: 46.688916
+  type: 'test'
+  ...
+# Subtest: unknown history, source staleness, market identity and request bounds stay explicit
+ok 13 - unknown history, source staleness, market identity and request bounds stay explicit
+  ---
+  duration_ms: 49.906726
+  type: 'test'
+  ...
+# Subtest: over-budget or invalid database projections cannot be passed off as complete history
+ok 14 - over-budget or invalid database projections cannot be passed off as complete history
+  ---
+  duration_ms: 1.187454
+  type: 'test'
+  ...
+# Subtest: coverage repair refreshes authoritative buckets before declaring the gap repaired
+ok 15 - coverage repair refreshes authoritative buckets before declaring the gap repaired
+  ---
+  duration_ms: 19.970186
+  type: 'test'
+  ...
+# Subtest: parallel SQL reads get distinct request-correlated query IDs and report read costs
+ok 16 - parallel SQL reads get distinct request-correlated query IDs and report read costs
+  ---
+  duration_ms: 113.75285
+  type: 'test'
+  ...
+# Subtest: failed SQL attempts are counted and timed
+ok 17 - failed SQL attempts are counted and timed
+  ---
+  duration_ms: 15.855846
+  type: 'test'
+  ...
+# Subtest: cancellable read queries opt into server cancellation without changing writes
+ok 18 - cancellable read queries opt into server cancellation without changing writes
+  ---
+  duration_ms: 22.279966
+  type: 'test'
+  ...
+# Subtest: HTTP 200 streamed SQL exceptions cannot masquerade as valid rows
+ok 19 - HTTP 200 streamed SQL exceptions cannot masquerade as valid rows
+  ---
+  duration_ms: 73.34472
+  type: 'test'
+  ...
+# Subtest: projects exact visible BTC quantities and USDT notionals with side-specific coverage
+ok 20 - projects exact visible BTC quantities and USDT notionals with side-specific coverage
+  ---
+  duration_ms: 41.292826
+  type: 'test'
+  ...
+# Subtest: defaults to a 160-row viewport around the committed best quote and caps explicit ranges
+ok 21 - defaults to a 160-row viewport around the committed best quote and caps explicit ranges
+  ---
+  duration_ms: 14.759502
+  type: 'test'
+  ...
+# Subtest: only committed ordered records advance the projection; gaps and cursor jumps clear quantities
+ok 22 - only committed ordered records advance the projection; gaps and cursor jumps clear quantities
+  ---
+  duration_ms: 34.833207
+  type: 'test'
+  ...
+# Subtest: truncated 5,000-level edges remain partial or unknown instead of asserting empty depth
+ok 23 - truncated 5,000-level edges remain partial or unknown instead of asserting empty depth
+  ---
+  duration_ms: 195.362694
+  type: 'test'
+  ...
+# Subtest: invalidates its bounded row cache after each newly committed delta
+ok 24 - invalidates its bounded row cache after each newly committed delta
+  ---
+  duration_ms: 6.563341
+  type: 'test'
+  ...
+# Subtest: stale collector status keeps the last durable quantities, marking known sides stale and preserving unknown edges
+ok 25 - stale collector status keeps the last durable quantities, marking known sides stale and preserving unknown edges
+  ---
+  duration_ms: 5.944031
+  type: 'test'
+  ...
+# Subtest: lazy row integration is identical across quiet rows, same-time changes, gaps, epochs and checkpoints
+ok 26 - lazy row integration is identical across quiet rows, same-time changes, gaps, epochs and checkpoints
+  ---
+  duration_ms: 22881.994933
+  type: 'test'
+  ...
+# Subtest: a repeated sequence with a new record cursor cannot change quantities
+ok 27 - a repeated sequence with a new record cursor cannot change quantities
+  ---
+  duration_ms: 1.081455
+  type: 'test'
+  ...
+# Subtest: snapshot bridging, absolute replacements, outside levels, quiet known levels and removal
+ok 28 - snapshot bridging, absolute replacements, outside levels, quiet known levels and removal
+  ---
+  duration_ms: 28.775418
+  type: 'test'
+  ...
+# Subtest: checkpoint replay preserves outer known-zero metadata without implying unknown zeros
+ok 29 - checkpoint replay preserves outer known-zero metadata without implying unknown zeros
+  ---
+  duration_ms: 21.618842
+  type: 'test'
+  ...
+# Subtest: simultaneous price sums, weighted time, true peak and quote price notionals
+ok 30 - simultaneous price sums, weighted time, true peak and quote price notionals
+  ---
+  duration_ms: 6.352379
+  type: 'test'
+  ...
+# Subtest: history/live duplicates do not create artificial walls; gaps invalidate outer state
+ok 31 - history/live duplicates do not create artificial walls; gaps invalidate outer state
+  ---
+  duration_ms: 5.729588
+  type: 'test'
+  ...
+# Subtest: replay from reconstruction checkpoint equals original stream over retained interval
+ok 32 - replay from reconstruction checkpoint equals original stream over retained interval
+  ---
+  duration_ms: 3.407623
+  type: 'test'
+  ...
+# Subtest: retention keeps entire checkpoint dependency epochs including current epoch
+ok 33 - retention keeps entire checkpoint dependency epochs including current epoch
+  ---
+  duration_ms: 0.620496
+  type: 'test'
+  ...
+# Subtest: same-millisecond observed simultaneous peaks are not lost
+ok 34 - same-millisecond observed simultaneous peaks are not lost
+  ---
+  duration_ms: 7.664536
+  type: 'test'
+  ...
+# Subtest: seed plus continuous deltas matches replay with redundant intermediate checkpoints
+ok 35 - seed plus continuous deltas matches replay with redundant intermediate checkpoints
+  ---
+  duration_ms: 16.339213
+  type: 'test'
+  ...
+# (node:31894) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: server restores genuine raw history without backdating signals, then keeps collecting without clients
+ok 36 - server restores genuine raw history without backdating signals, then keeps collecting without clients
+  ---
+  duration_ms: 1571.011933
+  type: 'test'
+  ...
+# Subtest: server restart restores timestamp-eligible calibration and marks active continuity interrupted
+ok 37 - server restart restores timestamp-eligible calibration and marks active continuity interrupted
+  ---
+  duration_ms: 1328.389941
+  type: 'test'
+  ...
+# Subtest: server configurations are stable, bounded, and independent of chart display and notification preferences
+ok 38 - server configurations are stable, bounded, and independent of chart display and notification preferences
+  ---
+  duration_ms: 72.746763
+  type: 'test'
+  ...
+# Subtest: wrong source identity, sequence gaps and interrupted persistence never become complete signals
+ok 39 - wrong source identity, sequence gaps and interrupted persistence never become complete signals
+  ---
+  duration_ms: 54.891912
+  type: 'test'
+  ...
+# Subtest: canonical engine supports calibration-only admission without producing retrospective events or pane scores
+ok 40 - canonical engine supports calibration-only admission without producing retrospective events or pane scores
+  ---
+  duration_ms: 9.620541
+  type: 'test'
+  ...
+# Subtest: notification claims survive reload and require fresh real transition availability
+ok 41 - notification claims survive reload and require fresh real transition availability
+  ---
+  duration_ms: 76.730771
+  type: 'test'
+  ...
+# Subtest: availability is stamped after a delayed durable read, not at request start
+ok 42 - availability is stamped after a delayed durable read, not at request start
+  ---
+  duration_ms: 1508.815848
+  type: 'test'
+  ...
+# Subtest: a new source sequence gap interrupts and durably retains a pending observation
+ok 43 - a new source sequence gap interrupts and durably retains a pending observation
+  ---
+  duration_ms: 1515.35238
+  type: 'test'
+  ...
+# Subtest: batch geometry retains individual four-hour bounds, exact configuration and independent ranges
+ok 44 - batch geometry retains individual four-hour bounds, exact configuration and independent ranges
+  ---
+  duration_ms: 8.744214
+  type: 'test'
+  ...
+# Subtest: each frame keeps the existing prepared result and commands; end is delivery metadata, never view completion
+ok 45 - each frame keeps the existing prepared result and commands; end is delivery metadata, never view completion
+  ---
+  duration_ms: 27.277503
+  type: 'test'
+  ...
+# Subtest: building and failed members cannot erase ready siblings or end the remaining work
+ok 46 - building and failed members cannot erase ready siblings or end the remaining work
+  ---
+  duration_ms: 6.97732
+  type: 'test'
+  ...
+# Subtest: cancelled batch starts no later member and does not publish an artificial end
+ok 47 - cancelled batch starts no later member and does not publish an artificial end
+  ---
+  duration_ms: 4.764687
+  type: 'test'
+  ...
+# Subtest: one gzip stream publishes a validated member before a delayed sibling, then finishes exact framing
+ok 48 - one gzip stream publishes a validated member before a delayed sibling, then finishes exact framing
+  ---
+  duration_ms: 258.518826
+  type: 'test'
+  ...
+# Subtest: oversized member fails specifically while a later valid range still arrives
+ok 49 - oversized member fails specifically while a later valid range still arrives
+  ---
+  duration_ms: 349.177828
+  type: 'test'
+  ...
+# Subtest: bad method, content type and bounded request body do not start canonical work
+ok 50 - bad method, content type and bounded request body do not start canonical work
+  ---
+  duration_ms: 89.594676
+  type: 'test'
+  ...
+# Subtest: disconnect after a progressive gzip member aborts active canonical work and starts no later member
+ok 51 - disconnect after a progressive gzip member aborts active canonical work and starts no later member
+  ---
+  duration_ms: 107.138011
+  type: 'test'
+  ...
+# Subtest: a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+ok 52 - a busy single hour over 250,000 executions resumes exact canonical cumulative extrema through bounded pages
+  ---
+  duration_ms: 773.277147
+  type: 'test'
+  ...
+# Subtest: a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+ok 53 - a full last page needs explicit exhaustion, invalid horizons/capacity do not silently drop records
+  ---
+  duration_ms: 17.563853
+  type: 'test'
+  ...
+# Subtest: interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+ok 54 - interleaved candle timestamps retain each candle exact ID-ordered extrema through restart
+  ---
+  duration_ms: 3.131885
+  type: 'test'
+  ...
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 55 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 219.181617
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 56 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 98.342651
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 57 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 48.998067
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 58 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 52.693003
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 59 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 53.488793
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 60 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 40.342686
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 61 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 1947.563687
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 62 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 147.142164
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 63 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 113.789908
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 64 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 117.141068
+  type: 'test'
+  ...
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+ok 65 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 224.015509
+  type: 'test'
+  ...
+# Subtest: late repair intent survives restart and a full history queue without pausing current preparation
+ok 66 - late repair intent survives restart and a full history queue without pausing current preparation
+  ---
+  duration_ms: 684.529808
+  type: 'test'
+  ...
+# Subtest: a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+ok 67 - a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+  ---
+  duration_ms: 127.896546
+  type: 'test'
+  ...
+# Subtest: a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+ok 68 - a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+  ---
+  duration_ms: 235.683758
+  type: 'test'
+  ...
+# Subtest: multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+ok 69 - multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+  ---
+  duration_ms: 111.077021
+  type: 'test'
+  ...
+# Subtest: source revision tokens coalesce polls, defer actual changes until the pinned candle completes, and refresh completed jobs once
+ok 70 - source revision tokens coalesce polls, defer actual changes until the pinned candle completes, and refresh completed jobs once
+  ---
+  duration_ms: 261.782845
+  type: 'test'
+  ...
+# Subtest: default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+ok 71 - default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+  ---
+  duration_ms: 301.558869
+  type: 'test'
+  ...
+# Subtest: automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+ok 72 - automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+  ---
+  duration_ms: 108.912093
+  type: 'test'
+  ...
+# Subtest: default upkeep resumes needed closed preparation after transport failure and preserves its build state
+ok 73 - default upkeep resumes needed closed preparation after transport failure and preserves its build state
+  ---
+  duration_ms: 104.282404
+  type: 'test'
+  ...
+# Subtest: an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+ok 74 - an older pinned build cannot replace a newer canonical revision, even with a later wall clock
+  ---
+  duration_ms: 17.767499
+  type: 'test'
+  ...
+# Subtest: unchanged canonical content is idempotent across publication clocks and source horizons
+ok 75 - unchanged canonical content is idempotent across publication clocks and source horizons
+  ---
+  duration_ms: 2.912479
+  type: 'test'
+  ...
+# Subtest: canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+ok 76 - canonical history keeps time bounds, while initialized current pages observe bounded ID tails
+  ---
+  duration_ms: 3.118958
+  type: 'test'
+  ...
+# Subtest: current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+ok 77 - current cursor seed uses the canonical first ID of the highest observed candle when head timestamps regress
+  ---
+  duration_ms: 4.65691
+  type: 'test'
+  ...
+# Subtest: current seed rejects missing retained source instead of advancing past the unavailable cursor
+ok 78 - current seed rejects missing retained source instead of advancing past the unavailable cursor
+  ---
+  duration_ms: 4.317024
+  type: 'test'
+  ...
+# Subtest: normal current tails require the measured index and bounded SQL read work
+ok 79 - normal current tails require the measured index and bounded SQL read work
+  ---
+  duration_ms: 4.070155
+  type: 'test'
+  ...
+# Subtest: publication refuses a same-count changed canonical input and enriches legacy content idempotently
+ok 80 - publication refuses a same-count changed canonical input and enriches legacy content idempotently
+  ---
+  duration_ms: 7.554019
+  type: 'test'
+  ...
+# Subtest: atomic checkpoints expose pending and completed corrections without retaining accumulators
+ok 81 - atomic checkpoints expose pending and completed corrections without retaining accumulators
+  ---
+  duration_ms: 44.030919
+  type: 'test'
+  ...
+# Subtest: page digests survive restart and duplicate input without losing UInt256 precision
+ok 82 - page digests survive restart and duplicate input without losing UInt256 precision
+  ---
+  duration_ms: 10.6342
+  type: 'test'
+  ...
+# Subtest: scalar source versions retain canonical FINAL, Decimal input hashing, pinned horizon and work bounds
+ok 83 - scalar source versions retain canonical FINAL, Decimal input hashing, pinned horizon and work bounds
+  ---
+  duration_ms: 5.202351
+  type: 'test'
+  ...
+# Subtest: historical admission cannot consume the current/health reserve and releases idempotently
+ok 84 - historical admission cannot consume the current/health reserve and releases idempotently
+  ---
+  duration_ms: 2.83785
+  type: 'test'
+  ...
+# Subtest: native viewport and bootstrap HTTP reads cannot consume the current/health reserve
+ok 85 - native viewport and bootstrap HTTP reads cannot consume the current/health reserve
+  ---
+  duration_ms: 0.849068
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: average
+ok 86 - incremental sparse tiles match authoritative replay: average
+  ---
+  duration_ms: 6248.569893
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: peak
+ok 87 - incremental sparse tiles match authoritative replay: peak
+  ---
+  duration_ms: 5828.488024
+  type: 'test'
+  ...
+# Subtest: incremental sparse tiles match authoritative replay: last
+ok 88 - incremental sparse tiles match authoritative replay: last
+  ---
+  duration_ms: 6276.954052
+  type: 'test'
+  ...
+# Subtest: simultaneous price peaks are not the sum of independent fine-row peaks
+ok 89 - simultaneous price peaks are not the sum of independent fine-row peaks
+  ---
+  duration_ms: 3.15157
+  type: 'test'
+  ...
+# Subtest: checkpoint before a snapshot bridge preserves unbridged sequence semantics
+ok 90 - checkpoint before a snapshot bridge preserves unbridged sequence semantics
+  ---
+  duration_ms: 6.372417
+  type: 'test'
+  ...
+# Subtest: duplicate finalization and checkpoint resume produce identical sufficient statistics
+ok 91 - duplicate finalization and checkpoint resume produce identical sufficient statistics
+  ---
+  duration_ms: 77.45879
+  type: 'test'
+  ...
+# Subtest: fractional tick-aligned rows retain reference boundary arithmetic
+ok 92 - fractional tick-aligned rows retain reference boundary arithmetic
+  ---
+  duration_ms: 577.124924
+  type: 'test'
+  ...
+# Subtest: checkpoint calculation identity cannot silently cross a schema or feed change
+ok 93 - checkpoint calculation identity cannot silently cross a schema or feed change
+  ---
+  duration_ms: 5.588163
+  type: 'test'
+  ...
+# Subtest: Retry after a transport failure reads ready history without starting a new materialization
+ok 94 - Retry after a transport failure reads ready history without starting a new materialization
+  ---
+  duration_ms: 23.486532
+  type: 'test'
+  ...
+# Subtest: a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+ok 95 - a completed resumed job re-reads tiles and recomputes missing slots before returning ready
+  ---
+  duration_ms: 122.650419
+  type: 'test'
+  ...
+# Subtest: explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+ok 96 - explicit retry resumes the failed job range rather than re-enqueuing the whole viewport
+  ---
+  duration_ms: 16.065716
+  type: 'test'
+  ...
+# Subtest: ordinary polling neither resets a healthy build nor retries absent source
+ok 97 - ordinary polling neither resets a healthy build nor retries absent source
+  ---
+  duration_ms: 11.802247
+  type: 'test'
+  ...
+# Subtest: an independently maintained current cursor never suppresses missing historical preparation
+ok 98 - an independently maintained current cursor never suppresses missing historical preparation
+  ---
+  duration_ms: 23.092942
+  type: 'test'
+  ...
+# Subtest: a queued closed-candle revision keeps good tiles visible without claiming ready
+ok 99 - a queued closed-candle revision keeps good tiles visible without claiming ready
+  ---
+  duration_ms: 4.639077
+  type: 'test'
+  ...
+# Subtest: a correction committing around a tile read forces a bounded revision re-read
+ok 100 - a correction committing around a tile read forces a bounded revision re-read
+  ---
+  duration_ms: 6.12201
+  type: 'test'
+  ...
+# Subtest: a completed correction observed through worker health also re-reads stale tiles
+ok 101 - a completed correction observed through worker health also re-reads stale tiles
+  ---
+  duration_ms: 8.559234
+  type: 'test'
+  ...
+# Subtest: failed revision recovery retains good tiles when its worker is unreachable
+ok 102 - failed revision recovery retains good tiles when its worker is unreachable
+  ---
+  duration_ms: 2.575685
+  type: 'test'
+  ...
+# Subtest: an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+ok 103 - an inactive unusual configuration discovers a same-count canonical correction and reuses its healthy repair
+  ---
+  duration_ms: 16.261141
+  type: 'test'
+  ...
+# Subtest: a legacy tile remains visible but cannot claim current canonical validation
+ok 104 - a legacy tile remains visible but cannot claim current canonical validation
+  ---
+  duration_ms: 29.033844
+  type: 'test'
+  ...
+# Subtest: absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+ok 105 - absent retained source keeps old tiles explicitly unavailable without launching a futile rebuild
+  ---
+  duration_ms: 5.55957
+  type: 'test'
+  ...
+# Subtest: an unconfirmed closed boundary stays building independently of a healthy live source
+ok 106 - an unconfirmed closed boundary stays building independently of a healthy live source
+  ---
+  duration_ms: 3.800546
+  type: 'test'
+  ...
+# Subtest: a drained closed bucket survives publication failure and process restart
+ok 107 - a drained closed bucket survives publication failure and process restart
+  ---
+  duration_ms: 40.48326
+  type: 'test'
+  ...
+# Subtest: publication acknowledges payloads before manifest, retries are idempotent, corrections revise without adding totals
+ok 108 - publication acknowledges payloads before manifest, retries are idempotent, corrections revise without adding totals
+  ---
+  duration_ms: 33.929548
+  type: 'test'
+  ...
+# Subtest: gzip and identity responses preserve the same JSON and negotiate bounded response headers
+ok 109 - gzip and identity responses preserve the same JSON and negotiate bounded response headers
+  ---
+  duration_ms: 57.334193
+  type: 'test'
+  ...
+# Subtest: gzip is skipped when the body is below the existing 4 KiB response threshold
+ok 110 - gzip is skipped when the body is below the existing 4 KiB response threshold
+  ---
+  duration_ms: 3.501308
+  type: 'test'
+  ...
+# Subtest: Spot and USD-M share native ids and times without sharing durable identity
+ok 111 - Spot and USD-M share native ids and times without sharing durable identity
+  ---
+  duration_ms: 6.948561
+  type: 'test'
+  ...
+# Subtest: Spot market config uses Spot feed identity and Spot public endpoints
+ok 112 - Spot market config uses Spot feed identity and Spot public endpoints
+  ---
+  duration_ms: 0.631273
+  type: 'test'
+  ...
+# Subtest: Spot REST aggregate rows without wire event and symbol fields normalize as Spot executions
+ok 113 - Spot REST aggregate rows without wire event and symbol fields normalize as Spot executions
+  ---
+  duration_ms: 1.02527
+  type: 'test'
+  ...
+# Subtest: real gateway reserves health while three native reads wait and propagates a cancelled downstream
+ok 114 - real gateway reserves health while three native reads wait and propagates a cancelled downstream
+  ---
+  duration_ms: 7693.96016
+  type: 'test'
+  ...
+# Subtest: positioning API query supports only bounded perpetual methods and venues
+ok 115 - positioning API query supports only bounded perpetual methods and venues
+  ---
+  duration_ms: 9.530931
+  type: 'test'
+  ...
+# Subtest: positioning API range is capped at four hours and duplicate or malformed bounds fail closed
+ok 116 - positioning API range is capped at four hours and duplicate or malformed bounds fail closed
+  ---
+  duration_ms: 1.102103
+  type: 'test'
+  ...
+# Subtest: positioning response rows stay capped and expose truncation past the limit
+ok 117 - positioning response rows stay capped and expose truncation past the limit
+  ---
+  duration_ms: 1.008567
+  type: 'test'
+  ...
+# Subtest: persisted Decimal text stays exact and refuses JSON numbers
+ok 118 - persisted Decimal text stays exact and refuses JSON numbers
+  ---
+  duration_ms: 5.808865
+  type: 'test'
+  ...
+# Subtest: price plus OI allocates signed increases and decreases and conserves every change
+ok 119 - price plus OI allocates signed increases and decreases and conserves every change
+  ---
+  duration_ms: 3.632863
+  type: 'test'
+  ...
+# Subtest: aggressor flow classifies from signed native BTC quantity, not quote notional
+ok 120 - aggressor flow classifies from signed native BTC quantity, not quote notional
+  ---
+  duration_ms: 2.218428
+  type: 'test'
+  ...
+# Subtest: single-sided flow quantities work and flow timestamps use exact half-open interval boundaries
+ok 121 - single-sided flow quantities work and flow timestamps use exact half-open interval boundaries
+  ---
+  duration_ms: 0.654144
+  type: 'test'
+  ...
+# Subtest: neutral direction is unclassified and zero OI is confirmed zero without direction inputs
+ok 122 - neutral direction is unclassified and zero OI is confirmed zero without direction inputs
+  ---
+  duration_ms: 0.700347
+  type: 'test'
+  ...
+# Subtest: stale, future-only, invalid and cross-feed price inputs remain unavailable instead of zeros
+ok 123 - stale, future-only, invalid and cross-feed price inputs remain unavailable instead of zeros
+  ---
+  duration_ms: 0.877864
+  type: 'test'
+  ...
+# Subtest: duplicate, repeated, out-of-order and invalid OI observations cannot create spikes
+ok 124 - duplicate, repeated, out-of-order and invalid OI observations cannot create spikes
+  ---
+  duration_ms: 0.818827
+  type: 'test'
+  ...
+# Subtest: coarse OI cadence is allowed when the collector marks continuity complete
+ok 125 - coarse OI cadence is allowed when the collector marks continuity complete
+  ---
+  duration_ms: 0.495848
+  type: 'test'
+  ...
+# Subtest: late-flow grace needs a same-feed source watermark beyond the boundary
+ok 126 - late-flow grace needs a same-feed source watermark beyond the boundary
+  ---
+  duration_ms: 0.738754
+  type: 'test'
+  ...
+# Subtest: future flow is ignored and a trade-stream reconnect cannot bridge old-epoch prints
+ok 127 - future flow is ignored and a trade-stream reconnect cannot bridge old-epoch prints
+  ---
+  duration_ms: 1.183733
+  type: 'test'
+  ...
+# Subtest: BTC conservation is exact to source precision for one-satoshi OI changes and accumulated flow
+ok 128 - BTC conservation is exact to source precision for one-satoshi OI changes and accumulated flow
+  ---
+  duration_ms: 1.153399
+  type: 'test'
+  ...
+# Subtest: flow gaps, incomplete coverage, cross-feed coverage and conflicting duplicate trades are unavailable
+ok 129 - flow gaps, incomplete coverage, cross-feed coverage and conflicting duplicate trades are unavailable
+  ---
+  duration_ms: 1.284972
+  type: 'test'
+  ...
+# Subtest: provenance preserves raw observation source and receive timestamps and exact attribution boundary
+ok 130 - provenance preserves raw observation source and receive timestamps and exact attribution boundary
+  ---
+  duration_ms: 0.500348
+  type: 'test'
+  ...
+# Subtest: Hyperliquid public trades normalize base size and aggressor side without USD conversion
+ok 131 - Hyperliquid public trades normalize base size and aggressor side without USD conversion
+  ---
+  duration_ms: 1.850487
+  type: 'test'
+  ...
+# Subtest: Hyperliquid open interest uses coin size and makes collector-sampled source timing explicit
+ok 132 - Hyperliquid open interest uses coin size and makes collector-sampled source timing explicit
+  ---
+  duration_ms: 1.036215
+  type: 'test'
+  ...
+# Subtest: Binance BTCUSDT open interest preserves its supported base-size field and rejects unsupported inputs
+ok 133 - Binance BTCUSDT open interest preserves its supported base-size field and rejects unsupported inputs
+  ---
+  duration_ms: 0.918919
+  type: 'test'
+  ...
+# Subtest: the Hyperliquid working set bounds memory, deduplicates, and retains exact boundary prices/flow
+ok 134 - the Hyperliquid working set bounds memory, deduplicates, and retains exact boundary prices/flow
+  ---
+  duration_ms: 1.678118
+  type: 'test'
+  ...
+# Subtest: point tuples restore byte-identical JSON, decimal spelling, ordering, tiny values and negative offsets
+ok 135 - point tuples restore byte-identical JSON, decimal spelling, ordering, tiny values and negative offsets
+  ---
+  duration_ms: 20.186205
+  type: 'test'
+  ...
+# Subtest: unknown fields, scalar mismatches and fractional timestamps remain unchanged native objects
+ok 136 - unknown fields, scalar mismatches and fractional timestamps remain unchanged native objects
+  ---
+  duration_ms: 6.969023
+  type: 'test'
+  ...
+# Subtest: malformed tuples and decoded expansion past the canonical byte budget fail explicitly
+ok 137 - malformed tuples and decoded expansion past the canonical byte budget fail explicitly
+  ---
+  duration_ms: 6.448805
+  type: 'test'
+  ...
+# Subtest: bounded work checkpoints can cancel encoding and decoding without publishing a fragment
+ok 138 - bounded work checkpoints can cancel encoding and decoding without publishing a fragment
+  ---
+  duration_ms: 22.330671
+  type: 'test'
+  ...
+# Subtest: negotiated products preserve exact JSON and expansion budgets; v1 never emits or accepts them
+ok 139 - negotiated products preserve exact JSON and expansion budgets; v1 never emits or accepts them
+  ---
+  duration_ms: 9.029878
+  type: 'test'
+  ...
+# Subtest: product encoding falls back for spelling, source mismatch, missing price, extended point shape and arithmetic bounds
+ok 140 - product encoding falls back for spelling, source mismatch, missing price, extended point shape and arithmetic bounds
+  ---
+  duration_ms: 3.051533
+  type: 'test'
+  ...
+# Subtest: malformed products fail before expansion and cancellation remains bounded
+ok 141 - malformed products fail before expansion and cancellation remains bounded
+  ---
+  duration_ms: 11.563416
+  type: 'test'
+  ...
+# Subtest: full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+ok 142 - full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+  ---
+  duration_ms: 1039.200984
+  type: 'test'
+  ...
+# Subtest: default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+ok 143 - default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+  ---
+  duration_ms: 18.358459
+  type: 'test'
+  ...
+# Subtest: pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+ok 144 - pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+  ---
+  duration_ms: 18.521865
+  type: 'test'
+  ...
+# Subtest: archive profiles publish the same canonical feed identity the frontend validates
+ok 145 - archive profiles publish the same canonical feed identity the frontend validates
+  ---
+  duration_ms: 1.058678
+  type: 'test'
+  ...
+# Subtest: history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+ok 146 - history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+  ---
+  duration_ms: 16.395825
+  type: 'test'
+  ...
+# Subtest: history continuation cursors remain on the last applied event before terminal watermark advancement
+ok 147 - history continuation cursors remain on the last applied event before terminal watermark advancement
+  ---
+  duration_ms: 11.743748
+  type: 'test'
+  ...
+# Subtest: history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+ok 148 - history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+  ---
+  duration_ms: 12.371818
+  type: 'test'
+  ...
+# Subtest: history API emits canonical singular candidate and removal sides for seeds and patches
+ok 149 - history API emits canonical singular candidate and removal sides for seeds and patches
+  ---
+  duration_ms: 4.726225
+  type: 'test'
+  ...
+# Subtest: seven-day history without a retained carry-in anchor is unavailable rather than empty
+ok 150 - seven-day history without a retained carry-in anchor is unavailable rather than empty
+  ---
+  duration_ms: 3.765102
+  type: 'test'
+  ...
+# Subtest: archive retention setting is bounded and drives the supported query horizon
+ok 151 - archive retention setting is bounded and drives the supported query horizon
+  ---
+  duration_ms: 5.265406
+  type: 'test'
+  ...
+# Subtest: archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+ok 152 - archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+  ---
+  duration_ms: 51.469144
+  type: 'test'
+  ...
+# Subtest: staging rollout backs up a running container when its image object was pruned
+ok 153 - staging rollout backs up a running container when its image object was pruned
+  ---
+  duration_ms: 6.893006
+  type: 'test'
+  ...
+# Subtest: current deltas retain the pinned head and coverage while a later profile head advances
+ok 154 - current deltas retain the pinned head and coverage while a later profile head advances
+  ---
+  duration_ms: 2.678296
+  type: 'test'
+  ...
+# Subtest: current validity stays distinct from partial observed band scope and gap state
+ok 155 - current validity stays distinct from partial observed band scope and gap state
+  ---
+  duration_ms: 3.289883
+  type: 'test'
+  ...
+# Subtest: current bootstrap scopes its latest gap and locates a seed before loading payload
+ok 156 - current bootstrap scopes its latest gap and locates a seed before loading payload
+  ---
+  duration_ms: 9.202155
+  type: 'test'
+  ...
+# Subtest: midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+ok 157 - midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+  ---
+  duration_ms: 5.533923
+  type: 'test'
+  ...
+# Subtest: confirmation waits for the first unchanged raw observation beyond its boundary
+ok 158 - confirmation waits for the first unchanged raw observation beyond its boundary
+  ---
+  duration_ms: 1.916282
+  type: 'test'
+  ...
+# Subtest: delayed confirmation starts when the configured minimum or Top N eligibility begins
+ok 159 - delayed confirmation starts when the configured minimum or Top N eligibility begins
+  ---
+  duration_ms: 3.869805
+  type: 'test'
+  ...
+# Subtest: level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+ok 160 - level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+  ---
+  duration_ms: 115.215959
+  type: 'test'
+  ...
+# Subtest: ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+ok 161 - ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+  ---
+  duration_ms: 5.687995
+  type: 'test'
+  ...
+# Subtest: current lane commits a start-unknown checkpoint anchor before advancing its watermark
+ok 162 - current lane commits a start-unknown checkpoint anchor before advancing its watermark
+  ---
+  duration_ms: 16.538102
+  type: 'test'
+  ...
+# Subtest: materializer retries from durable progress after both a write and recovery read fail
+ok 163 - materializer retries from durable progress after both a write and recovery read fail
+  ---
+  duration_ms: 9.185563
+  type: 'test'
+  ...
+# Subtest: archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+ok 164 - archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+  ---
+  duration_ms: 15.976735
+  type: 'test'
+  ...
+# Subtest: missing retained source cursor inside one batch records a gap and censors prior selection
+ok 165 - missing retained source cursor inside one batch records a gap and censors prior selection
+  ---
+  duration_ms: 5.538478
+  type: 'test'
+  ...
+# Subtest: custom admission stores confirmation, Top N and minimum-notional identity fields
+ok 166 - custom admission stores confirmation, Top N and minimum-notional identity fields
+  ---
+  duration_ms: 5.431942
+  type: 'test'
+  ...
+# Subtest: raw archive head reuses the depth reader source scope and sorting-key order for both markets
+ok 167 - raw archive head reuses the depth reader source scope and sorting-key order for both markets
+  ---
+  duration_ms: 6.655304
+  type: 'test'
+  ...
+# Subtest: restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+ok 168 - restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+  ---
+  duration_ms: 9.279803
+  type: 'test'
+  ...
+# Subtest: central coordinator services every admitted current lane before fair custom history pages
+ok 169 - central coordinator services every admitted current lane before fair custom history pages
+  ---
+  duration_ms: 31.803491
+  type: 'test'
+  ...
+# Subtest: fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+ok 170 - fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+  ---
+  duration_ms: 4.0416
+  type: 'test'
+  ...
+# Subtest: native prices and quantities retain decimal precision and exact quote notional
+ok 171 - native prices and quantities retain decimal precision and exact quote notional
+  ---
+  duration_ms: 1.791821
+  type: 'test'
+  ...
+# Subtest: rank exit, observed zero, explicit gap and replacement epoch remain distinct
+ok 172 - rank exit, observed zero, explicit gap and replacement epoch remain distinct
+  ---
+  duration_ms: 7.104559
+  type: 'test'
+  ...
+# Subtest: price ties rank deterministically within each side and midpoint precision is exact
+ok 173 - price ties rank deterministically within each side and midpoint precision is exact
+  ---
+  duration_ms: 1.864172
+  type: 'test'
+  ...
+# Subtest: display delivery batches exact events with a fixed watermark and resumable cursor
+ok 174 - display delivery batches exact events with a fixed watermark and resumable cursor
+  ---
+  duration_ms: 160.010023
+  type: 'test'
+  ...
+# Subtest: display continuation reuses pinned progress but new views and current reads revalidate the head
+ok 175 - display continuation reuses pinned progress but new views and current reads revalidate the head
+  ---
+  duration_ms: 7.622981
+  type: 'test'
+  ...
+# Subtest: pinned history never substitutes mutable current scope or midpoint for historical carry-in
+ok 176 - pinned history never substitutes mutable current scope or midpoint for historical carry-in
+  ---
+  duration_ms: 4.880187
+  type: 'test'
+  ...
+# Subtest: independent raw replay matches full-observed ranks beyond 5k nearer prices on both sides
+ok 177 - independent raw replay matches full-observed ranks beyond 5k nearer prices on both sides
+  ---
+  duration_ms: 1042.363168
+  type: 'test'
+  ...
+# Subtest: current checkpoint bootstrap and historical backfill keep unchanged outer walls known beyond 5k nearer levels
+ok 178 - current checkpoint bootstrap and historical backfill keep unchanged outer walls known beyond 5k nearer levels
+  ---
+  duration_ms: 2068.019226
+  type: 'test'
+  ...
+# Subtest: first observation beyond the snapshot edge stays start-unknown while an absent interior level has a known zero-to-positive start
+ok 179 - first observation beyond the snapshot edge stays start-unknown while an absent interior level has a known zero-to-positive start
+  ---
+  duration_ms: 12.970906
+  type: 'test'
+  ...
+# Subtest: per-price zero tombstones stay bounded under churn and a missing tombstone never becomes a known zero
+ok 180 - per-price zero tombstones stay bounded under churn and a missing tombstone never becomes a known zero
+  ---
+  duration_ms: 14.386544
+  type: 'test'
+  ...
+# Subtest: 200k unique add-zero churn keeps positive-book selection valid and evicted prices restart as unknown
+ok 181 - 200k unique add-zero churn keeps positive-book selection valid and evicted prices restart as unknown
+  ---
+  duration_ms: 13759.389928
+  type: 'test'
+  ...
+# Subtest: known zero-to-positive start remains intact in the current anchor and after materializer restart
+ok 182 - known zero-to-positive start remains intact in the current anchor and after materializer restart
+  ---
+  duration_ms: 15.20252
+  type: 'test'
+  ...
+# Subtest: legacy checkpoint bounds are not inferred from isolated observed outer levels
+ok 183 - legacy checkpoint bounds are not inferred from isolated observed outer levels
+  ---
+  duration_ms: 1.508378
+  type: 'test'
+  ...
+# Subtest: same-epoch legacy checkpoints keep authoritative seed bounds without widening to observed extrema
+ok 184 - same-epoch legacy checkpoints keep authoritative seed bounds without widening to observed extrema
+  ---
+  duration_ms: 1.702895
+  type: 'test'
+  ...
+# Subtest: unchanged candidate enters and leaves the band only when the midpoint moves
+ok 185 - unchanged candidate enters and leaves the band only when the midpoint moves
+  ---
+  duration_ms: 2.874312
+  type: 'test'
+  ...
+# Subtest: Top10 notional prefix supports exact TopN and minimum filters derived from the raw book
+ok 186 - Top10 notional prefix supports exact TopN and minimum filters derived from the raw book
+  ---
+  duration_ms: 26.729974
+  type: 'test'
+  ...
+# Subtest: fixed price aggregation ranks exact sum(price times quantity) against raw replay
+ok 187 - fixed price aggregation ranks exact sum(price times quantity) against raw replay
+  ---
+  duration_ms: 2.355835
+  type: 'test'
+  ...
+# Subtest: independent raw replay confirms native precision and deterministic equal-notional side ties
+ok 188 - independent raw replay confirms native precision and deterministic equal-notional side ties
+  ---
+  duration_ms: 2.588462
+  type: 'test'
+  ...
+# Subtest: 30-hour, adjacent, and seven-day reads retain one watermark, closed pages, and explicit expiry
+ok 189 - 30-hour, adjacent, and seven-day reads retain one watermark, closed pages, and explicit expiry
+  ---
+  duration_ms: 147.211345
+  type: 'test'
+  ...
+# Subtest: paged archive replay reconstructs the same selected candidates as the independent raw book oracle
+ok 190 - paged archive replay reconstructs the same selected candidates as the independent raw book oracle
+  ---
+  duration_ms: 47.526972
+  type: 'test'
+  ...
+# Subtest: materializer restart and duplicate overlap preserve candidate identity and the committed cursor
+ok 191 - materializer restart and duplicate overlap preserve candidate identity and the committed cursor
+  ---
+  duration_ms: 11.270178
+  type: 'test'
+  ...
+# Subtest: every admitted custom current profile gets a bounded turn before fair custom history backfill
+ok 192 - every admitted custom current profile gets a bounded turn before fair custom history backfill
+  ---
+  duration_ms: 21.84762
+  type: 'test'
+  ...
+# Subtest: custom admission repairs only fully defaulted legacy metadata without resetting slot or replay progress
+ok 193 - custom admission repairs only fully defaulted legacy metadata without resetting slot or replay progress
+  ---
+  duration_ms: 15.870756
+  type: 'test'
+  ...
+# Subtest: coordinator canonicalizes a stale defaulted row before it can overwrite an interleaved admission repair
+ok 194 - coordinator canonicalizes a stale defaulted row before it can overwrite an interleaved admission repair
+  ---
+  duration_ms: 9.520561
+  type: 'test'
+  ...
+# Subtest: projection returns exact best-N entrants and zero removals from the whole observed book
+ok 195 - projection returns exact best-N entrants and zero removals from the whole observed book
+  ---
+  duration_ms: 13.214386
+  type: 'test'
+  ...
+# Subtest: incremental top-N projection matches a sorted-book reference through promotions and evictions
+ok 196 - incremental top-N projection matches a sorted-book reference through promotions and evictions
+  ---
+  duration_ms: 436.624866
+  type: 'test'
+  ...
+# Subtest: checkpoint resumes pu continuity; invalid delta is exposed as a gap and requires a new seed
+ok 197 - checkpoint resumes pu continuity; invalid delta is exposed as a gap and requires a new seed
+  ---
+  duration_ms: 5.126185
+  type: 'test'
+  ...
+# Subtest: same-millisecond cursor groups close before a continuation cursor advances
+ok 198 - same-millisecond cursor groups close before a continuation cursor advances
+  ---
+  duration_ms: 1.52073
+  type: 'test'
+  ...
+# Subtest: initial history returns the actual seed and ordered pre-window deltas; synthetic gaps survive reseeding
+ok 199 - initial history returns the actual seed and ordered pre-window deltas; synthetic gaps survive reseeding
+  ---
+  duration_ms: 14.631449
+  type: 'test'
+  ...
+# Subtest: a cursor that maps to multiple retained records fails closed
+ok 200 - a cursor that maps to multiple retained records fails closed
+  ---
+  duration_ms: 1.364379
+  type: 'test'
+  ...
+# Subtest: rollout requires the actual incumbent state, not an empty or copied worktree directory
+ok 201 - rollout requires the actual incumbent state, not an empty or copied worktree directory
+  ---
+  duration_ms: 36.073368
+  type: 'test'
+  ...
+# Subtest: one canonical 30h cursor chain prepares through bounded restartable pages and discovers by source revision
+ok 202 - one canonical 30h cursor chain prepares through bounded restartable pages and discovers by source revision
+  ---
+  duration_ms: 306.443111
+  type: 'test'
+  ...
+# Subtest: source correction or unavailable tail withholds the completed revision and keeps the good prefix
+ok 203 - source correction or unavailable tail withholds the completed revision and keeps the good prefix
+  ---
+  duration_ms: 128.353921
+  type: 'test'
+  ...
+# Subtest: publication resumes after a crash between final progress, manifest and lookup without replaying data
+ok 204 - publication resumes after a crash between final progress, manifest and lookup without replaying data
+  ---
+  duration_ms: 185.850227
+  type: 'test'
+  ...
+# Subtest: the part budget cannot silently complete or erase a larger requested view
+ok 205 - the part budget cannot silently complete or erase a larger requested view
+  ---
+  duration_ms: 30.907091
+  type: 'test'
+  ...
+# Subtest: delivery rejects a completed manifest with a missing continuation interval
+ok 206 - delivery rejects a completed manifest with a missing continuation interval
+  ---
+  duration_ms: 172.606637
+  type: 'test'
+  ...
+# Subtest: a matching token with a regressed horizon cannot publish final pages or restore a missing lookup
+ok 207 - a matching token with a regressed horizon cannot publish final pages or restore a missing lookup
+  ---
+  duration_ms: 203.517636
+  type: 'test'
+  ...
+# Subtest: HTTP saturation leaves capacity for durable cursor replay
+ok 208 - HTTP saturation leaves capacity for durable cursor replay
+  ---
+  duration_ms: 14.186101
+  type: 'test'
+  ...
+# Subtest: admit one complete heatmap query before any database or worker work
+ok 209 - admit one complete heatmap query before any database or worker work
+  ---
+  duration_ms: 0.828587
+  type: 'test'
+  ...
+# Subtest: performance rollback restores all prior serving helpers before the app instead of stopping required dependencies
+ok 210 - performance rollback restores all prior serving helpers before the app instead of stopping required dependencies
+  ---
+  duration_ms: 27.061285
+  type: 'test'
+  ...
+# Subtest: full R2 rollback restores incumbent core configuration before stopping only newly introduced helpers
+ok 211 - full R2 rollback restores incumbent core configuration before stopping only newly introduced helpers
+  ---
+  duration_ms: 13.831511
+  type: 'test'
+  ...
+# Subtest: API-only rollback executes only app and detects a protected worker identity change
+ok 212 - API-only rollback executes only app and detects a protected worker identity change
+  ---
+  duration_ms: 177.854266
+  type: 'test'
+  ...
+# Subtest: buffers Spot events, discards updates through the snapshot id, then bridges at id plus one
+ok 213 - buffers Spot events, discards updates through the snapshot id, then bridges at id plus one
+  ---
+  duration_ms: 9.909724
+  type: 'test'
+  ...
+# Subtest: uses absolute replacement quantities and shared-book zero tombstones
+ok 214 - uses absolute replacement quantities and shared-book zero tombstones
+  ---
+  duration_ms: 1.755191
+  type: 'test'
+  ...
+# Subtest: rejects an initial bridge that skips snapshot lastUpdateId plus one
+ok 215 - rejects an initial bridge that skips snapshot lastUpdateId plus one
+  ---
+  duration_ms: 3.677158
+  type: 'test'
+  ...
+# Subtest: detects a post-bridge gap from U greater than local update id plus one
+ok 216 - detects a post-bridge gap from U greater than local update id plus one
+  ---
+  duration_ms: 3.594752
+  type: 'test'
+  ...
+# Subtest: a gap invalidates its epoch and reconnect requires a fresh snapshot bridge
+ok 217 - a gap invalidates its epoch and reconnect requires a fresh snapshot bridge
+  ---
+  duration_ms: 1.806543
+  type: 'test'
+  ...
+# Subtest: accepts a 5,000-level snapshot and reports only its observed outer bounds
+ok 218 - accepts a 5,000-level snapshot and reports only its observed outer bounds
+  ---
+  duration_ms: 62.452622
+  type: 'test'
+  ...
+# Subtest: shared SQL admission reserves current capacity across all historical callers
+ok 219 - shared SQL admission reserves current capacity across all historical callers
+  ---
+  duration_ms: 13.670531
+  type: 'test'
+  ...
+# Subtest: background SQL progresses between bounded bursts of visible queries
+ok 220 - background SQL progresses between bounded bursts of visible queries
+  ---
+  duration_ms: 21.475289
+  type: 'test'
+  ...
+# Subtest: continuous current arrivals cannot starve an independent build
+ok 221 - continuous current arrivals cannot starve an independent build
+  ---
+  duration_ms: 24.980745
+  type: 'test'
+  ...
+# Subtest: bounded queue cancellation releases every stale consumer
+ok 222 - bounded queue cancellation releases every stale consumer
+  ---
+  duration_ms: 19.145454
+  type: 'test'
+  ...
+# Subtest: shared SQL proxy bounds upstream work and preserves authenticated query bytes/metadata
+ok 223 - shared SQL proxy bounds upstream work and preserves authenticated query bytes/metadata
+  ---
+  duration_ms: 918.715012
+  type: 'test'
+  ...
+# Subtest: queued cancellation never reaches ClickHouse and releases its admission reference
+ok 224 - queued cancellation never reaches ClickHouse and releases its admission reference
+  ---
+  duration_ms: 147.412099
+  type: 'test'
+  ...
+# Subtest: active cancellation closes the upstream and releases the shared slot
+ok 225 - active cancellation closes the upstream and releases the shared slot
+  ---
+  duration_ms: 42.581229
+  type: 'test'
+  ...
+# Subtest: out-of-order and duplicate delivery reconcile to one contiguous sequence
+ok 226 - out-of-order and duplicate delivery reconcile to one contiguous sequence
+  ---
+  duration_ms: 5.115055
+  type: 'test'
+  ...
+# Subtest: missing IDs and regressing timestamps never publish a contiguous cursor
+ok 227 - missing IDs and regressing timestamps never publish a contiguous cursor
+  ---
+  duration_ms: 0.612977
+  type: 'test'
+  ...
+# Subtest: overflow is explicit and durable replay can repair discarded volatile records
+ok 228 - overflow is explicit and durable replay can repair discarded volatile records
+  ---
+  duration_ms: 0.967641
+  type: 'test'
+  ...
+# Subtest: WebSocket publication timestamps and actual notional are preserved
+ok 229 - WebSocket publication timestamps and actual notional are preserved
+  ---
+  duration_ms: 1.873375
+  type: 'test'
+  ...
+# Subtest: identity conflicts cannot overwrite a buffered execution
+ok 230 - identity conflicts cannot overwrite a buffered execution
+  ---
+  duration_ms: 5.711588
+  type: 'test'
+  ...
+# Subtest: bounded batches retain exact part bytes, gzip members, resume boundaries and immutable validation
+ok 231 - bounded batches retain exact part bytes, gzip members, resume boundaries and immutable validation
+  ---
+  duration_ms: 1402.977515
+  type: 'test'
+  ...
+# Subtest: startup quarantine, ready retirement and queue capacity reuse preserve unrelated source files
+ok 232 - startup quarantine, ready retirement and queue capacity reuse preserve unrelated source files
+  ---
+  duration_ms: 643.092032
+  type: 'test'
+  ...
+# Subtest: exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+ok 233 - exact overlap tails and projection extension checkpoints retire within the existing file/byte bounds
+  ---
+  duration_ms: 511.271376
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-namespace before removing any good cache files
+ok 234 - retirement refuses wrong-namespace before removing any good cache files
+  ---
+  duration_ms: 143.354481
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-namespace-tail before removing any good cache files
+ok 235 - retirement refuses wrong-namespace-tail before removing any good cache files
+  ---
+  duration_ms: 132.120211
+  type: 'test'
+  ...
+# Subtest: retirement refuses unknown-name before removing any good cache files
+ok 236 - retirement refuses unknown-name before removing any good cache files
+  ---
+  duration_ms: 127.851131
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-prefix before removing any good cache files
+ok 237 - retirement refuses oversized-prefix before removing any good cache files
+  ---
+  duration_ms: 179.480405
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-tail before removing any good cache files
+ok 238 - retirement refuses oversized-tail before removing any good cache files
+  ---
+  duration_ms: 246.698179
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-prefix before removing any good cache files
+ok 239 - retirement refuses symlink-prefix before removing any good cache files
+  ---
+  duration_ms: 183.267397
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-tail before removing any good cache files
+ok 240 - retirement refuses symlink-tail before removing any good cache files
+  ---
+  duration_ms: 179.359944
+  type: 'test'
+  ...
+# Subtest: retirement refuses wrong-index-namespace before removing any good cache files
+ok 241 - retirement refuses wrong-index-namespace before removing any good cache files
+  ---
+  duration_ms: 154.951454
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-index before removing any good cache files
+ok 242 - retirement refuses oversized-index before removing any good cache files
+  ---
+  duration_ms: 118.368811
+  type: 'test'
+  ...
+# Subtest: retirement refuses oversized-index-data before removing any good cache files
+ok 243 - retirement refuses oversized-index-data before removing any good cache files
+  ---
+  duration_ms: 114.329044
+  type: 'test'
+  ...
+# Subtest: retirement refuses symlink-index before removing any good cache files
+ok 244 - retirement refuses symlink-index before removing any good cache files
+  ---
+  duration_ms: 143.248816
+  type: 'test'
+  ...
+# Subtest: a live reader, pending validation and request pin each prevent retirement; peer sharing survives cancellation
+ok 245 - a live reader, pending validation and request pin each prevent retirement; peer sharing survives cancellation
+  ---
+  duration_ms: 271.847406
+  type: 'test'
+  ...
+# Subtest: recent completions and latest two defaults per market survive pressure; promoted defaults retain ownership
+ok 246 - recent completions and latest two defaults per market survive pressure; promoted defaults retain ownership
+  ---
+  duration_ms: 801.291042
+  type: 'test'
+  ...
+# Subtest: the latest two ready rolling windows survive pressure after automatic ownership advances
+ok 247 - the latest two ready rolling windows survive pressure after automatic ownership advances
+  ---
+  duration_ms: 609.809909
+  type: 'test'
+  ...
+# Subtest: active builds are never retired; abandoned paused builds expire from last progress
+ok 248 - active builds are never retired; abandoned paused builds expire from last progress
+  ---
+  duration_ms: 227.993409
+  type: 'test'
+  ...
+# Subtest: released automatic builds retire after a minute under pressure while their live consumer still protects them
+ok 249 - released automatic builds retire after a minute under pressure while their live consumer still protects them
+  ---
+  duration_ms: 247.957098
+  type: 'test'
+  ...
+# Subtest: an external producer lock defers only that job and keeps its exact owner
+ok 250 - an external producer lock defers only that job and keeps its exact owner
+  ---
+  duration_ms: 366.528167
+  type: 'test'
+  ...
+# Subtest: a durable parked retirement resumes after restart without treating trash as public data
+ok 251 - a durable parked retirement resumes after restart without treating trash as public data
+  ---
+  duration_ms: 195.716865
+  type: 'test'
+  ...
+# Subtest: unsafe symlink contents are retained and a corrupt journal cannot reach another namespace
+ok 252 - unsafe symlink contents are retained and a corrupt journal cannot reach another namespace
+  ---
+  duration_ms: 170.550269
+  type: 'test'
+  ...
+# Subtest: orphan revisions retire without removing a newer lookup or job checkpoint
+ok 253 - orphan revisions retire without removing a newer lookup or job checkpoint
+  ---
+  duration_ms: 229.992432
+  type: 'test'
+  ...
+# Subtest: startup discards only unpublished journal temporaries and refuses hot activation with live readers
+ok 254 - startup discards only unpublished journal temporaries and refuses hot activation with live readers
+  ---
+  duration_ms: 36.260942
+  type: 'test'
+  ...
+# Subtest: shifted canonical overlap is exact across future rows below old watermark, late cursors, epochs, gaps and decimal sides
+ok 255 - shifted canonical overlap is exact across future rows below old watermark, late cursors, epochs, gaps and decimal sides
+  ---
+  duration_ms: 216.266548
+  type: 'test'
+  ...
+# Subtest: prepared builder publishes exact canonical pages through overlap and restart, and final source changes withhold publication
+ok 256 - prepared builder publishes exact canonical pages through overlap and restart, and final source changes withhold publication
+  ---
+  duration_ms: 228.456978
+  type: 'test'
+  ...
+# Subtest: overlap rejects corrupted prepared bytes and non-overlapping or backward source horizons
+ok 257 - overlap rejects corrupted prepared bytes and non-overlapping or backward source horizons
+  ---
+  duration_ms: 99.444615
+  type: 'test'
+  ...
+# Subtest: an overlap scan beyond its byte budget falls back to the exact FINAL timestamp query
+ok 258 - an overlap scan beyond its byte budget falls back to the exact FINAL timestamp query
+  ---
+  duration_ms: 833.086645
+  type: 'test'
+  ...
+# Subtest: bounded pinned tail is read once, resumes across page factories and rejects corrupted cached rows
+ok 259 - bounded pinned tail is read once, resumes across page factories and rejects corrupted cached rows
+  ---
+  duration_ms: 208.243717
+  type: 'test'
+  ...
+# Subtest: oversized pinned tail records fallback rather than truncating financial rows
+ok 260 - oversized pinned tail records fallback rather than truncating financial rows
+  ---
+  duration_ms: 191.616004
+  type: 'test'
+  ...
+# Subtest: prepared HTTP delivery reuses gzip, validates independent ETags and preserves exact canonical pages without database reads
+ok 261 - prepared HTTP delivery reuses gzip, validates independent ETags and preserves exact canonical pages without database reads
+  ---
+  duration_ms: 351.648516
+  type: 'test'
+  ...
+# Subtest: prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+ok 262 - prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+  ---
+  duration_ms: 293.268051
+  type: 'test'
+  ...
+# Subtest: wall preparation rejects unpinned geometry and a non-advancing canonical page
+ok 263 - wall preparation rejects unpinned geometry and a non-advancing canonical page
+  ---
+  duration_ms: 27.09862
+  type: 'test'
+  ...
+# Subtest: changed fixed heads and oversized parts retain the prior validated checkpoint
+ok 264 - changed fixed heads and oversized parts retain the prior validated checkpoint
+  ---
+  duration_ms: 150.474248
+  type: 'test'
+  ...
+# Subtest: bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+ok 265 - bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+  ---
+  duration_ms: 729.795012
+  type: 'test'
+  ...
+# Subtest: source and content failures preserve the validated prefix and explicit gaps through retry
+ok 266 - source and content failures preserve the validated prefix and explicit gaps through retry
+  ---
+  duration_ms: 493.332886
+  type: 'test'
+  ...
+# Subtest: aggregate retained capacity includes closed records outside the active checkpoint
+ok 267 - aggregate retained capacity includes closed records outside the active checkpoint
+  ---
+  duration_ms: 194.468393
+  type: 'test'
+  ...
+# Subtest: a persisted V3 checkpoint missing its closed index is rejected before any publication and resumes after repair
+ok 268 - a persisted V3 checkpoint missing its closed index is rejected before any publication and resumes after repair
+  ---
+  duration_ms: 387.944443
+  type: 'test'
+  ...
+# Subtest: private header overhead falls back at the exact legacy byte boundary without widening the logical budget
+ok 269 - private header overhead falls back at the exact legacy byte boundary without widening the logical budget
+  ---
+  duration_ms: 1233.774364
+  type: 'test'
+  ...
+# Subtest: a crash after final V2 progress but before manifest publication recovers without folding again
+ok 270 - a crash after final V2 progress but before manifest publication recovers without folding again
+  ---
+  duration_ms: 446.712929
+  type: 'test'
+  ...
+# Subtest: the incumbent512-part boundary falls back to exact V2 before extra index files, including crash leftovers and final-write retry
+ok 271 - the incumbent512-part boundary falls back to exact V2 before extra index files, including crash leftovers and final-write retry
+  ---
+  duration_ms: 1662.624966
+  type: 'test'
+  ...
+# Subtest: a closed wall larger than one transport part preserves every exact point across fragments
+ok 272 - a closed wall larger than one transport part preserves every exact point across fragments
+  ---
+  duration_ms: 2111.473818
+  type: 'test'
+  ...
+# Subtest: identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+ok 273 - identical nonterminal prefix copies one bounded output per turn, resumes and replays old final page plus future rows below its watermark exactly
+  ---
+  duration_ms: 790.995789
+  type: 'test'
+  ...
+# Subtest: changed event input rejects prefix reuse and folds from the first canonical page
+ok 274 - changed event input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 801.6179
+  type: 'test'
+  ...
+# Subtest: changed epoch input rejects prefix reuse and folds from the first canonical page
+ok 275 - changed epoch input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 875.557019
+  type: 'test'
+  ...
+# Subtest: changed gap input rejects prefix reuse and folds from the first canonical page
+ok 276 - changed gap input rejects prefix reuse and folds from the first canonical page
+  ---
+  duration_ms: 884.768177
+  type: 'test'
+  ...
+# Subtest: corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+ok 277 - corrupt extension prefix is rejected and changed target proof cannot publish a copied prefix
+  ---
+  duration_ms: 753.196013
+  type: 'test'
+  ...
+# Subtest: bounded inline indexes and mid-build V3 conversion publish identical financial and prefix bytes
+ok 278 - bounded inline indexes and mid-build V3 conversion publish identical financial and prefix bytes
+  ---
+  duration_ms: 646.30682
+  type: 'test'
+  ...
+# Subtest: polling an admitted building job renews interest without repeating source discovery/hash work
+ok 279 - polling an admitted building job renews interest without repeating source discovery/hash work
+  ---
+  duration_ms: 20.14004
+  type: 'test'
+  ...
+# Subtest: ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+ok 280 - ordinary discovery admits a consumer-scoped exact request without waiting for a source build
+  ---
+  duration_ms: 9.232581
+  type: 'test'
+  ...
+# Subtest: disabled, older clients and explicitly ineligible source do not enqueue
+ok 281 - disabled, older clients and explicitly ineligible source do not enqueue
+  ---
+  duration_ms: 0.894549
+  type: 'test'
+  ...
+# Subtest: only a missing compatible selected projection queues work when canonical data is ready
+ok 282 - only a missing compatible selected projection queues work when canonical data is ready
+  ---
+  duration_ms: 3.910269
+  type: 'test'
+  ...
+# Subtest: explicit Retry tokens pass through while malformed consumer identity never reaches admission
+ok 283 - explicit Retry tokens pass through while malformed consumer identity never reaches admission
+  ---
+  duration_ms: 3.559752
+  type: 'test'
+  ...
+# Subtest: cancelled discovery releases only its consumer even when admission completed before the reply
+ok 284 - cancelled discovery releases only its consumer even when admission completed before the reply
+  ---
+  duration_ms: 34.995433
+  type: 'test'
+  ...
+# Subtest: explicit shared derived root maps canonical and selected files without changing disabled defaults
+ok 285 - explicit shared derived root maps canonical and selected files without changing disabled defaults
+  ---
+  duration_ms: 2.013227
+  type: 'test'
+  ...
+# Subtest: visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+ok 286 - visible preparation shares consumers, pauses on last release and resumes the pinned checkpoint after restart
+  ---
+  duration_ms: 270.446031
+  type: 'test'
+  ...
+# Subtest: capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+ok 287 - capacity pause is reported over control without resetting checkpoints, hiding ready data or replacing failures
+  ---
+  duration_ms: 431.293575
+  type: 'test'
+  ...
+# Subtest: expired view leases yield processing capacity without pausing manual default work
+ok 288 - expired view leases yield processing capacity without pausing manual default work
+  ---
+  duration_ms: 80.278866
+  type: 'test'
+  ...
+# Subtest: paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+ok 289 - paused artifacts do not occupy active slots; resume at full capacity preserves progress and lease bounds
+  ---
+  duration_ms: 501.202831
+  type: 'test'
+  ...
+# Subtest: control admission bounds consumers and cannot reset failed builds through ordinary polling
+ok 290 - control admission bounds consumers and cannot reset failed builds through ordinary polling
+  ---
+  duration_ms: 434.196982
+  type: 'test'
+  ...
+# Subtest: internal admission uses loopback, bounded commands and no source queries on enqueue/release
+ok 291 - internal admission uses loopback, bounded commands and no source queries on enqueue/release
+  ---
+  duration_ms: 138.002487
+  type: 'test'
+  ...
+# Subtest: worker health is bounded metadata and never admits, resumes, or reads financial source
+ok 292 - worker health is bounded metadata and never admits, resumes, or reads financial source
+  ---
+  duration_ms: 231.145371
+  type: 'test'
+  ...
+# Subtest: worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+ok 293 - worker summary separates failed, prepared, paused and building jobs without exporting source proofs
+  ---
+  duration_ms: 474.778894
+  type: 'test'
+  ...
+# Subtest: readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+ok 294 - readers protect both immutable roots through renewal, sharing, release and monotonic expiry
+  ---
+  duration_ms: 25.586872
+  type: 'test'
+  ...
+# Subtest: pending manifest validation is protected and late completion cannot resurrect a released reader
+ok 295 - pending manifest validation is protected and late completion cannot resurrect a released reader
+  ---
+  duration_ms: 17.693095
+  type: 'test'
+  ...
+# Subtest: read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+ok 296 - read and build interests share the 128-consumer bound; invalid or failed metadata does not leak protection
+  ---
+  duration_ms: 97.917832
+  type: 'test'
+  ...
+# Subtest: loopback read lease commands do not admit jobs and match reserved current/health routes
+ok 297 - loopback read lease commands do not admit jobs and match reserved current/health routes
+  ---
+  duration_ms: 62.714585
+  type: 'test'
+  ...
+# Subtest: last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+ok 298 - last-consumer release during the final bounded step leaves reusable ready data, even with full pending capacity
+  ---
+  duration_ms: 632.93294
+  type: 'test'
+  ...
+# Subtest: all requested views advance fairly in bounded steps across restart, without source repinning
+ok 299 - all requested views advance fairly in bounded steps across restart, without source repinning
+  ---
+  duration_ms: 818.269237
+  type: 'test'
+  ...
+# Subtest: ordinary admission retains failure and progress; explicit Retry resumes the exact step
+ok 300 - ordinary admission retains failure and progress; explicit Retry resumes the exact step
+  ---
+  duration_ms: 180.874457
+  type: 'test'
+  ...
+# Subtest: existing CLI ownership defers a job, retains its lock and lets other views progress
+ok 301 - existing CLI ownership defers a job, retains its lock and lets other views progress
+  ---
+  duration_ms: 137.873434
+  type: 'test'
+  ...
+# Subtest: pending capacity is explicit and duplicate polling cannot allocate more work
+ok 302 - pending capacity is explicit and duplicate polling cannot allocate more work
+  ---
+  duration_ms: 392.546081
+  type: 'test'
+  ...
+# Subtest: a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+ok 303 - a healthy build cannot be reset; explicit failed-job revision preserves old files and repins
+  ---
+  duration_ms: 144.432664
+  type: 'test'
+  ...
+# Subtest: persisted Retry commands execute once even when the same admission file is replayed after restart
+ok 304 - persisted Retry commands execute once even when the same admission file is replayed after restart
+  ---
+  duration_ms: 193.035222
+  type: 'test'
+  ...
+# Subtest: a repeated explicit revision command cannot reset a healthy newly pinned build
+ok 305 - a repeated explicit revision command cannot reset a healthy newly pinned build
+  ---
+  duration_ms: 144.511682
+  type: 'test'
+  ...
+# Subtest: validated canonical cache reuse keeps its original horizon and skips full replay
+ok 306 - validated canonical cache reuse keeps its original horizon and skips full replay
+  ---
+  duration_ms: 111.728733
+  type: 'test'
+  ...
+# Subtest: specific failures remain separate from successful build/coverage state
+ok 307 - specific failures remain separate from successful build/coverage state
+  ---
+  duration_ms: 272.385688
+  type: 'test'
+  ...
+# Subtest: a concurrent tick cannot acquire a second build, while admission remains durable
+ok 308 - a concurrent tick cannot acquire a second build, while admission remains durable
+  ---
+  duration_ms: 43.219874
+  type: 'test'
+  ...
+# Subtest: completed immutable projection reuse validates source again without folding closed history
+ok 309 - completed immutable projection reuse validates source again without folding closed history
+  ---
+  duration_ms: 122.95906
+  type: 'test'
+  ...
+# Subtest: ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+ok 310 - ready-job Retry revalidates a public-only canonical manifest without replay or repinning
+  ---
+  duration_ms: 247.850253
+  type: 'test'
+  ...
+# Subtest: Retry cannot move a ready view past pending capacity or damage its saved cache state
+ok 311 - Retry cannot move a ready view past pending capacity or damage its saved cache state
+  ---
+  duration_ms: 538.114462
+  type: 'test'
+  ...
+# Subtest: request pins require a same-key live reader, bound capacity and expire independently of reader release
+ok 312 - request pins require a same-key live reader, bound capacity and expire independently of reader release
+  ---
+  duration_ms: 23.718589
+  type: 'test'
+  ...
+# Subtest: cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+ok 313 - cancellation before pin acknowledgement prevents late resurrection with bounded tombstones
+  ---
+  duration_ms: 15.737942
+  type: 'test'
+  ...
+# Subtest: ordinary admission cannot consume the health and cleanup control reserve
+ok 314 - ordinary admission cannot consume the health and cleanup control reserve
+  ---
+  duration_ms: 119.053681
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+ok 315 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=false)
+  ---
+  duration_ms: 376.394977
+  type: 'test'
+  ...
+# Subtest: overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+ok 316 - overlapping canonical reuse is freshly validated, persisted and protected through canonical completion (changed=true)
+  ---
+  duration_ms: 329.803017
+  type: 'test'
+  ...
+# Subtest: projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+ok 317 - projection-prefix dependencies survive failure/retry/restart and release only after bounded installation finishes
+  ---
+  duration_ms: 418.913322
+  type: 'test'
+  ...
+# Subtest: prepared canonical discovery still selects and pins an exact same-start projection prefix
+ok 318 - prepared canonical discovery still selects and pins an exact same-start projection prefix
+  ---
+  duration_ms: 245.510401
+  type: 'test'
+  ...
+# Subtest: private V3 barrier is durable before a projection writer starts and survives its failure
+ok 319 - private V3 barrier is durable before a projection writer starts and survives its failure
+  ---
+  duration_ms: 189.934672
+  type: 'test'
+  ...
+# Subtest: failed barrier and finally saves cannot let a different projection enter with queue V2 on disk
+ok 320 - failed barrier and finally saves cannot let a different projection enter with queue V2 on disk
+  ---
+  duration_ms: 254.793428
+  type: 'test'
+  ...
+# Subtest: worker telemetry rotates two bounded files and rejects oversized records or symlinks
+ok 321 - worker telemetry rotates two bounded files and rejects oversized records or symlinks
+  ---
+  duration_ms: 94.288283
+  type: 'test'
+  ...
+# Subtest: a new job pins a validated source once; repeated bounded resumes do no source scan
+ok 322 - a new job pins a validated source once; repeated bounded resumes do no source scan
+  ---
+  duration_ms: 22.781669
+  type: 'test'
+  ...
+# Subtest: request mismatch and invalid saved horizon fail before source or page work
+ok 323 - request mismatch and invalid saved horizon fail before source or page work
+  ---
+  duration_ms: 7.561353
+  type: 'test'
+  ...
+# Subtest: only explicit new revision refreshes source and unchanged content keeps the original horizon
+ok 324 - only explicit new revision refreshes source and unchanged content keeps the original horizon
+  ---
+  duration_ms: 4.21147
+  type: 'test'
+  ...
+# Subtest: portable source checksum is pinned separately from verified checkpoint compatibility
+ok 325 - portable source checksum is pinned separately from verified checkpoint compatibility
+  ---
+  duration_ms: 21.092978
+  type: 'test'
+  ...
+# Subtest: cooperative restoration yields and preserves the synchronous financial checkpoint
+ok 326 - cooperative restoration yields and preserves the synchronous financial checkpoint
+  ---
+  duration_ms: 17.372986
+  type: 'test'
+  ...
+# Subtest: checkpoint restore retains decimals and exact replacement counts
+ok 327 - checkpoint restore retains decimals and exact replacement counts
+  ---
+  duration_ms: 8.740233
+  type: 'test'
+  ...
+# Subtest: delta roots reconstruct exact legacy JSON, updates, tombstones and deletion/reinsertion order after every page
+ok 328 - delta roots reconstruct exact legacy JSON, updates, tombstones and deletion/reinsertion order after every page
+  ---
+  duration_ms: 390.588391
+  type: 'test'
+  ...
+# Subtest: objects written before a root commit are harmless orphans, and both protected roots survive bounded compaction cleanup
+ok 329 - objects written before a root commit are harmless orphans, and both protected roots survive bounded compaction cleanup
+  ---
+  duration_ms: 12618.307639
+  type: 'test'
+  ...
+# Subtest: corrupt descriptor/Bloom bytes and compressed data are rejected, never treated as absent entries
+ok 330 - corrupt descriptor/Bloom bytes and compressed data are rejected, never treated as absent entries
+  ---
+  duration_ms: 35.175081
+  type: 'test'
+  ...
+# Subtest: large repeated corrections compact by live bytes before the descriptor count bound
+ok 331 - large repeated corrections compact by live bytes before the descriptor count bound
+  ---
+  duration_ms: 957.089772
+  type: 'test'
+  ...
+# Subtest: cleanup avoids retained shard stats while no-follow financial reads still reject a replaced retained object
+ok 332 - cleanup avoids retained shard stats while no-follow financial reads still reject a replaced retained object
+  ---
+  duration_ms: 22.306896
+  type: 'test'
+  ...
+# Subtest: capacity observations use final page mutations, including a deletion after a temporarily larger total
+ok 333 - capacity observations use final page mutations, including a deletion after a temporarily larger total
+  ---
+  duration_ms: 30.188839
+  type: 'test'
+  ...
+# Subtest: exact default configurations admit bounded closed windows and unchanged polling does not reset work
+ok 334 - exact default configurations admit bounded closed windows and unchanged polling does not reset work
+  ---
+  duration_ms: 135.022363
+  type: 'test'
+  ...
+# Subtest: source lag is explicit, absent source stays absent and unavailable retention never shortens the window
+ok 335 - source lag is explicit, absent source stays absent and unavailable retention never shortens the window
+  ---
+  duration_ms: 53.714836
+  type: 'test'
+  ...
+# Subtest: rollover retains one ready fallback and releases older automatic ownership without unbounded active jobs
+ok 336 - rollover retains one ready fallback and releases older automatic ownership without unbounded active jobs
+  ---
+  duration_ms: 531.080667
+  type: 'test'
+  ...
+# Subtest: superseded automatic work keeps a visible consumer, pauses on release, and manual ownership is independent
+ok 337 - superseded automatic work keeps a visible consumer, pauses on release, and manual ownership is independent
+  ---
+  duration_ms: 336.420399
+  type: 'test'
+  ...
+# Subtest: a cold build survives multiple bar cadences and restart while intermediate obsolete windows pause
+ok 338 - a cold build survives multiple bar cadences and restart while intermediate obsolete windows pause
+  ---
+  duration_ms: 811.739004
+  type: 'test'
+  ...
+# Subtest: restart resumes only the desired default checkpoints and does not repin healthy builds
+ok 339 - restart resumes only the desired default checkpoints and does not repin healthy builds
+  ---
+  duration_ms: 209.266164
+  type: 'test'
+  ...
+# Subtest: only failed automatic work gets a bounded retry; ordinary polling never resets a healthy peer
+ok 340 - only failed automatic work gets a bounded retry; ordinary polling never resets a healthy peer
+  ---
+  duration_ms: 168.664937
+  type: 'test'
+  ...
+# Subtest: default admission failure is explicit and recoverable without stopping independent queue work
+ok 341 - default admission failure is explicit and recoverable without stopping independent queue work
+  ---
+  duration_ms: 76.319896
+  type: 'test'
+  ...
+# Subtest: closed wall source identity survives unrelated head progress and canonical duplicate inserts
+ok 342 - closed wall source identity survives unrelated head progress and canonical duplicate inserts
+  ---
+  duration_ms: 37.173474
+  type: 'test'
+  ...
+# Subtest: same-count correction, carry-in mutation, regressing late timestamp and gaps invalidate source identity
+ok 343 - same-count correction, carry-in mutation, regressing late timestamp and gaps invalidate source identity
+  ---
+  duration_ms: 19.385953
+  type: 'test'
+  ...
+# Subtest: source loss and unconfirmed tail stay explicit rather than becoming a ready snapshot
+ok 344 - source loss and unconfirmed tail stay explicit rather than becoming a ready snapshot
+  ---
+  duration_ms: 6.749174
+  type: 'test'
+  ...
+# Subtest: a half-open request includes the fixed head millisecond without certifying the next millisecond
+ok 345 - a half-open request includes the fixed head millisecond without certifying the next millisecond
+  ---
+  duration_ms: 5.06413
+  type: 'test'
+  ...
+# Subtest: source proof hashes exact bounded FINAL payloads, including pre-window observations
+ok 346 - source proof hashes exact bounded FINAL payloads, including pre-window observations
+  ---
+  duration_ms: 2.323835
+  type: 'test'
+  ...
+# Subtest: malformed canonical counters or hashes cannot certify prepared content
+ok 347 - malformed canonical counters or hashes cannot certify prepared content
+  ---
+  duration_ms: 8.468977
+  type: 'test'
+  ...
+# Subtest: the private source route accepts only a bounded exact profile identity
+ok 348 - the private source route accepts only a bounded exact profile identity
+  ---
+  duration_ms: 7.53852
+  type: 'test'
+  ...
+# Subtest: in-range coverage gaps before a regressing carry-in anchor cursor remain in the revision
+ok 349 - in-range coverage gaps before a regressing carry-in anchor cursor remain in the revision
+  ---
+  duration_ms: 1.878338
+  type: 'test'
+  ...
+# Subtest: revalidating a persisted proof hashes only canonical request fields
+ok 350 - revalidating a persisted proof hashes only canonical request fields
+  ---
+  duration_ms: 2.370872
+  type: 'test'
+  ...
+# Subtest: an in-range gap remains valid when every event cursor precedes the regressing carry-in anchor
+ok 351 - an in-range gap remains valid when every event cursor precedes the regressing carry-in anchor
+  ---
+  duration_ms: 3.846416
+  type: 'test'
+  ...
+# (node:32731) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: validates native ticks and explicit future expiry
+ok 352 - validates native ticks and explicit future expiry
+  ---
+  duration_ms: 7.946202
+  type: 'test'
+  ...
+# Subtest: complete causal baseline then selling, limited progress and executed reclaim
+ok 353 - complete causal baseline then selling, limited progress and executed reclaim
+  ---
+  duration_ms: 5.882921
+  type: 'test'
+  ...
+# Subtest: silence cannot satisfy reclaim or invalidation dwell
+ok 354 - silence cannot satisfy reclaim or invalidation dwell
+  ---
+  duration_ms: 7.524927
+  type: 'test'
+  ...
+# Subtest: invalidation wins; immutable confirmation is never overwritten
+ok 355 - invalidation wins; immutable confirmation is never overwritten
+  ---
+  duration_ms: 2.211151
+  type: 'test'
+  ...
+# Subtest: partial outer depth and a continuity gap cannot confirm
+ok 356 - partial outer depth and a continuity gap cannot confirm
+  ---
+  duration_ms: 2.450705
+  type: 'test'
+  ...
+# Subtest: no baseline means no encounter, no selling pressure means no confirmation
+ok 357 - no baseline means no encounter, no selling pressure means no confirmation
+  ---
+  duration_ms: 1.423379
+  type: 'test'
+  ...
+# Subtest: same admitted input sequence reproduces frozen evidence and transitions
+ok 358 - same admitted input sequence reproduces frozen evidence and transitions
+  ---
+  duration_ms: 9.823392
+  type: 'test'
+  ...
+# Subtest: SQLite commits cursor, state and outbox atomically and survives reopening
+ok 359 - SQLite commits cursor, state and outbox atomically and survives reopening
+  ---
+  duration_ms: 52.130589
+  type: 'test'
+  ...
+# Subtest: retention preserves pinned seed and ordered journal; expired clips report unavailable
+ok 360 - retention preserves pinned seed and ordered journal; expired clips report unavailable
+  ---
+  duration_ms: 19.759247
+  type: 'test'
+  ...
+# Subtest: encounter pagination preserves simultaneous contacts at a cursor boundary
+ok 361 - encounter pagination preserves simultaneous contacts at a cursor boundary
+  ---
+  duration_ms: 17.559337
+  type: 'test'
+  ...
+# Subtest: durable notification claim is at most once across connections and silent for old events
+ok 362 - durable notification claim is at most once across connections and silent for old events
+  ---
+  duration_ms: 63.136732
+  type: 'test'
+  ...
+# Subtest: quantity thresholds do not lose a decimal boundary through repeated addition
+ok 363 - quantity thresholds do not lose a decimal boundary through repeated addition
+  ---
+  duration_ms: 3.288624
+  type: 'test'
+  ...
+# Subtest: outbox cursor remains monotonic when retention removes every old event
+ok 364 - outbox cursor remains monotonic when retention removes every old event
+  ---
+  duration_ms: 9.378803
+  type: 'test'
+  ...
+1..364
+# tests 364
+# suites 0
+# pass 364
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 67097.290424
