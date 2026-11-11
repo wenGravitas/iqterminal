@@ -1,5 +1,15 @@
 ## Latest client: early warm-manifest validation
 
+Current recertification on frontend **d039b6a**: prepared24h/1h footprints
+PASS (median3359.1ms/max4595.3ms,24/24 slots in all five runs); prepared4h/5m
+footprints PASS (median2644.1ms/max2760.1ms,48/48 in all five).
+The full30h USD-M wall view remains FAIL (median9269.2ms/max10228.0ms),
+as does initial current footprint paint (median3085.1ms/max9495.9ms).
+All samples, environment scope and retained failures are in
+[the latest recertification](wall-warm-reuse-results.md#current-build-recertification-d039b6a).
+The release remains incomplete.
+
+
 Frontenda147714 reuses an identical authenticated cached wall presentation before
 projection download, while retaining fresh canonical source validation. All1335
 frontend tests (two skipped),88 focused checks, typecheck and production build

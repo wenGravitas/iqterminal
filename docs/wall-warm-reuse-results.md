@@ -6,7 +6,7 @@ an identical authenticated warm manifest before downloading projection parts.
 Neither change modifies the financial kernel, limits, source retention, current
 collector connections, native/Threshold/Fit Walls settings or production.
 
-The new fast path passes1335 frontend tests (two skipped),88 focused checks,
+The new fast path passes1336 frontend tests (two skipped),89 focused checks,
 typecheck and production build. Independent before/after canonical source proofs
 and a full canonical fold match the new pinned projection:21261 segments,
 87018 value runs and one explicit depth gap. These are exact retained local-book
@@ -131,3 +131,85 @@ format migration is needed. Server rollback boundaries remain in the existing
 cloned-staging operational documentation.
 
 [Raw evidence, reports, browser receipts and screenshots](../artifacts/pi-history-r1/transport-r2/).
+
+## Current build recertification: d039b6a
+
+The current application commit is d039b6aef2c39b83d9f6553d5d93cb7963aa907a.
+It avoids computing the full warm-manifest fingerprint when no eligible warm
+cache entry exists. A regression proves cold service loading fingerprints the
+manifest once. Typecheck, the production staging build and the tests above pass.
+Obsolete owned preview servers were stopped before this cohort; latency changes
+therefore cannot be attributed solely to this code change.
+
+Five empty-browser-cache runs over already prepared source on the actual Pi
+headless route, with every requested footprint slot painted and validated:
+
+| Scenario | Every complete painted sample (ms) | Median / maximum (ms) | Gate |
+| --- | --- | --- | --- |
+|24h footprints,1h/$25|3359.1,3259.0,2682.0,4445.0,4595.3|3359.1 /4595.3|PASS;24/24 slots every run|
+|4h footprints,5m/$25|2644.1,2300.0,2355.8,2646.3,2760.1|2644.1 /2760.1|PASS;48/48 slots every run|
+|30h USD-M walls,15m,Top8/10%/native|10228.0,7997.0,10111.1,9269.2,8677.9|9269.2 /10228.0|FAIL|
+
+The wall cohort uses the pinned source and reference described above. All five
+match21261 segments/87018 value runs,120 native closed slots and the explicit
+gap. Wall first-history samples are3580.6,3195.9,3386.8,3302.9,3200.7ms:
+median3302.9ms, maximum3580.6ms, failing the3s target.
+
+Current footprint first useful samples are9495.9,3085.1,3109.8,2833.4,2835.8ms:
+median3085.1ms, maximum9495.9ms. This gate FAILS; the slow initial sample and
+its incomplete historical observation remain in the raw capture. Historical
+completion passes do not establish healthy current startup.
+
+Raw captures use prefixes stage039-cold-wall-check, stage039-footprint24-final,
+stage039-footprint4-final and stage039-current-footprint-final. The coverage-aware
+reports are transport-r2/guard-*-report.json. No p95 is inferred from five samples.
+
+The earlier natural warm cohort's worker first-content observations are
+25.5,10.1,11.4,5.2,7.5,39.5ms, while useful main-thread paint is much later.
+Native presentation cache counters already show one exact hit per reopen,
+120 rows and no capacity misses. Additional speculative native caching is not
+justified. The bounded subscription handoff trace now records main-clock batch
+receipt, callback work and geometry state, without retaining financial payloads.
+Its observations must not be subtracted from worker clocks as exclusive phases.
+
+## Bounded main-thread handoff follow-up
+
+The older pinned view had been retired by normal rollover before follow-up.
+No browser was treated as prepared against that failed lease preflight. The new
+full30h source uses sourceToken414ccb810f774a32a09015db36ef219f36fbdfbddfc0e9800a20b7c7c3b6f7ff,
+projection72cd8350163e50a7d4d96afddd0ac2ae7624e166c5dc1a87c33e17eb33722144.
+A fresh full canonical fold with independent before/after source checks matches
+19301 segments/83389 value runs and two explicit retained depth gaps. This is a
+different source window from the earlier cohorts, not an improvement comparison.
+The read-only reference helper and exact source intervals are in
+transport-r2/handoff-reference.jsonl and handoff-references.json.
+
+The first six-reopen natural-GC follow-up retains useful paint samples
+[740.1,458.5,1331.8,748.5,659.0,451.6]ms. Two early cycles never completed
+the requested fixed view: their active history jobs instead extended from the
+visible left edge toward current time. Each issued repeated discovery/current
+requests. Their failed completion remains in handoff-natural.jsonl; cached
+content is not fresh full-view proof. Main receipt tracing alone did not capture
+the origin of that changed viewport, so its cause remains unresolved.
+
+The next cohort additionally traces viewport-update calls. All five warm
+reopens retain the exact saved view and independently validate its revision,
+with zero projection batches and one source validation each. No viewport-update
+call occurred. First useful painted samples are
+[929.7,2963.2,587.3,704.5,630.6]ms; median704.5ms, maximum2963.2ms.
+Complete painted/validated samples are
+[5137.1,4880.2,3678.7,3811.8,4055.6]ms. The warm1s gate still FAILS.
+Raw native timestamps prove all120 closed candle slots for each settled view.
+Initial cold view3357.5ms first/9068.7ms complete is separately retained.
+
+In the slow warm cycle, the first nonempty cached batch reached the main
+subscription at597.8ms, with22.5ms synchronous apply; further batches were
+received730–763ms. The first four segments ended in left context before the
+visible range. Geometry/reference work remained pending while more data arrived.
+These main-clock observations localize a substantial remaining delay after
+receipt. They do not establish a single cause or justify raising CPU budgets.
+Full batch metadata and bounded geometry observations are in
+handoff-view-natural.jsonl. Both cohorts use headless Chromium on the Pi,
+without forced GC. Retained heap plateau and foreground responsiveness remain
+unaccepted. Their final chart screenshots preserve the two explicit gaps and
+the exact partial-history footer; no artificial continuous wall is introduced.
