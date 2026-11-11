@@ -1,3 +1,31 @@
+## Current staging result: footprint gates pass; wall latency remains open
+
+Frontend9a526dc, gateway112bf11 and worker33c7e3a are installed on the isolated
+staging route. The worker uses a checksummed clone of the quiescent old root;
+queueV3 and subsequent exact default rollover have been observed. The original
+protocol1 root and stopped incumbent containers remain available for rollback.
+Collectors and the protected history API have not been replaced.
+
+Across five empty-browser-cache runs over prepared data, complete painted24h/1h
+footprints have median3.691s/max4.638s;4h/5m have median3.496s/max3.998s.
+Every eligible closed slot is accounted for. Future whitespace also preserves
+five closed hours plus the independent forming hour in all five runs.
+
+Both30h wall latency gates remain **FAILED**: Spot median5.640s/max9.648s;
+USD-M median11.619s/max11.851s. Current footprint startup remains failed.
+Current-wall samples received16 selected levels outside the price viewport, so
+those samples cannot establish current-wall paint latency. Warm revisit,
+concurrency, retained-memory plateau and foreground Pi acceptance remain open.
+All current browser tests are headless to avoid disrupting the working i3 window.
+
+[Exact builds, samples, root causes and limits](pi-history-stage33-stage112-results.md).
+Validation-only progressive import (frontend691e68e) removes throwaway projector
+construction. All1332 frontend tests (two skipped),374 backend tests and builds
+pass. Its same-pinned-window five-run wall cohort completes every view but remains
+slow: median10.218s/max10.859s. It does not establish a latency improvement.
+
+The goal remains **INCOMPLETE**. Older sections below record superseded states.
+
 ## Current follow-up: eligible wall-history request bounds
 
 The client now reads an independent archive horizon before default prepared
