@@ -6,17 +6,18 @@ test('a negotiated projection paints exact historical walls before independent s
  const step=300000,now=Date.now(),end=Math.floor(now/step)*step-2*3600000,start=end-30*3600000,id='chart-projection-source';
  const f=projectionOnlyFixture(true,end+step,start-step);let release!:()=>void;
  const gate=new Promise<void>(resolve=>release=resolve),requests:Array<{path:string;headers:Record<string,string>}>=[];
- await installHealthyStagingWorker(context);
+ await installHealthyStagingWorker(context,true,{o:100,h:101,l:99,c:100});
  await context.addInitScript(({id,start,end})=>{
   const params={venue:'binance',market:'spot',interval:'5m',type:'candle',historyViewport:{from:start,to:end},studies:[],indicators:[{instanceId:'native.order-walls',definitionId:'native.order-walls',settingsVersion:2,visible:true,source:{kind:'chart'},placement:'overlay',settings:{enabled:true,mode:'top-levels',topLevels:8,aggregation:'native',searchRangePercent:10,showHistory:true}}]};
   const layout={grid:{root:{type:'branch',data:[{type:'leaf',data:{views:[id],activeView:id,id:'1'},size:1600}],size:1000},width:1600,height:1000,orientation:'HORIZONTAL'},panels:{[id]:{id,contentComponent:'candle',tabComponent:'compact-chart',title:'Projection source fixture',params,minimumHeight:140,minimumWidth:220}},activeGroup:'1'};
+  localStorage.setItem('basis.theme.v1','dark');
   localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));
  },{id,start,end});
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url()),json=(value:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(value)});
   requests.push({path:u.pathname,headers:route.request().headers()});
   if(u.pathname.endsWith('/native-candles')){
-   const first=u.searchParams.has('from')?Number(u.searchParams.get('from')):Math.floor(now/step)*step,last=u.searchParams.has('to')?Number(u.searchParams.get('to')):first+step;
+   const first=u.searchParams.has('from')?Number(u.searchParams.get('from')):Math.floor(now/step)*step,last=u.searchParams.has('to')?Number(u.searchParams.get('to')):u.searchParams.has('from')?Math.min(now,first+1000*step):first+step;
    return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:Math.min(1000,Math.ceil((last-first)/step))},(_,i)=>({t:first+i*step,o:100,h:101,l:99,c:100,v:2,quoteVolume:200,revision:1,closed:first+i*step+step<=now}))});
   }
   if(u.pathname.endsWith('/discover')){
@@ -32,15 +33,22 @@ test('a negotiated projection paints exact historical walls before independent s
  try{
   await page.goto('/',{waitUntil:'domcontentloaded'});
   await expect.poll(()=>requests.some(r=>r.path.endsWith('/source'))).toBe(true);
+  await page.evaluate(()=>(window as any).__terminal.feed.send({type:'diagnostics'}));
+  await expect.poll(()=>page.evaluate(()=>(window as any).__terminal.feed.diagnostics?.staging?.config)).toMatchObject({dataMode:'staging',historyTiles:true});
+  const environment=await page.evaluate(()=>(window as any).__terminal.feed.diagnostics.staging.config);
+  if(process.env.IQ_PROJECTION_CLIENT_BUILD)expect(environment.build).toBe(process.env.IQ_PROJECTION_CLIENT_BUILD);
   await expect.poll(()=>page.evaluate(id=>{const p=(window as any).__terminal?.panels.get(id),d=p?.engine.orderWallsDiagnostics();return d?{visible:d.visibleHistorical,painted:d.paintedRevision===d.inputRevision,complete:p.orderWallsStatus?.archive?.requestComplete}:null;},id)).toMatchObject({painted:true,complete:false});
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.orderWallsDiagnostics().visibleHistorical,id)).toBeGreaterThan(0);
   release();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).orderWallsStatus?.archive?.requestComplete,id)).toBe(true);
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).status.nativeHistory?.viewport,id)).toMatchObject({state:'ready',loadedSlots:360,requestedSlots:360});
   const actual=await page.evaluate(id=>{const p=(window as any).__terminal.panels.get(id);return {segments:[...p.engine.orderWallSegments.values()].map(({currentSelection:_selection,presentationKind:_kind,...row}:any)=>row),status:p.orderWallsStatus,live:p.status.state,view:p.engine.visibleTimeRange(),render:p.engine.orderWallsDiagnostics()};},id);
-  expect(actual.segments).toEqual(f.full.segments);expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});
+  const ordered=(rows:any[])=>[...rows].sort((a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price);
+  expect(ordered(actual.segments)).toEqual(ordered(f.full.segments));expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});
   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});
   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);
   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  await page.evaluate(()=>{const label=document.createElement('div');label.textContent='EXPLICIT TRANSPORT FIXTURE - NOT LIVE OR LATENCY EVIDENCE';label.style.cssText='position:fixed;top:66px;right:145px;z-index:10000;font:11px monospace;background:#111;color:#aaa;padding:4px;pointer-events:none';document.body.append(label);});
   const screenshot=testInfo.outputPath('projection-source-fixture.png');await page.screenshot({path:screenshot});await testInfo.attach('projection-source-fixture',{path:screenshot,contentType:'image/png'});
-  await testInfo.attach('projection-source-proof.json',{body:JSON.stringify({scope:'Explicit deterministic transport in a real compiled chart; no source-data, latency or foreground acceptance.',requests,actual,canonicalReference:f.full.segments},null,2),contentType:'application/json'});
+  await testInfo.attach('projection-source-proof.json',{body:JSON.stringify({scope:'Explicit deterministic transport in a real compiled chart; no source-data, latency or foreground acceptance.',environment,requests,actual,canonicalReference:f.full.segments},null,2),contentType:'application/json'});
  }finally{release();}
 });
