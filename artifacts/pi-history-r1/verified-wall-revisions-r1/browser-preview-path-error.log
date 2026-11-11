@@ -1,0 +1,10 @@
+[WebServer] (node:54424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:54435) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] error when starting preview server:
+[WebServer] Error: The directory "/home/daz/workarea/iqterminal-perf-history/artifacts/pi-history-r1/verified-wall-revisions-r1/dist" does not exist. Did you build your project?
+[WebServer]     at preview (file:///home/daz/workarea/iqterminal/node_modules/.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/dist/node/chunks/node.js:35645:198)
+[WebServer]     at async CAC.<anonymous> (file:///home/daz/workarea/iqterminal/node_modules/.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/dist/node/cli.js:811:18)
+Error: Process from config.webServer was not able to start. Exit code: 1
+

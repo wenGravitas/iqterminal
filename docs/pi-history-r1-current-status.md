@@ -1,3 +1,21 @@
+## Latest frontend correctness change: verified wall revisions
+
+Frontend8d10334/022c39c removes unproved terminal history/live joins. Full anchored
+canonical revisions replace history only after validation; good data survives a
+failed replacement and Retry. Current selection uses independent fixed-time
+snapshot markers. History no longer waits for current bootstrap. All124 focused
+checks, the full1314-test serial suite (two skipped), typecheck/build and10 headless
+native-chart fixture UI checks pass. Retention follow-upa20a198 separates snapshot
+markers from the historical budget. All138 focused tests, the final full1315-test
+serial suite (two skipped), typecheck/build and three targeted native-chart UI
+checks pass on4615dcf. [Root cause, scope and evidence](wall-verified-revisions.md).
+
+This is correctness validation. Eligible request clamping, ready-prefix discovery,
+cross-revision closed-record reuse and actual Pi loading acceptance remain open.
+Both latest measured30h wall gates remain failed. Serving worker13730f7/API71f62d2
+and all protected service identities are unchanged. No production deployment or
+main merge occurs. The goal remains **INCOMPLETE**.
+
 ## Latest measured candidate: backend2a1dace
 
 All364 backend tests,20 focused tests, typecheck/build pass. The final five-pair

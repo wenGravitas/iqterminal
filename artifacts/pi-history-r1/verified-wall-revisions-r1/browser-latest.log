@@ -1,0 +1,14 @@
+[WebServer] (node:69836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:69850) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:69904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/order-walls-ui.spec.ts:229:1 › Fit Walls changes only the primary vertical scale and keeps it manual through the next candle update (11.2s)
+  ✓  2 tests/browser/order-walls-ui.spec.ts:318:1 › wall value patches preserve every point without rebuilding pane and indicator controls (7.9s)
+  ✓  3 tests/browser/order-walls-ui.spec.ts:343:1 › current snapshot tooltip reports one selected state without inventing episode duration (9.1s)
+
+  3 passed (36.8s)
