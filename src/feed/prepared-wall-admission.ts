@@ -51,7 +51,7 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  };
  try{for(;;){
   const found=await historyScheduler.read(url+'#consumer='+consumer+(projection?'&projection='+WALL_PROJECTION_CORE_SHA256:''),'order-walls',signal,async upstream=>{
-   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),...(options.resolveEligibility&&!eligibility?{'X-IQ-Wall-Resolve-Eligible':'1'}:{}),
+   const headers:Record<string,string>={'X-IQ-Wall-Consumer':consumer,...(projection?{'X-IQ-Wall-Projection':WALL_PROJECTION_CORE_SHA256,'X-IQ-Wall-Projection-Only':'1'}:{}),...(job?{'X-IQ-Wall-Job':job}:{}),...(options.resolveEligibility&&!eligibility?{'X-IQ-Wall-Resolve-Eligible':'1'}:{}),
     ...(options.retry?{'X-IQ-Wall-Retry':options.retry.token,...(options.retry.newRevision?{'X-IQ-Wall-New-Revision':'1'}:{})}:{})};
    const response=await fetcher(url,{signal:upstream,headers});
    if(!response.ok){if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}

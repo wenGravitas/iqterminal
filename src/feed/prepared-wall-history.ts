@@ -11,6 +11,8 @@ type Head={cursor:number;epoch:number;at:number};
 export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;from:number;to:number;watermark?:number;head?:Head}
 interface Part {index:number;hash:string;canonicalHash:string;bytes:number;after:number;nextAfter:number}
 interface Manifest {version:5;key:string;complete:true;watermark:number;head:Head;after:number;request:PreparedWallRequest&{sourceRevision:string};sourceProof:Source;parts:Part[]}
+interface ProjectionSource {version:1;kind:'wall-projection-source-v1';key:string;request:PreparedWallRequest;sourceProof:Source;watermark:number;head:Head}
+type SourceSnapshot=Manifest|ProjectionSource;
 interface Source extends PreparedWallRequest {version:1;kind:'wall-source-sha256-xor-v1';token:string;eligible:boolean;watermark:number;head:Head;maxCursor?:number;anchor?:{cursor:number;epoch:number;at:number;hash:string}|null}
 export interface PreparedWallFetched {response:Response;body:unknown;bytes:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs?:number;validationYieldMs?:number;attempts:number}
 const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
@@ -20,13 +22,13 @@ const sameRequest=(a:PreparedWallRequest,b:PreparedWallRequest)=>a.market===b.ma
 /** A quiet/out-of-range head advance need not invalidate an older bootstrap.
  * Permit backward transport rebinding only when the independently validated
  * source proves every financial input/carry-in fits inside that older fence. */
-function sourceFitsFence(manifest:Manifest,source:Source,target:Head){
+function sourceFitsFence(manifest:SourceSnapshot,source:Source,target:Head){
  if(target.cursor>=manifest.watermark)return true;
  const anchor=source.anchor,stored=manifest.sourceProof.anchor,max=source.maxCursor;
  return typeof max==='number'&&integer(max)&&max<=target.cursor&&manifest.sourceProof.maxCursor===max
   &&anchor&&stored&&integer(anchor.cursor)&&anchor.cursor<=target.cursor&&integer(anchor.epoch)&&integer(anchor.at)&&anchor.at<manifest.request.from&&hex(anchor.hash)
   &&anchor.cursor===stored.cursor&&anchor.epoch===stored.epoch&&anchor.at===stored.at&&anchor.hash===stored.hash
-  &&manifest.parts.every((part,index)=>part.after<=target.cursor&&(index===manifest.parts.length-1||part.nextAfter<=target.cursor));
+  &&(!('parts' in manifest)||manifest.parts.every((part,index)=>part.after<=target.cursor&&(index===manifest.parts.length-1||part.nextAfter<=target.cursor)));
 }
 const hash=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const sourceUrl=(path:string,r:PreparedWallRequest)=>'/market-data/v2/history/walls/'+path+'?'+new URLSearchParams({market:r.market,profile:r.profile,from:String(r.from),to:String(r.to)});
@@ -57,6 +59,17 @@ async function validateManifest(value:any,source:Source,r:PreparedWallRequest):P
    ||i<value.parts.length-1&&part.nextAfter<=part.after)throw Error('Invalid prepared wall part chain');
  }
  if(value.parts.at(-1).nextAfter!==value.watermark||await hash(new TextEncoder().encode(JSON.stringify(value.parts.map((p:Part)=>p.canonicalHash))))!==value.request.sourceRevision)throw Error('Invalid prepared wall manifest revision');
+ return value;
+}
+/** This fence authenticates the selected projection only. It deliberately has
+ * no canonical page list, page revision or continuation capability. */
+async function validateProjectionSource(value:any,source:Source,r:PreparedWallRequest):Promise<ProjectionSource>{
+ if(value?.version!==1||value.kind!=='wall-projection-source-v1'||'parts' in value||'after' in value||!hex(value.key)||!sameRequest(value.request??{},r)
+   ||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token||!integer(value.watermark)||value.watermark>source.watermark
+   ||value.sourceProof.watermark!==value.watermark||!head(value.head)||value.head.cursor!==value.watermark
+   ||JSON.stringify(value.head)!==JSON.stringify(value.sourceProof.head)
+   ||await hash(new TextEncoder().encode(JSON.stringify({version:5,market:r.market,profile:r.profile,from:r.from,to:r.to,watermark:value.watermark,sourceToken:source.token})))!==value.key)
+  throw Error('Invalid prepared wall projection source identity');
  return value;
 }
 /** Only transport metadata is rebound, after the server proves every canonical
@@ -95,7 +108,10 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
- const manifest=await validateManifest(found.manifest,source,request);
+ if(found.representation!==undefined&&found.representation!=='projection-v1')throw Error('Invalid prepared wall representation');
+ if(found.representation==='projection-v1'&&(!projection||!found.projection||found.manifest||found.delivery))throw Error('Invalid projection-only wall delivery');
+ const manifest:SourceSnapshot=found.representation==='projection-v1'?await validateProjectionSource(found.sourceSnapshot,source,request):await validateManifest(found.manifest,source,request);
+ const canonicalManifest=found.representation==='projection-v1'?undefined:manifest as Manifest;
  const target=request.watermark===undefined?source.head:request.head;
  if(!head(target)||target.cursor!==(request.watermark??source.watermark)||!sourceFitsFence(manifest,source,target)||target.cursor>source.watermark||target.at<request.to-1){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(found.readerLease&&(found.readerLease.version!==1||found.readerLease.leaseMs!==15000))throw Error('Invalid wall reader lease capability');
@@ -115,9 +131,10 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   if(!validSource(latest,request)||latest.token!==source.token||latest.watermark<target!.cursor)throw new PreparedWallSourceChangedError();
  }
  const pending=new Map<number,Promise<PreparedWallFetched>>();let expectedAfter:number|undefined;
- const batchEnabled=found.delivery?.version===2&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
+ const batchEnabled=Boolean(canonicalManifest)&&found.delivery?.version===2&&found.delivery.maxDecodedBytes===8*1024*1024&&found.delivery.maxParts===8;
  let currentBatch:{start:number;next:number;handle:ReturnType<typeof acquireWallBatch>}|undefined;
  function batchAt(startIndex:number){
+  const manifest=canonicalManifest;if(!manifest)throw Error('Canonical wall pages were not advertised');
   const parts:Part[]=[];let bytes=0;
   for(const part of manifest.parts.slice(startIndex,startIndex+8)){if(bytes+part.bytes+1>8*1024*1024)break;parts.push(part);bytes+=part.bytes+1;}
   const url='/market-data/v2/history/walls/batch?'+new URLSearchParams({market:request.market,key:manifest.key,start:String(startIndex),version:'2'});
@@ -125,6 +142,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
  }
 
  function prefetch(index:number,priority:number){
+  const manifest=canonicalManifest;if(!manifest)return;
   if(index>=manifest.parts.length||pending.has(index))return;
   const part=manifest.parts[index],url='/market-data/v2/history/walls/part?'+new URLSearchParams({market:request.market,key:manifest.key,hash:part.hash});
   const promise=historyScheduler.read(url,'order-walls',consumer,async upstream=>{
@@ -158,7 +176,7 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
    from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{
-  assertActive();
+  assertActive();const manifest=canonicalManifest;if(!manifest)throw Error('Canonical wall pages were not advertised');
   if(expectedAfter!==undefined&&after!==expectedAfter)throw Error('Prepared wall continuation cursor mismatch');
   const index=after===0?0:manifest.parts.findIndex(part=>part.after===after);if(index<0)throw Error('Prepared wall resume cursor is not a part boundary');
   let result:PreparedWallFetched;

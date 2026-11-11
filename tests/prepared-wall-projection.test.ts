@@ -3,7 +3,7 @@ import {OrderWallsPrimitive} from '../src/chart/order-walls';
 import type {PrimitiveRenderContext} from 'openalgo-charts';
 import * as compactCodec from '../src/feed/compact-wall-presentation';
 import {wallHistoryPresentation,wallCompactPresentation} from '../src/feed/wall-history-presentation-cache';
-import {test,expect,vi,afterEach} from 'vitest';import {createHash} from 'node:crypto';
+import {test,expect,vi,afterEach} from 'vitest';
 import {OrderWallsArchiveProjector,loadOrderWallsArchive} from '../src/feed/order-walls-archive';
 import {orderWallsSettings} from '../src/feed/order-walls';import {readPreparedWallProjection} from '../src/feed/prepared-wall-projection';
 import {WALL_PROJECTION_CORE_SHA256} from '../src/shared/order-walls-projection-version';
@@ -11,37 +11,7 @@ import {OrderWallsArchiveService} from '../src/feed/order-walls-archive-service'
 import {preparedWallReader} from '../src/feed/prepared-wall-history';
 import {historyScheduler} from '../src/feed/history-scheduler';
 afterEach(()=>vi.unstubAllEnvs());
-const hash=(text:string)=>createHash('sha256').update(text).digest('hex');
-const from=1800000000000,to=from+30*3600000,settings=orderWallsSettings({enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10});
-const normalized={topLevels:8,minimumNotionalEnabled:false,minimumNotionalUsd:0,minDurationMs:0};
-const profile:any={id:'binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',version:1,market:'spot',venue:'binance',instrument:'binance:spot:BTCUSDT',feed:'binance:spot:BTCUSDT:spot-diff-depth',aggregation:'native',bandPercent:10,midpointBasis:'best-observed-bid-ask',topN:10,algorithmVersion:1,schemaVersion:1,confirmationMs:0,selectionTopN:10,minimumNotionalUsd:null,exactDerivations:{bandPercent:[10],topNMax:10,minimumNotional:true,confirmation:true}};
-const oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
-function fixture(split=false,end=to){
- const to=end,oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
- const coverage:any={availableFrom:from-1000,requestedFrom:from,requestedTo:to,confirmedTo:to,gaps:[{at:from+3000,reason:'Observed disconnect'}],partial:true,status:'partial'};
- const candidate=(id:string)=>({entryId:id,side:'bid',price:'100.00000001',quantity:'2.000000000001',notional:'200.0000000001',rank:1,startedAt:from-1000,startCursor:1,startEpoch:1,startKnown:true});
- const page:any={version:1,profile,market:'spot',instrument:profile.instrument,feed:profile.feed,from,to,watermark:30,head:oldHead,
-  page:{after:1,nextAfter:30,hasMore:false,lastAt:to,limit:4096,sameMillisecondClosed:true},seed:{at:from-1,cursor:1,epoch:1,midpoint:'100',bids:[candidate('A')],asks:[]},
-  patches:[{kind:'patch',cursor:2,epoch:1,at:from+1000,midpoint:'100',bids:{upserts:[{...candidate('A'),quantity:'3.000000000003',notional:'300.0000000003'}],removals:[]},asks:{upserts:[],removals:[]}},
-   {kind:'gap',cursor:3,epoch:2,at:from+3000,midpoint:'100',reason:'Observed disconnect',bids:{upserts:[],removals:[]},asks:{upserts:[],removals:[]}},
-   {kind:'patch',cursor:4,epoch:2,at:from+4000,midpoint:'100',bids:{upserts:[{...candidate('B'),startCursor:4,startEpoch:2,startedAt:from+4000}],removals:[]},asks:{upserts:[],removals:[]}}],coverage};
- const original=new OrderWallsArchiveProjector(settings,from,to);original.applyPage(page);
- const full=original.checkpoint(),closed=original.takeClosedSegments(),active=original.checkpoint();
- const groups=closed.map(item=>{
-  const base={order:full.segments.findIndex(s=>s.id===item.segment.id),totalRuns:item.segment.valueRuns.length};
-  if(!split||item.segment.valueRuns.length<2)return [{...item,...base,offset:0}];
-  return [0,1].map((offset,i)=>({...base,offset,segment:{...item.segment,valueRuns:i===0?item.segment.valueRuns.slice(0,1):item.segment.valueRuns.slice(1)},valueRunOrder:i===0?item.valueRunOrder.slice(0,1):item.valueRunOrder.slice(1)}));
- });
- const texts=groups.flatMap(group=>group.map(row=>JSON.stringify([row]))),parts=texts.map(text=>({hash:hash(text),bytes:Buffer.byteLength(text),records:1}));let index=0;
- const coordinates=groups.map(group=>group.map(()=>[index++,0]));
- const sourceKey='b'.repeat(64),sourceToken='a'.repeat(64),key=hash(JSON.stringify({version:2,sourceKey,core:WALL_PROJECTION_CORE_SHA256,settings:normalized}));
- const manifest:any={version:2,key,sourceKey,sourceToken,core:WALL_PROJECTION_CORE_SHA256,complete:true,settings:normalized,parts,closed:coordinates,active,activeOrder:active.segments.map(s=>full.segments.findIndex(v=>v.id===s.id)),coverage,profile};
- const source:any={version:1,kind:'wall-source-sha256-xor-v1',market:'spot',profile:profile.id,from,to,token:sourceToken,eligible:true,watermark:40,head};
- const canonicalText=JSON.stringify(page),canonicalPart={index:0,hash:hash(canonicalText),canonicalHash:hash(canonicalText),bytes:Buffer.byteLength(canonicalText),after:1,nextAfter:30};
- const canonical:any={version:5,key:sourceKey,complete:true,watermark:30,head:oldHead,after:30,request:{market:'spot',profile:profile.id,from,to,watermark:30,sourceRevision:hash(JSON.stringify([canonicalPart.canonicalHash]))},parts:[canonicalPart],sourceProof:{...source,watermark:30,head:oldHead}};
- const advertised={manifest,delivery:{version:1,maxParts:32,maxDecodedBytes:8*1024*1024}};
- return {manifest,texts,source,canonical,advertised,full,page,context:{restoreProjector:true,sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
-}
+import {hash,from,to,settings,normalized,profile,oldHead,head,fixture,projectionOnlyFixture} from './helpers/prepared-wall-fixture';
 function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
@@ -544,12 +514,51 @@ test.each([false,true])('advancing same-start warm view preserves its financial 
 
 test('warm prefix lookup rejects changed starts, cursor fences, settings and backwards or excessive extensions',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f);let phase=0;
- const service=new OrderWallsArchiveService(()=>{},(input,init)=>phase?new Promise<Response>((_resolve,reject)=>init?.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')))):t.fetcher(input,init),()=>to+1000);
+ const service=new OrderWallsArchiveService(()=>{},(input,init)=>{if(!phase)return t.fetcher(input,init);init?.signal?.throwIfAborted();return new Promise<Response>((_resolve,reject)=>init?.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));},()=>to+1000);
  const request={market:'binance-spot' as const,from,to,settings,followLive:false};
  try{
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics().warmEntries).toBe(1));service.unsubscribe('seed');phase=1;
   const changes=[{from:from+1,to:to+1},{to:to-1},{to:to+3600001},{to:to+1,after:3},{to:to+1,watermark:30},{to:to+1,settings:{...settings,topLevels:7}},{to:to+1,market:'binance-perp' as const}];
   for(const [i,change] of changes.entries()){service.subscribe('miss'+i,{...request,...change});expect(service.diagnostics().warmReplayConsumers).toBe(0);service.unsubscribe('miss'+i);}
   expect(service.diagnostics().warmPrefixHits).toBe(0);
- }finally{service.dispose();}
+ }finally{service.dispose();await vi.waitFor(()=>expect(historyScheduler.diagnostics()).toMatchObject({active:0,queued:0}));}
+});
+
+test('negotiated selected history validates exact financial output without advertising canonical pages',async()=>{
+ const f=projectionOnlyFixture(),t=transport(f),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to},t.fetcher,new AbortController().signal,undefined,settings,{discovery:f.discovery});
+ expect(reader).not.toBeNull();
+ try{
+  await expect(reader!.read(0)).rejects.toThrow('Canonical wall pages were not advertised');expect(t.calls).toEqual([]);
+  const result=await reader!.readProjection(settings,()=>{});
+  expect(result?.segments).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).snapshot());
+  expect(result?.head).toEqual(f.source.head);expect(t.calls.every(path=>path.endsWith('/projection-batch')||path.endsWith('/source'))).toBe(true);
+  expect(t.calls.some(path=>path.endsWith('/source'))).toBe(true);
+ }finally{reader?.dispose();}
+});
+test.each(['key','token','head','range','canonical','representation'] as const)('projection-only source rejects changed %s metadata before data delivery',async change=>{
+ const f=projectionOnlyFixture(),d:any=structuredClone(f.discovery),t=transport(f);
+ if(change==='key')d.sourceSnapshot.key='f'.repeat(64);
+ if(change==='token')d.sourceSnapshot.sourceProof.token='c'.repeat(64);
+ if(change==='head')d.sourceSnapshot.head.cursor++;
+ if(change==='range')d.sourceSnapshot.request.from++;
+ if(change==='canonical')d.manifest=f.canonical;
+ if(change==='representation')d.representation='unknown';
+ await expect(preparedWallReader({market:'spot',profile:profile.id,from,to},t.fetcher,new AbortController().signal,undefined,settings,{discovery:d})).rejects.toThrow(/Invalid/);
+ expect(t.calls).toEqual([]);
+});
+test('projection-only delivery retains source failure and retry boundaries',async()=>{
+ const f=projectionOnlyFixture(),t=transport(f,{changed:true}),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to},t.fetcher,new AbortController().signal,undefined,settings,{discovery:f.discovery});
+ try{await expect(reader!.readProjection(settings,()=>{})).rejects.toThrow(/source changed/);}finally{reader?.dispose();}
+});
+
+test.each(['valid','late-input','late-anchor','changed-anchor'] as const)('projection-only output respects an older acknowledged fence: %s',async mode=>{
+ const f=projectionOnlyFixture(),anchor={cursor:1,epoch:1,at:from-1,hash:'e'.repeat(64)};
+ Object.assign(f.discovery.source,{maxCursor:4,anchor});Object.assign(f.discovery.sourceSnapshot.sourceProof,{maxCursor:4,anchor});
+ if(mode==='late-input')Object.assign(f.discovery.source,{maxCursor:11});
+ if(mode==='late-anchor')Object.assign(f.discovery.source,{anchor:{...anchor,cursor:11}});
+ if(mode==='changed-anchor')Object.assign(f.discovery.source,{anchor:{...anchor,hash:'f'.repeat(64)}});
+ const target={cursor:10,epoch:2,at:to+500},t=transport(f),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to,watermark:10,head:target},t.fetcher,new AbortController().signal,undefined,settings,{discovery:f.discovery});
+ if(mode!=='valid'){expect(reader).toBeNull();expect(t.calls).toEqual([]);return;}
+ try{const result=await reader!.readProjection(settings,()=>{});expect(result!.head).toEqual(target);expect(result!.segments).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).snapshot());}
+ finally{reader?.dispose();}
 });
