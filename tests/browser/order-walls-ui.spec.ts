@@ -352,8 +352,9 @@ test('current snapshot tooltip reports one selected state without inventing epis
     const status={state:'live',currentSubscribed:true,lastConfirmedAt:at+5000,coverage:{complete:true,partial:false,from:at-100000,to:at},archive:{profileId:'explicit-fixture',state:'complete',from:at-100000,to:at,confirmedTo:at,gaps:[],requestedTopN:8,requestedBandPercent:10,profileBandPercent:10,exact:true,requestComplete:true}};
     p.engine.setOrderWallSnapshot([snapshot],status);p.orderWallsControls.setStatus(status);
     const text=p.orderWallsControls.tooltip({segment:snapshot,at,x:0,y:0,priceLow:price,priceHigh:price,percentile:null},p.diagnostics().series,status,at+7000);
-    p.heatmapControls.showSharedTooltip(text);return {text,snapshotAt:at,scope:'Explicit diagnostic fixture in real native chart; no venue, serving, foreground or latency acceptance'};
+    p.heatmapControls.showSharedTooltip(text);return {text,retention:p.engine.orderWallsDiagnostics(),snapshotAt:at,scope:'Explicit diagnostic fixture in real native chart; no venue, serving, foreground or latency acceptance'};
   },id);
+  expect(result.retention).toMatchObject({archiveSegments:0,archiveValueRuns:0,directSegments:1,directValueRuns:1});
   expect(result.text).toContain('selected Top Level');expect(result.text).toContain('Selected snapshot');expect(result.text).toContain('observed rank #3');expect(result.text).toContain('1.5 BTC');
   expect(result.text).toContain('Resting notional $130,000');expect(result.text).toContain('observed book');
   for(const text of ['Observed since','Observed span','Duration','Active through','complete history window'])expect(result.text).not.toContain(text);
