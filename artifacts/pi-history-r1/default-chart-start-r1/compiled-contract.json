@@ -1,0 +1,542 @@
+{
+  "scope": "Compiled production chart range method with explicit fixture transport. No financial source, loading latency or foreground UX acceptance.",
+  "frontendEnvironment": {
+    "historyTaskYield": "user-visible-post-task",
+    "historyBackgroundYield": "background-post-task",
+    "dataMode": "staging",
+    "historyTiles": true,
+    "build": "a6e253b0663e5829d3078f537ae51e1de0251fca"
+  },
+  "backendBuild": "dbfcef4a8d948e8043245868ea03c397f2e89243",
+  "backendSourceSha256": "9611cde25fda7f2bd945a76f114f2fe11f67f0affaf7cd17d45554b454dd80fa",
+  "cases": [
+    {
+      "interval": "5m",
+      "now": 1794398400000,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400000,
+      "sourceAt": 1794398399999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400000,
+      "sourceAt": 1794398099999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289200000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400000,
+      "sourceAt": 1794394800000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794286200000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400001,
+      "sourceAt": 1794398400001,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400001,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400001,
+      "sourceAt": 1794398100000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398400001,
+      "sourceAt": 1794394800001,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794286200000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398460000,
+      "sourceAt": 1794398460000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398460000,
+      "sourceAt": 1794398459999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398460000,
+      "sourceAt": 1794398159999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398460000,
+      "sourceAt": 1794394860000,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794286200000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398699999,
+      "sourceAt": 1794398699999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398699999
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398699999,
+      "sourceAt": 1794398699998,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398699999
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398699999,
+      "sourceAt": 1794398399998,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398699999
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398699999,
+      "sourceAt": 1794395099999,
+      "range": {
+        "from": 1794290100000,
+        "to": 1794398699999
+      },
+      "preparedFrom": 1794290100000,
+      "formerPreparedFrom": 1794286200000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700000,
+      "sourceAt": 1794398700000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794290100000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700000,
+      "sourceAt": 1794398699999,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700000,
+      "sourceAt": 1794398399999,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700000,
+      "sourceAt": 1794395100000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794286500000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700001,
+      "sourceAt": 1794398700001,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794290100000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700001,
+      "sourceAt": 1794398700000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794290100000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700001,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289800000
+    },
+    {
+      "interval": "5m",
+      "now": 1794398700001,
+      "sourceAt": 1794395100001,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794398700001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794286500000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400000,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400000,
+      "sourceAt": 1794398399999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794287700000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400000,
+      "sourceAt": 1794397499999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794286800000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400000,
+      "sourceAt": 1794394800000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794285000000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400001,
+      "sourceAt": 1794398400001,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400001,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400001,
+      "sourceAt": 1794397500000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794287700000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398400001,
+      "sourceAt": 1794394800001,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398400001
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794285000000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398460000,
+      "sourceAt": 1794398460000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398460000,
+      "sourceAt": 1794398459999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398460000,
+      "sourceAt": 1794397559999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794287700000
+    },
+    {
+      "interval": "15m",
+      "now": 1794398460000,
+      "sourceAt": 1794394860000,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794398460000
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794285000000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399299999,
+      "sourceAt": 1794399299999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794399299999
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399299999,
+      "sourceAt": 1794399299998,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794399299999
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399299999,
+      "sourceAt": 1794398399998,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794399299999
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794287700000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399299999,
+      "sourceAt": 1794395699999,
+      "range": {
+        "from": 1794289500000,
+        "to": 1794399299999
+      },
+      "preparedFrom": 1794289500000,
+      "formerPreparedFrom": 1794285000000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300000,
+      "sourceAt": 1794399300000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300000,
+      "sourceAt": 1794399299999,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300000,
+      "sourceAt": 1794398399999,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794287700000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300000,
+      "sourceAt": 1794395700000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300000
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794285900000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300001,
+      "sourceAt": 1794399300001,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300001,
+      "sourceAt": 1794399300000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794289500000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300001,
+      "sourceAt": 1794398400000,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794288600000
+    },
+    {
+      "interval": "15m",
+      "now": 1794399300001,
+      "sourceAt": 1794395700001,
+      "range": {
+        "from": 1794290400000,
+        "to": 1794399300001
+      },
+      "preparedFrom": 1794290400000,
+      "formerPreparedFrom": 1794285900000
+    }
+  ]
+}
