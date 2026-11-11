@@ -1,0 +1,74 @@
+{
+  "frontendCommit": "9d113170e699dabba194f2dc12a7a1b74235e6c6",
+  "candidateDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "bundleSha256": "efabf0828fd8f2407935f235f722be8307e8dfd0eed0ad0fe37750a4b1516ec6",
+  "browser": "155.0.8059.79",
+  "headless": true,
+  "buildEnvironment": {
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "DEV": false,
+    "PROD": true
+  },
+  "scope": "Explicit deterministic headless Chromium/WebCrypto prepared-history protocol and shared-kernel reference check; not live venue, chart painting or latency acceptance",
+  "head": {
+    "cursor": 3,
+    "epoch": 1,
+    "at": 1800000060000
+  },
+  "requested": {
+    "from": 1800000000000,
+    "to": 1800000060001
+  },
+  "lastValue": {
+    "at": 1800000060000,
+    "usd": 300,
+    "percentile": null,
+    "rank": 1,
+    "quantity": 3,
+    "quantityExact": "3",
+    "notionalExact": "300"
+  },
+  "coverage": {
+    "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+    "state": "partial",
+    "from": 1800000000000,
+    "to": 1800000060001,
+    "rangeComplete": false,
+    "market": "spot",
+    "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+    "aggregation": "native",
+    "availableFrom": 1799999999000,
+    "confirmedTo": 1800000060000,
+    "gaps": [
+      {
+        "from": 1800000001000,
+        "to": 1800000001000,
+        "reason": "Explicit fixture gap"
+      }
+    ],
+    "requestedBandPercent": 10,
+    "profileBandPercent": 10,
+    "requestedTopN": 8,
+    "exact": true,
+    "profileVersion": 1,
+    "algorithmVersion": 1,
+    "schemaVersion": 1,
+    "midpoint": "100",
+    "requestComplete": true,
+    "loadedThrough": 1800000060000
+  },
+  "updates": [
+    {
+      "kind": "snapshot",
+      "complete": true
+    }
+  ],
+  "calls": [
+    "/market-data/v2/history/walls/discover",
+    "/market-data/v2/history/walls/part",
+    "/market-data/v2/history/walls/source",
+    "/market-data/v2/history/walls/discover"
+  ],
+  "result": "pass"
+}
