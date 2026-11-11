@@ -1,3 +1,19 @@
+## Latest saved-view lifecycle repair
+
+Frontende25cd43 prevents separate closed/forming native arrivals from sliding an
+already restored historical wall viewport toward current time. Both5m and15m
+browser regressions fail against the previous build and pass with the fix;
+returning to the live edge still follows new candles. This changes chart time
+anchoring, not financial data or collectors.
+[Root cause, source trace, validation scope and rollback](wall-saved-view-current-arrivals.md).
+Five real Pi warm USD-M30h reopens now PASS the scoped≤1s useful-cache gate:
+median547.5ms/max793.0ms, full18924 segments/82601 runs and120 native slots
+in every view, with independent source validation. Initial cold-browser history
+still takes5373.3ms first/13998.4ms complete in its separate single sample.
+All1336 frontend tests, typecheck, staging build and six native browser tests pass.
+The remaining latency results below stay tied to their recorded builds; no full
+performance acceptance or foreground UX pass is inferred.
+
 ## Latest client: early warm-manifest validation
 
 Current recertification on frontend **d039b6a**: prepared24h/1h footprints

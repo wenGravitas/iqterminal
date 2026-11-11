@@ -32,13 +32,16 @@ try{
  page.on('request',request=>{if(!request.url().includes('/market-data/')||request.url().includes('/stream'))return;const record={cycle:activeCycle,url:request.url()};requests.push(record);requestRecords.set(request,record);});
  page.on('response',response=>{const record=requestRecords.get(response.request());if(!record)return;record.status=response.status();responseTasks.push((async()=>{try{record.headers=await response.allHeaders();record.finishedError=await response.finished();record.sizes=await response.request().sizes();record.timing=response.request().timing();}catch(e){record.traceError=String(e);}})());});
  await page.addInitScript(reference=>{
-  window.__life={start:0,first:null,complete:null,handoffs:[],viewChanges:[]};
+  const fresh=()=>({start:performance.now(),first:null,complete:null,handoffs:[],viewChanges:[],commands:[],ranges:[],longTasks:[]});
+  window.__life=fresh();window.__life.start=0;window.__freshLifecycle=fresh;
+  new PerformanceObserver(list=>{const life=window.__life;for(const entry of list.getEntries())if(life.longTasks.length<100)life.longTasks.push({at:entry.startTime-life.start,duration:entry.duration});}).observe({type:'longtask',buffered:true});
   // Browser-local monotonic observations only: do not subtract worker clocks.
   // Wrap the public subscription boundary before subsequent reopen cycles.
   // Retain metadata for at most12 batches, never financial payload references.
   function traceSubscriptions(){
    const feed=window.__terminal?.feed;if(!feed||feed.__lifecycleTrace)return;
-   feed.__lifecycleTrace=true;const subscribe=feed.subscribeOrderWalls,update=feed.updateOrderWallsViewport;
+   feed.__lifecycleTrace=true;const subscribe=feed.subscribeOrderWalls,update=feed.updateOrderWallsViewport,send=feed.send;
+   feed.send=function(command){const life=window.__life;if(command.type.startsWith('order-wall-')&&life.commands.length<24)life.commands.push({at:performance.now()-life.start,type:command.type,id:command.id,from:command.from??command.request?.from,to:command.to??command.request?.to,followLive:command.request?.followLive});return send.call(this,command);};
    feed.updateOrderWallsViewport=function(id,from,to,width){const life=window.__life,p=window.__terminal.panels.get('chart-bench');if(life.viewChanges.length<16)life.viewChanges.push({at:performance.now()-life.start,from,to,visible:p?.engine.visibleTimeRange(),pending:p?.pendingHistoryView,nativeCount:p?.candles.length});return update.call(this,id,from,to,width);};
    feed.subscribeOrderWalls=function(id,request,callback){return subscribe.call(this,id,request,event=>{
     const life=window.__life,rows=event.segments??event.patches?.map(p=>p.segment).filter(Boolean)??[];
@@ -47,6 +50,7 @@ try{
    });};
   }
   function frame(){const t=window.__terminal,p=t?.panels.get('chart-bench'),d=p?.engine.orderWallsDiagnostics(),a=p?.orderWallsStatus?.archive,v=p?.engine.visibleTimeRange();
+   const life=window.__life,key=v?`${v.from}:${v.to}`:'none';if(key!==life.lastRange){life.lastRange=key;if(life.ranges.length<24)life.ranges.push({at:performance.now()-life.start,visible:v,pending:p?.pendingHistoryView,nativeCount:p?.candles.length});}
    traceSubscriptions();const visible=document.documentElement.dataset.appState==='ready'&&getComputedStyle(document.getElementById('startup-splash')).visibility==='hidden';
    const matches=v&&Math.abs(v.from-reference.from/1000)<900&&Math.abs(v.to-reference.to/1000)<900;
    if(visible&&matches&&d.visibleHistorical>0){window.__life.first??=performance.now()-window.__life.start;
@@ -58,7 +62,7 @@ try{
  await page.goto(base,{waitUntil:'domcontentloaded'});
  for(let cycle=0;cycle<=cycles;cycle++){
   activeCycle=cycle;
-  if(cycle)await page.evaluate(params=>{window.__life={start:performance.now(),first:null,complete:null,handoffs:[],viewChanges:[]};window.__terminal.dock.addPanel({id:'chart-bench',component:'candle',tabComponent:'compact-chart',title:'Candles',params,minimumWidth:220,minimumHeight:140});},params);
+  if(cycle)await page.evaluate(params=>{window.__life=window.__freshLifecycle();window.__terminal.dock.addPanel({id:'chart-bench',component:'candle',tabComponent:'compact-chart',title:'Candles',params,minimumWidth:220,minimumHeight:140});},params);
   await page.waitForFunction(()=>window.__terminal?.panels.get('chart-bench')?.candles.length>0,null,{timeout:12000});
   await page.evaluate(r=>{const p=window.__terminal.panels.get('chart-bench'),d=p.engine.chart.dataLayer;p.engine.setRange({from:d.timeToIndexFloat(r.from/1000),to:d.timeToIndexFloat(r.to/1000)});},reference);
   let paintFailure=null;try{await page.waitForFunction(()=>window.__life.complete!==null,null,{timeout:12000});}catch(e){paintFailure=String(e);}
