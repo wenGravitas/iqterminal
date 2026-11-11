@@ -106,7 +106,7 @@ interface CurrentGroup {
 }
 
 interface WarmTiming {kind:'encode'|'replay';identity:string;queueMs:number;elapsedMs:number;firstContentMs?:number;segments:number;runs:number;state:'ready'|'cancelled'|'failed'}
-interface WarmEntry {presentation?:ReadonlyMap<string,OrderWallSegment>;compact?:CompactWallPresentation;status:OrderWallStatus;bytes:number;runs:number;segments:number;signature?:string;expired?:boolean;replay?:WarmReplay;timer:ReturnType<typeof setTimeout>}
+interface WarmEntry {family:string;requestedTo:number;presentation?:ReadonlyMap<string,OrderWallSegment>;compact?:CompactWallPresentation;status:OrderWallStatus;bytes:number;runs:number;segments:number;signature?:string;expired?:boolean;replay?:WarmReplay;timer:ReturnType<typeof setTimeout>}
 interface WarmReplay {key:string;entry:WarmEntry;abort:AbortController;presentation:Map<string,OrderWallSegment>;subscribers:Set<Subscription>;settled:boolean;runs:number;ready?:Promise<void>}
 /** Worker-owned adapter for fixed-profile history and the current selected-profile tail. */
 export class OrderWallsArchiveService {
@@ -122,7 +122,7 @@ export class OrderWallsArchiveService {
   private recordWarmTiming(timing:WarmTiming){this.warmTimings.push(timing);if(this.warmTimings.length>16)this.warmTimings.shift();}
   private sequence = 0;
   private disposed = false;
-  readonly stats = { warmAdmissions:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
+  readonly stats = { warmAdmissions:0,warmPrefixHits:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
     currentPatches: 0, ringDrops: 0, failures: 0 };
@@ -566,12 +566,23 @@ export class OrderWallsArchiveService {
   }
 
   private showWarmHistory(sub:Subscription){
-    const key=warmHistoryKey(sub.request),entry=this.warmHistory.get(key);if(!entry||entry.expired)return;
+    let key=warmHistoryKey(sub.request),entry=this.warmHistory.get(key);
+    if(!entry||entry.expired){
+      // Reuse only presentation at the exact old left edge. Financial means
+      // and active duration remain fenced at the old end until fresh validation.
+      const family=warmHistoryFamily(sub.request);
+      const prefix=[...this.warmHistory].filter(([,cached])=>!cached.expired&&cached.family===family
+        &&cached.requestedTo<sub.request.to&&sub.request.to-cached.requestedTo<=3600000
+        &&(cached.status.archive?.loadedThrough??sub.request.from)>sub.request.from)
+        .sort((a,b)=>b[1].requestedTo-a[1].requestedTo)[0];
+      if(!prefix)return;[key,entry]=prefix;this.stats.warmPrefixHits++;
+    }
+    const prefix=key!==warmHistoryKey(sub.request);
     let replay=entry.replay,started=false;
     if(!replay&&entry.compact&&this.warmReplays.size>=2){this.stats.warmCapacityMisses++;return;}
     if(!replay){replay={key,entry,abort:new AbortController(),presentation:new Map(entry.presentation),subscribers:new Set(),settled:!entry.compact,runs:entry.compact?0:entry.runs};entry.replay=replay;started=true;}
     const active=replay;active.subscribers.add(sub);sub.warmReplay=active;sub.cachedHistory=true;sub.historyProjector=undefined;sub.historyPresentation=active.presentation;
-    sub.historyStatus={...entry.status,archive:{...entry.status.archive!,state:'loading',requestComplete:false,rangeComplete:false,loadedThrough:active.settled?entry.status.archive!.loadedThrough:sub.request.from,presentationThrough:entry.status.archive!.presentationThrough??entry.status.archive!.loadedThrough,reason:'Cached history visible; validating the current revision.'}};
+    sub.historyStatus={...entry.status,coverage:{from:sub.request.from,to:sub.request.to,complete:false,partial:true},archive:{...entry.status.archive!,from:sub.request.from,to:sub.request.to,state:'loading',requestComplete:false,rangeComplete:false,loadedThrough:active.settled?entry.status.archive!.loadedThrough:sub.request.from,presentationThrough:entry.status.archive!.presentationThrough??entry.status.archive!.loadedThrough,reason:prefix?'Cached history visible; validating the newer range.':'Cached history visible; validating the current revision.'}};
     if(started&&entry.compact)this.warmReplays.add(active);
     this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));
     if(started&&entry.compact){if(active.abort.signal.aborted){this.warmReplays.delete(active);return;}const replayAt=performance.now();let firstContentMs:number|undefined,decodedSegments=0;active.ready=replayCompactWallPresentation(entry.compact,key,active.abort.signal,segments=>{
@@ -595,7 +606,11 @@ export class OrderWallsArchiveService {
   private releaseWarmReplay(sub:Subscription){
     const replay=sub.warmReplay;if(!replay)return;sub.warmReplay=undefined;replay.subscribers.delete(sub);
     if(!replay.subscribers.size){replay.abort.abort();replay.presentation.clear();if(replay.entry.replay===replay)replay.entry.replay=undefined;
-      if(replay.entry.expired&&this.warmHistory.get(replay.key)===replay.entry){clearTimeout(replay.entry.timer);this.warmHistory.delete(replay.key);}}
+      if(this.warmHistory.get(replay.key)===replay.entry){
+        clearTimeout(replay.entry.timer);
+        if(replay.entry.expired)this.warmHistory.delete(replay.key);
+        else replay.entry.timer=setTimeout(()=>this.expireWarm(replay.key,replay.entry),60000);
+      }}
   }
 
   private reusePreparedPresentation(job:SharedHistoryJob,revision:string,count:number){
@@ -615,7 +630,7 @@ export class OrderWallsArchiveService {
   /** Only bounded subscription metadata is inspected; no closed segments,
    * value runs or mutable accumulators participate in cache interest. */
   private hasWarmConsumers(key:string){
-    for(const sub of this.subscriptions.values())if(!sub.request.currentOnly&&(warmHistoryKey(sub.request)===key||sub.historyJob&&warmHistoryKey(sub.historyJob.request)===key))return true;
+    for(const sub of this.subscriptions.values())if(!sub.request.currentOnly&&(sub.warmReplay?.key===key||warmHistoryKey(sub.request)===key||sub.historyJob&&warmHistoryKey(sub.historyJob.request)===key))return true;
     return false;
   }
 
@@ -632,7 +647,7 @@ export class OrderWallsArchiveService {
     entry.expired=true;if(!entry.replay?.subscribers.size&&this.warmHistory.get(key)===entry)this.warmHistory.delete(key);
   }
 
-  private admitWarm(key:string,status:OrderWallStatus,runs:number,segments:number,bytes:number,presentation?:ReadonlyMap<string,OrderWallSegment>,compact?:CompactWallPresentation,signature?:string){
+  private admitWarm(key:string,family:string,requestedTo:number,status:OrderWallStatus,runs:number,segments:number,bytes:number,presentation?:ReadonlyMap<string,OrderWallSegment>,compact?:CompactWallPresentation,signature?:string){
     if(this.disposed)return;if(bytes>16*1024*1024){this.stats.warmCapacityMisses++;return;}const old=this.warmHistory.get(key);
     if(old?.replay?.subscribers.size){this.stats.warmCapacityMisses++;return;}
     if(old){clearTimeout(old.timer);this.warmHistory.delete(key);}
@@ -640,7 +655,7 @@ export class OrderWallsArchiveService {
       const unused=[...this.warmHistory].find(([,entry])=>!entry.replay?.subscribers.size);
       if(!unused){this.stats.warmCapacityMisses++;return;}clearTimeout(unused[1].timer);this.warmHistory.delete(unused[0]);
     }
-    const entry:WarmEntry={presentation,compact,status,runs,segments,bytes,signature,timer:setTimeout(()=>this.expireWarm(key,entry),60000)};
+    const entry:WarmEntry={family,requestedTo,presentation,compact,status,runs,segments,bytes,signature,timer:setTimeout(()=>this.expireWarm(key,entry),60000)};
     this.warmHistory.set(key,entry);this.stats.warmAdmissions++;
   }
 
@@ -683,13 +698,13 @@ export class OrderWallsArchiveService {
     if(bytes>this.compactPreparedAboveBytes&&(!result.preparedPresentationComplete||!result.presentation)){this.stats.warmCapacityMisses++;return;}
     const presentation=bytes>this.compactPreparedAboveBytes?wallCompactPresentation(result.segments,result.presentation!):wallHistoryPresentation(result.segments,result.preparedPresentationComplete?result.presentation:undefined);
     if(!presentation||presentation.size!==count.retainedSegments){this.stats.warmInvalidMisses++;return;}
-    if(bytes<=this.compactPreparedAboveBytes){this.admitWarm(key,result.status,count.valueRuns,count.retainedSegments,bytes,presentation,undefined,signature);return;}
-    this.enqueueWarmBuild(key,result.status,signature,presentation,count);
+    if(bytes<=this.compactPreparedAboveBytes){this.admitWarm(key,warmHistoryFamily(request),request.to,result.status,count.valueRuns,count.retainedSegments,bytes,presentation,undefined,signature);return;}
+    this.enqueueWarmBuild(key,warmHistoryFamily(request),request.to,result.status,signature,presentation,count);
   }
 
   /** Separate scope prevents the asynchronous encoder from retaining the
    * completed loader result/projector through a shared closure environment. */
-  private enqueueWarmBuild(key:string,status:OrderWallStatus,signature:string|undefined,presentation:ReadonlyMap<string,OrderWallSegment>,count:{valueRuns:number;retainedSegments:number}){
+  private enqueueWarmBuild(key:string,family:string,requestedTo:number,status:OrderWallStatus,signature:string|undefined,presentation:ReadonlyMap<string,OrderWallSegment>,count:{valueRuns:number;retainedSegments:number}){
     // Two retained inputs at most, one encoder at a time. Neither visible
     // network scheduling nor fresh history publication waits for this work.
     if(this.warmBuilds.size>=2){this.stats.warmCapacityMisses++;return;}
@@ -698,7 +713,7 @@ export class OrderWallsArchiveService {
       build.abort.signal.throwIfAborted();buildAt=performance.now();const compact=await compactWallPresentation(key,[...presentation.values()],build.abort.signal);
       build.abort.signal.throwIfAborted();if(this.disposed)return;
       if(new TextEncoder().encode(JSON.stringify([status,signature])).byteLength*2+4096>256*1024)throw Error('Compact wall status capacity');
-      this.admitWarm(key,status,count.valueRuns,count.retainedSegments,compact.retainedBytes+256*1024,undefined,compact,signature);this.stats.warmCompactBuilds++;built=true;
+      this.admitWarm(key,family,requestedTo,status,count.valueRuns,count.retainedSegments,compact.retainedBytes+256*1024,undefined,compact,signature);this.stats.warmCompactBuilds++;built=true;
     }).catch(()=>{if(!build.abort.signal.aborted){this.stats.warmBuildFailures++;this.stats.warmCapacityMisses++;}}).finally(()=>{this.warmBuilds.delete(build);const end=performance.now();this.recordWarmTiming({kind:'encode',identity:key,queueMs:(buildAt??end)-queuedAt,elapsedMs:buildAt===undefined?0:end-buildAt,segments:count.retainedSegments,runs:count.valueRuns,state:built?'ready':build.abort.signal.aborted?'cancelled':'failed'});});
     this.warmBuildTail=work;
   }
@@ -731,11 +746,11 @@ export class OrderWallsArchiveService {
       const archive=update.status.archive;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
         if(priorStatus?.archive&&archive){const gaps=new Map([...priorStatus.archive.gaps,...archive.gaps].map(gap=>[`${gap.from}:${gap.to}:${gap.reason}`,gap]));
-          sub.historyStatus={...update.status,archive:{...priorStatus.archive,...archive,gaps:[...gaps.values()].slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS),gapsTruncated:priorStatus.archive.gapsTruncated||archive.gapsTruncated||gaps.size>MAX_SUBSCRIPTION_ARCHIVE_GAPS,loadedThrough:Math.max(priorStatus.archive.loadedThrough??sub.request.from,archive.loadedThrough??sub.request.from),requestComplete:false,rangeComplete:false}};}
+          sub.historyStatus={...update.status,archive:{...priorStatus.archive,...archive,gaps:[...gaps.values()].slice(-MAX_SUBSCRIPTION_ARCHIVE_GAPS),gapsTruncated:priorStatus.archive.gapsTruncated||archive.gapsTruncated||gaps.size>MAX_SUBSCRIPTION_ARCHIVE_GAPS,loadedThrough:priorStatus.archive.loadedThrough,presentationThrough:priorStatus.archive.presentationThrough,requestComplete:false,rangeComplete:false}};}
         this.publish(sub,'patch',[],this.status(sub));return;
       }
       const replay=sub.warmReplay;
-      const unchanged=update.preparedPresentationComplete&&replay?.settled&&update.preparedPresentationRevision
+      const unchanged=update.preparedPresentationComplete&&replay?.key===warmHistoryKey(job.request)&&replay.settled&&update.preparedPresentationRevision
         &&replay.entry.signature==='manifest:'+update.preparedPresentationRevision
         &&update.segments?.length===replay.entry.segments;
       if(unchanged){
@@ -863,6 +878,7 @@ function canCoalesceLiveViewport(previous: { from: number; to: number; followLiv
 }
 
 
+function warmHistoryFamily(request:OrderWallsArchiveRequest){return historyJobKey({...request,to:0});}
 function warmHistoryKey(request:OrderWallsArchiveRequest){return historyJobKey({...request,after:0,watermark:undefined,head:undefined});}
 function historyJobKey(request: OrderWallsArchiveRequest) {
   const settings = orderWallsSettings(request.settings);

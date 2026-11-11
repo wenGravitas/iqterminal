@@ -16,7 +16,8 @@ const from=1800000000000,to=from+30*3600000,settings=orderWallsSettings({enabled
 const normalized={topLevels:8,minimumNotionalEnabled:false,minimumNotionalUsd:0,minDurationMs:0};
 const profile:any={id:'binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',version:1,market:'spot',venue:'binance',instrument:'binance:spot:BTCUSDT',feed:'binance:spot:BTCUSDT:spot-diff-depth',aggregation:'native',bandPercent:10,midpointBasis:'best-observed-bid-ask',topN:10,algorithmVersion:1,schemaVersion:1,confirmationMs:0,selectionTopN:10,minimumNotionalUsd:null,exactDerivations:{bandPercent:[10],topNMax:10,minimumNotional:true,confirmation:true}};
 const oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
-function fixture(split=false){
+function fixture(split=false,end=to){
+ const to=end,oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
  const coverage:any={availableFrom:from-1000,requestedFrom:from,requestedTo:to,confirmedTo:to,gaps:[{at:from+3000,reason:'Observed disconnect'}],partial:true,status:'partial'};
  const candidate=(id:string)=>({entryId:id,side:'bid',price:'100.00000001',quantity:'2.000000000001',notional:'200.0000000001',rank:1,startedAt:from-1000,startCursor:1,startEpoch:1,startKnown:true});
  const page:any={version:1,profile,market:'spot',instrument:profile.instrument,feed:profile.feed,from,to,watermark:30,head:oldHead,
@@ -44,8 +45,8 @@ function fixture(split=false){
 function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
   const url=new URL(String(input),'http://test');calls.push(url.pathname);
-  if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:head,availableFrom:from-3600000});
-  if(url.pathname.endsWith('/discover')){const response=Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});if(new Headers(init?.headers).get('X-IQ-Wall-Resolve-Eligible')!=='1')return response;const requested={market:'spot',profile:profile.id,from:Number(url.searchParams.get('from')),to:Number(url.searchParams.get('to'))},horizon={version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...head,at:options.horizonAt??head.at},availableFrom:from-3600000},request={...requested,to:Math.max(requested.from,Math.min(requested.to,horizon.head.at+1))};return Response.json({...await response.json(),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request,horizon}});}
+  if(url.pathname.endsWith('/horizon'))return Response.json({version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:f.source.head,availableFrom:from-3600000});
+  if(url.pathname.endsWith('/discover')){const response=Response.json({state:'ready',manifest:f.canonical,source:f.source,projection:f.advertised});if(new Headers(init?.headers).get('X-IQ-Wall-Resolve-Eligible')!=='1')return response;const requested={market:'spot',profile:profile.id,from:Number(url.searchParams.get('from')),to:Number(url.searchParams.get('to'))},horizon={version:1,kind:'wall-source-horizon-v1',market:'spot',profile:profile.id,head:{...f.source.head,at:options.horizonAt??f.source.head.at},availableFrom:from-3600000},request={...requested,to:Math.max(requested.from,Math.min(requested.to,horizon.head.at+1))};return Response.json({...await response.json(),eligibility:{version:1,kind:'wall-eligible-discovery-v1',requested,request,horizon}});}
   if(url.pathname.endsWith('/source')){await options.gateSource;return Response.json(options.changed?{...f.source,token:'c'.repeat(64)}:f.source);}
   if(url.pathname.endsWith('/projection-batch')){
    const start=Number(url.searchParams.get('start')),selected=f.manifest.parts.slice(start,start+32),mode=(f.advertised.delivery as any).productTransport===1?2:(f.advertised.delivery as any).pointTransport,compact=mode===1||mode===2;expect(url.searchParams.get('version')).toBe(mode===2?'3':compact?'2':'1');
@@ -512,4 +513,43 @@ test('an older gateway falls back to its horizon route without weakening final s
  const fetcher:typeof fetch=async(input,init)=>{const path=new URL(String(input),'http://test').pathname;paths.push(path);const headers=new Headers(init?.headers);headers.delete('X-IQ-Wall-Resolve-Eligible');return io.fetcher(input,{...init,headers});};
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},eligibleHistory:true,fetcher});
  expect(result.status.archive?.requestComplete).toBe(true);expect(result.segments).toEqual(f.full.segments);expect(paths.filter(p=>p.endsWith('/discover'))).toHaveLength(2);expect(paths.filter(p=>p.endsWith('/horizon'))).toHaveLength(1);expect(paths.filter(p=>p.endsWith('/source'))).toHaveLength(1);
+});
+
+test.each([false,true])('advancing same-start warm view preserves its financial fence until fresh proof (compact=%s)',async compact=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');
+ const old=fixture(true),next=fixture(true,to+60000),seed=transport(old);let release!:()=>void;
+ const gate=new Promise<void>(r=>release=r),fresh=transport(next,{gateSource:gate});let phase=0;
+ const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+61000,compact?0:16*1024*1024);
+ const request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
+  service.subscribe('a',{...request,to:to+60000});service.subscribe('b',{...request,to:to+60000});
+  await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));
+  await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
+  const reference=old.full.segments.map(segment=>({...segment,currentSelection:false}));
+  expect([...displayedWalls(events,'a').values()]).toEqual(reference);
+  expect(events.filter(e=>e.ids?.includes('a')).at(-1).status.archive).toMatchObject({to:to+60000,loadedThrough:to,presentationThrough:to,requestComplete:false,rangeComplete:false});
+  expect(fresh.calls.some(path=>path.endsWith('/projection-batch'))).toBe(true);
+  const [key,entry]=[...(service as any).warmHistory][0];
+  (service as any).expireWarm(key,entry);expect(entry.expired).not.toBe(true);
+  service.unsubscribe('a');expect(service.diagnostics().warmReplayConsumers).toBe(1);
+  expect([...displayedWalls(events,'b').values()]).toEqual(reference);
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')).at(-1).status.archive.requestComplete).toBe(true));
+  expect([...displayedWalls(events,'b').values()].map(({currentSelection:_current,...row})=>row)).toEqual(next.full.segments);
+  expect(events.filter(e=>e.ids?.includes('b')).at(-1).status.archive.loadedThrough).toBe(to+60000);
+  expect(service.diagnostics()).toMatchObject({warmPrefixHits:2,warmValidatedReuses:0});
+  service.unsubscribe('b');expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0});
+ }finally{release();service.dispose();}
+});
+
+test('warm prefix lookup rejects changed starts, cursor fences, settings and backwards or excessive extensions',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),t=transport(f);let phase=0;
+ const service=new OrderWallsArchiveService(()=>{},(input,init)=>phase?new Promise<Response>((_resolve,reject)=>init?.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')))):t.fetcher(input,init),()=>to+1000);
+ const request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics().warmEntries).toBe(1));service.unsubscribe('seed');phase=1;
+  const changes=[{from:from+1,to:to+1},{to:to-1},{to:to+3600001},{to:to+1,after:3},{to:to+1,watermark:30},{to:to+1,settings:{...settings,topLevels:7}},{to:to+1,market:'binance-perp' as const}];
+  for(const [i,change] of changes.entries()){service.subscribe('miss'+i,{...request,...change});expect(service.diagnostics().warmReplayConsumers).toBe(0);service.unsubscribe('miss'+i);}
+  expect(service.diagnostics().warmPrefixHits).toBe(0);
+ }finally{service.dispose();}
 });
