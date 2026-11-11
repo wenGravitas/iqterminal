@@ -285,7 +285,7 @@ test('compact warm replay is shared, survives one unsubscribe and never marks fr
  }finally{release();service.dispose();}
 });
 
-test('compact cached history paints before a delayed current bootstrap and last release cancels it',async()=>{
+test('compact cached history paints and validates independently of delayed current bootstrap; last release cancels current',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],signals:AbortSignal[]=[];
  const service=new OrderWallsArchiveService(event=>events.push(event),(input,init)=>{
   if(String(input).includes('/current?')){signals.push(init!.signal as AbortSignal);return new Promise((_resolve,reject)=>init!.signal!.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));}
@@ -295,7 +295,9 @@ test('compact cached history paints before a delayed current bootstrap and last 
   service.subscribe('seed',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(service.diagnostics().warmCompactEntries).toBe(1));service.unsubscribe('seed');
   service.subscribe('live',{market:'binance-spot',from,to,settings,followLive:true});
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('live')&&e.kind==='patch').flatMap(e=>e.patches??[]).filter(p=>p.segment)).toHaveLength(f.full.segments.length));
-  expect(events.filter(e=>e.ids?.includes('live')).every(e=>e.status.archive.requestComplete===false)).toBe(true);expect(signals).toHaveLength(1);expect(signals[0]!.aborted).toBe(false);
+  expect(events.filter(e=>e.ids?.includes('live')).some(e=>e.status.archive.requestComplete===false)).toBe(true);
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('live')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(signals).toHaveLength(1);expect(signals[0]!.aborted).toBe(false);
   service.unsubscribe('live');expect(signals[0]!.aborted).toBe(true);expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0,groups:0,projections:[]});
   await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
  }finally{service.dispose();}

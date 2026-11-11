@@ -1084,6 +1084,28 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }finally{service.dispose();vi.useRealTimers();}
   });
 
+  it('refreshes a quiet canonical revision without inserting a terminal integration boundary',async()=>{
+    const oldTo=from+30*60000,h=oldTo-1,newTo=oldTo+5,start=h-9,events:any[]=[],calls:Array<{from:number;to:number;after:number}>=[];
+    const wall=candidate({entryId:'quiet-exact',price:'100.1',quantity:'1',notional:'100.1',startedAt:start,startCursor:10});
+    const bootstrap={version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),watermark:20,
+      head:{cursor:20,at:h,epoch:1,valid:true,midpoint:'100.1'},state:{bids:[wall],asks:[]},page:{after:0,nextAfter:20,hasMore:false,lastAt:h,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',coverage:{availableFrom:from-1000,confirmedTo:h,status:'complete',gaps:[]}};
+    const historical=(end:number)=>page({to:end,watermark:end===oldTo?20:30,head:{cursor:end===oldTo?20:30,at:end-1,epoch:1},
+      seed:{at:from-1,cursor:0,epoch:1,midpoint:'100.1',bids:[],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+      page:{after:0,nextAfter:end===oldTo?20:30,hasMore:false,lastAt:end-1,limit:256,sameMillisecondClosed:true},
+      patches:[archivePatch(10,start,{midpoint:'100.1',bids:side([wall])})],coverage:coverage({requestedTo:end,confirmedTo:end-1})});
+    const fetcher=async(input:RequestInfo|URL)=>{const url=new URL(String(input),'http://localhost');if(url.pathname.endsWith('/current'))return Response.json(bootstrap);
+      const end=Number(url.searchParams.get('to'));calls.push({from:Number(url.searchParams.get('from')),to:end,after:Number(url.searchParams.get('after'))});return Response.json(historical(end));};
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>oldTo),flush=async()=>{for(let i=0;i<150;i++)await Promise.resolve();};
+    try{
+      service.subscribe('quiet-revision',{...request(),to:oldTo,followLive:true});await flush();
+      service.updateViewport('quiet-revision',from,newTo,true);await flush();
+      expect(calls).toEqual([{from,to:oldTo,after:0},{from,to:newTo,after:0}]);
+      const actual=publishedSegments(events).filter(row=>row.presentationKind!=='current-snapshot').map(({currentSelection:_selected,...row})=>row);
+      const reference=new OrderWallsArchiveProjector(request().settings,from,newTo);reference.applyPage(historical(newTo));
+      expect(actual).toEqual(reference.snapshot());expect(actual).toHaveLength(1);expect(actual[0]).toMatchObject({meanUsd:100.1,durationMs:14});
+    }finally{service.dispose();}
+  });
+
   it('keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes', async () => {
     vi.useFakeTimers();
     const settings = request().settings, wideTo = from + 30 * 60_000, roll = 60_000, rolledTo = wideTo + roll;
