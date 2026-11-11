@@ -61,3 +61,20 @@ A new fixed source per market is shared by all three variants. It does not reuse
 | spot | followup | 6751, 5915, 5907, 6410, 5759 | 5915 | 6751 |
 
 The lstat follow-up e6c64be helps USD-M slightly versus cbe0bdc, but does not repair Spot:5.915s median versus4.505s baseline, maximum6.751s versus4.616s. This failure remains explicit. The committed bounded-inline strategy fbd58b03097ba06f96a6ffd7071e327e4f3b662d passes all364 backend tests,20 focused tests, typecheck and builds; its performance cohort is separate and still pending. It keeps indexes inline up to2MiB and converts before the next page after that bound is crossed, retaining every financial limit. Exact fixture comparisons include inline, sharded and mid-build conversion. No serving upgrade or gate pass is inferred.
+
+## Bounded-inline strategy cohort
+
+All20 builds over one new pinned source per market match exactly. Baseline and candidate each have five fresh output directories per market, alternating order, with identical fixed inputs. These remain unprofiled offline component samples.
+
+|Market|Version|Every sample ms|Median ms|Maximum ms|
+|---|---|---|---:|---:|
+| perpetual | baseline | 27863, 28494, 27926, 27753, 26757 | 27863 | 28494 |
+| perpetual | candidate | 21617, 22069, 21551, 22090, 22153 | 22069 | 22153 |
+| spot | baseline | 4564, 4193, 4337, 4651, 3945 | 4337 | 4651 |
+| spot | candidate | 5225, 4911, 4651, 5743, 4947 | 4947 | 5743 |
+
+USD-M improves about20.8% (27.863s to22.069s median). Spot remains about14.1% slower (4.337s to4.947s median; maximum4.651s to5.743s), so **the Spot regression is not resolved**. The candidate uses48 V3 pages per USD-M build and no V3 pages per Spot build. Final output and extension prefix match their exact baseline bytes in every case. No chart gate passes.
+
+All20 terminal containers exit0 without OOM and respect the fixed resource/mount bounds. Original API plus seven protected services and the serving worker/gateway identities remain unchanged. The cohort releases all leases; postflight control state is retained. Read-only host CPU/load/memory/swap samples cover only part of this cohort, labelled as a partial window. The Pi host is aarch64 Raspberry Pi5 ModelB Rev1.0 with8GiB nominal RAM; the separately sampled staging host is not its client route. Monotonic times are interpreted only within each host. These samples do not prove foreground rendering, request latency or current ACK continuity. Both owned sampler processes terminate explicitly.
+
+One separate CPU-profiled Spot build follows the completed comparison. It matches every financial output and source token. Its timing is excluded from the cohort. V8 sample attribution includes cgroup throttle/idle/GC and cannot be treated as exclusive CPU durations. Position ticks identify avoidable inline threshold serialization (41), rebuilding the final ordered entry object (120), and materialization/copying; canonical decode/replay hashing remain large. A follow-up reuses the exact size counter and keeps monotonic entry objects with the incumbent sort fallback. Its performance validation is pending; no claim is made that it removes the measured regression. The raw profile, executed fbd58b0 bundle and reproducible analyzer are retained.

@@ -1,3 +1,21 @@
+## Latest bounded-index comparison: backend fbd58b0
+
+All364 backend tests,20 focused tests, typecheck/build pass. Across three cohorts,
+70 real-canonical projection builds preserve every financial checkpoint, prefix,
+manifest and compressed part. The final five-pair cohort improves USD-M component
+median27.863s to22.069s, but Spot remains slower4.337s to4.947s. The Spot regression
+is **unresolved**. A separate exact-output CPU profile identifies redundant inline
+size serialization and ordered-object rebuilding; a follow-up is under validation.
+[Every sample, exact build, raw profile and limits](wall-projection-index-v3-results.md).
+
+Serving remains worker13730f7/API71f62d2; V3 is not installed. Both latest30h wall
+chart gates remain failed. Snapshot/restore, exact client-tail composition,
+current/warm/concurrency/heap and foreground Pi acceptance remain open. Current
+footprint candidates require recertification. Fixed-head evidence now includes
+fresh115 focused frontend tests, typecheck/build and a headless protocol probe;
+[scope and withheld continuation counterexamples](wall-fixed-head-boundary-results.md).
+The release remains **INCOMPLETE**. No production deployment or main merge occurs.
+
 ## Latest private index check: backend cbe0bdc / e6c64be
 
 The closed-entry index now uses bounded authenticated immutable shards during
