@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-perp-15m": {
+      "from": 1794287700000,
+      "to": 1794395700000,
+      "sourceFrom": 1794286800000,
+      "sourceTo": 1794396600000,
+      "sourceToken": "b44adda4b39d70bd5c7277df7e9cf77f67371f8555b5426b5278100c2e0cc830",
+      "segments": 18780,
+      "valueRuns": 82355,
+      "gaps": 2,
+      "financialHash": "659f6a93329ce369fa5a51e5f36af237b2fca045b5ec8c357793afd3be434416",
+      "evidence": "readonly-r1/reference.jsonl"
+    }
+  }
+}
