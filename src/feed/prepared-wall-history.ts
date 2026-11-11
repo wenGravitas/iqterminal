@@ -2,7 +2,8 @@ import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
 import {historyHttpError} from './history-http-error';
 import {acquireWallBatch} from './prepared-wall-batch';
 import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wall-projection';
-import {type OrderWallsProjectionSettings,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
+import {type OrderWallsProjectionSettings,type OrderWallsArchiveProfile,type OrderWallSegment,type OrderWallsArchiveCoverage} from '../shared/order-walls-projection';
+import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import {historyScheduler} from './history-scheduler';
 import {discoverPreparedWallAdmission,type WallPreparationProgress} from './prepared-wall-admission';
 import type {OrderWallsArchivePage} from './order-walls-archive';
@@ -71,7 +72,17 @@ export function rebasePreparedWallPage(raw:any,manifest:Manifest,part:Part,targe
   page:{...raw.page,nextAfter:raw.page.hasMore?raw.page.nextAfter:target.cursor}} as OrderWallsArchivePage;
 }
 export class PreparedWallSourceChangedError extends Error {constructor(){super('Prepared wall source changed or cannot be revalidated; restart revision with displayed history retained');this.name='PreparedWallSourceChangedError';}}
-export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
+export type PreparedWallReuseLookup=(revision:string,segments:number)=>Promise<ReadonlyMap<string,OrderWallSegment>|undefined>|undefined;
+interface ReusedProjection {projector?:undefined;presentation:ReadonlyMap<string,OrderWallSegment>;presentationRevision:string;coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile;head:Head;confirmedAt:number;midpoint:string|null;parts:0;bytes:0}
+export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;
+ reuseProjection:(settings:OrderWallsProjectionSettings,lookup:PreparedWallReuseLookup,validateProfile:(profile:OrderWallsArchiveProfile)=>void)=>Promise<ReusedProjection|null>;
+ readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
+function waitCached<T>(value:Promise<T>,signal:AbortSignal):Promise<T>{
+ signal.throwIfAborted();return new Promise((resolve,reject)=>{
+  const cancel=()=>{signal.removeEventListener('abort',cancel);reject(signal.reason);};signal.addEventListener('abort',cancel,{once:true});
+  void value.then(result=>{signal.removeEventListener('abort',cancel);resolve(result);},error=>{signal.removeEventListener('abort',cancel);reject(error);});
+ });
+}
 /** At most two immutable parts are prefetched. Every read uses the shared
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
@@ -125,7 +136,24 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   },priority);
   pending.set(index,promise);void promise.catch(()=>{});
  }
- return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},readProjection:async(settings,onProgress,validateProfile)=>{
+ return {sourceToken:source.token,dispose:()=>{abort.abort();lease?.release();pending.clear();currentBatch?.handle.release();currentBatch=undefined;},reuseProjection:async(settings,lookup,validateProfile)=>{
+  assertActive();const m=found.projection?.manifest;
+  const normalized={topLevels:settings.topLevels,minimumNotionalEnabled:settings.minimumNotionalEnabled,minimumNotionalUsd:settings.minimumNotionalEnabled?settings.minimumNotionalUsd:0,minDurationMs:settings.minDurationMs};
+  if(!m||m.core!==WALL_PROJECTION_CORE_SHA256||JSON.stringify(m.settings)!==JSON.stringify(normalized))return null;
+  if(m.active?.valueHistoryLimited||m.active?.episodeHistoryLimited)return null;
+  if(m.version!==2||m.complete!==true||m.sourceKey!==manifest.key||m.sourceToken!==source.token||m.profile?.id!==request.profile||m.profile.market!==request.market
+    ||m.active?.from!==request.from||m.active.to!==request.to||m.active.cursor!==manifest.watermark||m.active.epoch!==manifest.head.epoch
+    ||!Array.isArray(m.closed)||!Array.isArray(m.active.segments)||m.closed.length+m.active.segments.length>100000)throw Error('Invalid prepared wall reuse identity');
+  validateProfile(m.profile);
+  // The exact complete manifest hash must match an already authenticated cache.
+  // A cache miss uses the ordinary full importer and all its structural checks.
+  const revision=await hash(new TextEncoder().encode(JSON.stringify(m))),cached=lookup(revision,m.closed.length+m.active.segments.length);
+  if(!cached)return null;
+  const validation=validateRevision();void validation.catch(()=>{});
+  const [presentation]=await Promise.all([waitCached(cached,consumer),validation]);assertActive();
+  if(!presentation||presentation.size!==m.closed.length+m.active.segments.length)return null;
+  return {presentation,presentationRevision:revision,coverage:m.coverage,profile:m.profile,head:target!,confirmedAt:m.active.confirmedTo,midpoint:m.active.midpoint,parts:0,bytes:0};
+ },readProjection:async(settings,onProgress,validateProfile)=>{
   const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
    from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   assertActive();return result?{...result,head:target!}:null;

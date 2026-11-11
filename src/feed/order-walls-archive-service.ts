@@ -107,7 +107,7 @@ interface CurrentGroup {
 
 interface WarmTiming {kind:'encode'|'replay';identity:string;queueMs:number;elapsedMs:number;firstContentMs?:number;segments:number;runs:number;state:'ready'|'cancelled'|'failed'}
 interface WarmEntry {presentation?:ReadonlyMap<string,OrderWallSegment>;compact?:CompactWallPresentation;status:OrderWallStatus;bytes:number;runs:number;segments:number;signature?:string;expired?:boolean;replay?:WarmReplay;timer:ReturnType<typeof setTimeout>}
-interface WarmReplay {key:string;entry:WarmEntry;abort:AbortController;presentation:Map<string,OrderWallSegment>;subscribers:Set<Subscription>;settled:boolean;runs:number}
+interface WarmReplay {key:string;entry:WarmEntry;abort:AbortController;presentation:Map<string,OrderWallSegment>;subscribers:Set<Subscription>;settled:boolean;runs:number;ready?:Promise<void>}
 /** Worker-owned adapter for fixed-profile history and the current selected-profile tail. */
 export class OrderWallsArchiveService {
   private readonly subscriptions = new Map<string, Subscription>();
@@ -259,7 +259,8 @@ export class OrderWallsArchiveService {
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
     return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
-      historyJobs: this.historyJobs.size,readerControl:wallReadControlScheduler.diagnostics(),
+      historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
+      historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: 0,
@@ -504,6 +505,7 @@ export class OrderWallsArchiveService {
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
     void loadOrderWallsArchive({ eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+      reusePreparedPresentation:(revision,count)=>this.reusePreparedPresentation(job,revision,count),
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
       job.latest = update; job.resume = update.resume;
@@ -571,7 +573,7 @@ export class OrderWallsArchiveService {
     sub.historyStatus={...entry.status,archive:{...entry.status.archive!,state:'loading',requestComplete:false,rangeComplete:false,loadedThrough:active.settled?entry.status.archive!.loadedThrough:sub.request.from,presentationThrough:entry.status.archive!.presentationThrough??entry.status.archive!.loadedThrough,reason:'Cached history visible; validating the current revision.'}};
     if(started&&entry.compact)this.warmReplays.add(active);
     this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));
-    if(started&&entry.compact){if(active.abort.signal.aborted){this.warmReplays.delete(active);return;}const replayAt=performance.now();let firstContentMs:number|undefined,decodedSegments=0;void replayCompactWallPresentation(entry.compact,key,active.abort.signal,segments=>{
+    if(started&&entry.compact){if(active.abort.signal.aborted){this.warmReplays.delete(active);return;}const replayAt=performance.now();let firstContentMs:number|undefined,decodedSegments=0;active.ready=replayCompactWallPresentation(entry.compact,key,active.abort.signal,segments=>{
       if(firstContentMs===undefined&&segments.length)firstContentMs=performance.now()-replayAt;decodedSegments+=segments.length;
       for(const segment of segments){active.presentation.set(segment.id,segment);active.runs+=segment.valueRuns.length;}
       for(const viewer of active.subscribers)if(viewer.warmReplay===active&&viewer.cachedHistory&&this.subscriptions.get(viewer.id)===viewer){
@@ -593,6 +595,20 @@ export class OrderWallsArchiveService {
     const replay=sub.warmReplay;if(!replay)return;sub.warmReplay=undefined;replay.subscribers.delete(sub);
     if(!replay.subscribers.size){replay.abort.abort();replay.presentation.clear();if(replay.entry.replay===replay)replay.entry.replay=undefined;
       if(replay.entry.expired&&this.warmHistory.get(replay.key)===replay.entry){clearTimeout(replay.entry.timer);this.warmHistory.delete(replay.key);}}
+  }
+
+  private reusePreparedPresentation(job:SharedHistoryJob,revision:string,count:number){
+    const replay=[...job.subscribers].map(sub=>sub.warmReplay).find(active=>active?.key===warmHistoryKey(job.request)
+      &&!active.entry.expired&&active.entry.signature==='manifest:'+revision&&active.entry.segments===count);
+    if(!replay)return;
+    return (replay.ready??Promise.resolve()).then(()=>{
+      job.abort.signal.throwIfAborted();
+      if(!replay.settled||replay.abort.signal.aborted||replay.entry.expired||replay.entry.signature!=='manifest:'+revision
+        ||replay.presentation.size!==count||replay.runs!==replay.entry.runs)return;
+      // Copy only the container: releaseWarmReplay clears its source map.
+      // Authenticated immutable rows and exact point arrays remain shared.
+      return new Map(replay.presentation);
+    });
   }
 
   /** Only bounded subscription metadata is inspected; no closed segments,
@@ -651,6 +667,11 @@ export class OrderWallsArchiveService {
 
   private rememberHistory(request:OrderWallsArchiveRequest,result:OrderWallsArchiveResult){
     const archive=result.status.archive,projector=result.projector;
+    if(!this.disposed&&result.preparedRevisionReused&&archive?.requestComplete&&archive.exact){
+      const key=warmHistoryKey(request),entry=this.warmHistory.get(key);
+      if(entry&&!entry.expired&&entry.signature==='manifest:'+result.preparedPresentationRevision){entry.status=result.status;clearTimeout(entry.timer);entry.timer=setTimeout(()=>this.expireWarm(key,entry),60000);this.stats.warmRevisionReuses++;}
+      return;
+    }
     if(this.disposed||!projector||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume)return;
     const key=warmHistoryKey(request);
     const signature=result.preparedPresentationRevision?'manifest:'+result.preparedPresentationRevision:result.preparedSourceToken&&result.presentation?JSON.stringify([result.preparedSourceToken,result.segments.filter(segment=>result.presentation!.get(segment.id)?.end===null).map(({valueRuns:_runs,...header})=>header)]):undefined;
@@ -702,7 +723,9 @@ export class OrderWallsArchiveService {
     if(forceValidatedSnapshot){sub.cachedHistory=false;this.releaseWarmReplay(sub);}
     const priorStatus=sub.historyStatus;sub.historyStatus = update.status;
     if(!sub.cachedHistory&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable')this.releaseWarmReplay(sub);
-    let alreadyPresented=!forceValidatedSnapshot&&update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector&&(sub.historyPresentation||sub.historyProjector===update.projector));
+    let alreadyPresented=!forceValidatedSnapshot&&update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector
+      ?sub.historyPresentation||sub.historyProjector===update.projector
+      :update.preparedRevisionReused&&update.presentation&&sub.historyPresentation===update.presentation);
     if(sub.cachedHistory){
       const archive=update.status.archive;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){

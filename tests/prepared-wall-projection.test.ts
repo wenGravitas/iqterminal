@@ -388,11 +388,42 @@ test('identical complete prepared manifest validates warm rows without a second 
    expect(events.slice(before).filter(e=>e.ids?.includes('warm')).every(e=>e.kind==='patch'&&e.patches.length===0)).toBe(true);
    expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot')).toHaveLength(snapshots);
    expect([...displayedWalls(events,'warm').values()]).toEqual(displayed);expect(service.diagnostics().warmValidatedReuses).toBe(1);
+   expect(fresh.calls).toEqual(['/market-data/v2/history/walls/discover','/market-data/v2/history/walls/source']);
+   expect(service.diagnostics().projections).toHaveLength(0);
    // A new viewer still needs a complete authoritative shared snapshot.
    service.subscribe('late',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('late')).at(-1)?.segments).toHaveLength(f.full.segments.length));
    service.unsubscribe('late');service.unsubscribe('warm');expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0,historyConsumers:0});
   }finally{release();service.dispose();}
  }
+});
+
+test('cached manifest reuse retains exact rows through failed source proof and a successful explicit Retry',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),seed=transport(f),bad=transport(f,{changed:true}),recovered=transport(f);let phase=0;
+ const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase===0?seed:phase===1?bad:recovered).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
+  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.message).toMatch(/source changed/));
+  expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.requestComplete).toBe(false);
+  expect(displayedWalls(events,'warm').size).toBe(f.full.segments.length);expect(bad.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
+  const before=[...displayedWalls(events,'warm').values()];phase=2;service.retry('warm');
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect([...displayedWalls(events,'warm').values()]).toEqual(before);
+  expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.message??'').not.toMatch(/source changed/);
+  expect(recovered.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);
+ }finally{service.dispose();}
+});
+
+test('a failed cached replay falls back to full authenticated prepared records',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),t.fetcher,()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
+ let spy:{mockRestore:()=>unknown}|undefined;
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');const before=t.calls.length;
+  spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockRejectedValueOnce(Error('Corrupt cached presentation'));
+  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(t.calls.slice(before).some(path=>path.endsWith('/projection-batch'))).toBe(true);
+  expect(service.diagnostics().warmDecodeFailures).toBe(1);
+  expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual([...f.full.segments].sort((a,b)=>a.id.localeCompare(b.id)));
+ }finally{service.dispose();spy?.mockRestore();}
 });
 
 test('changed presentation metadata with the same source token cannot reuse warm geometry',async()=>{
@@ -415,11 +446,12 @@ test('an unfinished warm replay cannot certify complete presentation from a matc
  try{
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');
   spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImplementationOnce(async(...args)=>{await gate;return original.apply(OrderWallsArchiveProjector,args);});
-  service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
-  expect(service.diagnostics().warmValidatedReuses).toBe(0);const reference=f.full.segments;
+  const before=t.calls.length;service.subscribe('warm',request);await vi.waitFor(()=>expect(t.calls.at(-1)).toMatch(/\/source$/));
+  expect(events.filter(e=>e.ids?.includes('warm')).every(e=>e.status.archive.requestComplete===false)).toBe(true);
+  expect(t.calls.slice(before).some(path=>path.endsWith('/projection-batch'))).toBe(false);
+  release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
+  expect(service.diagnostics().warmValidatedReuses).toBe(1);const reference=f.full.segments.map(segment=>({...segment,currentSelection:false}));
   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(reference.sort((a,b)=>a.id.localeCompare(b.id)));
-  const before=events.length;release();await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
-  expect(events.slice(before).some(e=>e.patches?.some((p:any)=>p.segment))).toBe(false);
  }finally{release();service.dispose();spy?.mockRestore();}
 });
 

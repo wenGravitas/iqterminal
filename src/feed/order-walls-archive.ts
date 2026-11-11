@@ -224,6 +224,7 @@ export interface OrderWallsArchiveUpdate {
   preparedSourceToken?:string;
   /** SHA256 of the entire validated selected manifest, including part hashes. */
   preparedPresentationRevision?:string;
+  preparedRevisionReused?:true;
 }
 
 export interface OrderWallsArchiveCurrentPollerOptions {
@@ -260,6 +261,7 @@ export interface OrderWallsArchiveLoadOptions {
   eligibleHistory?:boolean;
   /** Pre-fetched descriptor still passes all normal source/manifest validation. */
   preparedDiscovery?:unknown;
+  reusePreparedPresentation?:import('./prepared-wall-history').PreparedWallReuseLookup;
   /** Job-bound metadata survives a failed build before any projector exists. */
   eligibleRange?:{to:number;horizonAt:number};
   onEligibility?:(range:{to:number;horizonAt:number})=>void;
@@ -452,7 +454,9 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
   try {
   if(prepared&&!after&&!prior&&!options.initialProjector){
     let painted=false;
-    const projected=await prepared.readProjection(settings,progress=>{
+    const validateProjectionProfile=(candidate:OrderWallsArchiveProfile)=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');};
+    const reused=options.reusePreparedPresentation?await prepared.reuseProjection(settings,options.reusePreparedPresentation,validateProjectionProfile):null;
+    const projected=reused??await prepared.readProjection(settings,progress=>{
       const archive={...archiveStatus(request,availability,'loading'),exact:true,requestComplete:false,rangeComplete:false,loadedThrough:request.from,presentationThrough:progress.presentationThrough};
       const status=statusForArchive(archive,'loading','Loading validated prepared wall records; full range validation pending.');
       const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:progress.segments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:progress.segments}),
@@ -462,16 +466,16 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
         requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
         responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:progress.metrics.validationMs,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
       bytes=progress.bytes;
-    },candidate=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');});
+    },validateProjectionProfile);
     if(projected){
       const head=projected.head,coverage=projected.coverage;
       validatePage({version:1,profile:projected.profile,market:projected.profile.market,instrument:projected.profile.instrument,feed:projected.profile.feed,from:queryFrom,to:request.to,watermark:head.cursor,head,
         page:{after:0,nextAfter:head.cursor,hasMore:false,lastAt:coverage.confirmedTo??queryFrom,limit:pageLimit,sameMillisecondClosed:true},patches:[],coverage},profile,queryRequest,0,watermark,watermarkHead);
       const extent=coverage.availableFrom!==null&&coverage.availableFrom<=request.from&&coverage.confirmedTo!==null&&coverage.confirmedTo>=request.to-1;
       const state=coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
-      const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector.confirmedAt,
-        profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,midpoint:projected.projector.selectedState().midpoint};
-      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector.snapshot(),projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
+      const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector?projected.projector.confirmedAt:projected.confirmedAt,
+        profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,midpoint:projected.projector?projected.projector.selectedState().midpoint:projected.midpoint};
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector?projected.projector.snapshot():[...projected.presentation.values()],projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,...(reused?{preparedRevisionReused:true as const}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
       options.onUpdate?.(result);return result;
     }
   }
