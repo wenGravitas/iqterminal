@@ -1,0 +1,54 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-projection.test.ts (30 tests | 1 failed) 2931ms
+   × an unfinished warm replay cannot certify complete presentation from a matching revision 114ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-projection.test.ts > an unfinished warm replay cannot certify complete presentation from a matching revision
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,10 @@
+  [
+    {
+      "archiveEntryId": "A",
+      "censoredReason": "Observed disconnect",
++     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 2000,
+      "end": 1800000001000,
+      "endKnown": false,
+      "endReason": "censored",
+@@ -41,10 +42,11 @@
+      ],
+      "valueRunsTruncated": false,
+    },
+    {
+      "archiveEntryId": "B",
++     "currentSelection": false,
+      "detectionMode": "top-levels",
+      "durationMs": 107996000,
+      "end": null,
+      "endKnown": false,
+      "endReason": null,
+
+ ❯ tests/prepared-wall-projection.test.ts:423:93
+    421|   release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includ…
+    422|   expect(service.diagnostics().warmValidatedReuses).toBe(1);const refe…
+    423|   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.…
+       |                                                                                             ^
+    424|  }finally{release();service.dispose();spy?.mockRestore();}
+    425| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 85 passed (86)
+   Start at  12:49:48
+   Duration  5.87s (tests 77%, transform 19%, import 3%)
+

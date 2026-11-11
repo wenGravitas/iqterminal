@@ -1,0 +1,199 @@
+{
+  "scope": "Headless Pi open/close study over a fixed full30h reference. Warm eligibility derives from the preceding closed cache, never from successful timings. Initial and unseeded cycles remain in samples. No foreground, pan/switch/concurrent-live or retained-heap plateau acceptance is inferred.",
+  "samples": [
+    {
+      "cycle": 0,
+      "naturalWarmEligible": false,
+      "forcedCollection": false,
+      "firstMs": null,
+      "completeMs": null,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 0,
+      "reusedValidatedManifest": false,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        2090428
+      ],
+      "closedWorkerHeapBytes": [
+        2139668
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 1,
+      "naturalWarmEligible": false,
+      "forcedCollection": false,
+      "firstMs": 9832.199999999255,
+      "completeMs": null,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": false,
+      "projectionBatchRequests": 4,
+      "workerHeapBytes": [
+        35710104
+      ],
+      "closedWorkerHeapBytes": [
+        36711940
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 2,
+      "naturalWarmEligible": false,
+      "forcedCollection": false,
+      "firstMs": 3942.60000000149,
+      "completeMs": 12107.20000000298,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": false,
+      "projectionBatchRequests": 4,
+      "workerHeapBytes": [
+        61768628
+      ],
+      "closedWorkerHeapBytes": [
+        62530176
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 3,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 1957.5,
+      "completeMs": 8105.800000000745,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        49906260
+      ],
+      "closedWorkerHeapBytes": [
+        50370544
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 4,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 1696.199999999255,
+      "completeMs": 9732.599999997765,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        44182168
+      ],
+      "closedWorkerHeapBytes": [
+        44792832
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 5,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 3079.60000000149,
+      "completeMs": 6194.699999999255,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        48331596
+      ],
+      "closedWorkerHeapBytes": [
+        48942492
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 6,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 527.6999999992549,
+      "completeMs": 6181,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        38271976
+      ],
+      "closedWorkerHeapBytes": [
+        38745992
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 7,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 288.70000000298023,
+      "completeMs": 4166.300000000745,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        53306812
+      ],
+      "closedWorkerHeapBytes": [
+        53929260
+      ],
+      "warmPass": false
+    },
+    {
+      "cycle": 8,
+      "naturalWarmEligible": true,
+      "forcedCollection": false,
+      "firstMs": 398.30000000074506,
+      "completeMs": 6030.20000000298,
+      "environmentVerified": true,
+      "full30hSpanVerified": true,
+      "completePaintAndNativeCoverage": false,
+      "sourceValidationResponses": 1,
+      "reusedValidatedManifest": true,
+      "projectionBatchRequests": 0,
+      "workerHeapBytes": [
+        49723596
+      ],
+      "closedWorkerHeapBytes": [
+        50337020
+      ],
+      "warmPass": false
+    }
+  ],
+  "warmSampleCount": 6,
+  "warmFirstSamplesMs": [
+    1957.5,
+    1696.199999999255,
+    3079.60000000149,
+    527.6999999992549,
+    288.70000000298023,
+    398.30000000074506
+  ],
+  "warmFirstMedianMs": 1111.949999999255,
+  "warmFirstMaximumMs": 3079.60000000149,
+  "warmUseful1sGate": "FAIL",
+  "retainedHeapPlateauGate": "INCOMPLETE",
+  "otherReleaseGates": "Not certified by this lifecycle study"
+}

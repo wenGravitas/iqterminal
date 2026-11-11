@@ -1,0 +1,20 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 11.733951047062874, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32025.007493793964, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64042.738444171846, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96056.2963699922, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128075.41452627629, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160189.53467998654, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 192310.52606459707, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 57, "elapsedMs": 224321.41743600368, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 65, "elapsedMs": 256334.0069623664, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 73, "elapsedMs": 288349.6557911858, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 81, "elapsedMs": 320364.05487544835, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 89, "elapsedMs": 352377.74321623147, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 97, "elapsedMs": 384392.3494871706, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 105, "elapsedMs": 416412.02870197594, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 113, "elapsedMs": 448423.63857477903, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 121, "elapsedMs": 480603.7389682606, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 129, "elapsedMs": 512625.4429165274, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 137, "elapsedMs": 544637.8531344235, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "renewed", "turn": 145, "elapsedMs": 576651.8323011696, "consumers": ["stage168-lifecycle-perpetual"]}
+{"phase": "released", "elapsedMs": 600663.2335381582, "consumers": ["stage168-lifecycle-perpetual"]}

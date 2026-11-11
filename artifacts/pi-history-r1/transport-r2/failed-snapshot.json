@@ -1,0 +1,7 @@
+{
+  "file": "artifacts/pi-history-r1/transport-r2/candidate-retainer-worker.heapsnapshot",
+  "bytes": 167771907,
+  "sha256": "98cb3eecc69c7d50dac52c61c35a68550a90434e97ba167d84baedd22f58f605",
+  "state": "Incomplete JSON; diagnostic stopped at160MiB cap and the owned browser closed. Raw partial snapshot remains local and is excluded from committed evidence.",
+  "alternative": "Owned-worker Runtime.queryObjects metadata probe, validated against a separate one-object scratch worker; candidate-owner-probe.jsonl. These observations did not verify that all history jobs were settled."
+}
