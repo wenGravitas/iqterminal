@@ -688,3 +688,23 @@ it('keeps overlapping Top Levels episode IDs across an earlier pan without mergi
  expect(episodes().map(s=>s.id)).toEqual(before.map(s=>s.id));expect(episodes()[0]!.start).toBe(viewportFrom-100000);
  expect(episodes().map(s=>s.endReason)).toEqual(['rank-exit','rank-exit']);service.dispose();
 });
+
+it('keeps selected snapshots out of the canonical history budget and bounds their stale value references',()=>{
+  const chart=makeChartHarness();
+  const historical:OrderWallSegment={id:'canonical-closed',archiveEntryId:'canonical-source',epoch:1,side:'bid',price,start:base-1000,end:base,
+    peakUsd:1000,meanUsd:1000,durationMs:1000,percentile:null,scopePartial:false,startKnown:true,detectionMode:'top-levels',rank:1,
+    valueRuns:[{at:base-1000,usd:1000,percentile:null,rank:1,quantityExact:'0.02000000',notionalExact:'1000.00000000'}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true};
+  const selected:OrderWallSegment={...historical,id:'current-point',archiveEntryId:'current-checkpoint',presentationKind:'current-snapshot',currentSelection:true,
+    start:base,end:null,startKnown:false,durationMs:0,endReason:null,endKnown:false,valueRuns:[{...historical.valueRuns[0]!,at:base}]};
+  chart.setOrderWallSnapshot([historical,selected],{state:'live',lastConfirmedAt:base});
+  expect(chart.orderWallsDiagnostics()).toMatchObject({archiveSegments:1,archiveValueRuns:1,directSegments:1,directValueRuns:1});
+  const source=chart.orderWallSegments.get(historical.id),before=JSON.stringify(source),runs=source.valueRuns;
+  for(let i=1;i<=7000;i++)chart.patchOrderWalls([{id:selected.id,segment:{...selected,start:base+i,valueRuns:[{...selected.valueRuns[0]!,at:base+i}]},replaceValueRuns:true}],{state:'live',lastConfirmedAt:base+i});
+  expect(JSON.stringify(chart.orderWallSegments.get(historical.id))).toBe(before);
+  expect(chart.orderWallSegments.get(historical.id).valueRuns).toBe(runs);
+  expect(chart.orderWallArchiveValueQueue).toHaveLength(1);
+  expect(chart.orderWallValueQueue.length).toBeLessThanOrEqual(4096);
+  expect(chart.orderWallsDiagnostics()).toMatchObject({archiveSegments:1,archiveValueRuns:1,directSegments:1,directValueRuns:1,valueHistoryLimited:false,episodeHistoryLimited:false});
+  chart.setOrderWallSnapshot([],{state:'loading'});
+  expect(chart.orderWallArchiveValueQueue).toHaveLength(0);expect(chart.orderWallValueQueue).toHaveLength(0);
+});

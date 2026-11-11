@@ -90,7 +90,7 @@ function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
 
 interface ViewAnchor { fromTime: number; toTime: number }
 let drawingToolsRegistered = false;
-function isArchiveOrderWall(segment:OrderWallSegment){return typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
+function isArchiveOrderWall(segment:OrderWallSegment){return segment.presentationKind!=='current-snapshot'&&typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
 
 /** Owns the chart engine while routing its frames through the shared visible-panel scheduler. */
 export class OpenAlgoCandleChart {
