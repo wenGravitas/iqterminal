@@ -260,7 +260,7 @@ export class OrderWallsArchiveService {
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
     return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
-      historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
+      historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: 0,
@@ -673,13 +673,13 @@ export class OrderWallsArchiveService {
       if(entry&&!entry.expired&&entry.signature==='manifest:'+result.preparedPresentationRevision){entry.status=result.status;clearTimeout(entry.timer);entry.timer=setTimeout(()=>this.expireWarm(key,entry),60000);this.stats.warmRevisionReuses++;}
       return;
     }
-    if(this.disposed||!projector||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume)return;
+    if(this.disposed||(!projector&&!result.preparedPresentationComplete)||!archive?.requestComplete||!archive.exact||archive.state==='unavailable'||result.resume||result.status.valueHistoryLimited||result.status.episodeHistoryLimited)return;
     const key=warmHistoryKey(request);
     const signature=result.preparedPresentationRevision?'manifest:'+result.preparedPresentationRevision:result.preparedSourceToken&&result.presentation?JSON.stringify([result.preparedSourceToken,result.segments.filter(segment=>result.presentation!.get(segment.id)?.end===null).map(({valueRuns:_runs,...header})=>header)]):undefined;
     const prior=this.warmHistory.get(key);
     if(signature&&prior?.signature===signature&&!prior.expired){prior.status=result.status;clearTimeout(prior.timer);prior.timer=setTimeout(()=>this.expireWarm(key,prior),60000);this.stats.warmRevisionReuses++;return;}
     for(const build of this.warmBuilds)if(build.key===key)build.abort.abort();
-    const count=projector.diagnostics(),bytes=count.valueRuns*256+count.retainedSegments*512;
+    const count=projector?.diagnostics()??{retainedSegments:result.segments.length,valueRuns:result.segments.reduce((n,segment)=>n+segment.valueRuns.length,0)},bytes=count.valueRuns*256+count.retainedSegments*512;
     if(bytes>this.compactPreparedAboveBytes&&(!result.preparedPresentationComplete||!result.presentation)){this.stats.warmCapacityMisses++;return;}
     const presentation=bytes>this.compactPreparedAboveBytes?wallCompactPresentation(result.segments,result.presentation!):wallHistoryPresentation(result.segments,result.preparedPresentationComplete?result.presentation:undefined);
     if(!presentation||presentation.size!==count.retainedSegments){this.stats.warmInvalidMisses++;return;}
@@ -704,7 +704,7 @@ export class OrderWallsArchiveService {
   }
 
   private publishSharedHistorySnapshot(sub: Subscription, update: OrderWallsArchiveUpdate) {
-    const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? (update.presentation?[...update.presentation.values()]:update.segments) ?? [], patches: undefined };
+    const replay: OrderWallsArchiveUpdate = { ...update, kind: 'snapshot', segments: update.projector?.snapshot() ?? update.segments ?? (update.presentation?[...update.presentation.values()]:[]), patches: undefined };
     this.publishSharedHistoryUpdate(sub, sub.historyJob!, replay, true);
   }
 
@@ -726,7 +726,7 @@ export class OrderWallsArchiveService {
     if(!sub.cachedHistory&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable')this.releaseWarmReplay(sub);
     let alreadyPresented=!forceValidatedSnapshot&&update.preparedPresentationComplete&&!sub.cachedHistory&&Boolean(update.projector
       ?sub.historyPresentation||sub.historyProjector===update.projector
-      :update.preparedRevisionReused&&update.presentation&&sub.historyPresentation===update.presentation);
+      :update.presentation&&sub.historyPresentation===update.presentation);
     if(sub.cachedHistory){
       const archive=update.status.archive;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){

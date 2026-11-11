@@ -39,7 +39,7 @@ function fixture(split=false){
  const canonicalText=JSON.stringify(page),canonicalPart={index:0,hash:hash(canonicalText),canonicalHash:hash(canonicalText),bytes:Buffer.byteLength(canonicalText),after:1,nextAfter:30};
  const canonical:any={version:5,key:sourceKey,complete:true,watermark:30,head:oldHead,after:30,request:{market:'spot',profile:profile.id,from,to,watermark:30,sourceRevision:hash(JSON.stringify([canonicalPart.canonicalHash]))},parts:[canonicalPart],sourceProof:{...source,watermark:30,head:oldHead}};
  const advertised={manifest,delivery:{version:1,maxParts:32,maxDecodedBytes:8*1024*1024}};
- return {manifest,texts,source,canonical,advertised,full,page,context:{sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
+ return {manifest,texts,source,canonical,advertised,full,page,context:{restoreProjector:true,sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
 }
 function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;changed?:boolean;corrupt?:boolean;gateSource?:Promise<void>;tailGate?:Promise<void>;firstGate?:Promise<void>}={}){
  const calls:string[]=[];const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
@@ -61,8 +61,27 @@ test('progressive chunks validate without throwaway restores and final restore r
  try{
   const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},()=>{});
   expect(restore).toHaveBeenCalledTimes(1);
-  expect(result?.projector.checkpoint()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).checkpoint());
+  expect(result?.projector!.checkpoint()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).checkpoint());
  }finally{restore.mockRestore();}
+});
+test('ordinary prepared completion validates the full canonical union without constructing mutable queues',async()=>{
+ const f=fixture(true),t=transport(f),{restoreProjector:_referenceOnly,...context}=f.context;
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively'),validate=vi.spyOn(OrderWallsArchiveProjector,'validateCheckpointCooperatively');
+ try{
+  const result=await readPreparedWallProjection(f.advertised,{...context,fetcher:t.fetcher,signal:new AbortController().signal,outputHead:{cursor:head.cursor,epoch:head.epoch}},()=>{});
+  expect(restore).not.toHaveBeenCalled();expect(result?.projector).toBeUndefined();
+  const complete=validate.mock.calls.find(([value])=>(value as any).segments.length===f.full.segments.length);
+  expect(complete?.[0]).toEqual({...f.full,cursor:head.cursor,epoch:head.epoch});
+  const reference=OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to);
+  expect(result?.segments).toEqual(reference.snapshot());expect(result?.confirmedAt).toBe(reference.confirmedAt);expect(result?.midpoint).toBe(reference.selectedState().midpoint);
+ }finally{restore.mockRestore();validate.mockRestore();}
+});
+test.each(['valueHistoryLimited','episodeHistoryLimited'] as const)('prepared %s remains explicit and cannot seed an apparently unlimited warm view',async flag=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true);f.manifest.active[flag]=true;Object.assign(f.manifest.coverage,{status:'complete',partial:false,gaps:[]});const t=transport(f),events:any[]=[];
+ const service=new OrderWallsArchiveService(e=>events.push(e),t.fetcher,()=>to+1000);
+ try{service.subscribe('limited',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
+  expect(events.at(-1).status[flag]).toBe(true);expect(events.at(-1).status.archive).toMatchObject({state:'partial',rangeComplete:false});expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBuilds:0});
+ }finally{service.dispose();}
 });
 test('a cold service view fingerprints the full manifest once without a redundant warm-cache probe',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),events:any[]=[],expected=Buffer.from(JSON.stringify(f.manifest)),digest=vi.spyOn(crypto.subtle,'digest');
@@ -76,7 +95,7 @@ test('actual archive loader imports exact prepared cells, retains gaps and rebas
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),updates:any[]=[],metrics:any[]=[];
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u),onPageMetrics:m=>metrics.push(m)});
  const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:40,head,page:{...f.page.page,nextAfter:40}});
- expect(result.segments).toEqual(reference.snapshot());expect(result.projector?.selectedState()).toEqual(reference.selectedState());expect(result.head).toEqual(head);expect(result.cursor).toBe(40);
+ expect(result.segments).toEqual(reference.snapshot());expect(result.projector).toBeUndefined();expect(result.status.archive?.midpoint).toBe(reference.selectedState().midpoint);expect(result.head).toEqual(head);expect(result.cursor).toBe(40);
  expect(result.status.archive).toMatchObject({requestComplete:true,rangeComplete:false,gaps:[{from:from+3000,to:from+3000,reason:'Observed disconnect'}]});
  expect(updates.slice(0,-1).every(u=>u.status.archive.requestComplete===false&&u.status.archive.loadedThrough===from)).toBe(true);
  expect(t.calls).toEqual(['/market-data/v2/history/walls/discover','/market-data/v2/history/walls/projection-batch','/market-data/v2/history/walls/source']);expect(metrics.every(m=>m.delivery==='projection')).toBe(true);
@@ -96,8 +115,8 @@ test('independent revision read overlaps final assembly but cannot publish compl
  vi.stubEnv('VITE_HISTORY_TILES','1');
  const f=fixture(true);let release!:()=>void;
  const gateSource=new Promise<void>(resolve=>release=resolve),io=transport(f,{gateSource}),updates:any[]=[];
- const original=OrderWallsArchiveProjector.restoreCheckpointCooperatively;
- const restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');let finalRestored=false;
+ const original=OrderWallsArchiveProjector.validateCheckpointCooperatively;
+ const restore=vi.spyOn(OrderWallsArchiveProjector,'validateCheckpointCooperatively');let finalRestored=false;
  restore.mockImplementation((...args)=>{
   if((args[0] as any).segments.length===f.full.segments.length){
    expect(io.calls.at(-1)).toMatch(/\/source$/);finalRestored=true;
@@ -130,7 +149,7 @@ test('cancel during overlapped source validation retains partial data and preven
 test('global checkpoint failure remains fatal when overlapping source validation also rejects',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(),rows=JSON.parse(f.texts[0]!);
  // Each part is valid on its own, but this closed value collides with an active
- // value's global retention sequence. Only the final full restore can reject it.
+ // value's global retention sequence. Only full-union canonical validation can reject it.
  rows[0].valueRunOrder[0]=f.manifest.active.valueRunOrder[0][0];
  f.texts[0]=JSON.stringify(rows);Object.assign(f.manifest.parts[0],{hash:hash(f.texts[0]!),bytes:Buffer.byteLength(f.texts[0]!)});
  const io=transport(f,{changed:true}),updates:any[]=[];
@@ -167,7 +186,7 @@ test('first wall member leaves admission for native prices before bounded batch 
   await vi.waitFor(()=>expect(nativeStarted).toBe(true));expect(t.calls).toHaveLength(1);
   releaseFirst();await vi.waitFor(()=>expect(t.calls).toHaveLength(2));releaseNative();
   const result=await work;await native;
-  expect(result?.parts).toBe(35);expect(result?.projector.snapshot()).toHaveLength(36);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
+  expect(result?.parts).toBe(35);expect(result?.projector!.snapshot()).toHaveLength(36);expect(t.calls.every(path=>path.endsWith('/projection-batch'))).toBe(true);
  }finally{releaseFirst();releaseNative();abort.abort();await Promise.allSettled([work,...(native?[native]:[])]);}
 });
 test('shared service joins and Retry retain the prepared presentation until the full replacement validates',async()=>{
@@ -206,12 +225,7 @@ test('settled prepared jobs release mutable retention queues and late joins own 
  try{
   service.subscribe('first',request);await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestComplete).toBe(true));
   expect(service.diagnostics()).toMatchObject({historyJobs:1,historyConsumers:1,projections:[]});
-  const completed=await restore.mock.results.at(-1)!.value as OrderWallsArchiveProjector;
-  expect(completed.diagnostics().retainedSegments).toBe(f.full.segments.length);
-  // A deliberately mutated discarded replay cannot corrupt the still-open
-  // history job, its late subscribers, or the independently owned warm cache.
-  completed.censorOpen(to,'Discarded mutable replay');
-  for(const segment of completed.snapshot())for(const point of segment.valueRuns)point.quantity=0;
+  expect(restore).not.toHaveBeenCalled();
   const before=t.calls.length;service.subscribe('late',request);
   await vi.waitFor(()=>expect(events.filter(event=>event.ids?.includes('late')).at(-1)?.status?.archive?.requestComplete).toBe(true));
   expect(t.calls).toHaveLength(before);
@@ -236,19 +250,19 @@ test('projection retry attempts reach page diagnostics and financial records pub
  expect(updates.filter(u=>u.presentation&&u.kind==='patch').flatMap(u=>u.patches??[]).map(p=>p.id)).toHaveLength(f.full.segments.length-f.manifest.active.segments.length);
 });
 
-test.each(['newer','older'] as const)('%s quiet-head rebinding restores retained history once without a transport-metadata clone',async direction=>{
+test.each(['newer','older'] as const)('%s quiet-head rebinding validates retained history without a transport-metadata clone',async direction=>{
  const f=fixture(true),target=direction==='newer'?head:{cursor:25,epoch:2,at:to+1000};
  const anchor={cursor:1,epoch:1,at:from-1,hash:'c'.repeat(64)};Object.assign(f.source,{maxCursor:4,anchor});Object.assign(f.canonical.sourceProof,{maxCursor:4,anchor});
  const t=transport(f),reader=await preparedWallReader({market:'spot',profile:profile.id,from,to,watermark:target.cursor,head:target},t.fetcher,new AbortController().signal,undefined,settings);
  expect(reader).not.toBeNull();
- const checkpoint=vi.spyOn(OrderWallsArchiveProjector.prototype,'checkpoint'),restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');
+ const checkpoint=vi.spyOn(OrderWallsArchiveProjector.prototype,'checkpoint'),restore=vi.spyOn(OrderWallsArchiveProjector,'validateCheckpointCooperatively');
  try{
   const result=await reader!.readProjection(settings,()=>{});
   expect(result).not.toBeNull();expect(checkpoint).not.toHaveBeenCalled();
   const completeRestores=restore.mock.calls.filter(([value])=>(value as any).segments.length===f.full.segments.length);
   expect(completeRestores).toHaveLength(1);expect(completeRestores[0]![0]).toMatchObject({cursor:target.cursor,epoch:target.epoch});
   const reference=new OrderWallsArchiveProjector(settings,from,to);reference.applyPage({...f.page,watermark:target.cursor,head:target,page:{...f.page.page,nextAfter:target.cursor}});
-  expect(result!.projector.snapshot()).toEqual(reference.snapshot());expect(result!.projector.selectedState()).toEqual(reference.selectedState());
+  expect(result!.projector).toBeUndefined();expect(result!.segments).toEqual(reference.snapshot());expect(result!.midpoint).toEqual(reference.selectedState().midpoint);
  }finally{checkpoint.mockRestore();restore.mockRestore();reader?.dispose();}
 });
 
@@ -261,9 +275,7 @@ test('prepared warm revisits retain detached presentation without a second mutab
  try{
   service.subscribe('first',subscription);await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));
   expect(clone).not.toHaveBeenCalled();expect(service.diagnostics()).toMatchObject({warmEntries:1,warmSegments:f.full.segments.length,warmRuns:f.full.segments.reduce((n,s)=>n+s.valueRuns.length,0)});
-  const completed=(await Promise.all(restore.mock.results.map(result=>result.value as Promise<OrderWallsArchiveProjector>|undefined))).find(projector=>projector?.diagnostics().retainedSegments===f.full.segments.length)!;
-  // Even an active replay mutation cannot change the detached cached records.
-  completed.censorOpen(to,'Test replay mutation after cache admission');
+  expect(restore).not.toHaveBeenCalled();
   service.unsubscribe('first');expect(service.diagnostics()).toMatchObject({projections:[],historyJobs:0});
   phase=1;service.subscribe('revisit',subscription);
   const cached=events.filter(event=>event.ids?.includes('revisit')&&event.kind==='snapshot').at(-1);
@@ -374,7 +386,7 @@ test('a corrupt compact cache falls back to the good fresh prefix and recovers w
 test('negotiated exact point transport reconstructs the identical selected walls and rejects canonical corruption',async()=>{
  for(const mode of [1,2])for(const corrupt of [false,true]){const f=fixture();(f.advertised.delivery as any).pointTransport=1;if(mode===2)(f.advertised.delivery as any).productTransport=1;const io=transport(f,{corrupt});const ready:any[]=[];
   if(corrupt)await expect(readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p))).rejects.toThrow(/hash/);
-  else{const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p));expect(result?.projector.snapshot()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,f.context.settings,f.context.from,f.context.to).snapshot());expect(ready.at(-1).metrics.validationMs).toBeGreaterThanOrEqual(0);}
+  else{const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:io.fetcher,signal:new AbortController().signal},p=>ready.push(p));expect(result?.projector!.snapshot()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,f.context.settings,f.context.from,f.context.to).snapshot());expect(ready.at(-1).metrics.validationMs).toBeGreaterThanOrEqual(0);}
  }
 });
 

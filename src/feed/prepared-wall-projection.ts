@@ -5,13 +5,23 @@ import {acquireWallBatch} from './prepared-wall-batch';
 interface Part {hash:string;bytes:number;records:number}
 interface RecordRow {order:number;segment:OrderWallSegment;valueRunOrder:number[];offset:number;totalRuns:number}
 export interface PreparedWallProjectionManifest {version:2;key:string;sourceKey:string;sourceToken:string;core:string;complete:true;settings:OrderWallsProjectionSettings;active:WallProjectionCheckpoint;activeOrder:number[];closed:Array<Array<[number,number]>>;parts:Part[];coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile}
-interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>}
+interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>;restoreProjector?:boolean}
 export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;requestId?:string}}
 const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const digest=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const normalized=(s:OrderWallsProjectionSettings)=>({topLevels:s.topLevels,minimumNotionalEnabled:s.minimumNotionalEnabled,minimumNotionalUsd:s.minimumNotionalEnabled?s.minimumNotionalUsd:0,minDurationMs:s.minDurationMs});
 const yieldTask=(signal:AbortSignal)=>yieldHistoryTask(signal,'user-visible');
+/** One completion-only ordering pass, bounded between comparisons/copies. */
+async function sortedRecords<T>(input:T[],compare:(a:T,b:T)=>number,signal:AbortSignal){
+ let source=input.slice(),target=new Array<T>(source.length),at=performance.now(),units=0;
+ for(let width=1;width<source.length;width*=2){
+  for(let start=0;start<source.length;start+=2*width){let left=start,right=Math.min(start+width,source.length),out=start;const middle=right,end=Math.min(start+2*width,source.length);
+   while(left<middle||right<end){target[out++]=right>=end||left<middle&&compare(source[left]!,source[right]!)<=0?source[left++]!:source[right++]!;
+    if(++units%256===0){signal.throwIfAborted();if(performance.now()-at>=8){await yieldTask(signal);at=performance.now();}}}
+  }[source,target]=[target,source];
+ }signal.throwIfAborted();return source;
+}
 /** Configuration mismatch is a compatible fallback. A malformed advertised
  * snapshot is an explicit failure, never an excuse to claim empty coverage. */
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){
@@ -105,14 +115,22 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  // alone. Observe rejection immediately, including when final assembly throws.
  const validation=context.validateCompletion?.();void validation?.catch(()=>{});
  if(validation){await yieldTask(context.signal);context.signal.throwIfAborted();}
- retained.sort((a,b)=>a.order-b.order);context.signal.throwIfAborted();
+ const orderAt=performance.now(),ordered=await sortedRecords(retained,(a,b)=>a.order-b.order,context.signal),checkpointOrderElapsedMs=performance.now()-orderAt;
  // outputHead is the transport fence already admitted by the source-proof
  // reader. Financial rows/order and active candidates remain untouched. The
  // reader still revalidates the source before returning this final projector.
- const projector=await restore({...manifest.active,...(context.outputHead??{}),segments:retained.map(row=>row.segment),valueRunOrder:retained.map(row=>row.valueRunOrder)});
+ const checkpoint={...manifest.active,...(context.outputHead??{}),segments:ordered.map(row=>row.segment),valueRunOrder:ordered.map(row=>row.valueRunOrder)};
+ // The full canonical validator still checks cross-part sequence uniqueness,
+ // candidate links, bounds and financial fields. A visible immutable revision
+ // needs no copied points, mutable candidates or sorted retention queue.
+ const validateAt=performance.now(),yieldBefore=restoreYieldMs;let projector:OrderWallsArchiveProjector|undefined;
+ if(context.restoreProjector)projector=await restore(checkpoint);else await validate(checkpoint);
+ const validationElapsedMs=performance.now()-validateAt,presentationAt=performance.now();
+ const segments=await sortedRecords(checkpoint.segments,(a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price,context.signal);
+ const finalization={checkpointOrderElapsedMs,validationElapsedMs,validationYieldMs:restoreYieldMs-yieldBefore,presentationOrderElapsedMs:performance.now()-presentationAt,mutableProjectorRestored:Boolean(projector)};
  // Authenticate the complete presentation description, not merely its source
  // input token: corrections can change part hashes or selected metadata.
  const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));
  await validation;context.signal.throwIfAborted();
- return {projector,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
+ return {projector,segments,finalization,confirmedAt:manifest.active.confirmedTo,midpoint:manifest.active.midpoint,valueHistoryLimited:manifest.active.valueHistoryLimited,episodeHistoryLimited:manifest.active.episodeHistoryLimited,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
 }

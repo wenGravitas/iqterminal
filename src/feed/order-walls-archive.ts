@@ -224,6 +224,8 @@ export interface OrderWallsArchiveUpdate {
   preparedSourceToken?:string;
   /** SHA256 of the entire validated selected manifest, including part hashes. */
   preparedPresentationRevision?:string;
+  /** Worker-local elapsed stages include cooperative waits; source I/O overlaps. */
+  preparedFinalization?:{checkpointOrderElapsedMs:number;validationElapsedMs:number;validationYieldMs:number;presentationOrderElapsedMs:number;mutableProjectorRestored:boolean};
   preparedRevisionReused?:true;
 }
 
@@ -471,11 +473,19 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const head=projected.head,coverage=projected.coverage;
       validatePage({version:1,profile:projected.profile,market:projected.profile.market,instrument:projected.profile.instrument,feed:projected.profile.feed,from:queryFrom,to:request.to,watermark:head.cursor,head,
         page:{after:0,nextAfter:head.cursor,hasMore:false,lastAt:coverage.confirmedTo??queryFrom,limit:pageLimit,sameMillisecondClosed:true},patches:[],coverage},profile,queryRequest,0,watermark,watermarkHead);
+      const limited=('valueHistoryLimited' in projected&&projected.valueHistoryLimited)||('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited);
       const extent=coverage.availableFrom!==null&&coverage.availableFrom<=request.from&&coverage.confirmedTo!==null&&coverage.confirmedTo>=request.to-1;
-      const state=coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
+      const state=limited||coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
+      const reason=limited?'Prepared wall history reached its retained detail capacity.':coverage.reason;
       const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector?projected.projector.confirmedAt:projected.confirmedAt,
-        profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,midpoint:projected.projector?projected.projector.selectedState().midpoint:projected.midpoint};
-      const result:OrderWallsArchiveResult={kind:'snapshot',segments:projected.projector?projected.projector.snapshot():[...projected.presentation.values()],projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,...(reused?{preparedRevisionReused:true as const}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status:statusForArchive(archive,state,coverage.reason),watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
+        ...(limited?{rangeComplete:false,reason}:{}),profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,
+        midpoint:projected.projector?projected.projector.selectedState().midpoint:projected.midpoint};
+      const status={...statusForArchive(archive,state,reason),...('valueHistoryLimited' in projected&&projected.valueHistoryLimited?{valueHistoryLimited:true}:{}),
+        ...('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited?{episodeHistoryLimited:true}:{})};
+      const segments=projected.projector?projected.projector.snapshot():'segments' in projected?projected.segments:[...projected.presentation.values()];
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,
+        ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status,
+        watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
       options.onUpdate?.(result);return result;
     }
   }
