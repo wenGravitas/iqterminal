@@ -1,3 +1,43 @@
+## Latest source work: exact prepared-prefix and tail reuse
+
+The release remains **INCOMPLETE**. The following source changes are committed
+on the isolated performance branches; they do not establish new Pi latency passes.
+
+- Frontenda6e253b displays a compatible same-start cached prefix when only the
+  right end advances, retaining its old loaded/presentation fence while the new
+  range validates. [Bounds, recovery and validation](wall-advancing-warm-prefix.md).
+- Backenddbfcef4 matches automatic preparation to the chart's exact padded start;
+  source lag changes only the eligible end.48 compiled-chart comparisons pass.
+  [Cross-repository source/compiled proof](wall-default-chart-start-results.md).
+- Frontend7eb4a00/backendd33a878 negotiate a selected projection and pinned source
+  fence without claiming canonical pages exist.1,354frontend tests (two skips),
+  379backend tests and seven headless compiled-chart fixture checks pass.
+  [Contract, failures, evidence and rollout limits](wall-projection-source-delivery.md).
+- Backendcaa415b builds same-start projections through an authenticated preterminal
+  prefix and bounded tail.30focused/389full backend checks, typecheck and build
+  pass. Full fresh-fold financial fields, identity index and output parts match;
+  multi-page/V3 resume, SQL limits, gaps, corrections and corrupt data are covered.
+  [Producer and exact scope](https://github.com/wenGravitas/iqterminal-server/blob/caa415b/docs/wall-projection-tail.md),
+  [raw validation](https://github.com/wenGravitas/iqterminal-server/tree/880c9c1/artifacts/pi-history-r1/projection-tail-r1).
+
+The bounded producer is **not yet connected to the live queue or HTTP discovery**.
+Its internal ready result is not API readiness. Independent source publication,
+reader/retention dependencies, legacy canonical-readiness compatibility and a
+rollback-safe queue protocol/cohort still need implementation and staging checks.
+No runtime was changed for this producer. The most recent recorded staging
+identity audit remains in projection-source-r1/postflight.json: worker33c7e3a,
+gateway112bf11 and eight protected identities/start times unchanged.
+
+The latest comparable cold-server-ready/client-empty wall series below remains
+FAILED: median8019.3ms/max8618.7ms completion, first history median3140.3ms/
+max4569.2ms. The fixed-past e25cd43 warm pass remains scoped to that build;
+advancing-end warm latency, the new build's loading gates, concurrency, retained
+memory plateau, actual cold-build throughput and normal foreground Pi UX remain
+unverified. The proposed ranges/thresholds are unchanged. All browser checks
+remain headless; no new test window is mapped onto the working i3 workspace.
+
+Older sections below retain the measured build-specific investigation history.
+
 ## Latest cold prepared-history implementation
 
 Frontend474f066 validates the complete prepared wall union without restoring a
