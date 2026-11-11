@@ -28,7 +28,7 @@ if(process.env.IQ_BENCH_BUILD&&!/^[a-f0-9]{40}$/.test(process.env.IQ_BENCH_BUILD
 if(process.env.IQ_BENCH_BUILD)try{execFileSync('git',['cat-file','-e',process.env.IQ_BENCH_BUILD+'^{commit}'],{stdio:'ignore'});}catch{throw Error('IQ_BENCH_BUILD is not a known local source commit; verify/fetch the deployed identity before opening a browser');}
 const samples=Number(process.env.IQ_BENCH_SAMPLES??5),selected=process.env.IQ_BENCH_CASE;
 const wallTransportExperiment=process.env.IQ_BENCH_WALL_TRANSPORT??null;
-if(wallTransportExperiment&&!['canonical','product'].includes(wallTransportExperiment))throw Error('Invalid IQ_BENCH_WALL_TRANSPORT');
+if(wallTransportExperiment&&!['canonical','point','product'].includes(wallTransportExperiment))throw Error('Invalid IQ_BENCH_WALL_TRANSPORT');
 if(process.env.IQ_BENCH_YIELD_MODE&&!['user-visible-post-task','background-post-task','timer-fallback'].includes(process.env.IQ_BENCH_YIELD_MODE))throw Error('Invalid expected history yield mode');
 const observationMs=Number(process.env.IQ_BENCH_OBSERVATION_MS??12000),fitWalls=process.env.IQ_BENCH_FIT_WALLS==='1';
 // This extends observation/frame capture only; it does not enable a live subscription.

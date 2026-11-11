@@ -10,6 +10,9 @@ test('canonical experiment removes only optional transport capabilities', () => 
   assert.equal(out.projection.manifest,input.projection.manifest);
   assert.equal(out.source,input.source);
   assert.equal(selectWallTransport(input,'product'),input);
+  const point=selectWallTransport(input,'point');
+  assert.equal(point.projection.manifest,input.projection.manifest);
+  assert.deepEqual(point.projection.delivery,{version:1,maxParts:32,maxDecodedBytes:8388608,pointTransport:1});
 });
 test('building work is unchanged and unsupported experiment fails explicitly', () => {
   const building={state:'building',job:{id:'same'}};
