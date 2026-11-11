@@ -78,3 +78,18 @@ USD-M improves about20.8% (27.863s to22.069s median). Spot remains about14.1% sl
 All20 terminal containers exit0 without OOM and respect the fixed resource/mount bounds. Original API plus seven protected services and the serving worker/gateway identities remain unchanged. The cohort releases all leases; postflight control state is retained. Read-only host CPU/load/memory/swap samples cover only part of this cohort, labelled as a partial window. The Pi host is aarch64 Raspberry Pi5 ModelB Rev1.0 with8GiB nominal RAM; the separately sampled staging host is not its client route. Monotonic times are interpreted only within each host. These samples do not prove foreground rendering, request latency or current ACK continuity. Both owned sampler processes terminate explicitly.
 
 One separate CPU-profiled Spot build follows the completed comparison. It matches every financial output and source token. Its timing is excluded from the cohort. V8 sample attribution includes cgroup throttle/idle/GC and cannot be treated as exclusive CPU durations. Position ticks identify avoidable inline threshold serialization (41), rebuilding the final ordered entry object (120), and materialization/copying; canonical decode/replay hashing remain large. A follow-up reuses the exact size counter and keeps monotonic entry objects with the incumbent sort fallback. Its performance validation is pending; no claim is made that it removes the measured regression. The raw profile, executed fbd58b0 bundle and reproducible analyzer are retained.
+
+## Profile-driven follow-up cohort: backend2a1dace
+
+Backend2a1dace25a1f3557e03a441edd89d5945525b77c uses the exact entry byte counter for the inline threshold and avoids rebuilding already strictly ordered entries. A nonmonotonic sequence retains the original sort fallback. All364 backend tests,20 focused tests, typecheck and all bundles pass. A new five-pair cohort per market preserves all final checkpoint/prefix/manifest/member bytes.
+
+|Market|Version|Every sample ms|Median ms|Maximum ms|
+|---|---|---|---:|---:|
+| perpetual | baseline | 27611, 27636, 27741, 26901, 27252 | 27611 | 27741 |
+| perpetual | candidate | 22458, 21653, 21658, 22626, 21458 | 21658 | 22626 |
+| spot | baseline | 4700, 4659, 3918, 4032, 4633 | 4633 | 4700 |
+| spot | candidate | 4568, 5101, 4995, 5023, 4984 | 4995 | 5101 |
+
+USD-M median improves21.6% (27.611s to21.658s), maximum27.741s to22.626s. Spot still regresses7.8% (4.633s to4.995s), maximum4.700s to5.101s. **Spot remains an unresolved cold projection-component limitation.** Do not compare this cohort directly with a previous cohort on a different source window. No raw rebuild or chart-loading pass follows. This completes90 exact-output unprofiled comparison builds across the four cohorts, plus one separately profiled exact-output Spot build.
+
+Postflight verifies all20 terminal containers, their original bounds, unchanged protected service identities and unchanged serving worker13730f7/gateway71f62d2. All reader leases are released. Read-only storage accounting is retained separately; it does not constitute a snapshot/restore drill. V3 is still not installed. The next release work is the verified nonterminal history/current-tail handoff and prepared-range chart path, with snapshot/restore required before installing a V3 writer. Further component microbenchmarks cannot certify those gates.

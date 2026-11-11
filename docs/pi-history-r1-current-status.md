@@ -1,3 +1,21 @@
+## Latest measured candidate: backend2a1dace
+
+All364 backend tests,20 focused tests, typecheck/build pass. The final five-pair
+component cohort improves USD-M median27.611s to21.658s (21.6%), but Spot remains
+slower4.633s to4.995s (7.8%). Across four cohorts,90 unprofiled real-canonical
+builds preserve every final financial checkpoint, prefix, manifest and compressed
+part; a separate CPU-profiled Spot build also matches. **The Spot component
+regression remains unresolved.** [All samples and scope](wall-projection-index-v3-results.md).
+
+These are projection rebuild measurements over prepared canonical input, not
+ready-server/client-cache loading gates. Serving stays worker13730f7/API71f62d2;
+all protected service IDs are unchanged, comparison containers exit0, and leases
+are released. V3 installation awaits the snapshot/restore drill. Both latest30h
+wall chart gates remain failed; verified nonterminal client-tail continuation,
+current/warm/concurrency/heap, foreground Pi and current-footprint recertification
+remain open. The goal remains **INCOMPLETE**. No production deployment or main
+merge occurs. Browser checks remain headless.
+
 ## Latest bounded-index comparison: backend fbd58b0
 
 All364 backend tests,20 focused tests, typecheck/build pass. Across three cohorts,
