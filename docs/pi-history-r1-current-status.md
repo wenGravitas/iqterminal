@@ -20,13 +20,22 @@ on the isolated performance branches; they do not establish new Pi latency passe
   [Producer and exact scope](https://github.com/wenGravitas/iqterminal-server/blob/caa415b/docs/wall-projection-tail.md),
   [raw validation](https://github.com/wenGravitas/iqterminal-server/tree/880c9c1/artifacts/pi-history-r1/projection-tail-r1).
 
-The bounded producer is **not yet connected to the live queue or HTTP discovery**.
-Its internal ready result is not API readiness. Independent source publication,
-reader/retention dependencies, legacy canonical-readiness compatibility and a
-rollback-safe queue protocol/cohort still need implementation and staging checks.
-No runtime was changed for this producer. The most recent recorded staging
-identity audit remains in projection-source-r1/postflight.json: worker33c7e3a,
-gateway112bf11 and eight protected identities/start times unchanged.
+Backendd9bd9a3 now connects the bounded producer to independent source publication,
+reader leases/retention and the existing fair queue. Selected readiness is separated
+from canonical availability, with a durable protocol4 barrier and explicit retry.
+Legacy upgrades preserve the32-job bound. The feature defaults off. Backendb874a4c
+pins the incumbent staging-clone protocol and verifies candidate flags, preserving
+the original root for rollback. Local checks pass:403backend tests,51focused tests,
+typecheck/build and7staging-tool tests. The financial kernel is unchanged.
+[Root cause, raw evidence, retry and remaining scope](https://github.com/wenGravitas/iqterminal-server/blob/677d8b7/docs/wall-projection-publication-results.md).
+
+These changes are **not yet deployed or latency-certified**. Canonical-backed
+parents are required; repeated independent-parent extension and automatic defaults
+still fall back to exact canonical preparation. An isolated staging clone, retained
+real-source comparison and new Pi cohort remain required. No runtime was changed
+for this publication validation. The prior staging identity audit remains in
+projection-source-r1/postflight.json: worker33c7e3a, gateway112bf11 and eight protected
+identities/start times unchanged at that observation.
 
 The latest comparable wall series with prepared server history and an empty
 browser cache below remains FAILED: median8019.3ms/max8618.7ms completion, first history median3140.3ms/

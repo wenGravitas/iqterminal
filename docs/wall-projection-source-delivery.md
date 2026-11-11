@@ -29,13 +29,14 @@ use the ordinary source path, never advance that acknowledged cursor silently.
 
 ## Scope of this change
 
-The current server constructs this response from the incumbent complete canonical
-snapshot and complete projection. Existing lookup publication, reader leases,
-retention and source checks remain mandatory. This does not yet publish a
-projection independently of canonical files or implement the bounded same-start
-tail builder. That producer must preserve gap replay, late/corrected events,
-source/anchor/epoch validation and durable dependencies before it can use this
-contract. No canonical pages may be invented to satisfy the old manifest schema.
+The initial delivery contract constructs this response from the incumbent complete
+canonical snapshot and complete projection. The new queue integration also supports
+independent publication after a bounded same-start tail build. It is opt-in through
+IQ_WALL_PROJECTION_SOURCES=1 in both worker and gateway, with a protocol4 durability
+barrier, separate hashed source lookup and existing bounded reader leases/retention.
+See [publication, recovery and rollback](https://github.com/wenGravitas/iqterminal-server/blob/677d8b7/docs/wall-projection-tail.md). Legacy readers
+still require actual canonical pages; selected readiness cannot claim they exist.
+No independent-source staging deployment or latency acceptance is established yet.
 
 No financial kernel, profile selection, depth/time coverage, point format, source
 retention, exchange connection or collector changes. This is a delivery contract,
