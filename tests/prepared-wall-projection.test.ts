@@ -56,6 +56,14 @@ function transport(f:ReturnType<typeof fixture>,options:{horizonAt?:number;chang
   throw Error('Unexpected canonical replay request: '+url.pathname);
  });return {fetcher:fetcher as typeof fetch,calls};
 }
+test('progressive chunks validate without throwaway restores and final restore retains exact financial state',async()=>{
+ const f=fixture(true),t=transport(f),restore=vi.spyOn(OrderWallsArchiveProjector,'restoreCheckpointCooperatively');
+ try{
+  const result=await readPreparedWallProjection(f.advertised,{...f.context,fetcher:t.fetcher,signal:new AbortController().signal},()=>{});
+  expect(restore).toHaveBeenCalledTimes(1);
+  expect(result?.projector.checkpoint()).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).checkpoint());
+ }finally{restore.mockRestore();}
+});
 test('actual archive loader imports exact prepared cells, retains gaps and rebases only the quiet head',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const f=fixture(true),t=transport(f),updates:any[]=[],metrics:any[]=[];
  const result=await loadOrderWallsArchive({request:{market:'binance-spot',from,to,settings},fetcher:t.fetcher,onUpdate:u=>updates.push(u),onPageMetrics:m=>metrics.push(m)});

@@ -27,10 +27,12 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  if(context.outputHead&&![context.outputHead.cursor,context.outputHead.epoch].every(integer))throw Error('Invalid prepared wall output fence');
  const manifest=m as PreparedWallProjectionManifest,hashes=new Set<string>();let decodedBytes=0;
  let restoreYieldMs=0;
- const restore=async(value:unknown)=>OrderWallsArchiveProjector.restoreCheckpointCooperatively(value,context.settings,context.from,context.to,{
+ const work=()=>({
   now:()=>performance.now(),budgetMs:8,check:()=>context.signal.throwIfAborted(),
   yield:async()=>{const began=performance.now();await yieldTask(context.signal);restoreYieldMs+=performance.now()-began;},
  });
+ const restore=(value:unknown)=>OrderWallsArchiveProjector.restoreCheckpointCooperatively(value,context.settings,context.from,context.to,work());
+ const validate=(value:unknown)=>OrderWallsArchiveProjector.validateCheckpointCooperatively(value,context.settings,context.from,context.to,work());
  context.validateProfile?.(manifest.profile);
  for(const p of manifest.parts){if(!hex(p.hash)||hashes.has(p.hash)||!integer(p.bytes)||p.bytes<1||p.bytes>4*1024*1024||!integer(p.records)||p.records<1)throw Error('Invalid prepared wall projection part');hashes.add(p.hash);decodedBytes+=p.bytes;}
  if(decodedBytes>64*1024*1024)throw Error('Prepared wall projection byte capacity');
@@ -43,7 +45,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   }
  }
  // The active checkpoint is independently validated before any presentation.
- await restore(manifest.active);
+ await validate(manifest.active);
  const presentation=new Map<string,OrderWallSegment>(),retained:Array<Omit<RecordRow,'offset'|'totalRuns'>>=[];
  for(const [i,segment] of manifest.active.segments.entries()){
   if(segment.end!==null||!integer(manifest.activeOrder[i]))throw Error('Invalid prepared wall projection active order');
@@ -88,7 +90,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
     // Validate only this bounded new batch. Previously imported closed history
     // is neither cloned nor sorted during progressive publication.
     const priorYield=restoreYieldMs;
-    await restore({...manifest.active,candidates:[],seenGaps:[],segments:ready.map(row=>row.segment),valueRunOrder:ready.map(row=>row.valueRunOrder)});
+    await validate({...manifest.active,candidates:[],seenGaps:[],segments:ready.map(row=>row.segment),valueRunOrder:ready.map(row=>row.valueRunOrder)});
     yieldMs+=restoreYieldMs-priorYield;
     for(const record of ready){if(presentation.has(record.segment.id))throw Error('Prepared wall projection duplicate identity');presentation.set(record.segment.id,record.segment);}
    }

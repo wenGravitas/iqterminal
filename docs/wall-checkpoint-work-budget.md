@@ -171,3 +171,21 @@ server observer starts after several client samples; it is a partial observation
 window, not continuous resource coverage of the cohort. Its monotonic timings
 are not subtracted from client timestamps. Both pre/post protected identity
 checks must remain attached to the evidence. No production/main merge occurred.
+
+## Validation without temporary projectors
+
+The progressive reader now calls `validateCheckpointCooperatively` for the active
+manifest and each completed closed fragment group. It uses the exact existing
+validation generator and the same8ms cooperative budget/cancellation checks.
+It allocates no temporary mutable projector, copied point objects or sorted
+retention queue. The final union still passes full validation and restore,
+including cross-part sequence uniqueness, active-candidate associations and
+retention ordering. Hash verification, bounds and final source proof remain.
+
+Only this additive method changes the portable kernel source; removing its exact
+method block reproduces source101dfc7 byte-for-byte. Source checksum1a86cb47 is
+separately pinned and retains prepared compatibilityc4939405. Tests compare exact
+restored state, reject malformed financial/cross-segment sequences, exercise
+cancellation and invalid budgets, and verify a multi-part reader constructs just
+one final projector. No Pi performance gain is claimed until a comparable cohort
+has run; validation-only unit success is not loading acceptance.

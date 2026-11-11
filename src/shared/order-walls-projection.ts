@@ -307,6 +307,19 @@ export class OrderWallsArchiveProjector {
     }
   }
 
+  /** Validate a progressive presentation without allocating a throwaway mutable
+   * projector or retention queue. Final restore still validates the full union. */
+  static async validateCheckpointCooperatively(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,
+    work:{now:()=>number;yield:()=>Promise<void>;budgetMs:number;check:()=>void},namespace='') {
+    if(!Number.isFinite(work.budgetMs)||work.budgetMs<=0||work.budgetMs>16)throw Error('Invalid wall import work budget');
+    const steps=validateCheckpointSteps(value,settings,from,to,namespace);let since=work.now();
+    work.check();
+    for(;;){
+      const next=steps.next();work.check();if(next.done)return;
+      if(work.now()-since>=work.budgetMs){await work.yield();work.check();since=work.now();}
+    }
+  }
+
   private static *restoreCheckpointSteps(value:unknown,settings:OrderWallsProjectionSettings,from:number,to:number,namespace:string):Generator<void,OrderWallsArchiveProjector> {
     yield* validateCheckpointSteps(value,settings,from,to,namespace);
     const state=value as WallProjectionCheckpoint,projector=new OrderWallsArchiveProjector(settings,from,to,namespace);

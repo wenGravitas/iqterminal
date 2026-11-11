@@ -100,7 +100,19 @@ test('cooperative validation rejects cross-segment duplicate sequences and orpha
  const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint());
  for(const mutate of [(s:any)=>s.valueRunOrder[1][0]=s.valueRunOrder[0][0],(s:any)=>s.candidates=[],(s:any)=>s.segments[0].valueRuns[0].quantityExact='bad',(s:any)=>s.seenGaps=[5]]){
   const bad=wire(state);mutate(bad);await expect(OrderWallsArchiveProjector.restoreCheckpointCooperatively(bad,settings,from,to,cooperative())).rejects.toThrow(/Invalid wall projection checkpoint/);
+  await expect(OrderWallsArchiveProjector.validateCheckpointCooperatively(bad,settings,from,to,cooperative())).rejects.toThrow(/Invalid wall projection checkpoint/);
  }
+});
+test('validation-only import yields and retains the exact caller checkpoint for final restore',async()=>{
+ const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint());
+ state.seenGaps=Array.from({length:600},(_,i)=>String(i));const before=wire(state);let yields=0;
+ await expect(OrderWallsArchiveProjector.validateCheckpointCooperatively(state,settings,from,to,cooperative(async()=>{yields++;}))).resolves.toBeUndefined();
+ expect(yields).toBeGreaterThan(0);expect(state).toEqual(before);
+ expect(wire(OrderWallsArchiveProjector.restoreCheckpoint(state,settings,from,to).checkpoint())).toEqual(before);
+ let calls=0;
+ await expect(OrderWallsArchiveProjector.validateCheckpointCooperatively(state,settings,from,to,cooperative(async()=>{if(++calls===2)throw Error('Canceled validation');}))).rejects.toThrow('Canceled validation');
+ for(const budgetMs of [0,NaN,17])await expect(OrderWallsArchiveProjector.validateCheckpointCooperatively(state,settings,from,to,{...cooperative(),budgetMs})).rejects.toThrow(/budget/);
+ expect(state).toEqual(before);
 });
 test('cancelled cooperative work returns no partial projector and leaves the input untouched',async()=>{
  const source=new OrderWallsArchiveProjector(settings,from,to);source.applyPage(prefix());const state=wire(source.checkpoint()),before=wire(state);
