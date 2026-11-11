@@ -1,0 +1,4 @@
+{"copy": "snapshot", "files": 1213, "bytes": 196677117, "postReadExact": true}
+{"copy": "restored", "files": 1213, "bytes": 196677117, "postReadExact": true}
+/iqterminal-wall-restore-legacy-r1 b726c41b46e6e2c90fc3944e6379b0648373d583243ae2091ea51f8d355c3a59 exited exit=0 network=none readonly=true cpu=500000000 memory=402653184
+/iqterminal-wall-restore-candidate-r1 737aa1a1c3e6d7481af387b05236446401015ed0e3e1b3fa85767859b002cf77 exited exit=0 network=none readonly=true cpu=500000000 memory=402653184

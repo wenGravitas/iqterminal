@@ -1,0 +1,2 @@
+[{"Type":"bind","Source":"/home/daz/iqterminal-wall-serving-71f62d2-r1","Destination":"/wall-preparation","Mode":"","RW":true,"Propagation":"rprivate"},{"Type":"bind","Source":"/home/daz/iq-wall-serving-13730f7-r1.mjs","Destination":"/app/wall-preparations-perf.mjs","Mode":"ro","RW":false,"Propagation":"rprivate"},{"Type":"bind","Source":"/home/daz/iq-wall-serving-71f62d2-r1-input.json","Destination":"/app/perf-requests.json","Mode":"ro","RW":false,"Propagation":"rprivate"}]
+queue.json
