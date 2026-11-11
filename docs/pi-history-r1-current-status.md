@@ -1,3 +1,20 @@
+## Latest private index check: backend cbe0bdc / e6c64be
+
+The closed-entry index now uses bounded authenticated immutable shards during
+preparation. All 362 backend tests and builds pass. Twenty paired real-canonical
+builds preserve every financial checkpoint, prefix, manifest and compressed part.
+USD-M component median improves26.7s to21.0s; Spot regresses4.5s to5.9s.
+The redundant-file-stat follow-up e6c64be is committed/pushed and under a separate
+three-version cohort. Neither is installed in serving. [Every sample and limits](wall-projection-index-v3-results.md).
+
+The half-open fixed-head validators are committed in frontend7257c8a/backende31db8d;
+the request-clamp experiment remains withheld pending exact nonterminal continuation.
+The old allocation section below is historical: its claim that the boundary patch
+is unapplied is superseded by this update. Full release acceptance stays
+**INCOMPLETE**; both latest30h wall gates remain failed. Snapshot/restore,
+current/warm-wall/concurrency/heap, client-tail composition and foreground Pi checks
+remain open. No production deployment, collector change or main merge occurred.
+
 ## Latest projection allocation check: backend 990e146
 
 The measured allocation change preserves every checkpoint, manifest and compressed
