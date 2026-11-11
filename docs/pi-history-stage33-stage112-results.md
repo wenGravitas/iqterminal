@@ -195,9 +195,10 @@ Protected collector/materializer/API identities must be checked before and after
 See the backend guarded clone tool and deployment receipts for exact IDs, roots,
 checksums, budget, source health and failure rollback sequence.
 
-Source commits are reviewable on perf/pi-history-r1; remaining benchmark/report
-work and evidence packaging are not yet fully committed/pushed. No claim of release
-readiness follows from source tests or these partial passing performance gates.
+Source, benchmark/report changes and curated evidence are committed on
+perf/pi-history-r1 in both repositories. SHA256SUMS authenticates the retained
+raw files; no claim of release readiness follows from source tests or these
+partial passing performance gates.
 
 ## Follow-up: transport and progressive validation
 

@@ -2793,5 +2793,141 @@
     ],
     "footprintCoverage": null,
     "qualification": "Controlled transport experiment; cannot certify a release gate"
+  },
+  {
+    "label": "stage691-transport-product",
+    "case": "walls-30h-perp-15m",
+    "gate": "SUPPLEMENTAL",
+    "firstHistory3sGate": "SUPPLEMENTAL",
+    "assertionExitCode": 2,
+    "complete": {
+      "samplesMs": [
+        9766.89999999851,
+        9736.89999999851,
+        10441.39999999851,
+        10859.10000000149,
+        10217.60000000149
+      ],
+      "medianMs": 10217.60000000149,
+      "maximumMs": 10859.10000000149
+    },
+    "coverage": [
+      {
+        "run": 1,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 2,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 3,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 4,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      },
+      {
+        "run": 5,
+        "requested": {
+          "from": 1794276900000,
+          "to": 1794384900000
+        },
+        "viewport": {
+          "from": 1794276900,
+          "to": 1794384900
+        },
+        "paintedClosedBars": 0,
+        "formingPainted": false,
+        "archive": {
+          "state": "partial",
+          "from": 1794276000000,
+          "to": 1794385800000,
+          "rangeComplete": false,
+          "exact": true,
+          "requestComplete": true,
+          "loadedThrough": 1794385800000
+        },
+        "exception": null
+      }
+    ],
+    "qualification": "Supplemental exact pinned-window experiment; all five complete, median/max still fail release thresholds; no speed improvement claimed"
   }
 ]
