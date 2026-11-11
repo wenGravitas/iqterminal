@@ -1,0 +1,30 @@
+[
+  {
+    "pid": 93743,
+    "phase": "graceful-stop-requested",
+    "script": "/home/daz/workarea/iqterminal-perf-history/artifacts/pi-history-r1/staging-candidate-r1/preview.mjs",
+    "port": 4193,
+    "build": "ce036e7a8c2e7222735916e0d7e4092b5e92108f"
+  },
+  {
+    "pid": 114684,
+    "phase": "graceful-stop-requested",
+    "script": "/home/daz/workarea/iqterminal-perf-history/artifacts/pi-history-r1/staging-candidate-r1/preview-combined.mjs",
+    "port": 4194,
+    "build": "9a526dcbe5495405205b10da78c4328a6e3d6831"
+  },
+  {
+    "pid": 142485,
+    "phase": "graceful-stop-requested",
+    "script": "/home/daz/workarea/iqterminal-perf-history/artifacts/pi-history-r1/staging-candidate-r1/preview-validation.mjs",
+    "port": 4195,
+    "build": "691e68e846a696e28b453c9cb5fa25ad5ccae758"
+  },
+  {
+    "pid": 152821,
+    "phase": "graceful-stop-requested",
+    "script": "/home/daz/workarea/iqterminal-perf-history/artifacts/pi-history-r1/transport-r2/preview.mjs",
+    "port": 4196,
+    "build": "168918c163522dd7366c623bd753dc847ce4b632"
+  }
+]
