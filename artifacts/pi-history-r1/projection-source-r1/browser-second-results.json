@@ -1,0 +1,194 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal-perf-history/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "projection-source.browser.config.ts",
+      "tests/browser/wall-projection-source.spec.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-perf-history/projection-source.browser.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-perf-history/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4201",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--ozone-platform=headless",
+              "--no-sandbox",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pi-history-r1/projection-source-r1/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "wall-projection-source.spec.ts",
+      "file": "wall-projection-source.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a negotiated projection paints exact historical walls before independent source validation completes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2659,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"from\": 1794286500,\u001b[39m\n\u001b[31m+   \"from\": 1793877540,\u001b[39m\n\u001b[2m    \"to\": 1794394500,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"from\": 1794286500,\u001b[39m\n\u001b[31m+   \"from\": 1793877540,\u001b[39m\n\u001b[2m    \"to\": 1794394500,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts:45:56",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                      "column": 56,
+                      "line": 45
+                    },
+                    "snippet": "  43 |   const ordered=(rows:any[])=>[...rows].sort((a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price);\n  44 |   expect(ordered(actual.segments)).toEqual(ordered(f.full.segments));expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});\n> 45 |   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});\n     |                                                        ^\n  46 |   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);\n  47 |   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));\n  48 |   const screenshot=testInfo.outputPath('projection-source-fixture.png');await page.screenshot({path:screenshot});await testInfo.attach('projection-source-fixture',{path:screenshot,contentType:'image/png'});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                        "column": 56,
+                        "line": 45
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"from\": 1794286500,\u001b[39m\n\u001b[31m+   \"from\": 1793877540,\u001b[39m\n\u001b[2m    \"to\": 1794394500,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  43 |   const ordered=(rows:any[])=>[...rows].sort((a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price);\n  44 |   expect(ordered(actual.segments)).toEqual(ordered(f.full.segments));expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});\n> 45 |   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});\n     |                                                        ^\n  46 |   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);\n  47 |   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));\n  48 |   const screenshot=testInfo.outputPath('projection-source-fixture.png');await page.screenshot({path:screenshot});await testInfo.attach('projection-source-fixture',{path:screenshot,contentType:'image/png'});\n    at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts:45:56"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:55:43.683Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-perf-history/test-results/wall-projection-source-a-n-5bfd2-source-validation-completes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                    "column": 56,
+                    "line": 45
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6f5acde1b57cdc95839-ad34708b27b1279f379d",
+          "file": "wall-projection-source.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T12:55:42.060Z",
+    "duration": 5355.525,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

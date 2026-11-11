@@ -1,0 +1,405 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal-perf-history/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "projection-source.browser.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-perf-history/projection-source.browser.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-perf-history/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4201",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--ozone-platform=headless",
+              "--no-sandbox",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pi-history-r1/projection-source-r1/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "native-candle-history.spec.ts",
+      "file": "native-candle-history.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "saved 5m wall view one candle back survives separate latest-closed and forming arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3599,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:53:41.296Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-bdd507078ed984f8954b",
+          "file": "native-candle-history.spec.ts",
+          "line": 12,
+          "column": 36
+        },
+        {
+          "title": "saved 15m wall view one candle back survives separate latest-closed and forming arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3451,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:53:45.930Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-a1f154ab22372dae67dd",
+          "file": "native-candle-history.spec.ts",
+          "line": 12,
+          "column": 36
+        },
+        {
+          "title": "native30hpricecontext paints before bootstrap and retains current volume and newer historical reads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3341,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:53:49.449Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-59730e8e6336783f2378",
+          "file": "native-candle-history.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "nativepricepan preserves the requested past and current bars within the5000barbudget",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3692,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:53:52.820Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-e80f7c3483dc5835fc1b",
+          "file": "native-candle-history.spec.ts",
+          "line": 79,
+          "column": 1
+        },
+        {
+          "title": "warm native prices paint independently while their revision validation waits and later corrects exact quote volume",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4189,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:53:56.555Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-b464d4a60c36a88ba9c3",
+          "file": "native-candle-history.spec.ts",
+          "line": 104,
+          "column": 1
+        },
+        {
+          "title": "bootstrap-owned history seeds warm prices even when independent native history pages fail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3948,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:54:00.801Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-afac0a4a23d7a19502ca",
+          "file": "native-candle-history.spec.ts",
+          "line": 135,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "wall-projection-source.spec.ts",
+      "file": "wall-projection-source.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a negotiated projection paints exact historical walls before independent source validation completes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4969,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 30\u001b[39m\n\u001b[31m+ Received  + 30\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[32m-     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 2000,\u001b[39m\n\u001b[32m-     \"end\": 1794285901000,\u001b[39m\n\u001b[31m+     \"durationMs\": 108596000,\u001b[39m\n\u001b[31m+     \"end\": null,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": \"censored\",\u001b[39m\n\u001b[32m-     \"epoch\": 1,\u001b[39m\n\u001b[32m-     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[32m-     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[31m+     \"endReason\": null,\u001b[39m\n\u001b[31m+     \"epoch\": 2,\u001b[39m\n\u001b[31m+     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[31m+     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285899000,\u001b[39m\n\u001b[31m+     \"start\": 1794285904000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285899000,\u001b[39m\n\u001b[31m+         \"at\": 1794285904000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[32m-       },\u001b[39m\n\u001b[32m-       Object {\u001b[39m\n\u001b[32m-         \"at\": 1794285901000,\u001b[39m\n\u001b[32m-         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[32m-         \"percentile\": null,\u001b[39m\n\u001b[32m-         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[32m-         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[32m-         \"rank\": 1,\u001b[39m\n\u001b[32m-         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[31m+     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 108596000,\u001b[39m\n\u001b[32m-     \"end\": null,\u001b[39m\n\u001b[31m+     \"durationMs\": 2000,\u001b[39m\n\u001b[31m+     \"end\": 1794285901000,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": null,\u001b[39m\n\u001b[32m-     \"epoch\": 2,\u001b[39m\n\u001b[32m-     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[32m-     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"endReason\": \"censored\",\u001b[39m\n\u001b[31m+     \"epoch\": 1,\u001b[39m\n\u001b[31m+     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285904000,\u001b[39m\n\u001b[31m+     \"start\": 1794285899000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285904000,\u001b[39m\n\u001b[31m+         \"at\": 1794285899000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"at\": 1794285901000,\u001b[39m\n\u001b[31m+         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[31m+         \"percentile\": null,\u001b[39m\n\u001b[31m+         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[31m+         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[31m+         \"rank\": 1,\u001b[39m\n\u001b[31m+         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 30\u001b[39m\n\u001b[31m+ Received  + 30\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[32m-     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 2000,\u001b[39m\n\u001b[32m-     \"end\": 1794285901000,\u001b[39m\n\u001b[31m+     \"durationMs\": 108596000,\u001b[39m\n\u001b[31m+     \"end\": null,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": \"censored\",\u001b[39m\n\u001b[32m-     \"epoch\": 1,\u001b[39m\n\u001b[32m-     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[32m-     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[31m+     \"endReason\": null,\u001b[39m\n\u001b[31m+     \"epoch\": 2,\u001b[39m\n\u001b[31m+     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[31m+     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285899000,\u001b[39m\n\u001b[31m+     \"start\": 1794285904000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285899000,\u001b[39m\n\u001b[31m+         \"at\": 1794285904000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[32m-       },\u001b[39m\n\u001b[32m-       Object {\u001b[39m\n\u001b[32m-         \"at\": 1794285901000,\u001b[39m\n\u001b[32m-         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[32m-         \"percentile\": null,\u001b[39m\n\u001b[32m-         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[32m-         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[32m-         \"rank\": 1,\u001b[39m\n\u001b[32m-         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[31m+     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 108596000,\u001b[39m\n\u001b[32m-     \"end\": null,\u001b[39m\n\u001b[31m+     \"durationMs\": 2000,\u001b[39m\n\u001b[31m+     \"end\": 1794285901000,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": null,\u001b[39m\n\u001b[32m-     \"epoch\": 2,\u001b[39m\n\u001b[32m-     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[32m-     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"endReason\": \"censored\",\u001b[39m\n\u001b[31m+     \"epoch\": 1,\u001b[39m\n\u001b[31m+     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285904000,\u001b[39m\n\u001b[31m+     \"start\": 1794285899000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285904000,\u001b[39m\n\u001b[31m+         \"at\": 1794285899000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"at\": 1794285901000,\u001b[39m\n\u001b[31m+         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[31m+         \"percentile\": null,\u001b[39m\n\u001b[31m+         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[31m+         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[31m+         \"rank\": 1,\u001b[39m\n\u001b[31m+         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m  ]\u001b[22m\n    at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts:43:27",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                      "column": 27,
+                      "line": 43
+                    },
+                    "snippet": "  41 |   release();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).orderWallsStatus?.archive?.requestComplete,id)).toBe(true);\n  42 |   const actual=await page.evaluate(id=>{const p=(window as any).__terminal.panels.get(id);return {segments:[...p.engine.orderWallSegments.values()].map(({currentSelection:_selection,presentationKind:_kind,...row}:any)=>row),status:p.orderWallsStatus,live:p.status.state,view:p.engine.visibleTimeRange(),render:p.engine.orderWallsDiagnostics()};},id);\n> 43 |   expect(actual.segments).toEqual(f.full.segments);expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});\n     |                           ^\n  44 |   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});\n  45 |   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);\n  46 |   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                        "column": 27,
+                        "line": 43
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 30\u001b[39m\n\u001b[31m+ Received  + 30\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[32m-     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 2000,\u001b[39m\n\u001b[32m-     \"end\": 1794285901000,\u001b[39m\n\u001b[31m+     \"durationMs\": 108596000,\u001b[39m\n\u001b[31m+     \"end\": null,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": \"censored\",\u001b[39m\n\u001b[32m-     \"epoch\": 1,\u001b[39m\n\u001b[32m-     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[32m-     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[31m+     \"endReason\": null,\u001b[39m\n\u001b[31m+     \"epoch\": 2,\u001b[39m\n\u001b[31m+     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[31m+     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285899000,\u001b[39m\n\u001b[31m+     \"start\": 1794285904000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285899000,\u001b[39m\n\u001b[31m+         \"at\": 1794285904000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[32m-       },\u001b[39m\n\u001b[32m-       Object {\u001b[39m\n\u001b[32m-         \"at\": 1794285901000,\u001b[39m\n\u001b[32m-         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[32m-         \"percentile\": null,\u001b[39m\n\u001b[32m-         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[32m-         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[32m-         \"rank\": 1,\u001b[39m\n\u001b[32m-         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m    Object {\u001b[22m\n\u001b[32m-     \"archiveEntryId\": \"B\",\u001b[39m\n\u001b[31m+     \"archiveEntryId\": \"A\",\u001b[39m\n\u001b[31m+     \"censoredReason\": \"Observed disconnect\",\u001b[39m\n\u001b[2m      \"detectionMode\": \"top-levels\",\u001b[22m\n\u001b[32m-     \"durationMs\": 108596000,\u001b[39m\n\u001b[32m-     \"end\": null,\u001b[39m\n\u001b[31m+     \"durationMs\": 2000,\u001b[39m\n\u001b[31m+     \"end\": 1794285901000,\u001b[39m\n\u001b[2m      \"endKnown\": false,\u001b[22m\n\u001b[32m-     \"endReason\": null,\u001b[39m\n\u001b[32m-     \"epoch\": 2,\u001b[39m\n\u001b[32m-     \"id\": \"B:view-8:off:0:q4\",\u001b[39m\n\u001b[32m-     \"meanUsd\": 200.00000000009996,\u001b[39m\n\u001b[32m-     \"peakUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"endReason\": \"censored\",\u001b[39m\n\u001b[31m+     \"epoch\": 1,\u001b[39m\n\u001b[31m+     \"id\": \"A:view-8:off:0:q1\",\u001b[39m\n\u001b[31m+     \"meanUsd\": 200.0000000001,\u001b[39m\n\u001b[31m+     \"peakUsd\": 300.0000000003,\u001b[39m\n\u001b[2m      \"percentile\": null,\u001b[22m\n\u001b[2m      \"price\": 100.00000001,\u001b[22m\n\u001b[2m      \"priceExact\": \"100.00000001\",\u001b[22m\n\u001b[2m      \"rank\": 1,\u001b[22m\n\u001b[2m      \"scopePartial\": true,\u001b[22m\n\u001b[2m      \"side\": \"bid\",\u001b[22m\n\u001b[32m-     \"start\": 1794285904000,\u001b[39m\n\u001b[31m+     \"start\": 1794285899000,\u001b[39m\n\u001b[2m      \"startKnown\": true,\u001b[22m\n\u001b[2m      \"valueRuns\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[32m-         \"at\": 1794285904000,\u001b[39m\n\u001b[31m+         \"at\": 1794285899000,\u001b[39m\n\u001b[2m          \"notionalExact\": \"200.0000000001\",\u001b[22m\n\u001b[2m          \"percentile\": null,\u001b[22m\n\u001b[2m          \"quantity\": 2.000000000001,\u001b[22m\n\u001b[2m          \"quantityExact\": \"2.000000000001\",\u001b[22m\n\u001b[2m          \"rank\": 1,\u001b[22m\n\u001b[2m          \"usd\": 200.0000000001,\u001b[22m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"at\": 1794285901000,\u001b[39m\n\u001b[31m+         \"notionalExact\": \"300.0000000003\",\u001b[39m\n\u001b[31m+         \"percentile\": null,\u001b[39m\n\u001b[31m+         \"quantity\": 3.000000000003,\u001b[39m\n\u001b[31m+         \"quantityExact\": \"3.000000000003\",\u001b[39m\n\u001b[31m+         \"rank\": 1,\u001b[39m\n\u001b[31m+         \"usd\": 300.0000000003,\u001b[39m\n\u001b[2m        },\u001b[22m\n\u001b[2m      ],\u001b[22m\n\u001b[2m      \"valueRunsTruncated\": false,\u001b[22m\n\u001b[2m    },\u001b[22m\n\u001b[2m  ]\u001b[22m\n\n  41 |   release();await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).orderWallsStatus?.archive?.requestComplete,id)).toBe(true);\n  42 |   const actual=await page.evaluate(id=>{const p=(window as any).__terminal.panels.get(id);return {segments:[...p.engine.orderWallSegments.values()].map(({currentSelection:_selection,presentationKind:_kind,...row}:any)=>row),status:p.orderWallsStatus,live:p.status.state,view:p.engine.visibleTimeRange(),render:p.engine.orderWallsDiagnostics()};},id);\n> 43 |   expect(actual.segments).toEqual(f.full.segments);expect(actual.status.archive).toMatchObject({from:f.context.from,to:f.context.to,loadedThrough:f.context.to,exact:true});\n     |                           ^\n  44 |   expect(actual.live).toBe('live');expect(actual.view).toEqual({from:start/1000,to:end/1000});\n  45 |   expect(requests.some(r=>r.path.endsWith('/part')||r.path.endsWith('/batch'))).toBe(false);\n  46 |   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));\n    at /home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts:43:27"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:54:04.934Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-perf-history/test-results/wall-projection-source-a-n-5bfd2-source-validation-completes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal-perf-history/tests/browser/wall-projection-source.spec.ts",
+                    "column": 27,
+                    "line": 43
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6f5acde1b57cdc95839-ad34708b27b1279f379d",
+          "file": "wall-projection-source.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T12:53:38.141Z",
+    "duration": 32225.053999999996,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
