@@ -1,4 +1,4 @@
-import {test,expect} from 'vitest';
+import {test,expect,vi} from 'vitest';
 import {decodeFootprintBatch,readFootprintBatch,footprintBatchMember,FootprintBatchUnsupported} from '../src/feed/footprint-batch';
 import {PreparedFootprints} from '../src/feed/prepared-footprints';
 const hour=3600000,from=1800000000000;
@@ -12,11 +12,14 @@ test('progressive 24h history paints every ready member but cannot complete befo
  let controller!:ReadableStreamDefaultController<Uint8Array>,calls=0;const encoder=new TextEncoder();
  const request:any=async()=>{calls++;return response(new ReadableStream({start(c){controller=c;}}));};
  const events:any[]=[],cache={getMany:async()=>new Map(),putMany:async()=>{}};
- const work=new PreparedFootprints(request,cache).load(from,from+24*hour,'1h',25,new AbortController().signal,(bars,complete)=>events.push({bars,complete}));
- await new Promise(resolve=>setTimeout(resolve,10));for(let i=0;i<6;i++)controller.enqueue(encoder.encode(line(chunk(i))));
- await new Promise(resolve=>setTimeout(resolve,30));expect(calls).toBe(1);expect(events.at(-1).bars).toHaveLength(20);expect(events.every(e=>!e.complete)).toBe(true);
+ const abort=new AbortController();
+ const work=new PreparedFootprints(request,cache).load(from,from+24*hour,'1h',25,abort.signal,(bars,complete)=>events.push({bars,complete}));
+ try{
+ await vi.waitFor(()=>expect(controller).toBeDefined());for(let i=0;i<6;i++)controller.enqueue(encoder.encode(line(chunk(i))));
+ await vi.waitFor(()=>expect(events.at(-1)?.bars).toHaveLength(20));expect(calls).toBe(1);expect(events.every(e=>!e.complete)).toBe(true);
  controller.enqueue(encoder.encode(line(end)));await new Promise(resolve=>setTimeout(resolve,10));expect(events.every(e=>!e.complete)).toBe(true);
  controller.close();await work;expect(events.at(-1).complete).toBe(true);expect(events.at(-1).bars).toHaveLength(24);expect(events.at(-1).bars.every((b:any)=>b.quoteDelta===-123.456)).toBe(true);
+ }finally{abort.abort();await work.catch(()=>{});}
 });
 test('missing footer, altered identities, duplicates and trailing frames reject without delivering the final member',async()=>{
  const variants=[Array.from({length:6},(_,i)=>chunk(i)),[...Array.from({length:6},(_,i)=>chunk(i)),{...end,members:5}],[chunk(0),chunk(0)],[{...chunk(0),request:{...members[0],rowPrice:50}}],[...Array.from({length:6},(_,i)=>chunk(i)),end,end]];
