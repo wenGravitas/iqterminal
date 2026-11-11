@@ -1,3 +1,15 @@
+## Latest cold prepared-history implementation
+
+Frontend474f066 validates the complete prepared wall union without restoring a
+full mutable historical projector. The shared canonical validator and kernel are
+unchanged. All1339tests (two skipped),138focused checks, typecheck and staging
+build pass. Five comparable Pi cold-client runs retain exact full30h financial
+data, but still FAIL: median8019.3ms/max8618.7ms completion and
+median3140.3ms/max4569.2ms first useful history. No end-to-end speedup is claimed.
+[All five pairs, exact financial proofs, resource/request evidence and rollback](wall-readonly-prepared-history.md).
+The earlier e25cd43 warm pass below remains scoped to that build; the release
+and new-build warm/foreground/concurrency acceptance remain incomplete.
+
 ## Latest saved-view lifecycle repair
 
 Frontende25cd43 prevents separate closed/forming native arrivals from sliding an
