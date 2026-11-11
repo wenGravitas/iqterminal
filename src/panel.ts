@@ -309,7 +309,6 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsStatus?: OrderWallStatus;
   private nativeCandleVersions=new NativeCandleVersions();
   private nativeCandleDataEpoch=0;
-  private nativeCurrentDataEpoch=0;
   private nativeCandleDemand?:{from:number;to:number};
   private nativeCandleViewKey='';
   private toolbarWrap = document.createElement('div');
@@ -5230,7 +5229,7 @@ export class CandlePanel implements IContentRenderer {
   private subscribe() {
     this.release?.();
     const epoch = ++this.selectionEpoch;
-    this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=0;this.nativeCurrentDataEpoch=0;this.nativeCandleDemand=undefined;this.nativeCandleViewKey='';
+    this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=0;this.nativeCandleDemand=undefined;this.nativeCandleViewKey='';
     const selection = this.selection;
     this.engine?.setDrawingContext(selection);
     this.loadObjectTreeForSelection();
@@ -5245,11 +5244,16 @@ export class CandlePanel implements IContentRenderer {
     this.release = this.feed.subscribe(this.params.api.id, selection, event => {
       if (this.dead || epoch !== this.selectionEpoch) return;
       const vwapCoverage = this.dailyVwapCoverage();
-      let firstPrice=false,recentNative=false,preserveFirstCurrentView=false;
+      let firstPrice=false,preserveNativeTimeView=false;
       if(event.type==='snapshot'||event.type==='patch'){
         const step=duration[this.selection.interval],closed=Math.floor(Date.now()/step)*step;
-        recentNative=event.nativeVersion?.request!==0&&event.candles.some(c=>c.t>=closed-step);
-        preserveFirstCurrentView=recentNative&&this.nativeCurrentDataEpoch!==epoch&&this.selection.type==='candle'&&Boolean(this.nativeCandleDemand&&this.nativeCandleDemand.to<=closed-2*step);
+        const recentNative=event.nativeVersion?.request!==0&&event.candles.some(c=>c.t>=closed-step);
+        const visible=this.selection.type==='candle'?this.engine?.visibleTimeRange():undefined;
+        // Adding closed-bootstrap and forming knots can each shift logical
+        // indices. Preserve an actually historical time window on every such
+        // arrival, including views only one candle back. A prior closed candle
+        // is not proof that the forming knot has already reached this chart.
+        preserveNativeTimeView=recentNative&&Boolean(visible&&visible.to*1000<closed);
         firstPrice=this.nativeCandleDataEpoch!==epoch;
         if(firstPrice){this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=epoch;if(event.merge||event.type==='patch')this.candles=[];}
         if(event.nativeVersion){const version=event.nativeVersion;event={...event,candles:event.candles.filter(c=>{
@@ -5278,11 +5282,10 @@ export class CandlePanel implements IContentRenderer {
       } else if (event.type === 'patch') {
         const retainedView=this.mergeCandles(event.candles);
         if(firstPrice||retainedView){this.engine?.setSnapshot(this.candles,true);this.studyHost?.setSnapshot(this.candles);}
-        else{this.engine?.applyPatch(event.candles,preserveFirstCurrentView);this.studyHost?.applyPatch(event.candles);} this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
+        else{this.engine?.applyPatch(event.candles,preserveNativeTimeView);this.studyHost?.applyPatch(event.candles);} this.cvdData?.setHostCandles(this.candles); this.cvdView?.setHostCandles(this.candles); this.openInterestData?.setHostCandles(this.candles); this.openInterestView?.setHostCandles(this.candles); this.liquidationsView?.setHostCandles(this.candles); this.orderFlowPaneView?.invalidate();
         this.refreshFootprintCellTooltip();
         if(event.candles.length&&event.nativeVersion?.request===undefined)this.status = { ...this.status, lastUpdate: Date.now() };
       }
-      if(recentNative)this.nativeCurrentDataEpoch=epoch;
       if (this.nativeIndicator(DAILY_VWAP_ID) && vwapCoverage !== this.dailyVwapCoverage()) this.renderActiveIndicators();
       this.requestNativeCandleViewport();
     });

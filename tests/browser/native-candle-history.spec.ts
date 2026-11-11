@@ -9,21 +9,56 @@ async function saved(context:BrowserContext,from:number,to:number,interval='5m')
   localStorage.setItem('basis.layout.v1',JSON.stringify({version:5,layout}));
  },{from,to,id,interval});
 }
+for(const interval of ['5m','15m'])test(`saved ${interval} wall view one candle back survives separate latest-closed and forming arrivals`,async({page,context})=>{
+ test.setTimeout(45000);await installHealthyStagingWorker(context,false);
+ const step=interval==='5m'?STEP:900000,current=Math.floor(Date.now()/step)*step,to=current-step,from=to-30*HOUR;
+ await saved(context,from,to,interval);
+ await context.route('**/market-data/**',async route=>{
+  const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
+  if(u.pathname.endsWith('/native-candles')){
+   if(u.searchParams.has('from')){const start=Number(u.searchParams.get('from')),end=to;return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:Math.max(0,Math.ceil((end-start)/step))},(_,i)=>bar(start+i*step))});}
+   return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:30*HOUR/step},(_,i)=>bar(from+i*step))});
+  }
+  return json({version:1,cursor:0,watches:[],events:[]});
+ });
+  await page.goto('/',{waitUntil:'domcontentloaded'});
+  await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+  const emit=async(t:number,closed:boolean)=>page.workers()[0].evaluate(({t,closed,interval})=>{for(const socket of (globalThis as any).__stagingNativeFixture.sockets)if(socket.command?.interval===interval)socket.onmessage?.({data:JSON.stringify({type:'native-candle',source:'binance-native-kline',interval,candle:{t,o:80000,h:80050,l:79990,c:80010,v:8,revision:Date.now(),closed}})});},{t,closed,interval});
+  await emit(current-step,true);await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current-step),{id,current,step})).toBe(true);
+  expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+  await emit(current,false);
+  await expect.poll(()=>page.evaluate(({id,current})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current&&!c.closed),{id,current})).toBe(true);
+  // Both missing axis knots are outside the saved window. Neither arrival may
+  // slide it or start an unrelated current-ending wall-history request.
+  expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+  // Returning to the live edge must keep the chart's normal follow behavior.
+  const live=await page.evaluate(id=>{const e=(window as any).__terminal.panels.get(id).engine,last=e.chart.dataLayer.length-1;e.setRange({from:last-12,to:last+2});return e.visibleTimeRange();},id);
+  await emit(current+step,false);
+  await expect.poll(()=>page.evaluate(({id,current,step})=>(window as any).__terminal.panels.get(id).candles.some((c:any)=>c.t===current+step),{id,current,step})).toBe(true);
+  expect((await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).to).toBeGreaterThan(live.to);
+});
 test('native30hpricecontext paints before bootstrap and retains current volume and newer historical reads',async({page,context})=>{
  test.setTimeout(45000);await installHealthyStagingWorker(context,false);
  const now=Date.now(),current=Math.floor(now/STEP)*STEP,to=current-72*HOUR,from=to-30*HOUR;await saved(context,from,to);
+ let releaseHistory!:()=>void;const historyGate=new Promise<void>(r=>releaseHistory=r);
  let release!:()=>void;const gate=new Promise<void>(r=>release=r),requests:string[]=[];
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){
    requests.push(u.pathname+u.search);
-   if(u.searchParams.has('from'))return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(Number(u.searchParams.get('from'))+i*STEP))});
+   if(u.searchParams.has('from')){await historyGate;return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>bar(Number(u.searchParams.get('from'))+i*STEP))});}
    await gate;return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:1000},(_,i)=>({...bar(current-(999-i)*STEP,80010,i<999),revision:9999999999999,v:1}))});
   }
   return json({version:1,cursor:0,watches:[],events:[]});
  });
  try{
   await page.goto('/',{waitUntil:'domcontentloaded'});
+  // This assertion concerns in-flight sharing. Let the real panel join before
+  // fulfilling the preload; a completed preload instead requires fresh cache validation.
+  await page.waitForFunction(id=>(window as any).__terminal?.feed.current.has(id),id);
+  await page.evaluate(()=>{const f=(window as any).__terminal.feed;(window as any).__priorNativeDiagnostic=f.diagnostics;f.send({type:'diagnostics'});});
+  await page.waitForFunction(()=>(window as any).__terminal.feed.diagnostics!==(window as any).__priorNativeDiagnostic);
+  releaseHistory();
   await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal?.panels.get(id);return p?.candles.filter((c:any)=>c.t>=from&&c.t<to).length??0;},{id,from,to})).toBe(360);
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
   const pre=await page.evaluate(({id,from})=>{const p=(window as any).__terminal.panels.get(id);return {status:p.status,first:p.candles.find((c:any)=>c.t===from)};},{id,from});
@@ -39,7 +74,7 @@ test('native30hpricecontext paints before bootstrap and retains current volume a
   expect(after.view).toEqual({from:from/1000,to:to/1000});expect(after.status.state).toBe('live');expect(after.status.nativeHistory.viewport).toMatchObject({state:'ready',loadedSlots:360});
   expect(requests.filter(u=>u.includes('from='))).toHaveLength(1);
   await expect(page.locator('.candle-panel').first()).toContainText('Native prices loaded · 360/360 closed bars');
- }finally{release();}
+ }finally{releaseHistory();release();}
 });
 test('nativepricepan preserves the requested past and current bars within the5000barbudget',async({page,context})=>{
  test.setTimeout(60000);await installHealthyStagingWorker(context);
@@ -69,22 +104,23 @@ test('nativepricepan preserves the requested past and current bars within the500
 test('warm native prices paint independently while their revision validation waits and later corrects exact quote volume',async({page,context})=>{
  test.setTimeout(45000);await installHealthyStagingWorker(context);
  const current=Math.floor(Date.now()/STEP)*STEP,to=current-72*HOUR,from=to-30*HOUR;await saved(context,from,to);
- let reads=0,release!:()=>void;const gate=new Promise<void>(r=>release=r);
+ let reads=0,warm=false,release!:()=>void;const gate=new Promise<void>(r=>release=r);
  await context.route('**/market-data/**',async route=>{
   const u=new URL(route.request().url()),json=(body:unknown)=>route.fulfill({contentType:'application/json',body:JSON.stringify(body)});
   if(u.pathname.endsWith('/native-candles')){
-   if(u.searchParams.has('from')){reads++;if(reads>1)await gate;const price=reads>1?80045:80040;
-    return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:360},(_,i)=>({...bar(from+i*STEP,price),revision:reads}))});}
+   if(u.searchParams.has('from')){const validatingWarm=warm;reads++;if(validatingWarm)await gate;const price=validatingWarm?80045:80040;
+    return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:Array.from({length:360},(_,i)=>({...bar(from+i*STEP,price),revision:validatingWarm?2:1}))});}
    return json({source:'binance-native-kline',market:'spot',instrument:'binance:spot:BTCUSDT',candles:[bar(current,80010,false)]});
   }
   return json({version:1,cursor:0,watches:[],events:[]});
  });
  try{
   await page.goto('/',{waitUntil:'domcontentloaded'});await expect.poll(()=>page.evaluate(id=>(window as any).__terminal?.panels.get(id)?.status.nativeHistory?.viewport?.state,id)).toBe('ready');
+  const initialReads=reads;warm=true;
   const params=await page.evaluate(({id,from,to})=>{const t=(window as any).__terminal,p=t.panels.get(id),params={...p.selection,historyViewport:{from,to}};t.dock.removePanel(t.dock.getPanel(id));return params;},{id,from,to});
   await page.waitForFunction(id=>!(window as any).__terminal.panels.has(id),id);
   await page.evaluate(({id,params})=>(window as any).__terminal.dock.addPanel({id,component:'candle',title:'Warm native prices',params}),{id,params});
-  await expect.poll(()=>reads).toBe(2);
+  await expect.poll(()=>reads).toBe(initialReads+1);
   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id)?.status.nativeHistory?.viewport,id)).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:360});
   await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {first:p.candles.find((c:any)=>c.t===from),count:p.candles.filter((c:any)=>c.t>=from&&c.t<to).length,view:p.engine.visibleTimeRange(),live:p.status.state};},{id,from,to})).toMatchObject({first:{c:80040,quoteVolume:160080},count:360,view:{from:from/1000,to:to/1000},live:'live'});
   await expect(page.locator('.candle-panel').first()).toContainText('360 cached (validating)');
