@@ -1,0 +1,13 @@
+
+Running 6 tests using 1 worker
+
+(node:200352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives separate latest-closed and forming arrivals (3.4s)
+  ✓  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives separate latest-closed and forming arrivals (3.4s)
+  ✓  3 tests/browser/native-candle-history.spec.ts:35:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (5.4s)
+  ✓  4 tests/browser/native-candle-history.spec.ts:74:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (4.9s)
+  ✓  5 tests/browser/native-candle-history.spec.ts:99:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume (4.0s)
+  ✓  6 tests/browser/native-candle-history.spec.ts:130:1 › bootstrap-owned history seeds warm prices even when independent native history pages fail (4.6s)
+
+  6 passed (29.6s)

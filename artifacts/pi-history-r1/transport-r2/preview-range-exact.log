@@ -1,0 +1,43 @@
+Production staging preview on loopback4198
+2:22:15 PM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:15 PM [vite] http proxy error: /v1/native-candles?interval=15m
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:15 PM [vite] http proxy error: /v1/native-candles?interval=15m&from=1794286800000
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:15 PM [vite] http proxy error: /v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794285900000&to=1794395700000
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:16 PM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:16 PM [vite] http proxy error: /v1/native-candles?interval=15m&from=1794286800000
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:16 PM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:16 PM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:17 PM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:18 PM [vite] http proxy error: /v1/native-candles?interval=15m
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:19 PM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:20 PM [vite] ws proxy error:
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:23 PM [vite] http proxy error: /v1/native-candles?interval=15m
+Error: connect ECONNREFUSED 127.0.0.1:18780
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+2:22:23 PM [vite] http proxy error: /v1/level-watches
+Error: connect ECONNREFUSED 127.0.0.1:18781
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)

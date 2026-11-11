@@ -1,0 +1,64 @@
+
+Running 2 tests using 1 worker
+
+(node:193001) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle (5.1s)
+(node:193499) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle (5.2s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "from": 1794286800,
+    -   "to": 1794394800,
+    +   "from": 1794287400,
+    +   "to": 1794395400,
+      }
+
+      30 |   // Both missing axis knots are outside the saved window. Neither arrival may
+      31 |   // slide it or start an unrelated current-ending wall-history request.
+    > 32 |   expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                           ^
+      33 | });
+      34 | test('native30hpricecontext paints before bootstrap and retains current volume and newer historical reads',async({page,context})=>{
+      35 |  test.setTimeout(45000);await installHealthyStagingWorker(context,false);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:32:107
+
+    Error Context: test-results/native-candle-history-save-e6c19-p-then-first-forming-candle/error-context.md
+
+  2) tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "from": 1794285900,
+    -   "to": 1794393900,
+    +   "from": 1794287700,
+    +   "to": 1794395700,
+      }
+
+      30 |   // Both missing axis knots are outside the saved window. Neither arrival may
+      31 |   // slide it or start an unrelated current-ending wall-history request.
+    > 32 |   expect(await page.evaluate(id=>(window as any).__terminal.panels.get(id).engine.visibleTimeRange(),id)).toEqual({from:from/1000,to:to/1000});
+         |                                                                                                           ^
+      33 | });
+      34 | test('native30hpricecontext paints before bootstrap and retains current volume and newer historical reads',async({page,context})=>{
+      35 |  test.setTimeout(45000);await installHealthyStagingWorker(context,false);
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:32:107
+
+    Error Context: test-results/native-candle-history-save-521d6-p-then-first-forming-candle/error-context.md
+
+  2 failed
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 5m wall view one candle back survives closed bootstrap then first forming candle 
+    tests/browser/native-candle-history.spec.ts:12:36 › saved 15m wall view one candle back survives closed bootstrap then first forming candle 

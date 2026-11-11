@@ -1,0 +1,20 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 7.440198212862015, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32021.767049096525, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64259.25067253411, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96382.28274229914, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128483.07539708912, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160657.4093773961, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 192677.11920570582, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 57, "elapsedMs": 224689.29400481284, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 65, "elapsedMs": 256792.23773721606, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 73, "elapsedMs": 288812.5756075606, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 81, "elapsedMs": 320826.1971110478, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 89, "elapsedMs": 352842.84576773643, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 97, "elapsedMs": 384859.07792206854, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 105, "elapsedMs": 416875.67774765193, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 113, "elapsedMs": 448891.141991131, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 121, "elapsedMs": 480906.30132798105, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 129, "elapsedMs": 513056.24852050096, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 137, "elapsedMs": 545180.7770878077, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "renewed", "turn": 145, "elapsedMs": 577367.6600661129, "consumers": ["stage039-range-trace-perpetual"]}
+{"phase": "released", "elapsedMs": 601462.6037022099, "consumers": ["stage039-range-trace-perpetual"]}
