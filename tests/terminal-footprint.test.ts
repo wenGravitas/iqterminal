@@ -17,12 +17,13 @@ afterAll(() => {
 
 function expectPocMarkers(path: RecordedPath2D) {
   const commands = path.commands;
-  expect(commands).toHaveLength(4);
-  expect(commands.map(({ kind }) => kind)).toEqual(['moveTo', 'lineTo', 'moveTo', 'lineTo']);
+  expect(commands).toHaveLength(8);
+  expect(commands.map(({ kind }) => kind)).toEqual(['moveTo', 'lineTo', 'moveTo', 'lineTo', 'moveTo', 'lineTo', 'moveTo', 'lineTo']);
   const left = commands[0]!.x, right = commands[2]!.x, top = commands[0]!.y, bottom = commands[1]!.y;
   expect(commands[1]).toMatchObject({ x: left, y: bottom });
   expect(commands[2]).toMatchObject({ y: top });
   expect(commands[3]).toMatchObject({ x: right, y: bottom });
+  expect(commands.slice(4)).toEqual([{kind:'moveTo',x:left,y:top},{kind:'lineTo',x:right,y:top},{kind:'moveTo',x:left,y:bottom},{kind:'lineTo',x:right,y:bottom}]);
   expect(bottom).toBeGreaterThan(top);
   expect(right).toBeGreaterThan(left);
 }
@@ -44,7 +45,7 @@ test('installed footprint draws larger fitted text and translucent cells without
     dataLayer: { timeToIndex: () => 0 } };
   p.draw(ctx, rc);
   expect(fills).toEqual([.85, .85]);
-  expect(outlines).toContainEqual({ width: 2, color: '#6d3fa0' });
+  expect(outlines).toContainEqual({ width: 1, color: '#b5a0cd' });
   expect(p.cellFont).toBe(24);
   expect(labels.some(l => l.font.startsWith('600 24px'))).toBe(true);
   expect(labels.every(l => l.alpha === 1)).toBe(true);
@@ -159,9 +160,9 @@ test('native value area draws distinct readable VAH and VAL boundaries beside th
   const align = (value: number) => Math.round(value) + .5;
   const expectedYs = [align(400 - (stats.vah + 12.5) * .8), align(400 - (stats.val - 12.5) * .8)].sort((a, b) => a - b);
   expect(actualYs).toEqual(expectedYs);
-  expect(valueAreaStrokes[0]).toMatchObject({ color: '#6d3fa0', alpha: 1, width: 2, dash: [3, 2] });
+  expect(valueAreaStrokes[0]).toMatchObject({ color: '#b5a0cd', alpha: 1, width: 1, dash: [3, 2] });
   expect(pocOutlines).toHaveLength(1);
-  expect(pocOutlines[0]).toMatchObject({ color: '#6d3fa0', alpha: 1, width: 2, dash: [3, 2] });
+  expect(pocOutlines[0]).toMatchObject({ color: '#b5a0cd', alpha: 1, width: 1, dash: [] });
   expectPocMarkers(pocOutlines[0]!.path);
   expect(pocOutlines[0]!.path.commands[0]!.x).toBe(points[0]![0]);
   expect(pocOutlines[0]!.path.commands[2]!.x).toBe(points[1]![0]);
@@ -271,7 +272,7 @@ test('bid and ask cells leave a central execution-candle gutter with matching ho
   expect(p.hoverAt(150, 150)).toBeNull();
   expect(p.options().showCandle).toBe(true);
   expect(dashes).toContainEqual([3, 2]);
-  expect(valueAreaStrokes).toContainEqual({ color: '#6d3fa0', alpha: 1, width: 2 });
+  expect(valueAreaStrokes).toContainEqual({ color: '#b5a0cd', alpha: 1, width: 1 });
   expect(lines).toHaveLength(4);
   [[58.5, 100.5], [242.5, 100.5], [58.5, 200.5], [242.5, 200.5]].forEach((point, i) => point.forEach((v, j) => expect(lines[i][j]).toBeCloseTo(v)));
   expect(cells[0][0]).toBeCloseTo(66); expect(cells[1][0] + cells[1][2]).toBeCloseTo(234);
@@ -317,11 +318,11 @@ for (const dpr of [1, 2]) {
     expect(cellLabels.every(({ font }) => Number.isInteger(Number(font.match(/^600 ([\d.]+)px/)?.[1])))).toBe(true);
     expect(lines.length).toBeGreaterThan(0);
     expect(lines.flat().every(value => Number.isInteger(value - offset))).toBe(true);
-    expect(guides).toContainEqual({ color: '#6d3fa0', width: 2 * dpr });
+    expect(guides).toContainEqual({ color: '#795a96', width: dpr });
     expect(candles).toHaveLength(2);
     expect(candles.flat().every(Number.isInteger)).toBe(true);
     expect(outlines).toHaveLength(1);
-    expect(outlines[0]).toMatchObject({ color: '#6d3fa0', width: 2 * dpr, dash: [3 * dpr, 2 * dpr] });
+    expect(outlines[0]).toMatchObject({ color: '#795a96', width: dpr, dash: [] });
     expectPocMarkers(outlines[0]!.path);
     expect(outlines[0]!.path.commands[0]!.x).toBe(lines[0]![0]);
     expect(outlines[0]!.path.commands[2]!.x).toBe(lines[1]![0]);
@@ -329,7 +330,7 @@ for (const dpr of [1, 2]) {
   });
 }
 
-for (const dpr of [1, 2]) test(`narrow POC bars keep only two dotted row marks at DPR ${dpr}`, () => {
+for (const dpr of [1, 2]) test(`narrow POC bars keep a solid row border at DPR ${dpr}`, () => {
   const p = new TerminalFootprint({ ...DEFAULT_FOOTPRINT_OPTIONS, cellStyle: 'ladder', displayMode: 'volume',
     showCandle: false, showPoc: true, pocStyle: 'outline', showValueArea: false, statsRows: [], tableRows: [] });
   p.setBars([{ time: 0, rowSize: 25, delta: 2, cells: [{ price: 50, bidVol: 1, askVol: 3 }] }]);
@@ -359,10 +360,10 @@ for (const dpr of [1, 2]) test(`narrow POC bars keep only two dotted row marks a
     dataLayer: { timeToIndex: () => 0 } };
   p.draw(ctx, rc);
   expect(paths).toHaveLength(1);
-  expect(paths[0]).toMatchObject({ color: '#6d3fa0', alpha: 1, width: 2 * dpr, dash: [3 * dpr, 2 * dpr] });
+  expect(paths[0]).toMatchObject({ color: '#b5a0cd', alpha: 1, width: dpr, dash: [] });
   expectPocMarkers(paths[0]!.path);
   expect(Math.abs(paths[0]!.path.commands[2]!.x - paths[0]!.path.commands[0]!.x)).toBeLessThanOrEqual(12 * dpr + 1);
-  expect(paths[0]!.dash).toEqual([3 * dpr, 2 * dpr]);
+  expect(paths[0]!.dash).toEqual([]);
   expect(savedPocStates).toHaveLength(1);
   expect(savedPocStates[0]!.dash).toEqual([2, 6]);
   expect(restoredPocStates).toEqual(savedPocStates);
@@ -459,7 +460,7 @@ test('POC-row totals use the full gap, track POC updates and remain outside the 
   ];
   p.setBars(updated); labels.length = 0; paths.length = 0; p.draw(ctx, rc);
   expect(p.stats().map(stat => stat.poc)).toEqual([125, 125]);
-  expect(labels).toHaveLength(3); // The shifted markers leave less inter-bar room, so an overlapping flank is suppressed.
+  expect(labels).toHaveLength(3); // Suppress overlapping flanks even with subpixel overlap.
   expect(labels.map(label => label.y)).toEqual([75, 75, 75]);
   const labelBounds = labels.map(({ text, x, align }) => align === 'right'
     ? [x - text.length * 5.4, x] as const : [x, x + text.length * 5.4] as const).sort((a, b) => a[0] - b[0]);
@@ -498,7 +499,7 @@ test('POC markers keep two CSS pixels of ink clearance from painted POC cells ac
     const pocFill = fills.find(([, y, , height]) => Math.abs(y + height / 2 - pocY) <= dpr)!;
     expect(pocFill).toBeDefined();
     expect(paths).toHaveLength(1);
-    const markerWidth = Math.max(1, Math.round(dpr)) * 2;
+    const markerWidth = Math.max(1, Math.round(dpr));
     const leftInkEdge = paths[0]!.commands[0]!.x + markerWidth / 2;
     const rightInkEdge = paths[0]!.commands[2]!.x - markerWidth / 2;
     expect((pocFill[0]! - leftInkEdge) / dpr).toBeCloseTo(2, 5);

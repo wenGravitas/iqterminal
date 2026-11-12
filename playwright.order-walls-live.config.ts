@@ -7,7 +7,7 @@ if (!enabled) {
 }
 
 const baseURL = process.env.IQTERMINAL_ORDER_WALLS_BASE_URL ?? 'http://127.0.0.1:5173';
-export default defineConfig({
+export default defineConfig({globalSetup:'./scripts/test-browser-i3-setup.mjs',
   testDir: './tools/profile',
   testMatch: '**/order-walls-live-probe.playwright.ts',
   workers: 1,
@@ -18,7 +18,7 @@ export default defineConfig({
     storageState: twoChartWorkspaceState(baseURL),
     viewport: { width: 1920, height: 1080 },
     launchOptions: { executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
-      args: ['--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--enable-precise-memory-info'] },
+      args: ['--class=IQTerminalPerf','--name=IQTerminalPerf','--ozone-platform=x11', '--no-sandbox', '--enable-webgl', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--enable-precise-memory-info'] },
   },
   reporter: 'list',
 });

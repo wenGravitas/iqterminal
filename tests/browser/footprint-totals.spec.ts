@@ -399,6 +399,26 @@ test('delta flip settings request the exact reference demand and the tooltip rep
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     return p.engine.footprintTotalsDiagnostics()[0]?.deltaFlip;
   })).toMatchObject({ candidates: 3, highlighted: 3 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const baselineEvaluations = await page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    const view = [...p.engine.footprintTotalsPanes.values()][0] as any;
+    const overlay = view.primitive.highlightOverlay, nativeDraw = overlay.draw;
+    (window as any).__deltaFlipPulseSamples = [];
+    overlay.draw = (ctx: CanvasRenderingContext2D, rc: any) => {
+      const stroke = ctx.strokeRect;
+      ctx.strokeRect = function(...args: [number, number, number, number]) {
+        const samples = (window as any).__deltaFlipPulseSamples;
+        samples.push({ alpha: this.globalAlpha, dash: this.getLineDash() });
+        if (samples.length > 200) samples.shift();
+        return stroke.apply(this, args);
+      };
+      try { nativeDraw(ctx, rc); } finally { ctx.strokeRect = stroke; }
+    };
+    return p.engine.footprintTotalsDiagnostics()[0].deltaFlip.analysisEvaluations;
+  });
+  await expect.poll(() => page.evaluate(() => new Set((window as any).__deltaFlipPulseSamples.map((s: any) => s.alpha.toFixed(4))).size)).toBeGreaterThan(2);
+  expect(await page.evaluate(() => ([...(window as any).__terminal.panels.values()][0] as any).engine.footprintTotalsDiagnostics()[0].deltaFlip.analysisEvaluations)).toBe(baselineEvaluations);
   await selectTheme(page, 'dark');
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-positive-negative-dark.png' });
@@ -432,6 +452,14 @@ test('delta flip settings request the exact reference demand and the tooltip rep
   await selectTheme(page, 'light');
   await page.waitForTimeout(100);
   await page.screenshot({ path: 'artifacts/footprint-totals/delta-flips-live-light.png' });
+  await expect.poll(() => page.evaluate(() => (window as any).__deltaFlipPulseSamples.some((s: any) => s.dash.length === 2))).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => page.evaluate(() => {
+    const p = [...(window as any).__terminal.panels.values()][0] as any;
+    return [...p.engine.footprintTotalsPanes.values()].some((view: any) => view.primitive.needsAnimationFrame);
+  })).toBe(false);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+
   await page.evaluate(() => {
     const p = [...(window as any).__terminal.panels.values()][0] as any;
     const summaries = p.engine.footprintAnalysisSummaries.map((summary: any) => ({ ...summary,

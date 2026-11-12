@@ -130,7 +130,7 @@ const result = {
 
 await mkdir('artifacts/order-walls', { recursive: true });
 const executable = process.env.CHROMIUM_PATH || '/usr/bin/chromium';
-const requestedArgs = ['--no-sandbox', '--enable-webgl'];
+const requestedArgs = ['--class=IQTerminalPerf', '--no-sandbox', '--enable-webgl'];
 const ignoredDefaultArguments = ['--enable-unsafe-swiftshader'];
 const browser = await chromium.launch({ executablePath: executable, headless: true,
   args: requestedArgs, ignoreDefaultArgs: ignoredDefaultArguments });

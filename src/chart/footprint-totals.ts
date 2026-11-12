@@ -52,10 +52,51 @@ export class FootprintTotalsPane implements IPrimitive {
   private deltaFlipSettings: FootprintDeltaFlipPresentation = { ...DEFAULT_FLIP_PRESENTATION };
   private presentation: FootprintTotalsPresentation = { font: 11, rowHeight: 18, labelWidth: 150 };
 
-  constructor(readonly id: string) {}
+  private flipPaint: Array<{ left: number; top: number; width: number; height: number; flip: Extract<DeltaFlipAssessment, { kind: 'flip' }>; color: string }> = [];
+  needsAnimationFrame = false;
+  /** Animate only the overlay canvas; the table, candles and analysis stay cached. */
+  readonly highlightOverlay: IPrimitive = {
+    zOrder: () => 'top',
+    draw: (ctx, rc) => this.drawFlipHighlight(ctx, rc),
+    detached: () => { this.flipPaint = []; this.needsAnimationFrame = false; },
+  };
+  constructor(readonly id: string, private reducedMotion: () => boolean = () => false,
+    private now: () => number = () => performance.now()) {}
+
+  private drawFlipHighlight(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
+    this.needsAnimationFrame = false;
+    if (!this.flipPaint.length || !this.deltaFlipSettings.enabled || rc.plotHeight <= PANE_HEADER_HEIGHT
+      || rc.plotWidth <= Math.min(this.presentation.labelWidth, rc.plotWidth)) return;
+    const reduced = this.reducedMotion();
+    const pulse = reduced ? .5 : (1 - Math.cos(this.now() * Math.PI * 2 / 3200)) / 2;
+    const dpr = rc.dpr;
+    const labelWidth = Math.min(this.presentation.labelWidth, rc.plotWidth) * dpr;
+    ctx.save();
+    try {
+      ctx.beginPath(); ctx.rect(labelWidth, PANE_HEADER_HEIGHT * dpr, Math.max(0, rc.plotWidth * dpr - labelWidth), Math.max(0, rc.plotHeight - PANE_HEADER_HEIGHT) * dpr); ctx.clip();
+      let painted = false;
+      for (const cell of this.flipPaint) {
+        if (cell.width <= 0 || cell.height <= 0 || cell.top >= rc.plotHeight * dpr) continue;
+        painted = true;
+        // Inset light stays inside its own cell and leaves the quantity untouched.
+        ctx.strokeStyle = cell.color;
+        ctx.setLineDash(cell.flip.lifecycle === 'live' ? [3 * dpr, 2 * dpr] : []);
+        const strength = cell.flip.strengthBand === 'small' ? .7 : 1;
+        const lineWidth = Math.min(2 * dpr, cell.width / 4, cell.height / 4);
+        ctx.lineWidth = lineWidth; ctx.globalAlpha = (.2 + .38 * pulse) * strength;
+        const inset = lineWidth / 2;
+        ctx.strokeRect(cell.left + inset, cell.top + inset, Math.max(0, cell.width - lineWidth), Math.max(0, cell.height - lineWidth));
+        if (cell.width >= 12 * dpr && cell.height >= 10 * dpr) {
+          ctx.lineWidth = dpr; ctx.globalAlpha = (.05 + .1 * pulse) * strength;
+          ctx.strokeRect(cell.left + 2.5 * dpr, cell.top + 2.5 * dpr, cell.width - 5 * dpr, cell.height - 5 * dpr);
+        }
+      }
+      this.needsAnimationFrame = painted && !reduced;
+    } finally { ctx.restore(); }
+  }
   zOrder() { return 'normal' as const; }
   attached(host: PrimitiveHost) { this.host = host; }
-  detached() { this.host = undefined; }
+  detached() { this.host = undefined; this.flipPaint = []; this.needsAnimationFrame = false; }
 
   setSettings(rows: readonly FootprintStatRow[], units: 'btc' | 'usdt', highlightHighest = false, deltaFlip: FootprintDeltaFlipPresentation = DEFAULT_FLIP_PRESENTATION) {
     const next = rows.filter(row => Object.hasOwn(FOOTPRINT_TOTALS_ROW_LABELS, row)).slice(0, 9);
@@ -163,6 +204,7 @@ export class FootprintTotalsPane implements IPrimitive {
     statsBars: this.stats.length, firstTime: this.stats[0]?.time ?? null, lastTime: this.stats.at(-1)?.time ?? null, presentation: { ...this.presentation } }; }
 
   draw(ctx: CanvasRenderingContext2D, rc: PrimitiveRenderContext) {
+    this.flipPaint = []; this.needsAnimationFrame = false;
     const dpr = rc.dpr, theme = rc.theme;
     const width = rc.plotWidth * dpr, height = rc.plotHeight * dpr;
     const labelWidth = Math.min(this.presentation.labelWidth, rc.plotWidth) * dpr;
@@ -227,6 +269,7 @@ export class FootprintTotalsPane implements IPrimitive {
         });
         ctx.fillRect(left, top + dpr, Math.max(0, slot - dpr), Math.max(0, rowHeight * dpr - dpr));
         const markFlip = highlightFlip && (this.deltaFlipSettings.target === 'whole-column' || row === 'delta');
+        if (markFlip && this.deltaFlipSettings.target === 'delta-cell' && row === 'delta') this.flipPaint.push({ left, top, width: slot, height: rowHeight * dpr, flip: flip!, color: flip!.direction === 'positive' ? buy : sell });
         const flipBorderWidth = markFlip && this.deltaFlipSettings.target === 'delta-cell' && row === 'delta'
           ? drawDeltaFlipOutline(ctx, left, top, slot, rowHeight * dpr, flip!, buy, sell, theme.background, dpr) : 0;
         const peak = this.highlightHighest && numeric != null && Number.isFinite(numeric) && numeric === highest.get(row);
@@ -248,6 +291,7 @@ export class FootprintTotalsPane implements IPrimitive {
       });
       let columnBorderWidth = 0;
       if (highlightFlip && this.deltaFlipSettings.target === 'whole-column') {
+        this.flipPaint.push({ left, top: tableTop, width: slot, height: tableRowsBottom - tableTop, flip: flip!, color: flip!.direction === 'positive' ? buy : sell });
         columnBorderWidth = drawDeltaFlipOutline(ctx, left, tableTop, slot, tableRowsBottom - tableTop, flip!, buy, sell, theme.background, dpr);
       }
       for (const marker of peakMarkers) drawNeutralPeakMarker(ctx, marker.left, marker.top, slot, marker.height,

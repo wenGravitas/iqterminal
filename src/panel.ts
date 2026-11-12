@@ -93,11 +93,11 @@ import {
   setObjectTreeFolderSidebar,
 } from './chart/object-tree';
 
-const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range', 'arrow', 'path', 'brush']);
+const DRAWING_TOOL_IDS = new Set(['horizontal-line', 'horizontal-ray', 'trend-line', 'rectangle', 'fib-retracement', 'text', 'callout', 'long-position', 'short-position', 'date-range', 'price-range', 'arrow', 'path', 'brush', 'fixed-range-volume-profile']);
 const DRAWING_TOOL_GROUPS = [
   { id: 'lines', label: 'Lines', tools: ['trend-line', 'horizontal-line', 'horizontal-ray', 'arrow', 'path', 'brush'], defaultTool: 'trend-line' },
   { id: 'shapes', label: 'Shapes and Fibonacci', tools: ['rectangle', 'fib-retracement'], defaultTool: 'rectangle' },
-  { id: 'positions', label: 'Position tools', tools: ['long-position', 'short-position', 'date-range', 'price-range'], defaultTool: 'long-position' },
+  { id: 'positions', label: 'Position tools', tools: ['long-position', 'short-position', 'date-range', 'price-range', 'fixed-range-volume-profile'], defaultTool: 'long-position' },
   { id: 'text', label: 'Text Tools', tools: ['text', 'callout'], defaultTool: 'text' },
 ] as const;
 const DRAWING_GROUP_BY_TOOL: Map<string, string> = new Map(DRAWING_TOOL_GROUPS.flatMap(group => group.tools.map(tool => [tool, group.id] as const)));
@@ -109,6 +109,7 @@ const DRAWING_ICON_MARKUP: Record<string, string> = {
   arrow: '<path d="M3 16 16 3M8 3h8v8"/>',
   path: '<path d="M2 15 6 8 10 12 17 3M12 3h5v5"/>',
   brush: '<path d="M2 14c5-13 2 8 8-2s8 1 7-8"/>',
+  'fixed-range-volume-profile': '<path d="M3 3v14h13M3 5h6M3 8h10M3 11h7M3 14h4"/>',
   rectangle: '<rect x="3" y="4" width="12" height="10"/>',
   'fib-retracement': '<path d="M4 3v13m0-12h11M4 7h8M4 11h11M4 15h8"/>',
   text: '<path d="M3 4h14M10 4v12m-3 0h6"/>',
@@ -152,6 +153,7 @@ function drawingSidebarIcon(name: string): SVGSVGElement {
 }
 
 function drawingToolName(id: string): string {
+  if (id === 'fixed-range-volume-profile') return 'Fixed Range Volume Profile';
   if (id === 'date-range') return 'Horizontal Measure';
   if (id === 'price-range') return 'Vertical Measure';
   return registeredDrawingTools().find(tool => tool.id === id)?.name ?? id;
@@ -2891,6 +2893,7 @@ export class CandlePanel implements IContentRenderer {
 
   private applyFootprintOptions() {
     const view = this.selection.footprint;
+    this.engine?.setFixedProfileStep(this.selection.type === 'footprint' ? this.selection.rowPrice : this.selection.market === 'spot' ? .01 : .1);
     this.engine?.setFootprintUnits(this.displayFootprintUnits);
     this.heatmapControls.setUnits(this.displayFootprintUnits);
     this.engine?.setFootprintOpacity(view.opacity);
@@ -4877,6 +4880,10 @@ export class CandlePanel implements IContentRenderer {
       if (this.paneIndicatorGeometry(paneIndex, paneRowsForIndex)) paneRows.set(paneIndex, paneRowsForIndex);
       else { this.setNativePaneControlsHost(paneIndex, null); mainRows.push(...paneRowsForIndex); }
     }
+    // Main-chart overlays belong to the price pane. A maximized secondary
+    // pane starts at the same top edge and must keep its header unobstructed.
+    const maximizedPane = this.engine?.chart.maximizedPane();
+    this.overlays.hidden = maximizedPane != null && maximizedPane !== this.engine?.chart.primaryPaneIndex();
     this.syncPaneIndicatorRows(paneRows);
     this.syncPaneLayoutControls();
     this.syncPaneLoadingStates();
