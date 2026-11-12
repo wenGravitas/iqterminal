@@ -54,3 +54,4 @@ c313674896b23f5906cafae1938fd136e85b8e867567fb6102ad688ce79254ee  artifacts/pi-f
 253778119792f70f6f4bef32ef5ba750b45bbd111fac6032af19bbf8e5e6a9c3  artifacts/pi-forwarded-route-r2/workload-ready.json
 b09cf19202e107631c740f9ab0c9e922d162c515452a8c844037e98edd38f24b  artifacts/pi-forwarded-route-r2/workload.jsonl.gz
 f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec  artifacts/pi-forwarded-route-r2/workload.log.gz
+e00360fb38f32c3c18ad85792c98b2bef8a7574f947ffe345e6d7a3084c851a6  artifacts/pi-forwarded-route-r2/control-events.jsonl.gz
