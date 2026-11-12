@@ -40,7 +40,9 @@
     },
     "sourceAncestry": {
       "frontendMain": "7aedc1896805be507382b8f5feb0e00775a4aa00"
-    }
+    },
+    "previewStateAtFinalHandoff": "stopped after user pause; saved PID/receipt describes the Nov11 validation process",
+    "localForwardStateAtFinalHandoff": "18880/18881 not listening; use existing manual tunnel command"
   },
   "backend": {
     "commit": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
@@ -254,5 +256,6 @@
     "experimentalCodeAndEvidenceDiscarded": false
   },
   "browserPolicy": "Only headless tests; foreground check delegated to documented manual steps",
-  "validation": "One sample per loading scenario, six deterministic browser regressions, one paired current smoke plus one isolated diagnostic recheck, one initial open plus five dependent reopens; no five-run candidate latency certification"
+  "validation": "One sample per loading scenario, six deterministic browser regressions, one paired current smoke plus one isolated diagnostic recheck, one initial open plus five dependent reopens; no five-run candidate latency certification",
+  "handoffRefresh": "artifacts/pi-history-stabilization-r1/handoff-refresh.json"
 }

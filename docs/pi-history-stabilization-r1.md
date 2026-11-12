@@ -6,7 +6,7 @@ The phase started at2026-11-11 14:57:12UTC with a two-hour ceiling (16:57:12UTC)
 
 The frozen client is **7eb4a00b60daf344188eebc0659a8a82862113e8**, tag `pi-history-stabilization-r1-client`. The frozen backend is **477b2f9960d4001c61a0d1ae4b47630b48cd4afb**, tag `pi-history-stabilization-r1-server`. Metadata commits on `rc/pi-history-stabilization-r1` record the handoff without changing those application tags.
 
-The client runs as a production staging preview at `http://127.0.0.1:4201`, with `VITE_DATA_MODE=staging`, `VITE_HISTORY_TILES=1` and diagnostics enabled. Separate owned SSH forwards18880/18881 lead to staging gateway18880. The user's5173 checkout/client was preserved. All automated browser checks were headless; they do not establish normal foreground rendering performance.
+Validation used a production staging preview at `http://127.0.0.1:4201`, with `VITE_DATA_MODE=staging`, `VITE_HISTORY_TILES=1` and diagnostics enabled. Separate owned SSH forwards18880/18881 led to staging gateway18880. The preview and local forwards are stopped after the user pause; the backend remains deployed. The preview PID in the saved receipt is historical, not a running-process claim. The user's5173 checkout/client was preserved. All automated browser checks were headless; they do not establish normal foreground rendering performance.
 
 Both backend processes have **IQ_WALL_PROJECTION_SOURCES=0**. The stabilization change closes independent-source discovery and reader-verification paths as well as admission. Ordinary canonical-backed prepared history remains enabled. Existing protocol4 files from the prior experiment are retained for compatibility; no format, service architecture or cache protocol was introduced during stabilization. The experimental path remains available as separate follow-up work.
 
@@ -55,6 +55,18 @@ The prioritized follow-up is small:
 1. Reproduce and attribute the current-startup/health timeout with correlated proxy/gateway ingress and transport evidence; then recheck only that reliability gate.
 2. Reduce current-footprint startup delay and wall first-paint/validation costs toward the original targets. Keep the failed five-run results and frozen source windows.
 3. Review the independent wall-tail/source-publication experiment separately. Its real staging extension reused62 prefix pages/one tail page and was financially exact, but took46.15s; repeated checkpoint/copy work and composable/default reuse remain follow-up work.
+
+To start the retained client artifact for the manual check, run these in separate terminals from `/home/daz/workarea/iqterminal-perf-history`. This uses the existing private tunnel and frozen production build; it does not rebuild or deploy anything:
+
+```bash
+IQ_STAGING_HISTORY_PORT=18880 IQ_STAGING_CURRENT_PORT=18881 IQ_STAGING_UPSTREAM_PORT=18880 pnpm tunnel:staging
+```
+
+```bash
+VITE_HISTORY_API_URL=http://127.0.0.1:18880 VITE_CURRENT_API_URL=http://127.0.0.1:18881 VITE_NATIVE_HISTORY_API_URL=http://127.0.0.1:18880 node artifacts/pi-history-r1/projection-source-r1/preview.mjs
+```
+
+Verify proxied `/market-data/v2/history/health` reports backend477b2f9 before opening a browser. The retained `projection-source-r1/dist` artifact is the tested7eb4a00 client; generated bundles stay local and are not added to the repository.
 
 For a manual foreground check, switch to i3 workspace9 yourself, open `http://127.0.0.1:4201`, and watch current prices/footprint totals for30s. Pan a historical chart left and back, close/reopen it, and check that loaded/requested coverage and gaps stay explicit. If Retry is shown, confirm it repairs history while healthy current updates continue. Check the30h Spot/USD-M walls with Top8/10%/native settings; use Fit Walls if the selected prices are outside the candle scale. Record the status and a screenshot if startup stalls beyond12s. This is a short manual smoke, not a five-run certification requirement.
 

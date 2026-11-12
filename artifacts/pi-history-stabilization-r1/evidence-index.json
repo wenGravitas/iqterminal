@@ -2,9 +2,14 @@
   "scope": "Frozen stabilization handoff; release BLOCKED by unexplained current-startup/health timeout",
   "client": "7eb4a00b60daf344188eebc0659a8a82862113e8",
   "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
-  "fileCount": 110,
-  "bytes": 3122089,
+  "fileCount": 111,
+  "bytes": 3123876,
   "files": [
+    {
+      "path": "artifacts/pi-history-r1/projection-source-r1/preview.mjs",
+      "bytes": 1481,
+      "sha256": "6c78bb03b14d4604b08a3ac68d6f82ef65f705c9a82f5994bc3660b0ce92ad2d"
+    },
     {
       "path": "artifacts/pi-history-r1/rc-stabilization-current-concurrency-smoke/concurrent-history-1.png",
       "bytes": 27901,
@@ -377,8 +382,8 @@
     },
     {
       "path": "artifacts/pi-history-stabilization-r1/candidate-inventory.json",
-      "bytes": 10579,
-      "sha256": "cfb65f00649995c8da7d7f71b13243e966315eadefaee6097288a727870c5271"
+      "bytes": 10885,
+      "sha256": "92eaeae7cd5013bb0e41b0e6e2276cd2bdf8449b83037aff92bc8148b4452081"
     },
     {
       "path": "artifacts/pi-history-stabilization-r1/comparison-control-preserved.json",

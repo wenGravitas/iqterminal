@@ -1,3 +1,4 @@
+6c78bb03b14d4604b08a3ac68d6f82ef65f705c9a82f5994bc3660b0ce92ad2d  artifacts/pi-history-r1/projection-source-r1/preview.mjs
 5cdad61887414f7cab53024433c2742748b3854eef674bbc50da4291fab58d73  artifacts/pi-history-r1/rc-stabilization-current-concurrency-smoke/concurrent-history-1.png
 3651a86fa47d759088be3edc649266d7d410f88d4aefe240ab319693dcacdfc6  artifacts/pi-history-r1/rc-stabilization-current-concurrency-smoke/current-only-1.png
 f13af24b61dbef2820030e9ad5a211e0b8ad39f054b98d50c0c37c179cb8afc0  artifacts/pi-history-r1/rc-stabilization-current-concurrency-smoke/executed.mjs
@@ -72,7 +73,7 @@ e16f490f4e47cc5fe2a4af7b60b6b4ba33e525cbdf9de07206683f7bbc441b40  artifacts/pi-h
 8111a4268838bacfaae2510db0d76868f2c6e2ffe5284fa342ba146728dd943e  artifacts/pi-history-stabilization-r1/backend-worker-build.log
 e8ebe021a9b551fddbc373f2bdfd8f7d8dd11bde625fdfaade611f5e988ffed3  artifacts/pi-history-stabilization-r1/browser-recovery-smoke.log
 3035b267f447e4fee12e62b6bc1df05805f29eaccfa64ec72015d8f07b9785d0  artifacts/pi-history-stabilization-r1/browser-test-scope.json
-cfb65f00649995c8da7d7f71b13243e966315eadefaee6097288a727870c5271  artifacts/pi-history-stabilization-r1/candidate-inventory.json
+92eaeae7cd5013bb0e41b0e6e2276cd2bdf8449b83037aff92bc8148b4452081  artifacts/pi-history-stabilization-r1/candidate-inventory.json
 71cb2151249db581c0ff314e50c6847d27168a4b526904c5ca7dcaacff6ca9d8  artifacts/pi-history-stabilization-r1/comparison-control-preserved.json
 df97be8bef8af004c4e1b629798a718015e97a20d724b6b1d0a925b19bd0089a  artifacts/pi-history-stabilization-r1/current-concurrency-smoke.log
 90bc2f62dffebb1f4a2fb5125d98e35f9f687c924d34553047b8c319385a91d8  artifacts/pi-history-stabilization-r1/current-diagnostic-recheck.log
@@ -108,4 +109,4 @@ e16f490f4e47cc5fe2a4af7b60b6b4ba33e525cbdf9de07206683f7bbc441b40  artifacts/pi-h
 16c3f1574eb05d1a45412db245849c897b57b9334fe096dd6e92a152de6531d6  artifacts/pi-history-stabilization-r1/wall-references.json
 9bcffd79d1cb8cfc80b306e99b4ed2ca765020a30d8d7485c545311bd18b3b85  artifacts/pi-history-stabilization-r1/walls-perp-smoke.log
 19ed118590ab6630d2e6c90eafef10f06c43928dfc61ec9077df734d9bf666b8  artifacts/pi-history-stabilization-r1/walls-spot-smoke.log
-0894d02cccb9fe0660cfeacf5678b116fad3aa13d9d8f76c5a8cf735c3c17d86  artifacts/pi-history-stabilization-r1/evidence-index.json
+f2842cd45396925d17b1e91bda82354cb8198ab88018d7bd06fe81a65b529a44  artifacts/pi-history-stabilization-r1/evidence-index.json
