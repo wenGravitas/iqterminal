@@ -1,0 +1,16 @@
+[
+  {
+    "HostName": "sd-fn-01",
+    "TailscaleIPs": [
+      "100.124.223.41",
+      "fd7a:115c:a1e0::a701:dfa8"
+    ],
+    "CurAddr": "65.21.65.212:41641",
+    "Relay": "hel",
+    "RxBytes": 5422100,
+    "TxBytes": 1175780,
+    "LastHandshake": "2026-11-12T09:15:23.026824827+03:00",
+    "Online": true,
+    "Active": true
+  }
+]

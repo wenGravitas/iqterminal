@@ -1,0 +1,18 @@
+{
+  "hardware": "Raspberry Pi5 ModelB Rev1.0; aarch64",
+  "firstMemKiB": {
+    "MemTotal": 8142664,
+    "MemAvailable": 1366956,
+    "SwapTotal": 33094924,
+    "SwapFree": 32826368
+  },
+  "lastMemKiB": {
+    "MemTotal": 8142664,
+    "MemAvailable": 1188512,
+    "SwapTotal": 33094924,
+    "SwapFree": 32554388
+  },
+  "swapInPages": 92915,
+  "swapOutPages": 158466,
+  "scope": "Whole-host counters include user applications and test browser. No attribution to terminal or SSH; swapping is a confounder for transport/scheduling diagnosis."
+}

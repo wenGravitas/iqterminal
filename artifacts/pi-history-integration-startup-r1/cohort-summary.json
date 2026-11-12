@@ -1,0 +1,2668 @@
+{
+  "client": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "gateway": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+  "scope": "Five fresh contexts each scenario; headless actual Pi SSH/preview route, empty browser caches. Bootstrap is footprint subscriber-to-live; navigation firstAt recorded separately. No original latency certification.",
+  "scenarios": {
+    "current-only": {
+      "samples": [
+        {
+          "run": 1,
+          "bootstrapMs": 4091.5999999996275,
+          "firstLiveNavigationMs": 5772.9000000003725,
+          "observationMs": 20000,
+          "updates": 32,
+          "maxReceiveGapMs": 1112.0999999996275,
+          "confirmedAckBefore": 3517171253,
+          "confirmedAckAfter": 3517171414,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [],
+          "healthErrors": [],
+          "error": null,
+          "heap": 10722751,
+          "longTasks": 4,
+          "maxLongTaskMs": 585,
+          "releasedStaging": {
+            "historyLoadAttempts": [],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 247,
+              "accountedBytes": 134858,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 0,
+              "coalesced": 0,
+              "cancelled": 0,
+              "completed": 0,
+              "failed": 0,
+              "peakActive": 0,
+              "queueMs": 0,
+              "runMs": 0,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794463877704,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794463877630,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 0,
+          "maxObservationLongTaskMs": 0,
+          "beforeLoad": "1.69 1.75 1.97 7/1216 64144\n",
+          "afterLoad": "1.66 1.74 1.97 4/1213 64285\n",
+          "beforeSwapCounters": [
+            "pswpin 436661",
+            "pswpout 501505"
+          ],
+          "afterSwapCounters": [
+            "pswpin 436810",
+            "pswpout 528413"
+          ]
+        },
+        {
+          "run": 2,
+          "bootstrapMs": 6859.4000000003725,
+          "firstLiveNavigationMs": 8007.5,
+          "observationMs": 20000,
+          "updates": 13,
+          "maxReceiveGapMs": 8783.700000001118,
+          "confirmedAckBefore": 3517172261,
+          "confirmedAckAfter": 3517172371,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [],
+          "healthErrors": [],
+          "error": null,
+          "heap": 10537851,
+          "longTasks": 3,
+          "maxLongTaskMs": 460,
+          "releasedStaging": {
+            "historyLoadAttempts": [],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 247,
+              "accountedBytes": 134858,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 0,
+              "coalesced": 0,
+              "cancelled": 0,
+              "completed": 0,
+              "failed": 0,
+              "peakActive": 0,
+              "queueMs": 0,
+              "runMs": 0,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794463996593,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794463996593,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 0,
+          "maxObservationLongTaskMs": 0,
+          "beforeLoad": "2.99 2.16 2.10 3/1215 64814\n",
+          "afterLoad": "1.75 1.96 2.03 2/1218 65094\n",
+          "beforeSwapCounters": [
+            "pswpin 439322",
+            "pswpout 587039"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439439",
+            "pswpout 587039"
+          ]
+        },
+        {
+          "run": 3,
+          "bootstrapMs": 1801,
+          "firstLiveNavigationMs": 2822.300000000745,
+          "observationMs": 20000,
+          "updates": 31,
+          "maxReceiveGapMs": 1214.4000000003725,
+          "confirmedAckBefore": 3517172539,
+          "confirmedAckAfter": 3517172626,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [],
+          "healthErrors": [],
+          "error": null,
+          "heap": 10159308,
+          "longTasks": 5,
+          "maxLongTaskMs": 504,
+          "releasedStaging": {
+            "historyLoadAttempts": [],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 247,
+              "accountedBytes": 134858,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 0,
+              "coalesced": 0,
+              "cancelled": 0,
+              "completed": 0,
+              "failed": 0,
+              "peakActive": 0,
+              "queueMs": 0,
+              "runMs": 0,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464023673,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464023673,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 0,
+          "maxObservationLongTaskMs": 0,
+          "beforeLoad": "1.75 1.96 2.03 2/1214 65163\n",
+          "afterLoad": "2.72 2.19 2.11 4/1214 65282\n",
+          "beforeSwapCounters": [
+            "pswpin 439439",
+            "pswpout 603040"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439578",
+            "pswpout 603040"
+          ]
+        },
+        {
+          "run": 4,
+          "bootstrapMs": 2637.800000000745,
+          "firstLiveNavigationMs": 3775.5999999996275,
+          "observationMs": 20000,
+          "updates": 29,
+          "maxReceiveGapMs": 1518.5,
+          "confirmedAckBefore": 3517173302,
+          "confirmedAckAfter": 3517173483,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [],
+          "healthErrors": [],
+          "error": null,
+          "heap": 10587383,
+          "longTasks": 3,
+          "maxLongTaskMs": 516,
+          "releasedStaging": {
+            "historyLoadAttempts": [],
+            "nativePresentation": {
+              "hits": 3,
+              "admissions": 3,
+              "capacityMisses": 0,
+              "entries": 2,
+              "rows": 495,
+              "accountedBytes": 270260,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 0,
+              "coalesced": 0,
+              "cancelled": 0,
+              "completed": 0,
+              "failed": 0,
+              "peakActive": 0,
+              "queueMs": 0,
+              "runMs": 0,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464110867,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464110867,
+                  "retainedStreamVersions": 3,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 0,
+          "maxObservationLongTaskMs": 0,
+          "beforeLoad": "4.82 2.93 2.37 2/1219 65730\n",
+          "afterLoad": "3.83 2.90 2.38 7/1221 65871\n",
+          "beforeSwapCounters": [
+            "pswpin 439671",
+            "pswpout 636119"
+          ],
+          "afterSwapCounters": [
+            "pswpin 441436",
+            "pswpout 636119"
+          ]
+        },
+        {
+          "run": 5,
+          "bootstrapMs": 2020.9000000003725,
+          "firstLiveNavigationMs": 3452.800000000745,
+          "observationMs": 20000,
+          "updates": 29,
+          "maxReceiveGapMs": 2087.5,
+          "confirmedAckBefore": 3517173560,
+          "confirmedAckAfter": 3517173631,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [],
+          "healthErrors": [],
+          "error": null,
+          "heap": 10116004,
+          "longTasks": 3,
+          "maxLongTaskMs": 538,
+          "releasedStaging": {
+            "historyLoadAttempts": [],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 247,
+              "accountedBytes": 134858,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 0,
+              "coalesced": 0,
+              "cancelled": 0,
+              "completed": 0,
+              "failed": 0,
+              "peakActive": 0,
+              "queueMs": 0,
+              "runMs": 0,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464138945,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464138945,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 0,
+          "maxObservationLongTaskMs": 0,
+          "beforeLoad": "3.83 2.90 2.38 11/1223 65925\n",
+          "afterLoad": "3.08 2.79 2.36 1/1227 66074\n",
+          "beforeSwapCounters": [
+            "pswpin 441442",
+            "pswpout 659971"
+          ],
+          "afterSwapCounters": [
+            "pswpin 441492",
+            "pswpout 659971"
+          ]
+        }
+      ],
+      "medianBootstrapMs": 2637.800000000745,
+      "maxBootstrapMs": 6859.4000000003725
+    },
+    "concurrent-history": {
+      "samples": [
+        {
+          "run": 1,
+          "bootstrapMs": 1519,
+          "firstLiveNavigationMs": 3539.4000000003725,
+          "observationMs": 20000,
+          "updates": 19,
+          "maxReceiveGapMs": 6034.9000000003725,
+          "confirmedAckBefore": 3517171665,
+          "confirmedAckAfter": 3517171754,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "healthErrors": [],
+          "error": null,
+          "heap": 14444204,
+          "longTasks": 19,
+          "maxLongTaskMs": 799,
+          "releasedStaging": {
+            "historyLoadAttempts": [
+              {
+                "at": 274.59999999962747,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-five:3",
+                "generation": 2,
+                "from": 1794448800000,
+                "to": 1794463200000,
+                "viewKey": "1794448800000:1794463200000:1794448800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 281.2000000011176,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-hour:5",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 6877.4000000003725,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794459600000,
+                "viewKey": "1794373200000:1794459600000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 7363.800000000745,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              }
+            ],
+            "nativePresentation": {
+              "hits": 2,
+              "admissions": 2,
+              "capacityMisses": 0,
+              "entries": 2,
+              "rows": 384,
+              "accountedBytes": 209818,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 4,
+              "coalesced": 0,
+              "cancelled": 2,
+              "completed": 2,
+              "failed": 2,
+              "peakActive": 2,
+              "queueMs": 1.1000000014901161,
+              "runMs": 11316.099999999627,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [
+              {
+                "id": "view-0f9df56f-d889-4e1e-9536-45bd159ec7c4-1",
+                "url": "/market-data/v2/history/footprints?from=1794448800000&to=1794463200000&interval=5m&rowPrice=25&known=",
+                "eligibleAt": 350.59999999962747,
+                "wireAt": 353.40000000037253,
+                "queueMs": 2.800000000745058,
+                "headersAt": 3693.5999999996275,
+                "headerMs": 3340.199999999255,
+                "requestId": "startup-r1-diagnostic-15-e55a7440",
+                "serverTiming": "admission;dur=0, db;dur=58.95, sqlqueue;dur=0.03, dbdecode;dur=0.15, project;dur=0.00, serialize;dur=1.36, total;dur=66.71, proxyqueue;dur=541.47, proxyheader;dur=2770.70",
+                "encodedBytes": 17915,
+                "proxyQueueMs": 541.47,
+                "proxyHeaderMs": 2770.7,
+                "dbQueries": 2,
+                "dbReadRows": 137924,
+                "dbReadBytes": 10720330,
+                "receivedAt": 3696.2000000011176,
+                "transferMs": 2.600000001490116,
+                "decodedBytes": 65814,
+                "decodedAt": 3699.9000000003725,
+                "decodeMs": 3.699999999254942,
+                "slots": 48,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-0f9df56f-d889-4e1e-9536-45bd159ec7c4-2",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 370.30000000074506,
+                "wireAt": 371.2000000011176,
+                "queueMs": 0.900000000372529,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-0f9df56f-d889-4e1e-9536-45bd159ec7c4-4",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 6904.200000001118,
+                "wireAt": 6904.4000000003725,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794373200000,
+                "requestedTo": 1794459600000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-0f9df56f-d889-4e1e-9536-45bd159ec7c4-5",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 7369.0999999996275,
+                "wireAt": 7369.200000001118,
+                "queueMs": 0.10000000149011612,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 7938.800000000745,
+                "headerMs": 569.5999999996275,
+                "requestId": "startup-r1-diagnostic-19-cb913046",
+                "proxyQueueMs": 1.75,
+                "proxyHeaderMs": 551.36,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 81473,
+                "decodeMs": 2.099999999627471,
+                "applyMs": 135.10000000149012,
+                "receivedAt": 8354.400000000373,
+                "streamMs": 415.59999999962747
+              }
+            ],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794463919305,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794463919305,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 13,
+          "maxObservationLongTaskMs": 65,
+          "beforeLoad": "1.60 1.73 1.96 14/1217 64349\n",
+          "afterLoad": "2.51 1.97 2.04 4/1216 64555\n",
+          "beforeSwapCounters": [
+            "pswpin 439274",
+            "pswpout 555764"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439298",
+            "pswpout 555764"
+          ]
+        },
+        {
+          "run": 2,
+          "bootstrapMs": 1666.5,
+          "firstLiveNavigationMs": 3125.9000000003725,
+          "observationMs": 20000,
+          "updates": 17,
+          "maxReceiveGapMs": 4415.699999999255,
+          "confirmedAckBefore": 3517171955,
+          "confirmedAckAfter": 3517172105,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "healthErrors": [],
+          "error": null,
+          "heap": 25298087,
+          "longTasks": 15,
+          "maxLongTaskMs": 665,
+          "releasedStaging": {
+            "historyLoadAttempts": [
+              {
+                "at": 197.90000000037253,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-five:3",
+                "generation": 2,
+                "from": 1794448800000,
+                "to": 1794463200000,
+                "viewKey": "1794448800000:1794463200000:1794448800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 207,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-hour:5",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 6437.300000000745,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794459600000,
+                "viewKey": "1794373200000:1794459600000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 6936.700000001118,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              }
+            ],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 137,
+              "accountedBytes": 74960,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 4,
+              "coalesced": 0,
+              "cancelled": 1,
+              "completed": 3,
+              "failed": 1,
+              "peakActive": 2,
+              "queueMs": 0.8000000007450581,
+              "runMs": 7348.700000001118,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [
+              {
+                "id": "view-352b2983-c278-4027-b5bd-7aae8eb5e56b-1",
+                "url": "/market-data/v2/history/footprints?from=1794448800000&to=1794463200000&interval=5m&rowPrice=25&known=",
+                "eligibleAt": 259.1000000014901,
+                "wireAt": 262.1000000014901,
+                "queueMs": 3,
+                "headersAt": 2526.10000000149,
+                "headerMs": 2264,
+                "requestId": "startup-r1-diagnostic-29-731b7483",
+                "serverTiming": "admission;dur=0, db;dur=190.75, sqlqueue;dur=144.93, dbdecode;dur=0.28, project;dur=0.00, serialize;dur=1.39, total;dur=196.98, proxyqueue;dur=1084.82, proxyheader;dur=1146.96",
+                "encodedBytes": 17906,
+                "proxyQueueMs": 1084.82,
+                "proxyHeaderMs": 1146.96,
+                "dbQueries": 2,
+                "dbReadRows": 137924,
+                "dbReadBytes": 10720330,
+                "receivedAt": 2527.10000000149,
+                "transferMs": 1,
+                "decodedBytes": 65814,
+                "decodedAt": 2530.800000000745,
+                "decodeMs": 3.699999999254942,
+                "slots": 48,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-352b2983-c278-4027-b5bd-7aae8eb5e56b-2",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 267.5,
+                "wireAt": 268.1000000014901,
+                "queueMs": 0.6000000014901161,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 2825.800000000745,
+                "headerMs": 2557.699999999255,
+                "requestId": "startup-r1-diagnostic-30-de0f6ff0",
+                "proxyQueueMs": 1583,
+                "proxyHeaderMs": 938.21,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 81490,
+                "decodeMs": 1.3999999985098839,
+                "applyMs": 158.2999999988824,
+                "receivedAt": 3410.60000000149,
+                "streamMs": 584.8000000007451
+              },
+              {
+                "id": "view-352b2983-c278-4027-b5bd-7aae8eb5e56b-4",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 6446.700000001118,
+                "wireAt": 6446.9000000003725,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794373200000,
+                "requestedTo": 1794459600000,
+                "chunks": 6,
+                "headersAt": 6923.9000000003725,
+                "headerMs": 477,
+                "requestId": "startup-r1-diagnostic-32-6428c8e1",
+                "proxyQueueMs": 0.98,
+                "proxyHeaderMs": 459.78,
+                "decodeMs": 0,
+                "applyMs": 0,
+                "error": "Truncated footprint batch response"
+              },
+              {
+                "id": "view-352b2983-c278-4027-b5bd-7aae8eb5e56b-5",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 6954.700000001118,
+                "wireAt": 6955.5,
+                "queueMs": 0.7999999988824129,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 7346.800000000745,
+                "headerMs": 391.30000000074506,
+                "requestId": "startup-r1-diagnostic-33-d6b6b8ef",
+                "proxyQueueMs": 0.92,
+                "proxyHeaderMs": 375.49,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 4972,
+                "decodeMs": 0.599999999627471,
+                "applyMs": 133.7999999988824,
+                "receivedAt": 8395.400000000373,
+                "streamMs": 1048.5999999996275
+              }
+            ],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794463951199,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794463951199,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 137
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 7,
+          "maxObservationLongTaskMs": 70,
+          "beforeLoad": "2.95 2.07 2.07 2/1214 64615\n",
+          "afterLoad": "2.99 2.16 2.10 3/1217 64760\n",
+          "beforeSwapCounters": [
+            "pswpin 439307",
+            "pswpout 574435"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439320",
+            "pswpout 574435"
+          ]
+        },
+        {
+          "run": 3,
+          "bootstrapMs": 1165.7000000011176,
+          "firstLiveNavigationMs": 4117.200000001118,
+          "observationMs": 20000,
+          "updates": 24,
+          "maxReceiveGapMs": 3125.199999999255,
+          "confirmedAckBefore": 3517172709,
+          "confirmedAckAfter": 3517172907,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "healthErrors": [],
+          "error": null,
+          "heap": 15952444,
+          "longTasks": 32,
+          "maxLongTaskMs": 1107,
+          "releasedStaging": {
+            "historyLoadAttempts": [
+              {
+                "at": 301.80000000074506,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-five:3",
+                "generation": 2,
+                "from": 1794448800000,
+                "to": 1794463200000,
+                "viewKey": "1794448800000:1794463200000:1794448800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 315.30000000074506,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-hour:5",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 2626.0999999996275,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 2731.300000000745,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794463200000,
+                "viewKey": "1794373200000:1794463200000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 7202.699999999255,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794459600000,
+                "viewKey": "1794373200000:1794459600000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 7715.699999999255,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              }
+            ],
+            "nativePresentation": {
+              "hits": 1,
+              "admissions": 1,
+              "capacityMisses": 0,
+              "entries": 1,
+              "rows": 137,
+              "accountedBytes": 74960,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 7,
+              "coalesced": 0,
+              "cancelled": 2,
+              "completed": 5,
+              "failed": 2,
+              "peakActive": 2,
+              "queueMs": 10.100000001490116,
+              "runMs": 8255.5,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-1",
+                "url": "/market-data/v2/history/footprints?from=1794448800000&to=1794463200000&interval=5m&rowPrice=25&known=",
+                "eligibleAt": 414.69999999925494,
+                "wireAt": 423.09999999962747,
+                "queueMs": 8.400000000372529,
+                "headersAt": 2035.9000000003725,
+                "headerMs": 1612.800000000745,
+                "requestId": "startup-r1-diagnostic-60-38773fbe",
+                "serverTiming": "admission;dur=0, db;dur=50.49, sqlqueue;dur=6.26, dbdecode;dur=0.17, project;dur=0.00, serialize;dur=1.36, total;dur=53.81, proxyqueue;dur=196.01, proxyheader;dur=1328.86",
+                "encodedBytes": 17914,
+                "proxyQueueMs": 196.01,
+                "proxyHeaderMs": 1328.86,
+                "dbQueries": 2,
+                "dbReadRows": 137924,
+                "dbReadBytes": 10720330,
+                "receivedAt": 2043.9000000003725,
+                "transferMs": 8,
+                "decodedBytes": 65814,
+                "decodedAt": 2048.5,
+                "decodeMs": 4.599999999627471,
+                "slots": 48,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-2",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 457.90000000037253,
+                "wireAt": 468,
+                "queueMs": 10.099999999627471,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-4",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 2665.9000000003725,
+                "wireAt": 2666.199999999255,
+                "queueMs": 0.2999999988824129,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 3063.300000000745,
+                "headerMs": 397.1000000014901,
+                "requestId": "startup-r1-diagnostic-63-6682638c",
+                "proxyQueueMs": 1.33,
+                "proxyHeaderMs": 361.01,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 5011,
+                "decodeMs": 0.40000000037252903,
+                "applyMs": 76.09999999962747,
+                "receivedAt": 3362.800000000745,
+                "streamMs": 299.5
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-5",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 2742.300000000745,
+                "wireAt": 2742.5,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794387600000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 3341.699999999255,
+                "headerMs": 599.1999999992549,
+                "requestId": "startup-r1-diagnostic-64-ba552dfc",
+                "proxyQueueMs": 2.22,
+                "proxyHeaderMs": 575.46,
+                "dbQueries": 12,
+                "dbReadRows": 1229589,
+                "dbReadBytes": 98318003,
+                "slots": 21,
+                "state": "ready",
+                "decodedBytes": 71033,
+                "decodeMs": 1.4999999962747097,
+                "applyMs": 241.59999999776483,
+                "receivedAt": 3994.9000000003725,
+                "streamMs": 653.2000000011176
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-5",
+                "url": "/market-data/v2/history/footprints?from=1794373200000&to=1794387600000&interval=1h&rowPrice=25&known=",
+                "eligibleAt": 3995,
+                "wireAt": 3995.300000000745,
+                "queueMs": 0.30000000074505806,
+                "headersAt": 4708,
+                "headerMs": 712.6999999992549,
+                "requestId": "startup-r1-diagnostic-65-90a2b895",
+                "serverTiming": "admission;dur=0, db;dur=408.21, sqlqueue;dur=336.78, dbdecode;dur=0.04, project;dur=0.00, serialize;dur=0.55, total;dur=410.52, proxyqueue;dur=1.68, proxyheader;dur=690.42",
+                "encodedBytes": 4245,
+                "proxyQueueMs": 1.68,
+                "proxyHeaderMs": 690.42,
+                "dbQueries": 2,
+                "dbReadRows": 175655,
+                "dbReadBytes": 14388457,
+                "receivedAt": 4709.699999999255,
+                "transferMs": 1.699999999254942,
+                "decodedBytes": 13114,
+                "decodedAt": 4709.9000000003725,
+                "decodeMs": 0.2000000011175871,
+                "slots": 4,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-6",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 7210.5,
+                "wireAt": 7210.5999999996275,
+                "queueMs": 0.09999999962747097,
+                "requestedFrom": 1794373200000,
+                "requestedTo": 1794459600000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-6b689c9d-5180-4b22-b2cd-5c3917ad05b6-7",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 7722.699999999255,
+                "wireAt": 7722.9000000003725,
+                "queueMs": 0.2000000011175871,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 8134.800000000745,
+                "headerMs": 411.90000000037253,
+                "requestId": "startup-r1-diagnostic-67-82477cfe",
+                "proxyQueueMs": 0.72,
+                "proxyHeaderMs": 394.78,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 5001,
+                "decodeMs": 0.8999999985098839,
+                "applyMs": 173,
+                "receivedAt": 8906.800000000745,
+                "streamMs": 772
+              }
+            ],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464052938,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464052938,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 137
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 19,
+          "maxObservationLongTaskMs": 181,
+          "beforeLoad": "3.94 2.45 2.19 11/1218 65329\n",
+          "afterLoad": "3.57 2.48 2.21 3/1230 65488\n",
+          "beforeSwapCounters": [
+            "pswpin 439579",
+            "pswpout 615038"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439631",
+            "pswpout 615038"
+          ]
+        },
+        {
+          "run": 4,
+          "bootstrapMs": 923.8000000007451,
+          "firstLiveNavigationMs": 2994.9000000003725,
+          "observationMs": 20000,
+          "updates": 31,
+          "maxReceiveGapMs": 2103,
+          "confirmedAckBefore": 3517172971,
+          "confirmedAckAfter": 3517173204,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "healthErrors": [],
+          "error": null,
+          "heap": 18316702,
+          "longTasks": 31,
+          "maxLongTaskMs": 843,
+          "releasedStaging": {
+            "historyLoadAttempts": [
+              {
+                "at": 150.40000000037253,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-five:3",
+                "generation": 2,
+                "from": 1794448800000,
+                "to": 1794463200000,
+                "viewKey": "1794448800000:1794463200000:1794448800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 160.5,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-hour:5",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 1346.1000000014901,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 5849.10000000149,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794459600000,
+                "viewKey": "1794373200000:1794459600000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 6373.9000000003725,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              }
+            ],
+            "nativePresentation": {
+              "hits": 2,
+              "admissions": 2,
+              "capacityMisses": 0,
+              "entries": 2,
+              "rows": 384,
+              "accountedBytes": 209818,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 5,
+              "coalesced": 0,
+              "cancelled": 1,
+              "completed": 4,
+              "failed": 1,
+              "peakActive": 2,
+              "queueMs": 3.199999999254942,
+              "runMs": 8125.799999998882,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [
+              {
+                "id": "view-33d894b6-69d0-4314-8caf-bf1f2bd73a0f-1",
+                "url": "/market-data/v2/history/footprints?from=1794448800000&to=1794463200000&interval=5m&rowPrice=25&known=",
+                "eligibleAt": 232.7000000011176,
+                "wireAt": 239.80000000074506,
+                "queueMs": 7.099999999627471,
+                "headersAt": 1196.4000000003725,
+                "headerMs": 956.5999999996275,
+                "requestId": "startup-r1-diagnostic-77-fb5edbc3",
+                "serverTiming": "admission;dur=0, db;dur=156.65, sqlqueue;dur=90.61, dbdecode;dur=0.15, project;dur=0.00, serialize;dur=1.22, total;dur=161.13, proxyqueue;dur=180.88, proxyheader;dur=725.75",
+                "encodedBytes": 17914,
+                "proxyQueueMs": 180.88,
+                "proxyHeaderMs": 725.75,
+                "dbQueries": 2,
+                "dbReadRows": 137924,
+                "dbReadBytes": 10720330,
+                "receivedAt": 1204.1000000014901,
+                "transferMs": 7.700000001117587,
+                "decodedBytes": 65814,
+                "decodedAt": 1205.300000000745,
+                "decodeMs": 1.199999999254942,
+                "slots": 48,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-33d894b6-69d0-4314-8caf-bf1f2bd73a0f-2",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 255.80000000074506,
+                "wireAt": 256.30000000074506,
+                "queueMs": 0.5,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 1783.9000000003725,
+                "headerMs": 1527.5999999996275,
+                "requestId": "startup-r1-diagnostic-78-e6e25798",
+                "proxyQueueMs": 894.04,
+                "proxyHeaderMs": 591.45,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 81473,
+                "decodeMs": 1.3999999985098839,
+                "applyMs": 162.7000000011176,
+                "receivedAt": 3169.60000000149,
+                "streamMs": 1385.7000000011176
+              },
+              {
+                "id": "view-33d894b6-69d0-4314-8caf-bf1f2bd73a0f-3",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 1368.2000000011176,
+                "wireAt": 1368.300000000745,
+                "queueMs": 0.09999999962747097,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 3145.9000000003725,
+                "headerMs": 1777.5999999996275,
+                "requestId": "startup-r1-diagnostic-80-14b94c1d",
+                "proxyQueueMs": 393.11,
+                "proxyHeaderMs": 1364.8,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 5029,
+                "decodeMs": 0.8999999985098839,
+                "applyMs": 80,
+                "receivedAt": 3228.4000000003725,
+                "streamMs": 82.5
+              },
+              {
+                "id": "view-33d894b6-69d0-4314-8caf-bf1f2bd73a0f-5",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 5873.4000000003725,
+                "wireAt": 5873.700000001118,
+                "queueMs": 0.30000000074505806,
+                "requestedFrom": 1794373200000,
+                "requestedTo": 1794459600000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-33d894b6-69d0-4314-8caf-bf1f2bd73a0f-6",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 6396.10000000149,
+                "wireAt": 6396.300000000745,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 6809.5,
+                "headerMs": 413.19999999925494,
+                "requestId": "startup-r1-diagnostic-82-99b6f270",
+                "proxyQueueMs": 5.16,
+                "proxyHeaderMs": 383.85,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 4990,
+                "decodeMs": 0.599999999627471,
+                "applyMs": 102.39999999850988,
+                "receivedAt": 8263.60000000149,
+                "streamMs": 1454.1000000014901
+              }
+            ],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464081863,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464081863,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 22,
+          "maxObservationLongTaskMs": 103,
+          "beforeLoad": "3.57 2.48 2.21 10/1221 65528\n",
+          "afterLoad": "4.82 2.93 2.37 2/1219 65677\n",
+          "beforeSwapCounters": [
+            "pswpin 439632",
+            "pswpout 636119"
+          ],
+          "afterSwapCounters": [
+            "pswpin 439671",
+            "pswpout 636119"
+          ]
+        },
+        {
+          "run": 5,
+          "bootstrapMs": 686.2000000011176,
+          "firstLiveNavigationMs": 2686.10000000149,
+          "observationMs": 120000,
+          "updates": 183,
+          "maxReceiveGapMs": 3151.0999999996275,
+          "confirmedAckBefore": 3517173684,
+          "confirmedAckAfter": 3517174261,
+          "disconnects": 0,
+          "streamErrors": 0,
+          "requestFailures": [
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "url": "http://127.0.0.1:4202/market-data/v2/history/footprints-batch",
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "healthErrors": [],
+          "error": null,
+          "heap": 20965979,
+          "longTasks": 103,
+          "maxLongTaskMs": 935,
+          "releasedStaging": {
+            "historyLoadAttempts": [
+              {
+                "at": 226.40000000037253,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-five:3",
+                "generation": 2,
+                "from": 1794448800000,
+                "to": 1794463200000,
+                "viewKey": "1794448800000:1794463200000:1794448800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 239.5,
+                "cause": "viewport",
+                "consumer": "footprint:restore-1:footprint:chart-history-hour:5",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 1838.0999999996275,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 6574.9000000003725,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794373200000,
+                "to": 1794459600000,
+                "viewKey": "1794373200000:1794459600000:1794373200000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 7076.9000000003725,
+                "cause": "viewport",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "loaded": false,
+                "validated": false
+              },
+              {
+                "at": 35173.300000000745,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-3",
+                "loaded": true,
+                "validated": true
+              },
+              {
+                "at": 39173.40000000037,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-6",
+                "loaded": true,
+                "validated": true
+              },
+              {
+                "at": 67173.5,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-7",
+                "loaded": true,
+                "validated": true
+              },
+              {
+                "at": 71173.30000000075,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-8",
+                "loaded": true,
+                "validated": true
+              },
+              {
+                "at": 98173.30000000075,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-five:13",
+                "generation": 2,
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "viewKey": "1794448500000:1794463200000:1794448500000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-9",
+                "loaded": true,
+                "validated": true
+              },
+              {
+                "at": 104173.69999999925,
+                "cause": "refresh",
+                "consumer": "footprint:chart-history-hour:15",
+                "generation": 4,
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "viewKey": "1794376800000:1794463200000:1794376800000:0",
+                "previousProgressId": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-10",
+                "loaded": true,
+                "validated": true
+              }
+            ],
+            "nativePresentation": {
+              "hits": 2,
+              "admissions": 2,
+              "capacityMisses": 0,
+              "entries": 2,
+              "rows": 384,
+              "accountedBytes": 209814,
+              "activeLeases": 1,
+              "retainedKeys": 1,
+              "limits": {
+                "entries": 2,
+                "rows": 1000,
+                "accountedBytes": 1048576,
+                "ttlMs": 60000,
+                "activeLeases": 128
+              }
+            },
+            "scheduler": {
+              "submitted": 11,
+              "coalesced": 0,
+              "cancelled": 1,
+              "completed": 10,
+              "failed": 1,
+              "peakActive": 2,
+              "queueMs": 1.200000001117587,
+              "runMs": 16084.699999997392,
+              "active": 0,
+              "queued": 0
+            },
+            "requests": [
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-1",
+                "url": "/market-data/v2/history/footprints?from=1794448800000&to=1794463200000&interval=5m&rowPrice=25&known=",
+                "eligibleAt": 308,
+                "wireAt": 315.69999999925494,
+                "queueMs": 7.699999999254942,
+                "headersAt": 1736.5,
+                "headerMs": 1420.800000000745,
+                "requestId": "startup-r1-diagnostic-106-0a3dc728",
+                "serverTiming": "admission;dur=0, db;dur=330.67, sqlqueue;dur=279.36, dbdecode;dur=0.11, project;dur=0.00, serialize;dur=1.00, total;dur=333.86, proxyqueue;dur=272.18, proxyheader;dur=1114.82",
+                "encodedBytes": 17914,
+                "proxyQueueMs": 272.18,
+                "proxyHeaderMs": 1114.82,
+                "dbQueries": 2,
+                "dbReadRows": 137924,
+                "dbReadBytes": 10720330,
+                "receivedAt": 1738.300000000745,
+                "transferMs": 1.800000000745058,
+                "decodedBytes": 65814,
+                "decodedAt": 1739.9000000003725,
+                "decodeMs": 1.599999999627471,
+                "slots": 48,
+                "state": "ready",
+                "jobs": []
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-2",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 329.40000000037253,
+                "wireAt": 329.80000000074506,
+                "queueMs": 0.40000000037252903,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 2743,
+                "headerMs": 2413.199999999255,
+                "requestId": "startup-r1-diagnostic-107-4c93ed66",
+                "proxyQueueMs": 1395.94,
+                "proxyHeaderMs": 985.26,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 81478,
+                "decodeMs": 1.9999999962747097,
+                "applyMs": 237.60000000149012,
+                "receivedAt": 3357.9000000003725,
+                "streamMs": 614.9000000003725
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-3",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 1856.0999999996275,
+                "wireAt": 1856.300000000745,
+                "queueMs": 0.2000000011175871,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 4197.800000000745,
+                "headerMs": 2341.5,
+                "requestId": "startup-r1-diagnostic-109-ab3374b3",
+                "proxyQueueMs": 850.8,
+                "proxyHeaderMs": 1466,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 5020,
+                "decodeMs": 0.09999999962747097,
+                "applyMs": 31,
+                "receivedAt": 4233,
+                "streamMs": 35.19999999925494
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-5",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 6592.300000000745,
+                "wireAt": 6592.4000000003725,
+                "queueMs": 0.09999999962747097,
+                "requestedFrom": 1794373200000,
+                "requestedTo": 1794459600000,
+                "chunks": 6,
+                "error": "signal is aborted without reason"
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-6",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 7096.4000000003725,
+                "wireAt": 7096.9000000003725,
+                "queueMs": 0.5,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 7783.5,
+                "headerMs": 686.5999999996275,
+                "requestId": "startup-r1-diagnostic-111-d3352363",
+                "proxyQueueMs": 0.87,
+                "proxyHeaderMs": 652.11,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 4992,
+                "decodeMs": 0.9000000040978193,
+                "applyMs": 157.59999999962747,
+                "receivedAt": 8172.5999999996275,
+                "streamMs": 389.09999999962747
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-7",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 35184.40000000037,
+                "wireAt": 35184.59999999963,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 36197.699999999255,
+                "headerMs": 1013.0999999996275,
+                "requestId": "startup-r1-diagnostic-112-a2cca416",
+                "proxyQueueMs": 2.38,
+                "proxyHeaderMs": 994.94,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 3776,
+                "decodeMs": 0.30000000074505806,
+                "applyMs": 23.299999997019768,
+                "receivedAt": 36472.90000000037,
+                "streamMs": 275.2000000011176
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-8",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 39180.800000000745,
+                "wireAt": 39181,
+                "queueMs": 0.19999999925494194,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 39797.5,
+                "headerMs": 616.5,
+                "requestId": "startup-r1-diagnostic-113-90fd8eee",
+                "proxyQueueMs": 0.66,
+                "proxyHeaderMs": 592.22,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 4980,
+                "decodeMs": 0.6999999992549419,
+                "applyMs": 235.80000000074506,
+                "receivedAt": 40648.5,
+                "streamMs": 851
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-9",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 67216.59999999963,
+                "wireAt": 67216.80000000075,
+                "queueMs": 0.2000000011175871,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 67999.69999999925,
+                "headerMs": 782.8999999985099,
+                "requestId": "startup-r1-diagnostic-114-7ddd5ed6",
+                "proxyQueueMs": 1.1,
+                "proxyHeaderMs": 762.42,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 3761,
+                "decodeMs": 0.40000000037252903,
+                "applyMs": 51.29999999888241,
+                "receivedAt": 68131.30000000075,
+                "streamMs": 131.60000000149012
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-10",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 71203.80000000075,
+                "wireAt": 71207.5,
+                "queueMs": 3.699999999254942,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 72566.09999999963,
+                "headerMs": 1358.5999999996275,
+                "requestId": "startup-r1-diagnostic-115-711ccfed",
+                "proxyQueueMs": 0.79,
+                "proxyHeaderMs": 1339.8,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 5006,
+                "decodeMs": 0.6999999992549419,
+                "applyMs": 96.70000000111759,
+                "receivedAt": 73225.40000000037,
+                "streamMs": 659.3000000007451
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-11",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 98186.5,
+                "wireAt": 98186.59999999963,
+                "queueMs": 0.09999999962747097,
+                "requestedFrom": 1794448500000,
+                "requestedTo": 1794463200000,
+                "chunks": 2,
+                "headersAt": 98992.69999999925,
+                "headerMs": 806.0999999996275,
+                "requestId": "startup-r1-diagnostic-116-91a46162",
+                "proxyQueueMs": 0.91,
+                "proxyHeaderMs": 786.99,
+                "dbQueries": 4,
+                "dbReadRows": 152797,
+                "dbReadBytes": 12088784,
+                "slots": 49,
+                "state": "ready",
+                "decodedBytes": 3786,
+                "decodeMs": 0.09999999962747097,
+                "applyMs": 35.999999998137355,
+                "receivedAt": 99060.19999999925,
+                "streamMs": 67.5
+              },
+              {
+                "id": "view-dcd6fd4e-45c2-4047-9ebb-c911abdda050-12",
+                "url": "/market-data/v2/history/footprints-batch",
+                "eligibleAt": 104186.69999999925,
+                "wireAt": 104187.09999999963,
+                "queueMs": 0.40000000037252903,
+                "requestedFrom": 1794376800000,
+                "requestedTo": 1794463200000,
+                "chunks": 6,
+                "headersAt": 104817.19999999925,
+                "headerMs": 630.0999999996275,
+                "requestId": "startup-r1-diagnostic-117-89e7814c",
+                "proxyQueueMs": 1.92,
+                "proxyHeaderMs": 590.52,
+                "dbQueries": 12,
+                "dbReadRows": 1335476,
+                "dbReadBytes": 107165986,
+                "slots": 24,
+                "state": "ready",
+                "decodedBytes": 4994,
+                "decodeMs": 0.599999999627471,
+                "applyMs": 175.59999999776483,
+                "receivedAt": 105306.90000000037,
+                "streamMs": 489.7000000011176
+              }
+            ],
+            "config": {
+              "historyTaskYield": "user-visible-post-task",
+              "historyBackgroundYield": "background-post-task",
+              "dataMode": "staging",
+              "historyTiles": true,
+              "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+            },
+            "views": [],
+            "source": "staging",
+            "transport": "websocket",
+            "streams": [
+              {
+                "key": "binance:perpetual:BTCUSDT:5m",
+                "connected": true,
+                "lastHeartbeat": 1794464269836,
+                "native": {
+                  "historyReady": true,
+                  "historyLoading": false,
+                  "historyRetryAt": 0,
+                  "lastCandleReceivedAt": 1794464269836,
+                  "retainedStreamVersions": 2,
+                  "viewportHistory": {
+                    "requests": 0,
+                    "receivedBars": 0,
+                    "presentedBars": 0,
+                    "applyMs": 0,
+                    "retainedOHLC": 0,
+                    "views": 1,
+                    "busy": 0,
+                    "retainedTimes": 247
+                  }
+                }
+              }
+            ],
+            "groups": 1,
+            "subscriptions": 1,
+            "retainedLiveBars": 0,
+            "preparedClosedBars": 0,
+            "retainedBars": 1000
+          },
+          "observationLongTasks": 89,
+          "maxObservationLongTaskMs": 114,
+          "beforeLoad": "3.96 2.98 2.42 5/1220 66113\n",
+          "afterLoad": "5.37 3.93 2.84 3/1226 66944\n",
+          "beforeSwapCounters": [
+            "pswpin 441495",
+            "pswpout 659971"
+          ],
+          "afterSwapCounters": [
+            "pswpin 529576",
+            "pswpout 659971"
+          ]
+        }
+      ],
+      "medianBootstrapMs": 1165.7000000011176,
+      "maxBootstrapMs": 1666.5
+    }
+  },
+  "customProfile": {
+    "status": 200,
+    "body": {
+      "version": 1,
+      "profile": {
+        "id": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "version": 1,
+        "market": "perpetual",
+        "venue": "binance",
+        "instrument": "binance:perpetual:BTCUSDT",
+        "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+        "aggregation": "native",
+        "bandPercent": 3,
+        "selectionTopN": 10,
+        "minimumNotionalUsd": null,
+        "confirmationMs": 0,
+        "midpointBasis": "best-observed-bid-ask",
+        "topN": 10,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "exactDerivations": {
+          "bandPercent": [
+            3
+          ],
+          "topNMax": 10,
+          "minimumNotional": true,
+          "confirmation": true,
+          "confirmationCrossings": true
+        }
+      },
+      "market": "perpetual",
+      "instrument": "binance:perpetual:BTCUSDT",
+      "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+      "from": 1794355200000,
+      "to": 1794463200000,
+      "watermark": 26182459,
+      "head": {
+        "cursor": 26182459,
+        "at": 1794463872419,
+        "epoch": 1794400199400
+      },
+      "page": {
+        "after": 25114074,
+        "nextAfter": 25114091,
+        "hasMore": true,
+        "lastAt": 1794355201602,
+        "limit": 1,
+        "observations": 1,
+        "sameMillisecondClosed": true
+      },
+      "seed": {
+        "cursor": 25114074,
+        "epoch": 1794309145901,
+        "at": 1794355199868,
+        "midpoint": "73762.95",
+        "bookScope": {
+          "outerCoverage": "snapshot-bounded",
+          "snapshotLevels": {
+            "bids": 29642,
+            "asks": 19207
+          },
+          "snapshotBidFloor": "74175.9",
+          "snapshotAskCeiling": "74437.8",
+          "observedBidLow": "570",
+          "observedAskHigh": "1609858.1",
+          "observedLevels": {
+            "bids": 23055,
+            "asks": 19600
+          },
+          "requestedBand": {
+            "bidLow": "71550.0615",
+            "bidHigh": "73762.95",
+            "askLow": "73762.95",
+            "askHigh": "75975.8385"
+          },
+          "bandCoverage": {
+            "bids": "partial",
+            "asks": "partial"
+          }
+        },
+        "bids": [
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:24812011:bids:7200000000000",
+            "side": "bid",
+            "price": "72000",
+            "quantity": "149.52",
+            "notional": "10765440",
+            "rank": 1,
+            "startedAt": 1794324484059,
+            "startCursor": 24812011,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794324484059
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:24796836:bids:7250000000000",
+            "side": "bid",
+            "price": "72500",
+            "quantity": "121.235",
+            "notional": "8789537.5",
+            "rank": 2,
+            "startedAt": 1794322940611,
+            "startCursor": 24796836,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794322940611
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25027960:bids:7180000000000",
+            "side": "bid",
+            "price": "71800",
+            "quantity": "97.362",
+            "notional": "6990591.6",
+            "rank": 3,
+            "startedAt": 1794346444983,
+            "startCursor": 25027960,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794346444983
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113281:bids:7288450000000",
+            "side": "bid",
+            "price": "72884.5",
+            "quantity": "74.522",
+            "notional": "5431498.709",
+            "rank": 4,
+            "startedAt": 1794355119288,
+            "startCursor": 25113281,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355119288
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:24867865:bids:7205000000000",
+            "side": "bid",
+            "price": "72050",
+            "quantity": "75.299",
+            "notional": "5425292.95",
+            "rank": 5,
+            "startedAt": 1794330164870,
+            "startCursor": 24867865,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794330164870
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:24915507:bids:7196000000000",
+            "side": "bid",
+            "price": "71960",
+            "quantity": "70.148",
+            "notional": "5047850.08",
+            "rank": 6,
+            "startedAt": 1794335009921,
+            "startCursor": 24915507,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794335009921
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25114012:bids:7156500000000",
+            "side": "bid",
+            "price": "71565",
+            "quantity": "69.996",
+            "notional": "5009263.74",
+            "rank": 7,
+            "startedAt": 1794355193545,
+            "startCursor": 25114012,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355193545
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25078339:bids:7217500000000",
+            "side": "bid",
+            "price": "72175",
+            "quantity": "68.341",
+            "notional": "4932511.675",
+            "rank": 8,
+            "startedAt": 1794351566799,
+            "startCursor": 25078339,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794351566799
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113281:bids:7312580000000",
+            "side": "bid",
+            "price": "73125.8",
+            "quantity": "59.321",
+            "notional": "4337895.5818",
+            "rank": 9,
+            "startedAt": 1794355119288,
+            "startCursor": 25113281,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355119288
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25111004:bids:7300000000000",
+            "side": "bid",
+            "price": "73000",
+            "quantity": "57.483",
+            "notional": "4196259",
+            "rank": 10,
+            "startedAt": 1794354887750,
+            "startCursor": 25111004,
+            "startEpoch": 1794309145901,
+            "startKnown": true,
+            "confirmationAt": 1794354887750
+          }
+        ],
+        "asks": [
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25018463:asks:7500000000000",
+            "side": "ask",
+            "price": "75000",
+            "quantity": "105.852",
+            "notional": "7938900",
+            "rank": 1,
+            "startedAt": 1794345479438,
+            "startCursor": 25018463,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794345479438
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25101713:asks:7417700000000",
+            "side": "ask",
+            "price": "74177",
+            "quantity": "100",
+            "notional": "7417700",
+            "rank": 2,
+            "startedAt": 1794353943220,
+            "startCursor": 25101713,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794353943220
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113293:asks:7469910000000",
+            "side": "ask",
+            "price": "74699.1",
+            "quantity": "77.492",
+            "notional": "5788582.6572",
+            "rank": 3,
+            "startedAt": 1794355120512,
+            "startCursor": 25113293,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355120512
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:24996636:asks:7450000000000",
+            "side": "ask",
+            "price": "74500",
+            "quantity": "64.706",
+            "notional": "4820597",
+            "rank": 4,
+            "startedAt": 1794343259994,
+            "startCursor": 24996636,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794343259994
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113281:asks:7445320000000",
+            "side": "ask",
+            "price": "74453.2",
+            "quantity": "61.233",
+            "notional": "4558992.7956",
+            "rank": 5,
+            "startedAt": 1794355119288,
+            "startCursor": 25113281,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355119288
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113883:asks:7572240000000",
+            "side": "ask",
+            "price": "75722.4",
+            "quantity": "53.737",
+            "notional": "4069094.6088",
+            "rank": 6,
+            "startedAt": 1794355180488,
+            "startCursor": 25113883,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355180488
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113281:asks:7425280000000",
+            "side": "ask",
+            "price": "74252.8",
+            "quantity": "46.794",
+            "notional": "3474585.5232",
+            "rank": 7,
+            "startedAt": 1794355119288,
+            "startCursor": 25113281,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355119288
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25112402:asks:7462640000000",
+            "side": "ask",
+            "price": "74626.4",
+            "quantity": "40.965",
+            "notional": "3057070.476",
+            "rank": 8,
+            "startedAt": 1794355029936,
+            "startCursor": 25112402,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355029936
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113397:asks:7590000000000",
+            "side": "ask",
+            "price": "75900",
+            "quantity": "40.058",
+            "notional": "3040402.2",
+            "rank": 9,
+            "startedAt": 1794355131018,
+            "startCursor": 25113397,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355131018
+          },
+          {
+            "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113935:asks:7492550000000",
+            "side": "ask",
+            "price": "74925.5",
+            "quantity": "40.325",
+            "notional": "3021370.7875",
+            "rank": 10,
+            "startedAt": 1794355185690,
+            "startCursor": 25113935,
+            "startEpoch": 1794309145901,
+            "startKnown": false,
+            "confirmationAt": 1794355185690
+          }
+        ]
+      },
+      "patches": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "cursor": 25114091,
+          "epoch": 1794309145901,
+          "at": 1794355201602,
+          "kind": "patch",
+          "midpoint": "73779.25",
+          "bookScope": {
+            "outerCoverage": "snapshot-bounded",
+            "snapshotLevels": {
+              "bids": 29642,
+              "asks": 19207
+            },
+            "snapshotBidFloor": "74175.9",
+            "snapshotAskCeiling": "74437.8",
+            "observedBidLow": "570",
+            "observedAskHigh": "1609858.1",
+            "observedLevels": {
+              "bids": 23109,
+              "asks": 19497
+            },
+            "requestedBand": {
+              "bidLow": "71565.8725",
+              "bidHigh": "73779.25",
+              "askLow": "73779.25",
+              "askHigh": "75992.6275"
+            },
+            "bandCoverage": {
+              "bids": "partial",
+              "asks": "partial"
+            }
+          },
+          "bids": {
+            "upserts": [
+              {
+                "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25078339:bids:7217500000000",
+                "side": "bid",
+                "price": "72175",
+                "quantity": "68.341",
+                "notional": "4932511.675",
+                "rank": 7,
+                "startedAt": 1794351566799,
+                "startCursor": 25078339,
+                "startEpoch": 1794309145901,
+                "startKnown": false,
+                "confirmationAt": 1794351566799
+              },
+              {
+                "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25113281:bids:7312580000000",
+                "side": "bid",
+                "price": "73125.8",
+                "quantity": "59.321",
+                "notional": "4337895.5818",
+                "rank": 8,
+                "startedAt": 1794355119288,
+                "startCursor": 25113281,
+                "startEpoch": 1794309145901,
+                "startKnown": false,
+                "confirmationAt": 1794355119288
+              },
+              {
+                "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25111004:bids:7300000000000",
+                "side": "bid",
+                "price": "73000",
+                "quantity": "57.483",
+                "notional": "4196259",
+                "rank": 9,
+                "startedAt": 1794354887750,
+                "startCursor": 25111004,
+                "startEpoch": 1794309145901,
+                "startKnown": true,
+                "confirmationAt": 1794354887750
+              },
+              {
+                "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25114091:bids:7249900000000",
+                "side": "bid",
+                "price": "72499",
+                "quantity": "51.493",
+                "notional": "3733191.007",
+                "rank": 10,
+                "startedAt": 1794355201602,
+                "startCursor": 25114091,
+                "startEpoch": 1794309145901,
+                "startKnown": false,
+                "confirmationAt": 1794355201602
+              }
+            ],
+            "removals": [
+              {
+                "entryId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1:1794309145901:25114012:bids:7156500000000",
+                "side": "bid",
+                "price": "71565",
+                "at": 1794355201602,
+                "cursor": 25114091,
+                "epoch": 1794309145901,
+                "reason": "band-exit",
+                "lastConfirmedAt": 1794355201500,
+                "lastConfirmedCursor": 25114090
+              }
+            ]
+          },
+          "asks": {
+            "upserts": [],
+            "removals": []
+          }
+        }
+      ],
+      "coverage": {
+        "availableFrom": 1793795272040,
+        "requestedFrom": 1794355200000,
+        "requestedTo": 1794463200000,
+        "confirmedTo": 1794463200000,
+        "gaps": [
+          {
+            "cursor": 25475471,
+            "epoch": 1794309145901,
+            "at": 1794391948671,
+            "reason": "Depth disconnected"
+          },
+          {
+            "cursor": 25556260,
+            "epoch": 1794391950295,
+            "at": 1794400167687,
+            "reason": "Shared disk watermark"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": {
+          "outerCoverage": "snapshot-bounded",
+          "snapshotLevels": {
+            "bids": 29642,
+            "asks": 19207
+          },
+          "snapshotBidFloor": "74175.9",
+          "snapshotAskCeiling": "74437.8",
+          "observedBidLow": "570",
+          "observedAskHigh": "1609858.1",
+          "observedLevels": {
+            "bids": 23055,
+            "asks": 19600
+          },
+          "requestedBand": {
+            "bidLow": "71550.0615",
+            "bidHigh": "73762.95",
+            "askLow": "73762.95",
+            "askHigh": "75975.8385"
+          },
+          "bandCoverage": {
+            "bids": "partial",
+            "asks": "partial"
+          }
+        },
+        "midpoint": "73762.95"
+      },
+      "profileStatus": "backfilling"
+    }
+  }
+}

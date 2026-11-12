@@ -1,0 +1,14 @@
+[
+  {
+    "url": "http://127.0.0.1:18880/v2/history/health",
+    "ms": 805.6967590000568,
+    "build": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+    "collector": null
+  },
+  {
+    "url": "http://127.0.0.1:18881/v1/health",
+    "ms": 603.9845239993156,
+    "build": null,
+    "collector": "live"
+  }
+]

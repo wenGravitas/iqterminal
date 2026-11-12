@@ -1,0 +1,11 @@
+{
+  "cohort": "diagnostic",
+  "startUtc": "2026-11-12T06:10:44.132Z",
+  "client": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "gateway": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+  "sampleCount": 5,
+  "deadlineUtc": "2026-11-12T07:54:25Z",
+  "checkpointUtc": "2026-11-12T07:39:25Z",
+  "policy": "Stop on first failure; no lucky reruns",
+  "phase": "starting"
+}

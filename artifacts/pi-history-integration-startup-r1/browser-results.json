@@ -1,0 +1,186 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal-integration-startup-r1/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "-c",
+      "playwright.startup-integration.config.ts",
+      "tests/browser/footprint-history-lifecycle.spec.ts",
+      "--grep",
+      "failed live Totals"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-integration-startup-r1/playwright.startup-integration.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-integration-startup-r1/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-integration-startup-r1/artifacts/pi-history-integration-startup-r1/browser-test-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-integration-startup-r1/artifacts/pi-history-integration-startup-r1/browser-test-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4202",
+          "headless": true,
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4202",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=headless",
+              "--no-sandbox",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pi-history-integration-startup-r1/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "footprint-history-lifecycle.spec.ts",
+      "file": "footprint-history-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "failed live Totals exposes scoped Retry while healthy native candles and closed history remain",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5195,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:23:22.910Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-5b6754ceecd9d758a003",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 134,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-12T06:23:20.866Z",
+    "duration": 8176.737000000001,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
