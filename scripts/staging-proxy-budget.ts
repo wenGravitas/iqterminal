@@ -1,8 +1,8 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {performance} from 'node:perf_hooks';
-import {markProxyAdmission} from './staging-proxy-observability.ts';
+import {markProxyAdmission,markProxyDispatch} from './staging-proxy-observability.ts';
 type Lane='current'|'native'|'bulk';
-interface Waiting {lane:Lane;response:ServerResponse;next:()=>void;finish:()=>void;active:boolean;done:boolean}
+interface Waiting {request:IncomingMessage;lane:Lane;response:ServerResponse;next:()=>void;finish:()=>void;active:boolean;done:boolean}
 /** Transport admission only. Four total slots, at most three historical. Current
  * reads have priority and a separate bounded waiting reserve; streams bypass it. */
 export class StagingProxyBudget {
@@ -11,10 +11,10 @@ export class StagingProxyBudget {
  constructor(private classify:(request:IncomingMessage)=>Lane|undefined){}
  middleware=(request:IncomingMessage,response:ServerResponse,next:()=>void)=>{
   const lane=this.classify(request);if(!lane){next();return;}
+  markProxyAdmission(request,performance.now(),response,()=>this.diagnostics());
   const waiting=this.pending.filter(item=>(item.lane==='current')===(lane==='current')).length;
   if(this.closed||waiting>=(lane==='current'?16:128)){response.writeHead(503,{'Retry-After':'1','Content-Type':'application/json'});response.end('{"error":"Local proxy request capacity; retry"}');return;}
-  markProxyAdmission(request,performance.now());
-  const item:Waiting={lane,response,next,active:false,done:false,finish:()=>{
+  const item:Waiting={request,lane,response,next,active:false,done:false,finish:()=>{
    if(item.done)return;item.done=true;response.off('close',item.finish);response.off('finish',item.finish);
    if(item.active){this.active.delete(item);this.count[lane]--;}else{const index=this.pending.indexOf(item);if(index>=0)this.pending.splice(index,1);}
    this.drain();
@@ -33,7 +33,7 @@ export class StagingProxyBudget {
    if(index<0)break;const item=this.pending.splice(index,1)[0]!;
    if(item.response.destroyed){item.finish();continue;}
    item.active=true;this.active.add(item);this.count[item.lane]++;
-   try{item.next();}catch(error){item.response.destroy(error instanceof Error?error:Error(String(error)));item.finish();}
+   markProxyDispatch(item.request);try{item.next();}catch(error){item.response.destroy(error instanceof Error?error:Error(String(error)));item.finish();}
   }}finally{this.draining=false;}
  }
  diagnostics(){return {active:this.active.size,historicalActive:this.count.native+this.count.bulk,currentActive:this.count.current,nativeActive:this.count.native,bulkActive:this.count.bulk,waitingCurrent:this.pending.filter(item=>item.lane==='current').length,waitingHistorical:this.pending.filter(item=>item.lane!=='current').length,closed:this.closed};}
