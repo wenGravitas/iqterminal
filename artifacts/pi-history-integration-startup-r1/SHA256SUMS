@@ -89,3 +89,8 @@ df0043b538d2ae0a39cc2910e9f94663c54acf8974c9fd17c9cf6036a78275c7  artifacts/pi-h
 be930002cc16a249e10fccf6aaa70df016ca104a00157cff56d58f635a307b0d  artifacts/pi-history-r1/startup-r1-footprint-coverage-observations.jsonl
 411202e72fd27c4bb1e64cc6f86ae93c8db12ee13b90a800a6eedbdda239f9b4  artifacts/pi-history-r1/startup-r1-footprint-coverage-samples.jsonl
 2d7d4f1c65b711e5999b0f6a56a8d827527874d4f0882faea452a2cb92e5def9  artifacts/pi-history-r1/startup-r1-footprint-coverage-trace-helper-executed.mjs
+9cd3cbebab86060b3ea75ed4ecf8d3452429f42ed6b4b27058e3adeab018f290  artifacts/pi-history-integration-startup-r1/browser-screenshots/artifacts/pi-history-r1/candle-totals-delayed-live.png
+4877114900479ab9611a292e4fdc5b0638d2658166326531387c7f19306e7c63  artifacts/pi-history-integration-startup-r1/browser-screenshots/artifacts/pi-history-r1/candle-totals-five-closed-hours.png
+3d1ac6d6c69a5669ee59e2348f389111c9828314772cb34616e01a6f1cc936ef  artifacts/pi-history-integration-startup-r1/browser-screenshots/artifacts/pi-history-r1/footprint-delayed-live.png
+c2a609a5199416d916ef8c7c8555c1805db738878b17ff3df44cb888e94913c7  artifacts/pi-history-integration-startup-r1/browser-screenshots/artifacts/pi-history-r1/footprint-five-closed-hours.png
+8542e5163459f5afe3852fe38af7f014dbecab7917619ada847eb46dc2c5c3f7  artifacts/pi-history-integration-startup-r1/browser-screenshots/artifacts/pi-history-r1/late-current-future-whitespace-footprint.png
