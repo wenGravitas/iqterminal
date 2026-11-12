@@ -1,0 +1,53 @@
+{
+  "verified": 11,
+  "newFixtureScreenshotsSavedSeparately": [
+    "artifacts/pi-history-stabilization-r1/recovery-fixture-screenshots/native-current-before-history-3.png",
+    "artifacts/pi-history-stabilization-r1/recovery-fixture-screenshots/native-history-recovered-live-retained-3.png"
+  ],
+  "originals": [
+    {
+      "path": "artifacts/order-walls/top-levels-spot-5m-dark.png",
+      "sha256": "9a565bc9c3918ac98ef39f82d5f74c76bb092a737619cdbcf27b5fa7cbe57471"
+    },
+    {
+      "path": "artifacts/order-walls/top-levels-spot-5m-footprint.png",
+      "sha256": "8d18c289d12725cc4d6fb1d5f9b1918160d4cc2416b9489d21fe95a63bafa564"
+    },
+    {
+      "path": "artifacts/order-walls/top-levels-spot-5m-light.png",
+      "sha256": "0b498371bb6d93d71f5e923327ee9b825ccb10ddc015c80a79e05b2fe6ce402d"
+    },
+    {
+      "path": "artifacts/pi-history-r1/early-ui-saved-24h.png",
+      "sha256": "f5b65dab2af24bd6443775aee311d4d70b3bf2d63df8f7a9b1636d96a8a237db"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-current-before-history-1000.png",
+      "sha256": "8c3685b1689d902ecf8a0f59a6361f5506b593559578b2afa2146f9eb49ec0ef"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-current-before-history-3.png",
+      "sha256": "3cc02995def355910c8c2f1b6c18c594465484883ad7b9a15b90c23c0e597479"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-history-recovered-live-retained-1000.png",
+      "sha256": "0d23c787fa0d981cebd52751de73749c5eaffcf64c8bffaf9f3366e989ea2169"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-history-recovered-live-retained-3.png",
+      "sha256": "c15a1b86e62dd7912fd4b54f9fcf704054ac1fca69e603298e9837cde567c45b"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-presentation-r1/bootstrap-seeded-before-validation.png",
+      "sha256": "ca0f3db101951635c55de383715c48831fd685446f2133e701c332d3729f36d3"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-presentation-r1/cached-before-validation.png",
+      "sha256": "c56c660a1d688f7de1d0f09e271082fb8ec5867ea740d3a554491063b2a9e9ca"
+    },
+    {
+      "path": "artifacts/pi-history-r1/native-visible-r1/native30h-before-bootstrap.png",
+      "sha256": "b98703a162531be31a02e3eba2dea14aadc288a5b3f9defa582258f0be1ca1f5"
+    }
+  ]
+}

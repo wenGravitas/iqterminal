@@ -1,0 +1,1115 @@
+{
+  "scope": "One sample per loading case; not five-run certification; frozen client and backend",
+  "samples": [
+    {
+      "case": "footprint-24h-1h",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": 3049.89999999851,
+      "firstCurrentMs": 3308.10000000149,
+      "completeMs": 3308.2999999970198,
+      "requested": {
+        "from": 1794322800000,
+        "to": 1794409200000
+      },
+      "wallCoverageVerification": null,
+      "nativeCoverage": null,
+      "financialEvidence": {
+        "file": "rc-stabilization-footprint24-smoke-footprint-24h-1h-1-financial.json",
+        "sha256": "47afe7da041adc7eeba2875d5615599500f063d42c0d3105f3bc282c2ca9754d",
+        "bars": 24,
+        "cells": 494,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "wallFinancialEvidence": null,
+      "paintedFootprintTimes": [
+        1794322800,
+        1794326400,
+        1794330000,
+        1794333600,
+        1794337200,
+        1794340800,
+        1794344400,
+        1794348000,
+        1794351600,
+        1794355200,
+        1794358800,
+        1794362400,
+        1794366000,
+        1794369600,
+        1794373200,
+        1794376800,
+        1794380400,
+        1794384000,
+        1794387600,
+        1794391200,
+        1794394800,
+        1794398400,
+        1794402000,
+        1794405600,
+        1794409200
+      ],
+      "history": {
+        "views": 1,
+        "ready": true,
+        "validated": true,
+        "ranges": [
+          {
+            "from": 1794322800000,
+            "to": 1794409200000,
+            "progress": {
+              "viewId": "view-1f62bd76-72b1-4ae5-9f1f-eee14f81ae1a-1",
+              "firstUsefulMs": 1790.2999999970198,
+              "completeMs": 2108.60000000149,
+              "from": 1794322800000,
+              "to": 1794409200000,
+              "requestedSlots": 24,
+              "loadedSlots": 24,
+              "validatedSlots": 24,
+              "slots": [
+                {
+                  "from": 1794322800000,
+                  "to": 1794326400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794326400000,
+                  "to": 1794330000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794330000000,
+                  "to": 1794333600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794333600000,
+                  "to": 1794337200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794337200000,
+                  "to": 1794340800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794340800000,
+                  "to": 1794344400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794344400000,
+                  "to": 1794348000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794348000000,
+                  "to": 1794351600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794351600000,
+                  "to": 1794355200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794355200000,
+                  "to": 1794358800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794358800000,
+                  "to": 1794362400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794362400000,
+                  "to": 1794366000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794366000000,
+                  "to": 1794369600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794369600000,
+                  "to": 1794373200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794373200000,
+                  "to": 1794376800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794376800000,
+                  "to": 1794380400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794380400000,
+                  "to": 1794384000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794384000000,
+                  "to": 1794387600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794387600000,
+                  "to": 1794391200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794391200000,
+                  "to": 1794394800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794394800000,
+                  "to": 1794398400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398400000,
+                  "to": 1794402000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402000000,
+                  "to": 1794405600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405600000,
+                  "to": 1794409200000,
+                  "validated": true,
+                  "state": "ready"
+                }
+              ],
+              "capacityLimited": false
+            }
+          }
+        ],
+        "capacityLimited": false
+      },
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-footprint24-smoke-samples.jsonl"
+    },
+    {
+      "case": "footprint-4h-5m",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": 2142.7999999970198,
+      "firstCurrentMs": null,
+      "completeMs": 2143,
+      "requested": {
+        "from": 1794394800000,
+        "to": 1794409200000
+      },
+      "wallCoverageVerification": null,
+      "nativeCoverage": null,
+      "financialEvidence": {
+        "file": "rc-stabilization-footprint4-smoke-footprint-4h-5m-1-financial.json",
+        "sha256": "bdfa305f428181502303d4f95fecfece0388df155892047935dcecdfeabe3738",
+        "bars": 48,
+        "cells": 280,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "wallFinancialEvidence": null,
+      "paintedFootprintTimes": [
+        1794394800,
+        1794395100,
+        1794395400,
+        1794395700,
+        1794396000,
+        1794396300,
+        1794396600,
+        1794396900,
+        1794397200,
+        1794397500,
+        1794397800,
+        1794398100,
+        1794398400,
+        1794398700,
+        1794399000,
+        1794399300,
+        1794399600,
+        1794399900,
+        1794400200,
+        1794400500,
+        1794400800,
+        1794401100,
+        1794401400,
+        1794401700,
+        1794402000,
+        1794402300,
+        1794402600,
+        1794402900,
+        1794403200,
+        1794403500,
+        1794403800,
+        1794404100,
+        1794404400,
+        1794404700,
+        1794405000,
+        1794405300,
+        1794405600,
+        1794405900,
+        1794406200,
+        1794406500,
+        1794406800,
+        1794407100,
+        1794407400,
+        1794407700,
+        1794408000,
+        1794408300,
+        1794408600,
+        1794408900
+      ],
+      "history": {
+        "views": 1,
+        "ready": true,
+        "validated": true,
+        "ranges": [
+          {
+            "from": 1794394800000,
+            "to": 1794409200000,
+            "progress": {
+              "viewId": "view-ac34e095-03e8-4f12-9996-e62da17f9705-1",
+              "firstUsefulMs": 730.3999999985099,
+              "completeMs": 745.6000000014901,
+              "from": 1794394800000,
+              "to": 1794409200000,
+              "requestedSlots": 48,
+              "loadedSlots": 48,
+              "validatedSlots": 48,
+              "slots": [
+                {
+                  "from": 1794394800000,
+                  "to": 1794395100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794395100000,
+                  "to": 1794395400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794395400000,
+                  "to": 1794395700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794395700000,
+                  "to": 1794396000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396000000,
+                  "to": 1794396300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396300000,
+                  "to": 1794396600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396600000,
+                  "to": 1794396900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396900000,
+                  "to": 1794397200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397200000,
+                  "to": 1794397500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397500000,
+                  "to": 1794397800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397800000,
+                  "to": 1794398100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398100000,
+                  "to": 1794398400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398400000,
+                  "to": 1794398700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398700000,
+                  "to": 1794399000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399000000,
+                  "to": 1794399300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399300000,
+                  "to": 1794399600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399600000,
+                  "to": 1794399900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399900000,
+                  "to": 1794400200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400200000,
+                  "to": 1794400500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400500000,
+                  "to": 1794400800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400800000,
+                  "to": 1794401100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401100000,
+                  "to": 1794401400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401400000,
+                  "to": 1794401700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401700000,
+                  "to": 1794402000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402000000,
+                  "to": 1794402300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402300000,
+                  "to": 1794402600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402600000,
+                  "to": 1794402900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402900000,
+                  "to": 1794403200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403200000,
+                  "to": 1794403500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403500000,
+                  "to": 1794403800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403800000,
+                  "to": 1794404100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404100000,
+                  "to": 1794404400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404400000,
+                  "to": 1794404700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404700000,
+                  "to": 1794405000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405000000,
+                  "to": 1794405300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405300000,
+                  "to": 1794405600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405600000,
+                  "to": 1794405900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405900000,
+                  "to": 1794406200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406200000,
+                  "to": 1794406500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406500000,
+                  "to": 1794406800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406800000,
+                  "to": 1794407100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407100000,
+                  "to": 1794407400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407400000,
+                  "to": 1794407700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407700000,
+                  "to": 1794408000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408000000,
+                  "to": 1794408300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408300000,
+                  "to": 1794408600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408600000,
+                  "to": 1794408900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408900000,
+                  "to": 1794409200000,
+                  "validated": true,
+                  "state": "ready"
+                }
+              ],
+              "capacityLimited": false
+            }
+          }
+        ],
+        "capacityLimited": false
+      },
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-footprint4-smoke-samples.jsonl"
+    },
+    {
+      "case": "walls-30h-spot-5m",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": 2927.7999999970198,
+      "firstCurrentMs": null,
+      "completeMs": 5850.29999999702,
+      "requested": {
+        "from": 1794300300000,
+        "to": 1794408300000
+      },
+      "wallCoverageVerification": {
+        "reference": {
+          "from": 1794300300000,
+          "to": 1794408300000,
+          "sourceFrom": 1794300000000,
+          "sourceTo": 1794408600000,
+          "sourceToken": "08561e1eae28026c861821d6ae02162ffc84df6d37a784a888ca2841e862f836",
+          "segments": 3912,
+          "valueRuns": 31127,
+          "gaps": 12,
+          "financialHash": "e8e5816f0002a37b00c135cfa233cefbba53bcc398b707d876d89bdf040541a4",
+          "evidence": "backend artifacts/pi-history-stabilization-r1/wall-financial-check.log; fresh shared financial kernel fold plus source before/after checks"
+        },
+        "sourceVerified": true,
+        "financialVerified": true,
+        "valid": true
+      },
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794300300000,
+        "to": 1794408300000,
+        "requestedSlots": 360,
+        "loadedSlots": 360,
+        "missing": []
+      },
+      "financialEvidence": null,
+      "wallFinancialEvidence": {
+        "financialHash": "e8e5816f0002a37b00c135cfa233cefbba53bcc398b707d876d89bdf040541a4",
+        "segments": 3912,
+        "valueRuns": 31127,
+        "revision": 28,
+        "scope": "Post-observation stable canonical fields and episode order; presentation tags excluded; no timing or retained-heap proof"
+      },
+      "paintedFootprintTimes": null,
+      "history": null,
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-walls-spot-smoke-samples.jsonl"
+    },
+    {
+      "case": "walls-30h-perp-15m",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": 3402.10000000149,
+      "firstCurrentMs": null,
+      "completeMs": 8541.80000000447,
+      "requested": {
+        "from": 1794299400000,
+        "to": 1794407400000
+      },
+      "wallCoverageVerification": {
+        "reference": {
+          "from": 1794299400000,
+          "to": 1794407400000,
+          "sourceFrom": 1794298500000,
+          "sourceTo": 1794408300000,
+          "sourceToken": "c641287f041fac8421190675518b2db193b2500c668614d6d4e2b6838742e9f6",
+          "segments": 19213,
+          "valueRuns": 88220,
+          "gaps": 3,
+          "financialHash": "6c1b717853c642fb1d3e3e756c0d86c2c3f6460e015a33b6ae8cf57832b0921d",
+          "evidence": "backend artifacts/pi-history-stabilization-r1/wall-financial-check.log; fresh shared financial kernel fold plus source before/after checks"
+        },
+        "sourceVerified": true,
+        "financialVerified": true,
+        "valid": true
+      },
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794299400000,
+        "to": 1794407400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "financialEvidence": null,
+      "wallFinancialEvidence": {
+        "financialHash": "6c1b717853c642fb1d3e3e756c0d86c2c3f6460e015a33b6ae8cf57832b0921d",
+        "segments": 19213,
+        "valueRuns": 88220,
+        "revision": 70,
+        "scope": "Post-observation stable canonical fields and episode order; presentation tags excluded; no timing or retained-heap proof"
+      },
+      "paintedFootprintTimes": null,
+      "history": null,
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-walls-perp-smoke-samples.jsonl"
+    },
+    {
+      "case": "current-footprint-5m",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": 2678,
+      "firstCurrentMs": 5373.20000000298,
+      "completeMs": 2678.2000000029802,
+      "requested": {
+        "from": 1794395400000,
+        "to": 1794409800000
+      },
+      "wallCoverageVerification": null,
+      "nativeCoverage": null,
+      "financialEvidence": {
+        "file": "rc-stabilization-current-footprint-smoke-current-footprint-5m-1-financial.json",
+        "sha256": "f24357540ca7a6b962f35ec29cc49681cdb9ee479e4d0691efffc635bc22615d",
+        "bars": 48,
+        "cells": 285,
+        "scope": "Post-observation canonical financial fields; independently compare to bounded real source, not timing evidence."
+      },
+      "wallFinancialEvidence": null,
+      "paintedFootprintTimes": [
+        1794395400,
+        1794395700,
+        1794396000,
+        1794396300,
+        1794396600,
+        1794396900,
+        1794397200,
+        1794397500,
+        1794397800,
+        1794398100,
+        1794398400,
+        1794398700,
+        1794399000,
+        1794399300,
+        1794399600,
+        1794399900,
+        1794400200,
+        1794400500,
+        1794400800,
+        1794401100,
+        1794401400,
+        1794401700,
+        1794402000,
+        1794402300,
+        1794402600,
+        1794402900,
+        1794403200,
+        1794403500,
+        1794403800,
+        1794404100,
+        1794404400,
+        1794404700,
+        1794405000,
+        1794405300,
+        1794405600,
+        1794405900,
+        1794406200,
+        1794406500,
+        1794406800,
+        1794407100,
+        1794407400,
+        1794407700,
+        1794408000,
+        1794408300,
+        1794408600,
+        1794408900,
+        1794409200,
+        1794409500
+      ],
+      "history": {
+        "views": 1,
+        "ready": true,
+        "validated": true,
+        "ranges": [
+          {
+            "from": 1794395400000,
+            "to": 1794409500000,
+            "progress": {
+              "viewId": "view-525b9387-50bd-41dc-97b7-a011d7b4502a-1",
+              "firstUsefulMs": 1085,
+              "completeMs": 1094.1999999955297,
+              "from": 1794395400000,
+              "to": 1794409500000,
+              "requestedSlots": 47,
+              "loadedSlots": 47,
+              "validatedSlots": 47,
+              "slots": [
+                {
+                  "from": 1794395400000,
+                  "to": 1794395700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794395700000,
+                  "to": 1794396000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396000000,
+                  "to": 1794396300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396300000,
+                  "to": 1794396600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396600000,
+                  "to": 1794396900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794396900000,
+                  "to": 1794397200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397200000,
+                  "to": 1794397500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397500000,
+                  "to": 1794397800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794397800000,
+                  "to": 1794398100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398100000,
+                  "to": 1794398400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398400000,
+                  "to": 1794398700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794398700000,
+                  "to": 1794399000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399000000,
+                  "to": 1794399300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399300000,
+                  "to": 1794399600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399600000,
+                  "to": 1794399900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794399900000,
+                  "to": 1794400200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400200000,
+                  "to": 1794400500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400500000,
+                  "to": 1794400800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794400800000,
+                  "to": 1794401100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401100000,
+                  "to": 1794401400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401400000,
+                  "to": 1794401700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794401700000,
+                  "to": 1794402000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402000000,
+                  "to": 1794402300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402300000,
+                  "to": 1794402600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402600000,
+                  "to": 1794402900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794402900000,
+                  "to": 1794403200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403200000,
+                  "to": 1794403500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403500000,
+                  "to": 1794403800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794403800000,
+                  "to": 1794404100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404100000,
+                  "to": 1794404400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404400000,
+                  "to": 1794404700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794404700000,
+                  "to": 1794405000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405000000,
+                  "to": 1794405300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405300000,
+                  "to": 1794405600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405600000,
+                  "to": 1794405900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794405900000,
+                  "to": 1794406200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406200000,
+                  "to": 1794406500000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406500000,
+                  "to": 1794406800000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794406800000,
+                  "to": 1794407100000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407100000,
+                  "to": 1794407400000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407400000,
+                  "to": 1794407700000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794407700000,
+                  "to": 1794408000000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408000000,
+                  "to": 1794408300000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408300000,
+                  "to": 1794408600000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408600000,
+                  "to": 1794408900000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794408900000,
+                  "to": 1794409200000,
+                  "validated": true,
+                  "state": "ready"
+                },
+                {
+                  "from": 1794409200000,
+                  "to": 1794409500000,
+                  "validated": true,
+                  "state": "ready"
+                }
+              ],
+              "capacityLimited": false
+            }
+          }
+        ],
+        "capacityLimited": false
+      },
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-current-footprint-smoke-samples.jsonl"
+    },
+    {
+      "case": "current-walls-15m",
+      "build": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+      "backend": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "firstHistoryMs": null,
+      "firstCurrentMs": 1671.2000000029802,
+      "completeMs": null,
+      "requested": {
+        "from": 1794406500000,
+        "to": 1794410100000
+      },
+      "wallCoverageVerification": null,
+      "nativeCoverage": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794406500000,
+        "to": 1794409200000,
+        "requestedSlots": 3,
+        "loadedSlots": 3,
+        "missing": []
+      },
+      "financialEvidence": null,
+      "wallFinancialEvidence": null,
+      "paintedFootprintTimes": null,
+      "history": null,
+      "sourceFile": "artifacts/pi-history-r1/rc-stabilization-current-walls-smoke-samples.jsonl"
+    }
+  ]
+}

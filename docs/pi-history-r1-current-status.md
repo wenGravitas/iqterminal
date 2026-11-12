@@ -1,3 +1,9 @@
+## Bounded stabilization handoff supersedes open-ended optimization
+
+The user changed the goal on11November2026 to a two-hour stabilization and release-candidate handoff. The candidate is frozen at client7eb4a00/backend477b2f9 with independent wall sources disabled. The handoff decision is **BLOCKED by an unresolved intermittent current-startup/health timeout on the Pi route**. Coverage and financial checks pass; wall latency targets remain deferred with their old failures preserved. No main merge or production deployment occurred. [Candidate inventory, bounded smoke results, blocker, manual check and follow-up](pi-history-stabilization-r1.md).
+
+The older investigation and build-scoped performance evidence below is preserved.
+
 ## Latest source work: exact prepared-prefix and tail reuse
 
 The release remains **INCOMPLETE**. The following source changes are committed

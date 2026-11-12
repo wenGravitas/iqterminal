@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-spot-5m": {
+      "from": 1794300300000,
+      "to": 1794408300000,
+      "sourceFrom": 1794300000000,
+      "sourceTo": 1794408600000,
+      "sourceToken": "08561e1eae28026c861821d6ae02162ffc84df6d37a784a888ca2841e862f836",
+      "segments": 3912,
+      "valueRuns": 31127,
+      "gaps": 12,
+      "financialHash": "e8e5816f0002a37b00c135cfa233cefbba53bcc398b707d876d89bdf040541a4",
+      "evidence": "backend artifacts/pi-history-stabilization-r1/wall-financial-check.log; fresh shared financial kernel fold plus source before/after checks"
+    },
+    "walls-30h-perp-15m": {
+      "from": 1794299400000,
+      "to": 1794407400000,
+      "sourceFrom": 1794298500000,
+      "sourceTo": 1794408300000,
+      "sourceToken": "c641287f041fac8421190675518b2db193b2500c668614d6d4e2b6838742e9f6",
+      "segments": 19213,
+      "valueRuns": 88220,
+      "gaps": 3,
+      "financialHash": "6c1b717853c642fb1d3e3e756c0d86c2c3f6460e015a33b6ae8cf57832b0921d",
+      "evidence": "backend artifacts/pi-history-stabilization-r1/wall-financial-check.log; fresh shared financial kernel fold plus source before/after checks"
+    }
+  }
+}
