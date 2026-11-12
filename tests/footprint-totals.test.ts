@@ -186,3 +186,45 @@ describe('Footprint Totals pane', () => {
     expect(fills.some(([, , width, height]) => width === height && width <= 3)).toBe(false);
   });
 });
+
+
+describe('delta flip pulse overlay', () => {
+  it('pulses solid and dashed highlights without repainting values and stops offscreen or under reduced motion', () => {
+    let time = 0, reduced = false;
+    const pane = new FootprintTotalsPane('pulse', () => reduced, () => time);
+    pane.setSettings(['delta'], 'btc', false, flipPresentation());
+    const history = Array.from({ length: 22 }, (_, i) => flipSummary(i * 60, i < 20 ? 20 : i === 20 ? -40 : 60));
+    pane.setAnalysisSummaries(history); pane.setStats([{ ...stats, time: 1260, delta: 60 }]);
+    let dash: number[] = [], fills = 0, labels = 0;
+    const strokes: Array<{ alpha: number; dash: number[] }> = [];
+    const canvas: any = { globalAlpha: 1, save() {}, restore() {},
+      measureText: () => ({ width: 10 }), setLineDash(value: number[]) { dash = [...value]; },
+      fillRect() { fills++; }, fillText() { labels++; },
+      strokeRect() { strokes.push({ alpha: this.globalAlpha, dash: [...dash] }); },
+    };
+    const ctx = new Proxy(canvas, { get: (target, key) => key in target ? target[key] : () => {} });
+    const rc: any = { dpr: 1, plotWidth: 400, plotHeight: 70,
+      theme: { background: '#090909', axisText: '#858585', upColor: '#58a65c', downColor: '#ad5858' },
+      timeScale: { barSpacing: 40, indexToX: () => 220 }, dataLayer: { timeToIndex: () => 0 } };
+    pane.draw(ctx, rc); strokes.length = 0; fills = 0; labels = 0;
+    pane.highlightOverlay.draw(ctx, rc);
+    const dim = strokes[0]!.alpha;
+    expect(strokes[0]!.dash).toEqual([]); expect(pane.needsAnimationFrame).toBe(true);
+    time = 1600; strokes.length = 0; pane.highlightOverlay.draw(ctx, rc);
+    expect(strokes[0]!.alpha).toBeGreaterThan(dim);
+    expect(strokes[0]!.alpha).toBeLessThan(.6);
+    expect(fills).toBe(0); expect(labels).toBe(0);
+    const live = history.slice();
+    live[21] = flipSummary(1260, 60, { coverage: 'partial', ended: false, completionSource: 'unknown', previewEligible: true,
+      coverageEvidence: { ...history[21]!.coverageEvidence, complete: false, confirmedToMs: 1290000 } });
+    pane.setAnalysisSummaries(live); pane.draw(ctx, rc); strokes.length = 0;
+    pane.highlightOverlay.draw(ctx, rc); expect(strokes[0]!.dash).toEqual([3, 2]);
+    reduced = true; pane.highlightOverlay.draw(ctx, rc); expect(pane.needsAnimationFrame).toBe(false);
+    reduced = false; pane.draw(ctx, { ...rc, timeScale: { ...rc.timeScale, indexToX: () => -1000 } });
+    strokes.length = 0; pane.highlightOverlay.draw(ctx, rc);
+    expect(strokes).toEqual([]); expect(pane.needsAnimationFrame).toBe(false);
+    pane.draw(ctx, rc); pane.setSettings(['delta'], 'btc', false, flipPresentation({ enabled: false }));
+    pane.highlightOverlay.draw(ctx, rc); expect(pane.needsAnimationFrame).toBe(false);
+    pane.detached(); expect(pane.needsAnimationFrame).toBe(false);
+  });
+});

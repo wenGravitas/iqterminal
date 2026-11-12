@@ -1,3 +1,4 @@
+import { registerFixedRangeProfile, setFixedProfileStep } from './fixed-range-volume-profile';
 import { workspacePanelStorage } from '../workspaces/panel-storage';
 import { RectangleDragPreview } from './rectangle-drag-preview';
 import {setVenueLabelIcon,venueLabelIcon,venueIconPath,setLabelCurrencySource,type LabelVenue} from './venue-label';
@@ -270,6 +271,7 @@ export class OpenAlgoCandleChart {
     // It shares this chart's existing renderer and RAF scheduler.
     if (!drawingToolsRegistered) { registerBuiltinDrawingTools(); drawingToolsRegistered = true; }
     registerIQDrawingLabelRenderers();
+    registerFixedRangeProfile();
     this.drawings = new DrawingController(this.chart, { magnet: 'weak' });
     this.rectangleDragPreview = new RectangleDragPreview(this.chart, this.drawings, container);
     this.syncDrawingAxisLabels();
@@ -331,6 +333,8 @@ export class OpenAlgoCandleChart {
       capture: true, passive: false, signal: this.inputAbort.signal,
     });
   }
+
+  setFixedProfileStep(step: number) { setFixedProfileStep(this.chart.dataLayer, step); }
 
   setDrawingContext(series: CanonicalSeries) {
     this.candleTimerInterval = duration[series.interval] / 1000;
@@ -546,11 +550,12 @@ export class OpenAlgoCandleChart {
       this.ensureFootprintStatsModel();
       this.ensureFootprintRefreshSubscriptions();
       const paneIndex = this.chart.panes().length;
-      const primitive = new FootprintTotalsPane(id);
+      const primitive = new FootprintTotalsPane(id, () => this.reducedMotion.matches);
       const series = this.chart.addSeries('histogram', { paneIndex, priceScaleId: 'right', style: { visible: false } });
       series.priceScale().setPriceFormatter(() => '');
       series.setData([]);
       this.chart.addPrimitive(primitive, paneIndex);
+      this.chart.addPrimitive(primitive.highlightOverlay, paneIndex);
       view = { series, primitive, paneIndex, autoHeight: 0, autoWeight: null, manuallyResized: false };
       this.footprintTotalsPanes.set(id, view);
       // A new pane still needs the current shared stats when the visible
@@ -1298,7 +1303,10 @@ export class OpenAlgoCandleChart {
       this.stats.draws++;
     }
     // Cursor invalidation repaints only OpenAlgo's overlay, through our existing RAF scheduler.
-    if (this.footprintActivity.needsFrame) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
+    const maximized = this.chart.maximizedPane();
+    const flipAnimation = [...this.footprintTotalsPanes.values()].some(view => view.primitive.needsAnimationFrame
+      && !this.chart.paneCollapsed(view.paneIndex) && (maximized === null || maximized === view.paneIndex));
+    if (this.footprintActivity.needsFrame || flipAnimation) this.chart.invalidate(mask => mask.invalidateGlobal(InvalidationLevel.Cursor));
   }
 
   dispose() {

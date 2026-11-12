@@ -4,7 +4,7 @@ import { Footprint, compactVol, type FootprintBar, type FootprintOptions, type F
 const PROFILE_LEVEL_EXTENSION = 8;
 const POC_MARKER_CELL_GAP = 2;
 const FOOTPRINT_FONT_FAMILY = 'ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace';
-const FOOTPRINT_LEVEL_COLOR = '#6d3fa0';
+const FOOTPRINT_LEVEL_COLOR = '#b5a0cd';
 type RgbColor = { r: number; g: number; b: number; a: number };
 type PaintedCell = { x: number; y: number; width: number; height: number; background: RgbColor };
 type QuantityTextStyle = { color: string; alpha: number; outline?: string };
@@ -69,15 +69,18 @@ export class TerminalFootprint extends Footprint {
     }
     if (typeof args[4] === 'number') args[4] = Math.round(args[4]);
   }
-  private levelGuideColor() { return FOOTPRINT_LEVEL_COLOR; }
+  private levelGuideColor() {
+    const background = parseRgbColor(this.rc?.theme.background ?? '');
+    return background && relativeLuminance(background) > .5 ? '#795a96' : FOOTPRINT_LEVEL_COLOR;
+  }
   private alignedPocBounds(left: number, right: number): [number, number] {
     const edge = this.rc ? this.rc.plotWidth * this.dpr : Infinity;
     left = Math.max(0, Math.min(edge, left));
     right = Math.max(0, Math.min(edge, right));
-    // POC marks use a two-pixel stroke (per DPR); align their centerline for
+    // POC borders use a one-CSS-pixel stroke; align their centerline for
     // that stroke width so the requested fill-to-ink gap stays even.
-    const markerWidth = this.pixelStrokeWidth() * 2;
-    const alignMarker = (value: number) => Math.round(value) + (markerWidth % 2 ? .5 : 0);
+    const markerWidth = this.pixelStrokeWidth();
+    const alignMarker = (value: number) => Math.round(value - (markerWidth % 2 ? .5 : 0)) + (markerWidth % 2 ? .5 : 0);
     return [alignMarker(left), alignMarker(right)];
   }
   private pocHorizontalBounds(left: number, right: number, centreY: number): [number, number] {
@@ -93,9 +96,9 @@ export class TerminalFootprint extends Footprint {
       && cell.x >= left - tolerance && cell.x + cell.width <= right + tolerance);
     const actualLeft = rowCells.length ? Math.min(...rowCells.map(cell => cell.x)) : left;
     const actualRight = rowCells.length ? Math.max(...rowCells.map(cell => cell.x + cell.width)) : right;
-    // Keep a two-CSS-pixel clear gap from the painted POC bars. Marker stroke
-    // width is twice pixelStrokeWidth(), so include its half-width before alignment.
-    const offset = POC_MARKER_CELL_GAP * this.dpr + this.pixelStrokeWidth();
+    // Keep two CSS pixels of clearance from the painted POC bars,
+    // including half the border width before alignment.
+    const offset = POC_MARKER_CELL_GAP * this.dpr + this.pixelStrokeWidth() / 2;
     return this.alignedPocBounds(actualLeft - offset, actualRight + offset);
   }
   private shiftedX(x: number) {
@@ -179,7 +182,7 @@ export class TerminalFootprint extends Footprint {
                 if (key === 'stroke') {
                   const dash = this.pixelStrokeWidth();
                   target.save(); target.setLineDash([dash * 3, dash * 2]);
-                  target.strokeStyle = this.levelGuideColor(); target.globalAlpha = 1; target.lineWidth = dash * 2;
+                  target.strokeStyle = this.levelGuideColor(); target.globalAlpha = 1; target.lineWidth = dash;
                   try { return (target.stroke as Function).apply(target, args); } finally { target.restore(); }
                 }
                 if (this.gap) args[0] = this.shiftedX(args[0]);
@@ -227,14 +230,16 @@ export class TerminalFootprint extends Footprint {
                 args[1] = top; args[3] = Math.max(1, bottom - top);
                 const rightEdge = args[0] + args[2], bottomEdge = args[1] + args[3];
                 const dash = this.pixelStrokeWidth();
-                target.save(); target.setLineDash([dash * 3, dash * 2]);
+                target.save(); target.setLineDash([]);
                 target.strokeStyle = this.levelGuideColor(); target.globalAlpha = 1;
-                target.lineWidth = dash * 2;
+                target.lineWidth = dash;
                 try {
                   // Use an isolated path so POC paint cannot replace the native VA path.
                   const marker = new Path2D();
                   marker.moveTo(args[0], top); marker.lineTo(args[0], bottomEdge);
                   marker.moveTo(rightEdge, top); marker.lineTo(rightEdge, bottomEdge);
+                  marker.moveTo(args[0], top); marker.lineTo(rightEdge, top);
+                  marker.moveTo(args[0], bottomEdge); marker.lineTo(rightEdge, bottomEdge);
                   return target.stroke(marker);
                 } finally { target.restore(); }
               }
@@ -407,7 +412,7 @@ export class TerminalFootprint extends Footprint {
     for (let n = 0; n + 1 < this.bars.length; n++) {
       const delta = rightLabels[n], volume = leftLabels[n + 1];
       if (!delta || !volume) continue;
-      const horizontal = Math.max(delta.x, volume.x - volume.width) < Math.min(delta.x + delta.width, volume.x) - 1;
+      const horizontal = Math.max(delta.x, volume.x - volume.width) < Math.min(delta.x + delta.width, volume.x);
       const vertical = Math.abs(delta.y - volume.y) < physicalFont;
       if (!horizontal || !vertical) continue;
       if (delta.width <= volume.width) volume.visible = false;

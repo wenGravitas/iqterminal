@@ -18,7 +18,8 @@ async function expectPaneHeaderBounds(page: import('@playwright/test').Page, exp
       if (!paneRect || !rowList || !title) return false;
       const contentLeft = plot ? stage.left + plot.left + 1 : paneRect.left + 5;
       const titleLeft = plot ? stage.left + plot.left + 4 : paneRect.left + 8;
-      return Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - stage.right) < 2
+      return rect.top >= stage.top - 1 && rect.bottom <= stage.bottom + 1
+        && Math.abs(rect.left - paneRect.left) < 2 && Math.abs(rect.right - stage.right) < 2
         && Math.abs(rowList.left - contentLeft) < 2 && Math.abs(title.left - titleLeft) < 2
         && (!paneActions || Math.abs(paneActions.right - (stage.right - edgePadding)) < 2);
     });
@@ -171,7 +172,16 @@ test('pane indicators use one local header while overlays stay in the main list'
       && document.querySelector('.active-indicator-rows > .active-indicator[data-definition-id="native.footprint-totals"]') !== null;
   })).toBe(true);
   await expectPaneHeaderBounds(page, 1);
+  await expect(panel.locator('.chart-top-overlays')).toBeHidden();
+  const maximizedHeader = panel.locator('.pane-indicator-host');
+  await expect(maximizedHeader.getByRole('button', { name: 'Restore all panes', exact: true })).toBeVisible();
+  await expect.poll(() => maximizedHeader.evaluate(host => {
+    const rect = host.getBoundingClientRect();
+    return host.contains(document.elementFromPoint(rect.left + 20, rect.top + rect.height / 2));
+  })).toBe(true);
+  await page.screenshot({ path: 'artifacts/pane-indicator-headers/maximized-unobstructed.png' });
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.maximizePane(index), positioningIndex);
+  await expect(panel.locator('.chart-top-overlays')).toBeVisible();
   await expect(paneRows).toHaveCount(2);
   await expectPaneHeaderBounds(page);
   await page.evaluate(index => [...(window as any).__terminal.panels.values()][0].engine.chart.setPaneCollapsed(index, true), totalsIndex);

@@ -130,9 +130,9 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
     prototype.lineTo = function(x: number, y: number) { paths.get(this)?.push([x, y]); return lineTo.call(this, x, y); };
     const stroke = prototype.stroke;
     prototype.stroke = function(path?: Path2D) {
-      if (path && this.strokeStyle === '#6d3fa0') {
+      if (path && this.strokeStyle === '#b5a0cd') {
         (window as any).__footprintPocStrokes.push({ color: this.strokeStyle, width: this.lineWidth, dash: this.getLineDash(), points: (path as RecordedPath2D).points });
-      } else if (!path && this.strokeStyle === '#6d3fa0' && this.lineWidth >= 2) {
+      } else if (!path && this.strokeStyle === '#b5a0cd' && this.lineWidth >= 1) {
         (window as any).__footprintVaStrokes.push({ color: this.strokeStyle, width: this.lineWidth, dash: this.getLineDash(), points: [...(paths.get(this) ?? [])] });
       }
       return stroke.apply(this, arguments as any);
@@ -189,10 +189,10 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   expect(rendered).toMatchObject({ subscriptions: 1, collectionStart: setup.start, opacity: .3, cells: 18 });
   expect(rendered.vah).not.toBe(rendered.val);
   const pocStroke = rendered.pocStrokes.at(-1)!;
-  expect(pocStroke).toMatchObject({ color: '#6d3fa0', width: 2, dash: [3, 2] });
-  expect(pocStroke.points).toHaveLength(4);
+  expect(pocStroke).toMatchObject({ color: '#b5a0cd', width: 1, dash: [] });
+  expect(pocStroke.points).toHaveLength(8);
   const levelStroke = rendered.strokes.at(-1)!;
-  expect(levelStroke.color).toBe('#6d3fa0'); expect(levelStroke.width).toBeGreaterThanOrEqual(2);
+  expect(levelStroke.color).toBe('#b5a0cd'); expect(levelStroke.width).toBe(1);
   expect(levelStroke.points).toHaveLength(4);
   expect(pocStroke.points[0][0]).toBe(levelStroke.points[0][0]);
   expect(pocStroke.points[2][0]).toBe(levelStroke.points[1][0]);
@@ -208,6 +208,9 @@ test('18-level footprint shows distinct VAH and VAL with transparent histogram b
   expect(rendered.totals).toEqual([]);
   expect(rendered.options.statsRows).toEqual([]);
   await page.screenshot({ path: '/tmp/footprint-poc-aligned.png' });
+  await selectTheme(page, 'light');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: '/tmp/footprint-poc-aligned-light.png' });
 });
 
 test('delta profile applies native presentation without restarting collection and persists', async ({ page }) => {

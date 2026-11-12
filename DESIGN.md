@@ -112,6 +112,8 @@ The tab-strip cycle icon opens a small anchored popover just below the control, 
 
 Bid/ask quantities grow with the price-row height and available column width, from 9px up to a restrained 24px semibold monospace. Compact rows keep compact text. Statistics appear only in the standalone Footprint Totals pane; the main chart has no embedded totals table or POC-row totals. The time axis belongs to the main price pane. Standalone totals use brighter 11px text and 18px default rows; optional row-maximum highlights use a thin neutral outline and bold text, with ties included across visible candles. Executed cell backgrounds default to 85% opacity (15% transparency), independently adjustable in Footprint display settings. Heatmap backgrounds retain their own opacity control and use muted, theme-aware liquidity colours with smaller labels so executed footprint cells remain in the foreground. Text remains opaque; saved explicit heatmap opacity is respected.
 
+When a secondary pane is maximized, the main-chart indicator list is hidden so the focused pane header and restore controls remain unobstructed. Restoring all panes restores the list.
+
 ### Pane data readiness
 
 Empty chart and indicator panes show a compact five-bar signal animation with the loading task and source detail. The signal uses the theme accent and becomes static under reduced motion; narrow plots show the signal alone with a full accessible label. Loading feedback yields to usable data without covering retained values. Empty results, unavailable sources and errors use static text rather than an endless animation. Pane headers, input and pane layout controls remain interactive. Market Conditions and Depth Matrix share the same feedback component.
@@ -120,7 +122,7 @@ Empty chart and indicator panes show a compact five-bar signal animation with th
 
 Small directional zone segments begin at actual candidate availability, with a diamond marker and restrained R/B/U/? outcome notation. Buy-flow stalls use resistance red and sell-flow stalls support green. Segments stop at resolution; candles retain their original appearance. A compact status/evidence button has its own reserved chart-footer row below the plot and footprint totals. Hover evidence uses a flat theme surface and expandable provenance; the optional signed pane labels intensity as descriptive and shows warm-up/quality feedback rather than plotting missing observations as zero.
 
-When VAH/VAL guides are visible, POC dotted vertical markers share their horizontal endpoints, including the central candle gutter, guide extensions and chart-edge clipping. With value-area guides hidden, the markers retain their compact clearance from the painted POC cells.
+POC uses a solid one-pixel rectangular row border. VAH/VAL use thinner dashed horizontal guides with matching endpoints, including the central candle gutter, guide extensions and chart-edge clipping. Both use light muted lavender on Dark and deeper mauve on Ivory. With value-area guides hidden, the border retains compact clearance from the painted POC cells.
 
 ### Floating drawing toolbar
 
@@ -133,3 +135,11 @@ The native lower pane reuses Net Positioning source-button sizing, selected stat
 ### Order Walls Top Levels
 
 Top Levels uses a compact set of continuous native horizontal selection episodes, with four shared strength tiers and distinct bid/ask hues. The strongest levels have brighter warm colours and greater width; small quantity/rank changes remain within a line. Visible Range Only scales appearance independently of detection. Optional right-edge price/notional labels suppress overlaps. Native settings are grouped into Detection, Appearance and History, with confirmation advanced controls collapsed. Pending replay, partial observed ranking scope, unknown removals and evicted detail remain explicit. Existing Threshold Walls settings retain their mode.
+
+### Fixed Range Volume Profile
+
+The Position tools menu includes a two-anchor Fixed Range Volume Profile. Muted cyan (`#92b9c0`) volume bars, thin dotted range rails and short corner brackets give it a restrained HUD appearance. A solid POC guide and dashed VAH/VAL guides share the profile colour; the Ivory default uses darker teal (`#386e79`) for contrast. Rows use the footprint price level in Footprint mode and the instrument tick step in candle mode. The `EST` readout identifies candle volume distributed uniformly over each candle’s price buckets, not trade-by-trade volume; incomplete loaded history is marked `PARTIAL`. Ranges exceeding 100,000 rows show an explicit limit instead of silently coarsening. Native drawing settings, selection, handles, Object Tree, undo/redo and instrument-scoped persistence remain authoritative.
+
+### Delta flip emphasis
+
+Qualifying Footprint Totals delta cells (or the selected whole-column target) retain their solid confirmed or dashed live outline. Both receive a slow 3.2-second pulse of inset directional light; numbers and fill colours stay steady. The accent stays within the cell, without blur or spill into neighbours. Reduced motion uses a steady accent. Only visible expanded panes schedule overlay animation; hidden, collapsed and removed panes stop it.
