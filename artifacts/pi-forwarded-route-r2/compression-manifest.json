@@ -1,0 +1,51 @@
+[
+  {
+    "source": "artifacts/pi-forwarded-route-r2/baseline-client.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/baseline-client.jsonl.gz",
+    "rawBytes": 2130718,
+    "rawSha256": "142e900e236056f72d7bd6bb2d80b656dd44ae907362b231ca84acc0e78b176e",
+    "gzipSha256": "af847d6487658b255d7e2e59608bccadf94d86372cbd3dcae88dd143adba600b"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/baseline-server.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/baseline-server.jsonl.gz",
+    "rawBytes": 3020371,
+    "rawSha256": "3efbe4aebc5639fe8f0ce7c60066b12b05d9c8f1b6d9941b384c4d16ac183777",
+    "gzipSha256": "9ea59b1d9a68223a29cf81dd575bc768d6ab5e371a8c880223c5ef212c37eb1b"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/verification-client.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/verification-client.jsonl.gz",
+    "rawBytes": 2133103,
+    "rawSha256": "62018314a361a0e92237bc480e1e7547749453ac4a471f71c8be941beb9c0348",
+    "gzipSha256": "24e2204b04f425c9565414776ee62be72fb12918fe908657911302d1dfe5e901"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/verification-server.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/verification-server.jsonl.gz",
+    "rawBytes": 3022074,
+    "rawSha256": "751f81621325b2e18fc6fa0d4ccb4ed73256e4c0ea5e2daea64f2abf16b5a0e0",
+    "gzipSha256": "b7a018fa0337a311e2fb98919a75d34e1bcb15dc8e02ed288e115e8645e0dbb5"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/workload.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/workload.jsonl.gz",
+    "rawBytes": 11119414,
+    "rawSha256": "9f5ddf24237a2e9a8026e5ad323eebd27c15001bd69ea199490e33feeeb17713",
+    "gzipSha256": "b09cf19202e107631c740f9ab0c9e922d162c515452a8c844037e98edd38f24b"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/startups-five/samples.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/startups-five/samples.jsonl.gz",
+    "rawBytes": 410549,
+    "rawSha256": "f07c7d9b1cd334ddd56fbe7870c0feb6f04cfb4b0e251b5286674036fd529bf2",
+    "gzipSha256": "239e253a6e9ec05769eb827890fdffe7d862e48cb4d530aa0e7360020627e2a4"
+  },
+  {
+    "source": "artifacts/pi-forwarded-route-r2/fresh-now-usdm/samples.jsonl",
+    "published": "artifacts/pi-forwarded-route-r2/fresh-now-usdm/samples.jsonl.gz",
+    "rawBytes": 22740,
+    "rawSha256": "5403f6754da559e4d00d835a12f94653541130985dc4eaf6d766405b8c408051",
+    "gzipSha256": "ebc610fe87211cdb8a8096d1be005874e7f02848790f37256f8101609a1cd338"
+  }
+]

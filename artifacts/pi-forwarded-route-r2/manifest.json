@@ -1,0 +1,28 @@
+{
+  "task": "pi-forwarded-route-r2",
+  "startUtc": "2026-11-12T13:50:59+00:00",
+  "experimentCutoffUtc": "2026-11-12T15:05:59+00:00",
+  "deadlineUtc": "2026-11-12T15:20:59+00:00",
+  "startEpoch": 1794491459.0,
+  "experimentCutoffEpoch": 1794495959.0,
+  "deadlineEpoch": 1794496859.0,
+  "budgetSeconds": 5400,
+  "previousGoalDeadlineUnchanged": "2026-11-12T07:54:25Z",
+  "unpublishedPairedTraceFound": false,
+  "frontendHead": "7b99204274fabdad03c80817054846aba16668cf",
+  "backendHead": "09a077ce4ffa8ca54bdeb5d2b203fb16b85efc2d",
+  "policy": "One baseline <=300s, one matched comparison <=300s,5fresh starts once, one recovery check, retained-job observation<=120s, fresh-now<=60s. Runtime manifest controls all deadlines.",
+  "phase": "complete",
+  "checkpointUtc": "2026-11-12T14:39:52.654972+00:00",
+  "completedWindows": {
+    "baselineSeconds": 300,
+    "verificationSeconds": 300,
+    "freshContexts": 5,
+    "retainedJobObservationSeconds": 120,
+    "freshNowSeconds": 60
+  },
+  "decision": "BLOCKED",
+  "budgetRenewed": false,
+  "unexecutedLocalScaffold": "scripts/pi-route-r2-recovery.mjs (not run; current-transport renewal was the sole recovery injection)",
+  "applicationSourceUnchanged": true
+}

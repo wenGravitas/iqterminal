@@ -1,0 +1,3568 @@
+{
+  "scope": "Each phase300s; one1Hz sampler per host; one persistent remote sampler/control session. Kernel serverTCP22 unavailable because TailscaleSSH uses userspace netstack. No host-clock subtraction.",
+  "phases": {
+    "baseline": {
+      "clientSamples": 300,
+      "serverSamples": 300,
+      "probes": {
+        "forward": {
+          "count": 19,
+          "late4s": 12,
+          "deadlineFailures": 7,
+          "medianMs": 9341.714013004093,
+          "maxMs": 12023.894154997834,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-0-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39533.009658664,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-0-forward",
+                "content-length": "2842",
+                "server-timing": "legacy;dur=4.00"
+              },
+              "headerMs": 3291.5928910006187,
+              "bytes": 2842,
+              "elapsedMs": 3291.7724100043415,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-1-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39548.009501208,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-1-forward",
+                "Content-Length": "2234",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.12, total;dur=4.00"
+              },
+              "headerMs": 880.4713380013709,
+              "bytes": 2234,
+              "elapsedMs": 881.0640619994956,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-2-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39563.010455714,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-2-forward"
+              },
+              "headerMs": 636.7083500008448,
+              "bytes": 0,
+              "elapsedMs": 637.0089799966081,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-3-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39578.19735119,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-3-forward",
+                "content-length": "2834",
+                "server-timing": "legacy;dur=0.69"
+              },
+              "headerMs": 584.7608390031382,
+              "bytes": 2834,
+              "elapsedMs": 585.6092300018645,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-4-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39593.442686986,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-4-forward",
+                "Content-Length": "2232",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=117.66"
+              },
+              "headerMs": 1178.4472599974833,
+              "bytes": 2232,
+              "elapsedMs": 1178.595093995682,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-5-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39608.500876354,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-5-forward"
+              },
+              "headerMs": 1275.6601739965845,
+              "bytes": 0,
+              "elapsedMs": 1275.9411559964065,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-6-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39623.518591345,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-6-forward",
+                "content-length": "3106",
+                "server-timing": "legacy;dur=1.70"
+              },
+              "headerMs": 9341.36003000458,
+              "bytes": 3106,
+              "elapsedMs": 9341.714013004093,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-7-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39638.583410814,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-7-forward",
+                "Content-Length": "2232",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.02, total;dur=0.92"
+              },
+              "headerMs": 3946.0889440015308,
+              "bytes": 2232,
+              "elapsedMs": 3946.331889004796,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-8-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39653.615430643,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12015.089618995262,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-9-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39668.66009653,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12012.938704996486,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-10-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39683.69159072,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-10-forward",
+                "Content-Length": "2233",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=2.47"
+              },
+              "headerMs": 6132.099497997842,
+              "bytes": 2233,
+              "elapsedMs": 6132.407961995341,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-11-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39698.784511959,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12015.744353004266,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-12-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39713.856872887,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12012.552927997604,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-13-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39728.955820276,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12017.15821900143,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-14-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39744.012657164,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12011.832322998089,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-15-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39759.006397094,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12023.894154997834,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-16-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39774.006496475,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-16-forward",
+                "Content-Length": "2234",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.09, total;dur=7.60"
+              },
+              "headerMs": 6556.690891004109,
+              "bytes": 2234,
+              "elapsedMs": 6556.851168999856,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-17-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39789.009953752,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-17-forward"
+              },
+              "headerMs": 10004.948955996952,
+              "bytes": 0,
+              "elapsedMs": 10005.671086997609,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-18-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 39804.475556222,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-18-forward",
+                "content-length": "2843",
+                "server-timing": "legacy;dur=3.46"
+              },
+              "headerMs": 11812.73055299971,
+              "bytes": 2843,
+              "elapsedMs": 11814.008761000878,
+              "late4s": true,
+              "deadlineMet": true
+            }
+          ]
+        },
+        "preview": {
+          "count": 19,
+          "late4s": 8,
+          "deadlineFailures": 4,
+          "medianMs": 2163.177389993507,
+          "maxMs": 12022.553743998287,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-0-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39533.016752893,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-0-preview",
+                "content-length": "2842",
+                "server-timing": "legacy;dur=2.00, proxyqueue;dur=1.18, proxyheader;dur=2078.03",
+                "x-iq-proxy-queue-ms": "1.18",
+                "x-iq-proxy-header-ms": "2078.03"
+              },
+              "headerMs": 2162.993073994585,
+              "bytes": 2842,
+              "elapsedMs": 2163.177389993507,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-1-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39548.010558249,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-1-preview",
+                "content-length": "2233",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=1.10, proxyqueue;dur=2.45, proxyheader;dur=686.04",
+                "x-iq-proxy-queue-ms": "2.45",
+                "x-iq-proxy-header-ms": "686.04"
+              },
+              "headerMs": 693.5061219992349,
+              "bytes": 2233,
+              "elapsedMs": 693.7685860029887,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-2-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39563.016143067,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-2-preview",
+                "x-iq-proxy-queue-ms": "2.45",
+                "x-iq-proxy-header-ms": "351.47",
+                "server-timing": "proxyqueue;dur=2.45, proxyheader;dur=351.47",
+                "Content-Length": "0"
+              },
+              "headerMs": 359.46314800094115,
+              "bytes": 0,
+              "elapsedMs": 360.48692899930757,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-3-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39578.198084933,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-3-preview",
+                "content-length": "2834",
+                "server-timing": "legacy;dur=0.76, proxyqueue;dur=2.22, proxyheader;dur=557.68",
+                "x-iq-proxy-queue-ms": "2.22",
+                "x-iq-proxy-header-ms": "557.68"
+              },
+              "headerMs": 567.360651002673,
+              "bytes": 2834,
+              "elapsedMs": 567.5257250040886,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-4-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39593.446093756,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-4-preview",
+                "content-length": "2233",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=0.96, proxyqueue;dur=2.59, proxyheader;dur=1819.41",
+                "x-iq-proxy-queue-ms": "2.59",
+                "x-iq-proxy-header-ms": "1819.41"
+              },
+              "headerMs": 1833.8228139982675,
+              "bytes": 2233,
+              "elapsedMs": 1834.128945003613,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-5-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39608.501777468,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-5-preview",
+                "x-iq-proxy-queue-ms": "0.97",
+                "x-iq-proxy-header-ms": "633.05",
+                "server-timing": "proxyqueue;dur=0.97, proxyheader;dur=633.05",
+                "Content-Length": "0"
+              },
+              "headerMs": 641.3049139955547,
+              "bytes": 0,
+              "elapsedMs": 641.6880449978635,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-6-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39623.518819623,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-6-preview",
+                "content-length": "3106",
+                "server-timing": "legacy;dur=1.67, proxyqueue;dur=2.45, proxyheader;dur=9341.08",
+                "x-iq-proxy-queue-ms": "2.45",
+                "x-iq-proxy-header-ms": "9341.08"
+              },
+              "headerMs": 9352.565752000373,
+              "bytes": 3106,
+              "elapsedMs": 9352.83358599554,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-7-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39638.583910427,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-7-preview",
+                "content-length": "2234",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.12, total;dur=5.44, proxyqueue;dur=3.40, proxyheader;dur=3463.41",
+                "x-iq-proxy-queue-ms": "3.40",
+                "x-iq-proxy-header-ms": "3463.41"
+              },
+              "headerMs": 3479.0580260014394,
+              "bytes": 2234,
+              "elapsedMs": 3479.3070450032246,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-8-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39653.616074682,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-8-preview",
+                "x-iq-proxy-queue-ms": "2.05",
+                "x-iq-proxy-header-ms": "267.93",
+                "server-timing": "proxyqueue;dur=2.05, proxyheader;dur=267.93",
+                "Content-Length": "0"
+              },
+              "headerMs": 287.10966400103644,
+              "bytes": 0,
+              "elapsedMs": 287.3003489949042,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-9-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39668.660336957,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-9-preview"
+              },
+              "headerMs": 12012.235258000146,
+              "bytes": 0,
+              "elapsedMs": 12012.439129000995,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-10-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39683.692701094,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-10-preview",
+                "content-length": "2233",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=2.64, proxyqueue;dur=5.04, proxyheader;dur=6123.67",
+                "x-iq-proxy-queue-ms": "5.04",
+                "x-iq-proxy-header-ms": "6123.67"
+              },
+              "headerMs": 6137.384866000502,
+              "bytes": 2233,
+              "elapsedMs": 6137.548441001854,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-11-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39698.785201572,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-11-preview",
+                "x-iq-proxy-queue-ms": "0.82",
+                "x-iq-proxy-header-ms": "348.84",
+                "server-timing": "proxyqueue;dur=0.82, proxyheader;dur=348.84",
+                "Content-Length": "0"
+              },
+              "headerMs": 369.53265700140037,
+              "bytes": 0,
+              "elapsedMs": 369.85019499843474,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-12-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39713.857257907,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-12-preview"
+              },
+              "headerMs": 12010.93131199741,
+              "bytes": 0,
+              "elapsedMs": 12011.298498000542,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-13-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39728.956188018,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-13-preview"
+              },
+              "headerMs": 12008.699711004738,
+              "bytes": 0,
+              "elapsedMs": 12008.860323003319,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-14-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39744.02106706,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-14-preview",
+                "x-iq-proxy-queue-ms": "0.97",
+                "x-iq-proxy-header-ms": "518.42",
+                "server-timing": "proxyqueue;dur=0.97, proxyheader;dur=518.42",
+                "Content-Length": "0"
+              },
+              "headerMs": 525.2911229981692,
+              "bytes": 0,
+              "elapsedMs": 525.6088099995395,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-15-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39759.006860595,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12022.553743998287,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-16-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39774.006971254,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-16-preview",
+                "content-length": "2234",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.07, total;dur=8.34, proxyqueue;dur=7.11, proxyheader;dur=6970.53",
+                "x-iq-proxy-queue-ms": "7.11",
+                "x-iq-proxy-header-ms": "6970.53"
+              },
+              "headerMs": 6990.0496730042505,
+              "bytes": 2234,
+              "elapsedMs": 6990.332285000477,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-17-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39789.01032729,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-17-preview",
+                "x-iq-proxy-queue-ms": "20.09",
+                "x-iq-proxy-header-ms": "637.43",
+                "server-timing": "proxyqueue;dur=20.09, proxyheader;dur=637.43",
+                "Content-Length": "0"
+              },
+              "headerMs": 663.9992619966506,
+              "bytes": 0,
+              "elapsedMs": 664.2075220006518,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-18-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 39804.476109946,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-18-preview",
+                "content-length": "2845",
+                "server-timing": "legacy;dur=4.72, proxyqueue;dur=3.23, proxyheader;dur=11819.31",
+                "x-iq-proxy-queue-ms": "3.23",
+                "x-iq-proxy-header-ms": "11819.31"
+              },
+              "headerMs": 11827.328503997705,
+              "bytes": 2845,
+              "elapsedMs": 11827.501207997557,
+              "late4s": true,
+              "deadlineMet": true
+            }
+          ]
+        },
+        "loopback": {
+          "count": 20,
+          "late4s": 0,
+          "deadlineFailures": 0,
+          "medianMs": 4.508521407842636,
+          "maxMs": 26.69733576476574,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-0-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254736.842925641,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-0-loopback",
+                "content-length": "2842",
+                "server-timing": "legacy;dur=2.02"
+              },
+              "headerMs": 4.8622265458106995,
+              "bytes": 2842,
+              "elapsedMs": 4.921482875943184,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-1-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254751.843007583,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-1-loopback",
+                "Content-Length": "2234",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.12, total;dur=6.68"
+              },
+              "headerMs": 9.917356073856354,
+              "bytes": 2234,
+              "elapsedMs": 10.081681422889233,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-2-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254767.013326954,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-2-loopback"
+              },
+              "headerMs": 0.8291872218251228,
+              "bytes": 0,
+              "elapsedMs": 0.8746068924665451,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-3-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254782.09370488,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-3-loopback",
+                "content-length": "2835",
+                "server-timing": "legacy;dur=3.63"
+              },
+              "headerMs": 6.619719788432121,
+              "bytes": 2835,
+              "elapsedMs": 6.82447012513876,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-4-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254797.098643369,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-4-loopback",
+                "Content-Length": "2233",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.07, total;dur=4.09"
+              },
+              "headerMs": 6.7817820236086845,
+              "bytes": 2233,
+              "elapsedMs": 6.864896975457668,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-5-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254812.197864822,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-5-loopback"
+              },
+              "headerMs": 0.7349047809839249,
+              "bytes": 0,
+              "elapsedMs": 0.7815724238753319,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-6-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254827.200952908,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-6-loopback",
+                "content-length": "3082",
+                "server-timing": "legacy;dur=4.03"
+              },
+              "headerMs": 7.38179124891758,
+              "bytes": 3082,
+              "elapsedMs": 7.499823346734047,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-7-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254842.292963334,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-7-loopback",
+                "Content-Length": "2231",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.04, total;dur=25.81"
+              },
+              "headerMs": 26.65156591683626,
+              "bytes": 2231,
+              "elapsedMs": 26.69733576476574,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-8-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254857.298896568,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-8-loopback"
+              },
+              "headerMs": 0.9457012638449669,
+              "bytes": 0,
+              "elapsedMs": 1.0215463116765022,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-9-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254872.395320753,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-9-loopback",
+                "content-length": "3092",
+                "server-timing": "legacy;dur=1.00"
+              },
+              "headerMs": 2.0155180245637894,
+              "bytes": 3092,
+              "elapsedMs": 2.0859679207205772,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-10-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254887.401323671,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-10-loopback",
+                "Content-Length": "2232",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.05, total;dur=3.48"
+              },
+              "headerMs": 5.354123190045357,
+              "bytes": 2232,
+              "elapsedMs": 5.498948507010937,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-11-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254902.497341083,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-11-loopback"
+              },
+              "headerMs": 0.9170938283205032,
+              "bytes": 0,
+              "elapsedMs": 1.0053832083940506,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-12-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254917.500220961,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-12-loopback",
+                "content-length": "2574",
+                "server-timing": "legacy;dur=3.86"
+              },
+              "headerMs": 5.7313041761517525,
+              "bytes": 2574,
+              "elapsedMs": 5.8920057490468025,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-13-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254932.501823446,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-13-loopback",
+                "Content-Length": "2233",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.10, total;dur=5.43"
+              },
+              "headerMs": 7.919623516499996,
+              "bytes": 2233,
+              "elapsedMs": 8.158078417181969,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-14-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254947.503537706,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-14-loopback"
+              },
+              "headerMs": 2.5115981698036194,
+              "bytes": 0,
+              "elapsedMs": 2.842022106051445,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-15-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254962.508055528,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-15-loopback",
+                "content-length": "2819",
+                "server-timing": "legacy;dur=0.86"
+              },
+              "headerMs": 1.6173105686903,
+              "bytes": 2819,
+              "elapsedMs": 1.6690678894519806,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-16-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254977.599544035,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-16-loopback",
+                "Content-Length": "2234",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.12, total;dur=4.89"
+              },
+              "headerMs": 7.017798721790314,
+              "bytes": 2234,
+              "elapsedMs": 7.145734503865242,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-17-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6254992.603739245,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-17-loopback"
+              },
+              "headerMs": 0.8795345202088356,
+              "bytes": 0,
+              "elapsedMs": 0.9552361443638802,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-18-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255007.700016873,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-baseline-18-loopback",
+                "content-length": "2830",
+                "server-timing": "legacy;dur=1.98"
+              },
+              "headerMs": 4.018188454210758,
+              "bytes": 2830,
+              "elapsedMs": 4.095559939742088,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-baseline-19-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255022.7032828,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-baseline-19-loopback",
+                "Content-Length": "2234",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.02, total;dur=1.49"
+              },
+              "headerMs": 2.26435624063015,
+              "bytes": 2234,
+              "elapsedMs": 2.3084254935383797,
+              "late4s": false,
+              "deadlineMet": true
+            }
+          ]
+        }
+      },
+      "clientCurrentSsh": {
+        "pid": 132347,
+        "comm": "ssh",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 0.48,
+        "schedWaitTotalMs": 3666.719243,
+        "largestSchedCounterIncrementMs": 598.857311,
+        "maxRssBytes": 6344704,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "currentTcp": {
+        "samples": 300,
+        "maxRtoMs": 2384.0,
+        "maxRttMs": 1134.36,
+        "totalRetransDelta": 5,
+        "retransBytesDelta": 352.0,
+        "receivedBytesDelta": 7565796.0,
+        "outOfOrderDelta": 1372.0,
+        "maxRecvQ": 0,
+        "maxSendQ": 2300
+      },
+      "clientHistorySsh": {
+        "pid": 132348,
+        "comm": "ssh",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 0.04,
+        "schedWaitTotalMs": 24998.713695,
+        "largestSchedCounterIncrementMs": 14131.269465,
+        "maxRssBytes": 5955584,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "historyTcp": {
+        "samples": 300,
+        "maxRtoMs": 2008.0,
+        "maxRttMs": 610.611,
+        "totalRetransDelta": 1,
+        "retransBytesDelta": 768.0,
+        "receivedBytesDelta": 46568.0,
+        "outOfOrderDelta": 5.0,
+        "maxRecvQ": 0,
+        "maxSendQ": 2452
+      },
+      "serverTailscaled": {
+        "pid": 1843359,
+        "comm": "tailscaled",
+        "majorFaultDelta": 1,
+        "cpuSeconds": 2.48,
+        "schedWaitTotalMs": 0.853473,
+        "largestSchedCounterIncrementMs": 0.266546,
+        "maxRssBytes": 63688704,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "gateway": {
+        "pid": 1363596,
+        "comm": "node",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 1.72,
+        "schedWaitTotalMs": 5.890699,
+        "largestSchedCounterIncrementMs": 0.271282,
+        "maxRssBytes": 78508032,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "worker": {
+        "pid": 2801215,
+        "comm": "node",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 46.66,
+        "schedWaitTotalMs": 35279.07226,
+        "largestSchedCounterIncrementMs": 632.721627,
+        "maxRssBytes": 229113856,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "clientResources": {
+        "swapPageDeltas": {
+          "pswpin": 10800,
+          "pswpout": 99545,
+          "pgmajfault": 13461
+        },
+        "interfaceErrorDeltas": {
+          "lo": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "eth0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "wlan0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "tailscale0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-051728a49348": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "br-1c88327053ad": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "br-2d319e8a9570": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-3257d8ce6194": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-45c0a4d207e4": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "docker0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "veth3939ab8": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4551ef6": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth633ea4d": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3214276": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth0fc3444": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth6c75584": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1bfd634": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethc134bfe": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethb740b05": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          }
+        },
+        "paths": [
+          {
+            "CurAddr": "65.21.65.212:41641",
+            "RelayFallback": "hel",
+            "Online": true
+          }
+        ],
+        "sampleCostMaxMs": 819.1512620032881,
+        "pressureAvg10Max": {
+          "cpu": null,
+          "memory": null,
+          "io": null
+        }
+      },
+      "serverResources": {
+        "swapPageDeltas": {
+          "pswpin": 297,
+          "pswpout": 161,
+          "pgmajfault": 404
+        },
+        "interfaceErrorDeltas": {
+          "lo": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "enp5s0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-b1d1da6d68cc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "docker0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-e72858d810e5": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3ee95e3": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-ec9f66525897": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf9e9dd8": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-6a1ef9008541": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4b9350e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4c766eb": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8bf4942943d2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethd7fdb75": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-a6abfe6d6438": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethd75a167": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf01a6f2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth6417785": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4949af2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth0b6a1fb": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth47782de": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth2fda32f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth7eacfea": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaf01c52": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth977b1c2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-7caab2d49018": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-66626e12a71c": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8bd5861a1772": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-18b1b8b6da44": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth206d5b3": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "tailscale0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-1c3cc7e2745a": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-3149edcc3883": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethb89489f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vetha4e210e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vetha3e92cc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth02f6c29": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaed6e31": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth11e06b2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4950c65": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaf9e2c1": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8d64ef9e8ffc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethbe15c6e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3567180": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth34effb7": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1228a90": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3c4c23c": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1c45b9f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethe4ffe3f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3ac4f7f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth61f43f5": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3990a39": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf9050db": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          }
+        },
+        "paths": [
+          {
+            "CurAddr": "154.159.254.12:5784",
+            "RelayFallback": "nai",
+            "Online": true
+          },
+          {
+            "CurAddr": "154.159.254.12:54548",
+            "RelayFallback": "nai",
+            "Online": true
+          }
+        ],
+        "sampleCostMaxMs": 110.2336198091507,
+        "pressureAvg10Max": {
+          "cpu": 13.64,
+          "memory": 0.0,
+          "io": 19.27
+        }
+      },
+      "windowStartUtc": "2026-11-12T13:57:33.738205+00:00",
+      "windowEndUtc": "2026-11-12T14:02:33.738205+00:00",
+      "workloadWindow": {
+        "samples": 59,
+        "streams": [
+          {
+            "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+            "firstConfirmed": 3517579982,
+            "lastConfirmed": 3517582651,
+            "firstApplied": 3517580046,
+            "lastApplied": 3517582703,
+            "socketStartsDelta": 10,
+            "minimumNoAckProgressSeconds": 170.37509999999403
+          },
+          {
+            "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+            "firstConfirmed": 3517580034,
+            "lastConfirmed": 3517583708,
+            "firstApplied": 3517580070,
+            "lastApplied": 3517583775,
+            "socketStartsDelta": 8,
+            "minimumNoAckProgressSeconds": 134.29479999999702
+          }
+        ],
+        "membershipScope": "Same-Pi UTC timestamps select window membership only; no latency inferred from cross-process/host clock subtraction. Progress durations use page monotonic clock."
+      }
+    },
+    "verification": {
+      "clientSamples": 300,
+      "serverSamples": 300,
+      "probes": {
+        "forward": {
+          "count": 19,
+          "late4s": 14,
+          "deadlineFailures": 8,
+          "medianMs": 9783.408686998882,
+          "maxMs": 12016.799170000013,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-0-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40084.541204276,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-0-forward",
+                "content-length": "2689",
+                "server-timing": "legacy;dur=1.01"
+              },
+              "headerMs": 1373.277026003052,
+              "bytes": 2689,
+              "elapsedMs": 1373.3943039987935,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-1-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40099.859852583,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12015.02151099703,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-2-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40114.873862419,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-2-forward"
+              },
+              "headerMs": 9783.236575996852,
+              "bytes": 0,
+              "elapsedMs": 9783.408686998882,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-3-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40129.948300926,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12011.890952002432,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-4-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40144.982384659,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12010.965741996188,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-5-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40160.031605588,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-5-forward"
+              },
+              "headerMs": 1940.1510149982641,
+              "bytes": 0,
+              "elapsedMs": 1940.5995089982753,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-6-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40175.061243312,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-6-forward",
+                "content-length": "2954",
+                "server-timing": "legacy;dur=1.19"
+              },
+              "headerMs": 6727.015964002931,
+              "bytes": 2954,
+              "elapsedMs": 6727.205128001515,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-7-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40190.081513368,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12015.001831001427,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-8-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40205.16343613,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12012.880942995253,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-9-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40220.185736159,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-9-forward",
+                "content-length": "2956",
+                "server-timing": "legacy;dur=1.13"
+              },
+              "headerMs": 3437.710361999052,
+              "bytes": 2956,
+              "elapsedMs": 3438.074764999328,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-10-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40235.19058302,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-10-forward",
+                "Content-Length": "2235",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=10.12"
+              },
+              "headerMs": 6231.979418000265,
+              "bytes": 2235,
+              "elapsedMs": 6232.848482002737,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-11-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40250.279129442,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-11-forward"
+              },
+              "headerMs": 900.6148029948235,
+              "bytes": 0,
+              "elapsedMs": 900.9319479955593,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-12-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40265.309825307,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-12-forward",
+                "content-length": "3089",
+                "server-timing": "legacy;dur=5.80"
+              },
+              "headerMs": 9029.338247004489,
+              "bytes": 3089,
+              "elapsedMs": 9029.498541000066,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-13-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40280.404670377,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12014.540463998856,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-14-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40295.497182726,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-14-forward"
+              },
+              "headerMs": 7204.893948997778,
+              "bytes": 0,
+              "elapsedMs": 7205.3326859968365,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-15-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40310.540026418,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-15-forward",
+                "content-length": "2545",
+                "server-timing": "legacy;dur=1.35"
+              },
+              "headerMs": 10162.714718004281,
+              "bytes": 2545,
+              "elapsedMs": 10163.067751003837,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-16-forward",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40325.540201083,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12016.799170000013,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-17-forward",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40340.544070175,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-17-forward"
+              },
+              "headerMs": 2628.0566089990316,
+              "bytes": 0,
+              "elapsedMs": 2628.295551003248,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-18-forward",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18881",
+              "startMono": 40355.975480284,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12014.671857999929,
+              "late4s": true,
+              "deadlineMet": false
+            }
+          ]
+        },
+        "preview": {
+          "count": 19,
+          "late4s": 11,
+          "deadlineFailures": 7,
+          "medianMs": 6697.948779998114,
+          "maxMs": 12014.555077003024,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-0-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40084.541435924,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-0-preview",
+                "content-length": "2689",
+                "server-timing": "legacy;dur=2.01, proxyqueue;dur=1.12, proxyheader;dur=1391.61",
+                "x-iq-proxy-queue-ms": "1.12",
+                "x-iq-proxy-header-ms": "1391.61"
+              },
+              "headerMs": 1395.770994000486,
+              "bytes": 2689,
+              "elapsedMs": 1395.924828000716,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-1-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40099.860301843,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-1-preview"
+              },
+              "headerMs": 12007.224731998576,
+              "bytes": 0,
+              "elapsedMs": 12007.397194996884,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-2-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40114.874113753,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-2-preview",
+                "x-iq-proxy-queue-ms": "0.83",
+                "x-iq-proxy-header-ms": "842.53",
+                "server-timing": "proxyqueue;dur=0.83, proxyheader;dur=842.53",
+                "Content-Length": "0"
+              },
+              "headerMs": 846.6377889999421,
+              "bytes": 0,
+              "elapsedMs": 846.7583079982433,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-3-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40129.949315595,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-3-preview"
+              },
+              "headerMs": 12009.205334004946,
+              "bytes": 0,
+              "elapsedMs": 12009.360186006234,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-4-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40144.982594715,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-4-preview"
+              },
+              "headerMs": 12003.146135000861,
+              "bytes": 0,
+              "elapsedMs": 12003.319983996334,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-5-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40160.031800475,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-5-preview",
+                "x-iq-proxy-queue-ms": "0.58",
+                "x-iq-proxy-header-ms": "906.22",
+                "server-timing": "proxyqueue;dur=0.58, proxyheader;dur=906.22",
+                "Content-Length": "0"
+              },
+              "headerMs": 909.2236349970335,
+              "bytes": 0,
+              "elapsedMs": 909.3795590015361,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-6-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40175.062591777,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-6-preview",
+                "content-length": "2954",
+                "server-timing": "legacy;dur=1.35, proxyqueue;dur=2.86, proxyheader;dur=6683.46",
+                "x-iq-proxy-queue-ms": "2.86",
+                "x-iq-proxy-header-ms": "6683.46"
+              },
+              "headerMs": 6697.713281995675,
+              "bytes": 2954,
+              "elapsedMs": 6697.948779998114,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-7-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40190.081821531,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-7-preview"
+              },
+              "headerMs": 12014.332635000756,
+              "bytes": 0,
+              "elapsedMs": 12014.555077003024,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-8-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40205.163627053,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-8-preview",
+                "x-iq-proxy-queue-ms": "0.64",
+                "x-iq-proxy-header-ms": "1203.15",
+                "server-timing": "proxyqueue;dur=0.64, proxyheader;dur=1203.15",
+                "Content-Length": "0"
+              },
+              "headerMs": 1205.6244569976116,
+              "bytes": 0,
+              "elapsedMs": 1205.740325996885,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-9-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40220.187815524,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-9-preview",
+                "content-length": "2956",
+                "server-timing": "legacy;dur=2.04, proxyqueue;dur=4.46, proxyheader;dur=3534.81",
+                "x-iq-proxy-queue-ms": "4.46",
+                "x-iq-proxy-header-ms": "3534.81"
+              },
+              "headerMs": 3545.3627390015754,
+              "bytes": 2956,
+              "elapsedMs": 3545.602255006088,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-10-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40235.19109844,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-10-preview",
+                "content-length": "2235",
+                "server-timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=10.46, proxyqueue;dur=1.12, proxyheader;dur=6230.29",
+                "x-iq-proxy-queue-ms": "1.12",
+                "x-iq-proxy-header-ms": "6230.29"
+              },
+              "headerMs": 6245.504772996355,
+              "bytes": 2235,
+              "elapsedMs": 6245.766863001336,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-11-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40250.280482242,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-11-preview",
+                "x-iq-proxy-queue-ms": "6.00",
+                "x-iq-proxy-header-ms": "413.28",
+                "server-timing": "proxyqueue;dur=6.00, proxyheader;dur=413.28",
+                "Content-Length": "0"
+              },
+              "headerMs": 432.93253899901174,
+              "bytes": 0,
+              "elapsedMs": 433.19409099785844,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-12-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40265.310691187,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-12-preview",
+                "content-length": "3089",
+                "server-timing": "legacy;dur=4.45, proxyqueue;dur=3.54, proxyheader;dur=9467.38",
+                "x-iq-proxy-queue-ms": "3.54",
+                "x-iq-proxy-header-ms": "9467.38"
+              },
+              "headerMs": 9479.268834998948,
+              "bytes": 3089,
+              "elapsedMs": 9479.478407003626,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-13-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40280.406097122,
+              "timeoutMs": 12000,
+              "error": "timed out",
+              "elapsedMs": 12013.230607000878,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-14-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40295.504033531,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-14-preview",
+                "x-iq-proxy-queue-ms": "3.64",
+                "x-iq-proxy-header-ms": "311.90",
+                "server-timing": "proxyqueue;dur=3.64, proxyheader;dur=311.90",
+                "Content-Length": "0"
+              },
+              "headerMs": 322.0770050029387,
+              "bytes": 0,
+              "elapsedMs": 322.4311680023675,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-15-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40310.540279304,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-15-preview",
+                "content-length": "2545",
+                "server-timing": "legacy;dur=1.33, proxyqueue;dur=0.95, proxyheader;dur=10162.42",
+                "x-iq-proxy-queue-ms": "0.95",
+                "x-iq-proxy-header-ms": "10162.42"
+              },
+              "headerMs": 10170.317149000766,
+              "bytes": 2545,
+              "elapsedMs": 10170.698478999839,
+              "late4s": true,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-16-preview",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40325.540569358,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-16-preview"
+              },
+              "headerMs": 12012.322263995884,
+              "bytes": 0,
+              "elapsedMs": 12012.524113997642,
+              "late4s": true,
+              "deadlineMet": false
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-17-preview",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40340.544733558,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-17-preview",
+                "x-iq-proxy-queue-ms": "1.26",
+                "x-iq-proxy-header-ms": "268.92",
+                "server-timing": "proxyqueue;dur=1.26, proxyheader;dur=268.92",
+                "Content-Length": "0"
+              },
+              "headerMs": 272.80458199675195,
+              "bytes": 0,
+              "elapsedMs": 272.9740619979566,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-18-preview",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:4202/market-data",
+              "startMono": 40355.976068002,
+              "timeoutMs": 12000,
+              "status": 502,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-18-preview"
+              },
+              "headerMs": 12013.569162001659,
+              "bytes": 0,
+              "elapsedMs": 12013.720606002607,
+              "late4s": true,
+              "deadlineMet": false
+            }
+          ]
+        },
+        "loopback": {
+          "count": 20,
+          "late4s": 0,
+          "deadlineFailures": 0,
+          "medianMs": 2.968274522572756,
+          "maxMs": 80.97587525844574,
+          "samples": [
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-0-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255288.391089602,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-0-loopback",
+                "content-length": "2672",
+                "server-timing": "legacy;dur=2.38"
+              },
+              "headerMs": 5.1432522013783455,
+              "bytes": 2672,
+              "elapsedMs": 5.188141018152237,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-1-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255303.39236269,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-1-loopback",
+                "Content-Length": "2236",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.04, total;dur=1.73"
+              },
+              "headerMs": 2.860083244740963,
+              "bytes": 2236,
+              "elapsedMs": 2.9177796095609665,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-2-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255318.545962679,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-2-loopback"
+              },
+              "headerMs": 1.5381388366222382,
+              "bytes": 0,
+              "elapsedMs": 1.6903076320886612,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-3-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255333.556141409,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-3-loopback",
+                "content-length": "2697",
+                "server-timing": "legacy;dur=1.13"
+              },
+              "headerMs": 1.9083209335803986,
+              "bytes": 2697,
+              "elapsedMs": 1.964162103831768,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-4-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255348.649974494,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-4-loopback",
+                "Content-Length": "2233",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=1.29"
+              },
+              "headerMs": 2.1340521052479744,
+              "bytes": 2233,
+              "elapsedMs": 2.17476487159729,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-5-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255363.656073578,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-5-loopback"
+              },
+              "headerMs": 0.7493561133742332,
+              "bytes": 0,
+              "elapsedMs": 0.8028047159314156,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-6-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255378.748281684,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-6-loopback",
+                "content-length": "2954",
+                "server-timing": "legacy;dur=1.33"
+              },
+              "headerMs": 2.0551830530166626,
+              "bytes": 2954,
+              "elapsedMs": 2.092319540679455,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-7-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255393.76173772,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-7-loopback",
+                "Content-Length": "2236",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=43.76"
+              },
+              "headerMs": 44.591774232685566,
+              "bytes": 2236,
+              "elapsedMs": 44.64444052428007,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-8-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255408.853527549,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-8-loopback"
+              },
+              "headerMs": 0.6779329851269722,
+              "bytes": 0,
+              "elapsedMs": 0.7246984168887138,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-9-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255423.943548698,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-9-loopback",
+                "content-length": "2954",
+                "server-timing": "legacy;dur=2.35"
+              },
+              "headerMs": 4.185659810900688,
+              "bytes": 2954,
+              "elapsedMs": 4.252930171787739,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-10-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255438.944627867,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-10-loopback",
+                "Content-Length": "2236",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.13, total;dur=2.33"
+              },
+              "headerMs": 3.851565532386303,
+              "bytes": 2236,
+              "elapsedMs": 3.903847187757492,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-11-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255453.957547067,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-11-loopback"
+              },
+              "headerMs": 0.8393246680498123,
+              "bytes": 0,
+              "elapsedMs": 0.9202398359775543,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-12-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255469.048361238,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-12-loopback",
+                "content-length": "2975",
+                "server-timing": "legacy;dur=0.83"
+              },
+              "headerMs": 1.6202032566070557,
+              "bytes": 2975,
+              "elapsedMs": 1.6769738867878914,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-13-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255484.144853034,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-13-loopback",
+                "Content-Length": "2236",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=16.67"
+              },
+              "headerMs": 17.64668431133032,
+              "bytes": 2236,
+              "elapsedMs": 17.71751418709755,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-14-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255499.148450081,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-14-loopback"
+              },
+              "headerMs": 0.9038057178258896,
+              "bytes": 0,
+              "elapsedMs": 0.9813383221626282,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-15-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255514.244031392,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-15-loopback",
+                "content-length": "2423",
+                "server-timing": "legacy;dur=4.09"
+              },
+              "headerMs": 6.468791514635086,
+              "bytes": 2423,
+              "elapsedMs": 6.630631163716316,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-16-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255529.251146617,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-16-loopback",
+                "Content-Length": "2235",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=79.94"
+              },
+              "headerMs": 80.91012854129076,
+              "bytes": 2235,
+              "elapsedMs": 80.97587525844574,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-17-loopback",
+              "path": "/v2/history/_pi-route-r2-liveness",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255544.3443281,
+              "timeoutMs": 12000,
+              "status": 404,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-17-loopback"
+              },
+              "headerMs": 2.5752168148756027,
+              "bytes": 0,
+              "elapsedMs": 3.018769435584545,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-18-loopback",
+              "path": "/v2/history/footprint-current?interval=5m&rowPrice=25",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255559.365400631,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "x-iq-request-id": "pi-route-r2-verification-18-loopback",
+                "content-length": "2829",
+                "server-timing": "legacy;dur=3.23"
+              },
+              "headerMs": 5.205795168876648,
+              "bytes": 2829,
+              "elapsedMs": 5.227706395089626,
+              "late4s": false,
+              "deadlineMet": true
+            },
+            {
+              "kind": "probe",
+              "id": "pi-route-r2-verification-19-loopback",
+              "path": "/v2/history/health",
+              "base": "http://127.0.0.1:18880",
+              "startMono": 6255574.391345619,
+              "timeoutMs": 12000,
+              "status": 200,
+              "headers": {
+                "X-IQ-Request-Id": "pi-route-r2-verification-19-loopback",
+                "Content-Length": "2235",
+                "Server-Timing": "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.09, total;dur=5.89"
+              },
+              "headerMs": 7.697851397097111,
+              "bytes": 2235,
+              "elapsedMs": 7.7676596119999886,
+              "late4s": false,
+              "deadlineMet": true
+            }
+          ]
+        }
+      },
+      "clientCurrentSsh": {
+        "pid": 197582,
+        "comm": "ssh",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 0.29,
+        "schedWaitTotalMs": 3447.454056,
+        "largestSchedCounterIncrementMs": 585.15026,
+        "maxRssBytes": 7933952,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "currentTcp": {
+        "samples": 300,
+        "maxRtoMs": 2752.0,
+        "maxRttMs": 1148.8,
+        "totalRetransDelta": 2,
+        "retransBytesDelta": 200.0,
+        "receivedBytesDelta": 6350576.0,
+        "outOfOrderDelta": 1692.0,
+        "maxRecvQ": 0,
+        "maxSendQ": 4888
+      },
+      "clientHistorySsh": {
+        "pid": 132348,
+        "comm": "ssh",
+        "majorFaultDelta": 1,
+        "cpuSeconds": 0.04,
+        "schedWaitTotalMs": 710.789725,
+        "largestSchedCounterIncrementMs": 552.037795,
+        "maxRssBytes": 5824512,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "historyTcp": {
+        "samples": 300,
+        "maxRtoMs": 2680.0,
+        "maxRttMs": 1130.62,
+        "totalRetransDelta": 0,
+        "retransBytesDelta": 0.0,
+        "receivedBytesDelta": 47820.0,
+        "outOfOrderDelta": 0.0,
+        "maxRecvQ": 0,
+        "maxSendQ": 2452
+      },
+      "serverTailscaled": {
+        "pid": 1843359,
+        "comm": "tailscaled",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 2.46,
+        "schedWaitTotalMs": 1.214003,
+        "largestSchedCounterIncrementMs": 0.407327,
+        "maxRssBytes": 62894080,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "gateway": {
+        "pid": 1363596,
+        "comm": "node",
+        "majorFaultDelta": 1,
+        "cpuSeconds": 1.39,
+        "schedWaitTotalMs": 5.664892,
+        "largestSchedCounterIncrementMs": 0.463107,
+        "maxRssBytes": 83439616,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "worker": {
+        "pid": 2801215,
+        "comm": "node",
+        "majorFaultDelta": 0,
+        "cpuSeconds": 7.84,
+        "schedWaitTotalMs": 4774.067887,
+        "largestSchedCounterIncrementMs": 440.253647,
+        "maxRssBytes": 223961088,
+        "scope": "Process main-thread schedstat; deferred counter increments are not exclusive1s intervals. Tailscaled is shared, not per SSH flow."
+      },
+      "clientResources": {
+        "swapPageDeltas": {
+          "pswpin": 207476,
+          "pswpout": 263762,
+          "pgmajfault": 9218
+        },
+        "interfaceErrorDeltas": {
+          "lo": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "eth0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "wlan0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "tailscale0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-051728a49348": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "br-1c88327053ad": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "br-2d319e8a9570": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-3257d8ce6194": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-45c0a4d207e4": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "docker0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 10
+          },
+          "veth3939ab8": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4551ef6": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth633ea4d": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3214276": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth0fc3444": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth6c75584": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1bfd634": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethc134bfe": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethb740b05": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          }
+        },
+        "paths": [
+          {
+            "CurAddr": "65.21.65.212:41641",
+            "RelayFallback": "hel",
+            "Online": true
+          }
+        ],
+        "sampleCostMaxMs": 628.123948998109,
+        "pressureAvg10Max": {
+          "cpu": null,
+          "memory": null,
+          "io": null
+        }
+      },
+      "serverResources": {
+        "swapPageDeltas": {
+          "pswpin": 223,
+          "pswpout": 57,
+          "pgmajfault": 269
+        },
+        "interfaceErrorDeltas": {
+          "lo": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "enp5s0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-b1d1da6d68cc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "docker0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-e72858d810e5": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3ee95e3": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-ec9f66525897": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf9e9dd8": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-6a1ef9008541": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4b9350e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4c766eb": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8bf4942943d2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethd7fdb75": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-a6abfe6d6438": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethd75a167": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf01a6f2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth6417785": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4949af2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth0b6a1fb": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth47782de": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth2fda32f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth7eacfea": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaf01c52": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth977b1c2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-7caab2d49018": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-66626e12a71c": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8bd5861a1772": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-18b1b8b6da44": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth206d5b3": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "tailscale0": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-1c3cc7e2745a": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-3149edcc3883": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethb89489f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vetha4e210e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vetha3e92cc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth02f6c29": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaed6e31": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth11e06b2": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth4950c65": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethaf9e2c1": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "br-8d64ef9e8ffc": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethbe15c6e": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3567180": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth34effb7": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1228a90": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3c4c23c": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth1c45b9f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethe4ffe3f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3ac4f7f": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth61f43f5": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "veth3990a39": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          },
+          "vethf9050db": {
+            "rxErrors": 0,
+            "rxDrops": 0,
+            "txErrors": 0,
+            "txDrops": 0
+          }
+        },
+        "paths": [
+          {
+            "CurAddr": "154.159.254.12:5784",
+            "RelayFallback": "nai",
+            "Online": true
+          },
+          {
+            "CurAddr": "154.159.254.12:54548",
+            "RelayFallback": "nai",
+            "Online": true
+          }
+        ],
+        "sampleCostMaxMs": 109.84339285641909,
+        "pressureAvg10Max": {
+          "cpu": 9.19,
+          "memory": 0.0,
+          "io": 20.78
+        }
+      },
+      "windowStartUtc": "2026-11-12T14:06:45.272250+00:00",
+      "windowEndUtc": "2026-11-12T14:11:45.272250+00:00",
+      "workloadWindow": {
+        "samples": 58,
+        "streams": [
+          {
+            "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+            "firstConfirmed": 3517582651,
+            "lastConfirmed": 3517582651,
+            "firstApplied": 3517582703,
+            "lastApplied": 3517582703,
+            "socketStartsDelta": 18,
+            "minimumNoAckProgressSeconds": 294.4423999999985
+          },
+          {
+            "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+            "firstConfirmed": 3517583708,
+            "lastConfirmed": 3517583708,
+            "firstApplied": 3517583775,
+            "lastApplied": 3517583775,
+            "socketStartsDelta": 19,
+            "minimumNoAckProgressSeconds": 294.4423999999985
+          }
+        ],
+        "membershipScope": "Same-Pi UTC timestamps select window membership only; no latency inferred from cross-process/host clock subtraction. Progress durations use page monotonic clock."
+      }
+    }
+  },
+  "persistentWorkload": {
+    "stalls": [
+      {
+        "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+        "confirmedCursor": 3517582651,
+        "minimumUnchangedObservationSeconds": 767.7386999999956,
+        "finalProof": {
+          "generation": 2,
+          "socketStarts": 48,
+          "disconnects": 2,
+          "errors": 0,
+          "resets": 0,
+          "appliedBatches": 132,
+          "appliedExecutions": 3648,
+          "acksSent": 132,
+          "confirmedAckBatches": 131,
+          "sourceCursorJumps": 0,
+          "maxApplyMs": 17.19999999552965,
+          "maxReceiptGapMs": 9459.20000000298,
+          "lastReceiptMonoMs": 172752.69999999553,
+          "lastAfter": 3517582651,
+          "lastAppliedCursor": 3517582703,
+          "lastConfirmedAckCursor": 3517582651
+        }
+      },
+      {
+        "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+        "confirmedCursor": 3517583708,
+        "minimumUnchangedObservationSeconds": 731.6583999999986,
+        "finalProof": {
+          "generation": 4,
+          "socketStarts": 48,
+          "disconnects": 2,
+          "errors": 0,
+          "resets": 0,
+          "appliedBatches": 126,
+          "appliedExecutions": 4718,
+          "acksSent": 126,
+          "confirmedAckBatches": 125,
+          "sourceCursorJumps": 0,
+          "maxApplyMs": 22.69999999552965,
+          "maxReceiptGapMs": 15114,
+          "lastReceiptMonoMs": 208956,
+          "lastAfter": 3517583708,
+          "lastAppliedCursor": 3517583775,
+          "lastConfirmedAckCursor": 3517583708
+        }
+      }
+    ],
+    "injectedCurrentTransportRecovery": "No ACK advance within the recorded bounded settling observation; not recovered",
+    "historyPidPreserved": 132348,
+    "lastHeartbeatCaveat": "streamAt updates on socket creation; connected means a socket object exists, not necessarily OPEN. Neither field is live-progress proof."
+  },
+  "startupAttempts": [
+    {
+      "run": 1,
+      "bootstrapMs": 583,
+      "navigationLiveMs": 5706.39999999851,
+      "error": null,
+      "confirmedProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 12,
+        "appliedExecutions": 412,
+        "acksSent": 12,
+        "confirmedAckBatches": 11,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 16.399999998509884,
+        "maxReceiptGapMs": 5027.29999999702,
+        "lastReceiptMonoMs": 16735.79999999702,
+        "lastAfter": 3517616667,
+        "lastAppliedCursor": 3517616734,
+        "lastConfirmedAckCursor": 3517616667
+      },
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 3,
+        "appliedExecutions": 113,
+        "acksSent": 3,
+        "confirmedAckBatches": 2,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 16.399999998509884,
+        "maxReceiptGapMs": 633.2999999970198,
+        "lastReceiptMonoMs": 5941.29999999702,
+        "lastAfter": 3517616430,
+        "lastAppliedCursor": 3517616435,
+        "lastConfirmedAckCursor": 3517616430
+      },
+      "healthErrors": []
+    },
+    {
+      "run": 2,
+      "bootstrapMs": null,
+      "navigationLiveMs": null,
+      "error": "AssertionError [ERR_ASSERTION]: Startup health failed: {\"derivedBefore\":{\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v2/history/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-21-577db590\\u001b[22m\\n\",\"_probe\":{\"requestId\":\"pi-route-r2-startup-21-577db590\",\"elapsedMs\":12023.581177}},\"sourceBefore\":{\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v1/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-22-1acd4d3c\\u001b[22m\\n\",\"_probe\":{\"requestId\":\"pi-route-r2-startup-22-1acd4d3c\",\"elapsedMs\":12005.911947999994}}}",
+      "confirmedProof": null,
+      "baselineProof": null,
+      "healthErrors": [
+        {
+          "stage": "derivedBefore",
+          "error": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v2/history/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-21-577db590\u001b[22m\n",
+          "_probe": {
+            "requestId": "pi-route-r2-startup-21-577db590",
+            "elapsedMs": 12023.581177
+          }
+        },
+        {
+          "stage": "sourceBefore",
+          "error": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v1/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-22-1acd4d3c\u001b[22m\n",
+          "_probe": {
+            "requestId": "pi-route-r2-startup-22-1acd4d3c",
+            "elapsedMs": 12005.911947999994
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "bootstrapMs": 917.2000000029802,
+      "navigationLiveMs": 5243.39999999851,
+      "error": null,
+      "confirmedProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 12,
+        "appliedExecutions": 420,
+        "acksSent": 12,
+        "confirmedAckBatches": 11,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 23.30000000447035,
+        "maxReceiptGapMs": 3982.7000000029802,
+        "lastReceiptMonoMs": 17820.60000000149,
+        "lastAfter": 3517619146,
+        "lastAppliedCursor": 3517619248,
+        "lastConfirmedAckCursor": 3517619146
+      },
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 65,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 23.30000000447035,
+        "maxReceiptGapMs": 473.20000000298023,
+        "lastReceiptMonoMs": 4802.5,
+        "lastAfter": 3517618890,
+        "lastAppliedCursor": 3517618893,
+        "lastConfirmedAckCursor": 3517618890
+      },
+      "healthErrors": []
+    },
+    {
+      "run": 4,
+      "bootstrapMs": 1100,
+      "navigationLiveMs": 5378.39999999851,
+      "error": null,
+      "confirmedProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 17,
+        "appliedExecutions": 537,
+        "acksSent": 17,
+        "confirmedAckBatches": 16,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 12.699999995529652,
+        "maxReceiptGapMs": 4233.10000000149,
+        "lastReceiptMonoMs": 20412.60000000149,
+        "lastAfter": 3517621236,
+        "lastAppliedCursor": 3517621273,
+        "lastConfirmedAckCursor": 3517621236
+      },
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 3,
+        "appliedExecutions": 97,
+        "acksSent": 3,
+        "confirmedAckBatches": 2,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 12.699999995529652,
+        "maxReceiptGapMs": 461.40000000596046,
+        "lastReceiptMonoMs": 4797.70000000298,
+        "lastAfter": 3517620828,
+        "lastAppliedCursor": 3517620833,
+        "lastConfirmedAckCursor": 3517620828
+      },
+      "healthErrors": []
+    },
+    {
+      "run": 5,
+      "bootstrapMs": 130.5,
+      "navigationLiveMs": 4414.10000000149,
+      "error": "Post-observation health failed: {\"derivedAfter\":{\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v2/history/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-69-c4008824\\u001b[22m\\n\",\"_probe\":{\"requestId\":\"pi-route-r2-startup-69-c4008824\",\"elapsedMs\":12005.756213000015}},\"sourceAfter\":{\"error\":\"TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\\nCall log:\\n\\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v1/health\\u001b[22m\\n\\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\\u001b[22m\\n\\u001b[2m    - accept: */*\\u001b[22m\\n\\u001b[2m    - accept-encoding: gzip,deflate,br\\u001b[22m\\n\\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-70-6f6a16ff\\u001b[22m\\n\",\"_probe\":{\"requestId\":\"pi-route-r2-startup-70-6f6a16ff\",\"elapsedMs\":12002.552957000007}}}",
+      "confirmedProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 4,
+        "appliedExecutions": 196,
+        "acksSent": 4,
+        "confirmedAckBatches": 3,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 35.79999999701977,
+        "maxReceiptGapMs": 5866.89999999851,
+        "lastReceiptMonoMs": 13994.59999999404,
+        "lastAfter": 3517621724,
+        "lastAppliedCursor": 3517621762,
+        "lastConfirmedAckCursor": 3517621724
+      },
+      "baselineProof": {
+        "generation": 2,
+        "socketStarts": 1,
+        "disconnects": 0,
+        "errors": 0,
+        "resets": 0,
+        "appliedBatches": 2,
+        "appliedExecutions": 117,
+        "acksSent": 2,
+        "confirmedAckBatches": 1,
+        "sourceCursorJumps": 0,
+        "maxApplyMs": 35.79999999701977,
+        "maxReceiptGapMs": 1335.3000000044703,
+        "lastReceiptMonoMs": 4782.89999999851,
+        "lastAfter": 3517621626,
+        "lastAppliedCursor": 3517621683,
+        "lastConfirmedAckCursor": 3517621626
+      },
+      "healthErrors": [
+        {
+          "stage": "derivedAfter",
+          "error": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v2/history/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-69-c4008824\u001b[22m\n",
+          "_probe": {
+            "requestId": "pi-route-r2-startup-69-c4008824",
+            "elapsedMs": 12005.756213000015
+          }
+        },
+        {
+          "stage": "sourceAfter",
+          "error": "TimeoutError: apiRequestContext.get: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - \u2192 GET http://127.0.0.1:4202/market-data/v1/health\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - X-IQ-Request-Id: pi-route-r2-startup-70-6f6a16ff\u001b[22m\n",
+          "_probe": {
+            "requestId": "pi-route-r2-startup-70-6f6a16ff",
+            "elapsedMs": 12002.552957000007
+          }
+        }
+      ]
+    }
+  ]
+}

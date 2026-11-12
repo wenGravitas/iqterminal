@@ -1,0 +1,11 @@
+{
+  "cohort": "startup",
+  "startUtc": "2026-11-12T14:14:13.751Z",
+  "client": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+  "gateway": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+  "sampleCount": 5,
+  "deadlineUtc": "2026-11-12T15:20:59+00:00",
+  "checkpointUtc": "2026-11-12T15:05:59+00:00",
+  "policy": "Exactly five predeclared fresh contexts; preserve all failures; no reruns",
+  "phase": "starting"
+}

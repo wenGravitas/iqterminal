@@ -1,0 +1,57 @@
+{
+  "identities": [
+    {
+      "id": "443cc478e327053a499ce4ee85252147fecb9476d340cdc2a94a87e4cc6dba12",
+      "name": "/iqterminal-wall-gateway-startup-83c8cf2-r1",
+      "started": "2026-11-12T06:07:30.013582891Z",
+      "running": true,
+      "build": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+      "sources": "0",
+      "trace": "1",
+      "nanoCpus": 1000000000,
+      "memory": 536870912
+    },
+    {
+      "id": "4fae18b4a7cd30a0984cb8d2c56f8953f13478fbeefe0c1d74397bcb34b5625b",
+      "name": "/iqterminal-wall-serving-rc-477b2f9-r1",
+      "started": "2026-11-11T15:02:56.653443179Z",
+      "running": true,
+      "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+      "sources": "0",
+      "trace": null,
+      "nanoCpus": 500000000,
+      "memory": 402653184
+    }
+  ],
+  "gatewayTraceLines": 3065,
+  "lastTrace": [
+    "{\"kind\":\"startup-gateway\",\"id\":\"6a8d1b54-5a93-4b27-86d7-b098986577ce\",\"event\":\"response-close\",\"ms\":783.5677810000489,\"path\":\"/v2/history/health\",\"counts\":{\"active\":0,\"history\":0,\"reservedCurrent\":1,\"limit\":4},\"eventLoopMaxMs\":27.738111,\"dropped\":0,\"finished\":true,\"status\":200}"
+  ],
+  "ss": "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n",
+  "sshd": "    PID    PPID USER     COMMAND\n   1160       1 root     sshd\n",
+  "sudoSs": "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n",
+  "workerHealth": {
+    "version": 1,
+    "turn": 65500,
+    "busy": false,
+    "counts": {
+      "building": 0,
+      "ready": 21,
+      "failed": 0,
+      "paused": 0
+    },
+    "limits": {
+      "pending": 32,
+      "tracked": 128,
+      "metadataBytes": 1048576
+    },
+    "capacityPaused": false,
+    "consumers": 0,
+    "readers": 0,
+    "pins": 0,
+    "cancelledPins": 0,
+    "consumerLimit": 128,
+    "leaseMs": 15000,
+    "build": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb"
+  }
+}
