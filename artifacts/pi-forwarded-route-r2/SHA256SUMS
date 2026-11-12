@@ -2,7 +2,6 @@
 af847d6487658b255d7e2e59608bccadf94d86372cbd3dcae88dd143adba600b  artifacts/pi-forwarded-route-r2/baseline-client.jsonl.gz
 73c56a1eb44bbe54f44f5efa1b4829e42316a663bfb2f22a3143d653f4ea2430  artifacts/pi-forwarded-route-r2/baseline-done.json
 81f9dd0052b354ba1a31ec7feda6e6a1533a2e4d125ef566a5e0198b3ef4f49b  artifacts/pi-forwarded-route-r2/baseline-retrieval-attempt.json
-8eac3634f14691007e98cc201e50cb7b5c26cf31ec3e0a7e8fdeac2ecfca9e18  artifacts/pi-forwarded-route-r2/baseline-server-review-summary.json
 9ea59b1d9a68223a29cf81dd575bc768d6ab5e371a8c880223c5ef212c37eb1b  artifacts/pi-forwarded-route-r2/baseline-server.jsonl.gz
 8c5862096f0ca77eff4c6ab024c7f2596ea85122996867329a99fabe40625fd0  artifacts/pi-forwarded-route-r2/checkpoint-ownership.json
 a45ab61f8efb864ebbe99cd8e8041016e7993376d8d259d62986bc2422620924  artifacts/pi-forwarded-route-r2/comparison-choice.json
