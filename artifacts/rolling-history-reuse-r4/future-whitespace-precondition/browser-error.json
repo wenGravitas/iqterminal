@@ -1,0 +1,60 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: Ordinary view must end at the current candle",
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/level-watches",
+      "status": 200,
+      "requestId": "1121f9be-9c14-4396-b241-0db664cf7412",
+      "bytes": "2859"
+    }
+  ],
+  "state": {
+    "ids": [
+      "chart-r4-ordinary"
+    ],
+    "measure": {
+      "phase": "initial",
+      "startMono": 0,
+      "firstCurrent": null,
+      "firstHistory": null,
+      "completeAvailable": null,
+      "wallEnabledAt": null
+    },
+    "last": {
+      "render": {
+        "mounted": false,
+        "retainedSegments": 0,
+        "archiveSegments": 0,
+        "directSegments": 0,
+        "valueRuns": 0,
+        "archiveValueRuns": 0,
+        "directValueRuns": 0,
+        "valueHistoryLimited": false,
+        "episodeHistoryLimited": false
+      },
+      "viewport": {
+        "from": 1794453300.0013175,
+        "to": 1794561300
+      },
+      "candles": 2,
+      "renderer": {
+        "draws": 9,
+        "backend": "canvas2d",
+        "scheduler": {
+          "frames": 8,
+          "draws": 8,
+          "budgetYields": 1,
+          "lastMs": 11.400000002235174,
+          "maxMs": 98,
+          "budgetMs": 8,
+          "dirty": 0,
+          "drawing": 0
+        }
+      },
+      "heap": 10386932,
+      "mono": 5853.39999999851
+    },
+    "diagnostics": {}
+  }
+}

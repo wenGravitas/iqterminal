@@ -1,0 +1,11 @@
+# R4 evidence inventory
+
+manifest.json records the new budget without renewing prior phases. checkpoint.json marks measurement stop. diagnostic-build/preview-diagnostic and local-serving-ownership identify the actual457ac9a client, flags, route and owned PIDs. frontend-build.json is a separate577de5f validation artifact, not the served application.
+
+browser-summary.json and ordinary-summary.json derive bounded real-panel initial/reopen observations from browser-samples.jsonl.gz. browser-input/settings/native-viewport-control record normal30h past plus future whitespace, native wheel/settings controls and exact requested scope. executed-browser.mjs is the actual measured harness. The published script corrects its inclusive/exclusive completion predicate; coverage-predicate-correction.json preserves the offline correction, polling bounds and explicit gaps. Raw browser-results.done=false flags remain unchanged. Initial complete available coverage is established from saved status/render samples, while reopened fresh validation remains genuinely pending at the cap. No repeated cohort was used to obtain a pass.
+
+ordinary-initial/reopen.png show actual historical walls. workspace-closed/browser-cleanup show real teardown with bounded warm caches and no active wall work. Stream traces retain only metadata, message byte counts, cursor/ACK evidence and OPEN/close events; no execution payloads. pi-preparation-resource records actual swapping and unavailable PSI. browser-results retains every128 ERR_ABORTED discovery request event without unsupported cancellation attribution; saved proxy trace has no timeout/error terminal events.
+
+pre-token-browser preserves both valid ordinary builds that failed the demonstrated source-token boundary bug, plus operator-stop cleanup error. invalid-view-attempt and future-whitespace-precondition are excluded harness preconditions, with executed sources/errors/screenshots preserved. They are not valid30h latency samples. Previous phases remain untouched.
+
+Raw logs/samples are deterministic gzip copies. Run sha256sum -c SHA256SUMS from this directory. dist-validation and inherited unrelated files are deliberately not published. No foreground browser was launched; manual checking remains on i3workspace9.
