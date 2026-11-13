@@ -37,7 +37,7 @@ The final application pair was client457ac9a / gateway+workerf1fb0d6. A fresh em
 | Final ordinary-chart smoke | First current walls | First historical walls | Complete available history / pending state |
 |---|---:|---:|---|
 | Initial navigation |7.637s|251.919s|By272.366s, previous sample270.082s;40,025 archive segments/187,427 runs;three explicit gaps;6,979ms unconfirmed tail |
-| Dependent workspace reopen |5.526s from return|0.990s cached prefix|Whole advanced view still pending at301s;new7,429ms tail preparation started after eligible projection delivery |
+| Dependent workspace reopen |5.526s from return|0.990s cached prefix|Whole advanced view still pending at300s observation cap;new7,429ms tail preparation started after eligible projection delivery |
 | Server initial target |—|—|Ready241.789s from same-server admission;104 canonical/105 selected parts |
 | Server reopened eligible target |—|—|Ready233.524s;103 canonical projection-prefix pages reused;105 selected parts delivered |
 
@@ -74,3 +74,5 @@ Priorities: (1) capture an eligible genuinely failing current-stream cursor/from
 Manual check: select **i3workspace9**, open normal Chromium at `http://127.0.0.1:4202`, set USD-M BTCUSDT15m and approximately30h past through normal controls, enable Top8/10%/native Order Walls, then pan/reopen and check current freshness, gaps, profile/delta-flip overlays and responsiveness. Automated evidence uses Pi headless Chromium/canvas2d; no unattended foreground browser was launched. The unresolved historical reliability incident keeps the release **BLOCKED**, separately from this measured performance improvement.
 
 The measurement browser and helpers are stopped. Idle owned preview118684 and split SSH118681/118682 remain for the manual check; verify argv/cwd/start ticks against [ownership](../artifacts/rolling-history-reuse-r4/local-serving-ownership.json) before stopping only those PIDs. Ordinary5173 and user processes remain untouched. The two preserved pre-fix failures were marked nonretryable in their archived UI status. Repair requires the existing explicit new-revision control path; UI Retry recovery of those entries was not verified here. Ordinary polling must not reset them. Final cleanup/assertions and exact server phase data are in the backend postflight/ordinary summary.
+
+Published evidence payload commits: frontendfd8969d058dc54532069c362ba19d2d17046d1e5 and backend3e5aa3ca55bda9380b8cba3cbb0be1f6ab47ef5a. Later documentation clarification tips do not change the tested/deployed applications.
