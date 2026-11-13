@@ -24,6 +24,8 @@ class ProtocolTest(unittest.TestCase):
     while not header.endswith(b'\r\n\r\n'):header+=exact(self.request,1)
     key=next(l.split(b': ',1)[1] for l in header.split(b'\r\n') if l.lower().startswith(b'sec-websocket-key:'))
     accept=base64.b64encode(hashlib.sha1(key+b'258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest());self.request.sendall(b'HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: '+accept+b'\r\n\r\n');commands.append(receive(self.request))
+    if mode=='partial-frame':
+     self.request.sendall(bytes([129,126])+struct.pack('!H',1000)+b'{');threading.Event().wait(.2);return
     after=10
     for i in range(4):
      cursor=after+1;row={'id':cursor if mode!='invalid-order' else after,'timeMs':100,'price':10,'quantity':2,'quoteNotional':20,'side':'buy'}
@@ -34,9 +36,11 @@ class ProtocolTest(unittest.TestCase):
       if mode=='unconfirmed-ack':break
      after=cursor
   server=socketserver.TCPServer(('127.0.0.1',0),Handler);thread=threading.Thread(target=server.handle_request);thread.start()
-  try:r=probe.replay('ws://127.0.0.1:%d/v1/stream'%server.server_address[1],{'name':'fixture','after':10,'from':100},seconds=2)
+  try:r=probe.replay('ws://127.0.0.1:%d/v1/stream'%server.server_address[1],{'name':'fixture','after':10,'from':100},seconds=.05 if mode=='partial-frame' else 2)
   finally:thread.join(3);server.server_close()
   return r,commands
+ def test_partial_message_cannot_extend_observation_deadline(self):
+  r,c=self.run_case('partial-frame');self.assertFalse(r['passed']);self.assertLess(r['elapsedMs'],150);self.assertEqual(r['receivedBatches'],0);self.assertTrue(any(e['event']=='error' and e['category']=='TimeoutError' for e in r['events']))
  def test_confirmation_requires_next_after(self):
   r,c=self.run_case('valid');self.assertTrue(r['passed']);self.assertEqual(r['confirmedBatches'],3);self.assertEqual(c[0],{'type':'subscribe','version':1,'market':'perpetual','after':10,'from':100});self.assertEqual([x['cursor'] for x in c[1:]],[11,12,13])
  def test_send_ack_is_not_confirmation(self):

@@ -4,24 +4,28 @@ import argparse,base64,hashlib,json,math,os,socket,struct,time,urllib.parse
 def replay(url,case,seconds=60,target=3):
  start=time.monotonic();end=start+min(seconds,60);events=[];state='CONNECTING';sock=None;buffer=b'';fragments=bytearray();opcode0=None;after=case['after'];pending=None;received=0;confirmed=0;last_message=start;digest=hashlib.sha256()
  def log(event,**kw):events.append({'event':event,'ms':(time.monotonic()-start)*1000,'readyState':state,**kw})
+ def remaining():
+  now=time.monotonic();limit=min(end,last_message+15)
+  if now>=limit:raise TimeoutError('Observation deadline' if end<=last_message+15 else 'No complete message within existing15s watchdog')
+  return limit-now
  def exact(n):
   nonlocal buffer
   threshold=65536
   while len(buffer)<n:
-   sock.settimeout(max(.001,min(end-time.monotonic(),last_message+15-time.monotonic())));part=sock.recv(min(65536,n-len(buffer)))
+   sock.settimeout(remaining());part=sock.recv(min(65536,n-len(buffer)))
    if not part:raise EOFError('TCP EOF')
    buffer+=part
    if n>65536 and len(buffer)>=threshold:log('receive-progress',receivedBytes=len(buffer),declaredBytes=n);threshold+=65536
   r,buffer=buffer[:n],buffer[n:];return r
  def send(op,payload):
-  mask=os.urandom(4);n=len(payload);head=bytes([0x80|op,0x80|n]) if n<126 else bytes([0x80|op,0x80|126])+struct.pack('!H',n)
+  sock.settimeout(remaining());mask=os.urandom(4);n=len(payload);head=bytes([0x80|op,0x80|n]) if n<126 else bytes([0x80|op,0x80|126])+struct.pack('!H',n)
   sock.sendall(head+mask+bytes(c^mask[i%4] for i,c in enumerate(payload)))
  try:
   u=urllib.parse.urlsplit(url);assert u.scheme=='ws';key=base64.b64encode(os.urandom(16)).decode();log('attempt',url=url)
-  sock=socket.create_connection((u.hostname,u.port or 80),timeout=min(15,max(.1,end-time.monotonic())))
+  sock=socket.create_connection((u.hostname,u.port or 80),timeout=min(15,remaining()))
   sock.sendall((f'GET {u.path or "/"}{"?"+u.query if u.query else ""} HTTP/1.1\r\nHost: {u.netloc}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\nOrigin: http://127.0.0.1:4202\r\nX-IQ-Request-Id: pi-replay-history-r3-{case["name"]}\r\n\r\n').encode())
   while b'\r\n\r\n' not in buffer:
-   sock.settimeout(min(15,max(.001,end-time.monotonic())));b=sock.recv(8192)
+   sock.settimeout(min(15,remaining()));b=sock.recv(8192)
    if not b:raise EOFError('EOF before handshake')
    buffer+=b;assert len(buffer)<=65536
   header,buffer=buffer.split(b'\r\n\r\n',1);lines=header.decode().split('\r\n');assert ' 101 ' in lines[0],lines[0];headers=dict(l.split(': ',1) for l in lines[1:] if ': ' in l);expected=base64.b64encode(hashlib.sha1((key+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11').encode()).digest()).decode();assert any(k.lower()=='sec-websocket-accept' and v==expected for k,v in headers.items())
