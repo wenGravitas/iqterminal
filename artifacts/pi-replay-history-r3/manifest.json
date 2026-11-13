@@ -1,0 +1,32 @@
+{
+  "task": "pi-replay-history-r3",
+  "startUtc": "2026-11-13T04:08:41+00:00",
+  "experimentCutoffUtc": "2026-11-13T05:23:41+00:00",
+  "deadlineUtc": "2026-11-13T05:38:41+00:00",
+  "experimentCutoffEpoch": 1794547421.0,
+  "deadlineEpoch": 1794548321.0,
+  "budgetSeconds": 5400,
+  "unpublishedR3Found": false,
+  "frontendHead": "f3068a751bb40270266ab8dafbb010e1026c4d0a",
+  "backendHead": "98567fa71fda08c5468076dabc21df442257a9a0",
+  "phase": "publication",
+  "experimentsFinishedUtc": "2026-11-13T04:35:56.896748+00:00",
+  "frontendToolingCommit": "cdbb020986f2d0737ed398505980be5195175b06",
+  "backendToolingCommit": "0b6afa25cf1213b59dc6e94d1ad0b7ab5425234b",
+  "observedApplications": {
+    "client": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "gateway": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+    "worker": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb"
+  },
+  "flags": {
+    "IQ_WALL_PROJECTION_SOURCES_gateway": "0",
+    "IQ_WALL_PROJECTION_SOURCES_worker": "0"
+  },
+  "decision": "BLOCKED",
+  "outcomes": {
+    "durableReplayRecovery": "unresolved historical incident; comparable finite replay and one injected browser recovery passed",
+    "retainedUsdm": "ready and delivered with2explicit source gaps",
+    "freshNow": "new preparation required; overlap/prefix dependency selected; pending after60s"
+  },
+  "frontendProbeDeadlineCommit": "ef5919a81cf6b8db424513a2829d4ea1888de6bd"
+}

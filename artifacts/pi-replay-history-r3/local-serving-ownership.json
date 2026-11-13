@@ -1,0 +1,105 @@
+{
+  "utc": 1794544779.9644802,
+  "ownedLocalServing": [
+    {
+      "pid": 42672,
+      "argv": [
+        "bash",
+        "scripts/staging-tunnel.sh"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746851"
+    },
+    {
+      "pid": 42673,
+      "argv": [
+        "bash",
+        "scripts/staging-tunnel.sh"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746852"
+    },
+    {
+      "pid": 42674,
+      "argv": [
+        "bash",
+        "scripts/staging-tunnel.sh"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746852"
+    },
+    {
+      "pid": 42675,
+      "argv": [
+        "ssh",
+        "-N",
+        "-T",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ExitOnForwardFailure=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ControlPath=none",
+        "-o",
+        "Compression=no",
+        "-o",
+        "ServerAliveInterval=15",
+        "-o",
+        "ServerAliveCountMax=3",
+        "-o",
+        "IPQoS=none",
+        "-L",
+        "127.0.0.1:18881:127.0.0.1:18880",
+        "staging"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746852"
+    },
+    {
+      "pid": 42676,
+      "argv": [
+        "ssh",
+        "-N",
+        "-T",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ExitOnForwardFailure=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ControlPath=none",
+        "-o",
+        "Compression=no",
+        "-o",
+        "ServerAliveInterval=15",
+        "-o",
+        "ServerAliveCountMax=3",
+        "-o",
+        "IPQoS=none",
+        "-L",
+        "127.0.0.1:18880:127.0.0.1:18880",
+        "staging"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746852"
+    },
+    {
+      "pid": 42679,
+      "argv": [
+        "node",
+        "artifacts/pi-replay-history-r3/preview.mjs"
+      ],
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "746974"
+    }
+  ],
+  "ordinaryCheckoutTouched": false,
+  "browsersAndObserversClosed": true
+}

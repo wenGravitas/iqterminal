@@ -86,3 +86,6 @@ The next smallest action is **one bounded paired transport trace on the same Pi 
 Prioritized follow-up: (1) resolve that measured transport/scheduling fault and verify startup recovery; (2) resume/reuse the pending default USD-M wall job and verify the current-ending span once ready; (3) address long tasks and the retained wall latency misses with their original thresholds; (4) perform the short manual foreground check. Independent wall projection/source publication and native-price-cache control remain separate disabled/preserved experiments.
 
 New independent follow-up: [pi-forwarded-route-r2 paired trace and USD-M inspection](pi-forwarded-route-r2.md). Its separate budget and findings do not alter this phase's archived deadline or BLOCKED decision.
+
+
+New independent follow-up: [pi-replay-history-r3](pi-replay-history-r3.md). Its new budget, finite replay observations and retained-history completion do not alter this completed phase's deadline or evidence. Historical replay fault remains unresolved; retained range is ready/delivered; fresh rolling view still prepares.

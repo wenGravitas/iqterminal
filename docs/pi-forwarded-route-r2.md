@@ -74,3 +74,6 @@ No persistent serving policy changed, so there is no new application rollback. T
 **Next smallest action:** one bounded **server-local durable WebSocket replay from the captured applied cursor3517582703 (1h3517583775)**, recording only frame bytes, after/cursor and ACK timing, then compare that metadata with the forwarding trace. This is necessary because current-state HTTP health is not replay proof, and Tailscale SSH hides the server's kernel-flow counters. It tests the remaining replay-versus-forwarding/frame-delivery boundary before another remedy. Further comparisons are outside this task's one-comparison allowance.
 
 A short normal-Chromium check on **i3workspace9** remains manual: open4202, confirm actual current updates and warnings, retained historical bars, pan/reopen and pending/gap labels. No unattended foreground browser was launched. That manual check cannot clear the automated route/recovery failures or the pending history verification. The task stops at this BLOCKED handoff.
+
+
+New independent follow-up: [pi-replay-history-r3](pi-replay-history-r3.md). Its new budget, finite replay observations and retained-history completion do not alter this completed phase's deadline or evidence. Historical replay fault remains unresolved; retained range is ready/delivered; fresh rolling view still prepares.

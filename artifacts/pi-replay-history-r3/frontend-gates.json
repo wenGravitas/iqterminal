@@ -1,0 +1,31 @@
+[
+  {
+    "name": "build-typecheck",
+    "command": [
+      "pnpm",
+      "build",
+      "--mode",
+      "staging",
+      "--outDir",
+      "artifacts/pi-replay-history-r3/dist-validation"
+    ],
+    "commit": "cdbb020986f2d0737ed398505980be5195175b06",
+    "exitCode": 0,
+    "elapsedMs": 14271.818396000526
+  },
+  {
+    "name": "focused-recovery",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/staging-service.test.ts",
+      "tests/prepared-wall-admission.test.ts",
+      "tests/prepared-wall-read-lease.test.ts"
+    ],
+    "commit": "cdbb020986f2d0737ed398505980be5195175b06",
+    "exitCode": 0,
+    "elapsedMs": 4513.520659998903
+  }
+]
