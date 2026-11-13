@@ -1,0 +1,4 @@
+Original owned SSH session 90866 exited255: Timeout, server 100.124.223.41 not responding.
+Local18794 listener absent and direct curl returned000 / connection refused.
+Isolated gateway container ec40ef09cca9966091e9c02cddb1fc8008f679e6f76a07f9dd9a50979b50ed2f was still running, exit0/oom=false, RSS100.2MiB of512MiB. Incumbent services retained. The five USD-M failed samples are kept as route-failed cohort A; no sample excluded from that cohort's gate result.
+SSH effective config: compression no, controlmaster false, controlpersist no, ipqos lowdelay throughput; connection multiplexing was not active. A fresh isolated tunnel was launched only after the old exec was confirmed terminal and its listener absent. No serving/collector restart.

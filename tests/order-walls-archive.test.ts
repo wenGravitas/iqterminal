@@ -57,7 +57,26 @@ const archivePatch = (cursor: number, at: number, patch: Partial<OrderWallsArchi
   kind: 'patch', cursor, at, epoch: 1, midpoint: '78016.00', bids: side(), asks: side(), ...patch,
 });
 
+function publishedSegments(events:any[]){
+  const rows=new Map<string,any>();
+  for(const event of events.filter(event=>event.type==='order-wall-batch')){
+    if(event.kind==='snapshot'){rows.clear();for(const row of event.segments??[])rows.set(row.id,row);}
+    else for(const patch of event.patches??[]){if(patch.segment)rows.set(patch.id,patch.segment);else rows.delete(patch.id);}
+  }
+  return [...rows.values()];
+}
+
 describe('Order Walls archive profile selection', () => {
+  it('historical gaps are explicitly scoped to a view with no current subscription',async()=>{
+    const events:any[]=[],ready=page({coverage:coverage({status:'partial',partial:true,gaps:[{at:from+100,reason:'Recorded history gap'}]})});
+    const service=new OrderWallsArchiveService(event=>events.push(event),(async()=>Response.json(ready))as any,()=>to);
+    try{
+      service.subscribe('history-only',{market:'binance-spot',from,to,settings:request().settings,followLive:false});for(let i=0;i<100;i++)await Promise.resolve();
+      const history=events.filter(event=>event.ids?.includes('history-only'));expect(history.every(event=>event.status.currentSubscribed===false)).toBe(true);
+      expect(history.at(-1).status.archive).toMatchObject({state:'partial',requestComplete:true});
+      service.subscribe('current',{market:'binance-spot',from,to,settings:request().settings,followLive:true});expect(events.filter(event=>event.ids?.includes('current'))[0].status.currentSubscribed).toBe(true);
+    }finally{service.dispose();}
+  });
   it('selects the exact native Top10 profile for Binance spot and USD-M perpetual', () => {
     for (const market of ['binance-spot', 'binance-perp'] as const) {
       expect(orderWallsArchiveAvailability(market, request({ market }).settings)).toMatchObject({ exact: true, profileId: profiles[market].id, requestedBandPercent: 10 });
@@ -255,6 +274,24 @@ describe('OrderWallsArchiveProjector', () => {
     expect(segment.valueRunsTruncated).toBe(false);
     expect(projector.diagnostics()).toMatchObject({ retainedSegments: 1, valueRuns: updates.length + 1,
       largestSegmentRuns: updates.length + 1, episodeHistoryLimited: false, valueHistoryLimited: false });
+  });
+
+  it('emits only appended values and leaves a closed historical segment untouched', () => {
+    const projector = new OrderWallsArchiveProjector(request().settings, from, to);
+    const live = candidate({entryId:'live'}), closed = candidate({entryId:'closed',price:'74450.00'});
+    projector.applyPage(page({seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[live,closed],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+      patches:[archivePatch(2,from+2000,{bids:side([],[{entryId:'closed',side:'bid',price:closed.price,at:from+2000,cursor:2,epoch:1,reason:'rank-exit',lastConfirmedAt:from+2000,lastConfirmedCursor:2}])})]}));
+    const before = projector.snapshot().find(segment=>segment.id.includes('closed'))!;
+    const value = {...live,quantity:'3.00000000',notional:'223440.00000000'};
+    const patches = projector.applyPage(page({page:{after:20,nextAfter:21,hasMore:false,lastAt:to,limit:256,sameMillisecondClosed:true},
+      watermark:21,head:{cursor:21,at:to,epoch:1},patches:[archivePatch(21,to,{bids:side([value])})],coverage:coverage({confirmedTo:to})}));
+    expect(patches.some(patch=>patch.id===before.id)).toBe(false);
+    const append=patches.find(patch=>patch.segment?.end===null)!;
+    expect(append.replaceValueRuns).toBe(false);
+    expect(append.segment?.valueRuns).toEqual([]);
+    expect(append.valuePoints).toHaveLength(1);
+    expect(append.valuePoints![0]!.quantityExact).toBe(value.quantity);
+    expect(projector.snapshot().find(segment=>segment.id===before.id)).toBe(before);
   });
 
   it('uses an archive pre-roll to confirm carry-in across the visible left edge', () => {
@@ -641,7 +678,7 @@ describe('OrderWallsArchiveCurrentPoller', () => {
       await vi.advanceTimersByTimeAsync(1_000);
       await flush();
       const published = events.filter(event => event.type === 'order-wall-batch').flatMap(event => event.patches ?? []);
-      expect(published.some((patch: any) => patch.segment?.start === headAt && patch.segment.currentSelection === true)).toBe(true);
+      expect(published.some((patch: any) => patch.segment?.start === headAt + 10_000 && patch.segment.currentSelection === true && patch.segment.presentationKind === 'current-snapshot' && patch.segment.durationMs === 0 && patch.segment.valueRuns.length === 1)).toBe(true);
       expect(published.some((patch: any) => patch.segment?.start === from)).toBe(false);
     } finally {
       service.dispose();
@@ -675,12 +712,12 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
         coverage: coverage({ confirmedTo: to - 1, status: 'partial', partial: true }) }),
     ];
     let finishHistory!: (response: Response) => void;
-    const fetcher = vi.fn(async (url: RequestInfo | URL) => {
+    const fetcher = vi.fn(async (url: RequestInfo | URL,init?:RequestInit) => {
       const parsed = new URL(String(url), 'http://localhost');
       if (parsed.pathname.endsWith('/current')) return new Response(JSON.stringify(current), { status: 200 });
       const after = Number(parsed.searchParams.get('after'));
       return after === 0 ? new Response(JSON.stringify(historyPages[0]), { status: 200 })
-        : await new Promise<Response>(resolve => { finishHistory = resolve; });
+        : await new Promise<Response>((resolve,reject) => { finishHistory = resolve;init?.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}); });
     });
     const events: any[] = [];
     const service = new OrderWallsArchiveService(event => events.push(event), fetcher as unknown as typeof fetch, () => to);
@@ -689,12 +726,12 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       service.subscribe('backfilling-prefix', { market: 'binance-spot', from, to, settings: request().settings, followLive: true });
       await flush();
       const prefix = events.filter(event => event.type === 'order-wall-batch').at(-1);
-      const historicalPrefix = prefix?.segments?.find((segment: any) => segment.archiveEntryId === historyWall.entryId);
+      const historicalPrefix = publishedSegments(events).find((segment: any) => segment.archiveEntryId === historyWall.entryId);
       expect(prefix?.status).toMatchObject({ state: 'live', archive: {
         state: 'loading', profileStatus: 'backfilling', confirmedTo: to - 1, loadedThrough: from + 1_000,
       } });
       expect(historicalPrefix).toMatchObject({ start: from, durationMs: 1_000 });
-      expect(prefix?.segments?.some((segment: any) => segment.currentSelection && segment.end === null)).toBe(true);
+      expect(publishedSegments(events).some((segment: any) => segment.currentSelection && segment.end === null)).toBe(true);
 
       finishHistory(new Response(JSON.stringify(historyPages[1]), { status: 200 }));
       await flush();
@@ -702,8 +739,8 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       expect(terminal?.status).toMatchObject({ state: 'live', archive: {
         state: 'partial', profileStatus: 'backfilling', confirmedTo: to - 1, loadedThrough: to - 1,
       } });
-      expect(terminal?.segments?.some((segment: any) => segment.archiveEntryId === historyWall.entryId)).toBe(true);
-      expect(terminal?.segments?.some((segment: any) => segment.currentSelection && segment.end === null)).toBe(true);
+      expect(publishedSegments(events).some((segment: any) => segment.archiveEntryId === historyWall.entryId)).toBe(true);
+      expect(publishedSegments(events).some((segment: any) => segment.currentSelection && segment.end === null)).toBe(true);
     } finally {
       service.dispose();
       vi.useRealTimers();
@@ -772,8 +809,11 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     const flush = async () => { for (let index = 0; index < 80; index++) await Promise.resolve(); };
     try {
       const subscription = { market: 'binance-spot' as const, from, to, settings: request().settings, followLive: true };
+      service.subscribe('restore-current', {...subscription,currentOnly:true});await flush();
+      expect(fetcher.mock.calls.filter(([url])=>String(url).includes('/archive?'))).toHaveLength(0);
+      expect(fetcher.mock.calls.filter(([url])=>String(url).includes('/current?'))).toHaveLength(1);
       service.subscribe('shared-one', subscription);
-      service.subscribe('shared-two', subscription);
+      service.subscribe('shared-two', subscription);service.unsubscribe('restore-current');
       await flush();
 
       const diagnostics = service.diagnostics();
@@ -800,6 +840,113 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       service.dispose();
       vi.useRealTimers();
     }
+  });
+
+  it('uses the latest visible range when it arrives before the current bootstrap',async()=>{
+    let release!:(value:Response)=>void;
+    const urls:string[]=[],signals:AbortSignal[]=[];
+    const current={version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),
+      watermark:20,head:{cursor:20,at:to-1,epoch:1,valid:true,midpoint:'78016.00',bookScope:{bidComplete:true,askComplete:true}},
+      state:{bids:[candidate()],asks:[]},
+      page:{after:0,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',
+      coverage:{availableFrom:from-1000,confirmedTo:to-1,status:'complete',gaps:[]}};
+    const fetcher:any=(url:unknown,init:any)=>{urls.push(String(url));signals.push(init.signal);
+      if(String(url).includes('/current?'))return new Promise(resolve=>{release=resolve;});
+      return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));};
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to);
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('delayed-current',{market:'binance-spot',from:from-10000000,to,settings:request().settings,followLive:true});await flush();
+      service.updateViewport('delayed-current',from,to,false);
+      expect(signals[0].aborted).toBe(false);
+      release(new Response(JSON.stringify(current)));await flush();
+      const history=urls.filter(url=>url.includes('/archive?'));expect(history).toHaveLength(2);
+      expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('from')).toBe(String(from));
+      expect(new URL(history.at(-1)!,'http://localhost').searchParams.get('to')).toBe(String(to));
+      expect(urls.filter(url=>url.includes('/current?'))).toHaveLength(1);
+    }finally{service.dispose();}
+  });
+
+  it('cancels an offscreen initial prefix when a much narrower visible viewport arrives',async()=>{
+    const signals:AbortSignal[]=[];
+    const fetcher:any=(_url:unknown,init:any)=>{signals.push(init.signal);return new Promise((_resolve,reject)=>{init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});};
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to);
+    try{
+      service.subscribe('visible-priority',{market:'binance-spot',from,to:to+10000000,settings:request().settings,followLive:false});
+      for(let i=0;i<40;i++)await Promise.resolve();
+      service.updateViewport('visible-priority',from+(to-from)/2,to,false);
+      for(let i=0;i<40;i++)await Promise.resolve();
+      expect(signals[0]?.aborted).toBe(true);
+      expect(service.diagnostics().historyRequests).toBe(2);
+    }finally{service.dispose();}
+  });
+
+  it('shows bounded warm history immediately and validates independently without erasing good walls',async()=>{
+    const initial=candidate({entryId:'warm-wall',startedAt:from-100,startCursor:1,startKnown:false});
+    const ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let release!:(value:Response)=>void,calls=0;
+    const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((resolve,reject)=>{release=resolve;init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});
+    const events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      const subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false};
+      service.subscribe('warm-one',subscription);await flush();
+      expect(service.diagnostics().warmEntries).toBe(1);service.unsubscribe('warm-one');
+      service.subscribe('warm-two',subscription);await flush();
+      const cached=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('warm-two')&&event.segments?.length);
+      expect(cached.at(-1)?.status.archive.requestComplete).toBe(false);
+      expect(cached.at(-1)?.segments[0].archiveEntryId).toBe('warm-wall');
+      expect(calls).toBe(2);expect(service.diagnostics()).toMatchObject({historyJobs:1,warmEntries:1});
+      release(new Response(JSON.stringify(ready)));await flush();
+      const final=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('warm-two')).at(-1);
+      expect(final.status.archive.requestComplete).toBe(true);
+      expect(service.diagnostics().warmBytes).toBeLessThanOrEqual(32*1024*1024);
+      service.unsubscribe('warm-two');expect(service.diagnostics()).toMatchObject({historyJobs:0,historyConsumers:0,groups:0});
+    }finally{service.dispose();}
+    expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
+  });
+
+  it('retains active wall presentation across long-open peers and expires only after final idle release',async()=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'idle-wall',startedAt:from-100,startCursor:1,startKnown:false});
+    const ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let calls=0;const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    const events:any[]=[],service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to),subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false};
+    const flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('idle-a',subscription);await flush();expect(service.diagnostics().warmEntries).toBe(1);
+      await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics().warmEntries).toBe(1);service.subscribe('idle-b',subscription);await flush();
+      service.unsubscribe('idle-a');await vi.advanceTimersByTimeAsync(60000);service.unsubscribe('idle-b');
+      await vi.advanceTimersByTimeAsync(59999);service.subscribe('idle-c',subscription);await flush();
+      const cached=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('idle-c')&&event.segments?.length).at(-1);
+      expect(cached?.segments[0].archiveEntryId).toBe('idle-wall');expect(cached?.status.archive.requestComplete).toBe(false);expect(calls).toBe(2);
+      service.unsubscribe('idle-c');await vi.advanceTimersByTimeAsync(59999);expect(service.diagnostics().warmEntries).toBe(1);
+      await vi.advanceTimersByTimeAsync(1);expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0,historyConsumers:0,historyJobs:0,warmReplayConsumers:0});
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it.each(['viewport','current-only'])('releases unused wall cache interest on %s without extending unrelated data',async(mode)=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'released-idle',startedAt:from-100,startCursor:1,startKnown:false}),ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let calls=0;const fetcher:any=(_url:unknown,init:any)=>++calls===1?Promise.resolve(new Response(JSON.stringify(ready))):new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    const service=new OrderWallsArchiveService(()=>{},fetcher,()=>to),subscription={market:'binance-spot' as const,from,to,settings:request().settings,followLive:false},flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('idle-original',subscription);await flush();await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics().warmEntries).toBe(1);
+      if(mode==='viewport')service.updateViewport('idle-original',from-60000,to-60000,false);
+      else{service.subscribe('idle-current-only',{...subscription,currentOnly:true});service.unsubscribe('idle-original');}
+      await flush();await vi.advanceTimersByTimeAsync(60000);expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it('active wall interests cannot exceed the two-entry cache or retain evicted data',async()=>{
+    vi.useFakeTimers();
+    const initial=candidate({entryId:'bounded-idle',startedAt:from-100,startCursor:1,startKnown:false}),ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    const service=new OrderWallsArchiveService(()=>{},(async()=>new Response(JSON.stringify(ready))) as typeof fetch,()=>to),flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      for(const topLevels of [8,9,10]){service.subscribe('bounded-'+topLevels,{market:'binance-spot',from,to,settings:{...request().settings,topLevels},followLive:false});await flush();}
+      await vi.advanceTimersByTimeAsync(120000);expect(service.diagnostics()).toMatchObject({subscriptions:3,warmEntries:2});expect(service.diagnostics().warmBytes).toBeLessThanOrEqual(32*1024*1024);
+      for(const topLevels of [8,9,10])service.unsubscribe('bounded-'+topLevels);await vi.advanceTimersByTimeAsync(60000);expect(service.diagnostics()).toMatchObject({subscriptions:0,warmEntries:0,warmBytes:0,historyConsumers:0,warmReplayConsumers:0});
+    }finally{service.dispose();vi.useRealTimers();}
   });
 
   it('cancels a shared history fetch only for its last consumer and on service disposal', async () => {
@@ -845,7 +992,121 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     await flush();
   });
 
-  it('keeps a live history job across a modest right-edge roll and extends from its closed cursor fence', async () => {
+  it('loads ready canonical history without waiting for a current bootstrap',async()=>{
+    const events:any[]=[],wall=candidate({entryId:'ready-with-delayed-current'});
+    const historical=page({patches:[archivePatch(10,from+1000,{bids:side([wall])})]});
+    let currentSignal:AbortSignal|undefined;
+    const fetcher=vi.fn((input:RequestInfo|URL,init?:RequestInit)=>{
+      if(new URL(String(input),'http://localhost').pathname.endsWith('/current'))return new Promise<Response>((_resolve,reject)=>{
+        currentSignal=init?.signal??undefined;currentSignal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
+      });
+      return Promise.resolve(new Response(JSON.stringify(historical),{status:200}));
+    });
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>to);
+    try{
+      service.subscribe('independent-history',{market:'binance-spot',from,to,settings:request().settings,followLive:true});
+      for(let i=0;i<120;i++)await Promise.resolve();
+      expect(currentSignal?.aborted).toBe(false);
+      const displayed=new Map<string,any>();
+      for(const event of events){if(event.kind==='snapshot'){displayed.clear();for(const row of event.segments??[])displayed.set(row.id,row);}else for(const patch of event.patches??[]){if(patch.segment)displayed.set(patch.id,patch.segment);else displayed.delete(patch.id);}}
+      expect([...displayed.values()].some(row=>row.archiveEntryId===wall.entryId)).toBe(true);
+      expect(events.at(-1).status.archive.requestComplete).toBe(true);
+      expect([...displayed.values()].some(row=>row.presentationKind==='current-snapshot')).toBe(false);
+    }finally{service.dispose();}
+    expect(currentSignal?.aborted).toBe(true);
+  });
+
+  it('commits an already-ready shared replacement without restoring obsolete loading metadata',async()=>{
+    const oldTo=from+30*60000,targetTo=oldTo+60000,wall=candidate({entryId:'shared-canonical'}),events:any[]=[];let reads=0;
+    const bootstrap={version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),
+      watermark:30,head:{cursor:30,at:targetTo-1,epoch:1,valid:true,midpoint:'78016.00'},state:{bids:[wall],asks:[]},
+      page:{after:0,nextAfter:30,hasMore:false,lastAt:targetTo-1,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',coverage:{availableFrom:from-1000,confirmedTo:targetTo-1,status:'complete',gaps:[]}};
+    const fetcher=async(input:RequestInfo|URL)=>{const url=new URL(String(input),'http://localhost');if(url.pathname.endsWith('/current'))return Response.json(bootstrap);
+      reads++;const end=Number(url.searchParams.get('to'));return Response.json(page({to:end,watermark:30,head:{cursor:30,at:end-1,epoch:1},page:{after:0,nextAfter:30,hasMore:false,lastAt:end-1,limit:256,sameMillisecondClosed:true},patches:[archivePatch(10,from+1000,{bids:side([wall])})],coverage:coverage({requestedTo:end,confirmedTo:end-1})}));};
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>oldTo),flush=async()=>{for(let i=0;i<150;i++)await Promise.resolve();};
+    try{
+      service.subscribe('ready-target',{...request(),to:targetTo,followLive:true});await flush();
+      service.subscribe('old-view',{...request(),to:oldTo,followLive:true});await flush();expect(reads).toBe(2);
+      service.updateViewport('old-view',from,targetTo,true);await flush();
+      const latest=events.filter(event=>event.ids?.includes('old-view')).at(-1);
+      expect(latest.status.archive).toMatchObject({to:targetTo,loadedThrough:targetTo-1,requestComplete:true,rangeComplete:true});
+      expect(reads).toBe(2);expect(service.diagnostics()).toMatchObject({groups:1,historyJobs:1,historyConsumers:2});
+      expect(publishedSegments(events.filter(event=>event.ids?.includes('old-view'))).some(row=>row.archiveEntryId===wall.entryId&&!row.presentationKind)).toBe(true);
+    }finally{service.dispose();}
+  });
+
+  for(const pending of ['catching-up','stale'] as const)it(`does not publish cached current state as live for a late join while ${pending}`,async()=>{
+    vi.useFakeTimers();const events:any[]=[],wall=candidate({entryId:'late-selected'});let finish!:(response:Response)=>void;
+    const head=(cursor:number,at:number)=>({cursor,at,epoch:1,valid:true,midpoint:'78016.00'});
+    const current=(after:number,next:number,more:boolean)=>({version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),
+      watermark:after===0?20:30,head:head(after===0?20:30,from+(after===0?15000:30000)),...(after===0?{state:{bids:[wall],asks:[]}}:{}),
+      page:{after,nextAfter:next,hasMore:more,lastAt:from+(next===20?15000:next===25?25000:30000),limit:256,sameMillisecondClosed:true},
+      patches:after===0?[]:[archivePatch(next,from+(next===25?25000:30000),{bids:side([candidate({...wall,quantity:String(next),notional:String(next*74480)})])})],profileStatus:'ready',
+      coverage:{availableFrom:from-1000,confirmedTo:from+(next===20?15000:next===25?25000:30000),status:'complete',gaps:[]}});
+    const fetcher=async(input:RequestInfo|URL,init?:RequestInit)=>{
+      const url=new URL(String(input),'http://localhost');if(!url.pathname.endsWith('/current'))return Response.json(page());
+      const after=Number(url.searchParams.get('after'));if(after===0)return Response.json(current(0,20,false));
+      if(pending==='stale')throw new TypeError('Explicit current transport failure');
+      if(after===20)return Response.json(current(20,25,true));
+      return new Promise<Response>((resolve,reject)=>{finish=resolve;init?.signal?.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});
+    };
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>to),flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('first-current',{...request(),followLive:true});await flush();await vi.advanceTimersByTimeAsync(1000);await flush();
+      service.subscribe('late-current',{...request(),followLive:true});await flush();
+      expect(publishedSegments(events.filter(event=>event.ids?.includes('late-current'))).some(row=>row.presentationKind==='current-snapshot')).toBe(false);
+      expect(events.filter(event=>event.ids?.includes('late-current')).at(-1).status.state).toBe(pending==='stale'?'gap':'loading');
+      if(pending==='catching-up'){
+        finish(Response.json(current(25,30,false)));await flush();
+        const rows=publishedSegments(events.filter(event=>event.ids?.includes('late-current'))),point=rows.find(row=>row.presentationKind==='current-snapshot');
+        expect(point).toMatchObject({start:from+30000,durationMs:0,currentSelection:true});expect(point.valueRuns).toHaveLength(1);expect(point.valueRuns[0].quantityExact).toBe('30');
+      }
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it('uses current side coverage for complete-partial-complete snapshots without changing the candidate',async()=>{
+    vi.useFakeTimers();const events:any[]=[],wall=candidate({entryId:'coverage-snapshot'});
+    const fetcher=async(input:RequestInfo|URL)=>{const url=new URL(String(input),'http://localhost');if(!url.pathname.endsWith('/current'))return Response.json(page());
+      const after=Number(url.searchParams.get('after')),cursor=after===0?20:after===20?30:40,at=from+cursor*1000;
+      return Response.json({version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),
+        watermark:cursor,head:{cursor,at,epoch:1,valid:true,midpoint:'78016.00',bookScope:{bidComplete:cursor!==30,askComplete:true}},
+        ...(after===0?{state:{bids:[wall],asks:[]}}:{}),page:{after,nextAfter:cursor,hasMore:false,lastAt:at,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',
+        coverage:{availableFrom:from-1000,confirmedTo:at,status:'complete',gaps:[]}});};
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>to),flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('coverage',{...request(),followLive:true});await flush();
+      const point=()=>publishedSegments(events).find(row=>row.presentationKind==='current-snapshot');
+      const first=point();expect(first.scopePartial).toBe(false);
+      await vi.advanceTimersByTimeAsync(1000);await flush();expect(point()).toMatchObject({id:first.id,scopePartial:true,durationMs:0});
+      expect(point().valueRuns[0].quantityExact).toBe(first.valueRuns[0].quantityExact);
+      await vi.advanceTimersByTimeAsync(1000);await flush();expect(point()).toMatchObject({id:first.id,scopePartial:false,durationMs:0});
+      expect(point().valueRuns).toHaveLength(1);expect(point().valueRuns[0].notionalExact).toBe(first.valueRuns[0].notionalExact);
+    }finally{service.dispose();vi.useRealTimers();}
+  });
+
+  it('refreshes a quiet canonical revision without inserting a terminal integration boundary',async()=>{
+    const oldTo=from+30*60000,h=oldTo-1,newTo=oldTo+5,start=h-9,events:any[]=[],calls:Array<{from:number;to:number;after:number}>=[];
+    const wall=candidate({entryId:'quiet-exact',price:'100.1',quantity:'1',notional:'100.1',startedAt:start,startCursor:10});
+    const bootstrap={version:1,profile:profile(),market:'spot',instrument:profiles['binance-spot'].instrument,feed:preparedDepthFeed('spot'),watermark:20,
+      head:{cursor:20,at:h,epoch:1,valid:true,midpoint:'100.1'},state:{bids:[wall],asks:[]},page:{after:0,nextAfter:20,hasMore:false,lastAt:h,limit:256,sameMillisecondClosed:true},patches:[],profileStatus:'ready',coverage:{availableFrom:from-1000,confirmedTo:h,status:'complete',gaps:[]}};
+    const historical=(end:number)=>page({to:end,watermark:end===oldTo?20:30,head:{cursor:end===oldTo?20:30,at:end-1,epoch:1},
+      seed:{at:from-1,cursor:0,epoch:1,midpoint:'100.1',bids:[],asks:[],bookScope:{bidComplete:true,askComplete:true}},
+      page:{after:0,nextAfter:end===oldTo?20:30,hasMore:false,lastAt:end-1,limit:256,sameMillisecondClosed:true},
+      patches:[archivePatch(10,start,{midpoint:'100.1',bids:side([wall])})],coverage:coverage({requestedTo:end,confirmedTo:end-1})});
+    const fetcher=async(input:RequestInfo|URL)=>{const url=new URL(String(input),'http://localhost');if(url.pathname.endsWith('/current'))return Response.json(bootstrap);
+      const end=Number(url.searchParams.get('to'));calls.push({from:Number(url.searchParams.get('from')),to:end,after:Number(url.searchParams.get('after'))});return Response.json(historical(end));};
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher as typeof fetch,()=>oldTo),flush=async()=>{for(let i=0;i<150;i++)await Promise.resolve();};
+    try{
+      service.subscribe('quiet-revision',{...request(),to:oldTo,followLive:true});await flush();
+      service.updateViewport('quiet-revision',from,newTo,true);await flush();
+      expect(calls).toEqual([{from,to:oldTo,after:0},{from,to:newTo,after:0}]);
+      const actual=publishedSegments(events).filter(row=>row.presentationKind!=='current-snapshot').map(({currentSelection:_selected,...row})=>row);
+      const reference=new OrderWallsArchiveProjector(request().settings,from,newTo);reference.applyPage(historical(newTo));
+      expect(actual).toEqual(reference.snapshot());expect(actual).toHaveLength(1);expect(actual[0]).toMatchObject({meanUsd:100.1,durationMs:14});
+    }finally{service.dispose();}
+  });
+
+  it('keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes', async () => {
     vi.useFakeTimers();
     const settings = request().settings, wideTo = from + 30 * 60_000, roll = 60_000, rolledTo = wideTo + roll;
     const head1 = { cursor: 20, at: wideTo - 1, epoch: 1 };
@@ -869,15 +1130,22 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       seed: { at: from, cursor: 0, epoch: 1, midpoint: '78016.00', bids: [], asks: [], bookScope: { bidComplete: true, askComplete: true } },
       page: { after: 0, nextAfter: 10, hasMore: true, lastAt: from + 1_000, limit: 256, sameMillisecondClosed: true },
       patches: [archivePatch(10, from + 1_000, { bids: side([wall]) })],
-      coverage: coverage({ requestedTo: wideTo, confirmedTo: from + 1_000, status: 'partial', partial: true }) });
+      coverage: coverage({ requestedTo: wideTo, confirmedTo: from + 1_000, status: 'partial', partial: true, gaps: [{from:from+500,to:from+500,reason:'Corrected old gap'}] }) });
     const historyTerminal = page({ to: wideTo, watermark: head1.cursor, head: head1,
       page: { after: 10, nextAfter: head1.cursor, hasMore: false, lastAt: head1.at, limit: 256, sameMillisecondClosed: true },
       patches: [archivePatch(head1.cursor, head1.at, { bids: side([candidate({ ...wall, quantity: '2.50000000', notional: '186200.00000000' })]) })],
-      coverage: coverage({ requestedTo: wideTo, confirmedTo: head1.at }) });
-    const historyExtension = page({ from: head1.at, to: rolledTo, watermark: head2.cursor, head: head2,
-      page: { after: head1.cursor, nextAfter: head2.cursor, hasMore: false, lastAt: head2.at, limit: 256, sameMillisecondClosed: true },
-      patches: [archivePatch(head2.cursor, head2.at, { bids: side([candidate({ ...wall, quantity: '3.00000000', notional: '223440.00000000' })]) })],
-      coverage: coverage({ requestedFrom: head1.at, requestedTo: rolledTo, confirmedTo: head2.at }) });
+      coverage: coverage({ requestedTo: wideTo, confirmedTo: head1.at,gaps:[{from:from+500,to:from+500,reason:'Corrected old gap'}] }) });
+    const ahead = candidate({ entryId: 'timestamp-ahead-wall', price: '100.1', quantity: '1', notional: '100.1', startedAt: wideTo + 1_000, startCursor: 15 });
+    const historyExtension = page({ from, to: rolledTo, watermark: head2.cursor, head: head2, seed: historyFirst.seed,
+      page: { after: 0, nextAfter: head2.cursor, hasMore: false, lastAt: head2.at, limit: 256, sameMillisecondClosed: true },
+      patches: [...historyFirst.patches,
+        archivePatch(15, wideTo + 1_000, { bids: side([ahead]) }),
+        archivePatch(16, wideTo + 2_000, { bids: side([candidate({ ...ahead, rank: 9 })]) }),
+        ...historyTerminal.patches,
+        archivePatch(head2.cursor, head2.at, { bids: side([candidate({ ...wall, quantity: '3.00000000', notional: '223440.00000000' })]) })],
+      coverage: coverage({ requestedFrom: from, requestedTo: rolledTo, confirmedTo: head2.at }) });
+    let currentBootstraps=0;
+    let finishReplacement!: (response: Response) => void;
     let finishHistory!: (response: Response) => void;
     let historyPendingSignal: AbortSignal | undefined;
     const archiveRequests: Array<{ from: number; to: number; after: number; watermark: number | null }> = [];
@@ -885,17 +1153,18 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       const parsed = new URL(String(input), 'http://localhost');
       if (parsed.pathname.endsWith('/current')) {
         const after = Number(parsed.searchParams.get('after'));
+        if(after===0)currentBootstraps++;
         return new Response(JSON.stringify(after === 0 ? currentBootstrap : currentDelta), { status: 200 });
       }
       const query = { from: Number(parsed.searchParams.get('from')), to: Number(parsed.searchParams.get('to')),
         after: Number(parsed.searchParams.get('after')), watermark: parsed.searchParams.has('watermark') ? Number(parsed.searchParams.get('watermark')) : null };
       archiveRequests.push(query);
+      if (query.after === 0 && query.to === rolledTo) return new Promise<Response>(resolve => { finishReplacement = resolve; });
       if (query.after === 0) return new Response(JSON.stringify(historyFirst), { status: 200 });
       if (query.from === from && query.after === 10) {
         historyPendingSignal = init?.signal ?? undefined;
         return new Promise<Response>(resolve => { finishHistory = resolve; });
       }
-      if (query.from === head1.at && query.after === head1.cursor) return new Response(JSON.stringify(historyExtension), { status: 200 });
       throw new Error(`Unexpected archive request ${JSON.stringify(query)}`);
     });
     const events: any[] = [];
@@ -917,11 +1186,31 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
 
       finishHistory(new Response(JSON.stringify(historyTerminal), { status: 200 }));
       await flush();
-      expect(archiveRequests.at(-1)).toEqual({ from: head1.at, to: rolledTo, after: head1.cursor, watermark: head2.cursor });
+      expect(archiveRequests.at(-1)).toEqual({ from, to: rolledTo, after: 0, watermark: null });
+      expect(service.diagnostics()).toMatchObject({ groups: 1, historyJobs: 1 });
+      const retained = events.filter(event => event.type === 'order-wall-batch' && event.ids.includes('roll-forward')).at(-1);
+      expect(retained?.kind).toBe('patch');
+      expect(retained?.patches).toEqual([]);
+      expect(retained?.status).toMatchObject({ state: 'live', archive: { requestComplete: false, loadedThrough: head1.at } });
+      expect(retained.status.archive.gaps).toContainEqual({from:from+500,to:from+500,reason:'Corrected old gap'});
+      finishReplacement(new Response(JSON.stringify({...historyExtension,profile:{...historyExtension.profile,id:'invalid-replacement-profile'}}), {status:200}));
+      await flush();
+      const failed=events.filter(event=>event.type==='order-wall-batch'&&event.ids.includes('roll-forward')).at(-1);
+      expect(failed.status).toMatchObject({state:'live',archive:{requestComplete:false,loadedThrough:head1.at}});
+      expect(failed.kind).toBe('patch');expect(failed.patches).toEqual([]);
+      service.retry('roll-forward');await flush();
+      expect(currentBootstraps).toBe(1);
+      finishReplacement(new Response(JSON.stringify(historyExtension), { status: 200 }));
+      await flush();
       const latest = events.filter(event => event.type === 'order-wall-batch' && event.ids.includes('roll-forward')).at(-1);
       expect(latest?.status.archive).toMatchObject({ from, to: rolledTo, requestComplete: true, rangeComplete: true, state: 'complete' });
       expect(latest?.segments?.filter((segment: any) => segment.archiveEntryId === wall.entryId)).toHaveLength(1);
       expect(latest?.segments?.find((segment: any) => segment.archiveEntryId === wall.entryId)?.valueRuns.at(-1)).toMatchObject({ at: head2.at, notionalExact: '223440.00000000' });
+      expect(latest.status.archive.gaps).toEqual([]);
+      const reference = new OrderWallsArchiveProjector(settings, from, rolledTo); reference.applyPage(historyExtension);
+      const actual = latest.segments.filter((segment: any) => segment.presentationKind !== 'current-snapshot').map(({ currentSelection: _selected, ...segment }: any) => segment);
+      expect(actual).toEqual(reference.snapshot());
+      expect(actual.some((segment: any) => segment.archiveEntryId === ahead.entryId)).toBe(true);
       expect(service.diagnostics()).toMatchObject({ historyRequests: 2, historyJobs: 1, historyConsumers: 1, groups: 1 });
     } finally {
       service.dispose();
@@ -1066,7 +1355,7 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }
   });
 
-  const runScenario = async (checkpointMismatch = false, currentGap = false) => {
+  const runScenario = async (checkpointMismatch = false, currentGap = false, invalidCurrent = false) => {
     vi.useFakeTimers();
     const headAt = from + 15_000, requestTo = from + 60_000;
     const first = candidate({ entryId: 'archive-first-episode', startedAt: from + 1_000, startCursor: 10, startEpoch: 1, startKnown: true });
@@ -1086,7 +1375,7 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     };
     const currentDelta = {
       version: 1, profile: profile(), market: 'spot', instrument: 'binance:spot:BTCUSDT', feed: 'binance:spot:BTCUSDT:spot-diff-depth',
-      watermark: 30, head: { cursor: 30, at: headAt + 5_000, epoch: currentGap ? 2 : 1, midpoint: '78016.00', valid: true },
+      watermark: 30, head: { cursor: 30, at: headAt + 5_000, epoch: currentGap ? 2 : 1, midpoint: '78016.00', valid: !invalidCurrent },
       page: { after: 20, nextAfter: 30, hasMore: false, lastAt: headAt + 5_000, limit: 256, sameMillisecondClosed: true },
       patches: currentGap
         ? [{ ...archivePatch(25, headAt + 1_000, { epoch: 2, kind: 'gap', reason: 'Depth replacement epoch' }) },
@@ -1120,6 +1409,12 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     try {
       service.subscribe('identity-bridge', { market: 'binance-spot', from, to: requestTo, settings, followLive: true });
       await flush();
+      const before = new Map<string, any>();
+      for (const event of events.filter(item=>item.type==='order-wall-batch')) {
+        if(event.kind==='snapshot'){before.clear();for(const segment of event.segments??[])before.set(segment.id,segment);}
+        else for(const patch of event.patches??[]){if(patch.segment)before.set(patch.id,patch.segment);else before.delete(patch.id);}
+      }
+      const historyBefore=JSON.stringify([...before.values()].filter(segment=>segment.presentationKind!=='current-snapshot'));
       await vi.advanceTimersByTimeAsync(1_000);
       await flush();
       const segments = new Map<string, any>();
@@ -1130,52 +1425,65 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
           if (patch.segment) segments.set(patch.id, patch.segment); else segments.delete(patch.id);
         }
       }
-      return { segments: [...segments.values()], status: events.filter(item => item.type === 'order-wall-batch').at(-1)?.status };
+      return { historyBefore, segments: [...segments.values()], status: events.filter(item => item.type === 'order-wall-batch').at(-1)?.status };
     } finally {
       service.dispose();
       vi.useRealTimers();
     }
   };
 
-  it('maps a checkpoint ID to the latest same-price archive reentry only at an exact verified fence', async () => {
-    const { segments } = await runScenario(false);
-    expect(segments).toHaveLength(2);
-    expect(segments.find(segment => segment.archiveEntryId === 'archive-first-episode')).toMatchObject({ endReason: 'rank-exit' });
-    expect(segments.find(segment => segment.archiveEntryId === 'archive-second-episode')).toMatchObject({
-      start: from + 15_000, startKnown: true, end: null, currentSelection: true,
-    });
-    expect(segments.find(segment => segment.archiveEntryId === 'archive-second-episode').valueRuns.at(-1)).toMatchObject({
-      quantityExact: '3.00000000', notionalExact: '223440.00000000',
-    });
-    expect(segments.some(segment => segment.archiveEntryId === 'current-checkpoint-episode')).toBe(false);
-  });
-
-  it('keeps archive and current episodes separate when same-price checkpoint values disagree', async () => {
-    const { segments } = await runScenario(true);
+  it('keeps canonical episode identities and financial bytes unchanged while selected snapshots update', async () => {
+    const {segments,historyBefore}=await runScenario(false);
     expect(segments).toHaveLength(3);
-    expect(segments.find(segment => segment.archiveEntryId === 'archive-second-episode')).toMatchObject({
-      end: from + 15_000, endReason: 'censored', endKnown: false,
-    });
-    expect(segments.find(segment => segment.archiveEntryId === 'current-checkpoint-episode')).toMatchObject({
-      start: from + 15_000, startKnown: false, end: null, currentSelection: true,
-    });
+    expect(JSON.stringify(segments.filter(segment=>segment.presentationKind!=='current-snapshot'))).toBe(historyBefore);
+    expect(segments.find(segment=>segment.archiveEntryId==='archive-first-episode')).toMatchObject({endReason:'rank-exit',currentSelection:false});
+    const historical=segments.find(segment=>segment.archiveEntryId==='archive-second-episode');
+    expect(historical).toMatchObject({start:from+15_000,startKnown:true,end:null,currentSelection:false});
+    expect(historical.valueRuns.at(-1)).toMatchObject({quantityExact:'2.00000000',notionalExact:'148960.00000000'});
+    const point=segments.find(segment=>segment.presentationKind==='current-snapshot');
+    expect(point).toMatchObject({archiveEntryId:'current-checkpoint-episode',start:from+20_000,durationMs:0,startKnown:false,currentSelection:true});
+    expect(point.valueRuns).toHaveLength(1);expect(point.valueRuns[0]).toMatchObject({at:from+20_000,quantityExact:'3.00000000',notionalExact:'223440.00000000'});
+    expect(point.id).not.toBe(historical.id);
   });
 
-  it('censors the archive span and starts a fresh identity after a current gap/replacement epoch', async () => {
-    const { segments } = await runScenario(false, true);
+  it('never censors or remaps canonical history when a same-price current snapshot disagrees', async () => {
+    const {segments,historyBefore}=await runScenario(true);
+    expect(JSON.stringify(segments.filter(segment=>segment.presentationKind!=='current-snapshot'))).toBe(historyBefore);
+    expect(segments.find(segment=>segment.archiveEntryId==='archive-second-episode')).toMatchObject({end:null,endReason:null,currentSelection:false});
+    expect(segments.find(segment=>segment.archiveEntryId==='current-checkpoint-episode')).toMatchObject({presentationKind:'current-snapshot',start:from+20_000,durationMs:0,currentSelection:true});
+  });
+
+  it('replaces only current snapshot identities after a current gap and epoch change', async () => {
+    const {segments,historyBefore}=await runScenario(false,true);
     expect(segments).toHaveLength(3);
-    expect(segments.find(segment => segment.archiveEntryId === 'archive-second-episode')).toMatchObject({
-      end: from + 15_000, endReason: 'censored', endKnown: false,
-    });
-    expect(segments.find(segment => segment.archiveEntryId === 'current-after-gap')).toMatchObject({
-      start: from + 17_000, startKnown: true, end: null, currentSelection: true,
-    });
-    expect(segments.some(segment => segment.archiveEntryId === 'current-checkpoint-episode')).toBe(false);
+    expect(JSON.stringify(segments.filter(segment=>segment.presentationKind!=='current-snapshot'))).toBe(historyBefore);
+    expect(segments.find(segment=>segment.archiveEntryId==='archive-second-episode')).toMatchObject({end:null,endReason:null});
+    expect(segments.find(segment=>segment.archiveEntryId==='current-after-gap')).toMatchObject({presentationKind:'current-snapshot',start:from+20_000,startKnown:false,durationMs:0,currentSelection:true});
+    expect(segments.some(segment=>segment.archiveEntryId==='current-checkpoint-episode')).toBe(false);
   });
 
-  it('keeps bounded current gap markers in archive coverage after the verified history fence', async () => {
-    const { status } = await runScenario(false, true);
-    expect(status.archive.gaps).toContainEqual({ from: from + 16_000, to: from + 16_000, reason: 'Depth replacement epoch' });
-    expect(status.archive.gapsTruncated).toBeUndefined();
+  it('removes current snapshot markers when their source becomes invalid, preserving canonical rows',async()=>{
+    const {segments,status,historyBefore}=await runScenario(false,false,true);
+    expect(segments.every(segment=>segment.presentationKind!=='current-snapshot')).toBe(true);
+    expect(JSON.stringify(segments)).toBe(historyBefore);
+    expect(status.state).toBe('gap');
   });
+
+  it('reports current gaps independently of the canonical revision coverage', async () => {
+    const {status}=await runScenario(false,true);
+    expect(status.currentGaps).toContainEqual({from:from+16_000,to:from+16_000,reason:'Depth replacement epoch'});
+    expect(status.archive.gaps).toEqual([]);
+  });
+
+});
+
+
+it('holds shared history admission until wall response bodies finish',async()=>{
+ const bodies:ReadableStreamDefaultController<Uint8Array>[]=[],aborts=Array.from({length:3},()=>new AbortController());
+ const fetcher:any=async()=>new Response(new ReadableStream<Uint8Array>({start(controller){bodies.push(controller);}}));
+ const work=aborts.map((abort,index)=>loadOrderWallsArchive({request:request({from:from+index*60000,to:to+index*60000}),signal:abort.signal,fetcher}).catch(()=>undefined));
+ try{
+  for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(2);
+  bodies[0]!.close();for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveLength(3);
+ }finally{for(const abort of aborts)abort.abort();for(const body of bodies)try{body.close();}catch{}await Promise.allSettled(work);}
 });

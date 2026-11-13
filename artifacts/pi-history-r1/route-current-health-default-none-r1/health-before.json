@@ -1,0 +1,152 @@
+{
+  "enabled": true,
+  "build": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "metrics": {
+    "requests": 655,
+    "rejected": 1,
+    "bytes": 94099067,
+    "serializeMs": 489.3746179941645,
+    "legacyHeatmap": 0,
+    "legacyFootprint": 0,
+    "closedTileReads": 0,
+    "manifests": 0,
+    "orderWallPages": 2,
+    "peakRss": 226623488,
+    "active": 1,
+    "history": 0,
+    "reservedCurrent": 1,
+    "limit": 4,
+    "rss": 225243136
+  },
+  "wallProjectionEncoding": {
+    "active": 0,
+    "limit": 3,
+    "cacheEntries": 14,
+    "cacheBytes": 6997137
+  },
+  "materializer": {
+    "version": 1,
+    "head": {
+      "cursor": 23173346,
+      "at": 1794157854587,
+      "epoch": 1794143722831
+    },
+    "live": {
+      "cursor": 23173346,
+      "at": 1794157854587,
+      "from": 1794157800000,
+      "widths": [
+        10,
+        25,
+        50,
+        100,
+        250,
+        1000
+      ]
+    },
+    "archive": {
+      "pinned": {
+        "pages": 1,
+        "processed": 44,
+        "cursor": 23173303,
+        "lag": 0,
+        "caughtUp": true
+      },
+      "current": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 44,
+          "cursor": 23173303,
+          "lag": 0,
+          "caughtUp": true
+        },
+        {
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "lane": "pinned",
+          "pages": 1,
+          "processed": 45,
+          "cursor": 19209895,
+          "lag": 0,
+          "caughtUp": true
+        },
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "lane": "custom",
+          "pages": 1,
+          "processed": 44,
+          "cursor": 23173303,
+          "lag": 0,
+          "caughtUp": true
+        }
+      ],
+      "custom": [
+        {
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+          "state": "backfilling",
+          "progressCursor": 22098273,
+          "sourceHeadCursor": 23173303,
+          "lagCursors": 1075030,
+          "currentCursor": 23173303,
+          "currentAt": 1794157850201,
+          "currentValid": true
+        }
+      ],
+      "customWork": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+        "pages": 1,
+        "processed": 256,
+        "cursor": 22098273,
+        "lag": 1075030,
+        "caughtUp": false
+      },
+      "customWorker": "perpetual-materializer"
+    },
+    "metrics": {
+      "startedAt": 1793984035129,
+      "lastPoll": 1794157855614,
+      "lastPersist": 1794157805485,
+      "records": 1703658,
+      "closedBuckets": 3480,
+      "liveLagMs": 0,
+      "derivedBytes": 1180084664,
+      "freeBytes": 193463427072,
+      "paused": false,
+      "error": "",
+      "pages": 102327,
+      "pageMs": 3019342.539260694,
+      "accumulateMs": 1339392.3619273915,
+      "persistMs": 247444.38723913243,
+      "peakRss": 470634496,
+      "sourceHeadAgeMs": 2995,
+      "liveAgeMs": 2995,
+      "rss": 374497280
+    },
+    "backlog": []
+  },
+  "sqlAdmission": {
+    "enabled": true,
+    "version": 1,
+    "build": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+    "completed": 3903629,
+    "cancelled": 16,
+    "rejected": 0,
+    "peakActive": 2,
+    "peakQueued": 5,
+    "waitMs": 112622074.97241603,
+    "maxWaitMs": 737.4628309998661,
+    "active": 1,
+    "history": 1,
+    "queued": 0,
+    "waiting": {
+      "current": 0,
+      "visible": 0,
+      "background": 0
+    },
+    "limit": 2,
+    "reservedCurrent": 1,
+    "oldestWaitMs": 0,
+    "rss": 104591360
+  }
+}

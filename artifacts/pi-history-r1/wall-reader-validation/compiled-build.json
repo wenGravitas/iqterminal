@@ -1,0 +1,10 @@
+{
+  "build": "9c5fe1f8b488b408a3efc5654e0193be93f540bb",
+  "provenance": "Logged staging diagnostics build; embedded commit verified in emitted assets. No new live-browser latency claim.",
+  "files": [
+    {
+      "path": "dist/assets/worker-YSoKSNyQ.js",
+      "sha256": "9824b6023b047d2cd2378ff453f683725ffc6caaf27c96f6d631ed4f3f371be9"
+    }
+  ]
+}

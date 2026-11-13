@@ -1,0 +1,27 @@
+{
+  "pid": 263125,
+  "cwd": "/home/daz/workarea/iqterminal-perf-history",
+  "mode": "staging",
+  "historyTarget": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 18780
+  },
+  "nativeHistoryTarget": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 18780
+  },
+  "currentTarget": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 18781
+  },
+  "historyAgentSockets": 2,
+  "nativeAgentSockets": 2,
+  "currentAgentSockets": 4,
+  "totalAdmission": 4,
+  "historicalAdmission": 3,
+  "configSha256": "48b3c2d2661be12f4c33b02e779bcd7ead7caeb7af70de0bdd849731fed2a00f",
+  "scope": "Only safe origin components are retained; credentials/queries and unrelated environment values are omitted."
+}

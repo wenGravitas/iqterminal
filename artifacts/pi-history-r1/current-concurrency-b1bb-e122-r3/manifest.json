@@ -1,0 +1,16 @@
+{
+  "applicationBuild": "b1bb790589f14542c479e9e922122571451a5ca9",
+  "backendBuild": "e122f9d8d3995d5b6b907a1519cd6b2f639fa751",
+  "route": "Pi existing separate SSH18780/history,18781/current via Vite preview4185; no transport restarted",
+  "dataMode": "staging",
+  "historyTiles": true,
+  "fixture": false,
+  "samples": 10,
+  "observationsSecondsPerSample": 20,
+  "contexts": "Fresh browser context per sample; five alternating pairs",
+  "protectedIdentitiesMatch": true,
+  "runtimeChanges": "None; existing custom profile historical read renewed ordinary admission. Health proves background custom backfill in both baseline and history cohorts. No new profile, collector restart, deployment or main merge.",
+  "rendering": "Headless Chromium155, Canvas2D panels; not normal foreground UX",
+  "setupFailures": "r1 and r2 retained separately; r3 contains all ten samples.",
+  "scope": "Coverage and live-receipt comparison. No claim of current chart first paint, exact execution cursor continuity, cold/warm cache load latency or memory plateau."
+}

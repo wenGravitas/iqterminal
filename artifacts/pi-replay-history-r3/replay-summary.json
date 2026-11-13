@@ -1,0 +1,864 @@
+{
+  "applicationBuild": {
+    "commit": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "exitCode": 0,
+    "flags": {
+      "VITE_BUILD_COMMIT": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+      "VITE_DATA_MODE": "staging",
+      "VITE_HISTORY_TILES": "1",
+      "VITE_DIAGNOSTICS": "1"
+    },
+    "outDir": "artifacts/pi-history-integration-startup-r1/dist-diagnostic"
+  },
+  "protocol": {
+    "local": {
+      "url": "ws://127.0.0.1:18880/v1/stream",
+      "case": {
+        "name": "recent-eight-minute-backlog",
+        "after": 3519119129,
+        "from": 1794542553573
+      },
+      "elapsedMs": 100.40155332535505,
+      "receivedBatches": 4,
+      "confirmedBatches": 3,
+      "passed": true,
+      "financialSequenceHash": "578c3200ee2741f6df6248b2089629d8f83327085209474fc328b3e2aa838548",
+      "firstExecutionMs": 33.99865981191397,
+      "openMs": 1.8966486677527428,
+      "firstEncodedBytes": 502809
+    },
+    "direct": {
+      "url": "ws://127.0.0.1:18881/v1/stream",
+      "case": {
+        "name": "recent-eight-minute-backlog",
+        "after": 3519119129,
+        "from": 1794542553573
+      },
+      "elapsedMs": 13592.109279000397,
+      "receivedBatches": 4,
+      "confirmedBatches": 3,
+      "passed": true,
+      "financialSequenceHash": "578c3200ee2741f6df6248b2089629d8f83327085209474fc328b3e2aa838548",
+      "firstExecutionMs": 2911.5706970005704,
+      "openMs": 766.7049709998537,
+      "firstEncodedBytes": 502809
+    },
+    "preview": {
+      "url": "ws://127.0.0.1:4202/market-data/v1/stream",
+      "case": {
+        "name": "recent-eight-minute-backlog",
+        "after": 3519119129,
+        "from": 1794542553573
+      },
+      "elapsedMs": 8335.693740999886,
+      "receivedBatches": 4,
+      "confirmedBatches": 3,
+      "passed": true,
+      "financialSequenceHash": "578c3200ee2741f6df6248b2089629d8f83327085209474fc328b3e2aa838548",
+      "firstExecutionMs": 3872.745620000387,
+      "openMs": 966.8870080004126,
+      "firstEncodedBytes": 502809
+    }
+  },
+  "browser": {
+    "scope": "Single real headless Chromium context; metadata worker prefix; origin-scoped local-network-access permission; injected90s scoped subscription pause, not historical-cause reproduction",
+    "injection": {
+      "scope": "Injected scoped subscription pause, not proof of historical cause",
+      "id": 3,
+      "subscription": {
+        "type": "subscribe",
+        "after": 3519174665,
+        "from": 1794543600000
+      },
+      "lastAck": 3519175073,
+      "gateUntil": 1794543801938
+    },
+    "lastStreams": [
+      {
+        "key": "binance:perpetual:BTCUSDT:5m",
+        "connected": true,
+        "lastHeartbeat": 1794543863528,
+        "native": {
+          "historyReady": true,
+          "historyLoading": false,
+          "historyRetryAt": 0,
+          "lastCandleReceivedAt": 1794543863528,
+          "retainedStreamVersions": 2,
+          "viewportHistory": {
+            "requests": 0,
+            "receivedBars": 0,
+            "presentedBars": 0,
+            "applyMs": 0,
+            "retainedOHLC": 0,
+            "views": 1,
+            "busy": 0,
+            "retainedTimes": 64
+          }
+        }
+      },
+      {
+        "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+        "cursor": 3519183194,
+        "executionProof": {
+          "generation": 2,
+          "socketStarts": 7,
+          "disconnects": 6,
+          "errors": 0,
+          "resets": 0,
+          "appliedBatches": 39,
+          "appliedExecutions": 8529,
+          "acksSent": 39,
+          "confirmedAckBatches": 37,
+          "sourceCursorJumps": 0,
+          "maxApplyMs": 25.899999999441206,
+          "maxReceiptGapMs": 129969.20000000019,
+          "lastReceiptMonoMs": 167709.2000000002,
+          "lastAfter": 3519183142,
+          "lastAppliedCursor": 3519183194,
+          "lastConfirmedAckCursor": 3519183142
+        },
+        "connected": true,
+        "deliveryMs": 148,
+        "lastHeartbeat": 1794543863218
+      },
+      {
+        "key": "binance:perpetual:BTCUSDT:1h",
+        "connected": true,
+        "lastHeartbeat": 1794543863529,
+        "native": {
+          "historyReady": true,
+          "historyLoading": false,
+          "historyRetryAt": 0,
+          "lastCandleReceivedAt": 1794543863529,
+          "retainedStreamVersions": 2,
+          "viewportHistory": {
+            "requests": 0,
+            "receivedBars": 0,
+            "presentedBars": 0,
+            "applyMs": 0,
+            "retainedOHLC": 0,
+            "views": 0,
+            "busy": 0,
+            "retainedTimes": 0
+          }
+        }
+      },
+      {
+        "key": "binance:perpetual:BTCUSDT:footprint:1h:p25",
+        "cursor": 3519183194,
+        "executionProof": {
+          "generation": 4,
+          "socketStarts": 1,
+          "disconnects": 0,
+          "errors": 0,
+          "resets": 0,
+          "appliedBatches": 219,
+          "appliedExecutions": 8529,
+          "acksSent": 219,
+          "confirmedAckBatches": 218,
+          "sourceCursorJumps": 0,
+          "maxApplyMs": 8.800000000745058,
+          "maxReceiptGapMs": 9508.299999999814,
+          "lastReceiptMonoMs": 167719.2000000002,
+          "lastAfter": 3519183142,
+          "lastAppliedCursor": 3519183194,
+          "lastConfirmedAckCursor": 3519183142
+        },
+        "connected": true,
+        "deliveryMs": 157,
+        "lastHeartbeat": 1794543863228
+      }
+    ],
+    "history": [
+      {
+        "id": "chart-current-probe",
+        "status": {
+          "state": "loading",
+          "message": "Waiting for Binance USD-M aggTrade observations",
+          "lastUpdate": 0,
+          "tickSize": null,
+          "rowSize": null,
+          "collectionStartedAt": null,
+          "firstTradeAt": null,
+          "lastTradeAt": null,
+          "eventTime": null,
+          "outages": 0,
+          "lateRecords": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "coverage": "waiting",
+          "retentionStart": null
+        }
+      },
+      {
+        "id": "chart-history-five",
+        "status": {
+          "history": {
+            "views": 1,
+            "ready": true,
+            "validated": true,
+            "ranges": [
+              {
+                "from": 1794448500000,
+                "to": 1794463200000,
+                "progress": {
+                  "viewId": "view-fd9e9b38-95a2-4651-855b-6c134d6644e8-13",
+                  "firstUsefulMs": 25.200000000186265,
+                  "completeMs": 1194,
+                  "from": 1794448500000,
+                  "to": 1794463200000,
+                  "requestedSlots": 49,
+                  "loadedSlots": 49,
+                  "validatedSlots": 49,
+                  "slots": [
+                    {
+                      "from": 1794448500000,
+                      "to": 1794448800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794448800000,
+                      "to": 1794449100000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794449100000,
+                      "to": 1794449400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794449400000,
+                      "to": 1794449700000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794449700000,
+                      "to": 1794450000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794450000000,
+                      "to": 1794450300000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794450300000,
+                      "to": 1794450600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794450600000,
+                      "to": 1794450900000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794450900000,
+                      "to": 1794451200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794451200000,
+                      "to": 1794451500000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794451500000,
+                      "to": 1794451800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794451800000,
+                      "to": 1794452100000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794452100000,
+                      "to": 1794452400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794452400000,
+                      "to": 1794452700000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794452700000,
+                      "to": 1794453000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794453000000,
+                      "to": 1794453300000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794453300000,
+                      "to": 1794453600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794453600000,
+                      "to": 1794453900000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794453900000,
+                      "to": 1794454200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794454200000,
+                      "to": 1794454500000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794454500000,
+                      "to": 1794454800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794454800000,
+                      "to": 1794455100000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794455100000,
+                      "to": 1794455400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794455400000,
+                      "to": 1794455700000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794455700000,
+                      "to": 1794456000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794456000000,
+                      "to": 1794456300000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794456300000,
+                      "to": 1794456600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794456600000,
+                      "to": 1794456900000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794456900000,
+                      "to": 1794457200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794457200000,
+                      "to": 1794457500000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794457500000,
+                      "to": 1794457800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794457800000,
+                      "to": 1794458100000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794458100000,
+                      "to": 1794458400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794458400000,
+                      "to": 1794458700000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794458700000,
+                      "to": 1794459000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794459000000,
+                      "to": 1794459300000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794459300000,
+                      "to": 1794459600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794459600000,
+                      "to": 1794459900000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794459900000,
+                      "to": 1794460200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794460200000,
+                      "to": 1794460500000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794460500000,
+                      "to": 1794460800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794460800000,
+                      "to": 1794461100000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794461100000,
+                      "to": 1794461400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794461400000,
+                      "to": 1794461700000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794461700000,
+                      "to": 1794462000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794462000000,
+                      "to": 1794462300000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794462300000,
+                      "to": 1794462600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794462600000,
+                      "to": 1794462900000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794462900000,
+                      "to": 1794463200000,
+                      "validated": true,
+                      "state": "ready"
+                    }
+                  ],
+                  "capacityLimited": false
+                }
+              }
+            ],
+            "capacityLimited": false
+          },
+          "state": "live",
+          "message": "Staging \u00b7 durable execution stream \u00b7 delivery 148ms",
+          "lastUpdate": 1794543863066,
+          "tickSize": 0.1,
+          "rowSize": 25,
+          "collectionStartedAt": 1793939042039,
+          "firstTradeAt": 1794448500000,
+          "lastTradeAt": 1794543862409,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1794448500,
+          "coverage": "partial",
+          "transport": {
+            "cursor": 3519183194,
+            "backendSentAtMs": 1794543863070,
+            "workerReceivedAtMs": 1794543863218,
+            "workerAppliedAtMs": 1794543863218
+          }
+        }
+      },
+      {
+        "id": "chart-history-hour",
+        "status": {
+          "history": {
+            "views": 1,
+            "ready": true,
+            "validated": true,
+            "ranges": [
+              {
+                "from": 1794376800000,
+                "to": 1794463200000,
+                "progress": {
+                  "viewId": "view-fd9e9b38-95a2-4651-855b-6c134d6644e8-12",
+                  "firstUsefulMs": 20.90000000037253,
+                  "completeMs": 2960.2999999998137,
+                  "from": 1794376800000,
+                  "to": 1794463200000,
+                  "requestedSlots": 24,
+                  "loadedSlots": 24,
+                  "validatedSlots": 24,
+                  "slots": [
+                    {
+                      "from": 1794376800000,
+                      "to": 1794380400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794380400000,
+                      "to": 1794384000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794384000000,
+                      "to": 1794387600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794387600000,
+                      "to": 1794391200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794391200000,
+                      "to": 1794394800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794394800000,
+                      "to": 1794398400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794398400000,
+                      "to": 1794402000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794402000000,
+                      "to": 1794405600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794405600000,
+                      "to": 1794409200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794409200000,
+                      "to": 1794412800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794412800000,
+                      "to": 1794416400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794416400000,
+                      "to": 1794420000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794420000000,
+                      "to": 1794423600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794423600000,
+                      "to": 1794427200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794427200000,
+                      "to": 1794430800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794430800000,
+                      "to": 1794434400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794434400000,
+                      "to": 1794438000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794438000000,
+                      "to": 1794441600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794441600000,
+                      "to": 1794445200000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794445200000,
+                      "to": 1794448800000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794448800000,
+                      "to": 1794452400000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794452400000,
+                      "to": 1794456000000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794456000000,
+                      "to": 1794459600000,
+                      "validated": true,
+                      "state": "ready"
+                    },
+                    {
+                      "from": 1794459600000,
+                      "to": 1794463200000,
+                      "validated": true,
+                      "state": "ready"
+                    }
+                  ],
+                  "capacityLimited": false
+                }
+              }
+            ],
+            "capacityLimited": false
+          },
+          "state": "live",
+          "message": "Staging \u00b7 durable execution stream \u00b7 delivery 157ms",
+          "lastUpdate": 1794543863066,
+          "tickSize": 0.1,
+          "rowSize": 25,
+          "collectionStartedAt": 1793939042039,
+          "firstTradeAt": 1794376800000,
+          "lastTradeAt": 1794543862409,
+          "eventTime": null,
+          "outages": 0,
+          "capacityDrops": 0,
+          "unknownSideRecords": 0,
+          "unknownSideVolume": 0,
+          "lateRecords": 0,
+          "retentionStart": 1794376800,
+          "coverage": "partial",
+          "transport": {
+            "cursor": 3519183194,
+            "backendSentAtMs": 1794543863071,
+            "workerReceivedAtMs": 1794543863228,
+            "workerAppliedAtMs": 1794543863228
+          }
+        }
+      }
+    ],
+    "samples": 74,
+    "socketEvents": 3531,
+    "headerMetadataCaveat": "Probe prefix header regular expression produced null fields. ACK confirmation uses actual unmodified worker executionProof, not these null fields.",
+    "sampledCursorRegression": false,
+    "recoverySamples": [
+      {
+        "utc": "2026-11-13T04:23:37.276Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:39.695Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:42.129Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:44.512Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:47.163Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:49.548Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:51.934Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:54.307Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:56.888Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:23:59.232Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:24:01.677Z",
+        "cursor": 3519175073,
+        "confirmed": 6,
+        "applied": 7
+      },
+      {
+        "utc": "2026-11-13T04:24:04.153Z",
+        "cursor": 3519177073,
+        "confirmed": 7,
+        "applied": 9
+      },
+      {
+        "utc": "2026-11-13T04:24:06.730Z",
+        "cursor": 3519179073,
+        "confirmed": 9,
+        "applied": 11
+      },
+      {
+        "utc": "2026-11-13T04:24:09.209Z",
+        "cursor": 3519181073,
+        "confirmed": 11,
+        "applied": 13
+      },
+      {
+        "utc": "2026-11-13T04:24:11.620Z",
+        "cursor": 3519182270,
+        "confirmed": 15,
+        "applied": 17
+      },
+      {
+        "utc": "2026-11-13T04:24:14.090Z",
+        "cursor": 3519182488,
+        "confirmed": 19,
+        "applied": 21
+      },
+      {
+        "utc": "2026-11-13T04:24:16.631Z",
+        "cursor": 3519182575,
+        "confirmed": 24,
+        "applied": 26
+      },
+      {
+        "utc": "2026-11-13T04:24:19.123Z",
+        "cursor": 3519182796,
+        "confirmed": 28,
+        "applied": 30
+      },
+      {
+        "utc": "2026-11-13T04:24:21.689Z",
+        "cursor": 3519183038,
+        "confirmed": 33,
+        "applied": 35
+      },
+      {
+        "utc": "2026-11-13T04:24:24.242Z",
+        "cursor": 3519183194,
+        "confirmed": 37,
+        "applied": 39
+      }
+    ]
+  }
+}

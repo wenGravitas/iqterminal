@@ -1,0 +1,21 @@
+/** Five alternating production-build pairs. Each child supplies independent
+ * current-only/history observations; preserve raw run=1 and aggregate by round. */
+import assert from 'node:assert/strict';import {spawn,spawnSync} from 'node:child_process';import {createWriteStream} from 'node:fs';import {readFile,writeFile,appendFile,mkdir} from 'node:fs/promises';import {resolve,join} from 'node:path';import {createHash} from 'node:crypto';
+assert.equal(process.env.IQ_FOOT_APP_PAIR,'1','Explicit Pi production pair opt-in required');
+const root=resolve('artifacts/pi-history-r1/foot-font-app-pairs-r1'),windowFile=resolve('artifacts/pi-history-r1/current-continuity-r1/input-windows.json');
+const variants={control:{build:'8aaab36a2e4c305633877de7438f6b0883f5b4c1',route:'http://127.0.0.1:4188'},candidate:{build:'c170b4be24696bb6f58c9b3de27b522f818c3757',route:'http://127.0.0.1:4187'}},backend='dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51';
+const progress=join(root,'progress.jsonl');await writeFile(progress,'',{flag:'wx'});await writeFile(join(root,'executed.mjs'),await readFile(new URL(import.meta.url)));const input=await readFile(windowFile);await writeFile(join(root,'input-windows.json'),input);
+const aggregate={control:[],candidate:[]};
+for(let round=1;round<=5;round++)for(const variant of round%2?['control','candidate']:['candidate','control']){
+ const spec=variants[variant],label=`font-app-r1-${variant}-${round}`,childDir=resolve('artifacts/pi-history-r1',label),log=createWriteStream(join(root,`${variant}-${round}.log`),{flags:'wx'}),started=performance.now();
+ await appendFile(progress,JSON.stringify({kind:'start',round,variant,label,build:spec.build,route:spec.route,at:new Date().toISOString()})+'\n');
+ const child=spawn(process.execPath,['scripts/pi-current-concurrency.mjs'],{env:{...process.env,IQ_CURRENT_CONCURRENCY:'1',IQ_CURRENT_SAMPLES:'1',IQ_CURRENT_CPU_PROFILE:'0',IQ_CURRENT_WINDOWS:windowFile,IQ_BENCH_URL:spec.route,IQ_BENCH_BUILD:spec.build,IQ_BENCH_BACKEND:backend,IQ_BENCH_YIELD_MODE:'user-visible-post-task',IQ_BENCH_LABEL:label},stdio:['ignore','pipe','pipe']});child.stdout.pipe(log,{end:false});child.stderr.pipe(log,{end:false});
+ const code=await new Promise((accept,reject)=>{child.once('error',reject);child.once('close',accept);});await new Promise(resolve=>log.end(resolve));
+ const raw=await readFile(join(childDir,'samples.jsonl'),'utf8'),rows=raw.trim().split('\n').filter(Boolean).map(line=>JSON.parse(line));
+ assert.equal(rows.length,2,'Each child must retain both observations, including failures');assert.deepEqual(new Set(rows.map(r=>r.scenario)),new Set(['current-only','concurrent-history']));
+ for(const row of rows){assert.equal(row.run,1);assert.equal(row.build,spec.build);assert.equal(row.backend,backend);aggregate[variant].push({...row,individualRun:row.run,run:round,pairRound:round,pairVariant:variant,sourceSamples:join(childDir,'samples.jsonl'),sourceSha256:createHash('sha256').update(raw).digest('hex')});}
+ await appendFile(progress,JSON.stringify({kind:'end',round,variant,label,exitCode:code,elapsedMs:performance.now()-started,errors:rows.map(r=>r.error??null)})+'\n');
+ for(const name of ['control','candidate']){const dir=join(root,name);await mkdir(dir,{recursive:true});await writeFile(join(dir,'input-windows.json'),input);await writeFile(join(dir,'samples.jsonl'),aggregate[name].map(r=>JSON.stringify(r)).join('\n')+'\n');}
+}
+for(const name of ['control','candidate']){const report=spawnSync(process.execPath,['scripts/pi-current-concurrency-report.mjs',join(root,name)],{encoding:'utf8'});await writeFile(join(root,name,'report-console.txt'),(report.stdout??'')+(report.stderr??''));if(report.status!==0)process.exitCode=1;}
+await writeFile(join(root,'completed.json'),JSON.stringify({variants,backend,rounds:5,attempts:20,completedObservations:Object.values(aggregate).flat().filter(row=>!row.error&&Number.isFinite(row.measurement?.observeStart)&&row.measurement.now-row.measurement.observeStart>=row.observationMs).length,scope:'Five alternating app-build pairs; each raw child has current-only and concurrent footprint history scenarios. Aggregate run is the independently recorded pair round, with originalRun and raw-source SHA preserved. Actual loading/paint latency is not inferred from callback/bootstrap timing. Headless Pi only.'},null,2)+'\n');

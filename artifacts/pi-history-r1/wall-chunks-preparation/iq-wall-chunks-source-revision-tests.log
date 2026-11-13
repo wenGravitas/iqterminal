@@ -1,0 +1,238 @@
+TAP version 13
+# Subtest: full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+ok 1 - full-source rank finds distant qualifiers beyond five thousand closer prices on each side
+  ---
+  duration_ms: 275.054114
+  type: 'test'
+  ...
+# Subtest: default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+ok 2 - default ten-percent Top10 cannot reconstruct a narrower two-percent rank
+  ---
+  duration_ms: 3.999968
+  type: 'test'
+  ...
+# Subtest: pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+ok 3 - pinned IDs match both canonical markets and delayed profiles encode exact eligibility and confirmation
+  ---
+  duration_ms: 1.907812
+  type: 'test'
+  ...
+# Subtest: archive profiles publish the same canonical feed identity the frontend validates
+ok 4 - archive profiles publish the same canonical feed identity the frontend validates
+  ---
+  duration_ms: 0.552028
+  type: 'test'
+  ...
+# Subtest: history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+ok 5 - history pages keep patch cursors mid-range and advance a quiet terminal tail to its watermark
+  ---
+  duration_ms: 3.148862
+  type: 'test'
+  ...
+# Subtest: history continuation cursors remain on the last applied event before terminal watermark advancement
+ok 6 - history continuation cursors remain on the last applied event before terminal watermark advancement
+  ---
+  duration_ms: 2.175262
+  type: 'test'
+  ...
+# Subtest: history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+ok 7 - history and current pages close repeated timestamps across interleaved cursors and replacement epochs
+  ---
+  duration_ms: 7.302174
+  type: 'test'
+  ...
+# Subtest: history API emits canonical singular candidate and removal sides for seeds and patches
+ok 8 - history API emits canonical singular candidate and removal sides for seeds and patches
+  ---
+  duration_ms: 2.174392
+  type: 'test'
+  ...
+# Subtest: seven-day history without a retained carry-in anchor is unavailable rather than empty
+ok 9 - seven-day history without a retained carry-in anchor is unavailable rather than empty
+  ---
+  duration_ms: 1.484482
+  type: 'test'
+  ...
+# Subtest: archive retention setting is bounded and drives the supported query horizon
+ok 10 - archive retention setting is bounded and drives the supported query horizon
+  ---
+  duration_ms: 2.285886
+  type: 'test'
+  ...
+# Subtest: archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+ok 11 - archive migration applies the runtime horizon and preserves carry-in anchors beyond it
+  ---
+  duration_ms: 22.470884
+  type: 'test'
+  ...
+# Subtest: staging rollout backs up a running container when its image object was pruned
+ok 12 - staging rollout backs up a running container when its image object was pruned
+  ---
+  duration_ms: 2.355995
+  type: 'test'
+  ...
+# Subtest: current deltas retain the pinned head and coverage while a later profile head advances
+ok 13 - current deltas retain the pinned head and coverage while a later profile head advances
+  ---
+  duration_ms: 2.264203
+  type: 'test'
+  ...
+# Subtest: current validity stays distinct from partial observed band scope and gap state
+ok 14 - current validity stays distinct from partial observed band scope and gap state
+  ---
+  duration_ms: 1.736377
+  type: 'test'
+  ...
+# Subtest: current bootstrap scopes its latest gap and locates a seed before loading payload
+ok 15 - current bootstrap scopes its latest gap and locates a seed before loading payload
+  ---
+  duration_ms: 3.41459
+  type: 'test'
+  ...
+# Subtest: midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+ok 16 - midpoint-only movement reevaluates band eligibility and gives reentry a new identity
+  ---
+  duration_ms: 3.793589
+  type: 'test'
+  ...
+# Subtest: confirmation waits for the first unchanged raw observation beyond its boundary
+ok 17 - confirmation waits for the first unchanged raw observation beyond its boundary
+  ---
+  duration_ms: 1.563163
+  type: 'test'
+  ...
+# Subtest: delayed confirmation starts when the configured minimum or Top N eligibility begins
+ok 18 - delayed confirmation starts when the configured minimum or Top N eligibility begins
+  ---
+  duration_ms: 2.711439
+  type: 'test'
+  ...
+# Subtest: level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+ok 19 - level-map and delta capacity overflows censor candidates as capacity-unknown, separately from source gaps
+  ---
+  duration_ms: 66.304317
+  type: 'test'
+  ...
+# Subtest: ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+ok 20 - ambiguous progress insert reloads committed cursor and does not replay a confirmed batch
+  ---
+  duration_ms: 2.614833
+  type: 'test'
+  ...
+# Subtest: current lane commits a start-unknown checkpoint anchor before advancing its watermark
+ok 21 - current lane commits a start-unknown checkpoint anchor before advancing its watermark
+  ---
+  duration_ms: 2.146375
+  type: 'test'
+  ...
+# Subtest: materializer retries from durable progress after both a write and recovery read fail
+ok 22 - materializer retries from durable progress after both a write and recovery read fail
+  ---
+  duration_ms: 1.415208
+  type: 'test'
+  ...
+# Subtest: archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+ok 23 - archive materializer continues epoch discovery beyond the first 1,024 expired epochs
+  ---
+  duration_ms: 1.927108
+  type: 'test'
+  ...
+# Subtest: missing retained source cursor inside one batch records a gap and censors prior selection
+ok 24 - missing retained source cursor inside one batch records a gap and censors prior selection
+  ---
+  duration_ms: 1.512721
+  type: 'test'
+  ...
+# Subtest: custom admission stores confirmation, Top N and minimum-notional identity fields
+ok 25 - custom admission stores confirmation, Top N and minimum-notional identity fields
+  ---
+  duration_ms: 1.320824
+  type: 'test'
+  ...
+# Subtest: raw archive head reuses the depth reader source scope and sorting-key order for both markets
+ok 26 - raw archive head reuses the depth reader source scope and sorting-key order for both markets
+  ---
+  duration_ms: 0.709761
+  type: 'test'
+  ...
+# Subtest: restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+ok 27 - restore finds a scoped checkpoint by metadata before a primary-key payload fetch
+  ---
+  duration_ms: 1.72484
+  type: 'test'
+  ...
+# Subtest: central coordinator services every admitted current lane before fair custom history pages
+ok 28 - central coordinator services every admitted current lane before fair custom history pages
+  ---
+  duration_ms: 3.592451
+  type: 'test'
+  ...
+# Subtest: fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+ok 29 - fixed price buckets rank exact sum(price times quantity), not bucket price times volume
+  ---
+  duration_ms: 0.63956
+  type: 'test'
+  ...
+# Subtest: native prices and quantities retain decimal precision and exact quote notional
+ok 30 - native prices and quantities retain decimal precision and exact quote notional
+  ---
+  duration_ms: 0.634283
+  type: 'test'
+  ...
+# Subtest: rank exit, observed zero, explicit gap and replacement epoch remain distinct
+ok 31 - rank exit, observed zero, explicit gap and replacement epoch remain distinct
+  ---
+  duration_ms: 2.069693
+  type: 'test'
+  ...
+# Subtest: price ties rank deterministically within each side and midpoint precision is exact
+ok 32 - price ties rank deterministically within each side and midpoint precision is exact
+  ---
+  duration_ms: 0.45644
+  type: 'test'
+  ...
+# Subtest: display delivery batches exact events with a fixed watermark and resumable cursor
+ok 33 - display delivery batches exact events with a fixed watermark and resumable cursor
+  ---
+  duration_ms: 50.77194
+  type: 'test'
+  ...
+# Subtest: display continuation reuses pinned progress but new views and current reads revalidate the head
+ok 34 - display continuation reuses pinned progress but new views and current reads revalidate the head
+  ---
+  duration_ms: 2.122709
+  type: 'test'
+  ...
+# Subtest: pinned history never substitutes mutable current scope or midpoint for historical carry-in
+ok 35 - pinned history never substitutes mutable current scope or midpoint for historical carry-in
+  ---
+  duration_ms: 1.937959
+  type: 'test'
+  ...
+# Subtest: prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+ok 36 - prepared wall chunks resume bounded pages, retain good parts after failure and publish only terminal coverage
+  ---
+  duration_ms: 153.502392
+  type: 'test'
+  ...
+# Subtest: wall preparation rejects unpinned geometry and a non-advancing canonical page
+ok 37 - wall preparation rejects unpinned geometry and a non-advancing canonical page
+  ---
+  duration_ms: 5.72729
+  type: 'test'
+  ...
+# Subtest: changed fixed heads and oversized parts retain the prior validated checkpoint
+ok 38 - changed fixed heads and oversized parts retain the prior validated checkpoint
+  ---
+  duration_ms: 71.97435
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1063.662085

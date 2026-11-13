@@ -1,0 +1,50 @@
+{
+  "files": [
+    {
+      "path": "environment.json",
+      "bytes": 9117,
+      "sha256": "ca8ebf06634aa3a53631a7b13056b694d097210504af2bb2ef29549259ad4ed9"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 8708,
+      "sha256": "544331917de197c6a7516df1263a0575063ff2d4c6fb3cd834b8290b0ba2a39b"
+    },
+    {
+      "path": "perpetual-samples.json",
+      "bytes": 91203,
+      "sha256": "42bfe2000fb33947cf44ae787232d29f16dd1599753d9da98de7f2c300bacadb"
+    },
+    {
+      "path": "primitive.js",
+      "bytes": 616375,
+      "sha256": "2c1269130cbbb0fd3a6e6f516c5b2a6d7eb17b3c98c07484485062cab6dde053"
+    },
+    {
+      "path": "primitive.js.map",
+      "bytes": 1337925,
+      "sha256": "20ade334862dc51ee293d4138eccbbcd837d21ffb1324b4c467e974ff942ef44"
+    },
+    {
+      "path": "results.json",
+      "bytes": 212967,
+      "sha256": "60a918bb1f59748c24467d1bbee1990d9a0b40aee9e0549c30b90b7f24374752"
+    },
+    {
+      "path": "runner-console.txt",
+      "bytes": 121,
+      "sha256": "6f79c5152a97c15ed743a7741d28d07d567ef04400c66540fa6c23ed6dfa134d"
+    },
+    {
+      "path": "scope-clarification.json",
+      "bytes": 426,
+      "sha256": "cd08db03e2427f4a2531be95b222ce1e4a80279f85a510e333dc983133b81b32"
+    },
+    {
+      "path": "spot-samples.json",
+      "bytes": 91279,
+      "sha256": "8335b54148c909c38e0baebc13373fd6be73b1c4af6b392cd177fc4806a477be"
+    }
+  ],
+  "externalFiles": []
+}

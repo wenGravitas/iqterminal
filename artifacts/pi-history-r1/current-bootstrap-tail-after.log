@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 1 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 99.689112
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 2 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 71.84944
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 3 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 14.662676
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 4 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 40.347076
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 5 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 53.764861
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 6 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 24.444565
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 7 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 1035.572068
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 8 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 64.888397
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 9 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 11.586042
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 10 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 34.247564
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2095.826695

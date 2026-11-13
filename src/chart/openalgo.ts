@@ -89,9 +89,9 @@ function toFootprintBar(bar: FootprintBar): OpenAlgoFootprintBar {
   };
 }
 
-interface ViewAnchor { fromTime: number; toTime: number; fromOffset: number; toOffset: number }
+interface ViewAnchor { fromTime: number; toTime: number }
 let drawingToolsRegistered = false;
-function isArchiveOrderWall(segment:OrderWallSegment){return typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
+function isArchiveOrderWall(segment:OrderWallSegment){return segment.presentationKind!=='current-snapshot'&&typeof segment.archiveEntryId==='string'&&segment.archiveEntryId.length>0;}
 
 /** Owns the chart engine while routing its frames through the shared visible-panel scheduler. */
 export class OpenAlgoCandleChart {
@@ -670,6 +670,7 @@ export class OpenAlgoCandleChart {
     const other = otherFootprintTotals(this.footprintBars, this.footprint?.stats().map(row => row.time) ?? [], time, hit.units === 'btc' ? 'usdt' : 'btc');
     return { ...hit, other, coverage: bar.coverage, gapBefore: bar.gapBefore };
   }
+  footprintPaintDiagnostics(){return this.footprint?{...this.footprint.paint,times:[...this.footprint.paint.times]}:null;}
   footprintTotalsDiagnostics() { return [...this.footprintTotalsPanes.entries()].map(([id, view]) => ({ id, paneIndex: view.paneIndex, autoHeight: view.autoHeight, autoWeight: view.autoWeight, manuallyResized: view.manuallyResized, paneHeight: this.chart.panes()[view.paneIndex]?.base.mediaHeight ?? 0, ...view.primitive.diagnostics() })); }
 
   setNetPositioningSnapshot(id: string, candles: readonly NetPositioningCandle[], feeds: Partial<Record<NetPositioningVenue, NetPositioningFeedStatus>>, units: Partial<Record<NetPositioningVenue, NetPositioningUnitVerification>>, pending: number, error = '') {
@@ -692,7 +693,7 @@ export class OpenAlgoCandleChart {
       return;
     }
     if (!this.orderWalls) {
-      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs);
+      this.orderWalls = new OrderWallsPrimitive(settings, intervalMs, true, 6, () => this.visible && !document.hidden && !this.disposed);
       this.chart.addPrimitive(this.orderWalls, { anchor: 'primary-pane' });
       this.orderWalls.setSnapshot([...this.orderWallSegments.values()], this.orderWallStatus);
     } else {
@@ -750,7 +751,7 @@ export class OpenAlgoCandleChart {
         const archived = isArchiveOrderWall(patch.segment);
         const maxRuns = archived ? ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT : ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT;
         if (patch.segment.valueRunsTruncated) this.orderWallValuesLimited = true;
-        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-maxRuns) : [...(previous?.valueRuns ?? [])] };
+        const segment = { ...patch.segment, valueRuns: fullRuns ? incoming.slice(-maxRuns) : previous?.valueRuns ?? [] };
         if (fullRuns && incoming.length > segment.valueRuns.length) { segment.valueRunsTruncated = true; this.orderWallValuesLimited = true; }
         if (previous && fullRuns) this.adjustOrderWallValueCount(isArchiveOrderWall(previous), -previous.valueRuns.length);
         if (!previous) {
@@ -845,7 +846,7 @@ export class OpenAlgoCandleChart {
       const compact=queue.slice(start);if(archived){this.orderWallArchiveValueQueue=compact;this.orderWallArchiveValueQueueStart=0;}
       else{this.orderWallValueQueue=compact;this.orderWallValueQueueStart=0;}
     }else if(archived)this.orderWallArchiveValueQueueStart=start;else this.orderWallValueQueueStart=start;
-    if(queue.length>(limit*2)){
+    if(queue.length>Math.max(4096,count()*2+512)){
       const compact:Array<{id:string;point:OrderWallSegment['valueRuns'][number]}>=[];
       for(const segment of this.orderWallSegments.values())if(isArchiveOrderWall(segment)===archived)
         for(const point of segment.valueRuns)compact.push({id:segment.id,point});
@@ -991,6 +992,7 @@ export class OpenAlgoCandleChart {
     const indexSeries = this.footprintIndexSeries;
     if (this.disposed || !patches.length || (this.mode !== 'footprint' && !this.footprintTotalsPanes.size)) return;
     const useSeries = this.mode === 'footprint' && indexSeries !== null;
+    const view=useSeries?this.captureView():null;let remapped=false;
     let trimmed = false;
     if (retentionStart !== undefined) {
       const cutoff = retentionStart ?? Infinity;
@@ -1010,6 +1012,10 @@ export class OpenAlgoCandleChart {
       if (useSeries && indexSeries) {
         const index = lowerBound(this.footprintTimes, footprint.time);
         const known = this.footprintTimes[index] === footprint.time;
+        // A distant current bootstrap can arrive after closed history. Adding
+        // its point changes extrapolated whitespace into a compressed gap.
+        // Preserve absolute bounds; contiguous rollover keeps normal live-follow.
+        if(!known&&(footprint.time<this.latestTime||footprint.time>this.latestTime+this.candleTimerInterval))remapped=true;
         const bar = toExecutionBar(footprint);
         const source = footprint.time < this.latestTime ? 'history' : 'live';
         indexSeries.update(bar, { source, confirmation: footprint.time < this.latestTime ? 'confirmed' : 'forming' });
@@ -1031,14 +1037,17 @@ export class OpenAlgoCandleChart {
         this.latestTime = this.latestBar?.time ?? -Infinity;
       }
     }
+    if(remapped||trimmed)this.restoreView(view);
     this.enqueueFootprintRefresh();
   }
 
-  applyPatch(candles: Candle[]) {
+  applyPatch(candles: Candle[], preserveTimeView=false) {
     if (this.disposed || !candles.length) return;
-    let trim = false;
+    const footprintView=this.mode==='footprint'||preserveTimeView?this.captureView():null;
+    let axisChanged=false,trim = false;
     for (const candle of candles) {
       const bar = toBar(candle);
+      if(footprintView&&this.chart.dataLayer.timeToIndex(bar.time)===undefined)axisChanged=true;
       const at = lowerBound(this.candleTimes, bar.time);
       const isKnown = this.candleTimes[at] === bar.time;
       const source = bar.time < (this.candleTimes.at(-1) ?? -Infinity) ? 'history' : 'live';
@@ -1063,6 +1072,7 @@ export class OpenAlgoCandleChart {
         this.latestTime = this.latestBar?.time ?? -Infinity;
       }
     }
+    if(footprintView&&(axisChanged||trim))this.restoreView(footprintView);
     this.dailyVwap?.setData(this.dailyVwapInterval < 86400 ? this.series.getData() : [], this.dailyVwapInterval);
   }
 
@@ -1081,6 +1091,14 @@ export class OpenAlgoCandleChart {
 
   setRange(range: { from: number; to: number }) { this.chart.setVisibleLogicalRange(range); }
   visibleRange() { return this.chart.getVisibleLogicalRange(); }
+  restoreHistoryTimeRange(range:{from:number;to:number}) {
+    if(!this.chart.dataLayer.length)return false;
+    const from=this.chart.dataLayer.timeToIndexFloat(range.from/1000),to=this.chart.dataLayer.timeToIndexFloat(range.to/1000);
+    if(!Number.isFinite(from)||!Number.isFinite(to))return false;
+    this.chart.setVisibleLogicalRange({from,to});
+    const actual=this.visibleTimeRange(),tolerance=Math.max(1,(range.to-range.from)*1e-6)/1000;
+    return Boolean(actual&&Math.abs(actual.from-range.from/1000)<=tolerance&&Math.abs(actual.to-range.to/1000)<=tolerance);
+  }
   visibleTimeRange() {
     const range = this.chart.getVisibleLogicalRange();
     if (!range || !this.chart.dataLayer.length) return null;
@@ -1141,15 +1159,10 @@ export class OpenAlgoCandleChart {
   private captureView(): ViewAnchor | null {
     const range = this.chart.getVisibleLogicalRange();
     if (!range || !this.chart.dataLayer.length) return null;
-    const fromIndex = Math.max(0, Math.min(this.chart.dataLayer.length - 1, Math.floor(range.from)));
-    const toIndex = Math.max(0, Math.min(this.chart.dataLayer.length - 1, Math.floor(range.to)));
-    const fromTime = this.chart.dataLayer.indexToTime(fromIndex);
-    const toTime = this.chart.dataLayer.indexToTime(toIndex);
-    if (fromTime === undefined || toTime === undefined) return null;
-    return {
-      fromTime, toTime,
-      fromOffset: range.from - fromIndex, toOffset: range.to - toIndex,
-    };
+    const fromTime=this.chart.dataLayer.indexToTimeFloat(range.from);
+    const toTime=this.chart.dataLayer.indexToTimeFloat(range.to);
+    if(!Number.isFinite(fromTime)||!Number.isFinite(toTime)||fromTime>=toTime)return null;
+    return {fromTime,toTime};
   }
 
   private restoreView(view: ViewAnchor | null) {
@@ -1157,7 +1170,7 @@ export class OpenAlgoCandleChart {
     const fromIndex = this.chart.dataLayer.timeToIndexFloat(view.fromTime);
     const toIndex = this.chart.dataLayer.timeToIndexFloat(view.toTime);
     if (!Number.isFinite(fromIndex) || !Number.isFinite(toIndex)) return;
-    this.chart.setVisibleLogicalRange({ from: fromIndex + view.fromOffset, to: toIndex + view.toOffset });
+    this.chart.setVisibleLogicalRange({ from: fromIndex, to: toIndex });
   }
 
   setFootprintOpacity(opacity: number) { this.footprintOpacity = opacity; this.footprint?.setCellOpacity(opacity); }
@@ -1275,11 +1288,9 @@ export class OpenAlgoCandleChart {
         const demands=[...this.footprintTotalsPanes.values()].map(view=>view.primitive.analysisDemand()).filter(demand=>demand.enabled);
         const analysis:FootprintAnalysisDemand=demands.length?{enabled:true,lookback:Math.max(...demands.map(demand=>demand.lookback))}:{enabled:false,lookback:50};
         if (analysis.enabled) {
-          // The dense history request is intentionally capped. Carry the first
-          // candle that the current Totals slice can actually draw so warmup
-          // still starts N+1 slots before an older retained candidate.
-          const candidates = this.footprint?.stats() ?? [];
-          analysis.candidateFrom = candidates[0]?.time !== undefined ? candidates[0].time * 1000 : Math.floor(times.from * 1000);
+          // The eligible viewport defines demand even before any dense bar arrives.
+          // Progressive chunks must not repeatedly cancel/rebase their own warmup.
+          analysis.candidateFrom = Math.floor(times.from * 1000);
         }
         this.onFootprintViewport(Math.floor(times.from*1000),Math.ceil(times.to*1000),analysis);
       }

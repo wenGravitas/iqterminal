@@ -1,3 +1,5 @@
+import {OrderWallRankIndex} from '../feed/order-wall-rank';
+import {yieldHistoryTask,historyTaskYieldMode} from '../feed/history-task-yield';
 import type { IPrimitive, PrimitiveHost, PrimitiveRenderContext } from 'openalgo-charts';
 import { ORDER_WALL_ARCHIVE_MAX_SEGMENTS } from '../feed/order-walls';
 import { orderWallValuePointAt, type OrderWallHit, type OrderWallPatch, type OrderWallSegment, type OrderWallsSettings, type OrderWallStatus } from '../feed/order-walls';
@@ -5,7 +7,9 @@ import { orderWallValuePointAt, type OrderWallHit, type OrderWallPatch, type Ord
 const TOP_HEAT={bid:['#33778c','#45bcd0','#f1cb59','#ff884d'],ask:['#666da5','#8b99eb','#e9c15b','#ff8766']};
 const TOP_SIDE={bid:['#28644b','#3d9970','#66d39a','#b6f1aa'],ask:['#7b3f4b','#bf6273','#ed9a9e','#ffd0b0']};
 
-interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number }
+interface WallDrawable { key:string; segment:OrderWallSegment; runIndex:number; from:number; to:number; percentile:number|null; usd:number|null; x:number; right:number; y:number; low:number; high:number; paintOrder:number }
+interface WallPaintBucket {color:string;thickness:number;path:Path2D;firstOrder:number;historical:number;current:number}
+interface WallProjectionContext {rc:PrimitiveRenderContext;visibleFrom:number;visibleTo:number;low:number;high:number;y:number;timeToIndexFloat:(seconds:number)=>number}
 
 /** The chart data layer preserves sub-candle event times as fractional logical indices. */
 export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:number)=>number):number|null {
@@ -14,12 +18,25 @@ export function wallTimestampToLogical(timeMs:number,timeToIndexFloat:(seconds:n
   return Number.isFinite(logical)?logical:null;
 }
 
+/** Exact knots of the public piecewise-linear time mapping, relative to the
+ * visible origin. Axis padding/tail changes outside these knots do not move
+ * visible geometry. Keep work bounded; an unprovable mapping disables reuse. */
+export function wallProjectionMappingKey(rc:PrimitiveRenderContext):string|undefined {
+  const range=rc.timeScale.visibleRange(),lo=Math.floor(range.from),hi=Math.ceil(range.to);
+  if(!Number.isSafeInteger(lo)||!Number.isSafeInteger(hi)||!(range.to>range.from)||hi-lo>4096)return;
+  const values=[range.to-range.from,rc.timeScale.indexToX(range.from),rc.timeScale.indexToX(range.to)];
+  for(let index=lo;index<=hi;index++)values.push(index-range.from,rc.dataLayer.indexToTimeFloat(index));
+  if(values.some(value=>!Number.isFinite(value)))return;
+  return values.join(':');
+}
+
 export class OrderWallsPrimitive implements IPrimitive {
   private host?:PrimitiveHost;
   private settings:OrderWallsSettings;
   private intervalMs:number;
   private status:OrderWallStatus={state:'loading'};
   private segments=new Map<string,OrderWallSegment>();
+  private openIds=new Set<string>();
   private drawable=new Map<string,WallDrawable>();
   private drawableKeys=new Map<string,string[]>();
   private version=0;
@@ -32,47 +49,123 @@ export class OrderWallsPrimitive implements IPrimitive {
   private sizes=new Map<string,number>();
   private reference={min:0,max:0};
   private referenceDirty=true;
+  private referenceIds=new Set<string>();
+  private referenceExtents=new Map<string,{min:number;max:number}>();
+  private referenceCounts=new Map<number,number>();
+  private referenceIndex=new OrderWallRankIndex();
   private timeAtX?:(x:number)=>number;
-  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0};
+  private paintInvalid=true;
+  private paintKey='';
+  private paintPaths?:Array<{color:string;thickness:number;path:Path2D}>;
+  private closedPaintPaths?:WallPaintBucket[];
+  private closedPaintKey='';
+  private closedPaintInvalid=true;
+  private closedPaintMembers=new Set<string>();
+  private closedPaintDirty=new Set<string>();
+  private nextPaintOrder=0;
+  private nonTopDrawables=0;
+  private paintCounts={historical:0,current:0};
+  private inputRevision=0;
+  private paintedRevision=-1;
+  private paintedViewport?:{fromMs:number;toMs:number;minPrice:number;maxPrice:number;plotWidth:number;plotHeight:number};
+  readonly stats={draws:0,rebuilds:0,patchProjects:0,segments:0,visible:0,visibleHistorical:0,visibleCurrent:0,bytes:0,renderMs:0,maxRenderMs:0,strokes:0,lastProjectMs:0,lastReferenceMs:0,lastPaintMs:0,referenceRebuilds:0,referenceSegments:0,referenceValueScans:0,paintCacheHits:0,paintCacheBuilds:0,paintStyleVisits:0,closedPaintCacheHits:0,closedPaintCacheBuilds:0,closedPaintCacheAppends:0,closedPaintStyleVisits:0,settingsNoops:0,mappingChecks:0,mappingFallbacks:0};
   private durations:number[]=[];
+  private drawWork?:{key:string;revision:number;rc:PrimitiveRenderContext;steps:Generator<void,boolean>};
+  private preparedWork?:{key:string;revision:number;prepared:boolean};
+  private preparationTask?:AbortController;
+  private dirtyGeneration=new Map<string,number>();
+  private closedPaintEpoch=0;
+  private geometryEpoch=0;
+  private workStats={slices:0,steps:0,cancelled:0,activeMs:0,lastProjectionElapsedMs:0,lastReferenceElapsedMs:0,lastSliceMs:0,maxSliceMs:0,backgroundMs:0,maxBackgroundMs:0,yieldMode:'not-scheduled',phase:'idle' as 'idle'|'projection'|'reference'|'paint'};
 
-  constructor(settings:OrderWallsSettings,intervalMs:number){this.settings={...settings};this.intervalMs=intervalMs;}
+  constructor(settings:OrderWallsSettings,intervalMs:number,private readonly cachePaintPaths=true,private readonly preparationBudgetMs=6,private readonly canPrepare:()=>boolean=()=>true,private readonly backgroundPreparation=true){this.settings={...settings};this.intervalMs=intervalMs;}
   zOrder(){return 'normal' as const;}
   autoscaleInfo(){return null;}
   attached(host:PrimitiveHost){this.host=host;}
-  detached(){this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.timeAtX=undefined;this.stats.bytes=0;}
-  setSettings(settings:OrderWallsSettings){this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
-  setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
+  detached(){this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.host=undefined;this.segments.clear();this.timeAtX=undefined;this.stats.bytes=0;}
+  setSettings(settings:OrderWallsSettings){
+    // Panel reconciliation also runs after native/history status changes. The
+    // canonical settings are flat; an equivalent fresh object changes no input
+    // and must not invalidate tens of thousands of closed value geometries.
+    const keys=Object.keys(settings) as Array<keyof OrderWallsSettings>;
+    if(keys.length===Object.keys(this.settings).length&&keys.every(key=>Object.is(settings[key],this.settings[key]))){this.stats.settingsNoops++;return;}
+    this.inputRevision++;this.settings={...settings};this.trimHistory();this.referenceDirty=true;this.version++;this.host?.requestUpdate();}
+  setInterval(intervalMs:number){if(this.intervalMs!==intervalMs){this.inputRevision++;this.intervalMs=intervalMs;this.transformKey='';this.host?.requestUpdate();}}
   setStatus(status:OrderWallStatus){
-    const prior=this.status.lastConfirmedAt;this.status=this.effectiveStatus(status);
-    if(prior!==status.lastConfirmedAt)for(const[id,segment]of this.segments)if(segment.end===null)this.markTail(id,Math.max(0,segment.valueRuns.length-1));
+    this.inputRevision++;
+    const prior=this.status;this.status=this.effectiveStatus(status);
+    this.advanceOpenTails(prior);
     this.host?.requestUpdate();
   }
   setSnapshot(segments:OrderWallSegment[],status:OrderWallStatus){
+    this.inputRevision++;
     this.status={...status};this.archiveEpisodeHistoryLimited=status.episodeHistoryLimited===true;
-    this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();
-    for(const segment of segments)if(validSegment(segment)&&!this.beforeRetention(segment))this.segments.set(segment.id,segment);
+    this.clearEmptyProjection();this.openIds.clear();this.closedDirectOrder.clear();this.closedArchiveOrder.clear();this.sizes.clear();this.segments.clear();
+    for(const segment of segments)if(validSegment(segment)&&!this.beforeRetention(segment)){this.segments.set(segment.id,segment);if(segment.end===null)this.openIds.add(segment.id);}
     for(const segment of [...this.segments.values()].filter(s=>s.end!==null).sort((a,b)=>a.end!-b.end!))this.rememberClosed(segment);
     this.trimHistory();this.status=this.effectiveStatus(status);
     this.dirty=new Set(this.segments.keys());this.version++;this.transformKey='';this.measureBytes();this.host?.requestUpdate();
   }
   patch(patches:OrderWallPatch[],status:OrderWallStatus){
-    this.status={...status};
+    this.inputRevision++;
+    const prior=this.status;this.status={...status};
     for(const patch of patches){
       if(!patch.segment||!validSegment(patch.segment)||this.beforeRetention(patch.segment)){
-        this.dirty.add(patch.id);this.tailDirty.delete(patch.id);this.segments.delete(patch.id);
+        this.segments.delete(patch.id);this.openIds.delete(patch.id);this.removeProjection(patch.id);
         this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);continue;
       }
       const previous=this.segments.get(patch.id),next=patch.segment;
-      this.segments.set(patch.id,next);
+      this.segments.set(patch.id,next);if(next.end===null)this.openIds.add(patch.id);else this.openIds.delete(patch.id);
       const shifted=Boolean(previous&&(previous.valueRunsTruncated!==next.valueRunsTruncated||
         (previous.valueRuns[0]&&next.valueRuns[0]&&previous.valueRuns[0].at!==next.valueRuns[0].at)));
-      if(!previous||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.tailDirty.delete(patch.id);}
-      else this.markTail(patch.id,Math.max(0,previous.valueRuns.length-1));
+      if(!previous||patch.replaceValueRuns===true||shifted||previous.price!==next.price||previous.start!==next.start){this.dirty.add(patch.id);this.dirtyGeneration.set(patch.id,++this.geometryEpoch);this.tailDirty.delete(patch.id);}
+      else this.markTail(patch.id,Math.max(0,next.valueRuns.length-(patch.valuePoints?.length??0)-1));
     }
     for(const patch of patches){const next=this.segments.get(patch.id);if(next?.end!==null&&next)this.rememberClosed(next);
-      else {this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);}this.measureOne(patch.id);}
-    this.trimHistory();this.status=this.effectiveStatus(status);this.referenceDirty=true;this.host?.requestUpdate();
+      else {this.closedDirectOrder.delete(patch.id);this.closedArchiveOrder.delete(patch.id);}this.measureOne(patch.id);this.markReference(patch.id);}
+    this.trimHistory();this.status=this.effectiveStatus(status);this.advanceOpenTails(prior);if(!this.segments.size)this.clearEmptyProjection();this.host?.requestUpdate();
+  }
+  private removeProjection(id:string){
+    // Removal can race a first path build before its membership set exists.
+    this.closedPaintEpoch++;
+    this.removeDrawables(id);this.dirty.delete(id);this.dirtyGeneration.delete(id);this.tailDirty.delete(id);this.referenceIds.delete(id);
+    this.closedPaintDirty.delete(id);if(this.closedPaintMembers.delete(id))this.invalidateClosedPaint();
+    const extent=this.referenceExtents.get(id);
+    if(extent){this.countReference(extent.min,-1);this.countReference(extent.max,-1);this.referenceExtents.delete(id);}
+  }
+  private clearEmptyProjection(){
+    this.cancelPreparation();this.dirtyGeneration.clear();
+    this.paintedViewport=undefined;this.paintPaths=undefined;this.paintInvalid=true;this.paintKey='';this.paintCounts={historical:0,current:0};
+    this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;
+    this.closedPaintMembers.clear();this.closedPaintDirty.clear();
+    this.drawable.clear();this.nonTopDrawables=0;this.drawableKeys.clear();this.dirty.clear();this.tailDirty.clear();this.clearReference();this.referenceDirty=true;
+    this.stats.referenceSegments=0;this.stats.referenceValueScans=0;this.stats.segments=0;this.stats.visible=0;this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
+  }
+  private markReference(id:string){
+    if(this.referenceDirty&&!this.drawWork){this.referenceIds.clear();return;}
+    if(this.segments.has(id)||this.referenceExtents.has(id))this.referenceIds.add(id);else this.referenceIds.delete(id);
+  }
+  private clearReference(){
+    this.reference={min:0,max:0};
+    this.referenceIds.clear();this.referenceExtents.clear();this.referenceCounts.clear();this.referenceIndex.clear();
+  }
+  private countReference(value:number,delta:number){
+    const count=(this.referenceCounts.get(value)??0)+delta;
+    if(count>0)this.referenceCounts.set(value,count);else this.referenceCounts.delete(value);
+    this.referenceIndex.set(value,Math.max(0,count));
+  }
+  private updateReference(id:string){for(const _ of this.referenceSteps(id)){};}
+  private *referenceSteps(id:string):Generator<void,void>{
+    const source=this.segments.get(id);this.stats.referenceSegments++;
+    let min=Infinity,max=0,units=0;
+    const accept=(value:number|null)=>{this.stats.referenceValueScans++;if(value!==null&&value>0){min=Math.min(min,value);max=Math.max(max,value);}};
+    if(this.settings.visibleRangeOnly){for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)accept(line.usd);if(++units%32===0)yield;}}
+    else if(source&&(this.settings.showHistory||source.end===null))for(const run of source.valueRuns){accept(run.usd);if(++units%32===0)yield;}
+    if(this.segments.get(id)!==source){if(this.segments.has(id))this.referenceIds.add(id);return;}
+    const previous=this.referenceExtents.get(id);
+    if(previous&&previous.min===min&&previous.max===max)return;
+    if(previous){this.countReference(previous.min,-1);this.countReference(previous.max,-1);this.referenceExtents.delete(id);}
+    if(max>0){this.referenceExtents.set(id,{min,max});this.countReference(min,1);this.countReference(max,1);}
   }
   private rememberClosed(segment:OrderWallSegment){
     if(isArchiveSegment(segment))this.closedArchiveOrder.set(segment.id,true);
@@ -80,9 +173,9 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private trimHistory(){
     while(this.closedDirectOrder.size>this.settings.historyEpisodes){const id=this.closedDirectOrder.keys().next().value!;
-      this.closedDirectOrder.delete(id);this.segments.delete(id);this.dirty.add(id);this.measureOne(id);}
+      this.closedDirectOrder.delete(id);this.segments.delete(id);this.removeProjection(id);this.measureOne(id);}
     while(this.closedArchiveOrder.size>ORDER_WALL_ARCHIVE_MAX_SEGMENTS){const id=this.closedArchiveOrder.keys().next().value!;
-      this.closedArchiveOrder.delete(id);this.segments.delete(id);this.dirty.add(id);this.measureOne(id);this.archiveEpisodeHistoryLimited=true;}
+      this.closedArchiveOrder.delete(id);this.segments.delete(id);this.removeProjection(id);this.measureOne(id);this.archiveEpisodeHistoryLimited=true;}
   }
   private effectiveStatus(status:OrderWallStatus):OrderWallStatus{
     return this.archiveEpisodeHistoryLimited?{...status,episodeHistoryLimited:true,
@@ -90,7 +183,13 @@ export class OrderWallsPrimitive implements IPrimitive {
   }
   private beforeRetention(segment:OrderWallSegment){return this.status.retentionStart!==undefined&&(segment.end??this.status.lastConfirmedAt??segment.start)<=this.status.retentionStart;}
   private width(){return this.settings.aggregation==='native'?this.status.tickSize??.1:this.settings.aggregation==='auto'?this.status.resolvedPriceWidth??this.status.tickSize??.1:this.settings.aggregation;}
-  private markTail(id:string,index:number){if(this.dirty.has(id))return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
+  private archivePaintThrough(status:OrderWallStatus){const a=status.archive?.loadedThrough,b=status.archive?.presentationThrough;return a===undefined?b:b===undefined?a:Math.max(a,b);}
+  private advanceOpenTails(prior:OrderWallStatus){
+    const current=prior.lastConfirmedAt!==this.status.lastConfirmedAt,archive=this.archivePaintThrough(prior)!==this.archivePaintThrough(this.status);
+    if(!current&&!archive)return;
+    for(const id of this.openIds){const segment=this.segments.get(id);if(segment&&(segment.archiveEntryId&&!segment.currentSelection?archive:current))this.markTail(id,Math.max(0,segment.valueRuns.length-1));}
+  }
+  private markTail(id:string,index:number){if(this.dirty.has(id)&&!this.drawWork)return;this.tailDirty.set(id,Math.min(index,this.tailDirty.get(id)??index));}
 
   draw(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     if(!this.settings.enabled||!this.segments.size)return;
@@ -98,35 +197,86 @@ export class OrderWallsPrimitive implements IPrimitive {
     // Primitive hit inputs are plot-local CSS pixels, like indexToX/projected lines.
     // Only drawing coordinates are multiplied by DPR.
     this.timeAtX=x=>rc.dataLayer.indexToTimeFloat(rc.timeScale.xToIndex(x))*1000;
-    const key=[this.version,this.intervalMs,range.from,range.to,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,
-      rc.dataLayer.length,rc.dataLayer.indexToTime(0),rc.dataLayer.indexToTime(rc.dataLayer.baseIndex),this.width()].join(':');
-    if(key!==this.transformKey){this.referenceDirty=true;this.drawable.clear();this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
-    const projectionStarted=performance.now();
-    if(this.dirty.size){
-      for(const id of this.dirty){this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc);this.stats.patchProjects++;}
-      this.dirty.clear();
+    this.stats.mappingChecks++;
+    const mapping=wallProjectionMappingKey(rc);
+    if(mapping===undefined)this.stats.mappingFallbacks++;
+    const axis=mapping??`unproven:${this.stats.mappingChecks}`;
+    const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,dpr,this.width(),axis].join(':');
+    if(key!==this.transformKey){if(this.drawWork)this.referenceDirty=true;this.cancelPreparation();this.paintPaths=undefined;this.paintCounts={historical:0,current:0};this.paintInvalid=true;this.paintKey='';this.paintedViewport=undefined;if(this.settings.visibleRangeOnly)this.referenceDirty=true;this.closedPaintInvalid=true;this.drawable.clear();this.nonTopDrawables=0;this.drawableKeys.clear();this.tailDirty.clear();this.dirty=new Set(this.segments.keys());this.transformKey=key;this.stats.rebuilds++;}
+    let preparedRevision=this.inputRevision,pending=false;
+    let budgeted=Boolean(this.host&&this.preparationBudgetMs>0&&mapping!==undefined&&this.settings.mode==='top-levels'&&this.cachePaintPaths&&typeof Path2D!=='undefined'&&typeof Path2D.prototype.addPath==='function');
+    if(budgeted){
+      this.stats.lastProjectMs=0;this.stats.lastReferenceMs=0;
+      if(!this.preparedWork){
+        if(!this.drawWork)this.drawWork={key,revision:this.inputRevision,rc,steps:this.prepareDrawSteps(rc,key,dpr)};
+        this.advancePreparation();
+      }
+      if(this.preparedWork){
+        const ready=this.preparedWork;this.preparedWork=undefined;preparedRevision=ready.revision;budgeted=ready.prepared;
+        if(ready.revision!==this.inputRevision||this.dirty.size||this.tailDirty.size||this.referenceDirty||this.referenceIds.size||this.paintInvalid)this.host?.requestUpdate();
+      }else{
+        pending=true;preparedRevision=this.paintedRevision;
+        if(this.backgroundPreparation)this.schedulePreparation();else this.host?.requestUpdate();
+      }
+    }else{
+      if(this.drawWork||this.preparedWork){this.cancelPreparation();this.referenceDirty=true;this.paintInvalid=true;this.closedPaintInvalid=true;}
+      const projectionStarted=performance.now();
+      if(this.dirty.size){
+        for(const id of this.dirty){if(this.settings.visibleRangeOnly)this.markReference(id);this.removeDrawables(id);const segment=this.segments.get(id);if(segment)this.projectAll(segment,rc);this.stats.patchProjects++;}
+        this.dirty.clear();this.dirtyGeneration.clear();
+      }
+      if(this.tailDirty.size){for(const[id,index]of this.tailDirty){if(this.settings.visibleRangeOnly)this.markReference(id);const segment=this.segments.get(id);if(segment)this.projectTail(segment,index,rc);this.stats.patchProjects++;}this.tailDirty.clear();}
+      this.stats.lastProjectMs=performance.now()-projectionStarted;const referenceStarted=performance.now();
+      this.stats.referenceSegments=0;this.stats.referenceValueScans=0;
+      if(this.referenceDirty){
+        this.clearReference();this.stats.referenceRebuilds++;
+        for(const id of this.settings.visibleRangeOnly?this.drawableKeys.keys():this.segments.keys())this.updateReference(id);
+        this.referenceDirty=false;
+      }else for(const id of this.referenceIds)this.updateReference(id);
+      this.referenceIds.clear();
+      const referenceMin=this.referenceIndex.min;
+      this.reference={min:referenceMin!==undefined&&Number.isFinite(referenceMin)?referenceMin:0,max:this.referenceIndex.max??0};
+      this.stats.lastReferenceMs=performance.now()-referenceStarted;
     }
-    if(this.tailDirty.size){for(const[id,index]of this.tailDirty){const segment=this.segments.get(id);if(segment)this.projectTail(segment,index,rc);this.stats.patchProjects++;}this.tailDirty.clear();}
-    this.stats.lastProjectMs=performance.now()-projectionStarted;const referenceStarted=performance.now();
-    if(this.referenceDirty){let min=Infinity,max=0;
-      const accept=(v:number|null)=>{if(v!==null&&v>0){min=Math.min(min,v);max=Math.max(max,v);}};
-      if(this.settings.visibleRangeOnly)for(const line of this.drawable.values())accept(line.usd);
-      else for(const segment of this.segments.values())if(this.settings.showHistory||segment.end===null)for(const run of segment.valueRuns)accept(run.usd);
-      this.reference={min:Number.isFinite(min)?min:0,max};this.referenceDirty=false;
-    }
-    this.stats.lastReferenceMs=performance.now()-referenceStarted;const paintStarted=performance.now();this.stats.strokes=0;
+    const paintStarted=performance.now();this.stats.strokes=0;
+    this.stats.visibleHistorical=0;this.stats.visibleCurrent=0;
     this.stats.draws++;this.stats.segments=this.segments.size;this.stats.visible=this.drawable.size;
     ctx.save();ctx.beginPath();ctx.rect(0,0,rc.plotWidth*dpr,rc.plotHeight*dpr);ctx.clip();
     ctx.globalAlpha=this.settings.opacity;ctx.lineWidth=this.settings.thicknessPx*dpr;ctx.lineCap='butt';ctx.setLineDash([]);
+    const paintKey=key+':'+this.reference.min+':'+this.reference.max;
+    const cacheable=this.cachePaintPaths&&typeof Path2D!=='undefined';
+    if(budgeted&&(pending||this.paintPaths)){
+      if(pending&&this.paintPaths)this.stats.paintCacheHits++;
+      for(const entry of this.paintPaths??[]){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
+      this.stats.visibleHistorical=this.paintCounts.historical;this.stats.visibleCurrent=this.paintCounts.current;
+    }else if(cacheable&&!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths){
+      for(const entry of this.paintPaths){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
+      this.stats.visibleHistorical=this.paintCounts.historical;this.stats.visibleCurrent=this.paintCounts.current;this.stats.paintCacheHits++;
+    }else{
+    const incremental=cacheable&&typeof Path2D.prototype.addPath==='function'?this.topLevelPaintPaths(paintKey,dpr):undefined;
+    if(incremental){
+      this.paintPaths=incremental;
+      for(const entry of incremental){ctx.strokeStyle=entry.color;ctx.lineWidth=entry.thickness*dpr;ctx.stroke(entry.path);this.stats.strokes++;}
+      this.paintKey=paintKey;this.paintInvalid=false;this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};this.stats.paintCacheBuilds++;
+    }else{
+    const compiled:Array<{color:string;thickness:number;path:Path2D}>=[];
+    const stroke=(color:string,thickness:number,lines:Array<[number,number,number]>)=>{
+      ctx.strokeStyle=color;ctx.lineWidth=thickness*dpr;
+      if(cacheable){const path=new Path2D();for(const[x,right,y]of lines){path.moveTo(x*dpr,y*dpr);path.lineTo(right*dpr,y*dpr);}ctx.stroke(path);compiled.push({color,thickness,path});}
+      else{ctx.beginPath();for(const[x,right,y]of lines){ctx.moveTo(x*dpr,y*dpr);ctx.lineTo(right*dpr,y*dpr);}ctx.stroke();}
+      this.stats.strokes++;
+    };
     let group:{segmentId:string;epoch:string|number;side:'bid'|'ask';color:string;thickness:number;top:boolean;from:number;to:number;x:number;right:number;y:number;low:number;high:number}|undefined;
     const paths=new Map<string,{color:string;thickness:number;lines:Array<[number,number,number]>}>();
     const strokeGroup=()=>{
       if(!group)return;
       if(group.top){const key=`${group.color}:${group.thickness}`,path=paths.get(key)??{color:group.color,thickness:group.thickness,lines:[]};path.lines.push([group.x,group.right,group.y]);paths.set(key,path);}
-      else{ctx.lineWidth=group.thickness*dpr;ctx.strokeStyle=group.color;ctx.beginPath();ctx.moveTo(group.x*dpr,group.y*dpr);ctx.lineTo(group.right*dpr,group.y*dpr);ctx.stroke();this.stats.strokes++;}
+      else stroke(group.color,group.thickness,[[group.x,group.right,group.y]]);
       group=undefined;
     };
     for(const line of this.drawable.values()){
+      this.stats.paintStyleVisits++;
+      if(line.segment.currentSelection)this.stats.visibleCurrent++;else if(line.segment.archiveEntryId)this.stats.visibleHistorical++;
       const style=this.lineStyle(line),color=style.color,right=Math.max(line.x+(line.segment.detectionMode==='top-levels'?1/dpr:1),line.right);
       if(group&&group.segmentId===line.segment.id&&group.epoch===line.segment.epoch&&group.side===line.segment.side&&
         group.color===color&&group.thickness===style.thickness&&group.to===line.from&&group.low===line.low&&group.high===line.high&&group.y===line.y&&line.x<=group.right){
@@ -143,23 +293,212 @@ export class OrderWallsPrimitive implements IPrimitive {
     }
     strokeGroup();
     for(const path of paths.values()){
-      ctx.strokeStyle=path.color;ctx.lineWidth=path.thickness*dpr;ctx.beginPath();
-      for(const[x,right,y]of path.lines){ctx.moveTo(x*dpr,y*dpr);ctx.lineTo(right*dpr,y*dpr);}ctx.stroke();this.stats.strokes++;
+      stroke(path.color,path.thickness,path.lines);
+    }
+    this.paintPaths=cacheable?compiled:undefined;this.paintKey=paintKey;this.paintInvalid=false;
+    this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};if(cacheable)this.stats.paintCacheBuilds++;
+    }
     }
     if(this.settings.showPriceLines)this.drawPriceLines(ctx,rc);
     ctx.restore();
+    if(!pending&&!this.dirty.size&&!this.tailDirty.size&&!this.referenceDirty&&!this.referenceIds.size)this.paintedRevision=preparedRevision;
+    this.paintedViewport={fromMs:rc.dataLayer.indexToTimeFloat(range.from)*1000,toMs:rc.dataLayer.indexToTimeFloat(range.to)*1000,minPrice:prices.min,maxPrice:prices.max,plotWidth:rc.plotWidth,plotHeight:rc.plotHeight};
     this.stats.lastPaintMs=performance.now()-paintStarted;
     const elapsed=performance.now()-started;this.durations.push(elapsed);if(this.durations.length>512)this.durations.shift();this.stats.renderMs+=elapsed;this.stats.maxRenderMs=Math.max(this.stats.maxRenderMs,elapsed);
+  }
+
+  private cancelPreparation(){
+    this.preparationTask?.abort();this.preparationTask=undefined;
+    if(this.drawWork)this.workStats.cancelled++;this.drawWork=undefined;this.preparedWork=undefined;this.workStats.phase='idle';
+  }
+  private advancePreparation(){
+    const work=this.drawWork;if(!work)return;
+    const started=performance.now(),deadline=started+this.preparationBudgetMs;let done=false,prepared=true;
+    try{
+      do{this.workStats.steps++;const next=work.steps.next();if(next.done){done=true;prepared=next.value;}}while(!done&&performance.now()<deadline);
+    }catch(error){this.cancelPreparation();this.referenceDirty=true;this.transformKey='';this.paintInvalid=true;this.closedPaintInvalid=true;throw error;}
+    const elapsed=performance.now()-started;this.workStats.slices++;this.workStats.activeMs+=elapsed;this.workStats.lastSliceMs=elapsed;this.workStats.maxSliceMs=Math.max(this.workStats.maxSliceMs,elapsed);
+    if(done){this.drawWork=undefined;this.preparedWork={key:work.key,revision:work.revision,prepared};this.workStats.phase='idle';}
+  }
+  private schedulePreparation(){
+    if(this.preparationTask||!this.drawWork||!this.host)return;
+    const control=new AbortController();this.preparationTask=control;this.workStats.yieldMode=historyTaskYieldMode('user-visible');
+    // Visible geometry is mandatory display work. Use the existing task
+    // scheduler instead of a nested timer chain with a browser minimum delay.
+    void yieldHistoryTask(control.signal,'user-visible',()=>{
+      if(this.preparationTask!==control||control.signal.aborted)return;
+      this.preparationTask=undefined;if(!this.host||!this.drawWork||!this.canPrepare())return;
+      const started=performance.now(),work=this.drawWork,rc=work.rc;
+      // Captured scale objects can change before the next chart RAF. Cancel
+      // obsolete geometry before any subsequent background slice advances it.
+      const mapping=wallProjectionMappingKey(rc),prices=rc.priceScale.priceRange();
+      const key=[this.version,this.intervalMs,prices.min,prices.max,rc.plotWidth,rc.plotHeight,rc.dpr,this.width(),mapping].join(':');
+      if(mapping===undefined||key!==work.key){this.cancelPreparation();this.referenceDirty=true;this.transformKey='';this.host?.requestUpdate();return;}
+      this.advancePreparation();
+      const elapsed=performance.now()-started;this.workStats.backgroundMs+=elapsed;this.workStats.maxBackgroundMs=Math.max(this.workStats.maxBackgroundMs,elapsed);
+      if(this.preparedWork)this.host?.requestUpdate();else this.schedulePreparation();
+    }).catch(error=>{if(!control.signal.aborted)throw error;});
+  }
+
+  /** Slice-owned preparation. Native paths from the last completed pass remain
+   * paintable while work yields. A new input cannot inherit this pass's painted
+   * revision, and a transform change cancels the captured render context. */
+  private *prepareDrawSteps(rc:PrimitiveRenderContext,key:string,dpr:number):Generator<void,boolean>{
+    this.workStats.phase='projection';
+    const projectionStarted=performance.now();
+    const full=[...this.dirty];
+    for(const id of full){
+      const generation=this.dirtyGeneration.get(id),segment=this.segments.get(id);
+      if(this.settings.visibleRangeOnly)this.markReference(id);
+      yield* this.removeDrawableSteps(id);
+      if(segment)yield* this.projectSteps(segment,rc,generation);
+      if(this.dirtyGeneration.get(id)===generation){this.dirty.delete(id);this.dirtyGeneration.delete(id);}
+      this.stats.patchProjects++;yield;
+    }
+    const tails=[...this.tailDirty];
+    for(const[id,index]of tails){
+      if(this.dirty.has(id))continue;
+      this.tailDirty.delete(id);if(this.settings.visibleRangeOnly)this.markReference(id);
+      const segment=this.segments.get(id);if(segment)yield* this.tailSteps(segment,index,rc);
+      this.stats.patchProjects++;yield;
+    }
+    this.workStats.lastProjectionElapsedMs=performance.now()-projectionStarted;
+    this.workStats.phase='reference';
+    const referenceStarted=performance.now();this.stats.referenceSegments=0;this.stats.referenceValueScans=0;
+    let ids:string[];
+    if(this.referenceDirty){this.clearReference();this.stats.referenceRebuilds++;ids=[...(this.settings.visibleRangeOnly?this.drawableKeys.keys():this.segments.keys())];this.referenceDirty=false;}
+    else {ids=[...this.referenceIds];this.referenceIds.clear();}
+    for(const id of ids){yield* this.referenceSteps(id);yield;}
+    const min=this.referenceIndex.min;this.reference={min:min!==undefined&&Number.isFinite(min)?min:0,max:this.referenceIndex.max??0};
+    this.workStats.lastReferenceElapsedMs=performance.now()-referenceStarted;
+    this.workStats.phase='paint';
+    const paintKey=key+':'+this.reference.min+':'+this.reference.max;
+    if(!this.paintInvalid&&this.paintKey===paintKey&&this.paintPaths){this.stats.paintCacheHits++;return true;}
+    const epoch=this.closedPaintEpoch;
+    const paths=yield* this.topLevelPathSteps(paintKey,dpr);
+    if(paths){this.paintPaths=paths;this.paintKey=paintKey;this.paintInvalid=false;this.stats.paintCacheBuilds++;
+      this.paintCounts={historical:this.stats.visibleHistorical,current:this.stats.visibleCurrent};}
+    if(this.closedPaintEpoch!==epoch){this.paintInvalid=true;this.closedPaintInvalid=true;}
+    return Boolean(paths);
+  }
+
+  /** Closed paths hold only native geometry and scalar paint metadata. Dynamic
+   * tails are combined into the same style stroke, preserving alpha at overlap.
+   * Mixed/Threshold geometry retains the incumbent ordered renderer. */
+  private topLevelPaintPaths(key:string,dpr:number){const steps=this.topLevelPathSteps(key,dpr);for(;;){const next=steps.next();if(next.done)return next.value;}}
+  private *topLevelPathSteps(key:string,dpr:number):Generator<void,Array<{color:string;thickness:number;path:Path2D}>|undefined> {
+    if(this.nonTopDrawables){this.closedPaintPaths=undefined;this.closedPaintKey='';this.closedPaintInvalid=true;this.closedPaintMembers.clear();this.closedPaintDirty.clear();return;}
+    if(this.closedPaintInvalid||this.closedPaintKey!==key){
+      const self=this;
+      function* closed(){for(const line of self.drawable.values())yield self.openIds.has(line.segment.id)?undefined:line;}
+      this.closedPaintPaths=(yield* this.compileTopPathSteps(closed(),dpr,true));this.closedPaintKey=key;this.closedPaintInvalid=false;
+      this.closedPaintMembers.clear();this.closedPaintDirty.clear();
+      let members=0;for(const [id,keys]of this.drawableKeys){if(keys.length&&!this.openIds.has(id))this.closedPaintMembers.add(id);if(++members%32===0)yield;}
+      if(this.closedPaintPaths)this.stats.closedPaintCacheBuilds++;
+    }else if(this.closedPaintPaths)this.stats.closedPaintCacheHits++;
+    if(!this.closedPaintPaths)return;
+    if(this.closedPaintDirty.size){
+      const added:WallDrawable[]=[];let units=0;
+      for(const id of this.closedPaintDirty)if(!this.openIds.has(id)){
+        const keys=this.drawableKeys.get(id)??[];
+        for(const key of keys){const line=this.drawable.get(key);if(line)added.push(line);if(++units%32===0)yield;}
+        if(keys.length)this.closedPaintMembers.add(id);
+      }
+      const orderedAdded=yield* this.sortPaintSteps(added);
+      const compiled=(yield* this.compileTopPathSteps(orderedAdded,dpr,true))!;
+      const paths=new Map(this.closedPaintPaths.map(path=>[`${path.color}:${path.thickness}`,path]));
+      for(const entry of compiled){const id=`${entry.color}:${entry.thickness}`,previous=paths.get(id);
+        if(previous){previous.path.addPath(entry.path);yield;previous.firstOrder=Math.min(previous.firstOrder,entry.firstOrder);previous.historical+=entry.historical;previous.current+=entry.current;}
+        else paths.set(id,entry);
+      }
+      this.closedPaintPaths=[...paths.values()];this.closedPaintDirty.clear();this.stats.closedPaintCacheAppends++;
+    }
+    const open:WallDrawable[]=[];let openUnits=0;
+    for(const id of this.openIds)for(const key of this.drawableKeys.get(id)??[]){const line=this.drawable.get(key);if(line)open.push(line);if(++openUnits%32===0)yield;}
+    const orderedOpen=yield* this.sortPaintSteps(open);
+    const dynamic=yield* this.compileTopPathSteps(orderedOpen,dpr,false);if(!dynamic)return;
+    const paths=new Map<string,WallPaintBucket>();
+    for(const entry of this.closedPaintPaths)paths.set(`${entry.color}:${entry.thickness}`,entry);
+    for(const entry of dynamic){
+      const id=`${entry.color}:${entry.thickness}`,closed=paths.get(id);
+      if(!closed){paths.set(id,entry);continue;}
+      const path=new Path2D();path.addPath(closed.path);yield;path.addPath(entry.path);yield;
+      paths.set(id,{...entry,path,firstOrder:Math.min(closed.firstOrder,entry.firstOrder),historical:closed.historical+entry.historical,current:closed.current+entry.current});
+    }
+    const ordered=[...paths.values()].sort((a,b)=>a.firstOrder-b.firstOrder);
+    this.stats.visibleHistorical=ordered.reduce((n,p)=>n+p.historical,0);this.stats.visibleCurrent=ordered.reduce((n,p)=>n+p.current,0);
+    return ordered;
+  }
+  private *compileTopPathSteps(lines:Iterable<WallDrawable|undefined>,dpr:number,closed:boolean):Generator<void,WallPaintBucket[]|undefined> {
+    const paths=new Map<string,WallPaintBucket>();
+    let group:{line:WallDrawable;color:string;thickness:number;right:number;to:number;historical:number;current:number}|undefined;
+    const flush=()=>{
+      if(!group)return;
+      const {line,color,thickness,right}=group,id=`${color}:${thickness}`;
+      let bucket=paths.get(id);
+      if(!bucket){bucket={color,thickness,path:new Path2D(),firstOrder:line.paintOrder,historical:0,current:0};paths.set(id,bucket);}
+      bucket.historical+=group.historical;bucket.current+=group.current;
+      bucket.path.moveTo(line.x*dpr,line.y*dpr);bucket.path.lineTo(right*dpr,line.y*dpr);group=undefined;
+    };
+    let units=0;for(const line of lines){
+      if(++units%32===0)yield;if(!line)continue;
+      if(line.segment.detectionMode!=='top-levels')return;
+      this.stats.paintStyleVisits++;if(closed)this.stats.closedPaintStyleVisits++;
+      const {color,thickness}=this.lineStyle(line);
+      const current=line.segment.currentSelection?1:0,historical=!current&&line.segment.archiveEntryId?1:0;
+      const right=Math.max(line.x+1/dpr,line.right);
+      if(group&&group.line.segment.id===line.segment.id&&group.line.segment.epoch===line.segment.epoch&&group.line.segment.side===line.segment.side&&group.color===color&&group.thickness===thickness&&group.to===line.from&&group.line.low===line.low&&group.line.high===line.high&&group.line.y===line.y&&line.x<=group.right){
+        group.to=line.to;group.right=Math.max(group.right,right);group.historical+=historical;group.current+=current;continue;
+      }
+      flush();group={line,color,thickness,right,to:line.to,historical,current};
+    }
+    flush();return [...paths.values()];
+  }
+  /** Stable ordering without an uninterruptible history-sized Array.sort. Most
+   * incremental arrivals already follow creation order and take one linear pass. */
+  private *sortPaintSteps(values:WallDrawable[]):Generator<void,WallDrawable[]>{
+    let sorted=true,units=0;for(let i=1;i<values.length;i++){if(values[i-1]!.paintOrder>values[i]!.paintOrder)sorted=false;if(++units%32===0)yield;}
+    if(sorted)return values;
+    let source=values,target=new Array<WallDrawable>(values.length);
+    for(let width=1;width<values.length;width*=2){
+      for(let start=0;start<values.length;start+=width*2){
+        let left=start,right=Math.min(start+width,values.length);const mid=right,end=Math.min(start+width*2,values.length);
+        for(let at=start;at<end;at++){target[at]=right>=end||left<mid&&source[left]!.paintOrder<=source[right]!.paintOrder?source[left++]!:source[right++]!;if(++units%32===0)yield;}
+      }
+      [source,target]=[target,source];
+    }
+    return source;
+  }
+
+  private setDrawable(line:WallDrawable){
+    const previous=this.drawable.get(line.key);line.paintOrder=previous?.paintOrder??this.nextPaintOrder++;
+    if(previous&&previous.segment.detectionMode!=='top-levels')this.nonTopDrawables--;
+    if(line.segment.detectionMode!=='top-levels')this.nonTopDrawables++;
+    if(previous&&previous.segment.end!==null||!this.openIds.has(line.segment.id))this.changedClosedPaint(line.segment.id);
+    this.drawable.set(line.key,line);
+  }
+  private deleteDrawable(key:string){
+    const line=this.drawable.get(key);if(line&&line.segment.detectionMode!=='top-levels')this.nonTopDrawables--;
+    if(line&&(line.segment.end!==null||!this.openIds.has(line.segment.id)||this.closedPaintMembers.has(line.segment.id)))this.changedClosedPaint(line.segment.id);this.drawable.delete(key);
+  }
+  private invalidateClosedPaint(){this.closedPaintEpoch++;this.closedPaintInvalid=true;this.closedPaintPaths=undefined;this.paintPaths=undefined;this.closedPaintDirty.clear();}
+  private changedClosedPaint(id:string){
+    if(this.closedPaintMembers.has(id))this.invalidateClosedPaint();
+    else if(!this.closedPaintInvalid)this.closedPaintDirty.add(id);
   }
 
   /** Presentation-only guides: never extend the recorded wall timeline itself. */
   private drawPriceLines(ctx:CanvasRenderingContext2D,rc:PrimitiveRenderContext){
     const active=new Map<string,WallDrawable>();
-    for(const line of this.drawable.values()){
-      const segment=this.segments.get(line.segment.id);
-      if(!segment||segment.end!==null)continue;
-      const previous=active.get(line.segment.id);
-      if(!previous||line.from>previous.from)active.set(line.segment.id,line);
+    // Guides belong only to open episodes. The retained closed drawable map
+    // can contain a million exact value points; a current-tail update must not
+    // traverse those points just to find the handful of live label anchors.
+    for(const id of this.openIds){
+      for(const key of this.drawableKeys.get(id)??[]){
+        const line=this.drawable.get(key);if(!line)continue;
+        const previous=active.get(id);
+        if(!previous||line.from>previous.from)active.set(id,line);
+      }
     }
     const dpr=rc.dpr,occupied:number[]=[];
     ctx.font=`${10*dpr}px ui-monospace, monospace`;ctx.textBaseline='middle';ctx.textAlign='right';
@@ -195,64 +534,91 @@ export class OrderWallsPrimitive implements IPrimitive {
     return {color:(this.settings.colorMode==='heat'?heat:side)[tier]!,thickness:this.settings.strengthThickness?1+(this.settings.thicknessPx-1)*tier/3:this.settings.thicknessPx};
   }
 
-  private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){
+  private projectAll(segment:OrderWallSegment,rc:PrimitiveRenderContext){for(const _ of this.projectSteps(segment,rc)){};}
+  private *projectSteps(segment:OrderWallSegment,rc:PrimitiveRenderContext,generation=this.dirtyGeneration.get(segment.id)):Generator<void,void>{
+    if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
+    const projection=this.projectionContext(segment,rc);if(!projection)return;
     if(segment.detectionMode==='top-levels'&&segment.valueRunsTruncated&&segment.valueRuns.length>0&&segment.valueRuns[0]!.at>segment.start){
-      const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,rc);
-      if(line){this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
+      const line=this.project(segment,-1,segment.start,segment.valueRuns[0]!.at,null,projection);
+      if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
     }
     if(segment.valueRuns.length){
-      const range=rc.timeScale.visibleRange();
-      const visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
+      const {visibleFrom,visibleTo}=projection;
       const first=Math.max(0,lowerBoundRun(segment.valueRuns,visibleFrom)-1);
       const afterLast=Math.min(segment.valueRuns.length,Math.max(first+1,upperBoundRun(segment.valueRuns,visibleTo)));
-      for(let index=first;index<afterLast;index++)this.projectIndex(segment,index,rc);
+      let units=0;for(let index=first;index<afterLast;index++){if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;this.projectIndex(segment,index,projection);if(++units%32===0)yield;}
       return;
     }
     const to=this.segmentTo(segment);
-    const line=this.project(segment,0,segment.start,to,null,rc);
-    if(line){this.drawable.set(line.key,line);this.drawableKeys.set(segment.id,[line.key]);}
+    const line=this.project(segment,0,segment.start,to,null,projection);
+    if(line){this.paintInvalid=true;this.setDrawable(line);this.drawableKeys.set(segment.id,[line.key]);}
   }
-  private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){
-    if(!segment.valueRuns.length){this.removeDrawables(segment.id);this.projectAll(segment,rc);return;}
+  private projectTail(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext){for(const _ of this.tailSteps(segment,fromIndex,rc)){};}
+  private *tailSteps(segment:OrderWallSegment,fromIndex:number,rc:PrimitiveRenderContext):Generator<void,void>{
+    const generation=this.dirtyGeneration.get(segment.id);
+    if(!segment.valueRuns.length){yield* this.removeDrawableSteps(segment.id);yield* this.projectSteps(segment,rc,generation);return;}
     const keys=this.drawableKeys.get(segment.id)??[];
-    for(const key of keys){const drawable=this.drawable.get(key);if(drawable&&drawable.runIndex>=fromIndex)this.drawable.delete(key);}
-    this.drawableKeys.set(segment.id,keys.filter(key=>this.drawable.has(key)));
-    for(let i=fromIndex;i<segment.valueRuns.length;i++)this.projectIndex(segment,i,rc);
+    // Projected keys retain run-index order. An appended tail should not scan
+    // or copy a100,000-value immutable prefix merely to replace its last point.
+    let lo=0,hi=keys.length;
+    while(lo<hi){const mid=(lo+hi)>>>1;if((this.drawable.get(keys[mid]!)?.runIndex??-Infinity)<fromIndex)lo=mid+1;else hi=mid;}
+    let units=0;
+    for(let i=keys.length-1;i>=lo;i--){this.paintInvalid=true;this.deleteDrawable(keys.pop()!);if(++units%32===0)yield;}
+    if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
+    this.drawableKeys.set(segment.id,keys);
+    const projection=this.projectionContext(segment,rc);if(!projection)return;
+    for(let i=fromIndex;i<segment.valueRuns.length;i++){
+      if(!this.segments.has(segment.id)||this.dirtyGeneration.get(segment.id)!==generation)return;
+      this.projectIndex(segment,i,projection);if(++units%32===0)yield;
+    }
   }
-  private removeDrawables(id:string){for(const key of this.drawableKeys.get(id)??[])this.drawable.delete(key);this.drawableKeys.delete(id);}
-  private projectIndex(segment:OrderWallSegment,index:number,rc:PrimitiveRenderContext){
+  private removeDrawables(id:string){for(const _ of this.removeDrawableSteps(id)){};}
+  private *removeDrawableSteps(id:string):Generator<void,void>{const keys=this.drawableKeys.get(id)??[];if(keys.length)this.paintInvalid=true;let units=0;for(const key of keys){this.deleteDrawable(key);if(++units%32===0)yield;}this.drawableKeys.delete(id);}
+  private projectIndex(segment:OrderWallSegment,index:number,projection:WallProjectionContext){
     const value=segment.valueRuns[index];if(!value)return;
-    const next=segment.valueRuns[index+1],from=value.at,to=Math.min(next?.at??this.segmentTo(segment),this.segmentTo(segment));
-    const line=this.project(segment,index,from,to,value.percentile,rc);if(!line)return;
-    this.drawable.set(line.key,line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
+    const next=segment.valueRuns[index+1],from=value.at,limit=this.segmentTo(segment),to=Math.min(next?.at??limit,limit);
+    const line=this.project(segment,index,from,to,value.percentile,projection);if(!line)return;
+    this.paintInvalid=true;this.setDrawable(line);const keys=this.drawableKeys.get(segment.id)??[];keys.push(line.key);this.drawableKeys.set(segment.id,keys);
   }
   private segmentTo(segment:OrderWallSegment){
     if(segment.end!==null)return segment.end;
+    if(segment.presentationKind==='current-snapshot')return segment.start;
     if(segment.currentSelection===true)return this.status.lastConfirmedAt??segment.start;
     if(segment.archiveEntryId){
       const segmentConfirmed=segment.start+Math.max(0,segment.durationMs);
-      const archiveConfirmed=this.status.archive?.loadedThrough;
+      const archiveConfirmed=this.archivePaintThrough(this.status);
       return Math.max(segment.start,Math.min(segmentConfirmed,archiveConfirmed??segmentConfirmed));
     }
     return this.status.lastConfirmedAt??segment.start;
   }
-  private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,rc:PrimitiveRenderContext):WallDrawable|null{
-    if(!this.settings.showHistory&&segment.end!==null||segment.durationMs<this.settings.minDurationMs)return null;
-    from=Math.max(from,segment.start+this.settings.minDurationMs);
-    if(to<=from)return null;
-    const priceWidth=this.width(),low=segment.price,high=low+priceWidth;
-    const range=rc.timeScale.visibleRange(),visibleFrom=rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo=rc.dataLayer.indexToTimeFloat(range.to)*1000;
+  private projectionContext(segment:OrderWallSegment,rc:PrimitiveRenderContext):WallProjectionContext|null{
+    if(!this.settings.showHistory&&segment.end!==null||segment.presentationKind!=='current-snapshot'&&segment.durationMs<this.settings.minDurationMs)return null;
+    const low=segment.price,high=low+this.width(),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
+    // This is the incumbent per-point pixel cull, evaluated before traversing
+    // an offscreen wall's exact retained value history. Data remains retained.
+    if(!Number.isFinite(y)||y<0||y>rc.plotHeight)return null;
+    const range=rc.timeScale.visibleRange();
+    return {rc,low,high,y,visibleFrom:rc.dataLayer.indexToTimeFloat(range.from)*1000,visibleTo:rc.dataLayer.indexToTimeFloat(range.to)*1000,
+      timeToIndexFloat:rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer)};
+  }
+  private project(segment:OrderWallSegment,runIndex:number,from:number,to:number,percentile:number|null,projection:WallProjectionContext):WallDrawable|null{
+    const {rc,low,high,y,visibleFrom,visibleTo,timeToIndexFloat}=projection;
+    from=Math.max(from,segment.start+(segment.presentationKind==='current-snapshot'?0:this.settings.minDurationMs));
+    // A current seed is an observed point, not an observed duration. Use the
+    // existing one-pixel minimum stroke without extending its source time.
+    if(to<from||to===from&&segment.currentSelection!==true)return null;
     if(to<visibleFrom||from>visibleTo)return null;
-    const startLogical=wallTimestampToLogical(from,rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer));
-    const endLogical=wallTimestampToLogical(to,rc.dataLayer.timeToIndexFloat.bind(rc.dataLayer));
+    const startLogical=wallTimestampToLogical(from,timeToIndexFloat);
+    const endLogical=wallTimestampToLogical(to,timeToIndexFloat);
     if(startLogical===null||endLogical===null)return null;
-    const x=rc.timeScale.indexToX(startLogical),right=rc.timeScale.indexToX(endLogical),y=rc.priceScale.priceToY(this.settings.aggregation==='native'?low:(low+high)/2);
+    const x=rc.timeScale.indexToX(startLogical),right=rc.timeScale.indexToX(endLogical);
     if(![x,right,y].every(Number.isFinite)||y<0||y>rc.plotHeight||right<0||x>rc.plotWidth)return null;
     const key=`${segment.id}@${from}`;
-    return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high};
+    return {key,segment,runIndex,from,to,percentile,usd:segment.valueRuns[runIndex]?.usd??null,x:Math.max(0,x),right:Math.min(rc.plotWidth,right),y,low,high,paintOrder:0};
   }
 
   orderWallAt(x:number,y:number):OrderWallHit|null{
+    if(this.drawWork||this.preparedWork||!this.transformKey)return null;
     let best:WallDrawable|undefined,bestDistance=Infinity;
     const tolerance=Math.max(4,this.settings.thicknessPx/2+2);
     for(const line of this.drawable.values()){
@@ -262,11 +628,11 @@ export class OrderWallsPrimitive implements IPrimitive {
     const ratio=best?Math.max(0,Math.min(1,(x-best.x)/Math.max(1,best.right-best.x))):0;
     const projected=best?this.timeAtX?.(x):undefined;
     if(!best)return null;
-    const at=Number.isFinite(projected)?projected!:best.from+(best.to-best.from)*ratio;
+    const at=best.from===best.to?best.from:Number.isFinite(projected)?projected!:best.from+(best.to-best.from)*ratio;
     const segment=this.segments.get(best.segment.id)??best.segment;
     return {segment,x,y,at,priceLow:best.low,priceHigh:best.high,percentile:orderWallValuePointAt(segment,at)?.percentile??null};
   }
-  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,retainedSegments:this.segments.size,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
+  diagnostics(){const sorted=[...this.durations].sort((a,b)=>a-b);return {...this.stats,paintedViewport:this.paintedViewport?{...this.paintedViewport}:undefined,inputRevision:this.inputRevision,paintedRevision:this.paintedRevision,pendingProjectionSegments:this.dirty.size+this.tailDirty.size+(this.drawWork||this.preparedWork?1:0),pendingPaintWork:Boolean(this.drawWork||this.preparedWork),queuedPreparation:Boolean(this.preparationTask),preparation:{...this.workStats},retainedPaintPaths:this.paintPaths?.length??0,retainedClosedPaintPaths:this.closedPaintPaths?.length??0,retainedClosedPaintSegments:this.closedPaintMembers.size,pendingClosedPaintSegments:this.closedPaintDirty.size,retainedSegments:this.segments.size,openSegments:this.openIds.size,retainedReferenceSegments:this.referenceExtents.size,referenceExtentValues:this.referenceCounts.size,pendingReferenceSegments:this.referenceIds.size,referenceMinimum:this.reference.min,referenceMaximum:this.reference.max,retainedDrawables:this.drawable.size,p95RenderMs:sorted[Math.floor((sorted.length-1)*.95)]??0};}
   private measureOne(id:string){const before=this.sizes.get(id)??0,s=this.segments.get(id);const next=s?192+s.valueRuns.length*40:0;this.stats.bytes+=next-before;if(next)this.sizes.set(id,next);else this.sizes.delete(id);}
   private measureBytes(){this.stats.bytes=0;this.sizes.clear();for(const id of this.segments.keys())this.measureOne(id);this.referenceDirty=true;}
 }

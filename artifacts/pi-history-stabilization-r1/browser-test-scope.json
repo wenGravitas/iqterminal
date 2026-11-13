@@ -1,0 +1,15 @@
+{
+  "kind": "deterministic browser fixtures against frozen production client",
+  "candidateClient": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+  "baseURL": "http://127.0.0.1:4201",
+  "headless": true,
+  "priorConfigSha256": "3ab096b860e58b3e743caba81d83ed709c3237a39a6e2e6a69a71625b077fa75",
+  "scenarios": [
+    "prepared footprint and candle Totals before delayed bootstrap",
+    "five closed bars with future whitespace",
+    "scoped Totals retry without restarting healthy native feeds",
+    "history retry preserves live state",
+    "native viewport pan within configured budget"
+  ],
+  "notEvidenceFor": "retained real-source latency or whole interaction memory plateau"
+}

@@ -1,0 +1,71 @@
+{
+  "scope": "explicit offline native Chromium admission/cancellation check; not real-chart/source/Pi latency acceptance",
+  "implementationBuild": "9febaff3c2f3fd4a38e7f09a0c83787ad2d404b0",
+  "browser": "155.0.8059.79",
+  "rendering": "headed-normal-Chromium-gles",
+  "workspace": 9,
+  "scriptSha256": "9890d47d10c300aaa843ead707534d33393652b601f99aa63e3ca97894e8189a",
+  "bundleSha256": "960ebd442fcc59b109c90ec8e08368370e400957713c26251e188ae535cba368",
+  "records": [
+    {
+      "method": "GET",
+      "consumer": "d51b512d-ad51-4fa7-8b58-d71aed4eebfe",
+      "count": 1,
+      "retry": "explicit-browser-retry-1"
+    },
+    {
+      "method": "GET",
+      "consumer": "3cfed3c3-0432-4260-8444-68e3bad8da6d",
+      "count": 1,
+      "retry": "explicit-browser-retry-1"
+    },
+    {
+      "method": "DELETE",
+      "consumer": "d51b512d-ad51-4fa7-8b58-d71aed4eebfe"
+    },
+    {
+      "method": "GET",
+      "consumer": "3cfed3c3-0432-4260-8444-68e3bad8da6d",
+      "count": 2,
+      "job": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "retry": "explicit-browser-retry-1"
+    },
+    {
+      "method": "GET",
+      "consumer": "3cfed3c3-0432-4260-8444-68e3bad8da6d",
+      "count": 3,
+      "job": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "retry": "explicit-browser-retry-1"
+    },
+    {
+      "method": "DELETE",
+      "consumer": "3cfed3c3-0432-4260-8444-68e3bad8da6d"
+    }
+  ],
+  "result": {
+    "canceled": {
+      "aborted": true
+    },
+    "ready": "ready",
+    "progress": [
+      {
+        "view": "canceled",
+        "phase": "canonical"
+      },
+      {
+        "view": "survivor",
+        "phase": "canonical"
+      },
+      {
+        "view": "survivor",
+        "phase": "projection"
+      }
+    ],
+    "slotSamples": [
+      0,
+      0
+    ],
+    "active": 0,
+    "peerAborted": false
+  }
+}

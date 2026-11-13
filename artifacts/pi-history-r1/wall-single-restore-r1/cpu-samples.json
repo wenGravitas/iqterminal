@@ -1,0 +1,238 @@
+{
+  "scope": "Offline Pi Node CPU; real financial rows in a constructed queue-order envelope; not browser timing, whole loading, source revision or live-tail acceptance",
+  "arch": "arm64",
+  "node": "v22.23.4",
+  "inputGzipSha256": "058a89b77ef41960be233f41806b698a77d5fd9b9927a28b72ba077e16c696cd",
+  "financialHash": "de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6",
+  "segments": 23850,
+  "valueRuns": 104112,
+  "load": "1.26 0.83 0.78 3/1061 156850",
+  "memory": "MemTotal:        8142664 kB\nMemFree:          976096 kB\nMemAvailable:    2802688 kB\nBuffers:          114100 kB\nCached:          2310464 kB\nSwapCached:            0 kB\nActive:          3487176 kB\nInactive:        2573848 kB\nActive(anon):    1870036 kB\nInactive(anon):  2118184 kB\nActive(file):    1617140 kB\nInactive(file):   455664 kB\nUnevictable:      197812 kB\nMlocked:               4 kB\nSwapTotal:      33094924 kB\nSwapFree:       33094924 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             13248 kB\nWriteback:             0 kB\nAnonPages:       3834388 kB\nMapped:          1257088 kB\nShmem:            351772 kB\nKReclaimable:     185712 kB\nSlab:             273436 kB\nSReclaimable:     185712 kB\nSUnreclaim:        87724 kB\nKernelStack:       17024 kB\nPageTables:        51756 kB\nSecPageTables:       100 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    37166256 kB\nCommitted_AS:   15624888 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      327524 kB\nVmallocChunk:          0 kB\nPercpu:             1152 kB\nCmaTotal:          65536 kB\nCmaFree:             648 kB\n",
+  "samples": [
+    {
+      "run": 1,
+      "methods": [
+        {
+          "method": "double",
+          "ms": 1148.7868080000003,
+          "cpu": {
+            "user": 1565516,
+            "system": 48031
+          },
+          "heapBefore": 49202592,
+          "heapAfter": 170373072,
+          "heapGrowth": 121170480,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        },
+        {
+          "method": "single",
+          "ms": 473.9864739999998,
+          "cpu": {
+            "user": 573858,
+            "system": 12000
+          },
+          "heapBefore": 49348176,
+          "heapAfter": 98721032,
+          "heapGrowth": 49372856,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "methods": [
+        {
+          "method": "single",
+          "ms": 527.0314179999996,
+          "cpu": {
+            "user": 715468,
+            "system": 16321
+          },
+          "heapBefore": 49294008,
+          "heapAfter": 97338768,
+          "heapGrowth": 48044760,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        },
+        {
+          "method": "double",
+          "ms": 1034.2348510000002,
+          "cpu": {
+            "user": 1290428,
+            "system": 32613
+          },
+          "heapBefore": 49348736,
+          "heapAfter": 166459232,
+          "heapGrowth": 117110496,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "methods": [
+        {
+          "method": "double",
+          "ms": 852.5029970000005,
+          "cpu": {
+            "user": 1298553,
+            "system": 4013
+          },
+          "heapBefore": 49386200,
+          "heapAfter": 170892224,
+          "heapGrowth": 121506024,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        },
+        {
+          "method": "single",
+          "ms": 366.9403349999993,
+          "cpu": {
+            "user": 438582,
+            "system": 11522
+          },
+          "heapBefore": 49407552,
+          "heapAfter": 97979664,
+          "heapGrowth": 48572112,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "methods": [
+        {
+          "method": "single",
+          "ms": 346.27393800000027,
+          "cpu": {
+            "user": 431081,
+            "system": 4077
+          },
+          "heapBefore": 49377456,
+          "heapAfter": 97985312,
+          "heapGrowth": 48607856,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        },
+        {
+          "method": "double",
+          "ms": 844.4905490000001,
+          "cpu": {
+            "user": 1202159,
+            "system": 43759
+          },
+          "heapBefore": 49381968,
+          "heapAfter": 164692736,
+          "heapGrowth": 115310768,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "methods": [
+        {
+          "method": "double",
+          "ms": 882.5789560000012,
+          "cpu": {
+            "user": 1290119,
+            "system": 9110
+          },
+          "heapBefore": 49414408,
+          "heapAfter": 171097168,
+          "heapGrowth": 121682760,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        },
+        {
+          "method": "single",
+          "ms": 409.6992139999984,
+          "cpu": {
+            "user": 472198,
+            "system": 11914
+          },
+          "heapBefore": 49430104,
+          "heapAfter": 98459776,
+          "heapGrowth": 49029672,
+          "retained": {
+            "retainedSegments": 23850,
+            "activeCandidates": 20,
+            "valueRuns": 104112,
+            "largestSegmentRuns": 2005,
+            "queuedValueRuns": 104112,
+            "episodeHistoryLimited": false,
+            "valueHistoryLimited": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "scope": "One same-start extension per market, original attempt plus explicit resume. Source-validation transport failure retained. Not browser loading or five-run performance acceptance.",
+  "completed": [
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "exact-projection-prefix-extension",
+      "market": "perpetual",
+      "from": 1794096000000,
+      "to": 1794206700000,
+      "baseTo": 1794205800000,
+      "baseSourceKey": "5a1dd18374ca394934a93c6fa6ba7eea320374b3914a6bf0da822b320d0297c6",
+      "baseProjectionKey": "7d749bbf8d0446a7dc01b7d74dd19e02dc5eaf6dace17fa34cec3f15aaec8842",
+      "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb",
+      "projectionKey": "2ed53c8d5df6e7b22023b28472e117545927cee07e04a488c6c82656bac32f08",
+      "sourceToken": "5514364fc33bf4a8c53cc3412347f7d5d2de0151a3b90e7645758346d4e690f4",
+      "baseWatermark": 23994946,
+      "targetWatermark": 23999159,
+      "baseEpoch": 1794212514141,
+      "targetEpoch": 1794212514141,
+      "canonicalPages": 40,
+      "reusedPrefixPages": 38,
+      "financialHash": "fc1f49efb7a4b351295f6a451be705fbeaf4e2e4f5cba3ee5494be3921ad7ed0",
+      "selectedHash": "1d151bb20239c16792a0d1a13e32db81d08e0da81846bdef097c3ea493cd62b6",
+      "segments": 8380,
+      "valueRuns": 65865,
+      "coverage": {
+        "availableFrom": 1793506604584,
+        "requestedFrom": 1794096000000,
+        "requestedTo": 1794206700000,
+        "confirmedTo": 1794206700000,
+        "gaps": [
+          {
+            "cursor": 23034368,
+            "epoch": 1794074271599,
+            "at": 1794143691132,
+            "reason": "Shared disk watermark"
+          },
+          {
+            "cursor": 23454802,
+            "epoch": 1794143722831,
+            "at": 1794186475153,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "gapsTruncated": false,
+        "partial": true,
+        "status": "partial",
+        "reason": "Depth continuity gaps are present in the requested range",
+        "bookScope": null,
+        "midpoint": null
+      },
+      "scope": "One actual default same-start/end-extended window per market. Canonical input matches independent DB pages; prefix output matches full fresh fold byte/identity/value/queue and selected state. No live cursor seeding, browser latency or five-run acceptance."
+    }
+  ],
+  "builds": [
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-canonical-base",
+      "steps": 1,
+      "elapsedMs": 713.667647,
+      "sourceKey": "5a1dd18374ca394934a93c6fa6ba7eea320374b3914a6bf0da822b320d0297c6"
+    },
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-projection-base",
+      "steps": 1,
+      "elapsedMs": 1246.983792,
+      "sourceKey": "5a1dd18374ca394934a93c6fa6ba7eea320374b3914a6bf0da822b320d0297c6",
+      "projectionKey": "7d749bbf8d0446a7dc01b7d74dd19e02dc5eaf6dace17fa34cec3f15aaec8842"
+    },
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-canonical-target",
+      "steps": 40,
+      "elapsedMs": 15230.599435,
+      "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb"
+    },
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-canonical-reference",
+      "steps": 40,
+      "elapsedMs": 26679.360849,
+      "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb"
+    },
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-projection-reuse",
+      "steps": 40,
+      "elapsedMs": 5376.177898000002,
+      "reusedPrefixPages": 38,
+      "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb",
+      "projectionKey": "2ed53c8d5df6e7b22023b28472e117545927cee07e04a488c6c82656bac32f08"
+    },
+    {
+      "attempt": 2,
+      "build": "2ff39ccadf90605bd18a8e17d4e5da146b17a57c",
+      "kind": "build-complete",
+      "label": "perpetual-projection-reference",
+      "steps": 40,
+      "elapsedMs": 6497.933585999999,
+      "sourceKey": "8027856c04d1b75a1eeda1109854286f683583226dc7d5f2a4a7ba27456dbcbb",
+      "projectionKey": "2ed53c8d5df6e7b22023b28472e117545927cee07e04a488c6c82656bac32f08"
+    }
+  ],
+  "resources": {
+    "samples": 31,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "wall-prefix-resume-staging-r1",
+      "elapsedMs": 152063.531205,
+      "stopping": true
+    }
+  }
+}

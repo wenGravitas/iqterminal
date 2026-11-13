@@ -1,0 +1,44 @@
+
+> iqterminal-server@0.1.0 build /home/daz/workarea/iqterminal-server-perf-history
+> esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.mjs && esbuild src/depth-worker.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/depth-worker.mjs && esbuild src/watch-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/watch-server.mjs && esbuild src/history-gateway.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-gateway.mjs && esbuild src/history-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-materializer.mjs && esbuild src/effort-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/effort-server.mjs && esbuild src/liquidation-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/liquidation-server.mjs && esbuild src/footprint-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/footprint-materializer.mjs && esbuild src/sql-proxy-main.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/sql-proxy-main.mjs && esbuild ops/run-wall-preparations.mjs --bundle --platform=node --format=esm --packages=external --outfile=dist/wall-preparations.mjs
+
+
+  dist/server.mjs  151.7kb
+
+⚡ Done in 33ms
+
+  dist/depth-worker.mjs  9.8kb
+
+⚡ Done in 15ms
+
+  dist/watch-server.mjs  45.6kb
+
+⚡ Done in 20ms
+
+  dist/history-gateway.mjs  137.4kb
+
+⚡ Done in 69ms
+
+  dist/history-materializer.mjs  147.2kb
+
+⚡ Done in 96ms
+
+  dist/effort-server.mjs  41.2kb
+
+⚡ Done in 39ms
+
+  dist/liquidation-server.mjs  34.3kb
+
+⚡ Done in 50ms
+
+  dist/footprint-materializer.mjs  56.9kb
+
+⚡ Done in 38ms
+
+  dist/sql-proxy-main.mjs  6.2kb
+
+⚡ Done in 26ms
+
+  dist/wall-preparations.mjs  153.6kb
+
+⚡ Done in 122ms

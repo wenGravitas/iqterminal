@@ -1,0 +1,2380 @@
+{
+  "requested": {
+    "from": 1794450701780,
+    "to": 1794558701780
+  },
+  "results": [
+    {
+      "phase": "initial",
+      "windowElapsedMs": 301203.575998,
+      "done": false,
+      "snapshot": {
+        "measure": {
+          "phase": "initial",
+          "startMono": 0,
+          "firstCurrent": 17409.800000000745,
+          "firstHistory": null,
+          "completeAvailable": null,
+          "wallEnabledAt": 17463.5
+        },
+        "last": {
+          "status": {
+            "state": "live",
+            "message": "Order Walls history request failed: Prepared wall source changed; request a new revision",
+            "coverage": {
+              "from": 1794449700000,
+              "to": 1794558727756,
+              "complete": false,
+              "partial": true,
+              "reason": "Prepared wall source changed; request a new revision"
+            },
+            "archive": {
+              "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+              "state": "partial",
+              "requestComplete": false,
+              "rangeComplete": false,
+              "from": 1794449700000,
+              "to": 1794558727756,
+              "market": "perpetual",
+              "aggregation": "native",
+              "gaps": [],
+              "requestedBandPercent": 10,
+              "profileBandPercent": 10,
+              "requestedTopN": 8,
+              "exact": true,
+              "reason": "Prepared wall source changed; request a new revision",
+              "eligibleTo": 1794558724985,
+              "horizonAt": 1794558724984,
+              "retryable": false,
+              "profileStatus": "backfilling",
+              "midpoint": "68807.15"
+            },
+            "lastConfirmedAt": 1794559001109,
+            "bookScope": {
+              "maxLevelsPerSide": 1000,
+              "bidComplete": false,
+              "askComplete": false,
+              "bidFloor": 68484.2,
+              "askCeiling": 68776
+            },
+            "currentSubscribed": true
+          },
+          "render": {
+            "draws": 923,
+            "rebuilds": 1,
+            "patchProjects": 1440,
+            "segments": 16,
+            "visible": 11,
+            "visibleHistorical": 0,
+            "visibleCurrent": 11,
+            "bytes": 3712,
+            "renderMs": 820.399999961257,
+            "maxRenderMs": 44.400000002235174,
+            "strokes": 3,
+            "lastProjectMs": 0,
+            "lastReferenceMs": 0,
+            "lastPaintMs": 0.10000000149011612,
+            "referenceRebuilds": 1,
+            "referenceSegments": 0,
+            "referenceValueScans": 0,
+            "paintCacheHits": 831,
+            "paintCacheBuilds": 90,
+            "paintStyleVisits": 990,
+            "closedPaintCacheHits": 83,
+            "closedPaintCacheBuilds": 7,
+            "closedPaintCacheAppends": 0,
+            "closedPaintStyleVisits": 0,
+            "settingsNoops": 0,
+            "mappingChecks": 923,
+            "mappingFallbacks": 0,
+            "paintedViewport": {
+              "fromMs": 1794450701778.2542,
+              "toMs": 1794562200000,
+              "minPrice": 66629.425,
+              "maxPrice": 74825.175,
+              "plotWidth": 1756,
+              "plotHeight": 920
+            },
+            "inputRevision": 464,
+            "paintedRevision": 464,
+            "pendingProjectionSegments": 0,
+            "pendingPaintWork": false,
+            "queuedPreparation": false,
+            "preparation": {
+              "slices": 925,
+              "steps": 3794,
+              "cancelled": 0,
+              "activeMs": 340.70000000298023,
+              "lastProjectionElapsedMs": 0,
+              "lastReferenceElapsedMs": 0,
+              "lastSliceMs": 0,
+              "maxSliceMs": 57.600000001490116,
+              "backgroundMs": 91.99999999627471,
+              "maxBackgroundMs": 57.69999999925494,
+              "yieldMode": "user-visible-post-task",
+              "phase": "idle"
+            },
+            "retainedPaintPaths": 3,
+            "retainedClosedPaintPaths": 0,
+            "retainedClosedPaintSegments": 0,
+            "pendingClosedPaintSegments": 0,
+            "retainedSegments": 16,
+            "openSegments": 16,
+            "retainedReferenceSegments": 11,
+            "referenceExtentValues": 11,
+            "pendingReferenceSegments": 0,
+            "referenceMinimum": 3003212.2005,
+            "referenceMaximum": 13811955.114,
+            "retainedDrawables": 11,
+            "p95RenderMs": 2.300000000745058,
+            "mounted": true,
+            "archiveSegments": 0,
+            "directSegments": 16,
+            "valueRuns": 16,
+            "archiveValueRuns": 0,
+            "directValueRuns": 16,
+            "valueHistoryLimited": false,
+            "episodeHistoryLimited": false
+          },
+          "viewport": {
+            "from": 1794450701.7782543,
+            "to": 1794562200
+          },
+          "candles": 1000,
+          "renderer": {
+            "draws": 1192,
+            "backend": "canvas2d",
+            "scheduler": {
+              "frames": 1188,
+              "draws": 1188,
+              "budgetYields": 1,
+              "lastMs": 14.899999998509884,
+              "maxMs": 458.30000000074506,
+              "budgetMs": 8,
+              "dirty": 0,
+              "drawing": 0
+            }
+          },
+          "heap": 19005002,
+          "mono": 295555.09999999776
+        },
+        "staging": {
+          "historyLoadAttempts": [],
+          "nativePresentation": {
+            "hits": 2,
+            "admissions": 2,
+            "capacityMisses": 0,
+            "entries": 1,
+            "rows": 120,
+            "accountedBytes": 65932,
+            "activeLeases": 1,
+            "retainedKeys": 1,
+            "limits": {
+              "entries": 2,
+              "rows": 1000,
+              "accountedBytes": 1048576,
+              "ttlMs": 60000,
+              "activeLeases": 128
+            }
+          },
+          "scheduler": {
+            "submitted": 107,
+            "coalesced": 0,
+            "cancelled": 0,
+            "completed": 107,
+            "failed": 0,
+            "peakActive": 1,
+            "queueMs": 14.000000033527613,
+            "runMs": 41388.39999998361,
+            "active": 0,
+            "queued": 0
+          },
+          "requests": [],
+          "config": {
+            "historyTaskYield": "user-visible-post-task",
+            "historyBackgroundYield": "background-post-task",
+            "dataMode": "staging",
+            "historyTiles": true,
+            "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb"
+          },
+          "views": [],
+          "source": "staging",
+          "transport": "websocket",
+          "streams": [
+            {
+              "key": "binance:perpetual:BTCUSDT:15m",
+              "connected": true,
+              "lastHeartbeat": 1794559005019,
+              "native": {
+                "historyReady": true,
+                "historyLoading": false,
+                "historyRetryAt": 0,
+                "lastCandleReceivedAt": 1794559005019,
+                "retainedStreamVersions": 2,
+                "viewportHistory": {
+                  "requests": 0,
+                  "receivedBars": 0,
+                  "presentedBars": 0,
+                  "applyMs": 0,
+                  "retainedOHLC": 0,
+                  "views": 1,
+                  "busy": 0,
+                  "retainedTimes": 120
+                }
+              }
+            },
+            {
+              "key": "binance:perpetual:BTCUSDT:footprint:5m:p25",
+              "cursor": 3519741502,
+              "executionProof": {
+                "generation": 2,
+                "socketStarts": 1,
+                "disconnects": 0,
+                "errors": 0,
+                "resets": 0,
+                "appliedBatches": 459,
+                "appliedExecutions": 4306,
+                "acksSent": 459,
+                "confirmedAckBatches": 458,
+                "sourceCursorJumps": 0,
+                "maxApplyMs": 29.600000001490116,
+                "maxReceiptGapMs": 3581.699999999255,
+                "lastReceiptMonoMs": 289940.80000000075,
+                "lastAfter": 3519741499,
+                "lastAppliedCursor": 3519741502,
+                "lastConfirmedAckCursor": 3519741499
+              },
+              "connected": true,
+              "deliveryMs": 58,
+              "lastHeartbeat": 1794559004607
+            }
+          ],
+          "groups": 2,
+          "subscriptions": 2,
+          "retainedLiveBars": 2,
+          "preparedClosedBars": 0,
+          "retainedBars": 1002
+        },
+        "walls": {
+          "warmAdmissions": 0,
+          "warmPrefixHits": 0,
+          "warmCapacityMisses": 0,
+          "warmInvalidMisses": 0,
+          "warmCompactBuilds": 0,
+          "warmRevisionReuses": 0,
+          "warmValidatedReuses": 0,
+          "warmBuildFailures": 0,
+          "warmDecodeFailures": 0,
+          "incrementalSegments": 1441,
+          "fullReconciliations": 0,
+          "comparisonVisits": 0,
+          "subscriptions": 1,
+          "groups": 1,
+          "historyRequests": 1,
+          "currentPages": 176,
+          "historyPages": 0,
+          "bytes": 0,
+          "historyBytes": 0,
+          "historyResponseHeadersMs": 0,
+          "historyBodyReadMs": 0,
+          "historyJsonParseMs": 0,
+          "historyValidationMs": 0,
+          "historyProjectorApplyMs": 0,
+          "historyUpdateCallbackMs": 0,
+          "historyEventLoopYieldDelayMs": 0,
+          "currentPatches": 122,
+          "ringDrops": 0,
+          "failures": 1,
+          "projections": [
+            {
+              "retainedSegments": 16,
+              "activeCandidates": 20,
+              "valueRuns": 158,
+              "largestSegmentRuns": 49,
+              "queuedValueRuns": 250,
+              "episodeHistoryLimited": false,
+              "valueHistoryLimited": false
+            },
+            {
+              "retainedSegments": 20,
+              "activeCandidates": 20,
+              "valueRuns": 193,
+              "largestSegmentRuns": 49,
+              "queuedValueRuns": 325,
+              "episodeHistoryLimited": false,
+              "valueHistoryLimited": false
+            }
+          ],
+          "historyJobs": 1,
+          "historyActiveJobs": 0,
+          "historyJobStates": [
+            {
+              "request": {
+                "market": "binance-perp",
+                "from": 1794449700000,
+                "to": 1794558727756
+              },
+              "settled": true,
+              "failed": true,
+              "hasProjector": false,
+              "preparedRevisionReused": false,
+              "eligibleRange": {
+                "to": 1794558724985,
+                "horizonAt": 1794558724984
+              }
+            }
+          ],
+          "readerControl": {
+            "submitted": 1,
+            "coalesced": 0,
+            "cancelled": 0,
+            "completed": 1,
+            "failed": 0,
+            "peakActive": 1,
+            "queueMs": 0,
+            "runMs": 351.30000000074506,
+            "active": 0,
+            "queued": 0
+          },
+          "warmTimings": [],
+          "warmEntries": 0,
+          "warmBuilds": 0,
+          "warmReplayJobs": 0,
+          "warmReplaySegments": 0,
+          "warmReplayRuns": 0,
+          "warmCompactEntries": 0,
+          "warmReplayConsumers": 0,
+          "warmSegments": 0,
+          "warmRuns": 0,
+          "warmBytes": 0,
+          "historyConsumers": 1,
+          "ringPages": 0,
+          "ringBytes": 0,
+          "recentHistoryRequests": [],
+          "historyPageTiming": {
+            "totalPages": 0,
+            "retainedSamples": 0,
+            "completeSample": true,
+            "p50": {
+              "responseHeadersMs": null,
+              "responseBodyReadMs": null,
+              "jsonParseMs": null,
+              "validationMs": null,
+              "projectorApplyMs": null,
+              "updateCallbackMs": null,
+              "eventLoopYieldDelayMs": null,
+              "responseBytes": null
+            },
+            "p95": {
+              "responseHeadersMs": null,
+              "responseBodyReadMs": null,
+              "jsonParseMs": null,
+              "validationMs": null,
+              "projectorApplyMs": null,
+              "updateCallbackMs": null,
+              "eventLoopYieldDelayMs": null,
+              "responseBytes": null
+            },
+            "max": {
+              "responseHeadersMs": null,
+              "responseBodyReadMs": null,
+              "jsonParseMs": null,
+              "validationMs": null,
+              "projectorApplyMs": null,
+              "updateCallbackMs": null,
+              "eventLoopYieldDelayMs": null,
+              "responseBytes": null
+            }
+          }
+        }
+      }
+    }
+  ],
+  "errors": [
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "kind": "request",
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/preparation?consumer=68b14c04-4a29-4a1e-980d-e4f64feec51f",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/native-candles?interval=15m",
+      "status": 200,
+      "requestId": "ebaa8da4-c274-4794-b4e8-2b5abbc6ad93",
+      "bytes": "36711"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/level-watches",
+      "status": 200,
+      "requestId": "3445fbf0-753d-4b5f-825c-1b5e48963c45",
+      "bytes": "2859"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/level-watches",
+      "status": 200,
+      "requestId": "69b8bd81-4bfb-4932-a1c1-91a518f118c2",
+      "bytes": "2859"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558727756",
+      "status": 200,
+      "requestId": "4af8cf77-348f-43d8-8ea4-fff2c9aaf685",
+      "bytes": "514"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=0&limit=256",
+      "status": 200,
+      "requestId": "d5c00ec8-7ac2-4647-a394-88df072db2d0",
+      "bytes": "1967"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "f42c587b-53bc-4806-a738-779adb24e51f",
+      "bytes": "557"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115307&limit=256",
+      "status": 200,
+      "requestId": "731153b9-6f05-4b5a-9be4-1909fcd5aa8c",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "5a98f614-42b8-41ad-8cf1-ec2fbfadd03a",
+      "bytes": "696"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115307&limit=256",
+      "status": 200,
+      "requestId": "a0d64d46-bb94-4fce-82ce-2d50c944bfe8",
+      "bytes": "2152"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/footprint-current?interval=5m&rowPrice=25",
+      "status": 200,
+      "requestId": "fd5aada1-580a-42ff-b2d5-6dcfaf9c9ecb",
+      "bytes": "1115"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "3af00db0-24d7-4433-a70c-8dbf3f02a181",
+      "bytes": "697"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115338&limit=256",
+      "status": 200,
+      "requestId": "2bcba9c2-d4d5-437f-83e1-383a8135771e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "992a026f-e8b0-4d82-8ebd-e4b0e1249098",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115338&limit=256",
+      "status": 200,
+      "requestId": "61e0a8f0-8fd6-4d58-8640-371cb3411cd3",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "26f53dd8-c8c9-4d25-b4be-7d901df9f454",
+      "bytes": "697"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115338&limit=256",
+      "status": 200,
+      "requestId": "209d1551-9da0-4bd8-97aa-e8b6db2d1521",
+      "bytes": "1996"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "f58973d8-0502-4228-b39f-eca7e684b254",
+      "bytes": "697"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115395&limit=256",
+      "status": 200,
+      "requestId": "5517c6b8-29bb-4dd7-9077-b6f8ed38b956",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "37d16249-5270-430c-b0d1-2df9cb196295",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115395&limit=256",
+      "status": 200,
+      "requestId": "16317307-72a5-44d4-b39b-eddc58fb01f3",
+      "bytes": "3517"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c9f8ccfb-abcb-43ca-a74c-7bcaa4beffa2",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115416&limit=256",
+      "status": 200,
+      "requestId": "2dc2d724-082c-4a87-bce6-66e1aac780a1",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "3952b778-8f9b-47f6-abd7-4c9e3930fd07",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115416&limit=256",
+      "status": 200,
+      "requestId": "6bdd2e4e-d1d5-4d7c-b558-e74ce6cfb601",
+      "bytes": "1105"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "4fb222df-63bf-4fb8-9b80-301058b4f3fc",
+      "bytes": "697"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115453&limit=256",
+      "status": 200,
+      "requestId": "53a0373f-0baa-4b8a-9046-255f33b3b1ef",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "225fa585-9d79-4b51-8022-17b026847565",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115453&limit=256",
+      "status": 200,
+      "requestId": "d21972c1-3613-457f-a841-aa2394436c1d",
+      "bytes": "3179"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "984f74c4-29c4-4454-8c88-49e7481c64e6",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115482&limit=256",
+      "status": 200,
+      "requestId": "2aac8700-d130-484d-8876-26678be69f45",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c231b0eb-1ffc-4c4d-a555-ab900899a58b",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115482&limit=256",
+      "status": 200,
+      "requestId": "a55f07d1-2afa-417d-81ad-5d4dbb8db6fb",
+      "bytes": "3517"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "b41af394-1085-40a3-946a-5c0ced360a8d",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115511&limit=256",
+      "status": 200,
+      "requestId": "458d09db-797b-4a75-a7d8-7a3850f228c8",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "f4a037bb-1b32-46e0-90ed-0de2a80ffdc4",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "ea250c15-db31-472c-b3d5-25bbfda068c5",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115511&limit=256",
+      "status": 200,
+      "requestId": "07c9d299-502f-49cc-bbcf-a45cde784e68",
+      "bytes": "3178"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "e8ccecf1-6c4e-4c8f-9a09-2aa6ed3f58a1",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115533&limit=256",
+      "status": 200,
+      "requestId": "c9f2ce7d-72e8-49a7-af1e-e643a92078f4",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "7bca7e82-2186-48e5-9567-5e4fcefeee5f",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115533&limit=256",
+      "status": 200,
+      "requestId": "fa287ae0-87e2-4a10-b8ce-ee54398dcfe5",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "aec6b376-4a52-49cd-a1da-bf1d5f8187ee",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "f923a38c-bb82-4828-b5fa-2d009b01c596",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115562&limit=256",
+      "status": 200,
+      "requestId": "d57a2751-5c37-4e3b-8c57-3828c5d298a1",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c9f24fc3-3298-4cca-bb1d-3e879ee26f73",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115598&limit=256",
+      "status": 200,
+      "requestId": "c8ad0d9a-8260-45fc-8b2f-3d87ce78b87f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "6ffc5f04-99d3-41d5-a509-b77539ebcbae",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115598&limit=256",
+      "status": 200,
+      "requestId": "a8c2df95-b890-4918-9b4e-454660ab57cc",
+      "bytes": "1321"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "85122130-df4b-4814-a08a-0603dfc6764a",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115614&limit=256",
+      "status": 200,
+      "requestId": "4020253e-372a-47ae-bf6b-02a5634da6de",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "565f1ce1-4742-41d7-a52f-6cf1e192cc79",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115614&limit=256",
+      "status": 200,
+      "requestId": "addfc43c-e195-4e72-a2c1-7c22ee21f9ff",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c8e3e5d9-7cc0-403c-a473-396ffa3d6484",
+      "bytes": "697"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115614&limit=256",
+      "status": 200,
+      "requestId": "23e22322-5ea2-4c15-91c1-b54cedc59d75",
+      "bytes": "1330"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "17ca4c3f-ab30-47cb-a3a5-135500a787cc",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115674&limit=256",
+      "status": 200,
+      "requestId": "516f97a2-7e6c-4d16-87e8-aed78e52f1cd",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "3a2c87a8-dd5d-42cc-a36d-f660c15ba656",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115674&limit=256",
+      "status": 200,
+      "requestId": "368d1b14-b3ab-4a11-8c42-111cc87dbbf2",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "53ca431a-dac7-4ece-b25f-31d7dbaec6c6",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a3bbd9ba-5025-4917-b8f0-d9dad18a9c0c",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115696&limit=256",
+      "status": 200,
+      "requestId": "d828cdd7-4d7b-4e60-a5cd-d18670b8086f",
+      "bytes": "3182"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "108c8ac5-0f15-434d-aa07-0c9ba40e65fc",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115724&limit=256",
+      "status": 200,
+      "requestId": "c6fb5a13-245a-47c9-9d66-9dd55ac54289",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "608615c9-4a07-47b9-a17d-97ca36edb45e",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115724&limit=256",
+      "status": 200,
+      "requestId": "332a618a-b5d0-4879-b075-34c059597f4f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "06e643cc-5d8b-4604-8c2a-91ed2329824d",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115746&limit=256",
+      "status": 200,
+      "requestId": "908cd4d0-96fe-4bf6-95eb-55f7a3f17a9e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "33459945-fabf-4eec-b75e-e666fba7a689",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115760&limit=256",
+      "status": 200,
+      "requestId": "a02747b2-818a-4194-938a-b9f2ffdb48c4",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "99684d3f-2359-41ca-a939-705ea7a0cca8",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115760&limit=256",
+      "status": 200,
+      "requestId": "13b9adb7-f5e5-4077-bd17-cdcc9e24fc9c",
+      "bytes": "3185"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "cf9fec21-9005-44b1-be0a-61e0ed5e6e6e",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115782&limit=256",
+      "status": 200,
+      "requestId": "8ac50b80-bb81-498a-a00e-99b6fba71d5f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "4e29974b-21f1-4f13-9d5d-b183b4528ed7",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115782&limit=256",
+      "status": 200,
+      "requestId": "c179c5d3-ff03-4b86-bc08-39353016f3d5",
+      "bytes": "3511"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "f20c3143-d5e5-4888-8da1-6c9d3f99cfed",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115821&limit=256",
+      "status": 200,
+      "requestId": "f196b248-affd-458b-84ac-be2e812ce2ba",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a397094c-924c-45c2-a0fc-ff4a698b0f74",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115821&limit=256",
+      "status": 200,
+      "requestId": "fe0a89b2-6b71-4f6e-8d21-c9c8caaf9b51",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "662925ef-909f-41e2-abfa-0d4dbddbd49d",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115850&limit=256",
+      "status": 200,
+      "requestId": "402b6c73-20e3-48bc-b8c7-7e27a089a07a",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "10ff5055-8189-4e19-8c11-ef6281004ffa",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115850&limit=256",
+      "status": 200,
+      "requestId": "e9935672-ca90-49f8-bdcc-e31b6bc59aa4",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c55ebb1e-fdb8-4715-ae23-570b5749d519",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "0fc38c3b-65db-4322-82d2-29037272f62d",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115872&limit=256",
+      "status": 200,
+      "requestId": "16d76eea-c687-4f0a-8015-b113fb5e8709",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "b251befc-0f14-4d60-98e9-009c41f50662",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115894&limit=256",
+      "status": 200,
+      "requestId": "74ca6c02-023e-48d9-b7d9-557b30d50d4f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "d843b4bf-4716-44ff-bb6f-8ac403d0a197",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115894&limit=256",
+      "status": 200,
+      "requestId": "3d5add7e-3c01-44f0-8039-2a5ddc72f441",
+      "bytes": "3515"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "3aeb8dfc-ed67-46e0-8b38-4606b10008cb",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "178f3ec2-b874-4a8f-b969-34bac4d3e44f",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115910&limit=256",
+      "status": 200,
+      "requestId": "69aed9eb-8b27-42cf-b4a9-378ff50720e7",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "1684317e-e104-4c09-ac1e-5123c18b4597",
+      "bytes": "698"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115910&limit=256",
+      "status": 200,
+      "requestId": "48c7ea25-651d-4755-8110-8329ee01767b",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "aee5fc29-19de-4d1c-9e7d-5e54b8cda84b",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115910&limit=256",
+      "status": 200,
+      "requestId": "881f364a-a7ce-4b8e-8aef-1150c207295c",
+      "bytes": "3179"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "0f917f64-ba71-48b3-9e29-6cd1b90a4193",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115985&limit=256",
+      "status": 200,
+      "requestId": "a477aded-e30f-43a4-b236-a4a18d722fca",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "77910663-b5e9-456e-835e-5a2f594ff83a",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27115985&limit=256",
+      "status": 200,
+      "requestId": "b157ec56-3dd7-4737-962c-bb28ab1dabe6",
+      "bytes": "3179"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "87850cd6-d28e-409a-89c1-680661d89510",
+      "bytes": "702"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116013&limit=256",
+      "status": 200,
+      "requestId": "5bd85019-d867-4731-ab23-502af710f3fd",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "9881f59e-6543-4ee9-b87a-e61b0be19156",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116013&limit=256",
+      "status": 200,
+      "requestId": "d5445a27-65fe-4f59-99a4-c5d7a0447e7d",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "68e35c22-ae31-47b3-9eea-2652afe0b80e",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116048&limit=256",
+      "status": 200,
+      "requestId": "d914ed2d-3452-4b9a-bd6e-b8fa4434d1a3",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "34f6bf8a-c366-4921-833d-c982d2d5546b",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116070&limit=256",
+      "status": 200,
+      "requestId": "c9ebee92-3894-41b6-9fdd-3fc09604c529",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "33a0f999-cafa-43de-8c73-9e8811b31544",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116070&limit=256",
+      "status": 200,
+      "requestId": "f5bf1a46-81d7-45ac-b304-1aee6967cbaf",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "45df62d8-ab22-410a-a0d3-2d7f72967560",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116084&limit=256",
+      "status": 200,
+      "requestId": "88c8b4f0-77a9-4be7-97e5-47026e565c26",
+      "bytes": "3517"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "b6aac479-2e88-4493-a48f-7481a67e0289",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116106&limit=256",
+      "status": 200,
+      "requestId": "3a6a9475-a8b4-4a7a-b324-7259f8c352d9",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "eeda59ef-b23a-4271-bbf0-7dd7e65c210f",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116106&limit=256",
+      "status": 200,
+      "requestId": "169c4aaf-5283-4516-8a2c-12429dd89e80",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a9c13028-9e8c-47e9-aa45-9fd45637d87f",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "7de1f934-ba21-48b8-bfd9-5ef0beb7d90e",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116128&limit=256",
+      "status": 200,
+      "requestId": "28a6438a-f897-43ed-acea-8292e59b7911",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "83edf450-e10d-4749-b62d-7bed4b61403f",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116149&limit=256",
+      "status": 200,
+      "requestId": "7a4effa1-cc12-47b7-b4fc-a6ad1d0a0bb9",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "5298edfb-4964-41eb-9e29-35e521f77f3c",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116149&limit=256",
+      "status": 200,
+      "requestId": "27b9420a-c52a-4ea5-af25-5d5b77c0f05b",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "1dc2116b-8bba-44ea-81db-24b5d43d3beb",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116179&limit=256",
+      "status": 200,
+      "requestId": "2ecfce17-d1c3-4120-a724-c6511f3adb29",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "63456ae8-2d6b-42cc-9497-275c0234bf4a",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116179&limit=256",
+      "status": 200,
+      "requestId": "dae1d434-fac4-4c35-a643-b27f1a82317c",
+      "bytes": "3517"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "5df973a2-f418-4a84-beb9-279fbceb5905",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "6d64dfb5-4191-42f0-ab77-cec439ba548e",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116202&limit=256",
+      "status": 200,
+      "requestId": "29790890-bc94-4941-9d57-7cad911209f4",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "d834d520-d6aa-4e5a-982f-7e484055489c",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116202&limit=256",
+      "status": 200,
+      "requestId": "a9f9fab6-a27d-420d-b726-e5da589b02af",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c1b1b484-8f4f-4850-822a-78926078aebf",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116227&limit=256",
+      "status": 200,
+      "requestId": "0a08b00d-caf5-48cc-81cf-37eedd1f0afd",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "61b21879-60cf-45f5-99c8-7cb1252b42bc",
+      "bytes": "702"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116227&limit=256",
+      "status": 200,
+      "requestId": "11c68c24-87be-469e-8beb-78ace7bb6497",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "780123c6-9a91-4151-bf61-a6c6aea2cd4d",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116227&limit=256",
+      "status": 200,
+      "requestId": "cfeaa095-3d15-4a87-aa89-acc7731499e9",
+      "bytes": "2051"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "dd801f3f-077f-494c-a02f-9825c216a921",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116277&limit=256",
+      "status": 200,
+      "requestId": "cf6b4f80-03b2-43e6-98a0-cc416aa3561e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "e6bac5b2-9cd1-4573-9160-63b4fa606f56",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116277&limit=256",
+      "status": 200,
+      "requestId": "adad0b22-b88b-49e6-b5ee-b58be5e10b25",
+      "bytes": "1298"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "cf1e7447-5c1a-46a7-82e0-578baab1c4a2",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116306&limit=256",
+      "status": 200,
+      "requestId": "43248088-e520-4c55-92fc-26c68c151d11",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "ec0d8651-068c-49a5-95f1-4012b4c57c02",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116306&limit=256",
+      "status": 200,
+      "requestId": "adf5d5fb-78f1-48e1-89d7-ebcaf9abc5c5",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "0a8ef6d2-f2c9-4614-89fa-49861cb31340",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116335&limit=256",
+      "status": 200,
+      "requestId": "403aad45-0fdc-4362-b3b9-c77d1731d7ea",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "8d47e3f3-3c81-4a75-b12f-430f27d3d68b",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116356&limit=256",
+      "status": 200,
+      "requestId": "aa4c7e93-9057-437f-ab3e-9de3de941765",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "12f64f68-828d-4197-ba0f-b618590dff75",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116378&limit=256",
+      "status": 200,
+      "requestId": "c645d8c9-4725-49c0-96cf-a5f4eafae9f6",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "6e67a8cb-6f39-4833-bac1-6523018e6839",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116378&limit=256",
+      "status": 200,
+      "requestId": "5830d567-d4f2-4659-945d-ebc23dbfcf41",
+      "bytes": "3185"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "c803d253-e8ad-4099-af4c-1c4374c43bed",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116391&limit=256",
+      "status": 200,
+      "requestId": "0ec989c0-a302-49cd-8fea-7f60c9ac63f7",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "ef9ea159-ce4c-41fe-97c6-5f3a14a64144",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116391&limit=256",
+      "status": 200,
+      "requestId": "8351c0e0-8001-4de0-aac9-01e8b18b8688",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "4adca985-3998-4df5-9cd7-9aeaab731a3e",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116391&limit=256",
+      "status": 200,
+      "requestId": "24edeb7c-3e9f-479d-9b20-2abed015cfb9",
+      "bytes": "1690"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "4320fb9c-8265-4f08-b3bd-c26c05e920de",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116435&limit=256",
+      "status": 200,
+      "requestId": "dad860bb-087d-4af0-b33e-b36ae4e787e9",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a595583b-644b-431a-b41e-8855a4c08d78",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116435&limit=256",
+      "status": 200,
+      "requestId": "8ad2c0ad-301a-4e92-8b79-8b31afae0ff3",
+      "bytes": "3178"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "54e5301d-2629-4157-a425-dc034fc89172",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "ccb9374f-74aa-46db-a79c-1915891d7650",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116463&limit=256",
+      "status": 200,
+      "requestId": "67e18813-59e1-4f8a-a6c7-3205a4ec2b18",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116463&limit=256",
+      "status": 200,
+      "requestId": "f1e1eace-8c09-45d4-8b83-3f2c0d04bb21",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "b5240576-b1f3-4459-87d5-b763f2d40416",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "606433f0-70c8-4d5d-98be-178daa26d714",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116463&limit=256",
+      "status": 200,
+      "requestId": "2d3a5dc7-b66e-4a61-98fc-aaf78171e61e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a84a2564-1772-4353-9cf2-43ad79cee8fb",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116463&limit=256",
+      "status": 200,
+      "requestId": "f3fe6a61-3cb4-41db-a5dc-1c9ac9dc7b30",
+      "bytes": "1277"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "19beb825-dd94-4818-8f38-a00225eaac46",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116509&limit=256",
+      "status": 200,
+      "requestId": "400b255f-003a-4223-83f3-a887f38dd136",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "9e029e48-648e-4f68-9d59-ebb8e9f25125",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "8b159224-fc57-4b1f-be42-969923cac50f",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116509&limit=256",
+      "status": 200,
+      "requestId": "6ec2c526-5c7f-457c-869e-4ae76925c436",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "48e68fd5-86b8-4c8f-9430-e071c8d88b08",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116509&limit=256",
+      "status": 200,
+      "requestId": "4e049021-95c4-4cb2-956c-7356dceaabe3",
+      "bytes": "3512"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "a714b68c-f149-4557-abc7-604c66e033f9",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116569&limit=256",
+      "status": 200,
+      "requestId": "e44793af-e8a7-49fc-ba70-332776e3e159",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "e68dd19d-adbf-4209-bc52-a5cb93d27449",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116569&limit=256",
+      "status": 200,
+      "requestId": "1a8d9551-f26f-4acd-9b3c-a060a6cfcc19",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "298d8c81-ecf2-4344-8b79-648a382947fa",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116606&limit=256",
+      "status": 200,
+      "requestId": "c08598e9-ea7c-421a-8936-1616811a4444",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "107334b0-2fd3-477e-bb0a-2c39bfa38542",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116606&limit=256",
+      "status": 200,
+      "requestId": "69745132-5572-4566-9c20-fcebbbc79112",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "ccccd701-2e73-4ead-b077-41fdc85e902c",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116635&limit=256",
+      "status": 200,
+      "requestId": "7547965b-8872-4429-bb28-8f627486ebfc",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "1f4bdecc-dbe1-433e-b8f2-580cc7f2d0be",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116635&limit=256",
+      "status": 200,
+      "requestId": "5a8ceba3-4ca0-4cd4-b80f-7bf5b607d3fa",
+      "bytes": "3180"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "7ed93c6f-4ded-4ab8-b50d-30c20f630053",
+      "bytes": "701"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116665&limit=256",
+      "status": 200,
+      "requestId": "35442396-7920-41b9-ac57-8c075ea3c0cb",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "8793de4d-f561-47a6-94d6-b48a4a7d55bd",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116665&limit=256",
+      "status": 200,
+      "requestId": "1cf207c0-7bef-4c5e-afd3-9b687fa12f0e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "d7b44786-31b8-411d-8b63-f1e0e4f9e07d",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116665&limit=256",
+      "status": 200,
+      "requestId": "38b01e8a-13a7-4152-859d-94bce4966550",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "8a8e6e01-39d4-4e0d-a871-b2585c711bde",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116694&limit=256",
+      "status": 200,
+      "requestId": "92b308da-f745-4307-89d8-56a0c9faf8e1",
+      "bytes": "3514"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "6316b76d-5b6e-4cc9-89b7-ea4c42cf3729",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116716&limit=256",
+      "status": 200,
+      "requestId": "75f0d64a-d09d-44b2-82da-2ceb716fbf13",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "62e3f013-f925-4179-8b3d-1dccc18cdca5",
+      "bytes": "699"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116716&limit=256",
+      "status": 200,
+      "requestId": "1ec7d4da-6da2-465b-840b-60c194c5adde",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "bdc8f326-dcf6-46c7-a248-13dac331a6d6",
+      "bytes": "700"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116752&limit=256",
+      "status": 200,
+      "requestId": "9f1dea54-db1f-4851-8da1-c1f6aa5def24",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/discover?market=perpetual&profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&from=1794449700000&to=1794558724985",
+      "status": 200,
+      "requestId": "189ef1b8-491b-4c3a-b7b1-1eaf089b72bd",
+      "bytes": "762"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v2/history/walls/preparation?consumer=68b14c04-4a29-4a1e-980d-e4f64feec51f",
+      "status": 200,
+      "requestId": "0b3412d4-3c07-45b3-b21b-0602914a1f00"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116752&limit=256",
+      "status": 200,
+      "requestId": "94c9c4b7-3ba2-4f01-a85b-2135b366e1fb",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116774&limit=256",
+      "status": 200,
+      "requestId": "f1e260ff-c312-4894-946e-fffd33f4325b",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116774&limit=256",
+      "status": 200,
+      "requestId": "8d40f30e-b38b-41f9-a357-94b57248b655",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116796&limit=256",
+      "status": 200,
+      "requestId": "b8408fbf-2bc1-4558-84d8-2ff0809d7caf",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116796&limit=256",
+      "status": 200,
+      "requestId": "7d6c5a9b-e496-4fc2-97d2-95419b3d2186",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116812&limit=256",
+      "status": 200,
+      "requestId": "1d37e407-6ff6-4938-a1f8-d0e55f9bbe40",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116812&limit=256",
+      "status": 200,
+      "requestId": "efaab231-4419-440c-aea7-a11b0073d09f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116812&limit=256",
+      "status": 200,
+      "requestId": "5cdef173-9210-417a-9207-ce0d00ce0eda",
+      "bytes": "3184"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116865&limit=256",
+      "status": 200,
+      "requestId": "80e2f099-d2a7-4083-99bb-3fd28b85996f",
+      "bytes": "3186"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116887&limit=256",
+      "status": 200,
+      "requestId": "21826c5d-de37-4823-b7df-0a5c1bdff3a8",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116887&limit=256",
+      "status": 200,
+      "requestId": "f1c6a35b-21fa-4700-9e62-21efd1607fdb",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116915&limit=256",
+      "status": 200,
+      "requestId": "b4c1357d-0f8b-4895-989a-6d4c7cc54e2d",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116915&limit=256",
+      "status": 200,
+      "requestId": "59ea29c0-70e0-4950-9db3-926c1a41e74f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116936&limit=256",
+      "status": 200,
+      "requestId": "e907a905-b1d3-4817-a380-c59992429033",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116959&limit=256",
+      "status": 200,
+      "requestId": "a1c64351-c9a9-4187-8b41-77850fbbd259",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116959&limit=256",
+      "status": 200,
+      "requestId": "cbbc2eef-d57a-4a9f-9c61-895f24eaa147",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116981&limit=256",
+      "status": 200,
+      "requestId": "133f4cf7-d088-4a88-8cd8-dd0b7ac3bf1e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27116981&limit=256",
+      "status": 200,
+      "requestId": "db799d52-d5e5-4c35-9675-c73de71172d2",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117003&limit=256",
+      "status": 200,
+      "requestId": "25b10196-2eb1-4111-96cd-58db5b8ea86c",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117025&limit=256",
+      "status": 200,
+      "requestId": "3d85b717-bad6-410e-a463-13d2bdd3a43e",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117032&limit=256",
+      "status": 200,
+      "requestId": "283ffea8-d0e8-4a67-817b-579b9969d386",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117032&limit=256",
+      "status": 200,
+      "requestId": "4c12e884-7c27-4942-b2fa-a240fe2e9e3c",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117032&limit=256",
+      "status": 200,
+      "requestId": "36f16377-57d1-45b6-906f-3509fd826a73",
+      "bytes": "1466"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117070&limit=256",
+      "status": 200,
+      "requestId": "9a9ab4a2-5fa0-49b0-b597-41a3bdf8e1ed",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117070&limit=256",
+      "status": 200,
+      "requestId": "6550d549-3efb-4941-837b-5ffdf429fd6e",
+      "bytes": "3551"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117106&limit=256",
+      "status": 200,
+      "requestId": "180c9a62-8d7a-4669-a945-cd7cb0a4a99a",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117106&limit=256",
+      "status": 200,
+      "requestId": "7beeac9e-acd4-4744-a08a-2694d52bb5b0",
+      "bytes": "2117"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117133&limit=256",
+      "status": 200,
+      "requestId": "9db05023-ef90-42d4-9190-e1baad836dae",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117133&limit=256",
+      "status": 200,
+      "requestId": "7ebd785e-f641-4d8b-a658-ebda71d0bd4f",
+      "bytes": "1165"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117183&limit=256",
+      "status": 200,
+      "requestId": "0dd61640-6154-45c8-ac16-3205f71131ec",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117183&limit=256",
+      "status": 200,
+      "requestId": "35d33d1a-3971-48ae-bcb8-793f484b50e3",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117183&limit=256",
+      "status": 200,
+      "requestId": "41d98105-ccc5-4f49-bdba-479e3751b6a5",
+      "bytes": "3513"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117227&limit=256",
+      "status": 200,
+      "requestId": "55bdeac8-fd2b-4418-ae18-c0da2e44c4a9",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117249&limit=256",
+      "status": 200,
+      "requestId": "0ad1f4e5-3482-45e7-92a6-7031c6cd7755",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117249&limit=256",
+      "status": 200,
+      "requestId": "b914ab41-ba62-4c5a-9fdc-955496a9f1f2",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117279&limit=256",
+      "status": 200,
+      "requestId": "4786fd55-9f07-44ff-b494-1dc5a7a7503c",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117279&limit=256",
+      "status": 200,
+      "requestId": "c18f7875-af9c-4ed5-915f-566dce21136a",
+      "bytes": "1709"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117301&limit=256",
+      "status": 200,
+      "requestId": "66a27797-9d32-401a-94a4-07673736014f",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117301&limit=256",
+      "status": 200,
+      "requestId": "36332da3-7d19-4e05-b470-e0b6737552ed",
+      "bytes": "3185"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117331&limit=256",
+      "status": 200,
+      "requestId": "241d6e5b-1a2e-492b-a822-f8e799ec232d",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117331&limit=256",
+      "status": 200,
+      "requestId": "37740056-b368-4f6d-9380-0b87252d288d",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117331&limit=256",
+      "status": 200,
+      "requestId": "36095d20-b14c-49f1-8a57-8e2d41f764c9",
+      "bytes": "3180"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117361&limit=256",
+      "status": 200,
+      "requestId": "e1d8e8e2-c9be-45f4-9d55-2acea6efced9",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117361&limit=256",
+      "status": 200,
+      "requestId": "e1ee3133-bc7d-4290-94b9-613f073b71b6",
+      "bytes": "1807"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117391&limit=256",
+      "status": 200,
+      "requestId": "d1e469cf-289a-4ce3-bee5-a13acb3c44d7",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117391&limit=256",
+      "status": 200,
+      "requestId": "5369e2a9-5120-48e0-b8c0-474a606ca226",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117391&limit=256",
+      "status": 200,
+      "requestId": "613a4c1f-18d7-4460-ac93-7c37785d9a58",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117430&limit=256",
+      "status": 200,
+      "requestId": "3963e22c-b2ba-4020-a745-3ea30d122575",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117430&limit=256",
+      "status": 200,
+      "requestId": "83c8903e-85b2-40ba-9a27-a2a1ba9bd174",
+      "bytes": "1127"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117481&limit=256",
+      "status": 200,
+      "requestId": "75efa65e-b7bc-46ad-893c-76e161c311db",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117481&limit=256",
+      "status": 200,
+      "requestId": "4ab4ecbb-f9de-4189-b346-a458ffa09d4f",
+      "bytes": "3517"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117510&limit=256",
+      "status": 200,
+      "requestId": "2e95248c-8ea4-4dc0-a10e-e42912403edf",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117539&limit=256",
+      "status": 200,
+      "requestId": "d3a151b3-1f85-4d7d-87c1-1d6c5d125315",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117539&limit=256",
+      "status": 200,
+      "requestId": "404972fb-253b-4bb5-93e8-e2cbc7bbd457",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117561&limit=256",
+      "status": 200,
+      "requestId": "56e7bdec-7938-4c8b-8519-ed03470d2297",
+      "bytes": "1330"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117592&limit=256",
+      "status": 200,
+      "requestId": "4d1296db-06bf-495e-a0fc-0c53532d9702",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117592&limit=256",
+      "status": 200,
+      "requestId": "337f5774-1329-42c9-aaf0-02a0ca1505bd",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117592&limit=256",
+      "status": 200,
+      "requestId": "ead011a7-6d34-42a7-b464-18d272a5d0a0",
+      "bytes": "1357"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117622&limit=256",
+      "status": 200,
+      "requestId": "7cda0e25-d5db-49bb-9407-3471f5ca084a",
+      "bytes": "1186"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117644&limit=256",
+      "status": 200,
+      "requestId": "e1eb0674-d9cf-48c4-9998-4d48d4667570",
+      "bytes": "1052"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117674&limit=256",
+      "status": 200,
+      "requestId": "c0320a62-3f1f-40a8-a99d-088aed9e51f7",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117674&limit=256",
+      "status": 200,
+      "requestId": "c4e6d4f6-761c-4545-b56c-5d6e4cd0b12b",
+      "bytes": "1740"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117712&limit=256",
+      "status": 200,
+      "requestId": "161f7ead-c4cd-4919-994b-c24e051e01f7",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117712&limit=256",
+      "status": 200,
+      "requestId": "01e69a29-165c-476f-b86f-bd69478ff9ad",
+      "bytes": "2338"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117772&limit=256",
+      "status": 200,
+      "requestId": "15a00bed-e111-4682-9ebc-444a68b29dce",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117772&limit=256",
+      "status": 200,
+      "requestId": "f9dda463-4d40-4e7b-8862-96a7d55d9250",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117772&limit=256",
+      "status": 200,
+      "requestId": "7125c044-7607-4ac7-9b20-69a735d5b1c6",
+      "bytes": "2516"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117808&limit=256",
+      "status": 200,
+      "requestId": "1e9b510d-dd6d-496c-9208-fb7e2e414393",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117808&limit=256",
+      "status": 200,
+      "requestId": "6f3d0ea7-4fd2-49d2-a884-f6e71ca955cb",
+      "bytes": "1154"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117853&limit=256",
+      "status": 200,
+      "requestId": "279dc5b3-0952-4f61-9a47-033c07a022b1",
+      "bytes": "1076"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117881&limit=256",
+      "status": 200,
+      "requestId": "9f44bfbf-f575-44d8-9c3f-2c51a81be5ea",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117881&limit=256",
+      "status": 200,
+      "requestId": "eba01f67-c3f6-4da8-8c0d-a0c6e7750638",
+      "bytes": "1244"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117918&limit=256",
+      "status": 200,
+      "requestId": "54a6f06a-c9e0-4a48-8cb0-ba19a90ea178",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117918&limit=256",
+      "status": 200,
+      "requestId": "54fc021f-95d1-4601-90b9-8a5cec35af79",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117918&limit=256",
+      "status": 200,
+      "requestId": "a6d6777f-a467-47cb-9b12-25ff65d8962e",
+      "bytes": "1157"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117947&limit=256",
+      "status": 200,
+      "requestId": "41122c6c-8d4f-424d-989f-d94a33b83cd5",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117947&limit=256",
+      "status": 200,
+      "requestId": "46f79331-e96f-4a57-9aaf-b25cc8e678b1",
+      "bytes": "1288"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117984&limit=256",
+      "status": 200,
+      "requestId": "4bd600c3-2d87-4a32-a91e-5aac484374a6",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117984&limit=256",
+      "status": 200,
+      "requestId": "fdb2c773-9403-4bb9-96cd-71ab3b5d72d1",
+      "bytes": "2141"
+    },
+    {
+      "url": "http://127.0.0.1:4202/market-data/v1/order-walls/archive/current?profile=binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1&market=perpetual&after=27117984&limit=256",
+      "status": 200,
+      "requestId": "34ede854-3b10-4fa1-bbf6-e4359e9a4fee",
+      "bytes": "1775"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (45 tests | 1 failed | 44 skipped) 175ms
+   × fresh bootstrap displays its forming bar but awaits an actual live stream confirmation 169ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > fresh bootstrap displays its forming bar but awaits an actual live stream confirmation
+AssertionError: expected 'live' to be 'loading' // Object.is equality
+
+Expected: "loading"
+Received: "live"
+
+ ❯ tests/staging-service.test.ts:79:130
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 44 skipped (45)
+   Start at  16:20:21
+   Duration  1.73s (transform 75%, tests 12%, import 11%, worker 1%)
+

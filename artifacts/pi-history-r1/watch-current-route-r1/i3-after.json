@@ -1,0 +1,4 @@
+{
+  "testWindows": [],
+  "scope": "Read-only inventory; all browser probes/cohorts explicitly headless."
+}

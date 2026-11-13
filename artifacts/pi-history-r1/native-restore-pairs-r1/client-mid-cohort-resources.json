@@ -1,0 +1,27 @@
+{
+  "loadavg": "13.83 10.72 7.60 14/1488 374146",
+  "temperatureMilliC": 72700,
+  "processes": [
+    "    PID    PPID %CPU   RSS COMMAND",
+    " 374147  374146  100  4308 ps",
+    " 374146  374145 50.0 10236 python3",
+    " 374087  373976 42.2 161008 chromium",
+    " 374054  373976 38.3 210756 chromium",
+    " 139352    8429 35.8 476152 chromium",
+    " 139472    8429 28.0 337372 chromium",
+    " 373624  373605 27.7 231532 chromium",
+    " 373994  373975 27.4 128708 chromium",
+    "   8451    8425 21.6 161612 chromium",
+    "   8619    8429 17.2 348152 chromium",
+    " 373605  368203 16.8 135540 node",
+    " 314834    8429 12.3 500436 chromium",
+    "  28581    8429 11.9 426536 chromium",
+    "  25742    9271  9.1 80772 codex",
+    "   8286    8283  7.7 289956 chromium",
+    "   7813    7812  7.4 63604 Xorg",
+    " 139405    8429  6.7 242248 chromium",
+    " 268876    8429  6.5 287504 chromium",
+    " 374004  373624  5.4 134268 chromium"
+  ],
+  "scope": "Additional mid-cohort local resource observation. Process names only. Existing user processes were not changed; all test browsers are headless. No exclusive CPU-phase inference."
+}

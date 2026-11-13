@@ -1,0 +1,41 @@
+{
+  "kind": "pi-wall-delivery-release-increment",
+  "frontendServedBuild": "c467e57b09fcb2d91bcf99ba3042fa60a737e92a",
+  "backendServedBuild": "18a68da4d87b059bfeb57529e4b7bdb2573d2983",
+  "canonicalManifestKey": "0c59755f82338c16d9b012e1fd0e6214c521e39be58f809bc48def30b9112cbc",
+  "deliveryVersion": 2,
+  "firstPartPlusBatches": 18,
+  "originalParts": 66,
+  "batchMaxDecodedBytes": 8388608,
+  "batchMaxParts": 8,
+  "sampleCount": 5,
+  "expectedSamples": 5,
+  "everyEnvironmentVerified": true,
+  "everyTraceFinalized": true,
+  "actualChartBackends": [
+    "canvas2d",
+    "canvas2d",
+    "canvas2d",
+    "canvas2d",
+    "canvas2d"
+  ],
+  "rendering": "Normal headed Chromium with GLES compositor flags; actual chart backend canvas2d, not GPU chart rendering",
+  "requests": "Pi preview4181 -> independent existing SSH history18780/current18781 -> staging gateway18780",
+  "collectors": "/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z\n/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z\n",
+  "firstHistoryMs": [
+    8955.400000002235,
+    null,
+    null,
+    7225.300000000745,
+    null
+  ],
+  "completeMs": [
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "performanceAcceptance": "FAIL / incomplete",
+  "productionDeployment": false
+}

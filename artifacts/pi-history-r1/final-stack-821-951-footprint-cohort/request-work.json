@@ -1,0 +1,96 @@
+{
+  "final-stack-821-951-foot24-r1": [
+    {
+      "run": 1,
+      "historyRequests": 6,
+      "viewIds": 1,
+      "dbReadRows": 1673129,
+      "maximumProxyHeaderMs": 5101.08,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 streaming \u00b7 delivery 154ms"
+    },
+    {
+      "run": 2,
+      "historyRequests": 8,
+      "viewIds": 2,
+      "dbReadRows": 2252918,
+      "maximumProxyHeaderMs": 1234.58,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 80ms"
+    },
+    {
+      "run": 3,
+      "historyRequests": 7,
+      "viewIds": 2,
+      "dbReadRows": 2047351,
+      "maximumProxyHeaderMs": 5367.01,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 72ms"
+    },
+    {
+      "run": 4,
+      "historyRequests": 7,
+      "viewIds": 2,
+      "dbReadRows": 2047351,
+      "maximumProxyHeaderMs": 1474.18,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 67ms"
+    },
+    {
+      "run": 5,
+      "historyRequests": 8,
+      "viewIds": 2,
+      "dbReadRows": 2252918,
+      "maximumProxyHeaderMs": 1739.91,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 114ms"
+    }
+  ],
+  "final-stack-821-951-foot4-r1": [
+    {
+      "run": 1,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "dbReadRows": 374222,
+      "maximumProxyHeaderMs": 1668.03,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 59ms"
+    },
+    {
+      "run": 2,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "dbReadRows": 374222,
+      "maximumProxyHeaderMs": 1294.39,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 retained aggTrades \u00b7 1 bars \u00b7 1 coverage gap(s)"
+    },
+    {
+      "run": 3,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "dbReadRows": 374222,
+      "maximumProxyHeaderMs": 1527.77,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 retained aggTrades \u00b7 1 bars \u00b7 1 coverage gap(s)"
+    },
+    {
+      "run": 4,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "dbReadRows": 374222,
+      "maximumProxyHeaderMs": 1462.3,
+      "currentStateAtHistoryObservation": "live",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 durable execution stream \u00b7 delivery 50ms"
+    },
+    {
+      "run": 5,
+      "historyRequests": 1,
+      "viewIds": 1,
+      "dbReadRows": 374222,
+      "maximumProxyHeaderMs": 1089.38,
+      "currentStateAtHistoryObservation": "loading",
+      "currentMessageAtHistoryObservation": "Staging \u00b7 loading visible footprints"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{"cycle":0,"firstMs":5373.300000000745,"completeMs":13998.39999999851,"projectors":0,"workerHeap":[49715260],"paintFailure":null}
+{"cycle":1,"firstMs":455.5,"completeMs":3556,"projectors":0,"workerHeap":[42084180],"paintFailure":null}
+{"cycle":2,"firstMs":793,"completeMs":5395,"projectors":0,"workerHeap":[48379628],"paintFailure":null}
+{"cycle":3,"firstMs":700.6999999992549,"completeMs":3708.300000000745,"projectors":0,"workerHeap":[43870400],"paintFailure":null}
+{"cycle":4,"firstMs":321.30000000074506,"completeMs":5117.199999999255,"projectors":0,"workerHeap":[39168516],"paintFailure":null}
+{"cycle":5,"firstMs":547.5,"completeMs":3427.39999999851,"projectors":0,"workerHeap":[36964416],"paintFailure":null}

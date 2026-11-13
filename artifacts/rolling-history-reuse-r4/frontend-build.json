@@ -1,0 +1,13 @@
+{
+  "commit": "577de5f71008d97d60d286c777ee96c686532a07",
+  "flags": {
+    "VITE_BUILD_COMMIT": "577de5f71008d97d60d286c777ee96c686532a07",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  },
+  "served": false,
+  "exitCode": 0,
+  "elapsedMs": 19668.145442999958,
+  "scope": "Build/typecheck gate; observed preview remains unchanged457ac9a."
+}

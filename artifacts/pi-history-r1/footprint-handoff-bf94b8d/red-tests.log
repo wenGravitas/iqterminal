@@ -1,0 +1,46 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/staging-service.test.ts (40 tests | 2 failed) 1214ms
+   × saved-view handoff shares a prepared footprint job and releases only the departing consumer 11ms
+   × panning one footprint consumer preserves its peer job and failed shared Retry submits once 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/staging-service.test.ts > saved-view handoff shares a prepared footprint job and releases only the departing consumer
+AssertionError: expected "vi.fn()" to be called 1 times, but got 2 times
+ ❯ tests/staging-service.test.ts:543:16
+    541|   service.command({type:'footprint-subscribe',id:'visible',series,rowP…
+    542|   service.command({type:'footprint-viewport',id:'visible',from:60000,t…
+    543|   expect(load).toHaveBeenCalledTimes(1);expect(g.views.get('visible'))…
+       |                ^
+    544|   service.command({type:'footprint-unsubscribe',id:'a'});
+    545|   expect(signal.aborted).toBe(false);expect(socket.closed).toBe(false)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/staging-service.test.ts > panning one footprint consumer preserves its peer job and failed shared Retry submits once
+AssertionError: expected [ …(2) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/staging-service.test.ts:558:17
+    556|   service.command({type:'footprint-viewport',id:'a',from:60000,to:1800…
+    557|   service.command({type:'footprint-subscribe',id:'peer',series,rowPric…
+    558|   expect(calls).toHaveLength(1);const original=g.views.get('a');
+       |                 ^
+    559|   service.command({type:'footprint-viewport',id:'peer',from:120000,to:…
+    560|   service.command({type:'footprint-viewport',id:'peer',from:60000,to:1…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 38 passed (40)
+   Start at  15:22:28
+   Duration  2.48s (tests 57%, transform 36%, import 6%, worker 1%)
+

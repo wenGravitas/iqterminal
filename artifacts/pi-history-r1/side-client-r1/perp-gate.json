@@ -1,0 +1,134 @@
+{
+  "case": "walls-30h-perp-15m",
+  "build": "7e9303823c46bc36587d49946c79427c3de07a3a",
+  "route": "http://127.0.0.1:4189",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1794179700000,
+    "to": 1794287700000
+  },
+  "reference": {
+    "to": 1794287700000,
+    "sourceFrom": 1794178800000,
+    "sourceTo": 1794288600000,
+    "sourceToken": "09e5611063306489c8a99ab60cbbc013356116794b6e752a1f2d2859b45fc1bd",
+    "segments": 36013,
+    "valueRuns": 117182,
+    "gaps": 4,
+    "evidence": "0811e74 fresh canonical shared-projector fold exact-match; reference.jsonl",
+    "from": 1794179700000
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 3833.600000000559,
+      "firstUsefulValid": true,
+      "completeMs": null,
+      "segments": 14135,
+      "valueRuns": 61769,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": false,
+      "failures": [
+        "incomplete exact wall paint",
+        "unpainted or unavailable archive",
+        "incomplete validated source coverage",
+        "no observed complete paint"
+      ]
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": null,
+      "firstUsefulValid": false,
+      "completeMs": null,
+      "segments": 0,
+      "valueRuns": 0,
+      "nativeSlots": 0,
+      "requestedNativeSlots": 120,
+      "coverageValid": false,
+      "failures": [
+        "requested viewport not painted",
+        "incomplete exact wall paint",
+        "unpainted or unavailable archive",
+        "response revision differs from independent source reference",
+        "incomplete validated source coverage",
+        "incomplete native candle slots",
+        "missing raw native candle slot",
+        "no observed complete paint"
+      ]
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": null,
+      "firstUsefulValid": false,
+      "completeMs": null,
+      "segments": 0,
+      "valueRuns": 0,
+      "nativeSlots": 0,
+      "requestedNativeSlots": 120,
+      "coverageValid": false,
+      "failures": [
+        "requested viewport not painted",
+        "incomplete exact wall paint",
+        "unpainted or unavailable archive",
+        "response revision differs from independent source reference",
+        "incomplete validated source coverage",
+        "incomplete native candle slots",
+        "missing raw native candle slot",
+        "no observed complete paint"
+      ]
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 7290.700000000186,
+      "firstUsefulValid": true,
+      "completeMs": null,
+      "segments": 2149,
+      "valueRuns": 15829,
+      "nativeSlots": 120,
+      "requestedNativeSlots": 120,
+      "coverageValid": false,
+      "failures": [
+        "incomplete exact wall paint",
+        "unpainted or unavailable archive",
+        "incomplete validated source coverage",
+        "no observed complete paint"
+      ]
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": null,
+      "firstUsefulValid": false,
+      "completeMs": null,
+      "segments": 0,
+      "valueRuns": 0,
+      "nativeSlots": 0,
+      "requestedNativeSlots": 120,
+      "coverageValid": false,
+      "failures": [
+        "requested viewport not painted",
+        "incomplete exact wall paint",
+        "unpainted or unavailable archive",
+        "response revision differs from independent source reference",
+        "incomplete validated source coverage",
+        "incomplete native candle slots",
+        "missing raw native candle slot",
+        "no observed complete paint"
+      ]
+    }
+  ],
+  "firstUseful": {
+    "medianMs": null,
+    "maximumMs": null,
+    "targetMaximumMs": 3000,
+    "pass": false
+  },
+  "complete": {
+    "medianMs": null,
+    "maximumMs": null,
+    "targetMedianMs": 5000,
+    "targetMaximumMs": 10000,
+    "pass": false
+  },
+  "scope": "Five pinned empty-browser-cache/already-prepared real-chart samples. No p95, finite-subset medians, current/warm/cold-build or foreground acceptance. Supplemental observation time does not widen latency targets."
+}

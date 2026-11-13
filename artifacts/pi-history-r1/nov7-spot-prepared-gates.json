@@ -1,0 +1,151 @@
+{
+  "source": "artifacts/pi-history-r1/nov7-spot-prepared-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "walls-30h-spot-5m",
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7a1f6b129c78cf3e86178759bd98617213bcd701"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7a1f6b129c78cf3e86178759bd98617213bcd701"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7a1f6b129c78cf3e86178759bd98617213bcd701"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7a1f6b129c78cf3e86178759bd98617213bcd701"
+        },
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "7a1f6b129c78cf3e86178759bd98617213bcd701"
+        }
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        null,
+        9591.599999999627,
+        null,
+        null,
+        null
+      ],
+      "firstHistory3sGate": "FAIL",
+      "builds": [
+        "7a1f6b129c78cf3e86178759bd98617213bcd701"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1793696100000
+          },
+          "exception": null
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "exact": true
+          },
+          "exception": null
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "requestComplete": false,
+            "rangeComplete": false,
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "exact": true
+          },
+          "exception": null
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded."
+        }
+      ]
+    }
+  ]
+}

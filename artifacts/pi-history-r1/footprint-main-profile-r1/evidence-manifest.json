@@ -1,0 +1,25 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "console.txt",
+      "bytes": 226,
+      "sha256": "e073d237ee65b82d09ddab576ed6c607651ba9794bd3d084992833c916ecfc06"
+    },
+    {
+      "path": "current-readiness.json",
+      "bytes": 1612,
+      "sha256": "8b3d8c1c1b0d86ae66c6814aa958bfab7222f2945ad547ec3fe4609efd69ceb2"
+    },
+    {
+      "path": "main-B8_wiROY.js",
+      "bytes": 2359926,
+      "sha256": "62c38efabe20fd9ab28960accabd64d41c588a80b587cd9e80f88e4e1ddb7011"
+    },
+    {
+      "path": "precheck.json",
+      "bytes": 2611,
+      "sha256": "ebdb491fd89bb7cbfa5ee14dae661a2a01492918b312f5ac4f3f48e4e44b2a4f"
+    }
+  ]
+}

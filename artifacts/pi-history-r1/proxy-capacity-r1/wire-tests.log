@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: dev: reserved current sockets and upstream cancellation
+ok 1 - dev: reserved current sockets and upstream cancellation
+  ---
+  duration_ms: 1295.139673
+  type: 'test'
+  ...
+# Subtest: production-preview: reserved current sockets and upstream cancellation
+ok 2 - production-preview: reserved current sockets and upstream cancellation
+  ---
+  duration_ms: 662.95284
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2247.966375

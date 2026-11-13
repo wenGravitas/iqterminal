@@ -1,0 +1,41 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-lifecycle.test.ts (14 tests | 1 failed | 13 skipped) 145ms
+   × keeps selected snapshots out of the canonical history budget and bounds their stale value references 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-lifecycle.test.ts > keeps selected snapshots out of the canonical history budget and bounds their stale value references
+AssertionError: expected { mounted: false, …(8) } to match object { archiveSegments: 1, …(3) }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "archiveSegments": 1,
+-   "archiveValueRuns": 1,
+-   "directSegments": 1,
+-   "directValueRuns": 1,
++   "archiveSegments": 2,
++   "archiveValueRuns": 2,
++   "directSegments": 0,
++   "directValueRuns": 0,
+  }
+
+ ❯ tests/order-walls-lifecycle.test.ts:700:41
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  09:14:35
+   Duration  4.73s (transform 76%, import 20%, tests 3%, worker 1%)
+
+  Transform  transforming modules took 3.17s · 76% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

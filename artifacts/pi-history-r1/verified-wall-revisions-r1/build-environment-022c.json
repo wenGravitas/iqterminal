@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "022c39c2af203f6fd6b07bf182c336a8ddd6fba5",
+  "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "VITE_BUILD_COMMIT": "022c39c2af203f6fd6b07bf182c336a8ddd6fba5",
+  "VITE_DATA_MODE": "direct",
+  "VITE_HISTORY_TILES": "0",
+  "VITE_DIAGNOSTICS": "1",
+  "node": "v22.19.0",
+  "chromium": "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)",
+  "headless": true,
+  "rendering": "Chromium SwiftShader software",
+  "host": "Raspberry Pi5 aarch64",
+  "baseURL": "http://127.0.0.1:4192",
+  "scope": "Explicit fixture native-chart and tooltip correctness; no staging venue, foreground Pi, actual-history or latency acceptance"
+}

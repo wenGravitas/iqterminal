@@ -1,0 +1,35 @@
+{
+  "ancestry": [
+    {
+      "pid": 1360895,
+      "comm": "python3",
+      "ppid": 1360888
+    },
+    {
+      "pid": 1360888,
+      "comm": "tailscaled",
+      "ppid": 1360880
+    },
+    {
+      "pid": 1360880,
+      "comm": "tailscaled",
+      "ppid": 1843359
+    },
+    {
+      "pid": 1843359,
+      "comm": "tailscaled",
+      "ppid": 1
+    },
+    {
+      "pid": 1,
+      "comm": "systemd",
+      "ppid": 0
+    }
+  ],
+  "sshPrefs": {
+    "RunSSH": true
+  },
+  "addresses": "lo               UNKNOWN        127.0.0.1/8 ::1/128 \nenp5s0           UP             65.21.65.212/26 2a01:4f9:3081:515a::2/64 fe80::127c:61ff:fe4e:7b54/64 \nbr-b1d1da6d68cc  DOWN           172.18.0.1/16 \ndocker0          DOWN           172.17.0.1/16 fe80::68d2:3aff:fe20:d60b/64 \nbr-e72858d810e5  UP             172.20.0.1/16 fe80::ccf9:46ff:fe64:6b77/64 \nveth3ee95e3@if2  UP             fe80::cce8:89ff:fe83:75f8/64 \nbr-ec9f66525897  UP             172.23.0.1/16 fe80::3081:d7ff:fe10:44e8/64 \nvethf9e9dd8@if2  UP             fe80::a834:73ff:feb8:9d38/64 \nbr-6a1ef9008541  UP             172.24.0.1/16 fe80::649f:c4ff:fe64:1b0e/64 \nveth4b9350e@if2  UP             fe80::acf4:1fff:fe7f:4ead/64 \nveth4c766eb@if3  UP             fe80::f0e8:b0ff:fef7:7d18/64 \nbr-8bf4942943d2  DOWN           172.21.0.1/16 \nvethd7fdb75@if3  UP             fe80::4c38:b6ff:fedb:ab82/64 \nbr-a6abfe6d6438  UP             172.19.0.1/16 fe80::684f:b0ff:feb1:5201/64 \nvethd75a167@if4  UP             fe80::c458:68ff:fe0e:8848/64 \nvethf01a6f2@if2  UP             fe80::546b:bdff:fedc:e48f/64 \nveth6417785@if5  UP             fe80::a815:d3ff:febb:6f2a/64 \nveth4949af2@if2  UP             fe80::3a:abff:fe4b:4b60/64 \nveth0b6a1fb@if2  UP             fe80::ec27:8aff:fe05:87ec/64 \nveth47782de@if2  UP             fe80::30fc:d8ff:fe1d:bc06/64 \nveth2fda32f@if2  UP             fe80::d8:71ff:fe2a:9280/64 \nveth7eacfea@if2  UP             fe80::e4a6:1fff:fec9:a7a5/64 \nvethaf01c52@if3  UP             fe80::541e:afff:fe17:a655/64 \nveth977b1c2@if2  UP             fe80::dc1b:bdff:fe42:e096/64 \nbr-7caab2d49018  UP             172.27.0.1/16 fe80::fc06:e2ff:fe7c:b7a2/64 \nbr-66626e12a71c  UP             172.28.0.1/16 fe80::28c0:c8ff:fec4:5dd1/64 \nbr-8bd5861a1772  UP             172.30.0.1/16 fe80::54e3:1fff:fea7:12ae/64 \nbr-18b1b8b6da44  UP             172.29.0.1/16 fe80::c8e0:dcff:fe32:b2b/64 \nveth206d5b3@if2  UP             fe80::f0d9:f0ff:fee0:6750/64 \ntailscale0       UNKNOWN        100.124.223.41/32 fd7a:115c:a1e0::a701:dfa8/128 fe80::1cd5:d316:5c41:7dbc/64 \nbr-1c3cc7e2745a  UP             172.22.0.1/16 fe80::7c5e:f3ff:fe96:fc67/64 \nbr-3149edcc3883  UP             172.25.0.1/16 fe80::98e1:1ff:fee1:d5c6/64 \nvethb89489f@if2  UP             fe80::f81e:1fff:fe0e:3ab/64 \nvetha4e210e@if2  UP             fe80::ec38:42ff:fed7:b5f2/64 \nvetha3e92cc@if3  UP             fe80::2822:a2ff:fee6:4356/64 \nveth02f6c29@if2  UP             fe80::b892:3aff:fe89:2c9/64 \nvethaed6e31@if3  UP             fe80::44c3:f6ff:feb2:390b/64 \nveth11e06b2@if4  UP             fe80::2066:3bff:fecf:97dc/64 \nveth4950c65@if5  UP             fe80::402c:eeff:fec8:eb6b/64 \nvethaf9e2c1@if2  UP             fe80::5017:3ff:fee7:5ecc/64 \nbr-8d64ef9e8ffc  UP             172.26.0.1/16 fe80::14b9:88ff:fe79:b00c/64 \nvethbe15c6e@if2  UP             fe80::c886:cdff:fe26:f207/64 \nveth3567180@if2  UP             fe80::3c7e:1bff:fe5d:c40d/64 \nveth34effb7@if2  UP             fe80::9cb3:a9ff:fed8:7767/64 \nveth1228a90@if3  UP             fe80::105e:20ff:fe52:29f1/64 \nveth3c4c23c@if3  UP             fe80::74a2:c3ff:fe8b:6514/64 \nveth1c45b9f@if2  UP             fe80::2cff:beff:fe41:29ec/64 \nvethe4ffe3f@if2  UP             fe80::704c:aff:febf:598f/64 \nveth3ac4f7f@if3  UP             fe80::4c1d:4dff:fef1:c27a/64 \nveth61f43f5@if2  UP             fe80::d898:daff:fe60:8354/64 \nveth3990a39@if2  UP             fe80::4c0d:d1ff:fef3:573b/64 \nvethf9050db@if3  UP             fe80::90cc:a3ff:fe4b:cb34/64 \n",
+  "tcp22": "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n",
+  "tailscaled": "    PID    PPID USER     COMMAND\n1360880 1843359 root     tailscaled\n1360888 1360880 daz      tailscaled\n1843359       1 root     tailscaled\n3736977 1843359 root     tailscaled\n"
+}

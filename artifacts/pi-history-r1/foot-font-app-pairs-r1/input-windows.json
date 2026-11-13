@@ -1,0 +1,4 @@
+{
+  "end": 1794225600000,
+  "basis": "Closed hour from verified server materializer head, pinned before all concurrency runs; no use of frozen wall windows."
+}

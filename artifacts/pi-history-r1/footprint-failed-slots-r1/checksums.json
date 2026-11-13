@@ -1,0 +1,15 @@
+{
+  "browser-results.json": "5d5f69492a8ebbefcce2698e381e74326637770e2c2e9b44065a6cf66871ec5b",
+  "candle-totals-delayed-live.png": "cc6b39cbecd2f3394194515e7ef9be3c3f0f818d1ee0cc3707f8c1de3fa085f7",
+  "candle-totals-five-closed-hours.png": "9a41b1af6b2bb837482a56e6aa80cc7b5461e6d238e5ec98184c2b4d648dbddf",
+  "footprint-delayed-live.png": "4ce2cab9bb7c5d69a2765234a5261ae9853224d93304cdb37e31b6355c2e96af",
+  "footprint-five-closed-hours.png": "1aa9bfaf986cceaf1f6a4293b5d90e974f18544d1a31bb4936ffe68542854db5",
+  "iq-footprint-failed-slot-browser.log": "68d51e7c67389c09c85f7c5b59311b311bd414e9b6d02ac22d982b08bc3fc464",
+  "iq-footprint-failed-slot-build.log": "77eccbee61ec7a353f2cbf7cd0e4ee2e5b088f814dbb86fd6060b5dbe9f4dbb8",
+  "iq-footprint-failed-slot-full-tests.log": "48bd663d7dbce9d724376d181a500b4270b78e42c37201a7f71c1746fed930a5",
+  "iq-footprint-failed-slot-tests.log": "1c7d0036cee696ca3c898ac755576496c4b57a5a6405964a909cbc67a7656c9a",
+  "iq-footprint-failed-slot-types.log": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961",
+  "late-native-24h-footprint-batch.png": "792c8c9cfdd1e618faa316cb00c8cab2bd727fe20b47a2975dff71e5d221dfb8",
+  "late-native-24h-footprint-legacy.png": "9f04603885000b81c114f33eee83511c9296e5fabe2db9f2b8de187d952d4ea9",
+  "manifest.json": "74957ffa9460fee349cfd64b55dc8ba39e4d4aad1ed49e34646485a434bd4a56"
+}

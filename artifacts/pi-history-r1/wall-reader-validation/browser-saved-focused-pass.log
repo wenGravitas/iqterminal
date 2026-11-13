@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:275628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/footprint-history-lifecycle.spec.ts:25:1 › saved candle wall history starts before native candles and restores without an offscreen current bootstrap (3.7s)
+
+  1 passed (7.7s)

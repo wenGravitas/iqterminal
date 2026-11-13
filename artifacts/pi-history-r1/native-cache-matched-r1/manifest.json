@@ -1,0 +1,16 @@
+{
+  "builds": {
+    "control": "37fd44430f4be4ffb692bd4a813d38810b917f4a",
+    "candidate": "d82e4943e7544e564e1026d7df126207385e4d04"
+  },
+  "routes": {
+    "control": "http://127.0.0.1:4186",
+    "candidate": "http://127.0.0.1:4185"
+  },
+  "proxy": "same2native/2bulk history sockets over18780; current4 over18781; no third SSH",
+  "source": "Pinned30h default Top8/native/10percent, Spot5m and USD-M15m; source revisions/counts in scripts/pi-wall-reference.json",
+  "order": "5samples per market per variant; sequential, odd control/candidate and even candidate/control; fresh browser/context each individual run",
+  "paintMarker": "First: completed historical draw with painted viewport matching requested range, even while later input is pending. Complete: latest input painted, exact financial counts/gaps plus fresh native validation.",
+  "mode": "headless system Chromium, GPU SystemInfo per result; not normal foreground Pi acceptance",
+  "probeSha256": "d9649d7bb8bf013ffb65cde4a90c1f908e893891aca2d8a46b51c3fe5ae3eb8e"
+}

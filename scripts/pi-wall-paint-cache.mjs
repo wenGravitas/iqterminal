@@ -1,0 +1,34 @@
+/** Explicit offline real-data primitive benchmark. No venue/feed/load-gate claims. */
+import {chromium} from './test-browser-launch.mjs';import {readFile,writeFile,mkdir} from 'node:fs/promises';import {gunzipSync} from 'node:zlib';import {createHash} from 'node:crypto';import assert from 'node:assert/strict';import {routeTestBrowser} from './test-browser-workspace.mjs';
+const resources=async()=>({at:new Date().toISOString(),arch:process.arch,load:(await readFile('/proc/loadavg','utf8')).trim(),memory:await readFile('/proc/meminfo','utf8'),cpu:(await readFile('/proc/stat','utf8')).split('\n').slice(0,5),vmstat:(await readFile('/proc/vmstat','utf8')).split('\n').filter(line=>/^(pswpin|pswpout|pgmajfault) /.test(line)),temperatureMilliC:(await readFile('/sys/class/thermal/thermal_zone0/temp','utf8')).trim()});
+const [dataPath,bundlePath,output]=process.argv.slice(2);if(process.env.IQ_WALL_PAINT_BENCH!=='1')throw Error('Explicit offline paint benchmark opt-in required');assert.ok(output);
+const compressed=await readFile(dataPath),data=JSON.parse(gunzipSync(compressed,{maxOutputLength:64*1024*1024}).toString()),bundle=await readFile(bundlePath,'utf8');
+assert.ok(Array.isArray(data.segments));assert.equal(data.segments.length,23850);const financialHash=createHash('sha256');for(const segment of data.segments)financialHash.update(JSON.stringify(segment));assert.equal(financialHash.digest('hex'),'de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6');
+await mkdir(output,{recursive:true});const resourceBefore=await resources(),browser=await chromium.launch({headless:false,executablePath:'/usr/bin/chromium',args:['--class=IQTerminalPerf','--no-sandbox','--use-angle=gles','--enable-precise-memory-info']});
+try{
+ const page=await browser.newPage({viewport:{width:1920,height:1080}});await routeTestBrowser();await page.setContent('<body style="margin:0;background:#080808;color:#aaa;font:12px monospace"><div>Offline pinned real-wall geometry: immediate / cached</div><canvas id="reference"></canvas><canvas id="cached"></canvas></body>');await page.addScriptTag({content:bundle});
+ const result=await page.evaluate(async({segments})=>{
+  const {OrderWallsPrimitive}=window.WallPaint,from=1793696400000,to=1793804400000,step=900000;
+  const settings={enabled:true,mode:'top-levels',topLevels:8,searchRangePercent:10,minimumNotionalEnabled:false,minimumNotionalUsd:100000,minDurationMs:0,highContrast:true,visibleRangeOnly:true,strengthThickness:true,historyEpisodes:2000,showHistory:true,showPriceLines:false,method:'relative',thresholdUsd:500000,relativeFloorUsd:250000,relativePercentile:95,exitRatio:.85,aggregation:'native',colorMode:'heat',opacity:.85,thicknessPx:3};
+  const status={state:'gap',lastConfirmedAt:to,tickSize:.1,archive:{loadedThrough:to,from,to}};
+  const canvases=[document.getElementById('reference'),document.getElementById('cached')];for(const c of canvases){c.width=1840;c.height=930;c.style.width='920px';c.style.height='465px';}
+  const contexts=canvases.map(c=>c.getContext('2d',{willReadFrequently:true})),primitives=[new OrderWallsPrimitive(settings,step,false),new OrderWallsPrimitive(settings,step,true)];
+  let dpr=1,offset=0;const rc={timeScale:{visibleRange:()=>({from:offset,to:120+offset}),indexToX:index=>(index-offset)/120*1840,xToIndex:x=>offset+x/1840*120},priceScale:{priceRange:()=>({min:74000,max:82000}),priceToY:price=>(82000-price)/8000*930},dataLayer:{length:122,baseIndex:121,indexToTime:index=>from/1000+index*step/1000,indexToTimeFloat:index=>from/1000+index*step/1000,timeToIndexFloat:seconds=>(seconds-from/1000)/(step/1000)},plotWidth:1840,plotHeight:930,get dpr(){return dpr;}};
+  const raf=()=>new Promise(resolve=>requestAnimationFrame(resolve)),draw=(i)=>{const ctx=contexts[i];ctx.clearRect(0,0,canvases[i].width,canvases[i].height);primitives[i].draw(ctx,rc);return ctx.getImageData(0,0,canvases[i].width,canvases[i].height).data;};
+  for(const p of primitives)p.setSnapshot(segments,status);
+  const pixels=()=>{const a=draw(0),b=draw(1);let different=0;for(let i=0;i<a.length;i++)if(a[i]!==b[i])different++;if(different)throw Error('Paint cache changed '+different+' pixel channels');return {channels:a.length,different};};
+  const pixelChecks=[{case:'initial',...pixels()},{case:'cache-hit',...pixels()}],runs=[];
+  for(let run=1;run<=5;run++){
+   const methods=[];for(const index of run%2?[0,1]:[1,0]){
+    const cpuMs=[],frameIntervalsMs=[];for(let frame=0;frame<8;frame++){const beforeFrame=await raf(),start=performance.now();draw(index);cpuMs.push(performance.now()-start);const afterFrame=await raf();frameIntervalsMs.push(afterFrame-beforeFrame);}
+    methods.push({method:index?'cached-native-path':'immediate-reference',drawAndReadbackMs:cpuMs,rafIntervalsMs:frameIntervalsMs,diagnostics:primitives[index].diagnostics()});
+   }runs.push({run,methods});
+  }
+  offset=2;pixelChecks.push({case:'pan',...pixels()});dpr=2;for(const c of canvases){c.width=3680;c.height=1860;}pixelChecks.push({case:'dpr2',...pixels()});
+  for(const p of primitives)p.setSettings({...settings,colorMode:'bid-ask',thicknessPx:5});pixelChecks.push({case:'style',...pixels()});
+  const id=segments.find(s=>s.end!==null).id;for(const p of primitives)p.patch([{id,segment:null}],status);pixelChecks.push({case:'removal',...pixels()});
+  const retained=primitives.map(p=>p.diagnostics());for(const p of primitives)p.detached();const released=primitives.map(p=>p.diagnostics());
+  return {scope:'offline primitive with pinned real financial records; synchronous draw plus forced pixel readback and observed RAF intervals; not chart loading or FPS acceptance',segments:segments.length,valueRuns:segments.reduce((n,s)=>n+s.valueRuns.length,0),pixelChecks,runs,retained,released,memory:performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize,totalJSHeapSize:performance.memory.totalJSHeapSize}:null};
+ },{segments:data.segments});
+ await page.screenshot({path:output+'/paint-comparison.png'});result.browser=browser.version();result.contextMode='headed system Chromium, native 2d with willReadFrequently and forced readback';result.resourceBefore=resourceBefore;result.resourceAfter=await resources();result.inputGzipSha256=createHash('sha256').update(compressed).digest('hex');result.bundleSha256=createHash('sha256').update(bundle).digest('hex');result.scriptSha256=createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex');await writeFile(output+'/result.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({scope:result.scope,pixelChecks:result.pixelChecks,segments:result.segments,valueRuns:result.valueRuns,runs:result.runs.map(r=>({run:r.run,methods:r.methods.map(m=>({method:m.method,drawAndReadbackMs:m.drawAndReadbackMs,rafIntervalsMs:m.rafIntervalsMs}))}))}));
+}finally{await browser.close();}

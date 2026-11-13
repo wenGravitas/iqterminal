@@ -1,0 +1,100 @@
+{
+  "source": "artifacts/pi-history-r1/nov6-wall-selected-v2-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 5,
+      "environmentVerified": false,
+      "environments": [
+        {},
+        {},
+        {},
+        {},
+        {}
+      ],
+      "gate": "FAIL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "firstHistory3sGate": "FAIL",
+      "builds": [
+        "02e96ddacabe5a65f9737191a250bb4548b43417"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4180/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4180/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+        },
+        {
+          "run": 2,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4180/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4180/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+        },
+        {
+          "run": 3,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4180/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4180/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+        },
+        {
+          "run": 4,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4180/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4180/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+        },
+        {
+          "run": 5,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": null,
+          "paintedClosedBars": 0,
+          "archive": {},
+          "exception": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4180/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4180/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+
+> terminal-t0@0.1.0 test /home/daz/workarea/iqterminal-perf-history
+> vitest run
+
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/trading-vault.test.ts (8 tests | 2 failed) 21430ms
+   ❯ local Hyperliquid agent vault (8)
+     × writes scoped p=3 records and requires that account scope and passphrase to unlock 5315ms
+     × explicitly decrypts legacy p=1, prepares scoped p=3, then atomically moves the record 5027ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/trading-vault.test.ts > local Hyperliquid agent vault > writes scoped p=3 records and requires that account scope and passphrase to unlock
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/trading-vault.test.ts:97:3
+     95|
+     96| describe('local Hyperliquid agent vault', () => {
+     97|   it('writes scoped p=3 records and requires that account scope and pa…
+       |   ^
+     98|     await expect(vault.encryptAgentPrivateKey(PRIVATE_KEY, PASSPHRASE,…
+     99|     const key = await scopedRecordKey();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/trading-vault.test.ts > local Hyperliquid agent vault > explicitly decrypts legacy p=1, prepares scoped p=3, then atomically moves the record
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/trading-vault.test.ts:149:3
+    147|   });
+    148|
+    149|   it('explicitly decrypts legacy p=1, prepares scoped p=3, then atomic…
+       |   ^
+    150|     const legacy = await legacyFixture();
+    151|     await writeRaw(LEGACY_KEY_ID, legacy);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 125 passed | 2 skipped (128)
+      Tests  2 failed | 1057 passed | 2 skipped (1061)
+   Start at  16:50:44
+   Duration  65.46s (tests 59%, import 25%, transform 14%, worker 2%)
+
+    Isolate  128 workers spawned · ~414ms startup each (spawn + environment, per file)
+             at least ~17.24s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.

@@ -44,3 +44,99 @@ test('5m lookback warmup covers more than four hours in lower-priority summary-o
  expect(published.at(-1).analysis.summaries.find((summary:any)=>summary.time===analysisFrom/1000)).toMatchObject({revisionSource:'prepared-content-hash',coverageEvidence:{validated:true}});
  expect(cache.values.size).toBe(48); // Full dense tiles are retained only for the four-hour visible request.
 });
+
+test('24h of hourly tiles remains partial until every chunk validates, nearest history first', async () => {
+ const hour=3600000,from=1800000000000,to=from+24*hour,requests:Array<{from:number;to:number}>=[],events:any[]=[];
+ let release!:()=>void; const held=new Promise<void>(resolve=>release=resolve);
+ const request:any=async(url:string)=>{
+  if(url.endsWith('/footprints-batch'))return new Response(null,{status:405});
+  const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from')),end=Number(q.get('to'));
+  requests.push({from:start,to:end}); if(start===from)await held;
+  const tiles=[];for(let at=start;at<end;at+=hour)tiles.push({from:at,revision:1,bar:{time:at/1000},coverage:{from:at,to:at+hour,complete:true,gaps:[]}});
+  return new Response(JSON.stringify({version:1,feed,state:'ready',tiles}));
+ };
+ const client=new PreparedFootprints(request,new Cache());
+ const work=client.load(from,to,'1h',25,new AbortController().signal,(bars,complete,validated,_analysis,progress)=>events.push({bars,complete,validated,progress}));
+ await new Promise(resolve=>setTimeout(resolve,30));
+ expect(requests[0]).toEqual({from:to-4*hour,to});expect(requests.every(r=>r.to-r.from<=4*hour)).toBe(true);
+ expect(events.some(e=>e.bars.length>0)).toBe(true);expect(events.every(e=>!e.complete)).toBe(true);
+ release();await work;
+ expect(events.at(-1).bars).toHaveLength(24);expect(events.at(-1).complete).toBe(true);
+ expect(events.at(-1).progress).toMatchObject({requestedSlots:24,loadedSlots:24,validatedSlots:24});
+});
+
+test('known empty, source gaps and failed sibling chunks retain precise independent coverage',async()=>{
+ const hour=3600000,from=1800000000000,to=from+8*hour,events:any[]=[];
+ const request:any=async(url:string)=>{
+  if(url.endsWith('/footprints-batch'))return new Response(null,{status:405});
+  const q=new URL(url,'http://localhost').searchParams,start=Number(q.get('from'));
+  if(start===from)return new Response(JSON.stringify({error:'retryable source read'}),{status:503});
+  return new Response(JSON.stringify({version:1,feed,state:'ready',tiles:Array.from({length:4},(_,i)=>({from:start+i*hour,revision:1,bar:i===0?null:{time:(start+i*hour)/1000},coverage:{from:start+i*hour,to:start+(i+1)*hour,complete:i!==1,gaps:i===1?[{from:start+hour,to:start+hour+1000,reason:'not recorded'}]:[]}}))}));
+ };
+ const client=new PreparedFootprints(request,new Cache());
+ await expect(client.load(from,to,'1h',25,new AbortController().signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('retryable source read');
+ expect(events.at(-1).bars).toHaveLength(3);expect(events.every(e=>!e.complete)).toBe(true);
+ expect(events.at(-1).progress.slots.filter((s:any)=>s.state==='empty')).toHaveLength(1);
+ expect(events.at(-1).progress.slots.filter((s:any)=>s.state==='gapped')).toHaveLength(1);
+ expect(events.at(-1).progress.validatedSlots).toBe(4);
+});
+
+
+test('warm revision validation preserves a known-empty covered slot without requiring a bar summary',async()=>{
+ const cache=new Cache(),events:any[]=[];let warm=false;
+ const request:any=async()=>new Response(JSON.stringify({version:1,feed,state:'ready',tiles:[{from:900000,revision:1,...(warm?{}:{bar:null,coverage:{from:900000,to:1200000,complete:true,gaps:[]}})}]}));
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(900000,1200000,'5m',25,signal,()=>{});warm=true;
+ await client.load(900000,1200000,'5m',25,signal,(bars,complete,validated,_analysis,progress)=>events.push({bars,complete,validated,progress}));
+ expect(events.at(-1)).toMatchObject({bars:[],complete:true,validated:true,progress:{validatedSlots:1,slots:[{state:'empty',validated:true}]}});
+});
+
+test('a pending canonical revision retains painted bars but invalidates only affected slots and analysis',async()=>{
+ const from=1800000000000,step=3600000,events:any[]=[];let call=0;
+ const tiles=(revision:number)=>[0,1].map(i=>({from:from+i*step,revision,bar:{time:(from+i*step)/1000,delta:revision,quoteDelta:revision*80000,source:'binance-usdm-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}));
+ const client=new PreparedFootprints((async()=>{call++;return new Response(JSON.stringify({version:1,feed,state:call===1?'building':'ready',revisionState:call===1?'pending':'ready',revisionRanges:call===1?[{from,to:from+step,state:'building'}]:[],tiles:tiles(call)}));}) as any,new Cache());
+ await client.load(from,from+2*step,'1h',25,new AbortController().signal,(bars,complete,_validated,analysis,progress)=>events.push({bars,complete,analysis,progress}));
+ const pending=events[0];expect(pending.bars).toHaveLength(2);expect(pending.complete).toBe(false);expect(pending.progress.validatedSlots).toBe(1);
+ expect(pending.progress.slots).toMatchObject([{state:'building',validated:false},{state:'ready',validated:true}]);
+ expect(pending.analysis.summaries.map((s:any)=>s.coverageEvidence.validated)).toEqual([false,true]);
+ expect(events.at(-1)).toMatchObject({complete:true,progress:{validatedSlots:2}});expect(events.at(-1).bars.map((b:any)=>b.delta)).toEqual([2,2]);
+});
+
+test('failed canonical revision retains cached good bars with unavailable unvalidated coverage',async()=>{
+ const from=1800000000000,step=3600000,cache=new Cache();let failed=false;const events:any[]=[];
+ const request:any=async()=>new Response(JSON.stringify({version:1,feed,state:failed?'unavailable':'ready',revisionState:failed?'unavailable':'ready',revisionRanges:failed?[{from,to:from+step,state:'unavailable'}]:[],error:failed?'repair source unavailable':undefined,tiles:[{from,revision:1,bar:{time:from/1000},coverage:{from,to:from+step,complete:true,gaps:[]}}]}));
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(from,from+step,'1h',25,signal,()=>{});failed=true;
+ await expect(client.load(from,from+step,'1h',25,signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('repair source unavailable');
+ expect(events.at(-1)).toMatchObject({bars:[{time:from/1000,revision:1}],complete:false,progress:{loadedSlots:1,validatedSlots:0,slots:[{state:'unavailable',validated:false}]}});
+});
+
+test('a failed revision range does not revoke a separately validated sibling tile',async()=>{
+ const from=1800000000000,step=3600000,events:any[]=[];
+ const request:any=async()=>Response.json({version:1,feed,state:'unavailable',revisionState:'unavailable',revisionRanges:[{from,to:from+step,state:'unavailable'}],error:'One expired source interval',tiles:[0,1].map(i=>({from:from+i*step,revision:1,bar:{time:(from+i*step)/1000},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}))});
+ await expect(new PreparedFootprints(request,new Cache()).load(from,from+2*step,'1h',25,new AbortController().signal,(bars,complete,_validated,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('One expired source interval');
+ expect(events.at(-1).bars).toHaveLength(2);expect(events.at(-1).progress).toMatchObject({validatedSlots:1,slots:[{state:'unavailable',validated:false},{state:'ready',validated:true}]});
+});
+
+test('Spot native cent widths never share cached cells, summaries or known-revision hints',async()=>{
+ const cache=new Cache(),spot='binance:spot:BTCUSDT:aggregate-trade',calls:URL[]=[];let release!:(response:Response)=>void;
+ const response=(width:number)=>new Response(JSON.stringify({version:1,feed:spot,state:'ready',tiles:[{from:900000,revision:1,bar:{time:900,rowSize:width,delta:-3,quoteDelta:-300.02,source:'binance-spot-aggtrade',granularity:'aggregate-trade',coverage:'observed',gapBefore:false,cells:width===.01?[{price:100,bidVol:1,askVol:0,bidNotional:100,askNotional:0},{price:100.01,bidVol:2,askVol:0,bidNotional:200.02,askNotional:0}]:[{price:100,bidVol:3,askVol:0,bidNotional:300.02,askNotional:0}]},coverage:{from:900000,to:1200000,complete:true,gaps:[]}}]}));
+ const request:any=async(url:string)=>{const u=new URL(url,'http://localhost');calls.push(u);return calls.length===1?response(.01):new Promise<Response>(resolve=>{release=resolve;});};
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal,first:any[]=[],second:any[]=[];
+ await client.load(900000,1200000,'5m',.01,signal,(bars,complete)=>first.push({bars,complete}),'spot');expect(first.at(-1).bars[0].cells).toHaveLength(2);
+ const work=client.load(900000,1200000,'5m',.02,signal,(bars,complete)=>second.push({bars,complete}),'spot');await new Promise(resolve=>setTimeout(resolve,0));
+ expect(second).toEqual([]);expect(calls[1]!.searchParams.get('known')).toBe('');release(response(.02));await work;
+ expect(second.at(-1).bars[0]).toMatchObject({rowSize:.02,delta:-3,quoteDelta:-300.02,cells:[{price:100,bidVol:3,bidNotional:300.02}]});expect(cache.values.size).toBe(2);
+});
+
+test('malformed chunk identities cannot partially replace good cached financial data',async()=>{
+ const from=1800000000000,step=3600000,cache=new Cache();let mode='valid';
+ const request:any=async()=>Response.json({version:1,feed,state:'ready',tiles:[0,1].map(i=>({from:from+(mode==='duplicate'?0:i)*step,revision:mode==='valid'?1:99,bar:{time:(from+(mode==='foreign-time'?i+1:i)*step)/1000,delta:mode==='valid'?2:999},coverage:{from:from+i*step,to:from+(i+1)*step,complete:true,gaps:[]}}))});
+ const client=new PreparedFootprints(request,cache),signal=new AbortController().signal;
+ await client.load(from,from+2*step,'1h',25,signal,()=>{});
+ for(const invalid of ['duplicate','foreign-time']){
+  mode=invalid;const events:any[]=[];
+  await expect(client.load(from,from+2*step,'1h',25,signal,(bars,complete,_valid,_analysis,progress)=>events.push({bars,complete,progress}))).rejects.toThrow('tile identity');
+  expect(events.at(-1).bars.map((b:any)=>[b.revision,b.delta])).toEqual([[1,2],[1,2]]);expect(events.at(-1).progress.validatedSlots).toBe(0);expect(events.at(-1).progress.slots.every((s:any)=>s.state==='unavailable')).toBe(true);expect(events.every(e=>!e.complete)).toBe(true);
+ }
+});

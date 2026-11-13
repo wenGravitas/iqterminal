@@ -1,0 +1,57 @@
+{
+  "scope": "Current health only, five alternating fresh TCP pairs; no historical concurrency or live/paint acceptance. Both variants retained as evidence, all source samples kept.",
+  "results": {
+    "default": {
+      "samplesMs": [
+        1962.7046440000013,
+        1442.4955599999994,
+        1668.7550430000047,
+        1141.7969079999966,
+        942.0670260000043
+      ],
+      "medianMs": 1442.4955599999994,
+      "maxMs": 1962.7046440000013,
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "serverTiming": [
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=1.00, total;dur=8.95",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.40, total;dur=153.62",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.36, total;dur=588.72",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.45, total;dur=2.63",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.28, total;dur=2.65"
+      ]
+    },
+    "none": {
+      "samplesMs": [
+        1169.3069429999978,
+        1277.570598000002,
+        1274.764645000003,
+        1122.9408429999967,
+        1030.1384649999964
+      ],
+      "medianMs": 1169.3069429999978,
+      "maxMs": 1277.570598000002,
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "serverTiming": [
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.86, total;dur=8.12",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=1.12, total;dur=8.31",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.33, total;dur=2.26",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.33, total;dur=3.08",
+        "admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.24, total;dur=2.36"
+      ]
+    }
+  },
+  "noneFasterPairs": 4,
+  "decision": "Keep current tunnel QoS unchanged. These small cold-connection samples did not reproduce the timeout and had unequal backend timings (default up to588.72ms vs none up to8.31ms); neither long-lived live-stream nor concurrent-history acceptance is established. IPQoS=none remains scoped to the already documented future history lane."
+}

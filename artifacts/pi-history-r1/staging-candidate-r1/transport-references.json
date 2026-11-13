@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-perp-15m": {
+      "from": 1794276900000,
+      "to": 1794384900000,
+      "sourceFrom": 1794276000000,
+      "sourceTo": 1794385800000,
+      "sourceToken": "4b51d5e4fbda864c71e6c7d036486352c358089c185d0fb1d6372180c06e16f3",
+      "segments": 22178,
+      "valueRuns": 88720,
+      "gaps": 1,
+      "financialHash": "9e43deb032be42ff0912c0695272be8a84da9566802986a00bc7b2dd5a598fe2",
+      "evidence": "Independent source proof plus fresh canonical projector versus immutable V3 rollover projection; rollover-reference.jsonl"
+    }
+  }
+}

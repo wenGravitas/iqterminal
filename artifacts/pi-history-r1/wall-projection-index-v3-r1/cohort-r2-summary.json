@@ -1,0 +1,410 @@
+{
+  "scope": "Thirty unprofiled offline projection component builds, five per variant per market. Same pinned source per market, fresh output, alternating order, host filesystem cache not cleared. No raw cold build, browser, current ACK, chart paint or loading acceptance.",
+  "selection": {
+    "kind": "cohort-selected",
+    "jobs": {
+      "spot": {
+        "id": "0b742e47f96a45d0b447bd65e5609f56f635dd0ddc2aa2661a6a392e5465d2fa",
+        "request": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794263400000,
+          "to": 1794372000000
+        },
+        "lane": "default",
+        "requestedAt": 1794372005281,
+        "updatedAt": 1794372041945,
+        "defaultOwned": true,
+        "rollingDefault": true,
+        "lastTurn": 28300,
+        "phase": "ready",
+        "pages": 25,
+        "projectionPages": 25,
+        "parts": 25,
+        "projectionDecodedBytes": 8644925,
+        "projectionCompressedBytes": 977379,
+        "after": 21351564,
+        "decodedBytes": 46484833,
+        "compressedBytes": 2064497,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "proof": {
+          "market": "spot",
+          "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794263400000,
+          "to": 1794372000000,
+          "version": 1,
+          "kind": "wall-source-sha256-xor-v1",
+          "watermark": 21351564,
+          "head": {
+            "cursor": 21351564,
+            "epoch": 1794370288142,
+            "at": 1794372004554
+          },
+          "availableFrom": 1793521565645,
+          "anchor": {
+            "cursor": 20257307,
+            "epoch": 1794255363712,
+            "at": 1794262567044,
+            "hash": "855337e88a9c0f42034e92b64bf5319e6e79be3b9a6e7fe7390d588eae543d2e"
+          },
+          "records": 37274,
+          "maxCursor": 21351267,
+          "hash": "1079136504661996668246622123117292431211388032970655350820206747734067003498",
+          "token": "306081b93ac5e0436eb9a88fdbc30750c75961893d8b7538d30911d7f2308bbf",
+          "eligible": true
+        },
+        "sourceKey": "ea7e52f7eb0ebd0c2d177f384bdf89a966cd2b21a7ebe232173b178cd661ed89",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793521565645,
+          "confirmedTo": 1794372000000,
+          "gapCount": 14,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "projectionManifestReused": false,
+        "projectionKey": "002c5e742d9e61f620aded539379e202950fa3e768c622f8d14a5e22625fe956",
+        "doneAt": 1794372043033
+      },
+      "perpetual": {
+        "id": "ecc3904654e31fb7e1e5cb9bcc6334a3bbf81d0bd3117e671137958409af7faa",
+        "request": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794261600000,
+          "to": 1794371400000
+        },
+        "lane": "default",
+        "requestedAt": 1794371408667,
+        "updatedAt": 1794371565808,
+        "defaultOwned": true,
+        "rollingDefault": true,
+        "lastTurn": 28198,
+        "phase": "ready",
+        "pages": 64,
+        "projectionPages": 64,
+        "parts": 64,
+        "projectionDecodedBytes": 30422235,
+        "projectionCompressedBytes": 2535415,
+        "after": 25273487,
+        "decodedBytes": 123585282,
+        "compressedBytes": 5506314,
+        "leased": true,
+        "paused": false,
+        "canonicalManifestReused": false,
+        "proof": {
+          "market": "perpetual",
+          "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "from": 1794261600000,
+          "to": 1794371400000,
+          "version": 1,
+          "kind": "wall-source-sha256-xor-v1",
+          "watermark": 25273487,
+          "head": {
+            "cursor": 25273487,
+            "epoch": 1794309145901,
+            "at": 1794371407001
+          },
+          "availableFrom": 1793506604584,
+          "anchor": {
+            "cursor": 24192397,
+            "epoch": 1794242574491,
+            "at": 1794261478476,
+            "hash": "a8a99229cf8dfb13061bdc3b0e83b0ec3c16630aaec3483c78276bc58a0e3070"
+          },
+          "records": 82790,
+          "maxCursor": 25273362,
+          "hash": "60129321964581512529974518362455958307188347034469970979286512901084279369779",
+          "token": "65a57514357bc6855e26e79dd7924b248bf43da8e157381cb4a2a65f1e46230b",
+          "eligible": true
+        },
+        "sourceKey": "de739b192de35c8b85b404081ad4fc26974da3dd6ec4690670fc24a2de3b4748",
+        "coverage": {
+          "status": "partial",
+          "partial": true,
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794371400000,
+          "gapCount": 2,
+          "gapsTruncated": false,
+          "reason": "Depth continuity gaps are present in the requested range"
+        },
+        "projectionManifestReused": false,
+        "projectionKey": "0121aebb9d983b8fa6cfc73419e2496910d6d96084a90e1b3e9d0f339e59b24a",
+        "doneAt": 1794371567132
+      }
+    },
+    "baselineSource": "e4fa9b6ffa72e91e6be5f7579588217cfed76a7a",
+    "candidateSource": "cbe0bdcb5af1928a71e8bdfe559be5b75447b696",
+    "followupSource": "e6c64beda38aed64f58e6c399677e6ae225cce4b",
+    "bundles": {
+      "baseline": "dd82d2ac5c297ef1b1f5739f8f4fab62fde16b681c983061e0517c3c06706f6c",
+      "candidate": "edd59e6e8a9e5816be57ae4e1391ac562cdeec9efbe961e6081a7199ce4c4624",
+      "followup": "a28f927f073db67ad1e571496230a67dbf12deff4c1b7a4c9667e23599881e32"
+    },
+    "image": "sha256:3a67ff312a4924289717685b2c7aa53328e80f0dfd3af8e896bd347a3b848d43",
+    "protected": [
+      {
+        "name": "/iqterminal-history-api",
+        "id": "8b087d255b7262ff5b1543475c8c26610758ca8b37f0f99af8b54f3e0848336d",
+        "startedAt": "2026-11-09T10:14:21.244270641Z"
+      },
+      {
+        "name": "/iqterminal-server",
+        "id": "65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece",
+        "startedAt": "2026-10-25T10:58:27.590796454Z"
+      },
+      {
+        "name": "/iqterminal-spot-server",
+        "id": "a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb",
+        "startedAt": "2026-10-25T10:58:53.322433531Z"
+      },
+      {
+        "name": "/iqterminal-history-materializer",
+        "id": "d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34",
+        "startedAt": "2026-11-06T16:53:52.644213859Z"
+      },
+      {
+        "name": "/iqterminal-spot-history-materializer",
+        "id": "12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763",
+        "startedAt": "2026-11-06T16:53:52.682114009Z"
+      },
+      {
+        "name": "/iqterminal-footprint-materializer",
+        "id": "1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698",
+        "startedAt": "2026-11-06T16:53:52.623715016Z"
+      },
+      {
+        "name": "/iqterminal-spot-footprint-materializer",
+        "id": "8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447",
+        "startedAt": "2026-11-06T16:53:52.693763579Z"
+      },
+      {
+        "name": "/iqterminal-sql-admission",
+        "id": "625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b",
+        "startedAt": "2026-11-06T16:53:48.880958761Z"
+      }
+    ],
+    "scope": "Thirty unprofiled offline projection component builds, five per variant per market. Same pinned source per market, fresh output, alternating order, host filesystem cache not cleared. No raw cold build, browser, current ACK, chart paint or loading acceptance."
+  },
+  "groups": [
+    {
+      "market": "perpetual",
+      "variant": "baseline",
+      "samplesMs": [
+        27459.056167,
+        28416.575415000003,
+        27982.826259999998,
+        27246.09461,
+        27220.428805
+      ],
+      "medianMs": 27459.056167,
+      "maximumMs": 28416.575415000003,
+      "processSamplesMs": [
+        28946.108885109425,
+        29611.292026005685,
+        29254.85505256802,
+        28641.196130774915,
+        28411.114286631346
+      ],
+      "maximumSampledRssBytes": 178192384,
+      "maximumBuildingCheckpointBytes": 7419234,
+      "cpuSamplesMs": [
+        13515.748,
+        13933.88,
+        13779.031,
+        13394.058,
+        13253.615
+      ],
+      "checkpointHashes": [
+        "2c340503b5052da647a3a4e01ec8ca456dcf340c2321eb02ff547028de2ac2ca"
+      ],
+      "prefixHashes": [
+        "b5fc0243a3c75dec9fc098f288ef603268d5cf646521976823b092d15cb19a8c"
+      ]
+    },
+    {
+      "market": "perpetual",
+      "variant": "candidate",
+      "samplesMs": [
+        21580.574735,
+        22596.041144,
+        21746.538453,
+        21041.025979000002,
+        21260.656046
+      ],
+      "medianMs": 21580.574735,
+      "maximumMs": 22596.041144,
+      "processSamplesMs": [
+        22740.625244565308,
+        23885.222625918686,
+        22993.545001372695,
+        22286.253090016544,
+        22370.400493964553
+      ],
+      "maximumSampledRssBytes": 142991360,
+      "maximumBuildingCheckpointBytes": 1197317,
+      "cpuSamplesMs": [
+        9760.259,
+        10177.697,
+        9628.207,
+        9340.172,
+        9628.614
+      ],
+      "checkpointHashes": [
+        "2c340503b5052da647a3a4e01ec8ca456dcf340c2321eb02ff547028de2ac2ca"
+      ],
+      "prefixHashes": [
+        "b5fc0243a3c75dec9fc098f288ef603268d5cf646521976823b092d15cb19a8c"
+      ]
+    },
+    {
+      "market": "perpetual",
+      "variant": "followup",
+      "samplesMs": [
+        21112.278935,
+        20744.146028,
+        20686.424575,
+        21970.071508999998,
+        20988.76117
+      ],
+      "medianMs": 20988.76117,
+      "maximumMs": 21970.071508999998,
+      "processSamplesMs": [
+        22589.39130604267,
+        21743.156308308244,
+        21849.516961723566,
+        23500.181104056537,
+        22376.50913465768
+      ],
+      "maximumSampledRssBytes": 144871424,
+      "maximumBuildingCheckpointBytes": 1197317,
+      "cpuSamplesMs": [
+        9348.778,
+        8808.85,
+        9207.19,
+        9838.502,
+        9413.002
+      ],
+      "checkpointHashes": [
+        "2c340503b5052da647a3a4e01ec8ca456dcf340c2321eb02ff547028de2ac2ca"
+      ],
+      "prefixHashes": [
+        "b5fc0243a3c75dec9fc098f288ef603268d5cf646521976823b092d15cb19a8c"
+      ]
+    },
+    {
+      "market": "spot",
+      "variant": "baseline",
+      "samplesMs": [
+        4544.236514,
+        3767.710767,
+        4378.410496,
+        4504.69909,
+        4616.088326
+      ],
+      "medianMs": 4504.69909,
+      "maximumMs": 4616.088326,
+      "processSamplesMs": [
+        5362.851589918137,
+        4593.547843396664,
+        5195.2885976061225,
+        5395.325211808085,
+        5446.4172115549445
+      ],
+      "maximumSampledRssBytes": 104071168,
+      "maximumBuildingCheckpointBytes": 1342887,
+      "cpuSamplesMs": [
+        2167.898,
+        1816.27,
+        2098.48,
+        2157.543,
+        2190.047
+      ],
+      "checkpointHashes": [
+        "36f23583ddc09a093d344d2690181b5aa69f94691c76fc6b5b8a8fbfee087446"
+      ],
+      "prefixHashes": [
+        "6e2136acbea4d80119673a470fee613390492fd4a29f8c7431673a4571fac953"
+      ]
+    },
+    {
+      "market": "spot",
+      "variant": "candidate",
+      "samplesMs": [
+        5992.148402,
+        5994.423017,
+        5761.270133999999,
+        6050.377424,
+        6275.316834
+      ],
+      "medianMs": 5994.423017,
+      "maximumMs": 6275.316834,
+      "processSamplesMs": [
+        6842.37630199641,
+        6850.885981693864,
+        6582.44270272553,
+        6847.304651513696,
+        7039.9651965126395
+      ],
+      "maximumSampledRssBytes": 99295232,
+      "maximumBuildingCheckpointBytes": 333577,
+      "cpuSamplesMs": [
+        2295.287,
+        2488.969,
+        2268.849,
+        2359.601,
+        2541.894
+      ],
+      "checkpointHashes": [
+        "36f23583ddc09a093d344d2690181b5aa69f94691c76fc6b5b8a8fbfee087446"
+      ],
+      "prefixHashes": [
+        "6e2136acbea4d80119673a470fee613390492fd4a29f8c7431673a4571fac953"
+      ]
+    },
+    {
+      "market": "spot",
+      "variant": "followup",
+      "samplesMs": [
+        6751.464352,
+        5915.456659,
+        5906.818137,
+        6409.659738,
+        5759.28195
+      ],
+      "medianMs": 5915.456659,
+      "maximumMs": 6751.464352,
+      "processSamplesMs": [
+        7543.451282195747,
+        6550.314328633249,
+        6842.858716845512,
+        7289.126765914261,
+        6573.836410418153
+      ],
+      "maximumSampledRssBytes": 100286464,
+      "maximumBuildingCheckpointBytes": 333577,
+      "cpuSamplesMs": [
+        2968.755,
+        2460.687,
+        2350.573,
+        2586.045,
+        2312.921
+      ],
+      "checkpointHashes": [
+        "36f23583ddc09a093d344d2690181b5aa69f94691c76fc6b5b8a8fbfee087446"
+      ],
+      "prefixHashes": [
+        "6e2136acbea4d80119673a470fee613390492fd4a29f8c7431673a4571fac953"
+      ]
+    }
+  ],
+  "validation": {
+    "kind": "cohort-validated",
+    "leaseFailures": [],
+    "output": "/home/daz/iq-wall-index-v3-cohort-r2",
+    "servingUnchanged": true
+  }
+}

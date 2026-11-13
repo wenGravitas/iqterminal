@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-spot-5m": {
+      "from": 1794273000000,
+      "to": 1794381000000,
+      "sourceFrom": 1794272700000,
+      "sourceTo": 1794381300000,
+      "sourceToken": "e6b28663d3844d47c9f45e963982aea2fd6183b1c3434ccc74db404a9878f2d8",
+      "segments": 4507,
+      "valueRuns": 35149,
+      "gaps": 13,
+      "evidence": "stage33 fresh canonical shared-projector fold versus ready immutable projection; independently revalidated canonical source before and after",
+      "financialHash": "535b568bc257a034b08d6074830cc2b0dd20081aa281c319813a13ef12e78ffc"
+    },
+    "walls-30h-perp-15m": {
+      "from": 1794272400000,
+      "to": 1794380400000,
+      "sourceFrom": 1794271500000,
+      "sourceTo": 1794381300000,
+      "sourceToken": "6a30e3b2099928f64de3d4768f44dd83c6eb0c6ad3c0a9f336c2717117f11d9b",
+      "segments": 23886,
+      "valueRuns": 90254,
+      "gaps": 1,
+      "evidence": "stage33 fresh canonical shared-projector fold versus ready immutable projection; independently revalidated canonical source before and after",
+      "financialHash": "f4cc1429e8626cd542e67b6759bb2d97c5689fe897f953b02e8fd5a6bfd5d6ad"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "naturalEnd": {
+    "kind": "end",
+    "label": "wall-native-admission-r1",
+    "elapsedMs": 300035.229246,
+    "stopping": false
+  },
+  "observerSessionExitCode": 0,
+  "stopGuardExitCode": 1,
+  "scope": "Read-only observer completed its300s window before the guarded stop request. Process handle confirmed terminal; no signal sent and no observer restart."
+}

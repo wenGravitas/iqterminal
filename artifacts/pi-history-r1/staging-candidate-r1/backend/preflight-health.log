@@ -1,0 +1,112 @@
+# IQTerminal server checkpoint
+
+Completed durable REST milestone commits2140dbb/ecfc395. Streaming implementation commit af29a17; final native-stream evidence committed separately. Independent backend /opt/iqterminal; client /home/daz/workarea/iqterminal on Pi retains local uncommitted integration work. No hosted push/destination created; no credentials copied.
+
+Runtime: Docker supervised iqterminal-server + iqterminal-clickhouse, restart unless-stopped, Docker enabled at boot. API127.0.0.1:18780; CH host127.0.0.1:18123/19000. Pi loopback tunnel18780 and Vite5173. tmux iqterminal-server-dev detached, development only. Existing other services/policy preserved.
+
+Pipeline: routed Binance market WebSocket aggregate executions plus native klines;10000 volatile buffer,1000-record durable batch/250ms plus persistence cost; atomic fsynced checkpoint precedes publication. REST bootstrap/gap repair,47h conservative horizon, explicit unresolved gaps. Query FINAL dedup before merges. Cursor ACKed live/replay to Pi shared worker accumulator restored from bounded history. Native reconnect refreshes native REST candles; script OHLCV provenance preserved. OI observed30s.
+
+Bounds:16 sockets,1MiB outbound,1KiB inbound,15s ACK/heartbeat timeout,4 shared queries,300 bars/18000 cells/512 per bar. Server7d asynchronousTTL; pause32GiB parts orfree<20GiB, ~50GB budget. Inactive parts lifetime60s reduces merge overhead. Logs bounded; no hardquota claim.
+
+Evidence: logs/dev-validate.exit=0 (13 pure tests, typecheck/build, actual API volume/reload/dedup/OI/coverage); logs/dev-lifecycle.exit=0 (actual WS cursor reconnect, SIGUSR1 collector recovery, controlled app restart, retained bar parity and missing-ACK disconnect). docs/streaming-latency.json stores30s live samples; docs/recorded-coverage.json refreshed. Pi client182 tests/typecheck/build pass; actual browser artifacts and further cursor-parity/volume checks in scripts/verify-staging.mjs. Final Pi cursor handoff and UI timeframe volume parity pass; native live-volume/reconnect-history verifier also passes. Inspect docs/VERIFICATION.md for evidence and limits.
+
+Resume: ssh -t staging 'tmux attach -t iqterminal-server-dev'. Run via IQ_RUN_LABEL=validate bash ops/dev-run.sh bash ops/validate.sh. Lifecycle: IQ_RUN_LABEL=lifecycle bash ops/dev-run.sh /home/daz/.nvm/versions/node/v22.22.1/bin/node tests/stream-integration.mjs. Both use real services and lifecycle intentionally restarts app. SIGUSR1 reconnects collector through normal repair path without stopping API. Keep source/build/test/data on staging. Read docs/CONTRACT.md, STREAMING.md, SHARED.md and README first.
+
+Limits: overflow/missing-sequence/expired recovery tested with deterministic fixtures; actual browser displays real unrecorded coverage. No forced loss of actual venue records,23h elapsed rotation,reboot,full disk,7d expiry or sustained burst/desktop60fps acceptance. Pi headless timings are observations, include variable host load and clock dependence. Normal direct markets remain unchanged; no silent fallback.
+
+Durable order-book milestone completed; read CHECKPOINT-DEPTH.md and docs/DEPTH.md before resuming. Preserves all existing execution/OI/native routes. Depth has continuous independent standard diff-depth collection, per-epoch gaps and partial outer semantics; same storage budget and private service topology. Pi integration and actual wide viewport evidence are documented.
+# Prepared history deployed checkpoint
+
+Repository remains /opt/iqterminal; no duplicate checkout or push. Source commits:
+9fe396b (stage timings), b366aac (materialization/API/lifecycle), a66b781 (calculation
+identity and corrected availability), 8ee4a3f (guarded operations/reproduction).
+Preexisting CONTRACT/DEPTH, depth-book/server, query-admission and their tests are
+preserved outside these commits. Their original diff is logs/history-tiles/preexisting.patch.
+
+Collector iqterminal-server has run since 2026-10-13T15:54:46Z, ID3df0acd82749,
+restart count0. API/materializer have run since18:20:12Z that day, restart count0.
+All five Compose services (including unchanged ClickHouse/Level Watch) are healthy
+on October16; collection live, materializer backlog empty. Existing loopback-only
+listeners and SSH route are preserved. No new exchange connection or public port.
+
+Only the one-time lifecycle split restarted collection. Subsequent independent
+rollouts did not. Source epochs rotate/reconnect honestly; no stale book state is
+carried across a gap. The old container is not retained; rollback uses saved image
+`iqterminal-server:before-history` and `logs/history-tiles/compose-before.yaml`.
+Prefer client VITE_HISTORY_TILES=0 rollback without restarting collection.
+
+Validation evidence under logs/history-tiles:
+- final-validation.exit=0: typecheck,48 tests, full wide coverage check.
+- reference-comparison.json: eight exact real quiet/active comparisons.
+- restart-proof.json: actual checkpoint resume, collector unchanged, exact15m/$19
+  output and unchanged revision after identical correction.
+- canonical-check.json: overlapping execution batches and late replacement.
+- admission-check.json: four successes/eight503 with Retry-After1, oversized400.
+- resource-summary.json:480 samples during rebuilds, no collector overflows.
+- final-health.json: service identity, health, restart policy, cgroup peaks/OOM
+  counters, backlog, private listeners and disk budget snapshot.
+- expired-window-guard.exit=1: expected refusal before deleting derived entries
+  after the old raw benchmark window expired. No source data was removed.
+
+The final deployment job closure-rollout exited1 only because its immediately
+chained HTTP probe preceded readiness. Containers deployed and stayed healthy;
+final-validation repeats the probe successfully. Routine ops/history-rollout.sh
+now waits for actual readiness and asserts unchanged collector ID/start time.
+
+Pi measurements use the real local Chromium client over SSH/Vite. Five October13
+A/B/C/D/E trials completed, including actual first-use rebuilds. Later final-client
+A/B/D/E repeats are documented separately, not pooled. The cold<5s engineering
+target is still missed; report actual transfer/processing stages and host limits.
+See docs/HISTORY-TILES.md and docs/history-performance.md for architecture, exact
+semantics, commands, migration/retention/correction policy, measurements and rollback.
+
+Long jobs use named tmux iqterminal-history and ops/history-run.sh, bounded logs
+and .exit markers. Docker Compose remains the durable supervisor. Do not restart
+collector for API/materializer work, evict expired benchmark source, delete raw
+history, or resolve resource pressure by raising every limit.
+# API v1
+Only binance:perpetual:BTCUSDT. GET JSON, [from,to) UTC milliseconds. Optional symbol must be BTCUSDT. Maximum raw/aggregate/OI range 4 hours; raw pages 1..1000; aggregation at most 250000 executions, 300 bars, 18000 cells, 512 cells/bar (capacity flags preserved). Errors are explicit; no fallback.
+- /v1/health: DB reachability, collector freshness/retries, disk pause, metadata and OI freshness.
+- /v1/capabilities: instrument, transports, limits, tickSize, retention.
+- /v1/coverage?from=&to=: confirmed bounds, explicit gaps, completeness, durable aggregate ID watermark, OI status. Unrecorded/expired/current tail differs from a covered empty interval.
+- /v1/executions?from=&to=&after=0&limit=1000&watermark=: ordered id > after AND id <= watermark, page nextAfter (null at end). Capture watermark on page 1; retain it for all history pages. Then /v1/live with after=cursor and a NEW watermark catches the durable tail. Inserts become visible to clients only after committed checkpoint. FINAL eliminates replay duplicates before async merges.
+- /v1/footprints?from=&to=&interval=1m&rowPrice=25&watermark=: common pure client accumulator, full bounded replacement bars. Same interval and identical complete bounds reproduce values. Execution-derived OHLC and quote volume also returned. No approximate quote volume.
+- /v1/execution-candles: same execution-derived projection, never native/script OHLCV.
+- /v1/native-candles?interval=1m&from=: proxied native Binance klines (1000 max, 2s cache); explicitly separate source and cumulative base/actual native quote volume. Native candles are not durable executions.
+- /v1/oi?from=&to=: observed samples only, sourceTimeMs, observedAtMs, value BTC, max 1000 rows and truncated flag, gaps. No historical backfill/interpolation.
+- WS /v1/stream: subscribe `{type:"subscribe",version:1,after,from}` for executions, or include native `interval`. `from` must be within4h; cursor cannot exceed durable head. Server sends `{type:"executions",version:1,after,cursor,watermark,executions,coverage,collector,tickSize,sentAt}`. Rows strictly after acknowledged cursor, no more1000 per batch. ACK `{type:"ack",cursor}` must match the sole pending batch;15s timeout disconnects. Query FINAL remains authoritative. Heartbeat `{type:"health",collector,watermark,metrics,sentAt}` every5s. Invalid resume emits `reset`, closes and requires bounded rebootstrap. Native `{type:"native-candle",source:"binance-native-kline",interval,candle}` events are separate. Unknown command fields/versions rejected; maximum16 sockets,1KiB inbound commands,1MiB buffered output,4 shared queries. HTTP history admits at most3 slots, reserving one for durable execution replay; only one entire heatmap request is admitted before database/worker work. Contention returns503 with Retry-After:1.
+
+Execution fields reuse client NormalizedExecution + receive timestamp, actual quoteNotional, original decimal strings in database, first/last underlying trade IDs. REST has no event-publication E: eventTimeMs is null, timeMs is venue execution T. aggTrade records are aggregate market executions, not orders/positions. RPI q included, insurance/ADL excluded by venue.
+Bootstrap starts15m before initial startup. Connect official `/market/stream` before REST catch-up. At most10000 volatile executions,1000-record commits with250ms pacing plus insert/fsync time. Publish durable head only after insert and atomic fsynced checkpoint. Out-of-order WS records sort by aggregate ID; overlap deduplicates. Missing IDs switch to REST fromId inclusive pagination, with two retries before retaining an explicit gap. REST uses shared300ms gate, >1600 used-weight cooldown and429/418 Retry-After. Recovery retains conservative47h cutoff within documented48h horizon. Overflow reconnects and replays durable checkpoint; no silently complete coverage. Rotation23h, ws ping/pong,15s traffic watchdog, bounded30s retry with jitter. OI remains observed30s. Confirmed coverage ends exclusively at latest durable execution T, not wall-clock now.
+Footprint HTTP response includes `cursor`: last execution actually included in bounded [from,to) snapshot (or watermark for an empty snapshot). Resume from cursor rather than assuming all records through watermark fit a time boundary.
+
+Copied shared/footprint.ts is the client's pure accumulator, with only .ts import extension adapted. shared/protocol.ts supplies runtime grids/durations. Update together and compare checksums/fixtures; do not fork aggregation semantics.
+
+## Durable depth extension
+
+See [DEPTH.md](DEPTH.md) for `/v1/depth-coverage`, `/v1/heatmap` and acknowledged `/v1/stream` depth-head invalidations, units, synchronization, side-specific partial coverage, replay budgets and retention. These extend v1 without changing aggregate execution or native candle semantics.
+NAME                                     IMAGE                                                                     COMMAND                  SERVICE                       CREATED        STATUS                  PORTS
+iqterminal-clickhouse                    clickhouse/clickhouse-server:25.8.16.34                                   "/entrypoint.sh"         clickhouse                    4 weeks ago    Up 4 weeks (healthy)    9009/tcp, 127.0.0.1:18123->8123/tcp, 127.0.0.1:19000->9000/tcp
+iqterminal-effort-result                 iqterminal-effort-result:local                                            "docker-entrypoint.s…"   effort-result                 2 weeks ago    Up 2 weeks (healthy)    
+iqterminal-footprint-materializer        iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66          "docker-entrypoint.s…"   footprint-materializer        4 days ago     Up 4 days (healthy)     
+iqterminal-history-api                   iqterminal-perf-history:dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51          "docker-entrypoint.s…"   app                           45 hours ago   Up 45 hours (healthy)   
+iqterminal-history-materializer          iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66          "docker-entrypoint.s…"   materializer                  4 days ago     Up 4 days (healthy)     
+iqterminal-level-watch                   iqterminal-server-level-watch                                             "docker-entrypoint.s…"   level-watch                   4 weeks ago    Up 4 weeks (healthy)    
+iqterminal-liquidations                  sha256:27240a2cf8045235fea419c784f6c434f63ee84aab53a49d2264d258f72ddc70   "docker-entrypoint.s…"   liquidations                  2 weeks ago    Up 2 weeks (healthy)    
+iqterminal-server                        sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a   "docker-entrypoint.s…"   collector                     2 weeks ago    Up 2 weeks (healthy)    
+iqterminal-spot-footprint-materializer   iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66          "docker-entrypoint.s…"   spot-footprint-materializer   4 days ago     Up 4 days (healthy)     
+iqterminal-spot-history-materializer     iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66          "docker-entrypoint.s…"   spot-materializer             4 days ago     Up 4 days (healthy)     
+iqterminal-spot-server                   sha256:474e135196dcb68166e3d7cf6573f35fc57aa285f3483663fc5a1918e501f819   "docker-entrypoint.s…"   spot-collector                2 weeks ago    Up 2 weeks (healthy)    
+iqterminal-sql-admission                 iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66          "docker-entrypoint.s…"   sql-admission                 4 days ago     Up 4 days (healthy)     
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/md3        436G  237G  177G  58% /
+ 08:10:56 up 71 days,  2:38, 26 users,  load average: 5.22, 5.46, 5.55
+  UNIT                         LOAD   ACTIVE SUB    DESCRIPTION
+● aide-check.service           loaded failed failed Run the root AIDE integrity check and send a bounded report
+● staging-restore-test.service loaded failed failed Weekly Squawkdeck staging restic restore test
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+2 loaded units listed.
+{"enabled":true,"build":"dca1bb8aca42fda653a003f4bd1bb9a9b6c7cb51","metrics":{"requests":2379,"rejected":0,"bytes":181551619,"serializeMs":1228.69095798715,"legacyHeatmap":0,"legacyFootprint":0,"closedTileReads":0,"manifests":0,"orderWallPages":14,"peakRss":225505280,"active":1,"history":0,"reservedCurrent":1,"limit":4,"rss":225820672},"wallProjectionEncoding":{"active":0,"limit":3,"cacheEntries":19,"cacheBytes":8322580},"materializer":{"version":1,"head":{"cursor":25368358,"at":1794381055044,"epoch":1794309145901},"live":{"cursor":25368358,"at":1794381055044,"from":1794381000000,"widths":[10,25,50,100,250,1000]},"archive":{"pinned":{"pages":1,"processed":22,"cursor":25368345,"lag":0,"caughtUp":true},"current":[{"profile":"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1","lane":"pinned","pages":1,"processed":22,"cursor":25368345,"lag":0,"caughtUp":true},{"profile":"binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1","lane":"pinned","pages":1,"processed":21,"cursor":21442105,"lag":0,"caughtUp":true}],"custom":[],"customWorker":"perpetual-materializer"},"metrics":{"startedAt":1793984035129,"lastPoll":1794381055934,"lastPersist":1794381001867,"records":3891328,"closedBuckets":7944,"liveLagMs":0,"derivedBytes":1161104552,"freeBytes":189395656704,"paused":false,"error":"","pages":165736,"pageMs":5991781.924672552,"accumulateMs":4102007.4169987454,"persistMs":589220.1306940358,"peakRss":615284736,"sourceHeadAgeMs":1201,"liveAgeMs":1201,"rss":475308032},"backlog":[]},"sqlAdmission":{"enabled":true,"version":1,"build":"18579d938364e5fd5a9c7631bb19681a043f1b66","completed":8485827,"cancelled":34,"rejected":0,"peakActive":2,"peakQueued":5,"waitMs":249551916.75072855,"maxWaitMs":830.0502929985523,"active":1,"history":1,"queued":0,"waiting":{"current":0,"visible":0,"background":0},"limit":2,"reservedCurrent":1,"oldestWaitMs":0,"rss":98893824}}{"version":1,"market":"perpetual","instrument":"binance:perpetual:BTCUSDT","collector":{"state":"live","message":"Durable WebSocket aggregate executions","lastUpdate":1794381056183,"retries":0},"depth":{"head":{"cursor":25368365,"at":1794381055760,"epoch":1794309145901},"status":{"state":"live","message":"Durable standard diff-depth · RPI excluded · partial outer regions","epoch":1794309145901,"lastUpdate":1794381056167,"bidFloor":74175.9,"askCeiling":74437.8,"sequence":12076442726584},"metrics":{"events":14233923,"changes":1696486314,"wireBytes":37951633612,"storedPayloadBytes":131452398047,"overflows":0,"reconnects":167,"queue":4,"levels":192756,"startAt":1792925907805},"retention":{"lastRun":1794380308429,"error":null}},"metrics":{"transport":"websocket","queue":1,"overflows":0,"recoveries":251,"exchangeToReceiveMs":139,"receiveToDurableMs":663,"ingestionLagMs":688},"disk":{"bytes":6599087504,"free":189416730624,"paused":false},"watermark":{"id":3515994284,"timeMs":1794381055563},"tickSize":0.1,"oi":{"lastObservedAt":1794381026013,"error":null,"stale":false},"netPositioning":{"version":1,"pendingIntervals":0,"feeds":{"binance":{"state":"live","source":"binance:fapi/v1/openInterest","lastObservedAt":1794381026013,"lastError":null,"epoch":1794307857735,"sourceTimeQuality":"exchange-event"},"hyperliquid":{"state":"live","source":"hyperliquid:metaAndAssetCtxs","lastObservedAt":1794381026993,"lastError":null,"epoch":1794373810526,"lastTradeAt":1794381055287,"overflows":37,"reconnects":160,"sourceTimeQuality":"collector-sampled"}},"bufferedHyperliquidTrades":740,"bufferCapacity":10000}}{"version":1,"market":"perpetual","instrument":"binance:perpetual:BTCUSDT","collector":{"state":"live","message":"Durable WebSocket aggregate executions","lastUpdate":1794381056183,"retries":0},"depth":{"head":{"cursor":25368365,"at":1794381055760,"epoch":1794309145901},"status":{"state":"live","message":"Durable standard diff-depth · RPI excluded · partial outer regions","epoch":1794309145901,"lastUpdate":1794381056167,"bidFloor":74175.9,"askCeiling":74437.8,"sequence":12076442726584},"metrics":{"events":14233923,"changes":1696486314,"wireBytes":37951633612,"storedPayloadBytes":131452398047,"overflows":0,"reconnects":167,"queue":4,"levels":192756,"startAt":1792925907805},"retention":{"lastRun":1794380308429,"error":null}},"metrics":{"transport":"websocket","queue":1,"overflows":0,"recoveries":251,"exchangeToReceiveMs":139,"receiveToDurableMs":663,"ingestionLagMs":693},"disk":{"bytes":6599087504,"free":189416730624,"paused":false},"watermark":{"id":3515994284,"timeMs":1794381055563},"tickSize":0.1,"oi":{"lastObservedAt":1794381026013,"error":null,"stale":false},"netPositioning":{"version":1,"pendingIntervals":0,"feeds":{"binance":{"state":"live","source":"binance:fapi/v1/openInterest","lastObservedAt":1794381026013,"lastError":null,"epoch":1794307857735,"sourceTimeQuality":"exchange-event"},"hyperliquid":{"state":"live","source":"hyperliquid:metaAndAssetCtxs","lastObservedAt":1794381026993,"lastError":null,"epoch":1794373810526,"lastTradeAt":1794381055287,"overflows":37,"reconnects":160,"sourceTimeQuality":"collector-sampled"}},"bufferedHyperliquidTrades":740,"bufferCapacity":10000}}

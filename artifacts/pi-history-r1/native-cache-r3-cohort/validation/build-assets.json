@@ -1,0 +1,31 @@
+{
+  "clientBuild": "1ef788c439499b815fa2328e88b7712f9da9335d",
+  "fixtureScreenshots": "four focused headless native-history regression tests; distinct from actual-route loading samples",
+  "assets": {
+    "dist/theme-init.js": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+    "dist/index.html": "0ac372fb71fd3a52dad71501adc6caeb817e674abdd63e37e39dd572e528069e",
+    "dist/venues/binance.ico": "8318ebbcb1cb4729eb0f78bb058dc618c3b63f9f9f0070a1a7a3265fdc79b833",
+    "dist/venues/bybit.svg": "c7b0b277b6b02b086d33ba049ae1c62cfdc496a03aee68f69f7326a51322804b",
+    "dist/venues/NOTICE.txt": "a9301e5058dd46d23e4833fe1cd263e093d60c973bd7c90846f29160cdc5b556",
+    "dist/venues/hyperliquid.png": "3cf31bdb20f8ad764b3c0368fd20106991b0b8ae3ba64f5dfebb0c468fa9b08f",
+    "dist/assets/worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "dist/assets/main-DuadqPLo.css": "5caf8d6e3ccd3ef234c5ab99dfea43b02956db4856703f631771e9ac864e94ac",
+    "dist/assets/index-CMhiBG-F.js": "060f1bb5a3815443ed8487446be3a0169c9e51dc0eb3fe44aac39e41393acb85",
+    "dist/assets/editor-C9VFkpfA.js": "af4bc47ea7fa403a4be9313b659c19f086191f220be642002ebe87bd7817becc",
+    "dist/assets/worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9",
+    "dist/assets/worker-BrnCd0xd.js": "2b46191d45a8c0f2d3ccf9ed23b6e6fc47ed4c2063224a90d1d0fc4dfa8d0820",
+    "dist/assets/main-Du_yPNBr.js": "9de22a54a6c6573fdddf5ceb9ab2dd551b1bc1b545b8a5420e5d73d44344d6e8",
+    "dist/licenses/dockview-core-MIT.txt": "1d56757fdc06c9b33c0f80821efe4f4b11960dd7fb6544232cff61752101f513",
+    "dist/licenses/theme-palettes-NOTICE.txt": "7b48b764baa657cfe16f9ff1eeedaf087e1162743f75f1aa35b0868706635ea1",
+    "dist/licenses/hyperliquid-sdk-MIT.txt": "dc69b5f489b78ff65d128fe457f39b0e8d1d707d84e23beafe6a6a16209c38e7",
+    "dist/licenses/decimal-js-MIT.txt": "3108b546bcff5d346923a82f48b2d252ca722f9088076db6d145f6b67757ad6c",
+    "dist/licenses/noble-hashes-MIT.txt": "4f221aee6e072336700c408c68ab3b96a3fc09f6aebe6f48f1bd99e5ef13faec",
+    "dist/licenses/viem-MIT.txt": "091d17ae5f625ffeb381e7109daaf6c492dd32502d612d8ecd24e2ddf6d16b74",
+    "dist/licenses/axis-grid-NOTICE.txt": "ae174a14f4ed4415ef054ee886da693d13092a2fc4f1639133db09db28ad3bdd",
+    "dist/licenses/index.html": "b116e62788e3a5e281ebb0ff1ce98ecec711e55a7303f98cb83b2f83687765b9",
+    "dist/licenses/openalgo-script/LICENSE": "ede6b8620b0f3598fc4982a2f238a62c1cb9283cfbadf0b0efa9d13888b344cd",
+    "dist/licenses/openalgo-script/NOTICE": "7964c364534a2c2c9dbf655e3246d188b5f829d3c4e3b1bc4c2f3fbbdab65f2f",
+    "dist/licenses/openalgo-charts/LICENSE": "ede6b8620b0f3598fc4982a2f238a62c1cb9283cfbadf0b0efa9d13888b344cd",
+    "dist/licenses/openalgo-charts/NOTICE": "80f17fec44125e186ef7dc36913e849831b651f02f38430c7d6f49c30a704bf4"
+  }
+}

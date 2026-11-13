@@ -1,0 +1,68 @@
+
+ RUN  v5.0.3 /tmp/iq-wall-client-baseline-728-pAT1WK
+
+ ❯ tests/prepared-wall-history.test.ts (24 tests | 4 failed | 20 skipped) 3090ms
+   × admitted cold preparation remains incomplete until real prepared content validates, without serial fallback 60ms
+   × service Retry clears query build failure with a stable command and no current reconnect 1014ms
+   × service Retry clears source-changed build failure with a stable command and no current reconnect 1007ms
+   × specific nonretryable preparation failure is preserved in the chart history status 1006ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > admitted cold preparation remains incomplete until real prepared content validates, without serial fallback
+Error: Prepared chart must not use serial legacy pages: /market-data/v1/order-walls/archive
+ ❯ Object.<anonymous> tests/prepared-wall-history.test.ts:51:9
+     49|    active++;peak=Math.max(peak,active);try{await options.beforePart?.(…
+     50|   }
+     51|   throw Error('Prepared chart must not use serial legacy pages: '+url.…
+       |         ^
+     52|  });
+     53|  return {fetcher:fetcher as typeof fetch,calls,peak:()=>peak};
+ ❯ fetcher tests/prepared-wall-history.test.ts:61:183
+ ❯ correlatedFetcher src/feed/order-walls-archive.ts:376:60
+ ❯ fetchArchivePageWithRetry src/feed/order-walls-archive.ts:699:30
+ ❯ Object.run src/feed/order-walls-archive.ts:442:132
+ ❯ src/feed/history-scheduler.ts:20:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears query build failure with a stable command and no current reconnect
+ FAIL  tests/prepared-wall-history.test.ts > service Retry clears source-changed build failure with a stable command and no current reconnect
+AssertionError: expected 'Order Walls history request failed: P…' to match /Failure removed/
+
+- Expected:
+/Failure removed/
+
++ Received:
+"Order Walls history request failed: Prepared chart must not use serial legacy pages: /market-data/v1/order-walls/archive"
+
+ ❯ tests/prepared-wall-history.test.ts:79:156
+     77|  const service=new OrderWallsArchiveService(event=>events.push(event),…
+     78|  try{
+     79|   service.subscribe('prepare-retry',{market:'binance-spot',from,to,set…
+       |                                                                                                                                                            ^
+     80|   expect(events.at(-1).status.archive).toMatchObject({requestComplete:…
+     81|   await vi.waitFor(()=>expect(events.at(-1)?.status?.archive?.requestC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > specific nonretryable preparation failure is preserved in the chart history status
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/prepared-wall-history.test.ts:90:169
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 20 skipped (24)
+   Start at  13:59:41
+   Duration  3.78s (tests 85%, transform 13%, import 2%)
+

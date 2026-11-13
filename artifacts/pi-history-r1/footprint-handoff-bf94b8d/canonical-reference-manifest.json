@@ -1,0 +1,42 @@
+{
+  "scope": "Strict independent canonical FINAL execution-cursor financial comparison for one 1h and one5mUSD-M bar. Bounded real samples, separate from loading and cold build gates.",
+  "applicationBuild": "970541b79b1a9470f79a3644f5e8cdb8444420a9",
+  "servingBuild": "95114d0cb236e9de54fb535d58b901d5ac4a2d79",
+  "nodeVersion": "v22.23.4",
+  "protectedUnchanged": true,
+  "referenceContract": "Ordered Float64 price*quantity per execution, matching the incumbent shared FootprintAccumulator. The initial direct-Decimal-as-double reference failure and its executed source are retained. No tolerances or financial-runtime edits.",
+  "samples": [
+    {
+      "interval": "1h",
+      "from": 1793743200000,
+      "to": 1793746800000,
+      "records": 14626,
+      "cells": 8,
+      "pages": 8,
+      "watermark": 3510574096,
+      "preparedRevision": 1793949681523000,
+      "result": "exact-match"
+    },
+    {
+      "interval": "5m",
+      "from": 1793791500000,
+      "to": 1793791800000,
+      "records": 1397,
+      "cells": 4,
+      "pages": 1,
+      "watermark": 3510574103,
+      "preparedRevision": 1793949836502000,
+      "result": "exact-match"
+    }
+  ],
+  "sha256": {
+    "protected-before.txt": "5068480c25efc31669087b6d4b5939848e792067787424cb3d51fa85920f37b0",
+    "1h-chart.json": "a9df79bfbacc61e0a60fff65f7bbbbc2efead5a69352ea84469932ef5cf30102",
+    "executed-canonical.mjs": "20072d41877e2ba73bd8e35123367a162b23e0cfaf95da6ab4ca55b603a2c289",
+    "5m-chart.json": "c48ae067d90f142d3455a752ba0138690788eeaa7cfcae7a5876f170f00bdc29",
+    "1h-reference.log": "afc84415e5cd966affb32cbe4489f2df57716d1e9b0139e8c81b40950962ba7b",
+    "executed-stored-quote.mjs": "4b29e916f773d637ce68ba93d871a2d9e1f44ea41414c17917d96393a596ffdb",
+    "after-metadata.json": "a53e86f94d87f7d9e492638519f94db2e590d358f2b35832be91b294fcf74842",
+    "canonical-reference.log": "7f1f10f02923128dff99a9eb956140ca95397a2d74949ce4c1218bc644adc7f1"
+  }
+}

@@ -1,0 +1,1806 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+... Skipped lines
+
+  [
+    {
+      coverage: {
+        availableFrom: 1793506604584,
+        bookScope: {
+...
+        availableFrom: 1793506604584,
++       bookScope: null,
+-       bookScope: {
+-         bandCoverage: {
+-           asks: 'partial',
+-           bids: 'partial'
+-         },
+-         observedAskHigh: '1630765.3',
+-         observedBidLow: '556.8',
+-         observedLevels: {
+-           asks: 18890,
+-           bids: 22708
+-         },
+-         outerCoverage: 'snapshot-bounded',
+-         requestedBand: {
+-           askHigh: '83245.965',
+-           askLow: '75678.15',
+-           bidHigh: '75678.15',
+-           bidLow: '68110.335'
+-         },
+-         snapshotAskCeiling: '75952.8',
+-         snapshotBidFloor: '75663.7',
+-         snapshotLevels: {
+-           asks: 51610,
+-           bids: 91464
+-         }
+-       },
+        confirmedTo: 1793804400000,
+        gaps: [
+          {
+            at: 1793801475954,
+            cursor: 19684265,
+...
+        gapsTruncated: false,
++       midpoint: null,
+-       midpoint: '75678.15',
+        partial: true,
+        reason: 'Depth continuity gaps are present in the requested range',
+        requestedFrom: 1793800800000,
+        requestedTo: 1793804400000,
+        status: 'partial'
+...
+        availableFrom: 1793506604584,
++       bookScope: null,
+-       bookScope: {
+-         bandCoverage: {
+-           asks: 'partial',
+-           bids: 'partial'
+-         },
+-         observedAskHigh: '1630765.3',
+-         observedBidLow: '556.8',
+-         observedLevels: {
+-           asks: 18890,
+-           bids: 22708
+-         },
+-         outerCoverage: 'snapshot-bounded',
+-         requestedBand: {
+-           askHigh: '83245.965',
+-           askLow: '75678.15',
+-           bidHigh: '75678.15',
+-           bidLow: '68110.335'
+-         },
+-         snapshotAskCeiling: '75952.8',
+-         snapshotBidFloor: '75663.7',
+-         snapshotLevels: {
+-           asks: 51610,
+-           bids: 91464
+-         }
+-       },
+        confirmedTo: 1793804400000,
+        gaps: [
+          {
+            at: 1793801475954,
+            cursor: 19684265,
+...
+        gapsTruncated: false,
++       midpoint: null,
+-       midpoint: '75678.15',
+        partial: true,
+        reason: 'Depth continuity gaps are present in the requested range',
+        requestedFrom: 1793800800000,
+        requestedTo: 1793804400000,
+        status: 'partial'
+...
+        availableFrom: 1793506604584,
++       bookScope: null,
+-       bookScope: {
+-         bandCoverage: {
+-           asks: 'partial',
+-           bids: 'partial'
+-         },
+-         observedAskHigh: '1630765.3',
+-         observedBidLow: '556.8',
+-         observedLevels: {
+-           asks: 18890,
+-           bids: 22708
+-         },
+-         outerCoverage: 'snapshot-bounded',
+-         requestedBand: {
+-           askHigh: '83245.965',
+-           askLow: '75678.15',
+-           bidHigh: '75678.15',
+-           bidLow: '68110.335'
+-         },
+-         snapshotAskCeiling: '75952.8',
+-         snapshotBidFloor: '75663.7',
+-         snapshotLevels: {
+-           asks: 51610,
+-           bids: 91464
+-         }
+-       },
+        confirmedTo: 1793804400000,
+        gaps: [
+          {
+            at: 1793801475954,
+            cursor: 19684265,
+...
+        gapsTruncated: false,
++       midpoint: null,
+-       midpoint: '75678.15',
+        partial: true,
+        reason: 'Depth continuity gaps are present in the requested range',
+        requestedFrom: 1793800800000,
+        requestedTo: 1793804400000,
+        status: 'partial'
+...
+        availableFrom: 1793506604584,
++       bookScope: null,
+-       bookScope: {
+-         bandCoverage: {
+-           asks: 'partial',
+-           bids: 'partial'
+-         },
+-         observedAskHigh: '1630765.3',
+-         observedBidLow: '556.8',
+-         observedLevels: {
+-           asks: 18890,
+-           bids: 22708
+-         },
+-         outerCoverage: 'snapshot-bounded',
+-         requestedBand: {
+-           askHigh: '83245.965',
+-           askLow: '75678.15',
+-           bidHigh: '75678.15',
+-           bidLow: '68110.335'
+-         },
+-         snapshotAskCeiling: '75952.8',
+-         snapshotBidFloor: '75663.7',
+-         snapshotLevels: {
+-           asks: 51610,
+-           bids: 91464
+-         }
+-       },
+        confirmedTo: 1793804400000,
+        gaps: [
+          {
+            at: 1793801475954,
+            cursor: 19684265,
+...
+        gapsTruncated: false,
++       midpoint: null,
+-       midpoint: '75678.15',
+        partial: true,
+        reason: 'Depth continuity gaps are present in the requested range',
+        requestedFrom: 1793800800000,
+        requestedTo: 1793804400000,
+        status: 'partial'
+
+    at file:///home/daz/iqterminal-perf-history/ops/pi-wall-chunk-reference.mjs:20:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      version: 1,
+      displayVersion: 1,
+      snapshot: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:21179512:1793800800000:1793804400000',
+      profile: {
+        id: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+        version: 1,
+        market: 'perpetual',
+        venue: 'binance',
+        instrument: 'binance:perpetual:BTCUSDT',
+        feed: 'binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded',
+        aggregation: 'native',
+        bandPercent: 10,
+        selectionTopN: 10,
+        minimumNotionalUsd: null,
+        confirmationMs: 0,
+        midpointBasis: 'best-observed-bid-ask',
+        topN: 10,
+        algorithmVersion: 1,
+        schemaVersion: 1,
+        exactDerivations: {
+          bandPercent: [ 10 ],
+          topNMax: 10,
+          minimumNotional: true,
+          confirmation: true,
+          confirmationCrossings: true
+        }
+      },
+      market: 'perpetual',
+      instrument: 'binance:perpetual:BTCUSDT',
+      feed: 'binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded',
+      from: 1793800800000,
+      to: 1793804400000,
+      watermark: 21179512,
+      head: { cursor: 21179512, at: 1793955066879, epoch: 1793901708971 },
+      page: {
+        after: 19677609,
+        nextAfter: 19684382,
+        hasMore: true,
+        lastAt: 1793801522561,
+        limit: 512,
+        observations: 512,
+        sameMillisecondClosed: true
+      },
+      seed: {
+        cursor: 19677609,
+        epoch: 1793800727656,
+        at: 1793800799370,
+        midpoint: '78338.25',
+        bookScope: {
+          outerCoverage: 'snapshot-bounded',
+          snapshotLevels: { bids: 1000, asks: 1000 },
+          snapshotBidFloor: '78185.9',
+          snapshotAskCeiling: '78458.4',
+          observedBidLow: '1000',
+          observedAskHigh: '95580',
+          observedLevels: { bids: 2228, asks: 1967 },
+          requestedBand: {
+            bidLow: '70504.425',
+            bidHigh: '78338.25',
+            askLow: '78338.25',
+            askHigh: '86172.075'
+          },
+          bandCoverage: { bids: 'partial', asks: 'partial' }
+        },
+        bids: [
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677291:bids:7400000000000',
+            side: 'bid',
+            price: '74000',
+            quantity: '347.77',
+            notional: '25734980',
+            rank: 1,
+            startedAt: 1793800767036,
+            startCursor: 19677291,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800767036
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19676954:bids:7450000000000',
+            side: 'bid',
+            price: '74500',
+            quantity: '216.651',
+            notional: '16140499.5',
+            rank: 2,
+            startedAt: 1793800732761,
+            startCursor: 19676954,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800732761
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677166:bids:7736710000000',
+            side: 'bid',
+            price: '77367.1',
+            quantity: '76.648',
+            notional: '5930033.4808',
+            rank: 3,
+            startedAt: 1793800754389,
+            startCursor: 19677166,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800754389
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19676987:bids:7600000000000',
+            side: 'bid',
+            price: '76000',
+            quantity: '75.881',
+            notional: '5766956',
+            rank: 4,
+            startedAt: 1793800736128,
+            startCursor: 19676987,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800736128
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677027:bids:7750000000000',
+            side: 'bid',
+            price: '77500',
+            quantity: '64.531',
+            notional: '5001152.5',
+            rank: 5,
+            startedAt: 1793800740210,
+            startCursor: 19677027,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800740210
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677046:bids:7831880000000',
+            side: 'bid',
+            price: '78318.8',
+            quantity: '54.105',
+            notional: '4237438.674',
+            rank: 6,
+            startedAt: 1793800742149,
+            startCursor: 19677046,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800742149
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19676980:bids:7718800000000',
+            side: 'bid',
+            price: '77188',
+            quantity: '48.461',
+            notional: '3740607.668',
+            rank: 7,
+            startedAt: 1793800735413,
+            startCursor: 19676980,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800735413
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677584:bids:7818730000000',
+            side: 'bid',
+            price: '78187.3',
+            quantity: '45.33',
+            notional: '3544230.309',
+            rank: 8,
+            startedAt: 1793800796820,
+            startCursor: 19677584,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800796820
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677056:bids:7480000000000',
+            side: 'bid',
+            price: '74800',
+            quantity: '37.313',
+            notional: '2791012.4',
+            rank: 9,
+            startedAt: 1793800743168,
+            startCursor: 19677056,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800743168
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677545:bids:7650000000000',
+            side: 'bid',
+            price: '76500',
+            quantity: '34.68',
+            notional: '2653020',
+            rank: 10,
+            startedAt: 1793800792842,
+            startCursor: 19677545,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800792842
+          }
+        ],
+        asks: [
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677313:asks:7860000000000',
+            side: 'ask',
+            price: '78600',
+            quantity: '113.843',
+            notional: '8948059.8',
+            rank: 1,
+            startedAt: 1793800769279,
+            startCursor: 19677313,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800769279
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19676938:asks:7950000000000',
+            side: 'ask',
+            price: '79500',
+            quantity: '111.288',
+            notional: '8847396',
+            rank: 2,
+            startedAt: 1793800731130,
+            startCursor: 19676938,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800731130
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677003:asks:7920000000000',
+            side: 'ask',
+            price: '79200',
+            quantity: '88.441',
+            notional: '7004527.2',
+            rank: 3,
+            startedAt: 1793800737759,
+            startCursor: 19677003,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800737759
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677312:asks:7930600000000',
+            side: 'ask',
+            price: '79306',
+            quantity: '79.338',
+            notional: '6291979.428',
+            rank: 4,
+            startedAt: 1793800769177,
+            startCursor: 19677312,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800769177
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677403:asks:7900000000000',
+            side: 'ask',
+            price: '79000',
+            quantity: '79.047',
+            notional: '6244713',
+            rank: 5,
+            startedAt: 1793800778459,
+            startCursor: 19677403,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800778459
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677047:asks:7880000000000',
+            side: 'ask',
+            price: '78800',
+            quantity: '77.753',
+            notional: '6126936.4',
+            rank: 6,
+            startedAt: 1793800742249,
+            startCursor: 19677047,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800742249
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677340:asks:7890000000000',
+            side: 'ask',
+            price: '78900',
+            quantity: '68.737',
+            notional: '5423349.3',
+            rank: 7,
+            startedAt: 1793800772033,
+            startCursor: 19677340,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800772033
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677393:asks:8000000000000',
+            side: 'ask',
+            price: '80000',
+            quantity: '67.762',
+            notional: '5420960',
+            rank: 8,
+            startedAt: 1793800777439,
+            startCursor: 19677393,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800777439
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19677135:asks:7902960000000',
+            side: 'ask',
+            price: '79029.6',
+            quantity: '63.597',
+            notional: '5026045.4712',
+            rank: 9,
+            startedAt: 1793800751225,
+            startCursor: 19677135,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800751225
+          },
+          {
+            entryId: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1:1793800727656:19676963:asks:7960000000000',
+            side: 'ask',
+            price: '79600',
+            quantity: '51.444',
+            notional: '4094942.4',
+            rank: 10,
+            startedAt: 1793800733679,
+            startCursor: 19676963,
+            startEpoch: 1793800727656,
+            startKnown: false,
+            confirmationAt: 1793800733679
+          }
+        ]
+      },
+      patches: [
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677617,
+          epoch: 1793800727656,
+          at: 1793800800185,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677618,
+          epoch: 1793800727656,
+          at: 1793800800287,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677621,
+          epoch: 1793800727656,
+          at: 1793800800593,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677622,
+          epoch: 1793800727656,
+          at: 1793800800695,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677629,
+          epoch: 1793800727656,
+          at: 1793800801411,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677631,
+          epoch: 1793800727656,
+          at: 1793800801613,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677636,
+          epoch: 1793800727656,
+          at: 1793800802123,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677638,
+          epoch: 1793800727656,
+          at: 1793800802328,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677639,
+          epoch: 1793800727656,
+          at: 1793800802429,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677640,
+          epoch: 1793800727656,
+          at: 1793800802540,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677641,
+          epoch: 1793800727656,
+          at: 1793800802634,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677642,
+          epoch: 1793800727656,
+          at: 1793800802736,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677643,
+          epoch: 1793800727656,
+          at: 1793800802838,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677648,
+          epoch: 1793800727656,
+          at: 1793800803348,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677651,
+          epoch: 1793800727656,
+          at: 1793800803654,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677653,
+          epoch: 1793800727656,
+          at: 1793800803858,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677654,
+          epoch: 1793800727656,
+          at: 1793800803959,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677656,
+          epoch: 1793800727656,
+          at: 1793800804164,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677658,
+          epoch: 1793800727656,
+          at: 1793800804367,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677659,
+          epoch: 1793800727656,
+          at: 1793800804470,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677661,
+          epoch: 1793800727656,
+          at: 1793800804673,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677665,
+          epoch: 1793800727656,
+          at: 1793800805081,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677667,
+          epoch: 1793800727656,
+          at: 1793800805285,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677671,
+          epoch: 1793800727656,
+          at: 1793800805693,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677676,
+          epoch: 1793800727656,
+          at: 1793800806203,
+          kind: 'patch',
+          midpoint: '78338.25',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677677,
+          epoch: 1793800727656,
+          at: 1793800806320,
+          kind: 'patch',
+          midpoint: '78343.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677678,
+          epoch: 1793800727656,
+          at: 1793800806408,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677679,
+          epoch: 1793800727656,
+          at: 1793800806509,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677681,
+          epoch: 1793800727656,
+          at: 1793800806714,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677690,
+          epoch: 1793800727656,
+          at: 1793800807632,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677691,
+          epoch: 1793800727656,
+          at: 1793800807733,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677695,
+          epoch: 1793800727656,
+          at: 1793800808142,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677697,
+          epoch: 1793800727656,
+          at: 1793800808345,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677700,
+          epoch: 1793800727656,
+          at: 1793800808652,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677701,
+          epoch: 1793800727656,
+          at: 1793800808754,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677711,
+          epoch: 1793800727656,
+          at: 1793800809773,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677714,
+          epoch: 1793800727656,
+          at: 1793800810079,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677719,
+          epoch: 1793800727656,
+          at: 1793800810590,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677720,
+          epoch: 1793800727656,
+          at: 1793800810691,
+          kind: 'patch',
+          midpoint: '78345.75',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677721,
+          epoch: 1793800727656,
+          at: 1793800810794,
+          kind: 'patch',
+          midpoint: '78349.65',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677723,
+          epoch: 1793800727656,
+          at: 1793800810998,
+          kind: 'patch',
+          midpoint: '78349.65',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677728,
+          epoch: 1793800727656,
+          at: 1793800811508,
+          kind: 'patch',
+          midpoint: '78349.65',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677731,
+          epoch: 1793800727656,
+          at: 1793800811831,
+          kind: 'patch',
+          midpoint: '78351.8',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677732,
+          epoch: 1793800727656,
+          at: 1793800811917,
+          kind: 'patch',
+          midpoint: '78355.15',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677733,
+          epoch: 1793800727656,
+          at: 1793800812030,
+          kind: 'patch',
+          midpoint: '78360.05',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677734,
+          epoch: 1793800727656,
+          at: 1793800812120,
+          kind: 'patch',
+          midpoint: '78364.55',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677735,
+          epoch: 1793800727656,
+          at: 1793800812223,
+          kind: 'patch',
+          midpoint: '78364.55',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677736,
+          epoch: 1793800727656,
+          at: 1793800812332,
+          kind: 'patch',
+          midpoint: '78369.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [Array], removals: [Array] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677737,
+          epoch: 1793800727656,
+          at: 1793800812429,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [Array], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677738,
+          epoch: 1793800727656,
+          at: 1793800812528,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677739,
+          epoch: 1793800727656,
+          at: 1793800812629,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677740,
+          epoch: 1793800727656,
+          at: 1793800812732,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677741,
+          epoch: 1793800727656,
+          at: 1793800812833,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677742,
+          epoch: 1793800727656,
+          at: 1793800812936,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677743,
+          epoch: 1793800727656,
+          at: 1793800813038,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677744,
+          epoch: 1793800727656,
+          at: 1793800813140,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677745,
+          epoch: 1793800727656,
+          at: 1793800813241,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677746,
+          epoch: 1793800727656,
+          at: 1793800813344,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677748,
+          epoch: 1793800727656,
+          at: 1793800813548,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677749,
+          epoch: 1793800727656,
+          at: 1793800813650,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677750,
+          epoch: 1793800727656,
+          at: 1793800813751,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {
+            outerCoverage: 'snapshot-bounded',
+            snapshotLevels: [Object],
+            snapshotBidFloor: '78185.9',
+            snapshotAskCeiling: '78458.4',
+            observedBidLow: '1000',
+            observedAskHigh: '95580',
+            observedLevels: [Object],
+            requestedBand: [Object],
+            bandCoverage: [Object]
+          },
+          bids: { upserts: [Array], removals: [Array] },
+          asks: { upserts: [], removals: [] }
+        },
+        {
+          profile: 'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',
+          cursor: 19677752,
+          epoch: 1793800727656,
+          at: 1793800813955,
+          kind: 'patch',
+          midpoint: '78373.95',
+          bookScope: {

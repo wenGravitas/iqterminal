@@ -1,0 +1,485 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal-integration-startup-r1/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "-c",
+      "playwright.startup-integration.config.ts",
+      "tests/browser/footprint-history-lifecycle.spec.ts",
+      "tests/browser/fixed-range-volume-profile.spec.ts",
+      "tests/browser/footprint-totals.spec.ts",
+      "tests/browser/pane-indicator-headers.spec.ts",
+      "--grep",
+      "prepared .* history paints|delayed current bootstrap retains five|failed live Totals|native candles paint before 3-bar|fixed range profile places|delta flip settings|pane indicators use one local header"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-integration-startup-r1/playwright.startup-integration.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-integration-startup-r1/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-integration-startup-r1/artifacts/pi-history-integration-startup-r1/browser-test-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-integration-startup-r1/artifacts/pi-history-integration-startup-r1/browser-test-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4202",
+          "headless": true,
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4202",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=headless",
+              "--no-sandbox",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pi-history-integration-startup-r1/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fixed-range-volume-profile.spec.ts",
+      "file": "fixed-range-volume-profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "fixed range profile places through native tools, uses chart price steps and persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6093,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:20:34.334Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "08325ac7531774acb80b-024802618d68cf734f5a",
+          "file": "fixed-range-volume-profile.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "footprint-history-lifecycle.spec.ts",
+      "file": "footprint-history-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "prepared footprint history paints while the authoritative live bootstrap is delayed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9061,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:20:41.240Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-e95ae5ab532cfddb1e75",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 28,
+          "column": 58
+        },
+        {
+          "title": "prepared candle-totals history paints while the authoritative live bootstrap is delayed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7999,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:20:50.377Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-75992758084cfcb328ad",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 28,
+          "column": 58
+        },
+        {
+          "title": "a delayed current bootstrap retains five closed bars and future whitespace",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4279,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:20:58.493Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-19ebffd7f3efd2a20158",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 92,
+          "column": 34
+        },
+        {
+          "title": "failed live Totals exposes scoped Retry while healthy native candles and closed history remain",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 9727,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first()\nExpected substring: \u001b[32m\"Native prices partial\"\u001b[39m\nReceived string:    \u001b[31m\"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"candle-panel\" data-panel-id=\"chart-binance\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first()\nExpected substring: \u001b[32m\"Native prices partial\"\u001b[39m\nReceived string:    \u001b[31m\"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"candle-panel\" data-panel-id=\"chart-binance\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[22m\n\n    at /home/daz/workarea/iqterminal-integration-startup-r1/tests/browser/footprint-history-lifecycle.spec.ts:154:22",
+                    "location": {
+                      "file": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser/footprint-history-lifecycle.spec.ts",
+                      "column": 22,
+                      "line": 154
+                    },
+                    "snippet": "  152 |  // partial status keeps Retry after Totals has recovered; the next click is\n  153 |  // scoped to native history and must not restart the healthy Totals job.\n> 154 |  await expect(panel).toContainText('Native prices partial');\n      |                      ^\n  155 |  await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toBeVisible();\n  156 |  const nativeSockets=()=>page.workers()[0].evaluate(()=>(globalThis as any).__stagingNativeFixture.sockets.flatMap((s:any,i:number)=>s.command?.interval==='1h'&&s.readyState===1?[i]:[]));\n  157 |  const sockets=await nativeSockets();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser/footprint-history-lifecycle.spec.ts",
+                        "column": 22,
+                        "line": 154
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.candle-panel').first()\nExpected substring: \u001b[32m\"Native prices partial\"\u001b[39m\nReceived string:    \u001b[31m\"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.candle-panel').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.candle-panel').first()\u001b[22m\n\u001b[2m    13 × locator resolved to <section class=\"candle-panel\" data-panel-id=\"chart-binance\">…</section>\u001b[22m\n\u001b[2m       - unexpected value \"MarketsSave selected marketsCancelApplyBinance · BTCUSDT USD-M Perp1m5m15m1h4hIndicatorsTrade linesUSDT quote · BTC volume · USDT settlement · UTCWatch level›Financial chart, 100 bars, latest price 80,010.0Chart trade lines are unavailable on testnet because the displayed Hyperliquid candle feed uses mainnet prices.Buy limitSell limitPrice draftBuySellDiscardReview & submitConfirm Hyperliquid actionType MAINNET to confirmBackConfirmWaiting for data…Footprint data unavailableIndicators (0)Footprint TotalsDrag drawing tools hereObject TreeObjects · BTCUSDT · 1h · chart-binance · activeNew folderFootprint TotalsChart sourcesMain pane · Pane 1BTCUSDTLinesTrend LineHorizontal LineHorizontal RayArrowPathBrushShapes and FibonacciRectangleFib RetracementPosition toolsLong PositionShort PositionHorizontal MeasureVertical MeasureFixed Range Volume ProfileText ToolsTextCalloutWaiting for order-book data…Native prices loaded · 30/30 closed bars · 11-11 00:00–11-12 06:00 UTC · History validated · 30/30 slots · 11-11 00:00–06:00 UTCIndicatorsCloseSearchOrder FlowLiquidationsActual reported long/short liquidations · Bybit bankruptcy prices / sampled BinanceBuilt-in · one per chartAddMulti-Venue CVDExecuted aggressor-side cumulative volume delta · historical/live · Spot and PerpetualBuilt-in · one per chartAddOpen InterestObserved BTC-denominated perpetual open-interest levels; raw venue observations with sample age and partial coverageBuilt-in · one per chartAddTrade BubblesSize-scaled BTCUSDT executions · independent shared-feed overlayBuilt-in · one per chartAddEffort–ResultPersistent directional flow stalls · Binance BTCUSDT USD-M · trade-price proxyBuilt-in · one per chartAddFootprintObserved executed bid/ask volume · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddFootprint TotalsPer-candle footprint statistics on their own time-aligned paneBuilt-in · one per chartSettingsOrder-book HeatmapObserved resting liquidity · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddOrder WallsObserved resting BTC liquidity walls · Binance BTCUSDT Spot and USD-M PerpBuilt-in · one per chartAddNet Longs & ShortsEstimates whether changes in open interest are associated with long-side or short-side activity. Opening and closing intent is not directly observable from these inputs.Built-in · one per chartAddBinance depth bandSynchronized Binance BTCUSDT USD-M visible quote depth inside a percentage band. Values are 1-second samples, not traded volume or a time average.Scripted · editable sourceAddTrendMarket ConditionsCompleted-candle volatility regimes and heuristic tradeability · OHLC onlyBuilt-in · one per chartAddEMA overlayAn editable exponential moving average over price.Scripted · editable sourceAddVolumeDaily VWAPUTC daily candle-volume weighted price with deviation bandsBuilt-in · one per chartAddUTC TPO ProfileDaily UTC time-price opportunities, opening ranges and naked profile levels from 1-minute candlesBuilt-in · one per chartAddSMAFull-window simple moving average of a declared numeric indicator outputBuilt-in · one per chartAddVolumeReal candle volume in BTC, shown in a lower pane.Scripted · editable sourceAddFootprint Totals added with its default settings.Manage libraryDoneStudy settingsCloseCancelApplyFootprint settingsClosePrice level (USDT)$Volume unitsBTC base quantityUSDT execution notionalCell displayBid / askDeltaDelta profileVolume delta candleVolumeCellsBid / ask ladderVolume profileHistogram background opacity (%)Show execution candleShow point of controlShow VAH and VALDiagonal imbalancesStacked imbalance bracketsDominant / opposing ratio2 : 13 : 14 : 1Minimum dominant volume (BTC)Rows start at fixed price multiples and include their lower bound, excluding their upper bound. Diagonal imbalances color dominant buy or sell rows. Optional brackets mark runs of two adjacent rows. Both use classified aggregate observations only. Changing interval or row size reloads the bounded retained staging history; OpenScript studies use native candle OHLCV.CancelApplyOrder-book heatmapClosePrice row (USDT)Quantity unitsBTCUSDT notionalGlobal currency setting is set to BTC. Disable the override in Global settings to change this indicator.Resting quantityTime-weighted averageObserved peakLiquidity contrastEnhanced (faint walls visible)Muted (previous)OpacityFull intensity (BTC / $10)Minimum quantity (BTC)Quantity labelsAutoOffShow bidsShow asksPrice rows match the footprint. Change Price level in Footprint settings to update both layers. Changing resolution starts fresh collection unless that configuration is already shared.Quantity units are shared with Footprint; USDT is actual resting price × quantity. Session only. Columns follow the chart timeframe; closed candle quantities freeze. Changing price/time resolution starts fresh collection unless that resolution is still used by another chart. Visual settings preserve data. Colours use fixed BTC density per $10; wider bins do not brighten simply because they contain more levels. Enhanced contrast lifts faint recorded quantities with a fixed colour curve; it does not add liquidity. Stripes and hover identify incomplete outer-book subtotals.Retry depthApplyNet Longs & ShortsCloseEstimation inputsPrice + OIAggressor Flow + OIDisplayStackedGroupedValue labelsAutoHover onlyOffShow LongsShow ShortsReverse orderThe venue buttons control both sides. Longs and Shorts use separate signed scales in one pane; by default Longs are above Shorts. BTC quantities use recorded 30-second source intervals and belong to the candle containing each interval end. Missing, incomplete, and pre-collection intervals remain unknown. This estimate cannot distinguish opened from closed positions.CancelApplyDaily VWAPClosePrice sourceHLC3 · typical priceHL2 · midpointCloseShow first deviation zone (±1×)Show second deviation zone (±2×)Show third deviation zone (±3×)Show time above/below readoutShow naked previous VWAP gapsBand multiplier (standard deviations)VWAP colourBand colourVWAP line widthBand fill opacityResets at 00:00 UTC. Uses intraday candles, not individual executions. Deviation zones use volume-weighted population standard deviation of the selected candle price. The readout compares each candle close with its contemporaneous developing VWAP and weights only observed candle time; equal closes are neutral, missing intervals are excluded, and the forming candle is capped at elapsed time. Naked gaps extend untouched previous daily closing VWAPs to the price axis until touched. Loaded history can be partial; changing timeframe can change these candle-based approximations.CancelApplyOrder WallsCloseDetectionDetection modeTop LevelsThreshold WallsTop levels per sideSearch range per side (%)Minimum notional filterMinimum notional (USD)DetectionRelative percentileAbsolute notionalRelative percentileRelative USD floorAbsolute notional (USD)Price aggregationExchange-native$10$25$50$100$250Auto (chart zoom)AppearanceHigh ContrastVisible Range OnlyWall colourStrength hierarchyBid / ask hierarchyThickness by strengthLine thickness (px)OpacityPrice lines and size tags (active walls)HistoryShow historical wallsHistorical selection episodesAdvanced · confirmation and threshold exitExit threshold ratioMinimum confirmation (ms)Top Levels ranks observed bids and asks independently by quote notional. The search range can exceed recorded depth: partial scope means observed Top N only. Rank exits are not order removals. Stable price resolution ignores chart zoom.Fit WallsApplyAdd moving averageCloseInputOutputCalculationLengthDisplayLine colourScaleUse the selected output scaleCancelAdd SMAMove indicatorCloseDestinationPlace inGroupMove all studies in this pane togetherWhen unchecked, only this study moves and its numeric input stays connected.Embedded bottom bandHeight20%Lower pane presentationReserve a bottom band for zero-based outputsUse this for Volume-like outputs in a shared lower pane. Leave it off to use the full pane.CancelMoveChart settingsCloseGridlinesShow base candlesBase style: Candles. Footprint presentation temporarily replaces the base; this preference is retained.Candle elapsed timerElapsed mm:ss beside the current candle. Resets each candle; hidden for expired candles.Mouse wheelTradingView styleTime + price at cursor (previous)TradingView style: wheel zooms time from the right edge; Ctrl/⌘ + wheel zooms time at the cursor; Shift + wheel pans. Wheel on the price scale zooms price.Drawing settingsCloseCancelApplyDrawing templatesCloseSave selected lookInclude labelSaveSelect a drawing tool or drawing to manage its templates.Add everyday presetsDone\"\u001b[22m\n\n\n  152 |  // partial status keeps Retry after Totals has recovered; the next click is\n  153 |  // scoped to native history and must not restart the healthy Totals job.\n> 154 |  await expect(panel).toContainText('Native prices partial');\n      |                      ^\n  155 |  await expect(panel.getByRole('button',{name:'Retry market data',exact:true})).toBeVisible();\n  156 |  const nativeSockets=()=>page.workers()[0].evaluate(()=>(globalThis as any).__stagingNativeFixture.sockets.flatMap((s:any,i:number)=>s.command?.interval==='1h'&&s.readyState===1?[i]:[]));\n  157 |  const sockets=await nativeSockets();\n    at /home/daz/workarea/iqterminal-integration-startup-r1/tests/browser/footprint-history-lifecycle.spec.ts:154:22"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "FAILED_HISTORY_STATE [{\"diagnostics\":{\"id\":\"chart-binance\",\"visible\":true,\"bars\":100,\"right\":103,\"range\":{\"from\":69.14285714285714,\"to\":103},\"spacing\":7,\"rightOffset\":4,\"autoPrice\":true,\"min\":79968.75,\"max\":80031.25,\"renderer\":{\"draws\":57,\"backend\":\"canvas2d\",\"scheduler\":{\"frames\":59,\"draws\":62,\"budgetYields\":2,\"lastMs\":2.699999999254942,\"maxMs\":20.799999998882413,\"budgetMs\":8,\"dirty\":0,\"drawing\":0}},\"status\":{\"state\":\"live\",\"message\":\"Staging · Binance native candle stream\",\"lastUpdate\":1794464472510,\"nativeHistory\":{\"state\":\"ready\",\"loadedBars\":100,\"viewport\":{\"from\":1794355200000,\"to\":1794463200000,\"requestedSlots\":30,\"loadedSlots\":30,\"state\":\"ready\",\"capacityLimited\":false,\"retryable\":false,\"unloaded\":[],\"unloadedTruncated\":false}}},\"series\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1h\",\"type\":\"candle\",\"studies\":[],\"rowPrice\":25,\"candleElapsedTimer\":true,\"tradingOverlay\":false,\"grid\":true,\"wheelMode\":\"tradingview\",\"drawingMagnet\":\"weak\",\"floatingDrawingToolbar\":{\"visible\":false,\"tools\":[],\"x\":0.55,\"y\":0.14},\"footprintUnits\":\"btc\",\"footprint\":{\"displayMode\":\"bidask\",\"cellStyle\":\"ladder\",\"statsPosition\":\"bottom\",\"opacity\":0.85,\"showCandle\":true,\"showPoc\":true,\"showValueArea\":true,\"showDiagonalImbalances\":true,\"stackedImbalances\":false,\"imbalanceRatio\":3,\"imbalanceThreshold\":0.01},\"heatmap\":{\"enabled\":false,\"rowPrice\":10,\"bucketMs\":500,\"mode\":\"average\",\"contrast\":\"enhanced\",\"opacity\":0.85,\"intensity\":100,\"minimum\":0.01,\"labels\":\"auto\",\"bids\":true,\"asks\":true},\"indicatorVersion\":1,\"indicators\":[{\"instanceId\":\"native.footprint-totals\",\"definitionId\":\"native.footprint-totals\",\"settingsVersion\":1,\"visible\":true,\"source\":{\"kind\":\"chart\"},\"placement\":\"pane\",\"settings\":{\"rows\":[\"volume\",\"bidVolume\",\"askVolume\",\"delta\"],\"highlightHighest\":false,\"highlightDeltaFlips\":true,\"deltaFlipTarget\":\"delta-cell\",\"deltaFlipLookback\":50,\"deltaFlipMinimumStrength\":0.25,\"showDeltaFlipLivePreview\":true}}],\"composition\":{\"version\":1,\"panes\":[],\"embeddedBands\":[],\"plots\":[],\"scales\":[],\"opaqueLegacyPanes\":[]},\"paneOrder\":[],\"basePriceVisible\":true},\"last\":{\"t\":1794463200000,\"o\":80000,\"h\":80025,\"l\":79975,\"c\":80010,\"v\":8},\"footprint\":{\"bars\":31,\"paint\":{\"at\":0,\"draws\":0,\"ms\":0,\"times\":[],\"cells\":0},\"latest\":{\"time\":1794463200,\"revision\":1,\"cellCount\":1,\"coverage\":\"observed\",\"gapBefore\":false,\"open\":80000,\"high\":80025,\"low\":79975,\"close\":80010,\"delta\":2},\"status\":{\"history\":{\"views\":1,\"ready\":true,\"validated\":true,\"ranges\":[{\"from\":1794355200000,\"to\":1794463200000,\"progress\":{\"viewId\":\"view-824473e9-91f5-472d-8ac1-aa1e332effcd-4\",\"firstUsefulMs\":97.89999999850988,\"completeMs\":620.2999999988824,\"from\":1794355200000,\"to\":1794463200000,\"requestedSlots\":30,\"loadedSlots\":30,\"validatedSlots\":30,\"slots\":[{\"from\":1794355200000,\"to\":1794358800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794358800000,\"to\":1794362400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794362400000,\"to\":1794366000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794366000000,\"to\":1794369600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794369600000,\"to\":1794373200000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794373200000,\"to\":1794376800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794376800000,\"to\":1794380400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794380400000,\"to\":1794384000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794384000000,\"to\":1794387600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794387600000,\"to\":1794391200000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794391200000,\"to\":1794394800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794394800000,\"to\":1794398400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794398400000,\"to\":1794402000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794402000000,\"to\":1794405600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794405600000,\"to\":1794409200000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794409200000,\"to\":1794412800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794412800000,\"to\":1794416400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794416400000,\"to\":1794420000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794420000000,\"to\":1794423600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794423600000,\"to\":1794427200000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794427200000,\"to\":1794430800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794430800000,\"to\":1794434400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794434400000,\"to\":1794438000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794438000000,\"to\":1794441600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794441600000,\"to\":1794445200000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794445200000,\"to\":1794448800000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794448800000,\"to\":1794452400000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794452400000,\"to\":1794456000000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794456000000,\"to\":1794459600000,\"validated\":true,\"state\":\"ready\"},{\"from\":1794459600000,\"to\":1794463200000,\"validated\":true,\"state\":\"ready\"}],\"capacityLimited\":false}}],\"capacityLimited\":false},\"state\":\"live\",\"message\":\"Staging · streaming · delivery 0ms\",\"lastUpdate\":1794464463660,\"tickSize\":0.1,\"rowSize\":25,\"collectionStartedAt\":1794376800000,\"firstTradeAt\":1794355200000,\"lastTradeAt\":1794464463660,\"eventTime\":null,\"outages\":0,\"capacityDrops\":0,\"unknownSideRecords\":0,\"unknownSideVolume\":0,\"lateRecords\":0,\"retentionStart\":1794355200,\"coverage\":\"partial\"},\"needsSync\":false,\"initialViewSet\":false,\"primitiveSets\":4,\"surfaceMounted\":false,\"hover\":null},\"footprintTotals\":[{\"id\":\"native.footprint-totals\",\"paneIndex\":1,\"autoHeight\":104,\"autoWeight\":0.1897810218978102,\"manuallyResized\":false,\"paneHeight\":104,\"mounted\":true,\"rows\":[\"volume\",\"bidVolume\",\"askVolume\",\"delta\"],\"units\":\"btc\",\"highlightHighest\":false,\"deltaFlip\":{\"enabled\":true,\"target\":\"delta-cell\",\"lookback\":50,\"minimumStrength\":0.25,\"showLivePreview\":true,\"summaries\":82,\"candidates\":0,\"analysisEvaluations\":338,\"baselineEvaluations\":0,\"cachedBaselines\":0,\"highlighted\":0},\"statsBars\":31,\"firstTime\":1794355200,\"lastTime\":1794463200,\"presentation\":{\"font\":11,\"rowHeight\":18,\"labelWidth\":150,\"buyTextColor\":\"#58a65c\",\"sellTextColor\":\"#ad5858\"}}],\"tpo\":{\"mounted\":false,\"settings\":{\"tickSize\":0.1,\"bracketMinutes\":30,\"rowTicks\":\"auto\",\"valueAreaPercent\":70,\"openingRangeMinutes\":30,\"openingRangeMidpoint\":false,\"initialBalanceMinutes\":60,\"initialBalanceCompletedOnly\":false,\"showProfile\":true,\"profileMode\":\"adaptive\",\"profileWidthPercent\":70,\"profileOpacity\":55,\"shadeValueArea\":true,\"highlightPoc\":true,\"theme\":\"chart\",\"profileColor\":\"#8191a1\",\"pocColor\":\"#e1bb62\",\"valueAreaColor\":\"#86a4c5\",\"profileLevelsExtend\":true,\"pocLineVisible\":true,\"vahLineVisible\":true,\"valLineVisible\":true,\"pocLineStyle\":\"solid\",\"vahLineStyle\":\"dashed\",\"valLineStyle\":\"dashed\",\"levelLineThickness\":1,\"openingRangeEnabled\":true,\"openingRangeShade\":true,\"openingRangeExtend\":true,\"openingRangeHighVisible\":true,\"openingRangeLowVisible\":true,\"openingRangeLineStyle\":\"solid\",\"openingRangeColor\":\"#57a88b\",\"openingRangeThickness\":1,\"openingRangeOpacity\":62,\"initialBalanceEnabled\":true,\"initialBalanceExtend\":true,\"initialBalanceMidpoint\":false,\"initialBalanceShade\":false,\"initialBalanceHighVisible\":true,\"initialBalanceLowVisible\":true,\"initialBalanceLineStyle\":\"dashed\",\"initialBalanceColor\":\"#6299c7\",\"initialBalanceThickness\":1,\"initialBalanceOpacity\":62,\"projectionHalf\":false,\"projectionFull\":false,\"nakedEnabled\":true,\"nakedDays\":90,\"nakedPoc\":true,\"nakedVah\":true,\"nakedVal\":true,\"nakedActiveOnly\":false,\"testedLevels\":\"fade\",\"nakedLabels\":\"age-price\",\"nakedPocColor\":\"#e1bb62\",\"nakedVahColor\":\"#57a88b\",\"nakedValColor\":\"#d56b76\",\"nakedPocLineStyle\":\"dashed\",\"nakedVahLineStyle\":\"dotted\",\"nakedValLineStyle\":\"dotted\",\"nakedLineThickness\":1}},\"heatmap\":{\"mounted\":false,\"settings\":{\"enabled\":false,\"rowPrice\":10,\"bucketMs\":500,\"mode\":\"average\",\"contrast\":\"enhanced\",\"opacity\":0.85,\"intensity\":100,\"minimum\":0.01,\"labels\":\"auto\",\"bids\":true,\"asks\":true}},\"netPositioning\":{\"panes\":[],\"request\":\"\",\"histories\":[],\"errors\":{}},\"positioningRange\":{\"active\":false,\"range\":null},\"executionHoverRay\":{\"active\":false,\"executionId\":null,\"geometry\":null},\"orderWalls\":{\"mounted\":false,\"retainedSegments\":0,\"archiveSegments\":0,\"directSegments\":0,\"valueRuns\":0,\"archiveValueRuns\":0,\"directValueRuns\":0,\"valueHistoryLimited\":false,\"episodeHistoryLimited\":false,\"settings\":{\"enabled\":false,\"mode\":\"top-levels\",\"topLevels\":8,\"searchRangePercent\":10,\"minimumNotionalEnabled\":false,\"minimumNotionalUsd\":100000,\"highContrast\":true,\"visibleRangeOnly\":true,\"strengthThickness\":true,\"historyEpisodes\":2000,\"showHistory\":true,\"showPriceLines\":false,\"method\":\"relative\",\"thresholdUsd\":500000,\"relativeFloorUsd\":250000,\"relativePercentile\":95,\"exitRatio\":0.85,\"minDurationMs\":0,\"aggregation\":\"native\",\"colorMode\":\"heat\",\"opacity\":0.85,\"thicknessPx\":3}},\"studies\":{\"context\":{\"symbol\":\"BTCUSDT\",\"exchange\":\"Binance USD-M\",\"interval\":\"1h\"},\"attached\":0,\"workers\":0,\"compositionWork\":{\"workerResults\":0,\"workerFailures\":0,\"dataNotifications\":0,\"statusNotifications\":0,\"configurationNotifications\":1,\"listenerCalls\":1,\"dataListenerCalls\":0,\"uiListenerCalls\":1,\"workers\":[]},\"numericOutputs\":{\"chartId\":\"chart-binance\",\"revision\":0,\"outputs\":[],\"consumers\":[]},\"depthBands\":[],\"statuses\":[]},\"compositionWork\":{\"indicatorReconciles\":4,\"activeIndicatorRenders\":22,\"objectRefreshes\":4,\"scriptObjectProviderSyncs\":5,\"dataCallbacks\":0,\"visibleRangeScaleUpdates\":0,\"autoscaleValuesScanned\":0,\"sma\":{\"fullCalls\":0,\"fullInputValues\":0,\"tailCalls\":0,\"tailInputValues\":0,\"tailValuesProcessed\":0,\"registryRevisions\":0,\"registryFullValuesProcessed\":0,\"registryTailValuesProcessed\":0,\"derivedPublications\":0}},\"managedPaneResolutions\":[]},\"nativeBars\":100,\"nativeDemand\":{\"from\":1794355200000,\"to\":1794463200000},\"visibility\":\"visible\",\"primitiveBars\":[1794355200,1794358800,1794362400,1794366000,1794369600,1794373200,1794376800,1794380400,1794384000,1794387600,1794391200,1794394800,1794398400,1794402000,1794405600,1794409200,1794412800,1794416400,1794420000,1794423600,1794427200,1794430800,1794434400,1794438000,1794441600,1794445200,1794448800,1794452400,1794456000,1794459600,1794463200],\"sliceKey\":\"1794355200.1,1794358800.1,1794362400.1,1794366000.1,1794369600.1,1794373200.1,1794376800.1,1794380400.1,1794384000.1,1794387600.1,1794391200.1,1794394800.1,1794398400.1,1794402000.1,1794405600.1,1794409200.1,1794412800.1,1794416400.1,1794420000.1,1794423600.1,1794427200.1,1794430800.1,1794434400.1,1794438000.1,1794441600.1,1794445200.1,1794448800.1,1794452400.1,1794456000.1,1794459600.1,1794463200.1\",\"indices\":[[1794355200,69],[1794358800,70],[1794362400,71],[1794366000,72],[1794369600,73],[1794373200,74],[1794376800,75],[1794380400,76],[1794384000,77],[1794387600,78],[1794391200,79],[1794394800,80],[1794398400,81],[1794402000,82],[1794405600,83],[1794409200,84],[1794412800,85],[1794416400,86],[1794420000,87],[1794423600,88],[1794427200,89],[1794430800,90],[1794434400,91],[1794438000,92],[1794441600,93],[1794445200,94],[1794448800,95],[1794452400,96],[1794456000,97],[1794459600,98],[1794463200,99]],\"layerLength\":100,\"queuedRefresh\":false,\"schedulerDirty\":false,\"schedulerFrame\":0,\"engineVisible\":true,\"dead\":false},{\"diagnostics\":{\"id\":\"chart-hyperliquid\",\"visible\":true,\"bars\":1001,\"right\":1004,\"range\":{\"from\":970.1428571428571,\"to\":1004},\"spacing\":7,\"rightOffset\":4,\"autoPrice\":true,\"min\":73501.375,\"max\":73687.625,\"renderer\":{\"draws\":10,\"backend\":\"canvas2d\",\"scheduler\":{\"frames\":59,\"draws\":62,\"budgetYields\":2,\"lastMs\":2.699999999254942,\"maxMs\":20.799999998882413,\"budgetMs\":8,\"dirty\":0,\"drawing\":0}},\"status\":{\"state\":\"stale\",\"message\":\"Direct venue · History loaded · waiting for live update\",\"lastUpdate\":0},\"series\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[],\"rowPrice\":25,\"candleElapsedTimer\":true,\"tradingOverlay\":false,\"grid\":true,\"wheelMode\":\"tradingview\",\"drawingMagnet\":\"weak\",\"floatingDrawingToolbar\":{\"visible\":false,\"tools\":[],\"x\":0.55,\"y\":0.14},\"footprintUnits\":\"btc\",\"footprint\":{\"displayMode\":\"bidask\",\"cellStyle\":\"ladder\",\"statsPosition\":\"bottom\",\"opacity\":0.85,\"showCandle\":true,\"showPoc\":true,\"showValueArea\":true,\"showDiagonalImbalances\":true,\"stackedImbalances\":false,\"imbalanceRatio\":3,\"imbalanceThreshold\":0.01},\"heatmap\":{\"enabled\":false,\"rowPrice\":10,\"bucketMs\":500,\"mode\":\"average\",\"contrast\":\"enhanced\",\"opacity\":0.85,\"intensity\":100,\"minimum\":0.01,\"labels\":\"auto\",\"bids\":true,\"asks\":true},\"indicatorVersion\":1,\"indicators\":[],\"composition\":{\"version\":1,\"panes\":[],\"embeddedBands\":[],\"plots\":[],\"scales\":[],\"opaqueLegacyPanes\":[]},\"paneOrder\":[],\"basePriceVisible\":true},\"last\":{\"t\":1794464460000,\"o\":73663,\"h\":73663,\"l\":73662,\"c\":73662,\"v\":0.02276},\"footprint\":{\"bars\":0,\"paint\":null,\"latest\":null,\"status\":{\"state\":\"loading\",\"message\":\"Waiting for Binance USD-M aggTrade observations\",\"lastUpdate\":0,\"tickSize\":null,\"rowSize\":null,\"collectionStartedAt\":null,\"firstTradeAt\":null,\"lastTradeAt\":null,\"eventTime\":null,\"outages\":0,\"lateRecords\":0,\"capacityDrops\":0,\"unknownSideRecords\":0,\"unknownSideVolume\":0,\"coverage\":\"waiting\",\"retentionStart\":null},\"needsSync\":false,\"initialViewSet\":false,\"primitiveSets\":0,\"surfaceMounted\":false,\"hover\":null},\"footprintTotals\":[],\"tpo\":{\"mounted\":false,\"settings\":{\"tickSize\":0.1,\"bracketMinutes\":30,\"rowTicks\":\"auto\",\"valueAreaPercent\":70,\"openingRangeMinutes\":30,\"openingRangeMidpoint\":false,\"initialBalanceMinutes\":60,\"initialBalanceCompletedOnly\":false,\"showProfile\":true,\"profileMode\":\"adaptive\",\"profileWidthPercent\":70,\"profileOpacity\":55,\"shadeValueArea\":true,\"highlightPoc\":true,\"theme\":\"chart\",\"profileColor\":\"#8191a1\",\"pocColor\":\"#e1bb62\",\"valueAreaColor\":\"#86a4c5\",\"profileLevelsExtend\":true,\"pocLineVisible\":true,\"vahLineVisible\":true,\"valLineVisible\":true,\"pocLineStyle\":\"solid\",\"vahLineStyle\":\"dashed\",\"valLineStyle\":\"dashed\",\"levelLineThickness\":1,\"openingRangeEnabled\":true,\"openingRangeShade\":true,\"openingRangeExtend\":true,\"openingRangeHighVisible\":true,\"openingRangeLowVisible\":true,\"openingRangeLineStyle\":\"solid\",\"openingRangeColor\":\"#57a88b\",\"openingRangeThickness\":1,\"openingRangeOpacity\":62,\"initialBalanceEnabled\":true,\"initialBalanceExtend\":true,\"initialBalanceMidpoint\":false,\"initialBalanceShade\":false,\"initialBalanceHighVisible\":true,\"initialBalanceLowVisible\":true,\"initialBalanceLineStyle\":\"dashed\",\"initialBalanceColor\":\"#6299c7\",\"initialBalanceThickness\":1,\"initialBalanceOpacity\":62,\"projectionHalf\":false,\"projectionFull\":false,\"nakedEnabled\":true,\"nakedDays\":90,\"nakedPoc\":true,\"nakedVah\":true,\"nakedVal\":true,\"nakedActiveOnly\":false,\"testedLevels\":\"fade\",\"nakedLabels\":\"age-price\",\"nakedPocColor\":\"#e1bb62\",\"nakedVahColor\":\"#57a88b\",\"nakedValColor\":\"#d56b76\",\"nakedPocLineStyle\":\"dashed\",\"nakedVahLineStyle\":\"dotted\",\"nakedValLineStyle\":\"dotted\",\"nakedLineThickness\":1}},\"heatmap\":{\"mounted\":false,\"settings\":{\"enabled\":false,\"rowPrice\":10,\"bucketMs\":500,\"mode\":\"average\",\"contrast\":\"enhanced\",\"opacity\":0.85,\"intensity\":100,\"minimum\":0.01,\"labels\":\"auto\",\"bids\":true,\"asks\":true}},\"netPositioning\":{\"panes\":[],\"request\":\"\",\"histories\":[],\"errors\":{}},\"positioningRange\":{\"active\":false,\"range\":null},\"executionHoverRay\":{\"active\":false,\"executionId\":null,\"geometry\":null},\"orderWalls\":{\"mounted\":false,\"retainedSegments\":0,\"archiveSegments\":0,\"directSegments\":0,\"valueRuns\":0,\"archiveValueRuns\":0,\"directValueRuns\":0,\"valueHistoryLimited\":false,\"episodeHistoryLimited\":false,\"settings\":{\"enabled\":false,\"mode\":\"top-levels\",\"topLevels\":8,\"searchRangePercent\":10,\"minimumNotionalEnabled\":false,\"minimumNotionalUsd\":100000,\"highContrast\":true,\"visibleRangeOnly\":true,\"strengthThickness\":true,\"historyEpisodes\":2000,\"showHistory\":true,\"showPriceLines\":false,\"method\":\"relative\",\"thresholdUsd\":500000,\"relativeFloorUsd\":250000,\"relativePercentile\":95,\"exitRatio\":0.85,\"minDurationMs\":0,\"aggregation\":\"native\",\"colorMode\":\"heat\",\"opacity\":0.85,\"thicknessPx\":3}},\"studies\":{\"context\":{\"symbol\":\"BTC\",\"exchange\":\"Hyperliquid\",\"interval\":\"1m\"},\"attached\":0,\"workers\":0,\"compositionWork\":{\"workerResults\":0,\"workerFailures\":0,\"dataNotifications\":0,\"statusNotifications\":0,\"configurationNotifications\":0,\"listenerCalls\":0,\"dataListenerCalls\":0,\"uiListenerCalls\":0,\"workers\":[]},\"numericOutputs\":{\"chartId\":\"chart-hyperliquid\",\"revision\":0,\"outputs\":[],\"consumers\":[]},\"depthBands\":[],\"statuses\":[]},\"compositionWork\":{\"indicatorReconciles\":1,\"activeIndicatorRenders\":6,\"objectRefreshes\":1,\"scriptObjectProviderSyncs\":1,\"dataCallbacks\":0,\"visibleRangeScaleUpdates\":0,\"autoscaleValuesScanned\":0,\"sma\":{\"fullCalls\":0,\"fullInputValues\":0,\"tailCalls\":0,\"tailInputValues\":0,\"tailValuesProcessed\":0,\"registryRevisions\":0,\"registryFullValuesProcessed\":0,\"registryTailValuesProcessed\":0,\"derivedPublications\":0}},\"managedPaneResolutions\":[]},\"nativeBars\":1001,\"visibility\":\"visible\",\"sliceKey\":\"\",\"indices\":[],\"layerLength\":1001,\"queuedRefresh\":false,\"schedulerDirty\":false,\"schedulerFrame\":0,\"engineVisible\":true,\"dead\":false}]\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:21:02.877Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-integration-startup-r1/artifacts/pi-history-integration-startup-r1/browser-test-output/footprint-history-lifecycl-adae2-s-and-closed-history-remain/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/daz/workarea/iqterminal-integration-startup-r1/tests/browser/footprint-history-lifecycle.spec.ts",
+                    "column": 22,
+                    "line": 154
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-5b6754ceecd9d758a003",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 134,
+          "column": 1
+        },
+        {
+          "title": "native candles paint before 3-bar history and history Retry preserves live state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3453,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:21:14.004Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "41b976a2035942fe1695-7d55b560e08130639104",
+          "file": "footprint-history-lifecycle.spec.ts",
+          "line": 164,
+          "column": 35
+        }
+      ]
+    },
+    {
+      "title": "footprint-totals.spec.ts",
+      "file": "footprint-totals.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "delta flip settings request the exact reference demand and the tooltip reports unavailable strength",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10257,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:21:18.203Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ea77fb1ed2c009a5bce0-2d4cba5d9569beb20df2",
+          "file": "footprint-totals.spec.ts",
+          "line": 327,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pane-indicator-headers.spec.ts",
+      "file": "pane-indicator-headers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "pane indicators use one local header while overlays stay in the main list",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18221,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-12T06:21:28.525Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "71bc6300fb383bc9f792-3e9c68102a22becfa688",
+          "file": "pane-indicator-headers.spec.ts",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-12T06:20:30.941Z",
+    "duration": 76235.451,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

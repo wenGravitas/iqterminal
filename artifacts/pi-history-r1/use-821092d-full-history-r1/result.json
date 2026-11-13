@@ -1,0 +1,19 @@
+{
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:4185/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4185/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+  "failures": [
+    {
+      "phase": "setup",
+      "url": "http://127.0.0.1:4185/",
+      "error": "net::ERR_HTTP_RESPONSE_CODE_FAILURE"
+    }
+  ],
+  "pageErrors": [
+    {
+      "phase": "setup",
+      "error": "Failed to read the 'localStorage' property from 'Window': Access is denied for this document."
+    }
+  ],
+  "activeRequestsAtCleanup": 0,
+  "scope": "No plateau claim without all exact-coverage cycles and inspection of retained heap/queue trend."
+}

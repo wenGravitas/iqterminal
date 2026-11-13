@@ -1,0 +1,12 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Error: Exact browser-decoded part hash mismatch
+    at eval (eval at evaluate (:370:30), <anonymous>:8:62)
+    at async <anonymous>:396:30
+    at /home/daz/workarea/iqterminal-perf-history/scripts/pi-wall-batch-browser-probe.mjs:16:27 {
+  log: []
+}
+
+Node.js v22.23.4

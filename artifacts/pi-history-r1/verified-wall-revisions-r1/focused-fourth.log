@@ -1,0 +1,107 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-archive.test.ts (51 tests | 4 failed) 4755ms
+   ❯ OrderWallsArchiveService fixed-watermark identity bridge (21)
+     × publishes validated historical prefixes through the loaded boundary while current walls stay live 20ms
+     × uses the latest visible range when it arrives before the current bootstrap 7ms
+     × keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes 15ms
+   × holds shared history admission until wall response bodies finish 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > publishes validated historical prefixes through the loaded boundary while current walls stay live
+AssertionError: expected undefined to match object { start: 1800000000000, …(1) }
+
+- Expected:
+{
+  "durationMs": 1000,
+  "start": 1800000000000,
+}
+
++ Received:
+undefined
+
+ ❯ tests/order-walls-archive.test.ts:724:32
+    722|         state: 'loading', profileStatus: 'backfilling', confirmedTo: t…
+    723|       } });
+    724|       expect(historicalPrefix).toMatchObject({ start: from, durationMs…
+       |                                ^
+    725|       expect(prefix?.segments?.some((segment: any) => segment.currentS…
+    726|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > uses the latest visible range when it arrives before the current bootstrap
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/order-walls-archive.test.ts:852:34
+    850|       service.subscribe('delayed-current',{market:'binance-spot',from:…
+    851|       service.updateViewport('delayed-current',from,to,false);
+    852|       expect(signals[0].aborted).toBe(false);
+       |                                  ^
+    853|       release(new Response(JSON.stringify(current)));await flush();
+    854|       const history=urls.filter(url=>url.includes('/archive?'));expect…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes
+AssertionError: expected { state: 'live', …(5) } to match object { state: 'live', archive: { …(2) } }
+(26 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "archive": {
+-     "loadedThrough": 1800001799999,
+      "requestComplete": false,
+    },
+    "state": "live",
+  }
+
+ ❯ tests/order-walls-archive.test.ts:1100:29
+    1098|       await flush();
+    1099|       const failed=events.filter(event=>event.type==='order-wall-batch…
+    1100|       expect(failed.status).toMatchObject({state:'live',archive:{reque…
+       |                             ^
+    1101|       expect(failed.kind).toBe('patch');expect(failed.patches).toEqual…
+    1102|       service.retry('roll-forward');await flush();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/order-walls-archive.test.ts > holds shared history admission until wall response bodies finish
+AssertionError: expected [ ReadableStreamDefaultController {} ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/order-walls-archive.test.ts:1387:64
+    1385|  const work=aborts.map((abort,index)=>loadOrderWallsArchive({request:r…
+    1386|  try{
+    1387|   for(let i=0;i<100;i++)await Promise.resolve();expect(bodies).toHaveL…
+       |                                                                ^
+    1388|   bodies[0]!.close();for(let i=0;i<100;i++)await Promise.resolve();exp…
+    1389|  }finally{for(const abort of aborts)abort.abort();for(const body of bo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 failed | 90 passed (94)
+   Start at  08:18:24
+   Duration  6.41s (tests 68%, transform 26%, import 5%)
+
+  Transform  transforming modules took 3.59s · 26% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

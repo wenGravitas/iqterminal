@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-perp-15m": {
+      "from": 1794285900000,
+      "to": 1794393900000,
+      "sourceFrom": 1794285000000,
+      "sourceTo": 1794394800000,
+      "sourceToken": "ca70826d3846cf0f74a6906179e74f75b1a1eaaed3264bc7d52ffea9e3c5f0ee",
+      "segments": 19209,
+      "valueRuns": 83173,
+      "gaps": 2,
+      "financialHash": "8407bd4a09c800720047e94152247d064c914bdd4b3e5c92ef8642fc880823db",
+      "evidence": "transport-r2/range-trace-reference.jsonl"
+    }
+  }
+}

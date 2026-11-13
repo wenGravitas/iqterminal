@@ -1,0 +1,59 @@
+{
+  "applicationBuild": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "proxyImplementation": "638caabff4d4a441c3706898dc8602274a4d41d6",
+  "servingBuild": "95114d0cb236e9de54fb535d58b901d5ac4a2d79",
+  "environment": "VITE_DATA_MODE=staging, VITE_HISTORY_TILES=1, VITE_DIAGNOSTICS=1; independently verified per sample; fixture=false",
+  "rendering": "Headless system Chromium; every chart reports canvas2d. Requested GLES flags do not by themselves prove GPU rasterization. Effective hardware metadata from the separate preceding retention probe is not a per-run GPU measurement. Foreground UX remains unproven.",
+  "scope": "Five empty-browser-cache actual Pi/current+history SSH/Vite samples per pinned already-prepared footprint window. Coverage and latency only for closed footprints; current responses/gaps are recorded separately and do not certify healthy current freshness. No wall/warm/cold-build/foreground acceptance.",
+  "gateEvaluatorSha256": "50b0fa25a7f720c4d2fed809422bd011a98c353a5f398cd12bc859589afba726",
+  "gateTests": "11 passed",
+  "results": {
+    "final-stack-821-951-foot24-r1": {
+      "pass": false,
+      "medianMs": 6429.099999997765,
+      "maximumMs": 9876,
+      "coverageSlots": [
+        24,
+        24,
+        24,
+        24,
+        24
+      ]
+    },
+    "final-stack-821-951-foot4-r1": {
+      "pass": true,
+      "medianMs": 3509.099999997765,
+      "maximumMs": 4211,
+      "coverageSlots": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ]
+    }
+  },
+  "evidence": {
+    "final-stack-821-951-foot24-r1-executed.mjs": "3b115681bb485a5fd34ce021d708d89b11a798287424196cbbc711cdcbb9be80",
+    "final-stack-821-951-foot24-r1-footprint-24h-1h-1.png": "1964e2b4704b2053c7c171c0eee353df9af5221c9aba4a7f59f08417af140165",
+    "final-stack-821-951-foot24-r1-footprint-24h-1h-2.png": "c000d43a8091ce7a54de09dad1fa513e904fe76bcb16ab91dcdfa555235d3cc3",
+    "final-stack-821-951-foot24-r1-footprint-24h-1h-3.png": "eeb186ddcddfdfa24683e1517cecc14ae05024c607248237a5ea1136d50131b0",
+    "final-stack-821-951-foot24-r1-footprint-24h-1h-4.png": "2933abbe60a338374386fd4f96a9552dba491123239c83b84e9f89a0e66541b2",
+    "final-stack-821-951-foot24-r1-footprint-24h-1h-5.png": "2ae7e696bd85d4939c766be0cc120b0db871c5619495e71a137ad2b7e168b462",
+    "final-stack-821-951-foot24-r1-observations.jsonl": "d1a300bfa19fd0d5002e522834146f9c76a212db6f91ae63be89ed2fd6818f1a",
+    "final-stack-821-951-foot24-r1-samples.jsonl": "622449da2815896f63a2f9a287b5347860ce678a664e2f75222e1bcb1d84b00b",
+    "final-stack-821-951-foot24-r1-summary.json": "3c30db7777f48d64a131b01884ab6df21295993df07c94d70228ada12cdfd09f",
+    "final-stack-821-951-foot24-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc",
+    "final-stack-821-951-foot4-r1-executed.mjs": "3b115681bb485a5fd34ce021d708d89b11a798287424196cbbc711cdcbb9be80",
+    "final-stack-821-951-foot4-r1-footprint-4h-5m-1.png": "28bdd156d16a64dd3307c5823e1dd9d8040fca283a5b185db5d5da480cd7b840",
+    "final-stack-821-951-foot4-r1-footprint-4h-5m-2.png": "30315cd586c62e87a1386e885f5df664ba4f16bbc9ee737c2242326862d42a6c",
+    "final-stack-821-951-foot4-r1-footprint-4h-5m-3.png": "7cdec5095e5a27cd46071d69b5adc6f36cc6a12f65998c27626b7e48f1819caf",
+    "final-stack-821-951-foot4-r1-footprint-4h-5m-4.png": "2c595c9cc665b2ee4744f19fe5d7aa110cfe1090c3b6aaf4f91263226e461568",
+    "final-stack-821-951-foot4-r1-footprint-4h-5m-5.png": "d2de5630d0bcb748fa45c44b805443a41bd75f4e82a2a9d3deadd448ef459f5c",
+    "final-stack-821-951-foot4-r1-observations.jsonl": "bf6bcb23f1c8e979526a57ffe88ae3adac3e606e05f13bf9407131d34984c702",
+    "final-stack-821-951-foot4-r1-samples.jsonl": "429757ede0c69f7afa016050574a733c78bd3e437fc06870436bacff14e88f85",
+    "final-stack-821-951-foot4-r1-summary.json": "ed4330075074a35144696549616d015b0c4c9492cc24dfcc703505ff5012b4dd",
+    "final-stack-821-951-foot4-r1-trace-helper-executed.mjs": "898b2d5f4493e0527fdd84c92da3bab74e42e244715e2aef4c5d2178d5405cbc"
+  },
+  "collectorContinuity": "No remote mutation in this follow-up. Protected IDs/start times remain recorded in backend API-only serving deployment receipt; no production or collector changes."
+}

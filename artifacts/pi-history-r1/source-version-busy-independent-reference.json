@@ -1,0 +1,1 @@
+{"kind":"independent-streaming-busy-hour-reference","from":1793804400000,"to":1793808000000,"rowPrice":37.5,"watermark":3510576320,"records":333999,"cells":52,"maxBufferedBytes":65568,"duplicateRows":0,"queries":7,"contentHash":"a2fd517c62c65c2f1abd6a8237de8f263e329b1ba3377e2d4bd9a532c40705af","revision":1793949918780000,"result":"exact-financial-match"}

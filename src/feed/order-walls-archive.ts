@@ -1,7 +1,11 @@
+import {readWallHistoryHorizon,eligibleWallHistoryRange} from './wall-history-horizon';
+import {wallPreparationReason} from './prepared-wall-admission';
+import {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
+export {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
+import {discoverPreparedWallHistory,preparedWallReader} from './prepared-wall-history';
+import { historyScheduler } from './history-scheduler';
+import { historyViewId } from './history-trace';
 import {
-  ORDER_WALL_ARCHIVE_MAX_SEGMENTS,
-  ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS,
-  ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT,
   orderWallsSettings,
   type OrderWallArchiveStatus,
   type OrderWallMarket,
@@ -213,6 +217,16 @@ export interface OrderWallsArchiveUpdate {
   bytes: number;
   projector?: OrderWallsArchiveProjector;
   resume?: OrderWallsArchiveResumeState;
+  /** Validated prepared presentation; never a mutable live accumulator. */
+  presentation?:ReadonlyMap<string,OrderWallSegment>;
+  /** Every prepared segment was already published and the final proof passed. */
+  preparedPresentationComplete?:true;
+  preparedSourceToken?:string;
+  /** SHA256 of the entire validated selected manifest, including part hashes. */
+  preparedPresentationRevision?:string;
+  /** Worker-local elapsed stages include cooperative waits; source I/O overlaps. */
+  preparedFinalization?:{checkpointOrderElapsedMs:number;validationElapsedMs:number;validationYieldMs:number;presentationOrderElapsedMs:number;mutableProjectorRestored:boolean};
+  preparedRevisionReused?:true;
 }
 
 export interface OrderWallsArchiveCurrentPollerOptions {
@@ -244,12 +258,23 @@ export interface OrderWallsArchiveLoadOptions {
   initialProjector?: OrderWallsArchiveProjector;
   /** Retains the committed projector and fixed page cursor after a bounded transport failure. */
   resume?: OrderWallsArchiveResumeState;
+  preparationRetry?:{token:string;newRevision?:boolean};
+  /** Resolve the archive horizon independently of the current selected book. */
+  eligibleHistory?:boolean;
+  /** Pre-fetched descriptor still passes all normal source/manifest validation. */
+  preparedDiscovery?:unknown;
+  reusePreparedPresentation?:import('./prepared-wall-history').PreparedWallReuseLookup;
+  /** Job-bound metadata survives a failed build before any projector exists. */
+  eligibleRange?:{to:number;horizonAt:number};
+  onEligibility?:(range:{to:number;horizonAt:number})=>void;
   onUpdate?: (update: OrderWallsArchiveUpdate) => void;
   /** Optional bounded-page timings for acceptance diagnostics; callers decide whether to retain them. */
   onPageMetrics?: (metrics: OrderWallsArchivePageMetrics) => void;
 }
 
 export interface OrderWallsArchivePageMetrics {
+  delivery?:'projection'|'canonical';receivedSegments?:number;
+  viewId?:string;requestId?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;encodedBytes?:number;
   requestedAfter: number;
   pageAfter: number;
   nextAfter: number;
@@ -266,6 +291,10 @@ export interface OrderWallsArchivePageMetrics {
 }
 
 export interface OrderWallsArchiveResumeState {
+  /** Prepared-prefix revision must be reproved before resuming its projector. */
+  preparedSourceToken?:string;
+  eligibleTo?:number;
+  eligibleHorizonAt?:number;
   after: number;
   watermark?: number;
   head?: OrderWallsArchivePage['head'];
@@ -342,7 +371,47 @@ export function orderWallsArchiveCurrentRequest(request: OrderWallsArchiveReques
 }
 
 /** Fetches fixed-watermark pages and projects each selected-profile timeline into native chart segments. */
-export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOptions): Promise<OrderWallsArchiveResult> {
+export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions):Promise<OrderWallsArchiveResult>{
+ const original=options.request;
+ if(!options.eligibleHistory||import.meta.env.VITE_HISTORY_TILES!=='1'||options.initialProjector||options.resume&&options.resume.eligibleTo===undefined)return loadBoundedOrderWallsArchive(options);
+ const settings=orderWallsSettings(original.settings),availability=orderWallsArchiveAvailability(original.market,settings,original.profileId);
+ if(availability.admissionRequired||!availability.market||!availability.profileId||!Number.isSafeInteger(original.from)||!Number.isSafeInteger(original.to)||original.from>=original.to)return loadBoundedOrderWallsArchive(options);
+ const viewId=historyViewId(),fetcher=options.fetcher??fetch;
+ const horizonFetcher:typeof fetch=(input,init)=>{const headers=new Headers(init?.headers);headers.set('X-IQ-View-Id',viewId);return fetcher(input,{...init,headers});};
+ let to=options.resume?.eligibleTo??options.eligibleRange?.to,horizonAt=options.resume?.eligibleHorizonAt??options.eligibleRange?.horizonAt,preparedDiscovery:unknown;
+ if(to===undefined){
+  const found=await discoverPreparedWallHistory({market:availability.market,profile:availability.profileId,from:original.from,to:original.to},horizonFetcher,options.signal??new AbortController().signal,settings,{resolveEligibility:true,retry:options.preparationRetry,onEligibility:value=>{to=value.request.to;horizonAt=value.horizon.head.at;options.onEligibility?.({to,horizonAt});},onPreparation:preparation=>{
+   const reason=wallPreparationReason(preparation),archive={...archiveStatus(original,availability,'building'),requestComplete:false,rangeComplete:false,eligibleTo:to,horizonAt,loadedThrough:original.from,preparation,reason};
+   options.onUpdate?.({kind:'patch',patches:[],status:statusForArchive(archive,'building',reason),pages:0,bytes:0});
+  }});
+  if(found?.eligibility)preparedDiscovery=found;
+  else {
+   const horizon=await readWallHistoryHorizon({market:availability.market,profile:availability.profileId},horizonFetcher,options.signal??new AbortController().signal);
+   if(!horizon)return loadBoundedOrderWallsArchive(options,viewId);
+   const range=eligibleWallHistoryRange(original,horizon);to=range.to;horizonAt=range.horizonAt;options.onEligibility?.({to,horizonAt});
+  }
+ }
+ options.signal?.throwIfAborted();
+ if(to===undefined||!Number.isSafeInteger(to)||to<original.from||to>original.to)throw Error('Invalid resolved wall history bound');
+ if(to<=original.from){
+  const reason='This view is beyond the observed archive horizon; no past interval is eligible yet.';
+  const archive={...archiveStatus(original,availability,'partial'),requestComplete:true,rangeComplete:false,eligibleTo:to,horizonAt,reason};
+  const result:OrderWallsArchiveResult={kind:'snapshot',segments:[],status:statusForArchive(archive,'partial',reason),pages:0,bytes:0};options.onUpdate?.(result);return result;
+ }
+ const clipped=to<original.to;
+ const annotate=<T extends OrderWallsArchiveUpdate>(update:T):T=>{
+  const a=update.status.archive,complete=a?.requestComplete===true;
+  const reason=clipped&&complete?[a?.reason,'History is loaded through the archive horizon; later chart time is not covered.'].filter(Boolean).join(' '):a?.reason;
+  return {...update,...(update.resume?{resume:{...update.resume,eligibleTo:to,eligibleHorizonAt:horizonAt}}:{}),status:{...update.status,
+   ...(clipped?{coverage:{...update.status.coverage,from:original.from,to:original.to,complete:false,partial:true},...(complete?{message:reason}:{})}:{}),
+   ...(a?{archive:{...a,to:original.to,eligibleTo:to,...(horizonAt===undefined?{}:{horizonAt}),rangeComplete:!clipped&&a.rangeComplete,
+    ...(clipped&&complete?{state:'partial' as const,reason}:{})}}:{})}};
+ };
+ const result=await loadBoundedOrderWallsArchive({...options,preparedDiscovery,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
+ return annotate(result);
+}
+
+async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOptions,viewId=historyViewId()): Promise<OrderWallsArchiveResult> {
   const { request } = options, settings = orderWallsSettings(request.settings), availability = orderWallsArchiveAvailability(request.market, settings, request.profileId);
   const baseStatus = archiveStatus(request, availability, 'loading');
   if (!availability.exact && !availability.admissionRequired) {
@@ -362,6 +431,8 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   const fetcher = options.fetcher ?? ((input, init) => fetch(input, init));
   const pageLimit = Math.max(1, Math.min(ORDER_WALL_ARCHIVE_PAGE_LIMIT, Math.floor(options.pageLimit ?? ORDER_WALL_ARCHIVE_PAGE_LIMIT)));
   const signal = options.signal;
+  const correlatedFetcher: typeof fetch = (input, init) => {const headers=new Headers(init?.headers);headers.set('X-IQ-View-Id',viewId);return fetcher(input,{...init,headers});};
+  const consumerSignal=signal??new AbortController().signal;
   const prior = options.resume;
   const projector = prior?.projector ?? options.initialProjector ?? new OrderWallsArchiveProjector(settings, queryFrom, request.to);
   let after = prior?.after ?? request.after ?? 0, watermark: number | undefined = prior?.watermark ?? request.watermark,
@@ -373,8 +444,51 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
   let profileStatus: OrderWallsArchivePage['profileStatus'] = prior?.profileStatus;
   let sentInitial = pages > 0;
   let lastStatus: OrderWallStatus | undefined;
+  const prepared=import.meta.env.VITE_HISTORY_TILES==='1'&&(!after||prior?.preparedSourceToken)?await preparedWallReader({market:profile.market,profile:profile.id,from:queryFrom,to:request.to,
+    watermark,head:watermarkHead},correlatedFetcher,consumerSignal,prior?.preparedSourceToken,settings,{discovery:options.preparedDiscovery,retry:options.preparationRetry,onPreparation:preparation=>{
+      const reason=wallPreparationReason(preparation);
+      const archive:OrderWallArchiveStatus={...archiveStatus(request,availability,'building'),requestComplete:false,rangeComplete:false,
+        loadedThrough:Math.min(request.to,Math.max(request.from,prior?.projector.confirmedAt??request.from)),preparation,reason};
+      options.onUpdate?.({kind:'patch',patches:[],status:statusForArchive(archive,'building',reason),pages,bytes,...(prior?{resume:prior}:{})});
+    }}):null;
   const captureResume = (resumeAfter = after): OrderWallsArchiveResumeState => ({ after: resumeAfter, watermark,
-    head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector });
+    head: watermarkHead, pages, bytes, patchCount, coverage: pageCoverage, lastMidpoint, profileStatus, projector, ...(prepared?{preparedSourceToken:prepared.sourceToken}:{}) });
+  try {
+  if(prepared&&!after&&!prior&&!options.initialProjector){
+    let painted=false;
+    const validateProjectionProfile=(candidate:OrderWallsArchiveProfile)=>{if(!profileBasisMatches(candidate,profile)||!orderWallsArchiveDerivationsExact(candidate,settings))throw Error('Prepared wall projection profile is not exactly derivable');};
+    const reused=options.reusePreparedPresentation?await prepared.reuseProjection(settings,options.reusePreparedPresentation,validateProjectionProfile):null;
+    const projected=reused??await prepared.readProjection(settings,progress=>{
+      const archive={...archiveStatus(request,availability,'loading'),exact:true,requestComplete:false,rangeComplete:false,loadedThrough:request.from,presentationThrough:progress.presentationThrough};
+      const status=statusForArchive(archive,'loading','Loading validated prepared wall records; full range validation pending.');
+      const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:progress.segments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:progress.segments}),
+        presentation:progress.presentation,status,pages:progress.parts,bytes:progress.bytes};
+      const at=performance.now();options.onUpdate?.(update);painted=true;
+      if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
+        requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
+        responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:progress.metrics.validationMs,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
+      bytes=progress.bytes;
+    },validateProjectionProfile);
+    if(projected){
+      const head=projected.head,coverage=projected.coverage;
+      validatePage({version:1,profile:projected.profile,market:projected.profile.market,instrument:projected.profile.instrument,feed:projected.profile.feed,from:queryFrom,to:request.to,watermark:head.cursor,head,
+        page:{after:0,nextAfter:head.cursor,hasMore:false,lastAt:coverage.confirmedTo??queryFrom,limit:pageLimit,sameMillisecondClosed:true},patches:[],coverage},profile,queryRequest,0,watermark,watermarkHead);
+      const limited=('valueHistoryLimited' in projected&&projected.valueHistoryLimited)||('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited);
+      const extent=coverage.availableFrom!==null&&coverage.availableFrom<=request.from&&coverage.confirmedTo!==null&&coverage.confirmedTo>=request.to-1;
+      const state=limited||coverage.status==='complete'&&(!extent||coverage.partial||coverage.gaps.length||coverage.gapsTruncated)?'partial':coverageState(coverage.status);
+      const reason=limited?'Prepared wall history reached its retained detail capacity.':coverage.reason;
+      const archive={...archiveStatus(request,availability,state,coverage),exact:true,requestComplete:true,loadedThrough:projected.projector?projected.projector.confirmedAt:projected.confirmedAt,
+        ...(limited?{rangeComplete:false,reason}:{}),profileVersion:projected.profile.version,algorithmVersion:projected.profile.algorithmVersion,schemaVersion:projected.profile.schemaVersion,
+        midpoint:projected.projector?projected.projector.selectedState().midpoint:projected.midpoint};
+      const status={...statusForArchive(archive,state,reason),...('valueHistoryLimited' in projected&&projected.valueHistoryLimited?{valueHistoryLimited:true}:{}),
+        ...('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited?{episodeHistoryLimited:true}:{})};
+      const segments=projected.projector?projected.projector.snapshot():'segments' in projected?projected.segments:[...projected.presentation.values()];
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,
+        ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status,
+        watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
+      options.onUpdate?.(result);return result;
+    }
+  }
   for (;;) {
     if (signal?.aborted) throw abortError();
     if (pages >= ORDER_WALL_ARCHIVE_MAX_PAGES || patchCount > ORDER_WALL_ARCHIVE_MAX_PATCHES) {
@@ -395,9 +509,10 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       limit: String(pageLimit),
     });
     if (watermark !== undefined) params.set('watermark', String(watermark));
+    if (import.meta.env.VITE_HISTORY_TILES === '1') params.set('display', '1');
     const url = `/market-data/v1/order-walls/archive?${params}`;
     let fetched: Awaited<ReturnType<typeof fetchArchivePageWithRetry>>;
-    try { fetched = await fetchArchivePageWithRetry(fetcher, url, after, signal); }
+    try { fetched = prepared ? await prepared.read(after) : await historyScheduler.read(url,'order-walls',consumerSignal,upstream=>fetchArchivePageWithRetry(correlatedFetcher,url,after,upstream)); }
     catch (error) {
       if (signal?.aborted) throw abortError();
       if (!(error instanceof OrderWallsArchivePageRequestError)) throw error;
@@ -432,7 +547,7 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
     }
     const validationStartedAt = performance.now();
     const page = validatePage(body, profile, queryRequest, after, watermark, watermarkHead);
-    const validationMs = performance.now() - validationStartedAt;
+    const validationMs = performance.now() - validationStartedAt + ('validationMs' in fetched?Number(fetched.validationMs??0):0);
     if (page.profileStatus) profileStatus = page.profileStatus;
     if (watermark === undefined) { watermark = page.watermark; watermarkHead = page.head; }
     const fixedAt = watermarkHead?.at;
@@ -501,11 +616,11 @@ export async function loadOrderWallsArchive(options: OrderWallsArchiveLoadOption
       eventLoopYieldDelayMs = performance.now() - yieldStartedAt;
       batchPages = 0; batchBytes = 0; batchStartedAt = performance.now();
     }
-    options.onPageMetrics?.({ requestedAfter, pageAfter: page.page.after, nextAfter: page.page.nextAfter,
+    options.onPageMetrics?.({viewId,requestId:response.headers.get('x-iq-request-id')??undefined,dbQueries:Number(response.headers.get('x-iq-db-queries')??0),dbReadRows:Number(response.headers.get('x-iq-db-read-rows')??0),dbReadBytes:Number(response.headers.get('x-iq-db-read-bytes')??0),encodedBytes:Number(response.headers.get('content-length')??0), requestedAfter, pageAfter: page.page.after, nextAfter: page.page.nextAfter,
       patchCount: page.patches.length, responseBytes: pageBytes, responseHeadersMs, responseBodyReadMs,
       jsonParseMs, validationMs, projectorApplyMs, updateCallbackMs, eventLoopYieldDelayMs, attempts });
     if (!page.page.hasMore) return { kind: 'snapshot', segments: projector.snapshot(), status, watermark, head: watermarkHead, cursor: page.page.nextAfter, pages, bytes, projector };
-  }
+  }} finally {prepared?.dispose();}
 }
 
 /** Polls only bounded selected-profile changes; it never replays or projects the browser's 5k raw book. */
@@ -844,415 +959,6 @@ function validArchivePatch(value: unknown): value is OrderWallsArchivePatch {
     && validSidePatch(value.bids) && validSidePatch(value.asks) && (value.kind !== 'gap' || typeof value.reason === 'string');
 }
 
-export class OrderWallsArchiveProjector {
-  private readonly candidates = new Map<string, CandidateState>();
-  private readonly segments = new Map<string, OrderWallSegment>();
-  private readonly seenGaps = new Set<string>();
-  private valueRunQueue: Array<{ id: string; sequence: number }> = [];
-  private valueRunQueueStart = 0;
-  private nextValueRunSequence = 0;
-  private readonly valueRunSequences = new WeakMap<OrderWallValuePoint, number>();
-  private totalValueRuns = 0;
-  private valueHistoryLimited = false;
-  private episodeHistoryLimited = false;
-  private currentScope?: OrderWallsArchiveBookScope;
-  private confirmedTo: number;
-  private to: number;
-  private cursor = 0;
-  private epoch = 0;
-  private midpoint: string | null = null;
-  private patchBuffer = new Map<string, OrderWallPatch>();
-
-  constructor(private readonly settings: OrderWallsSettings, private readonly from: number, to: number, private readonly segmentNamespace = '') {
-    this.to = to;
-    this.confirmedTo = from;
-  }
-
-  get historyLimited() { return this.valueHistoryLimited || this.episodeHistoryLimited; }
-  get valueRunsLimited() { return this.valueHistoryLimited; }
-  get episodesLimited() { return this.episodeHistoryLimited; }
-  get confirmedAt() { return this.confirmedTo; }
-
-  diagnostics() {
-    let largestSegmentRuns = 0;
-    for (const segment of this.segments.values()) largestSegmentRuns = Math.max(largestSegmentRuns, segment.valueRuns.length);
-    return { retainedSegments: this.segments.size, activeCandidates: this.candidates.size, valueRuns: this.totalValueRuns,
-      largestSegmentRuns, queuedValueRuns: this.valueRunQueue.length - this.valueRunQueueStart,
-      episodeHistoryLimited: this.episodeHistoryLimited, valueHistoryLimited: this.valueHistoryLimited };
-  }
-
-  extendTo(to: number) { if (Number.isFinite(to)) this.to = Math.max(this.to, to); }
-
-  confirmWatermark(cursor: number, at: number, epoch: number, midpoint?: string | null) {
-    if (!validInt(cursor) || !finiteNonNegative(at) || !validInt(epoch) || cursor < this.cursor || epoch !== this.epoch) return false;
-    this.advanceAll(at); this.confirmedTo = Math.max(this.confirmedTo, at);
-    this.cursor = cursor; if (midpoint !== undefined) this.midpoint = midpoint;
-    return true;
-  }
-
-  selectedState() {
-    const candidates = [...this.candidates.values()].map(state => state.candidate);
-    return { at: this.confirmedTo, cursor: this.cursor, epoch: this.epoch, midpoint: this.midpoint,
-      bookScope: this.currentScope, bids: candidates.filter(candidate => candidate.side === 'bid').sort((a, b) => a.rank - b.rank),
-      asks: candidates.filter(candidate => candidate.side === 'ask').sort((a, b) => a.rank - b.rank) };
-  }
-
-  seedSelectedState(state: ReturnType<OrderWallsArchiveProjector['selectedState']>) {
-    this.patchBuffer.clear(); this.currentScope = state.bookScope; this.cursor = state.cursor; this.epoch = state.epoch; this.midpoint = state.midpoint;
-    this.advanceAll(state.at);
-    for (const candidate of [...state.bids, ...state.asks]) this.upsert(candidate, state.at, true);
-    this.confirmedTo = state.at;
-    return this.flushPatchBuffer();
-  }
-
-  cloneForLiveTail(to = Number.MAX_SAFE_INTEGER) {
-    const clone = new OrderWallsArchiveProjector(this.settings, this.from, Math.max(this.to, to), this.segmentNamespace);
-    clone.currentScope = this.currentScope;
-    clone.confirmedTo = this.confirmedTo; clone.cursor = this.cursor; clone.epoch = this.epoch; clone.midpoint = this.midpoint;
-    clone.valueHistoryLimited = this.valueHistoryLimited; clone.episodeHistoryLimited = this.episodeHistoryLimited;
-    for (const [id, segment] of this.segments) {
-      const copied = cloneSegment(segment);
-      clone.segments.set(id, copied);
-      for (const point of copied.valueRuns) clone.enqueueValueRun(id, point);
-    }
-    clone.totalValueRuns = [...clone.segments.values()].reduce((sum, segment) => sum + segment.valueRuns.length, 0);
-    for (const [id, state] of this.candidates) clone.candidates.set(id, { ...state,
-      segment: state.segment ? clone.segments.get(state.segment.id) : undefined, candidate: { ...state.candidate },
-      qualifyingCandidate: state.qualifyingCandidate ? { ...state.qualifyingCandidate } : undefined });
-    for (const gap of this.seenGaps) clone.seenGaps.add(gap);
-    return clone;
-  }
-
-  applyPage(page: OrderWallsArchivePage): OrderWallPatch[] {
-    this.patchBuffer.clear();
-    const head = page.head;
-    if (!head) throw new Error('Order Walls archive page is missing its fixed-watermark head');
-    if (page.seed && !this.candidates.size && !this.segments.size) {
-      this.currentScope = page.seed.bookScope;
-      const seedAt = Math.max(this.from, page.seed.at, page.coverage.availableFrom ?? this.from);
-      this.cursor = page.seed.cursor; this.epoch = page.seed.epoch; this.midpoint = page.seed.midpoint;
-      this.advanceAll(seedAt);
-      for (const candidate of [...page.seed.bids, ...page.seed.asks]) this.upsert(candidate, seedAt, true);
-      this.confirmedTo = seedAt;
-    }
-    for (const patch of page.patches) {
-      this.cursor = patch.cursor; this.epoch = patch.epoch; this.midpoint = patch.midpoint;
-      this.currentScope = patch.bookScope ?? this.currentScope;
-      if (patch.kind === 'gap') this.applyGap(patch);
-      else {
-        this.advanceAll(patch.at);
-        for (const candidate of [...patch.bids.upserts, ...patch.asks.upserts]) this.upsert(candidate, patch.at, false);
-        for (const removal of [...patch.bids.removals, ...patch.asks.removals]) this.remove(removal);
-      }
-    }
-    // Coverage.confirmedTo describes the whole fixed request range. While the
-    // cursor is still paging, only this page's last applied timestamp is safe
-    // to advance geometry through. The terminal page proves the quiet tail to
-    // the request's confirmed watermark and may then close that interval.
-    const pageConfirmedTo = page.page.hasMore ? page.page.lastAt : page.coverage.confirmedTo ?? page.page.lastAt;
-    const confirmed = Math.min(this.to, Math.max(this.from, pageConfirmedTo));
-    this.applyCoverageGaps(page.coverage.gaps, confirmed);
-    if (confirmed >= this.confirmedTo) {
-      this.advanceAll(confirmed);
-      this.confirmedTo = confirmed;
-    }
-    this.cursor = Math.max(this.cursor, page.page.nextAfter);
-    this.epoch = head.epoch;
-    this.trim();
-    return this.flushPatchBuffer();
-  }
-
-  snapshot() { return [...this.segments.values()].sort((a, b) => a.start - b.start || a.side.localeCompare(b.side) || a.price - b.price); }
-
-  /** Censors active replay state at a known fence when a verified current tail cannot join it. */
-  censorOpen(at: number, reason: string) {
-    this.patchBuffer.clear();
-    for (const [id, state] of this.candidates) {
-      const end = Math.min(at, state.lastAt);
-      this.advance(state, end);
-      if (state.segment) this.close(state, end, false, 'censored', reason);
-      this.candidates.delete(id);
-    }
-    return this.flushPatchBuffer();
-  }
-
-  applyCurrentPage(page: OrderWallsArchiveCurrentPage, from?: number) {
-    const head = page.head;
-    if (!head) throw new Error('Order Walls current page is missing its fixed-watermark head');
-    const seedFrom = from ?? head.at;
-    const confirmedTo = Math.min(page.coverage?.confirmedTo ?? head.at, head.at);
-    const gaps = (page.coverage?.gaps ?? []).filter(gap => (gap.from ?? gap.at ?? 0) <= head.at);
-    const converted: OrderWallsArchivePage = {
-      version: 1, profile: page.profile, market: page.market, instrument: page.instrument, feed: page.feed,
-      from: seedFrom, to: Number.MAX_SAFE_INTEGER, watermark: page.watermark,
-      head: { cursor: head.cursor, at: head.at, epoch: head.epoch },
-      page: { ...page.page, lastAt: page.page.lastAt ?? head.at },
-      ...(page.state ? { seed: { at: head.at, cursor: head.cursor, epoch: head.epoch,
-        midpoint: head.midpoint, bookScope: head.bookScope, bids: page.state.bids, asks: page.state.asks } } : {}),
-      patches: page.patches,
-      coverage: { availableFrom: page.coverage?.availableFrom ?? seedFrom, requestedFrom: seedFrom,
-        requestedTo: Number.MAX_SAFE_INTEGER, confirmedTo,
-        gaps, partial: page.coverage?.partial ?? false,
-        status: coverageState(page.coverage?.status ?? 'complete') as OrderWallsArchiveCoverage['status'],
-        ...(page.coverage?.reason ? { reason: page.coverage.reason } : {}), bookScope: head.bookScope },
-    };
-    return this.applyPage(converted);
-  }
-
-  private upsert(candidate: OrderWallsArchiveCandidate, at: number, carryIn: boolean) {
-    if (!validCandidate(candidate)) return;
-    const previous = this.candidates.get(candidate.entryId);
-    if (previous) this.advance(previous, at);
-    const eligible = this.eligible(candidate);
-    const state = previous ?? this.newCandidateState(candidate, at, carryIn, eligible);
-    if (previous) {
-      const wasEligible = previous.eligible;
-      previous.candidate = candidate;
-      previous.eligible = eligible;
-      if (wasEligible && !eligible) {
-        this.close(previous, at, true, !this.settings.minimumNotionalEnabled || compareDecimalToNumber(candidate.notional, this.settings.minimumNotionalUsd) >= 0 ? 'rank-exit' : 'below-minimum');
-        previous.qualifyingAt = undefined;
-        previous.qualifyingCursor = undefined;
-      } else if (!wasEligible && eligible) {
-        previous.qualifyingAt = at;
-        previous.qualifyingCursor = this.cursor;
-        previous.qualifyingStartKnown = true;
-        previous.qualifyingCandidate = candidate;
-      }
-      previous.candidate = candidate;
-      if (eligible && previous.segment) this.appendValue(previous.segment, candidate, at);
-      if (eligible && !previous.segment) {
-        if (previous.qualifyingAt === undefined) {
-          previous.qualifyingAt = at;
-          previous.qualifyingCursor = this.cursor;
-          previous.qualifyingStartKnown = !carryIn;
-          previous.qualifyingCandidate = candidate;
-        }
-        previous.qualifyingCandidate = candidate;
-        this.maybeOpen(previous, at);
-      }
-      return;
-    }
-    this.candidates.set(candidate.entryId, state);
-    if (eligible) {
-      if (carryIn) {
-        state.qualifyingAt = candidate.startKnown ? Math.max(0, candidate.startedAt) : at;
-        state.qualifyingCursor = candidate.startCursor;
-        state.qualifyingStartKnown = candidate.startKnown;
-        state.qualifyingCandidate = candidate;
-      }
-      this.maybeOpen(state, at);
-    }
-  }
-
-  private newCandidateState(candidate: OrderWallsArchiveCandidate, at: number, carryIn: boolean, eligible: boolean): CandidateState {
-    const start = carryIn ? candidate.startKnown ? Math.max(0, candidate.startedAt) : at : Math.max(this.from, candidate.startedAt);
-    const state: CandidateState = {
-      candidate, eligible, lastAt: start, usdMs: 0, peakUsd: decimalNumber(candidate.notional),
-      qualifyingAt: eligible ? start : undefined,
-      qualifyingCursor: eligible ? carryIn ? candidate.startCursor : this.cursor : undefined,
-      qualifyingStartKnown: eligible ? carryIn ? candidate.startKnown : candidate.startKnown && candidate.startedAt >= this.from : false,
-      qualifyingCandidate: eligible ? candidate : undefined,
-    };
-    if (eligible && !carryIn && candidate.startedAt < this.from) state.qualifyingStartKnown = false;
-    if (!eligible) state.lastAt = at;
-    return state;
-  }
-
-  private maybeOpen(state: CandidateState, confirmedTo: number) {
-    if (state.segment || !state.eligible || state.qualifyingAt === undefined || !state.qualifyingCandidate) return;
-    const start = state.qualifyingAt;
-    if (confirmedTo < start) return;
-    const candidate = state.qualifyingCandidate;
-    if (this.settings.minDurationMs > 0 && (candidate.confirmationAt === undefined || candidate.confirmationAt === null
-      || candidate.confirmationAt < start + this.settings.minDurationMs || confirmedTo < candidate.confirmationAt)) return;
-    const id = segmentId(candidate.entryId, this.settings, state.qualifyingCursor, state.qualifyingStartKnown, this.segmentNamespace);
-    const point = valuePoint(candidate, start);
-    const segment: OrderWallSegment = {
-      id, archiveEntryId: candidate.entryId, epoch: candidate.startEpoch, side: candidate.side, price: decimalNumber(candidate.price), priceExact: candidate.price,
-      start, end: null, peakUsd: decimalNumber(candidate.notional), meanUsd: decimalNumber(candidate.notional),
-      durationMs: Math.max(0, confirmedTo - start), percentile: null, scopePartial: this.scopePartial(candidate.side),
-      startKnown: state.qualifyingStartKnown, detectionMode: 'top-levels', rank: candidate.rank, valueRuns: [point],
-      valueRunsTruncated: false, endReason: null, endKnown: false,
-    };
-    state.segment = segment;
-    state.usdMs = decimalNumber(candidate.notional) * Math.max(0, confirmedTo - start);
-    this.totalValueRuns++;
-    this.enqueueValueRun(segment.id, point);
-    state.lastAt = confirmedTo;
-    state.peakUsd = segment.peakUsd;
-    state.valueSignature = candidateSignature(candidate);
-    this.store(segment);
-  }
-
-  private appendValue(segment: OrderWallSegment, candidate: OrderWallsArchiveCandidate, at: number) {
-    const state = this.candidates.get(candidate.entryId);
-    if (!state || state.valueSignature === candidateSignature(candidate)) return;
-    const point = valuePoint(candidate, at), last = segment.valueRuns.at(-1);
-    if (last?.at === at) {
-      this.totalValueRuns -= 1;
-      segment.valueRuns[segment.valueRuns.length - 1] = point;
-    } else {
-      segment.valueRuns.push(point); this.totalValueRuns++;
-    }
-    this.enqueueValueRun(segment.id, point);
-    state.valueSignature = candidateSignature(candidate);
-    state.peakUsd = Math.max(state.peakUsd, point.usd);
-    segment.peakUsd = state.peakUsd;
-    segment.rank = candidate.rank;
-    segment.priceExact = candidate.price;
-    segment.price = decimalNumber(candidate.price);
-    this.trimValues(segment);
-    this.store(segment);
-  }
-
-  private advanceAll(at: number) {
-    for (const state of this.candidates.values()) this.advance(state, at);
-  }
-
-  private advance(state: CandidateState, at: number) {
-    if (!Number.isFinite(at)) return;
-    if (state.eligible && !state.segment) this.maybeOpen(state, at);
-    const segment = state.segment;
-    if (!segment) { state.lastAt = Math.max(state.lastAt, at); return; }
-    const end = Math.min(this.to, Math.max(state.lastAt, at));
-    const elapsed = Math.max(0, end - state.lastAt);
-    state.usdMs += decimalNumber(state.candidate.notional) * elapsed;
-    state.lastAt = end;
-    segment.durationMs = Math.max(0, end - segment.start);
-    segment.meanUsd = segment.durationMs > 0 ? state.usdMs / segment.durationMs : decimalNumber(state.candidate.notional);
-    this.store(segment);
-  }
-
-  private remove(removal: OrderWallsArchiveRemoval) {
-    const state = this.candidates.get(removal.entryId);
-    if (!state) return;
-    const censored = isCensoredRemoval(removal.reason);
-    const end = censored ? Math.min(removal.at, removal.lastConfirmedAt) : removal.at;
-    this.advance(state, end);
-    const reason = removalReason(removal.reason);
-    this.close(state, end, !censored, reason, censored ? removal.reason : undefined);
-    this.candidates.delete(removal.entryId);
-  }
-
-  private applyGap(patch: OrderWallsArchivePatch) {
-    const removals = [...patch.bids.removals, ...patch.asks.removals];
-    const removalById = new Map(removals.map(item => [item.entryId, item]));
-    for (const [id, state] of this.candidates) {
-      const removal = removalById.get(id);
-      const end = removal?.lastConfirmedAt ?? state.lastAt;
-      this.advance(state, end);
-      this.close(state, end, false, 'censored', patch.reason ?? removal?.reason ?? 'Depth history gap.');
-      this.candidates.delete(id);
-    }
-  }
-
-  private applyCoverageGaps(gaps: OrderWallsArchiveCoverage['gaps'], confirmedTo: number) {
-    for (const gap of gaps) {
-      const from = gap.from ?? gap.at ?? this.from, to = gap.to ?? gap.at ?? from;
-      const key = `${from}:${to}:${gap.reason}`;
-      if (this.seenGaps.has(key)) continue;
-      this.seenGaps.add(key);
-      for (const [id, state] of this.candidates) {
-      if (to < state.lastAt || from > confirmedTo) continue;
-      const end = Math.min(state.lastAt, from);
-        this.advance(state, end);
-        this.close(state, end, false, 'censored', gap.reason);
-        this.candidates.delete(id);
-      }
-    }
-  }
-
-  private close(state: CandidateState, at: number, endKnown: boolean, reason: OrderWallSegment['endReason'], censoredReason?: string) {
-    const segment = state.segment;
-    if (!segment) return;
-    const end = Math.max(segment.start, Math.min(this.to, at));
-    segment.end = end;
-    segment.durationMs = Math.max(0, end - segment.start);
-    segment.endReason = reason;
-    segment.endKnown = endKnown;
-    if (!endKnown && censoredReason) segment.censoredReason = censoredReason;
-    this.store(segment);
-    state.segment = undefined;
-  }
-
-  private eligible(candidate: OrderWallsArchiveCandidate) {
-    return candidate.rank <= this.settings.topLevels
-      && (!this.settings.minimumNotionalEnabled || compareDecimalToNumber(candidate.notional, this.settings.minimumNotionalUsd) >= 0);
-  }
-
-  private scopePartial(side: 'bid' | 'ask') {
-    return side === 'bid' ? this.currentScope?.bidComplete !== true : this.currentScope?.askComplete !== true;
-  }
-
-  private store(segment: OrderWallSegment) {
-    this.segments.set(segment.id, segment);
-    // Keep a reference while the page fold is in progress. flushPatchBuffer()
-    // copies the final state once per changed segment instead of once per event.
-    this.patchBuffer.set(segment.id, { id: segment.id, segment, replaceValueRuns: true });
-  }
-
-  private trimValues(segment: OrderWallSegment) {
-    if (segment.valueRuns.length > ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT) {
-      const remove = segment.valueRuns.length - ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT;
-      segment.valueRuns.splice(0, remove);
-      this.totalValueRuns = Math.max(0, this.totalValueRuns - remove);
-      segment.valueRunsTruncated = true;
-      this.valueHistoryLimited = true;
-    }
-    while (this.totalValueRuns > ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS && this.valueRunQueueStart < this.valueRunQueue.length) {
-      const oldest = this.valueRunQueue[this.valueRunQueueStart++]!;
-      const candidate = this.segments.get(oldest.id), first = candidate?.valueRuns[0];
-      if (!candidate || !first || this.valueRunSequences.get(first) !== oldest.sequence) continue;
-      candidate.valueRuns.shift(); candidate.valueRunsTruncated = true;
-      this.totalValueRuns--; this.valueHistoryLimited = true;
-      this.store(candidate);
-    }
-    if (this.valueRunQueueStart > 4_096 && this.valueRunQueueStart * 2 > this.valueRunQueue.length) {
-      this.valueRunQueue = this.valueRunQueue.slice(this.valueRunQueueStart); this.valueRunQueueStart = 0;
-    }
-  }
-
-  private trim() {
-    while (this.segments.size > ORDER_WALL_ARCHIVE_MAX_SEGMENTS) {
-      let oldest: OrderWallSegment | undefined;
-      for (const segment of this.segments.values()) if (segment.end !== null) { oldest = segment; break; }
-      if (!oldest) break;
-      this.segments.delete(oldest.id);
-      this.totalValueRuns = Math.max(0, this.totalValueRuns - oldest.valueRuns.length);
-      this.patchBuffer.set(oldest.id, { id: oldest.id, segment: null }); this.episodeHistoryLimited = true;
-    }
-  }
-
-  private enqueueValueRun(id: string, point: OrderWallValuePoint) {
-    const sequence = ++this.nextValueRunSequence;
-    this.valueRunSequences.set(point, sequence);
-    this.valueRunQueue.push({ id, sequence });
-  }
-
-  private flushPatchBuffer() {
-    const patches = [...this.patchBuffer.values()].map(patch => patch.segment
-      ? { ...patch, segment: cloneSegment(patch.segment) }
-      : patch);
-    this.patchBuffer.clear();
-    return patches;
-  }
-}
-
-interface CandidateState {
-  candidate: OrderWallsArchiveCandidate;
-  eligible: boolean;
-  segment?: OrderWallSegment;
-  qualifyingAt?: number;
-  qualifyingCursor?: number;
-  qualifyingStartKnown: boolean;
-  qualifyingCandidate?: OrderWallsArchiveCandidate;
-  lastAt: number;
-  usdMs: number;
-  peakUsd: number;
-  valueSignature?: string;
-}
-
 interface ExpectedArchiveProfile {
   id: string;
   market: 'spot' | 'perpetual';
@@ -1451,33 +1157,10 @@ function expandExponent(value: string) {
       : `${digits.slice(0, decimalAt)}.${digits.slice(decimalAt)}`;
   return `${negative ? '-' : ''}${expanded}`;
 }
-function segmentId(entryId: string, settings: OrderWallsSettings, cursor: number | undefined, startKnown: boolean, namespace = '') {
-  const filter = `${settings.topLevels}:${settings.minimumNotionalEnabled ? settings.minimumNotionalUsd : 'off'}:${settings.minDurationMs}`;
-  return `${entryId}:view-${filter}:${startKnown ? `q${cursor ?? 0}` : 'carry'}${namespace ? `:${namespace}` : ''}`;
-}
-function valuePoint(candidate: OrderWallsArchiveCandidate, at: number): OrderWallValuePoint {
-  return { at, usd: decimalNumber(candidate.notional), percentile: null, rank: candidate.rank,
-    quantity: decimalNumber(candidate.quantity), quantityExact: candidate.quantity, notionalExact: candidate.notional };
-}
-function candidateSignature(candidate: OrderWallsArchiveCandidate) {
-  return `${candidate.price}|${candidate.quantity}|${candidate.notional}|${candidate.rank}`;
-}
-function removalReason(reason: OrderWallsArchiveRemovalReason): OrderWallSegment['endReason'] {
-  if (reason === 'rank-exit') return 'rank-exit';
-  if (reason === 'below-minimum') return 'below-minimum';
-  if (reason === 'band-exit') return 'out-of-range';
-  if (reason === 'observed-zero') return 'removed';
-  if (reason === 'replacement-epoch' || reason === 'gap' || reason === 'capacity-unknown') return 'censored';
-  return 'removed';
-}
-function isCensoredRemoval(reason: OrderWallsArchiveRemovalReason) {
-  return reason === 'gap' || reason === 'replacement-epoch' || reason === 'capacity-unknown';
-}
 function validDecimal(value: unknown): value is string {
   return typeof value === 'string' && /^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(value);
 }
 function decimalNumber(value: string) { return Number(value); }
-function cloneSegment(segment: OrderWallSegment): OrderWallSegment { return { ...segment, valueRuns: segment.valueRuns.map(point => ({ ...point })) }; }
 function validInt(value: unknown): value is number { return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0; }
 function finiteNonNegative(value: unknown): value is number { return typeof value === 'number' && Number.isFinite(value) && value >= 0; }
 function isRecord(value: unknown): value is Record<string, any> { return value !== null && typeof value === 'object' && !Array.isArray(value); }

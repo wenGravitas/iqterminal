@@ -1,0 +1,34 @@
+{
+  "scope": "Explicit mocked discovery503 over actual staging native candles; headless UI/status check only, not latency, financial-wall coverage or current ACK acceptance",
+  "expectedBuild": "e12965d38f9dc584c8fdfe46b8817a249166259a",
+  "pass": false,
+  "error": "TimeoutError: page.waitForFunction: Timeout 15000ms exceeded.",
+  "faults": 1,
+  "failureSnapshot": {
+    "panels": [
+      "chart-bench"
+    ],
+    "status": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794178800000,
+        "to": 1794288600000,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": false
+    },
+    "text": "1\nBTCUSDT\nP\nBinance · BTCUSDT USD-M Perp\n1m\n5m\n15m\n1h\n4h\nIndicators\nUSDT quote · BTC volume · USDT settlement · UTC\nWatch level\nIndicators (1)\nOrder Walls\nLive data unavailable · Candle history incomplete · Staging history HTTP 502 · Native prices failed · 0/120 closed bars · 11-08 23:15–11-10 05:15 UTC · History HTTP 502\nRetry\nHistorical view · history loading · exact profile · Top 8/side · ±10%\nHistory 11-08 23:00–pending UTC · observed band unknown\nBASIS\nMain Workspace\n▾\n+ Add ▾\nHL · disconnected\nNotifications\n1 feed failed\n15:04:12\nUTC+03\n3 OPEN",
+    "diagnostics": {}
+  }
+}

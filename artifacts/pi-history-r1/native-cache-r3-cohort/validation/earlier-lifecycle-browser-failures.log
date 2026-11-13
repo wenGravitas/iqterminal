@@ -1,0 +1,92 @@
+
+Running 14 tests using 1 worker
+
+(node:396420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/native-candle-history.spec.ts:12:1 › native30hpricecontext paints before bootstrap and retains current volume and newer historical reads (6.3s)
+  ✘   2 tests/browser/native-candle-history.spec.ts:44:1 › nativepricepan preserves the requested past and current bars within the5000barbudget (5.5s)
+(node:397268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   3 tests/browser/native-candle-history.spec.ts:69:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume (8.9s)
+(node:397758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 tests/browser/native-candle-history.spec.ts:99:1 › bootstrap-owned history seeds warm prices even when independent native history pages fail (6.3s)
+{"kind":"realistic-synthetic-depth-not-live","theme":"dark","market":"binance-spot","timeframe":"5m","episodes":20,"active":16,"diagnostics":{"draws":7,"rebuilds":6,"patchProjects":120,"segments":20,"visible":150,"visibleHistorical":0,"visibleCurrent":0,"bytes":81440,"renderMs":110.5,"maxRenderMs":51.69999999925494,"strokes":5,"lastProjectMs":1.5999999977648258,"lastReferenceMs":0.19999999925494194,"lastPaintMs":3.100000001490116,"referenceRebuilds":6,"referenceSegments":5,"referenceValueScans":150,"paintCacheHits":1,"paintCacheBuilds":6,"paintStyleVisits":5100,"paintedViewport":{"fromMs":1794127253571.4285,"toMs":1794131100000,"minPrice":83472.60412860717,"maxPrice":83716.33017775661,"plotWidth":1436,"plotHeight":844},"inputRevision":7,"paintedRevision":7,"pendingProjectionSegments":0,"retainedPaintPaths":5,"retainedSegments":20,"openSegments":16,"retainedReferenceSegments":5,"referenceExtentValues":10,"pendingReferenceSegments":0,"referenceMinimum":951651.261933837,"referenceMaximum":6061601.041974265,"retainedDrawables":150,"p95RenderMs":23.199999999254942,"mounted":true,"archiveSegments":0,"directSegments":20,"valueRuns":1940,"archiveValueRuns":0,"directValueRuns":1940,"valueHistoryLimited":false,"episodeHistoryLimited":false}}
+  ✓   5 tests/browser/order-wall-top-levels.spec.ts:4:37 › Top Levels Spot 5m has stable episodes, clear styles and persistent controls (dark) (11.8s)
+{"kind":"realistic-synthetic-depth-not-live","theme":"light","market":"binance-spot","timeframe":"5m","episodes":20,"active":16,"diagnostics":{"draws":3,"rebuilds":2,"patchProjects":40,"segments":20,"visible":1920,"visibleHistorical":0,"visibleCurrent":0,"bytes":81440,"renderMs":108.40000000223517,"maxRenderMs":64.20000000298023,"strokes":7,"lastProjectMs":0,"lastReferenceMs":0,"lastPaintMs":18.400000002235174,"referenceRebuilds":2,"referenceSegments":0,"referenceValueScans":0,"paintCacheHits":1,"paintCacheBuilds":2,"paintStyleVisits":3840,"paintedViewport":{"fromMs":1794116400000,"toMs":1794131400000,"minPrice":82990,"maxPrice":84010,"plotWidth":1436,"plotHeight":844},"inputRevision":5,"paintedRevision":5,"pendingProjectionSegments":0,"retainedPaintPaths":7,"retainedSegments":20,"openSegments":16,"retainedReferenceSegments":20,"referenceExtentValues":40,"pendingReferenceSegments":0,"referenceMinimum":951651.261933837,"referenceMaximum":12417359.409805223,"retainedDrawables":1920,"p95RenderMs":25.699999999254942,"mounted":true,"archiveSegments":0,"directSegments":20,"valueRuns":1940,"archiveValueRuns":0,"directValueRuns":1940,"valueHistoryLimited":false,"episodeHistoryLimited":false}}
+  ✓   6 tests/browser/order-wall-top-levels.spec.ts:4:37 › Top Levels Spot 5m has stable episodes, clear styles and persistent controls (light) (9.1s)
+  ✓   7 tests/browser/order-walls-ui.spec.ts:8:1 › Order Walls settings persist and remain a single viewport consumer alongside Heatmap (15.6s)
+  ✓   8 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a resume cursor (7.7s)
+  ✓   9 tests/browser/order-walls-ui.spec.ts:105:48 › Order Walls exposes scoped history retry with a superseded revision (8.3s)
+  ✓  10 tests/browser/order-walls-ui.spec.ts:147:1 › Order Walls releases its current/history consumer while a Dockview panel is hidden and on destroy (7.4s)
+  ✓  11 tests/browser/order-walls-ui.spec.ts:183:1 › wall tooltip uses the historical hit value and labels unknown bounds (4.9s)
+  ✓  12 tests/browser/order-walls-ui.spec.ts:220:1 › Fit Walls changes only the primary vertical scale and keeps it manual through the next candle update (7.0s)
+  ✓  13 tests/browser/order-walls-ui.spec.ts:289:1 › Order Walls distinguishes pending replay from an empty finished history (6.2s)
+  ✓  14 tests/browser/order-walls-ui.spec.ts:309:1 › wall value patches preserve every point without rebuilding pane and indicator controls (7.3s)
+
+
+  1) tests/browser/native-candle-history.spec.ts:44:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+        "capacityLimited": false,
+    -   "loadedSlots": 360,
+    -   "requestedSlots": 360,
+    +   "loadedSlots": 361,
+    +   "requestedSlots": 361,
+        "state": "ready",
+      }
+
+      63 |  await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return p.candles.filter((c:any)=>c.t>=from&&c.t<to).length;},{id,from:nextFrom,to:nextTo}),{timeout:15000}).toBe(360);
+      64 |  const next=await page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {count:p.candles.length,latest:p.candles.at(-1),versions:p.nativeCandleVersions.size(),visible:p.engine.visibleTimeRange(),history:p.status.nativeHistory.viewport};},{id,from:nextFrom,to:nextTo});
+    > 65 |  expect(next.count).toBe(5000);expect(next.versions).toBeLessThanOrEqual(5000);expect(next.latest.t).toBeGreaterThanOrEqual(current);expect(next.history).toMatchObject({state:'ready',loadedSlots:360,requestedSlots:360,capacityLimited:false});
+         |                                                                                                                                                           ^
+      66 |  expect(next.visible).toEqual({from:nextFrom/1000,to:nextTo/1000});
+      67 | });
+      68 |
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:65:155
+
+    Error Context: test-results/native-candle-history-nati-f0702-ars-within-the5000barbudget/error-context.md
+
+  2) tests/browser/native-candle-history.spec.ts:69:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+    @@ -4,9 +4,9 @@
+          "c": 80040,
+          "quoteVolume": 160080,
+        },
+        "live": "live",
+        "view": Object {
+    -     "from": 1793763600,
+    -     "to": 1793871600,
+    +     "from": 1793811257.142857,
+    +     "to": 1794132000,
+        },
+      }
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      87 |   await expect.poll(()=>reads).toBe(2);
+      88 |   await expect.poll(()=>page.evaluate(id=>(window as any).__terminal.panels.get(id)?.status.nativeHistory?.viewport,id)).toMatchObject({state:'loading',loadedSlots:0,cachedSlots:360});
+    > 89 |   await expect.poll(()=>page.evaluate(({id,from,to})=>{const p=(window as any).__terminal.panels.get(id);return {first:p.candles.find((c:any)=>c.t===from),count:p.candles.filter((c:any)=>c.t>=from&&c.t<to).length,view:p.engine.visibleTimeRange(),live:p.status.state};},{id,from,to})).toMatchObject({first:{c:80040,quoteVolume:160080},count:360,view:{from:from/1000,to:to/1000},live:'live'});
+         |                                                                                                                                                                                                                                                                                             ^
+      90 |   await expect(page.locator('.candle-panel').first()).toContainText('360 cached (validating)');
+      91 |   await page.evaluate(()=>new Promise<void>(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r()))));
+      92 |   await page.screenshot({path:'artifacts/pi-history-r1/native-presentation-r1/cached-before-validation.png'});
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/native-candle-history.spec.ts:89:285
+
+    Error Context: test-results/native-candle-history-warm-0ae10-corrects-exact-quote-volume/error-context.md
+
+  2 failed
+    tests/browser/native-candle-history.spec.ts:44:1 › nativepricepan preserves the requested past and current bars within the5000barbudget 
+    tests/browser/native-candle-history.spec.ts:69:1 › warm native prices paint independently while their revision validation waits and later corrects exact quote volume 
+  12 passed (2.0m)

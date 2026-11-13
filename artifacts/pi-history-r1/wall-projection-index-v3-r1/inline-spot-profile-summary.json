@@ -1,0 +1,357 @@
+{
+  "scope": "Single CPU-profiled Spot run; V8 elapsed attribution includes throttling/idle/GC, not exclusive durations or comparison timing",
+  "selfSamples": [
+    {
+      "sampledMs": 2278.543,
+      "frame": {
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      }
+    },
+    {
+      "sampledMs": 1483.681,
+      "frame": {
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      }
+    },
+    {
+      "sampledMs": 347.696,
+      "frame": {
+        "functionName": "advancePreparedWallProjection",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1630,
+        "columnNumber": 44
+      }
+    },
+    {
+      "sampledMs": 337.199,
+      "frame": {
+        "functionName": "wallProjectionReplay",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 9,
+        "columnNumber": 29
+      }
+    },
+    {
+      "sampledMs": 242.797,
+      "frame": {
+        "functionName": "",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1857,
+        "columnNumber": 56
+      }
+    },
+    {
+      "sampledMs": 200.339,
+      "frame": {
+        "functionName": "advancePreparedWallProjection",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1630,
+        "columnNumber": 44
+      }
+    },
+    {
+      "sampledMs": 174.744,
+      "frame": {
+        "functionName": "encodePreparedWallProjection",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1560,
+        "columnNumber": 43
+      }
+    },
+    {
+      "sampledMs": 166.136,
+      "frame": {
+        "functionName": "store",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 970,
+        "columnNumber": 7
+      }
+    },
+    {
+      "sampledMs": 114.479,
+      "frame": {
+        "functionName": "materialize",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1388,
+        "columnNumber": 19
+      }
+    },
+    {
+      "sampledMs": 72.295,
+      "frame": {
+        "functionName": "at",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 12,
+        "columnNumber": 13
+      }
+    },
+    {
+      "sampledMs": 70.861,
+      "frame": {
+        "functionName": "payloadBytes",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1223,
+        "columnNumber": 19
+      }
+    },
+    {
+      "sampledMs": 68.5,
+      "frame": {
+        "functionName": "update",
+        "scriptId": "140",
+        "url": "node:internal/crypto/hash",
+        "lineNumber": 131,
+        "columnNumber": 39
+      }
+    },
+    {
+      "sampledMs": 64.266,
+      "frame": {
+        "functionName": "cloneSegment",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1115,
+        "columnNumber": 21
+      }
+    },
+    {
+      "sampledMs": 57.759,
+      "frame": {
+        "functionName": "payloadBytes",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1223,
+        "columnNumber": 19
+      }
+    },
+    {
+      "sampledMs": 42.383,
+      "frame": {
+        "functionName": "upsert",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 776,
+        "columnNumber": 8
+      }
+    },
+    {
+      "sampledMs": 39.436,
+      "frame": {
+        "functionName": "update",
+        "scriptId": "140",
+        "url": "node:internal/crypto/hash",
+        "lineNumber": 131,
+        "columnNumber": 39
+      }
+    },
+    {
+      "sampledMs": 37.44,
+      "frame": {
+        "functionName": "decimalNumber",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1112,
+        "columnNumber": 22
+      }
+    },
+    {
+      "sampledMs": 33.991,
+      "frame": {
+        "functionName": "flush",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1758,
+        "columnNumber": 16
+      }
+    },
+    {
+      "sampledMs": 33.553,
+      "frame": {
+        "functionName": "",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 1857,
+        "columnNumber": 56
+      }
+    },
+    {
+      "sampledMs": 30.692,
+      "frame": {
+        "functionName": "applyPage",
+        "scriptId": "86",
+        "url": "file:///app/profile.mjs",
+        "lineNumber": 683,
+        "columnNumber": 11
+      }
+    }
+  ],
+  "positions": [
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1712,
+      "ticks": 167,
+      "source": "    page = JSON.parse(text2.toString());"
+    },
+    {
+      "function": "wallProjectionReplay",
+      "line": 56,
+      "ticks": 129,
+      "source": "  return { hash: createHash(\"sha256\").update(JSON.stringify(basis)).digest(\"hex\"), maxAt };"
+    },
+    {
+      "function": "",
+      "line": 1862,
+      "ticks": 120,
+      "source": "    const ordered = Object.fromEntries(Object.entries(all).sort((a, b) => a[1].order - b[1].order));"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1643,
+      "ticks": 78,
+      "source": "    state2 = JSON.parse((await boundedRead(join3(dir, \"progress.json\"), MAX_STATE_BYTES)).toString());"
+    },
+    {
+      "function": "encodePreparedWallProjection",
+      "line": 1568,
+      "ticks": 43,
+      "source": "  let result = state2, text = JSON.stringify(result);"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1681,
+      "ticks": 41,
+      "source": "  else if (state2?.version === 2 && (state2.nextPage + 1 === source3.parts.length || Buffer.byteLength(JSON.stringify(state2.entries)) <= inlineBytes)) entryIndex = WallProjectionIndex.memory(dir, key, state2.entries);"
+    },
+    {
+      "function": "decimalNumber",
+      "line": 1114,
+      "ticks": 37,
+      "source": "  return Number(value);"
+    },
+    {
+      "function": "materialize",
+      "line": 1391,
+      "ticks": 37,
+      "source": "    if (this.memoryEntries) for (const [id, e] of Object.entries(this.memoryEntries)) values.set(id, copy(e));"
+    },
+    {
+      "function": "payloadBytes",
+      "line": 1224,
+      "ticks": 33,
+      "source": "var payloadBytes = (id, e) => Buffer.byteLength(JSON.stringify(id)) + 1 + Buffer.byteLength(JSON.stringify(e));"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1793,
+      "ticks": 30,
+      "source": "        bytes = Buffer.byteLength(JSON.stringify(row));"
+    },
+    {
+      "function": "flush",
+      "line": 1761,
+      "ticks": 30,
+      "source": "    const text2 = JSON.stringify(batch), bytes = Buffer.byteLength(text2), digest3 = hash2(text2), existing = parts.find((part2) => part2.hash === digest3);"
+    },
+    {
+      "function": "upsert",
+      "line": 779,
+      "ticks": 26,
+      "source": "    const previous = this.candidates.get(candidate.entryId);"
+    },
+    {
+      "function": "payloadBytes",
+      "line": 1224,
+      "ticks": 21,
+      "source": "var payloadBytes = (id, e) => Buffer.byteLength(JSON.stringify(id)) + 1 + Buffer.byteLength(JSON.stringify(e));"
+    },
+    {
+      "function": "",
+      "line": 1931,
+      "ticks": 19,
+      "source": "  console.log(JSON.stringify({ kind: \"projection-profile-step\", step: step + 1, nextPage: state.nextPage, complete: state.complete, elapsedMs: performance2.now() - at, cpu: process.cpuUsage(before), privateVersion: state.version, checkpointBytes: (await stat(join4(root, state.key, \"progress.json\"))).size, activeSegments: state.active.segments.length, activeValues: state.active.segments.reduce((n, s) => n + s.valueRuns.length, 0), indexedSegments: state.version === 3 ? state.index.count : Object.keys(state.entries).length, memory: process.memoryUsage() }));"
+    },
+    {
+      "function": "materialize",
+      "line": 1400,
+      "ticks": 19,
+      "source": "    for (const [id, e] of [...values].sort((a, b) => a[1].order - b[1].order)) {"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1720,
+      "ticks": 17,
+      "source": "  for (const patch of projector.applyPage(page)) {"
+    },
+    {
+      "function": "memory",
+      "line": 1283,
+      "ticks": 17,
+      "source": "    for (const [id, e] of Object.entries(entries)) {"
+    },
+    {
+      "function": "store",
+      "line": 972,
+      "ticks": 13,
+      "source": "    this.segments.set(segment.id, segment);"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1856,
+      "ticks": 12,
+      "source": "  const logicalBytes = Buffer.byteLength(JSON.stringify(sizing)) + projectionIndexJsonBytes(indexRoot) - 2;"
+    },
+    {
+      "function": "applyPage",
+      "line": 705,
+      "ticks": 9,
+      "source": "        this.advanceAll(patch.at);"
+    },
+    {
+      "function": "applyPage",
+      "line": 706,
+      "ticks": 8,
+      "source": "        for (const candidate of [...patch.bids.upserts, ...patch.asks.upserts]) this.upsert(candidate, patch.at, false);"
+    },
+    {
+      "function": "payloadBytes",
+      "line": 1224,
+      "ticks": 8,
+      "source": "var payloadBytes = (id, e) => Buffer.byteLength(JSON.stringify(id)) + 1 + Buffer.byteLength(JSON.stringify(e));"
+    },
+    {
+      "function": "payloadBytes",
+      "line": 1224,
+      "ticks": 8,
+      "source": "var payloadBytes = (id, e) => Buffer.byteLength(JSON.stringify(id)) + 1 + Buffer.byteLength(JSON.stringify(e));"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1726,
+      "ticks": 7,
+      "source": "    const previous = entries[patch.id] ?? await entryIndex.get(patch.id);"
+    },
+    {
+      "function": "advancePreparedWallProjection",
+      "line": 1785,
+      "ticks": 7,
+      "source": "      let upperBytes = Buffer.byteLength(JSON.stringify(fragment(0)));"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "processes": [
+    {
+      "pid": 188916,
+      "cwd": "/home/daz/workarea/iqterminal-perf-history",
+      "startedUtc": "2026-11-09T07:55:28.860000+00:00",
+      "startTicks": 1292886,
+      "arguments": [
+        "ssh",
+        "-N",
+        "-T",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ExitOnForwardFailure=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ControlPath=none",
+        "-o",
+        "Compression=no",
+        "-o",
+        "ServerAliveInterval=15",
+        "-o",
+        "ServerAliveCountMax=3",
+        "-o",
+        "IPQoS=none",
+        "-L",
+        "127.0.0.1:18780:127.0.0.1:18780",
+        "staging"
+      ]
+    },
+    {
+      "pid": 265761,
+      "cwd": "/home/daz/workarea/iqterminal-perf-history",
+      "startedUtc": "2026-11-09T11:25:48.020000+00:00",
+      "startTicks": 2554802,
+      "arguments": [
+        "ssh",
+        "-N",
+        "-T",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ExitOnForwardFailure=yes",
+        "-o",
+        "ConnectTimeout=15",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ControlPath=none",
+        "-o",
+        "Compression=no",
+        "-o",
+        "ServerAliveInterval=15",
+        "-o",
+        "ServerAliveCountMax=3",
+        "-L",
+        "127.0.0.1:18781:127.0.0.1:18780",
+        "staging"
+      ]
+    },
+    {
+      "pid": 263125,
+      "cwd": "/home/daz/workarea/iqterminal-perf-history",
+      "startedUtc": "2026-11-09T11:19:09.470000+00:00",
+      "startTicks": 2514947,
+      "arguments": [
+        "node",
+        "./node_modules/.bin/../.pnpm/vite@8.3.4_@types+node@26.6.4/node_modules/vite/bin/vite.js",
+        "preview",
+        "--mode",
+        "staging",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4187",
+        "--strictPort"
+      ]
+    }
+  ],
+  "scope": "Owned preview and existing SSH forwards verified live. Current forward265761 started before these loading/profile cohorts; prior188974 identity is obsolete. No local process was restarted during this audit; the tunnel supervisor was already running."
+}

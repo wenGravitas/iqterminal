@@ -1,0 +1,11 @@
+{
+  "phase": "bounded stabilization and release-candidate handoff",
+  "startUtc": "2026-11-11T14:57:12Z",
+  "deadlineUtc": "2026-11-11T16:57:12Z",
+  "originalPerformanceAcceptance": "not achieved; thresholds become reported follow-up targets",
+  "frontendCandidate": "7eb4a00b60daf344188eebc0659a8a82862113e8",
+  "backendCandidate": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+  "candidateName": "pi-history-stabilization-r1",
+  "experimentalIndependentSources": false,
+  "browserPolicy": "headless; manual foreground check documented for the user"
+}

@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+ok 1 - execution-only preparation has no depth dependency, survives restart, and publishes pinned revisions once
+  ---
+  duration_ms: 110.990237
+  type: 'test'
+  ...
+# Subtest: ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+ok 2 - ordinary polling preserves failed jobs; explicit retry resumes its cursor and success clears the error
+  ---
+  duration_ms: 80.850819
+  type: 'test'
+  ...
+# Subtest: default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+ok 3 - default rollover reuses ready slots rather than repeatedly rebuilding full default windows
+  ---
+  duration_ms: 30.223992
+  type: 'test'
+  ...
+# Subtest: current state includes the final old-candle tail before publishing rollover, with exact extrema
+ok 4 - current state includes the final old-candle tail before publishing rollover, with exact extrema
+  ---
+  duration_ms: 58.399586
+  type: 'test'
+  ...
+# Subtest: progressive overlapping polls and defaults share already queued candle work
+ok 5 - progressive overlapping polls and defaults share already queued candle work
+  ---
+  duration_ms: 66.588133
+  type: 'test'
+  ...
+# Subtest: a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+ok 6 - a multi-candle build publishes nearest history first and resumes the older candle at the same horizon
+  ---
+  duration_ms: 37.161669
+  type: 'test'
+  ...
+# Subtest: completed-job retention cannot evict active current or historical progress
+ok 7 - completed-job retention cannot evict active current or historical progress
+  ---
+  duration_ms: 1438.497752
+  type: 'test'
+  ...
+# Subtest: explicit current bootstrap retry resumes failed progress without resetting healthy builds
+ok 8 - explicit current bootstrap retry resumes failed progress without resetting healthy builds
+  ---
+  duration_ms: 223.040838
+  type: 'test'
+  ...
+# Subtest: current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+ok 9 - current bootstrap never returns an old candle or an unbounded raw replay tail as ready
+  ---
+  duration_ms: 42.948992
+  type: 'test'
+  ...
+# Subtest: current execution preparation uses reserved current SQL admission; history keeps its fair lane
+ok 10 - current execution preparation uses reserved current SQL admission; history keeps its fair lane
+  ---
+  duration_ms: 55.366646
+  type: 'test'
+  ...
+# Subtest: a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+ok 11 - a later execution for the preceding closed candle revises that candle without duplicating the forming bar
+  ---
+  duration_ms: 55.485162
+  type: 'test'
+  ...
+# Subtest: late repair intent survives restart and a full history queue without pausing current preparation
+ok 12 - late repair intent survives restart and a full history queue without pausing current preparation
+  ---
+  duration_ms: 230.617614
+  type: 'test'
+  ...
+# Subtest: a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+ok 13 - a higher-ID old timestamp cannot rewind current bootstrap or prevent its closed-candle repair
+  ---
+  duration_ms: 67.587135
+  type: 'test'
+  ...
+# Subtest: a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+ok 14 - a correction arriving during a pinned repair schedules the newer horizon without resetting its page cursor
+  ---
+  duration_ms: 160.789048
+  type: 'test'
+  ...
+# Subtest: multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+ok 15 - multi-hour current recovery retains its ID cursor and repairs older closed slots instead of jumping past them
+  ---
+  duration_ms: 78.569958
+  type: 'test'
+  ...
+# Subtest: source revision tokens coalesce polls, defer actual changes until the pinned candle completes, and refresh completed jobs once
+ok 16 - source revision tokens coalesce polls, defer actual changes until the pinned candle completes, and refresh completed jobs once
+  ---
+  duration_ms: 161.360336
+  type: 'test'
+  ...
+# Subtest: default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+ok 17 - default upkeep resumes transient current transport failures without resetting cursors or healthy jobs
+  ---
+  duration_ms: 245.859707
+  type: 'test'
+  ...
+# Subtest: automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+ok 18 - automatic default recovery is rate bounded across restart and excludes nontransport and optional jobs
+  ---
+  duration_ms: 93.825515
+  type: 'test'
+  ...
+# Subtest: default upkeep resumes needed closed preparation after transport failure and preserves its build state
+ok 19 - default upkeep resumes needed closed preparation after transport failure and preserves its build state
+  ---
+  duration_ms: 51.454238
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4289.222

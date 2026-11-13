@@ -1,0 +1,61 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/startup-selection.test.ts (3 tests | 1 failed) 74ms
+   × startup layout follows registry active/fallback order without writing or altering stored records 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/startup-selection.test.ts > startup layout follows registry active/fallback order without writing or altering stored records
+AssertionError: expected null to deeply equal { panels: { …(1) }, …(1) }
+
+- Expected:
+{
+  "grid": {
+    "root": {
+      "data": {
+        "activeView": "chart-startup",
+        "views": [
+          "chart-startup",
+        ],
+      },
+      "type": "leaf",
+    },
+  },
+  "panels": {
+    "chart-startup": {
+      "contentComponent": "candle",
+      "id": "chart-startup",
+      "params": {
+        "interval": "1h",
+        "market": "spot",
+        "type": "footprint",
+        "venue": "binance",
+      },
+    },
+  },
+}
+
++ Received:
+null
+
+ ❯ tests/startup-selection.test.ts:30:33
+     28|  const a=newWorkspace('First',layout(base)),b=newWorkspace('Second',la…
+     29|  const raw=JSON.stringify({version:1,revision:1,activeId:b.id,workspac…
+     30|  expect(startupLayout(storage)).toEqual(b.layout);expect(values.get(WO…
+       |                                 ^
+     31|  b.layout={} as any;values.set(WORKSPACE_KEY,JSON.stringify({version:1…
+     32|  values.set(WORKSPACE_KEY,'{invalid');values.set('basis.layout.v1',JSO…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:15:15
+   Duration  6.85s (transform 83%, import 15%, tests 2%, worker 1%)
+
+  Transform  transforming modules took 5.68s · 83% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -1,0 +1,45 @@
+{
+  "scope": "Raw scoped evidence; a manifest verifies bytes, not performance acceptance. Failed attempts and superseded summaries are retained.",
+  "files": [
+    {
+      "path": "candidate.ts",
+      "bytes": 33406,
+      "sha256": "8a1a2dbd2657fdc04fd4d933d557e1c98d54170f1be5e727b787002d5f04a10f"
+    },
+    {
+      "path": "comparison.js",
+      "bytes": 81031,
+      "sha256": "53b15543685673aabbd69b2f4c0899b933c2659936dfc72b323c45107a82851c"
+    },
+    {
+      "path": "comparison.js.map",
+      "bytes": 184452,
+      "sha256": "ac09da4f1ff4dfafb7e6e16b61a722f617ee8d7ef39876f6c5f1606f5296d309"
+    },
+    {
+      "path": "compile.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "control.ts",
+      "bytes": 32517,
+      "sha256": "b2f1dc31510fa491f6f405c05a75ea5aed4e72ed216b1ada0e91d9c5a5d68404"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 8160,
+      "sha256": "a07e60859033101a633ea7f8d8caca1369d7dd73227cc0e4446242733aae88b7"
+    },
+    {
+      "path": "input.json",
+      "bytes": 150558,
+      "sha256": "6f73ae2bf5c090d8cefc5f6c4278d5903f64ad95f44ade66da8abf7c2293bed3"
+    },
+    {
+      "path": "results.json",
+      "bytes": 17765,
+      "sha256": "a298969fc41819de75f8247659e509ed02d40ea671cd7767911d03854f899e6d"
+    }
+  ]
+}

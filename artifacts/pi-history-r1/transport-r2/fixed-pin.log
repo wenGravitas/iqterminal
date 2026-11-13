@@ -1,0 +1,8 @@
+{"phase": "renewed", "turn": 1, "elapsedMs": 7.359115406870842, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 9, "elapsedMs": 32020.870321430266, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 17, "elapsedMs": 64039.4623959437, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 25, "elapsedMs": 96053.94885130227, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 33, "elapsedMs": 128068.77325847745, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 41, "elapsedMs": 160081.85764960945, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "renewed", "turn": 49, "elapsedMs": 192101.8791338429, "consumers": ["stage25-fixed-perpetual"]}
+{"phase": "released", "elapsedMs": 193510.65818127245, "consumers": ["stage25-fixed-perpetual"]}

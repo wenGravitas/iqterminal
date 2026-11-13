@@ -1,0 +1,51 @@
+{
+  "source": "artifacts/pi-history-r1/nov6-startup-profile-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "current-footprint-5m",
+      "samplesMs": [
+        5009.3
+      ],
+      "medianMs": 5009.3,
+      "maximumMs": 5009.3,
+      "sampleCount": 1,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "42db2e8845c71bc0d3bb32fb8ccdf32189c230bc"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 2000,
+        "maximum": 3000
+      },
+      "firstHistoricalPaintMs": [
+        null
+      ],
+      "firstHistory3sGate": null,
+      "builds": [
+        "42db2e8845c71bc0d3bb32fb8ccdf32189c230bc"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793952300000,
+            "to": 1793966700000
+          },
+          "viewport": {
+            "from": 1793892342.857143,
+            "to": 1793967600
+          },
+          "paintedClosedBars": 1,
+          "archive": {},
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

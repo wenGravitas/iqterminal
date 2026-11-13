@@ -1,0 +1,70 @@
+{
+  "scope": "Reader lifecycle correctness; not prepared-cache or cold-build latency acceptance",
+  "files": [
+    {
+      "name": "3fc-staging-build.log",
+      "bytes": 1314,
+      "sha256": "4e2de0c3ac50974ea09dabaaba3546a4beea2c5c55da1e88a5134bae222fa1b6"
+    },
+    {
+      "name": "browser-lifecycle-timeout.log",
+      "bytes": 3888,
+      "sha256": "61a0a336cadba6d4d51c475b32460ed23bbaf5f9c4ea0664150307204453ae6b"
+    },
+    {
+      "name": "browser-saved-focused-pass.log",
+      "bytes": 398,
+      "sha256": "17223f22e0db74aefd8035a626e40c11be9da2bcbc6f0a9c38d7aefb3336c751"
+    },
+    {
+      "name": "compiled-build.json",
+      "bytes": 351,
+      "sha256": "0f1febc7e5808a2e78b710e5b05762f408489e04bad8c8e2344a16c0a0f46e6e"
+    },
+    {
+      "name": "event-order-test-failure.log",
+      "bytes": 3794,
+      "sha256": "36cd3c428c2e462bbb69b9f85f29f969d3cae31e143429e5142537f5d1db24ce"
+    },
+    {
+      "name": "final-focused-95-pass.log",
+      "bytes": 193,
+      "sha256": "9b0161027039e0e8e81d93e2d13570e5a496fa495f2b423f318b32294e0a003c"
+    },
+    {
+      "name": "final-staging-build.log",
+      "bytes": 1314,
+      "sha256": "b4fe46dd365bafcac5637f17c807f1c3b940fe2ed3a0d4d89a5095bc364889bf"
+    },
+    {
+      "name": "final-typecheck.log",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "name": "full-unit-vault-timeout.log",
+      "bytes": 1520,
+      "sha256": "3bb990e107c010cb0fc960696dc44a99a4c0e4963e6ef4d653d5f18d51a858f7"
+    },
+    {
+      "name": "shared-core-check.json",
+      "bytes": 250,
+      "sha256": "23dd4c3bbb0e06ab8fd414188fc3e5b057d86c88c298c5f28ab88c617a8514dc"
+    },
+    {
+      "name": "test-initialization-type-failure.log",
+      "bytes": 248,
+      "sha256": "50f1259f969a91f4d66de3da316cba447d48fd2354eff3cde947122990ee4a65"
+    },
+    {
+      "name": "typecheck-fixed.log",
+      "bytes": 90,
+      "sha256": "6a96f930918fddaeeb20109218ace3ceac97d45f7f930b45457b108077717961"
+    },
+    {
+      "name": "vault-focused-pass.log",
+      "bytes": 191,
+      "sha256": "6c8c9a3c1134e1b37e33999fff329d956915317b3bc3fb7eb2b8d87ac6945fd8"
+    }
+  ]
+}

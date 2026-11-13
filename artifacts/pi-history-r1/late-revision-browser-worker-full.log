@@ -1,0 +1,15 @@
+
+Running 8 tests using 1 worker
+
+(node:36813) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/footprint-history-lifecycle.spec.ts:5:58 › prepared footprint history paints while the authoritative live bootstrap is delayed (10.2s)
+  ✓  2 tests/browser/footprint-history-lifecycle.spec.ts:5:58 › prepared candle-totals history paints while the authoritative live bootstrap is delayed (6.1s)
+  ✓  3 tests/browser/footprint-history-lifecycle.spec.ts:40:1 › a late native candle snapshot cannot move a restored 24h footprint range (2.9s)
+  ✓  4 tests/browser/footprint-history-lifecycle.spec.ts:62:34 › a delayed current bootstrap cannot expand a restored past footprint range (3.3s)
+  ✓  5 tests/browser/footprint-history-lifecycle.spec.ts:62:34 › a delayed current bootstrap retains five closed bars and future whitespace (3.2s)
+  ✓  6 tests/browser/footprint-history-lifecycle.spec.ts:84:1 › candle-chart Footprint Totals follows the visible range instead of a saved footprint-only range (5.4s)
+  ✓  7 tests/browser/footprint-history-lifecycle.spec.ts:102:1 › failed live Totals exposes scoped Retry while healthy native candles and closed history remain (5.2s)
+  ✓  8 tests/browser/pane-visibility-lifecycle.spec.ts:17:1 › combined positioning and native indicator panes restore without orphan panes (17.2s)
+
+  8 passed (57.4s)

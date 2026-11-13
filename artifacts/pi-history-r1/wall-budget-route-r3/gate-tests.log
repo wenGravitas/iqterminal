@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: all five exact paints pass unchanged targets
+ok 1 - all five exact paints pass unchanged targets
+  ---
+  duration_ms: 14.101889
+  type: 'test'
+  ...
+# Subtest: missing run is never a finite-subset completion median
+ok 2 - missing run is never a finite-subset completion median
+  ---
+  duration_ms: 7.081509
+  type: 'test'
+  ...
+# Subtest: 45 second observation never widens latency targets
+ok 3 - 45 second observation never widens latency targets
+  ---
+  duration_ms: 1.564946
+  type: 'test'
+  ...
+# Subtest: metadata completion cannot hide missing walls or native slots
+ok 4 - metadata completion cannot hide missing walls or native slots
+  ---
+  duration_ms: 6.595675
+  type: 'test'
+  ...
+# Subtest: different future whitespace/range/profile/source cannot pass
+ok 5 - different future whitespace/range/profile/source cannot pass
+  ---
+  duration_ms: 6.614601
+  type: 'test'
+  ...
+# Subtest: mixed cohorts and duplicate/missing runs are refused
+ok 6 - mixed cohorts and duplicate/missing runs are refused
+  ---
+  duration_ms: 3.728005
+  type: 'test'
+  ...
+# Subtest: first-useful failure is independent of completed coverage
+ok 7 - first-useful failure is independent of completed coverage
+  ---
+  duration_ms: 2.511022
+  type: 'test'
+  ...
+# Subtest: fixture or wrong-profile paint cannot certify first useful history
+ok 8 - fixture or wrong-profile paint cannot certify first useful history
+  ---
+  duration_ms: 3.473523
+  type: 'test'
+  ...
+# Subtest: native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+ok 9 - native flags cannot hide a missing raw slot and source flags cannot hide a wrong response revision
+  ---
+  duration_ms: 9.121827
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 436.128708

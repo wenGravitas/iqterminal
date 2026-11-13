@@ -1,0 +1,9 @@
+
+> terminal-t0@0.1.0 typecheck /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit
+
+src/feed/order-walls-archive.ts(387,5): error TS18048: 'to' is possibly 'undefined'.
+src/feed/order-walls-archive.ts(392,16): error TS18048: 'to' is possibly 'undefined'.
+src/feed/order-walls-archive.ts(401,101): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+ ELIFECYCLE  Command failed with exit code 1.

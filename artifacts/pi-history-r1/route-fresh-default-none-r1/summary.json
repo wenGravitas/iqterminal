@@ -1,0 +1,86 @@
+{
+  "cases": [
+    {
+      "qos": "default",
+      "samplesMs": [
+        44859.9467,
+        18230.856182999996,
+        41404.252047999995,
+        37274.838487,
+        35045.20870799996
+      ],
+      "medianMs": 37274.838487,
+      "maximumMs": 44859.9467,
+      "headersMs": [
+        5163.397368,
+        1445.5669810000109,
+        1773.400805000012,
+        1570.507798000006,
+        1370.5084829999832
+      ],
+      "compressedBodyBytes": [
+        640872,
+        640872,
+        640872,
+        640872,
+        640872
+      ],
+      "decodedBodyBytes": [
+        4745124,
+        4745124,
+        4745124,
+        4745124,
+        4745124
+      ],
+      "canonicalParts": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ]
+    },
+    {
+      "qos": "none",
+      "samplesMs": [
+        22919.773492000008,
+        21839.216549999997,
+        31388.92246500001,
+        21366.739669000002,
+        18096.095271999948
+      ],
+      "medianMs": 21839.216549999997,
+      "maximumMs": 31388.92246500001,
+      "headersMs": [
+        2362.405150999999,
+        2686.7162979999994,
+        2671.047561000014,
+        2103.217252000002,
+        1545.9952419999754
+      ],
+      "compressedBodyBytes": [
+        640872,
+        640872,
+        640872,
+        640872,
+        640872
+      ],
+      "decodedBodyBytes": [
+        4745124,
+        4745124,
+        4745124,
+        4745124,
+        4745124
+      ],
+      "canonicalParts": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ]
+    }
+  ],
+  "exactSameBodySha256": "d18105b191ff2ebf8e14088e15f0a2b16a3440b00ebdb238ab4c1988645d8923",
+  "scope": "Five fresh TCP SSH samples per QoS variant, alternating order per round, one immutable batch, original canonical part hashes validated. No full30h chart/current acceptance. Both variants remain slow; no persistent runtime tunnel change made. Compression/control sharing disabled in both. Client-local timings only; no p95."
+}

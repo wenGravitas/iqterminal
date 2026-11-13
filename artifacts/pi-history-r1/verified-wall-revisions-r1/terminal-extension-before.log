@@ -1,0 +1,41 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/order-walls-archive.test.ts (49 tests | 1 failed | 48 skipped) 176ms
+   ❯ OrderWallsArchiveService fixed-watermark identity bridge (19)
+     × keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes 172ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-walls-archive.test.ts > OrderWallsArchiveService fixed-watermark identity bridge > keeps good history across a roll and replaces it with a full canonical revision including timestamp-ahead episodes
+AssertionError: expected { from: 1800001799999, …(3) } to deeply equal { from: 1800000000000, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "after": 0,
+-   "from": 1800000000000,
++   "after": 20,
++   "from": 1800001799999,
+    "to": 1800001860000,
+-   "watermark": null,
++   "watermark": 30,
+  }
+
+ ❯ tests/order-walls-archive.test.ts:1064:38
+    1062|       finishHistory(new Response(JSON.stringify(historyTerminal), { st…
+    1063|       await flush();
+    1064|       expect(archiveRequests.at(-1)).toEqual({ from, to: rolledTo, aft…
+       |                                      ^
+    1065|       expect(service.diagnostics()).toMatchObject({ groups: 1, history…
+    1066|       const retained = events.filter(event => event.type === 'order-wa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 skipped (49)
+   Start at  08:11:58
+   Duration  1.64s (transform 75%, tests 12%, import 12%, worker 1%)
+

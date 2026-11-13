@@ -76,7 +76,7 @@ export class FeedClient {
               const listener = this.listeners.get(id);
               if (listener && listener.key === e.key) this.updateObservedFeed(listener.status, e.status.state, e.status.message, e.status.lastUpdate);
             }
-            if (e.type === 'patch' || e.type === 'snapshot') {
+            if ((e.type === 'patch' || e.type === 'snapshot')&&e.nativeVersion?.request===undefined) {
               const listener = this.listeners.get(id);
               const current = listener && this.observedFeedStatuses.get(listener.status.key);
               if (listener && listener.key === e.key && current?.state === 'live') this.updateObservedFeed(listener.status, current.state, current.message, Date.now());
@@ -214,6 +214,7 @@ export class FeedClient {
     return ()=>{this.comparisonListeners.delete(token);if(this.currentComparison.get(id)===token)this.currentComparison.delete(id);for(const meta of statuses.values())this.removeObservedFeed(meta.key);this.comparisonStatusMeta.delete(token);this.send({type:'comparison-unsubscribe',id:token});};
   }
   retryComparison(id:string){const token=this.currentComparison.get(id);if(token)this.send({type:'comparison-retry',id:token});}
+  requestCandleViewport(id:string,from:number,to:number,known:number[]){if(this.fixtureMode)return;if(import.meta.env.VITE_DATA_MODE!=='staging'||import.meta.env.VITE_HISTORY_TILES!=='1')return;const token=this.current.get(id);if(token)this.send({type:'candle-viewport',id:token,from,to,known});}
   requestFootprintViewport(id:string,from:number,to:number,analysis:FootprintAnalysisDemand={enabled:false,lookback:50}){if(import.meta.env.VITE_DATA_MODE!=='staging')return;const token=this.currentFootprint.get(id);if(token)this.send({type:'footprint-viewport',id:token,from,to,analysis});}
   retryDepth(){this.send({type:'depth-retry'});}
   subscribeFootprint(id:string,series:Series,rowPrice:number,callback:(e:Event)=>void) {
@@ -253,7 +254,7 @@ export class FeedClient {
   }
   updateTradeBubbles(id:string,request:import('./trade-bubbles-service').TradeBubbleRequest){const token=this.currentTradeBubbles.get(id),listener=token&&this.tradeBubbleListeners.get(token);if(token&&listener){listener.revision++;this.send({type:'trade-bubbles-update',id:token,configRevision:listener.revision,request});}}
   retryTradeBubbles(){this.send({type:'trade-bubbles-retry',id:'trade-bubbles-retry'});}
-  retryFootprint(){this.send({type:'footprint-retry'});}
+  retryFootprint(id?:string){const token=id?this.currentFootprint.get(id):undefined;if(id&&!token)return;this.send({type:'footprint-retry',...(token?{id:token}:{})});}
   dispose(){for(const r of this.effortClaims.values()){clearTimeout(r.timer);r.resolve(false);}this.effortClaims.clear();for(const r of this.effortExports.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.effortExports.clear();this.effortListeners.clear();for(const r of this.watchRequests.values()){clearTimeout(r.timer);r.reject(new Error('Feed disposed'));}this.watchRequests.clear();this.watchListeners.clear();this.worker.onmessage=null;this.liquidationListeners.clear();this.liquidationTokens.clear();this.tickerListeners.clear();this.currentTicker.clear();this.tickerStatusMeta.clear();this.tradeBubbleListeners.clear();this.currentTradeBubbles.clear();this.comparisonListeners.clear();this.currentComparison.clear();this.comparisonStatusMeta.clear();this.listeners.clear();this.current.clear();this.observedFeedStatuses.clear();this.observedFeedNotifiedAt.clear();this.observedFeedStatusListeners.clear();this.depthListeners.clear();this.currentDepth.clear();this.footprintListeners.clear();this.currentFootprint.clear();this.heatmapListeners.clear();this.currentHeatmap.clear();this.orderWallListeners.clear();this.currentOrderWalls.clear();this.netPositioningListeners.clear();this.currentNetPositioning.clear();this.depthMatrixListeners.clear();this.currentDepthMatrix.clear();this.cvdListeners.clear();this.currentCvd.clear();this.cvdStatusMeta.clear();this.tpoListeners.clear();this.currentTpo.clear();this.worker.terminate();}
 }
 

@@ -1,0 +1,12 @@
+{
+  "compile.log": "2ec609998ce235304f1ad6349751ff172d6b042da39e0da338fa78eeabe57004",
+  "environment.json": "62b1e76be2c5438c37e7313d9075d716636d7621ec497055760e611982977699",
+  "executed.mjs": "eabeab1fa451d1cc05dfae9bc04148298a5833ae89a269cce367e4ff3fb2457a",
+  "perpetual-samples.json": "cb99b0a449f0280c6f0fd49fc5d6d0fa8f1a6a8015eca41dc1a7a46edddfb974",
+  "primitive.js": "04e6e86ffe5d23bb95bd84cf61671a3387898aacb83a7faa3e0943374642c25d",
+  "primitive.js.map": "abf605e423c7856b213db1a549bda91a33a0b1aa0ad4e25cec3697005e313109",
+  "resource-summary.json": "ae3d3d9e6a7cf371f8aac85c295ec371a6139bb89940c4eec1f46b4588a17d8a",
+  "resources.jsonl": "9cad9b97abfb388abc47c178dd2096a5b1795aca861fae28fd6a37cbe5bd04ac",
+  "results.json": "f79ebf690558cbfb34bb16b3b68d1e57ba7f6004f5d40ba3543a9f60b9e260e2",
+  "spot-samples.json": "65dcd0b96589596988702c362e5c9d006795e619f95717ddff35041826b8c32f"
+}

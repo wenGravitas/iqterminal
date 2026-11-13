@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/daz/workarea/iqterminal-perf-history/scripts/pi-route-probe.py", line 54, in <module>
+    expected=expected or d['financialBodyHash'];d['identicalPinnedBody']=d['decodedBodyHash']=hashlib.sha256(decoded).hexdigest();d['financialBodyHash']==expected
+                                                                                                             ^^^^^^^
+NameError: name 'decoded' is not defined

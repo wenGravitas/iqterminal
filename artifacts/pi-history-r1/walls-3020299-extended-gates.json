@@ -1,0 +1,112 @@
+{
+  "source": "artifacts/pi-history-r1/walls-3020299-extended-samples.jsonl",
+  "method": "normal Chromium on Pi; navigation-relative main-thread painted content; null is not complete; every sample retained; no p95 from five runs",
+  "scenarios": [
+    {
+      "case": "walls-30h-spot-5m",
+      "samplesMs": [
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 1,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "302029935e0b1f1c0d0add783d8e6f61f85125e9"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        6629.6
+      ],
+      "firstHistory3sGate": "FAIL",
+      "builds": [
+        "302029935e0b1f1c0d0add783d8e6f61f85125e9"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "from": 1793696100000,
+            "to": 1793804700000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1793791693943
+          },
+          "exception": null
+        }
+      ]
+    },
+    {
+      "case": "walls-30h-perp-15m",
+      "samplesMs": [
+        null
+      ],
+      "medianMs": null,
+      "maximumMs": null,
+      "sampleCount": 1,
+      "environmentVerified": true,
+      "environments": [
+        {
+          "dataMode": "staging",
+          "historyTiles": true,
+          "build": "302029935e0b1f1c0d0add783d8e6f61f85125e9"
+        }
+      ],
+      "gate": "SUPPLEMENTAL",
+      "limitsMs": {
+        "median": 5000,
+        "maximum": 10000
+      },
+      "firstHistoricalPaintMs": [
+        9796.9
+      ],
+      "firstHistory3sGate": "FAIL",
+      "builds": [
+        "302029935e0b1f1c0d0add783d8e6f61f85125e9"
+      ],
+      "coverage": [
+        {
+          "run": 1,
+          "requested": {
+            "from": 1793696400000,
+            "to": 1793804400000
+          },
+          "viewport": {
+            "from": 1793696400,
+            "to": 1793804400
+          },
+          "paintedClosedBars": 0,
+          "archive": {
+            "state": "loading",
+            "from": 1793695500000,
+            "to": 1793805300000,
+            "rangeComplete": false,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1793725233104
+          },
+          "exception": null
+        }
+      ]
+    }
+  ]
+}

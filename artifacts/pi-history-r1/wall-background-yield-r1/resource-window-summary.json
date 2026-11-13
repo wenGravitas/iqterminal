@@ -1,0 +1,24 @@
+[
+  {
+    "file": "server-perp-resources.jsonl",
+    "samples": 60,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "wall-yield4efc-perp-r1",
+      "elapsedMs": 300036.712587,
+      "stopping": false
+    }
+  },
+  {
+    "file": "server-spot-resources.jsonl",
+    "samples": 48,
+    "errors": [],
+    "end": {
+      "kind": "end",
+      "label": "wall-yield4efc-spot-r1",
+      "elapsedMs": 237051.777405,
+      "stopping": true
+    }
+  }
+]

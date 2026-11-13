@@ -1,0 +1,119 @@
+{
+  "completeCohort": true,
+  "scenarios": {
+    "current-only": {
+      "bootstrapMs": {
+        "samples": [
+          282.3999999985099,
+          516.5,
+          294.0999999977648,
+          271.69999999925494,
+          341.9000000022352
+        ],
+        "observations": 5,
+        "median": 294.0999999977648,
+        "maximum": 516.5
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          870.3000000007451,
+          719.5999999977648,
+          789.1000000014901,
+          880.9000000022352,
+          901.8000000007451
+        ],
+        "observations": 5,
+        "median": 870.3000000007451,
+        "maximum": 901.8000000007451
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1734,
+          1338,
+          774,
+          1454,
+          1746
+        ],
+        "observations": 5,
+        "median": 1454,
+        "maximum": 1746
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          206,
+          0,
+          0,
+          54,
+          66
+        ],
+        "observations": 5,
+        "median": 54,
+        "maximum": 206
+      },
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "concurrent-history": {
+      "bootstrapMs": {
+        "samples": [
+          491.80000000074506,
+          426.0999999977648,
+          503.69999999925494,
+          242.59999999776483,
+          343
+        ],
+        "observations": 5,
+        "median": 426.0999999977648,
+        "maximum": 503.69999999925494
+      },
+      "maxReceiveGapMs": {
+        "samples": [
+          1900.6000000014901,
+          995.8999999985099,
+          2394.89999999851,
+          1601.5999999977648,
+          1608.699999999255
+        ],
+        "observations": 5,
+        "median": 1608.699999999255,
+        "maximum": 2394.89999999851
+      },
+      "maxPageLongTaskMs": {
+        "samples": [
+          1272,
+          1512,
+          1034,
+          988,
+          1134
+        ],
+        "observations": 5,
+        "median": 1134,
+        "maximum": 1512
+      },
+      "maxObservedLongTaskMs": {
+        "samples": [
+          775,
+          349,
+          536,
+          534,
+          627
+        ],
+        "observations": 5,
+        "median": 536,
+        "maximum": 775
+      },
+      "errors": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  }
+}

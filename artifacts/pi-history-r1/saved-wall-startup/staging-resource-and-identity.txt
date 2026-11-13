@@ -1,0 +1,14 @@
+Sat Nov  7 12:41:58 UTC 2026
+ 13:41:58 up 67 days,  8:10, 26 users,  load average: 6.06, 5.41, 5.16
+/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z
+/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z
+/iqterminal-history-api a078bf91b4cd7bbed1182ac91733991cf52c876175cd90ce91a5598c0a6264af 2026-11-06T16:54:08.538780843Z
+iqterminal-history-api 0.42% 76.04MiB / 512MiB 11
+iqterminal-history-materializer 5.02% 311.7MiB / 1GiB 11
+iqterminal-spot-history-materializer 1.09% 223.5MiB / 1GiB 11
+iqterminal-footprint-materializer 2.37% 42.31MiB / 384MiB 11
+iqterminal-spot-footprint-materializer 2.70% 45.47MiB / 384MiB 11
+iqterminal-sql-admission 1.57% 47.22MiB / 128MiB 7
+               total        used        free      shared  buff/cache   available
+Mem:     67194404864 15969509376  3571834880  3918331904 52375207936 51224895488
+Swap:    34325131264  6030622720 28294508544

@@ -1,0 +1,97 @@
+{
+  "candidate": "pi-history-integration-startup-r1",
+  "decision": "BLOCKED",
+  "decisionReason": "Integrated checks pass within recorded scope, but the original12s startup/health fault is not cleared and the intended forwarded route still has diagnostic transport timeouts. Current-ending USD-M history pending at60s.",
+  "timebox": {
+    "startUtc": "2026-11-12T05:54:25Z",
+    "checkpointUtc": "2026-11-12T07:39:25Z",
+    "deadlineUtc": "2026-11-12T07:54:25Z",
+    "budgetSeconds": 7200,
+    "cohortLimit": {
+      "diagnostic": 1,
+      "postFix": 1
+    },
+    "actualFrontendRC": "72f74cab783351865f7bcaf8d76da67eb380b40f",
+    "actualFrontendMain": "d2b519e3b5714ae4955647e80a8190c10f2511d9",
+    "comparisonControl": "bf1d8425525306848cd9bc741c647fc3f1ba5054",
+    "fetchPolicy": "One fetch per repository completed; upstream refs frozen for this goal",
+    "mergeCommit": "94ede84aee923870c18eaa97bfa10f7c8e495398",
+    "diagnosticClient": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "diagnosticCohortPolicy": "one start, stop on first failed sample; five fresh starts per scenario; saved histories present at concurrent startup; final concurrent observation120s"
+  },
+  "client": {
+    "commit": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "exitCode": 0,
+    "flags": {
+      "VITE_BUILD_COMMIT": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+      "VITE_DATA_MODE": "staging",
+      "VITE_HISTORY_TILES": "1",
+      "VITE_DIAGNOSTICS": "1"
+    },
+    "outDir": "artifacts/pi-history-integration-startup-r1/dist-diagnostic"
+  },
+  "preview": {
+    "pid": 62873,
+    "port": 4202,
+    "build": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+    "phase": "diagnostic",
+    "buildFlags": {
+      "VITE_BUILD_COMMIT": "457ac9a19d9f1d4642c1230988f4d97d0ae3dbbb",
+      "VITE_DATA_MODE": "staging",
+      "VITE_HISTORY_TILES": "1",
+      "VITE_DIAGNOSTICS": "1"
+    },
+    "startupTrace": true,
+    "routes": {
+      "/market-data/v1/level-watches/stream": "http://127.0.0.1:18881",
+      "/market-data/v1/level-watches": "http://127.0.0.1:18881",
+      "/market-data/v1/liquidations/stream": "http://127.0.0.1:18881",
+      "/market-data/v1/liquidations": "http://127.0.0.1:18880",
+      "/market-data/v2/history/walls/reader": "http://127.0.0.1:18881",
+      "/market-data/v2/history/walls/preparation": "http://127.0.0.1:18881",
+      "/market-data/v2/history/footprint-current": "http://127.0.0.1:18881",
+      "/market-data/v2/history/current": "http://127.0.0.1:18881",
+      "/market-data/v2/history/health": "http://127.0.0.1:18881",
+      "/market-data/v1/order-walls/archive/current": "http://127.0.0.1:18881",
+      "/market-data/v1/effort-result": "http://127.0.0.1:18881",
+      "/market-data/v1/health": "http://127.0.0.1:18881",
+      "/market-data/v1/depth-matrix": "http://127.0.0.1:18881",
+      "/market-data/v1/footprints": "http://127.0.0.1:18880",
+      "/market-data/v1/native-candles": "http://127.0.0.1:18880",
+      "/market-data/v1/stream": "http://127.0.0.1:18881",
+      "/market-data": "http://127.0.0.1:18880"
+    }
+  },
+  "mergeCommit": "94ede84aee923870c18eaa97bfa10f7c8e495398",
+  "testToolingCommit": "be90eabc04fa7fe7abb9dda61d56b3dcf839441f",
+  "backendApplication": "83c8cf2709dba91f01d5a24421ae5bc875c96db5",
+  "gatewayId": "443cc478e327053a499ce4ee85252147fecb9476d340cdc2a94a87e4cc6dba12",
+  "workerId": "4fae18b4a7cd30a0984cb8d2c56f8953f13478fbeefe0c1d74397bcb34b5625b",
+  "workerBuild": "477b2f9960d4001c61a0d1ae4b47630b48cd4afb",
+  "flags": {
+    "/iqterminal-wall-serving-rc-477b2f9-r1": {
+      "IQ_WALL_PROJECTION_SOURCES": "0",
+      "IQ_WALL_ROLLING_DEFAULTS": "1",
+      "IQ_WALL_PREPARATION_CONTROL": "1",
+      "IQ_WALL_RESERVED_DERIVED_BYTES": "1153433600",
+      "IQ_WALL_QUEUE_FOLLOW": "1",
+      "WALL_DERIVED_GC": "1"
+    },
+    "/iqterminal-wall-gateway-startup-83c8cf2-r1": {
+      "IQ_WALL_PROJECTION_SOURCES": "0",
+      "WALL_PREPARATION_ENABLED": "1",
+      "WALL_PREPARATION_STATE": "/wall-preparation",
+      "WALL_DERIVED_GC": "1",
+      "IQ_STARTUP_TRACE": "1"
+    }
+  },
+  "cohorts": {
+    "diagnostic": 1,
+    "postFix": 0
+  },
+  "noApplicationRemedyClaimed": true,
+  "financialKernelSha256": "1a86cb47e20943c9c71f4614e267abe22ae507c84834cd184559ff97df041c73",
+  "backendObservedUpstreamMain": "26337e4e618fce1c2ad1da0f38754837a7f55a4d",
+  "backendLocalMainAlias": "e6d6f86c41b53cc410d6b5f438bb6f044aa6d672",
+  "scope": "Local backend main is an older ancestor; fetched upstream main is frozen for this goal. No main or production changes. Later commits contain tooling/evidence/docs only."
+}

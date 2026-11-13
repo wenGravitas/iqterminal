@@ -1,0 +1,1 @@
+Initial manual USD-M readiness query used an incorrect guessed feed slug and returned HTTP400. No chart benchmark had started. Corrected to the exact archiveProfile contract below. Spot readiness succeeded.

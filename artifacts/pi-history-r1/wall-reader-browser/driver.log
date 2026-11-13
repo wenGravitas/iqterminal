@@ -1,0 +1,5 @@
+
+  artifacts/pi-history-r1/wall-reader-browser/client.mjs  6.5kb
+
+⚡ Done in 17ms
+{"workspaceVerified":true,"during":{"firstAborted":true,"peerAborted":false,"error":"Error: Wall history reader lease lost; Retry available: Wall reader lease HTTP 503","history":{"submitted":2,"coalesced":0,"cancelled":0,"completed":0,"failed":0,"peakActive":2,"queueMs":4.700000002980232,"runMs":0,"active":2,"queued":0},"control":{"submitted":5,"coalesced":0,"cancelled":0,"completed":4,"failed":1,"peakActive":1,"queueMs":1.7000000029802322,"runMs":176.5000000037253,"active":0,"queued":0}},"after":{"history":{"submitted":2,"coalesced":0,"cancelled":2,"completed":0,"failed":2,"peakActive":2,"queueMs":4.700000002980232,"runMs":13549.70000000298,"active":0,"queued":0},"control":{"submitted":6,"coalesced":0,"cancelled":0,"completed":5,"failed":1,"peakActive":1,"queueMs":1.800000000745058,"runMs":184.0000000037253,"active":0,"queued":0}}}

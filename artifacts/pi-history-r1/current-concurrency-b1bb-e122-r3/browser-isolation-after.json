@@ -1,0 +1,4 @@
+{
+  "testWindows": [],
+  "scope": "Only IQTerminalPerf and temporary Playwright browser windows; user browser left untouched"
+}

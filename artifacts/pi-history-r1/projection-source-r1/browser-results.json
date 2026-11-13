@@ -1,0 +1,386 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.19.0/bin/node",
+      "/home/daz/workarea/iqterminal-perf-history/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "projection-source.browser.config.ts"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-perf-history/projection-source.browser.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-perf-history/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-perf-history/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-perf-history/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-projection-source.spec.ts",
+          "native-candle-history.spec.ts"
+        ],
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4201",
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--ozone-platform=headless",
+              "--no-sandbox",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pi-history-r1/projection-source-r1/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "native-candle-history.spec.ts",
+      "file": "native-candle-history.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "saved 5m wall view one candle back survives separate latest-closed and forming arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2780,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:41.858Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-bdd507078ed984f8954b",
+          "file": "native-candle-history.spec.ts",
+          "line": 12,
+          "column": 36
+        },
+        {
+          "title": "saved 15m wall view one candle back survives separate latest-closed and forming arrivals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2472,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:45.380Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-a1f154ab22372dae67dd",
+          "file": "native-candle-history.spec.ts",
+          "line": 12,
+          "column": 36
+        },
+        {
+          "title": "native30hpricecontext paints before bootstrap and retains current volume and newer historical reads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2938,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:47.905Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-59730e8e6336783f2378",
+          "file": "native-candle-history.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "nativepricepan preserves the requested past and current bars within the5000barbudget",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3571,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:50.872Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-e80f7c3483dc5835fc1b",
+          "file": "native-candle-history.spec.ts",
+          "line": 79,
+          "column": 1
+        },
+        {
+          "title": "warm native prices paint independently while their revision validation waits and later corrects exact quote volume",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4506,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:54.479Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-b464d4a60c36a88ba9c3",
+          "file": "native-candle-history.spec.ts",
+          "line": 104,
+          "column": 1
+        },
+        {
+          "title": "bootstrap-owned history seeds warm prices even when independent native history pages fail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4423,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:59:59.029Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a87190cea11aac3a22d-afac0a4a23d7a19502ca",
+          "file": "native-candle-history.spec.ts",
+          "line": 135,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "wall-projection-source.spec.ts",
+      "file": "wall-projection-source.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a negotiated projection paints exact historical walls before independent source validation completes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4155,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T13:00:03.553Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "projection-source-fixture",
+                      "contentType": "image/png",
+                      "path": "/home/daz/workarea/iqterminal-perf-history/test-results/wall-projection-source-a-n-5bfd2-source-validation-completes/attachments/projection-source-fixture-77c89419f180924d53c53dbb480f012558b32bb7.png"
+                    },
+                    {
+                      "name": "projection-source-proof.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY29wZSI6ICJFeHBsaWNpdCBkZXRlcm1pbmlzdGljIHRyYW5zcG9ydCBpbiBhIHJlYWwgY29tcGlsZWQgY2hhcnQ7IG5vIHNvdXJjZS1kYXRhLCBsYXRlbmN5IG9yIGZvcmVncm91bmQgYWNjZXB0YW5jZS4iLAogICJlbnZpcm9ubWVudCI6IHsKICAgICJoaXN0b3J5VGFza1lpZWxkIjogInVzZXItdmlzaWJsZS1wb3N0LXRhc2siLAogICAgImhpc3RvcnlCYWNrZ3JvdW5kWWllbGQiOiAiYmFja2dyb3VuZC1wb3N0LXRhc2siLAogICAgImRhdGFNb2RlIjogInN0YWdpbmciLAogICAgImhpc3RvcnlUaWxlcyI6IHRydWUsCiAgICAiYnVpbGQiOiAiN2ViNGEwMGI2MGRhZjM0NDE4OGVlYmMwNjU5YThhODI4NjIxMTNlOCIKICB9LAogICJyZXF1ZXN0cyI6IFsKICAgIHsKICAgICAgInBhdGgiOiAiL21hcmtldC1kYXRhL3YxL25hdGl2ZS1jYW5kbGVzIiwKICAgICAgImhlYWRlcnMiOiB7CiAgICAgICAgImFjY2VwdCI6ICIqLyoiLAogICAgICAgICJyZWZlcmVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NDIwMS9hc3NldHMvd29ya2VyLUJCZUYyeE9RLmpzIiwKICAgICAgICAidXNlci1hZ2VudCI6ICJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIEhlYWRsZXNzQ2hyb21lLzE1NS4wLjAuMCBTYWZhcmkvNTM3LjM2IgogICAgICB9CiAgICB9LAogICAgewogICAgICAicGF0aCI6ICIvbWFya2V0LWRhdGEvdjEvbmF0aXZlLWNhbmRsZXMiLAogICAgICAiaGVhZGVycyI6IHsKICAgICAgICAiYWNjZXB0IjogIiovKiIsCiAgICAgICAgInJlZmVyZXIiOiAiaHR0cDovLzEyNy4wLjAuMTo0MjAxL2Fzc2V0cy93b3JrZXItQkJlRjJ4T1EuanMiLAogICAgICAgICJ1c2VyLWFnZW50IjogIk1vemlsbGEvNS4wIChYMTE7IExpbnV4IHg4Nl82NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgSGVhZGxlc3NDaHJvbWUvMTU1LjAuMC4wIFNhZmFyaS81MzcuMzYiLAogICAgICAgICJ4LWlxLXZpZXctaWQiOiAidmlldy02NjZmZTVjNC01ZjU2LTRlZTEtOTkyMy0wYWJhZmQwODI5M2YtMSIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgInBhdGgiOiAiL21hcmtldC1kYXRhL3YyL2hpc3Rvcnkvd2FsbHMvZGlzY292ZXIiLAogICAgICAiaGVhZGVycyI6IHsKICAgICAgICAiYWNjZXB0IjogIiovKiIsCiAgICAgICAgInJlZmVyZXIiOiAiaHR0cDovLzEyNy4wLjAuMTo0MjAxL2Fzc2V0cy93b3JrZXItQkJlRjJ4T1EuanMiLAogICAgICAgICJ1c2VyLWFnZW50IjogIk1vemlsbGEvNS4wIChYMTE7IExpbnV4IHg4Nl82NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgSGVhZGxlc3NDaHJvbWUvMTU1LjAuMC4wIFNhZmFyaS81MzcuMzYiLAogICAgICAgICJ4LWlxLXZpZXctaWQiOiAidmlldy02NjZmZTVjNC01ZjU2LTRlZTEtOTkyMy0wYWJhZmQwODI5M2YtMiIsCiAgICAgICAgIngtaXEtd2FsbC1jb25zdW1lciI6ICI0MzdkZDA5MS0zOGRiLTRkZGItODZkOC03NmE3YzQ4ZTJmNjAiLAogICAgICAgICJ4LWlxLXdhbGwtcHJvamVjdGlvbiI6ICJjNDkzOTQwNTNhM2NiNjgwYTEyYzlkMGNkOGQ5ODVlNGYxYTFmZmUzNGNkMjAyOTBhYTRjNGRjYjY4NTk5MzhjIiwKICAgICAgICAieC1pcS13YWxsLXByb2plY3Rpb24tb25seSI6ICIxIiwKICAgICAgICAieC1pcS13YWxsLXJlc29sdmUtZWxpZ2libGUiOiAiMSIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgInBhdGgiOiAiL21hcmtldC1kYXRhL3YyL2hpc3Rvcnkvd2FsbHMvaG9yaXpvbiIsCiAgICAgICJoZWFkZXJzIjogewogICAgICAgICJhY2NlcHQiOiAiKi8qIiwKICAgICAgICAicmVmZXJlciI6ICJodHRwOi8vMTI3LjAuMC4xOjQyMDEvYXNzZXRzL3dvcmtlci1CQmVGMnhPUS5qcyIsCiAgICAgICAgInVzZXItYWdlbnQiOiAiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTUuMC4wLjAgU2FmYXJpLzUzNy4zNiIsCiAgICAgICAgIngtaXEtdmlldy1pZCI6ICJ2aWV3LTY2NmZlNWM0LTVmNTYtNGVlMS05OTIzLTBhYmFmZDA4MjkzZi0yIgogICAgICB9CiAgICB9LAogICAgewogICAgICAicGF0aCI6ICIvbWFya2V0LWRhdGEvdjIvaGlzdG9yeS93YWxscy9kaXNjb3ZlciIsCiAgICAgICJoZWFkZXJzIjogewogICAgICAgICJhY2NlcHQiOiAiKi8qIiwKICAgICAgICAicmVmZXJlciI6ICJodHRwOi8vMTI3LjAuMC4xOjQyMDEvYXNzZXRzL3dvcmtlci1CQmVGMnhPUS5qcyIsCiAgICAgICAgInVzZXItYWdlbnQiOiAiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTUuMC4wLjAgU2FmYXJpLzUzNy4zNiIsCiAgICAgICAgIngtaXEtdmlldy1pZCI6ICJ2aWV3LTY2NmZlNWM0LTVmNTYtNGVlMS05OTIzLTBhYmFmZDA4MjkzZi0yIiwKICAgICAgICAieC1pcS13YWxsLWNvbnN1bWVyIjogIjNlNWU1NzBkLWRmNTktNDk5ZS1iNGM1LTU0ZmQzNDBiMmYxMyIsCiAgICAgICAgIngtaXEtd2FsbC1wcm9qZWN0aW9uIjogImM0OTM5NDA1M2EzY2I2ODBhMTJjOWQwY2Q4ZDk4NWU0ZjFhMWZmZTM0Y2QyMDI5MGFhNGM0ZGNiNjg1OTkzOGMiLAogICAgICAgICJ4LWlxLXdhbGwtcHJvamVjdGlvbi1vbmx5IjogIjEiCiAgICAgIH0KICAgIH0sCiAgICB7CiAgICAgICJwYXRoIjogIi9tYXJrZXQtZGF0YS92Mi9oaXN0b3J5L3dhbGxzL3Byb2plY3Rpb24tYmF0Y2giLAogICAgICAiaGVhZGVycyI6IHsKICAgICAgICAiYWNjZXB0IjogIiovKiIsCiAgICAgICAgInJlZmVyZXIiOiAiaHR0cDovLzEyNy4wLjAuMTo0MjAxL2Fzc2V0cy93b3JrZXItQkJlRjJ4T1EuanMiLAogICAgICAgICJ1c2VyLWFnZW50IjogIk1vemlsbGEvNS4wIChYMTE7IExpbnV4IHg4Nl82NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgSGVhZGxlc3NDaHJvbWUvMTU1LjAuMC4wIFNhZmFyaS81MzcuMzYiLAogICAgICAgICJ4LWlxLXZpZXctaWQiOiAidmlldy02NjZmZTVjNC01ZjU2LTRlZTEtOTkyMy0wYWJhZmQwODI5M2YtMiIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgInBhdGgiOiAiL21hcmtldC1kYXRhL3YyL2hpc3Rvcnkvd2FsbHMvc291cmNlIiwKICAgICAgImhlYWRlcnMiOiB7CiAgICAgICAgImFjY2VwdCI6ICIqLyoiLAogICAgICAgICJyZWZlcmVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NDIwMS9hc3NldHMvd29ya2VyLUJCZUYyeE9RLmpzIiwKICAgICAgICAidXNlci1hZ2VudCI6ICJNb3ppbGxhLzUuMCAoWDExOyBMaW51eCB4ODZfNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIEhlYWRsZXNzQ2hyb21lLzE1NS4wLjAuMCBTYWZhcmkvNTM3LjM2IiwKICAgICAgICAieC1pcS12aWV3LWlkIjogInZpZXctNjY2ZmU1YzQtNWY1Ni00ZWUxLTk5MjMtMGFiYWZkMDgyOTNmLTIiCiAgICAgIH0KICAgIH0sCiAgICB7CiAgICAgICJwYXRoIjogIi9tYXJrZXQtZGF0YS92MS9uYXRpdmUtY2FuZGxlcyIsCiAgICAgICJoZWFkZXJzIjogewogICAgICAgICJhY2NlcHQiOiAiKi8qIiwKICAgICAgICAicmVmZXJlciI6ICJodHRwOi8vMTI3LjAuMC4xOjQyMDEvYXNzZXRzL3dvcmtlci1CQmVGMnhPUS5qcyIsCiAgICAgICAgInVzZXItYWdlbnQiOiAiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTUuMC4wLjAgU2FmYXJpLzUzNy4zNiIsCiAgICAgICAgIngtaXEtdmlldy1pZCI6ICJ2aWV3LTY2NmZlNWM0LTVmNTYtNGVlMS05OTIzLTBhYmFmZDA4MjkzZi0zIgogICAgICB9CiAgICB9LAogICAgewogICAgICAicGF0aCI6ICIvbWFya2V0LWRhdGEvdjEvbGV2ZWwtd2F0Y2hlcyIsCiAgICAgICJoZWFkZXJzIjogewogICAgICAgICJhY2NlcHQiOiAiKi8qIiwKICAgICAgICAicmVmZXJlciI6ICJodHRwOi8vMTI3LjAuMC4xOjQyMDEvYXNzZXRzL3dvcmtlci1CQmVGMnhPUS5qcyIsCiAgICAgICAgInVzZXItYWdlbnQiOiAiTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTUuMC4wLjAgU2FmYXJpLzUzNy4zNiIKICAgICAgfQogICAgfSwKICAgIHsKICAgICAgInBhdGgiOiAiL21hcmtldC1kYXRhL3YxL2xldmVsLXdhdGNoZXMiLAogICAgICAiaGVhZGVycyI6IHsKICAgICAgICAiYWNjZXB0IjogIiovKiIsCiAgICAgICAgInJlZmVyZXIiOiAiaHR0cDovLzEyNy4wLjAuMTo0MjAxL2Fzc2V0cy93b3JrZXItQkJlRjJ4T1EuanMiLAogICAgICAgICJ1c2VyLWFnZW50IjogIk1vemlsbGEvNS4wIChYMTE7IExpbnV4IHg4Nl82NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgSGVhZGxlc3NDaHJvbWUvMTU1LjAuMC4wIFNhZmFyaS81MzcuMzYiCiAgICAgIH0KICAgIH0KICBdLAogICJhY3R1YWwiOiB7CiAgICAic2VnbWVudHMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAiQjp2aWV3LTg6b2ZmOjA6cTQiLAogICAgICAgICJhcmNoaXZlRW50cnlJZCI6ICJCIiwKICAgICAgICAiZXBvY2giOiAyLAogICAgICAgICJzaWRlIjogImJpZCIsCiAgICAgICAgInByaWNlIjogMTAwLjAwMDAwMDAxLAogICAgICAgICJwcmljZUV4YWN0IjogIjEwMC4wMDAwMDAwMSIsCiAgICAgICAgInN0YXJ0IjogMTc5NDI4NjUwNDAwMCwKICAgICAgICAiZW5kIjogbnVsbCwKICAgICAgICAicGVha1VzZCI6IDIwMC4wMDAwMDAwMDAxLAogICAgICAgICJtZWFuVXNkIjogMjAwLjAwMDAwMDAwMDA5OTk2LAogICAgICAgICJkdXJhdGlvbk1zIjogMTA4NTk2MDAwLAogICAgICAgICJwZXJjZW50aWxlIjogbnVsbCwKICAgICAgICAic2NvcGVQYXJ0aWFsIjogdHJ1ZSwKICAgICAgICAic3RhcnRLbm93biI6IHRydWUsCiAgICAgICAgImRldGVjdGlvbk1vZGUiOiAidG9wLWxldmVscyIsCiAgICAgICAgInJhbmsiOiAxLAogICAgICAgICJ2YWx1ZVJ1bnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJhdCI6IDE3OTQyODY1MDQwMDAsCiAgICAgICAgICAgICJ1c2QiOiAyMDAuMDAwMDAwMDAwMSwKICAgICAgICAgICAgInBlcmNlbnRpbGUiOiBudWxsLAogICAgICAgICAgICAicmFuayI6IDEsCiAgICAgICAgICAgICJxdWFudGl0eSI6IDIuMDAwMDAwMDAwMDAxLAogICAgICAgICAgICAicXVhbnRpdHlFeGFjdCI6ICIyLjAwMDAwMDAwMDAwMSIsCiAgICAgICAgICAgICJub3Rpb25hbEV4YWN0IjogIjIwMC4wMDAwMDAwMDAxIgogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgInZhbHVlUnVuc1RydW5jYXRlZCI6IGZhbHNlLAogICAgICAgICJlbmRSZWFzb24iOiBudWxsLAogICAgICAgICJlbmRLbm93biI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiQTp2aWV3LTg6b2ZmOjA6cTEiLAogICAgICAgICJhcmNoaXZlRW50cnlJZCI6ICJBIiwKICAgICAgICAiZXBvY2giOiAxLAogICAgICAgICJzaWRlIjogImJpZCIsCiAgICAgICAgInByaWNlIjogMTAwLjAwMDAwMDAxLAogICAgICAgICJwcmljZUV4YWN0IjogIjEwMC4wMDAwMDAwMSIsCiAgICAgICAgInN0YXJ0IjogMTc5NDI4NjQ5OTAwMCwKICAgICAgICAiZW5kIjogMTc5NDI4NjUwMTAwMCwKICAgICAgICAicGVha1VzZCI6IDMwMC4wMDAwMDAwMDAzLAogICAgICAgICJtZWFuVXNkIjogMjAwLjAwMDAwMDAwMDEsCiAgICAgICAgImR1cmF0aW9uTXMiOiAyMDAwLAogICAgICAgICJwZXJjZW50aWxlIjogbnVsbCwKICAgICAgICAic2NvcGVQYXJ0aWFsIjogdHJ1ZSwKICAgICAgICAic3RhcnRLbm93biI6IHRydWUsCiAgICAgICAgImRldGVjdGlvbk1vZGUiOiAidG9wLWxldmVscyIsCiAgICAgICAgInJhbmsiOiAxLAogICAgICAgICJ2YWx1ZVJ1bnMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJhdCI6IDE3OTQyODY0OTkwMDAsCiAgICAgICAgICAgICJ1c2QiOiAyMDAuMDAwMDAwMDAwMSwKICAgICAgICAgICAgInBlcmNlbnRpbGUiOiBudWxsLAogICAgICAgICAgICAicmFuayI6IDEsCiAgICAgICAgICAgICJxdWFudGl0eSI6IDIuMDAwMDAwMDAwMDAxLAogICAgICAgICAgICAicXVhbnRpdHlFeGFjdCI6ICIyLjAwMDAwMDAwMDAwMSIsCiAgICAgICAgICAgICJub3Rpb25hbEV4YWN0IjogIjIwMC4wMDAwMDAwMDAxIgogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImF0IjogMTc5NDI4NjUwMTAwMCwKICAgICAgICAgICAgInVzZCI6IDMwMC4wMDAwMDAwMDAzLAogICAgICAgICAgICAicGVyY2VudGlsZSI6IG51bGwsCiAgICAgICAgICAgICJyYW5rIjogMSwKICAgICAgICAgICAgInF1YW50aXR5IjogMy4wMDAwMDAwMDAwMDMsCiAgICAgICAgICAgICJxdWFudGl0eUV4YWN0IjogIjMuMDAwMDAwMDAwMDAzIiwKICAgICAgICAgICAgIm5vdGlvbmFsRXhhY3QiOiAiMzAwLjAwMDAwMDAwMDMiCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAidmFsdWVSdW5zVHJ1bmNhdGVkIjogZmFsc2UsCiAgICAgICAgImVuZFJlYXNvbiI6ICJjZW5zb3JlZCIsCiAgICAgICAgImVuZEtub3duIjogZmFsc2UsCiAgICAgICAgImNlbnNvcmVkUmVhc29uIjogIk9ic2VydmVkIGRpc2Nvbm5lY3QiCiAgICAgIH0KICAgIF0sCiAgICAic3RhdHVzIjogewogICAgICAic3RhdGUiOiAiZ2FwIiwKICAgICAgImNvdmVyYWdlIjogewogICAgICAgICJmcm9tIjogMTc5NDI4NjUwMDAwMCwKICAgICAgICAidG8iOiAxNzk0Mzk1MTAwMDAwLAogICAgICAgICJjb21wbGV0ZSI6IGZhbHNlLAogICAgICAgICJwYXJ0aWFsIjogdHJ1ZQogICAgICB9LAogICAgICAiYXJjaGl2ZSI6IHsKICAgICAgICAicHJvZmlsZUlkIjogImJpbmFuY2Utc3BvdC1idGN1c2R0LWZlZWQtc3BvdC1kaWZmLWRlcHRoLWJhbmQtMTBwY3QtYWdnLW5hdGl2ZS10b3AxMC1hMS1zMSIsCiAgICAgICAgInN0YXRlIjogInBhcnRpYWwiLAogICAgICAgICJmcm9tIjogMTc5NDI4NjUwMDAwMCwKICAgICAgICAidG8iOiAxNzk0Mzk1MTAwMDAwLAogICAgICAgICJyYW5nZUNvbXBsZXRlIjogZmFsc2UsCiAgICAgICAgIm1hcmtldCI6ICJzcG90IiwKICAgICAgICAiZmVlZCI6ICJiaW5hbmNlOnNwb3Q6QlRDVVNEVDpzcG90LWRpZmYtZGVwdGgiLAogICAgICAgICJhZ2dyZWdhdGlvbiI6ICJuYXRpdmUiLAogICAgICAgICJhdmFpbGFibGVGcm9tIjogMTc5NDI4NjQ5OTAwMCwKICAgICAgICAiY29uZmlybWVkVG8iOiAxNzk0Mzk1MTAwMDAwLAogICAgICAgICJnYXBzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiZnJvbSI6IDE3OTQyODY1MDMwMDAsCiAgICAgICAgICAgICJ0byI6IDE3OTQyODY1MDMwMDAsCiAgICAgICAgICAgICJyZWFzb24iOiAiT2JzZXJ2ZWQgZGlzY29ubmVjdCIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJyZXF1ZXN0ZWRCYW5kUGVyY2VudCI6IDEwLAogICAgICAgICJwcm9maWxlQmFuZFBlcmNlbnQiOiAxMCwKICAgICAgICAicmVxdWVzdGVkVG9wTiI6IDgsCiAgICAgICAgImV4YWN0IjogdHJ1ZSwKICAgICAgICAicmVxdWVzdENvbXBsZXRlIjogdHJ1ZSwKICAgICAgICAibG9hZGVkVGhyb3VnaCI6IDE3OTQzOTUxMDAwMDAsCiAgICAgICAgInByb2ZpbGVWZXJzaW9uIjogMSwKICAgICAgICAiYWxnb3JpdGhtVmVyc2lvbiI6IDEsCiAgICAgICAgInNjaGVtYVZlcnNpb24iOiAxLAogICAgICAgICJtaWRwb2ludCI6ICIxMDAiLAogICAgICAgICJlbGlnaWJsZVRvIjogMTc5NDM5NTEwMDAwMCwKICAgICAgICAiaG9yaXpvbkF0IjogMTc5NDM5NTEwMjAwMAogICAgICB9LAogICAgICAiY3VycmVudFN1YnNjcmliZWQiOiBmYWxzZQogICAgfSwKICAgICJsaXZlIjogImxpdmUiLAogICAgInZpZXciOiB7CiAgICAgICJmcm9tIjogMTc5NDI4NjgwMCwKICAgICAgInRvIjogMTc5NDM5NDgwMAogICAgfSwKICAgICJyZW5kZXIiOiB7CiAgICAgICJkcmF3cyI6IDMsCiAgICAgICJyZWJ1aWxkcyI6IDIsCiAgICAgICJwYXRjaFByb2plY3RzIjogNCwKICAgICAgInNlZ21lbnRzIjogMiwKICAgICAgInZpc2libGUiOiAxLAogICAgICAidmlzaWJsZUhpc3RvcmljYWwiOiAxLAogICAgICAidmlzaWJsZUN1cnJlbnQiOiAwLAogICAgICAiYnl0ZXMiOiA1MDQsCiAgICAgICJyZW5kZXJNcyI6IDkuODk5OTk5OTk4NTA5ODg0LAogICAgICAibWF4UmVuZGVyTXMiOiA4LAogICAgICAic3Ryb2tlcyI6IDEsCiAgICAgICJsYXN0UHJvamVjdE1zIjogMCwKICAgICAgImxhc3RSZWZlcmVuY2VNcyI6IDAsCiAgICAgICJsYXN0UGFpbnRNcyI6IDAuMTAwMDAwMDAxNDkwMTE2MTIsCiAgICAgICJyZWZlcmVuY2VSZWJ1aWxkcyI6IDIsCiAgICAgICJyZWZlcmVuY2VTZWdtZW50cyI6IDAsCiAgICAgICJyZWZlcmVuY2VWYWx1ZVNjYW5zIjogMCwKICAgICAgInBhaW50Q2FjaGVIaXRzIjogMSwKICAgICAgInBhaW50Q2FjaGVCdWlsZHMiOiAyLAogICAgICAicGFpbnRTdHlsZVZpc2l0cyI6IDIsCiAgICAgICJjbG9zZWRQYWludENhY2hlSGl0cyI6IDAsCiAgICAgICJjbG9zZWRQYWludENhY2hlQnVpbGRzIjogMiwKICAgICAgImNsb3NlZFBhaW50Q2FjaGVBcHBlbmRzIjogMCwKICAgICAgImNsb3NlZFBhaW50U3R5bGVWaXNpdHMiOiAwLAogICAgICAic2V0dGluZ3NOb29wcyI6IDcsCiAgICAgICJtYXBwaW5nQ2hlY2tzIjogMywKICAgICAgIm1hcHBpbmdGYWxsYmFja3MiOiAwLAogICAgICAicGFpbnRlZFZpZXdwb3J0IjogewogICAgICAgICJmcm9tTXMiOiAxNzk0Mjg2ODAwMDAwLAogICAgICAgICJ0b01zIjogMTc5NDM5NDgwMDAwMCwKICAgICAgICAibWluUHJpY2UiOiA5OC43NSwKICAgICAgICAibWF4UHJpY2UiOiAxMDEuMjUsCiAgICAgICAgInBsb3RXaWR0aCI6IDE0MzYsCiAgICAgICAgInBsb3RIZWlnaHQiOiA4NDAKICAgICAgfSwKICAgICAgImlucHV0UmV2aXNpb24iOiA3LAogICAgICAicGFpbnRlZFJldmlzaW9uIjogNSwKICAgICAgInBlbmRpbmdQcm9qZWN0aW9uU2VnbWVudHMiOiAwLAogICAgICAicGVuZGluZ1BhaW50V29yayI6IGZhbHNlLAogICAgICAicXVldWVkUHJlcGFyYXRpb24iOiBmYWxzZSwKICAgICAgInByZXBhcmF0aW9uIjogewogICAgICAgICJzbGljZXMiOiAzLAogICAgICAgICJzdGVwcyI6IDksCiAgICAgICAgImNhbmNlbGxlZCI6IDAsCiAgICAgICAgImFjdGl2ZU1zIjogNC44OTk5OTk5OTEwNTkzMDMsCiAgICAgICAgImxhc3RQcm9qZWN0aW9uRWxhcHNlZE1zIjogMCwKICAgICAgICAibGFzdFJlZmVyZW5jZUVsYXBzZWRNcyI6IDAuMDk5OTk5OTk0MDM5NTM1NTIsCiAgICAgICAgImxhc3RTbGljZU1zIjogMC4wOTk5OTk5OTQwMzk1MzU1MiwKICAgICAgICAibWF4U2xpY2VNcyI6IDQsCiAgICAgICAgImJhY2tncm91bmRNcyI6IDAsCiAgICAgICAgIm1heEJhY2tncm91bmRNcyI6IDAsCiAgICAgICAgInlpZWxkTW9kZSI6ICJub3Qtc2NoZWR1bGVkIiwKICAgICAgICAicGhhc2UiOiAiaWRsZSIKICAgICAgfSwKICAgICAgInJldGFpbmVkUGFpbnRQYXRocyI6IDEsCiAgICAgICJyZXRhaW5lZENsb3NlZFBhaW50UGF0aHMiOiAwLAogICAgICAicmV0YWluZWRDbG9zZWRQYWludFNlZ21lbnRzIjogMCwKICAgICAgInBlbmRpbmdDbG9zZWRQYWludFNlZ21lbnRzIjogMCwKICAgICAgInJldGFpbmVkU2VnbWVudHMiOiAyLAogICAgICAib3BlblNlZ21lbnRzIjogMSwKICAgICAgInJldGFpbmVkUmVmZXJlbmNlU2VnbWVudHMiOiAxLAogICAgICAicmVmZXJlbmNlRXh0ZW50VmFsdWVzIjogMSwKICAgICAgInBlbmRpbmdSZWZlcmVuY2VTZWdtZW50cyI6IDAsCiAgICAgICJyZWZlcmVuY2VNaW5pbXVtIjogMjAwLjAwMDAwMDAwMDEsCiAgICAgICJyZWZlcmVuY2VNYXhpbXVtIjogMjAwLjAwMDAwMDAwMDEsCiAgICAgICJyZXRhaW5lZERyYXdhYmxlcyI6IDEsCiAgICAgICJwOTVSZW5kZXJNcyI6IDEuMzk5OTk5OTk4NTA5ODgzOSwKICAgICAgIm1vdW50ZWQiOiB0cnVlLAogICAgICAiYXJjaGl2ZVNlZ21lbnRzIjogMiwKICAgICAgImRpcmVjdFNlZ21lbnRzIjogMCwKICAgICAgInZhbHVlUnVucyI6IDMsCiAgICAgICJhcmNoaXZlVmFsdWVSdW5zIjogMywKICAgICAgImRpcmVjdFZhbHVlUnVucyI6IDAsCiAgICAgICJ2YWx1ZUhpc3RvcnlMaW1pdGVkIjogZmFsc2UsCiAgICAgICJlcGlzb2RlSGlzdG9yeUxpbWl0ZWQiOiBmYWxzZQogICAgfQogIH0sCiAgImNhbm9uaWNhbFJlZmVyZW5jZSI6IFsKICAgIHsKICAgICAgImlkIjogIkE6dmlldy04Om9mZjowOnExIiwKICAgICAgImFyY2hpdmVFbnRyeUlkIjogIkEiLAogICAgICAiZXBvY2giOiAxLAogICAgICAic2lkZSI6ICJiaWQiLAogICAgICAicHJpY2UiOiAxMDAuMDAwMDAwMDEsCiAgICAgICJwcmljZUV4YWN0IjogIjEwMC4wMDAwMDAwMSIsCiAgICAgICJzdGFydCI6IDE3OTQyODY0OTkwMDAsCiAgICAgICJlbmQiOiAxNzk0Mjg2NTAxMDAwLAogICAgICAicGVha1VzZCI6IDMwMC4wMDAwMDAwMDAzLAogICAgICAibWVhblVzZCI6IDIwMC4wMDAwMDAwMDAxLAogICAgICAiZHVyYXRpb25NcyI6IDIwMDAsCiAgICAgICJwZXJjZW50aWxlIjogbnVsbCwKICAgICAgInNjb3BlUGFydGlhbCI6IHRydWUsCiAgICAgICJzdGFydEtub3duIjogdHJ1ZSwKICAgICAgImRldGVjdGlvbk1vZGUiOiAidG9wLWxldmVscyIsCiAgICAgICJyYW5rIjogMSwKICAgICAgInZhbHVlUnVucyI6IFsKICAgICAgICB7CiAgICAgICAgICAiYXQiOiAxNzk0Mjg2NDk5MDAwLAogICAgICAgICAgInVzZCI6IDIwMC4wMDAwMDAwMDAxLAogICAgICAgICAgInBlcmNlbnRpbGUiOiBudWxsLAogICAgICAgICAgInJhbmsiOiAxLAogICAgICAgICAgInF1YW50aXR5IjogMi4wMDAwMDAwMDAwMDEsCiAgICAgICAgICAicXVhbnRpdHlFeGFjdCI6ICIyLjAwMDAwMDAwMDAwMSIsCiAgICAgICAgICAibm90aW9uYWxFeGFjdCI6ICIyMDAuMDAwMDAwMDAwMSIKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJhdCI6IDE3OTQyODY1MDEwMDAsCiAgICAgICAgICAidXNkIjogMzAwLjAwMDAwMDAwMDMsCiAgICAgICAgICAicGVyY2VudGlsZSI6IG51bGwsCiAgICAgICAgICAicmFuayI6IDEsCiAgICAgICAgICAicXVhbnRpdHkiOiAzLjAwMDAwMDAwMDAwMywKICAgICAgICAgICJxdWFudGl0eUV4YWN0IjogIjMuMDAwMDAwMDAwMDAzIiwKICAgICAgICAgICJub3Rpb25hbEV4YWN0IjogIjMwMC4wMDAwMDAwMDAzIgogICAgICAgIH0KICAgICAgXSwKICAgICAgInZhbHVlUnVuc1RydW5jYXRlZCI6IGZhbHNlLAogICAgICAiZW5kUmVhc29uIjogImNlbnNvcmVkIiwKICAgICAgImVuZEtub3duIjogZmFsc2UsCiAgICAgICJjZW5zb3JlZFJlYXNvbiI6ICJPYnNlcnZlZCBkaXNjb25uZWN0IgogICAgfSwKICAgIHsKICAgICAgImlkIjogIkI6dmlldy04Om9mZjowOnE0IiwKICAgICAgImFyY2hpdmVFbnRyeUlkIjogIkIiLAogICAgICAiZXBvY2giOiAyLAogICAgICAic2lkZSI6ICJiaWQiLAogICAgICAicHJpY2UiOiAxMDAuMDAwMDAwMDEsCiAgICAgICJwcmljZUV4YWN0IjogIjEwMC4wMDAwMDAwMSIsCiAgICAgICJzdGFydCI6IDE3OTQyODY1MDQwMDAsCiAgICAgICJlbmQiOiBudWxsLAogICAgICAicGVha1VzZCI6IDIwMC4wMDAwMDAwMDAxLAogICAgICAibWVhblVzZCI6IDIwMC4wMDAwMDAwMDAwOTk5NiwKICAgICAgImR1cmF0aW9uTXMiOiAxMDg1OTYwMDAsCiAgICAgICJwZXJjZW50aWxlIjogbnVsbCwKICAgICAgInNjb3BlUGFydGlhbCI6IHRydWUsCiAgICAgICJzdGFydEtub3duIjogdHJ1ZSwKICAgICAgImRldGVjdGlvbk1vZGUiOiAidG9wLWxldmVscyIsCiAgICAgICJyYW5rIjogMSwKICAgICAgInZhbHVlUnVucyI6IFsKICAgICAgICB7CiAgICAgICAgICAiYXQiOiAxNzk0Mjg2NTA0MDAwLAogICAgICAgICAgInVzZCI6IDIwMC4wMDAwMDAwMDAxLAogICAgICAgICAgInBlcmNlbnRpbGUiOiBudWxsLAogICAgICAgICAgInJhbmsiOiAxLAogICAgICAgICAgInF1YW50aXR5IjogMi4wMDAwMDAwMDAwMDEsCiAgICAgICAgICAicXVhbnRpdHlFeGFjdCI6ICIyLjAwMDAwMDAwMDAwMSIsCiAgICAgICAgICAibm90aW9uYWxFeGFjdCI6ICIyMDAuMDAwMDAwMDAwMSIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJ2YWx1ZVJ1bnNUcnVuY2F0ZWQiOiBmYWxzZSwKICAgICAgImVuZFJlYXNvbiI6IG51bGwsCiAgICAgICJlbmRLbm93biI6IGZhbHNlCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c6f5acde1b57cdc95839-ad34708b27b1279f379d",
+          "file": "wall-projection-source.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T12:59:40.299Z",
+    "duration": 27982.327,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

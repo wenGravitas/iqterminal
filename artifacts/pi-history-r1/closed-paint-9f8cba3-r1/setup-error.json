@@ -1,0 +1,4 @@
+{
+  "phase": "compile",
+  "error": "Frontend dependencies use Vite/Rolldown; node_modules/.bin/esbuild is absent. spawn status null. No browser or timings; changed helper to existing Vite CLI in a child process."
+}

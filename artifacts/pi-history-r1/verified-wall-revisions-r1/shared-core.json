@@ -1,0 +1,7 @@
+{
+  "sha256": "101dfc7cf817d6c0a4b28fa264842100053f507b2d5e41f98fa917700a073383",
+  "backendCoreIdentical": true,
+  "frontendSourceCommit": "022c39c2af203f6fd6b07bf182c336a8ddd6fba5",
+  "backendSourceCommit": "638eaf8c1118e995f0c5cc11692156643aa58a51",
+  "scope": "Byte-identical shared financial kernel; frontend presentation and lifecycle changes only"
+}

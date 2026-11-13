@@ -1,0 +1,140 @@
+{
+  "files": [
+    {
+      "path": "330-tests.txt",
+      "bytes": 81396,
+      "sha256": "e4a8f163a923d6e25c7d1de2ac75c401d7842d377fc0084cae4f08e0ef53b113"
+    },
+    {
+      "path": "85-focused-tests.txt",
+      "bytes": 21564,
+      "sha256": "236f1f1ee3754ab756e05bff02bbba8e65496b1411ec71ab1f90c3b25d1ccfd9"
+    },
+    {
+      "path": "build-identity.json",
+      "bytes": 352,
+      "sha256": "b968a0567a741c9d820d118941ab0a3e620cf2e1696f73562eaf3a3fa7ca608f"
+    },
+    {
+      "path": "build.txt",
+      "bytes": 1895,
+      "sha256": "e55c1ddc96e7ac13b44816bfdb25ead702eb72cf21c1e5b5953e18ba3dfee06f"
+    },
+    {
+      "path": "cross-cohort-identity.json",
+      "bytes": 1072,
+      "sha256": "c9974a8b5174aac98829e182d2b8dfff10931f0e21313340494e93e7cadd15c2"
+    },
+    {
+      "path": "executed.mjs",
+      "bytes": 100520,
+      "sha256": "f03bd46fe2c48460fc5d65b24ee2ff25038fe7871bd30a0bde7d7b883d61b61d"
+    },
+    {
+      "path": "implementation-and-rollback.md",
+      "bytes": 5179,
+      "sha256": "c142eb95566045470cbf7c7e8fc051b6923c4777e91520a04758bc18ea3b3586"
+    },
+    {
+      "path": "measurement-summary.json",
+      "bytes": 10605,
+      "sha256": "6d57edc4c16978f3aee0661d413e6ace3da1fc131a1ab4f37d930dfb9f571d3f"
+    },
+    {
+      "path": "observer-stop.txt",
+      "bytes": 165,
+      "sha256": "4986d3c692d042fe98448e24190c512d6b72eb6760250ba0480ff3a918568e94"
+    },
+    {
+      "path": "perpetual-reference-manifest.json",
+      "bytes": 25736,
+      "sha256": "3143f8fe497327dccffbf5763edff2d2920eebd09b37cb9a9d283d84b0ed4d1d"
+    },
+    {
+      "path": "perpetual-reuse-manifest.json",
+      "bytes": 25736,
+      "sha256": "3143f8fe497327dccffbf5763edff2d2920eebd09b37cb9a9d283d84b0ed4d1d"
+    },
+    {
+      "path": "perpetual-reuse-tail.json",
+      "bytes": 1523037,
+      "sha256": "e6da8d5164c432f388ee1f7005a96e8a6aac2c9672a677e5970916157de53932"
+    },
+    {
+      "path": "proof-build.txt",
+      "bytes": 77,
+      "sha256": "d20a52dfad1d288ac5c833a8dac9c9c6ac3509b0119ff3f0c7bbcc56872bdd8b"
+    },
+    {
+      "path": "protected-check.json",
+      "bytes": 1620,
+      "sha256": "c0e591b1b16ed2fefe89299713457110b8a9030103bc38514f4d3f1f30347953"
+    },
+    {
+      "path": "remote-invocation.py",
+      "bytes": 1111,
+      "sha256": "b5b3b45581ebc5f89f6d61c790b65af60b977fa669e8cdd9229fcadd59fa04d4"
+    },
+    {
+      "path": "resource-observer-executed.mjs",
+      "bytes": 2746,
+      "sha256": "23dab06705cdea3b0ad1ddcab077d82a522b1ebc8824b3a919c8652de154a53c"
+    },
+    {
+      "path": "result.json",
+      "bytes": 5549,
+      "sha256": "8212674c738364d9699681491118886bec07f34d9b0d7bde7d2ee8d9875f8379"
+    },
+    {
+      "path": "runner-console.jsonl",
+      "bytes": 61401,
+      "sha256": "bc5a189385b6012d7b4f77364f9a8b5f5351786a33d52eb9e5c027339aacada6"
+    },
+    {
+      "path": "runtime.json",
+      "bytes": 68,
+      "sha256": "2e9e38e58fb20489b83aa7074bb99a8273205d3e2631d55abdf53a6daefd6110"
+    },
+    {
+      "path": "server-resources.jsonl",
+      "bytes": 188412,
+      "sha256": "0f74bd77195882bb696752bf58901868b3032a41038b7b142d95f8050e587c88"
+    },
+    {
+      "path": "serving-postcheck.txt",
+      "bytes": 4258,
+      "sha256": "b291d924cc5fbaa8c9a73527233ae2a86c106f11694220ff11501c2c1bace88d"
+    },
+    {
+      "path": "serving-precheck.txt",
+      "bytes": 4242,
+      "sha256": "dba507eb6185c4bfe8ce0915e1d2a6b545abf3c06cd8a2a937cefe355ada9682"
+    },
+    {
+      "path": "source.mjs",
+      "bytes": 5819,
+      "sha256": "654aef275ed8aaf2b202cba8eb7aaf6f9ce9c6250b5357adbb30452b9f5cf5fb"
+    },
+    {
+      "path": "spot-reference-manifest.json",
+      "bytes": 17292,
+      "sha256": "77f7d51bb487b6f246cdcbde2b08d6bcae398b4c398ce01d9a6d9c3811938947"
+    },
+    {
+      "path": "spot-reuse-manifest.json",
+      "bytes": 17292,
+      "sha256": "77f7d51bb487b6f246cdcbde2b08d6bcae398b4c398ce01d9a6d9c3811938947"
+    },
+    {
+      "path": "spot-reuse-tail.json",
+      "bytes": 57198,
+      "sha256": "b18283765c4ebab28d8705b7a7e603ddb911bdcbc05985897d1311a5471c521e"
+    },
+    {
+      "path": "typecheck.txt",
+      "bytes": 103,
+      "sha256": "27b65c4e80c0f846b47d9c39fc8fc3a6fce8ffe9def0395e1a51195f15910199"
+    }
+  ],
+  "externalFiles": []
+}

@@ -1,0 +1,28 @@
+
+Running 1 test using 1 worker
+
+(node:228886) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/footprint-history-lifecycle.spec.ts:141:1 › native candles paint before history and history Retry preserves the live socket and current candle (7.4s)
+
+
+  1) tests/browser/footprint-history-lifecycle.spec.ts:141:1 › native candles paint before history and history Retry preserves the live socket and current candle 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 2
+
+      173 |  expect((await read())?.status.state).toBe('live');await page.getByRole('button',{name:'Retry market data',exact:true}).click();
+      174 |  await expect.poll(async()=>{const state=await read();return state?.status.nativeHistory?.state==='ready'&&state.barCount===3;}).toBe(true);
+    > 175 |  expect((await read())?.candles.at(-1)?.c).toBe(80060);expect(socketCount).toBe(1);expect(historyRequests).toBe(2);
+          |                                                                            ^
+      176 |  await expect(page.getByText(/Candle history incomplete/)).toHaveCount(0);
+      177 |  await page.screenshot({path:'artifacts/pi-history-r1/native-history-recovered-live-retained.png'});
+      178 | });
+        at /home/daz/workarea/iqterminal-perf-history/tests/browser/footprint-history-lifecycle.spec.ts:175:76
+
+    Error Context: test-results/footprint-history-lifecycl-163bf-e-socket-and-current-candle/error-context.md
+
+  1 failed
+    tests/browser/footprint-history-lifecycle.spec.ts:141:1 › native candles paint before history and history Retry preserves the live socket and current candle 

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: default history and current routes retain separate private transports
+ok 1 - default history and current routes retain separate private transports
+  ---
+  duration_ms: 86.954019
+  type: 'test'
+  ...
+# Subtest: isolated history override covers bulk/native without rerouting current or streams
+ok 2 - isolated history override covers bulk/native without rerouting current or streams
+  ---
+  duration_ms: 30.44531
+  type: 'test'
+  ...
+# Subtest: explicit native override remains independent of bulk history override
+ok 3 - explicit native override remains independent of bulk history override
+  ---
+  duration_ms: 28.557805
+  type: 'test'
+  ...
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# failed to load config from /home/daz/workarea/iqterminal-perf-history/vite.config.ts
+# Subtest: history override cannot turn staging proxy into an external or credentialled route
+ok 4 - history override cannot turn staging proxy into an external or credentialled route
+  ---
+  duration_ms: 277.025749
+  type: 'test'
+  ...
+# Subtest: dev: reserved current sockets and upstream cancellation
+ok 5 - dev: reserved current sockets and upstream cancellation
+  ---
+  duration_ms: 2669.26011
+  type: 'test'
+  ...
+# Subtest: production-preview: reserved current sockets and upstream cancellation
+ok 6 - production-preview: reserved current sockets and upstream cancellation
+  ---
+  duration_ms: 1459.574776
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4527.518971

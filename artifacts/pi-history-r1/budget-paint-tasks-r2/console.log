@@ -1,0 +1,16 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Error: ENOENT: no such file or directory, open '/proc/pressure/cpu'
+    at async open (node:internal/fs/promises:641:25)
+    at async readFile (node:internal/fs/promises:1245:14)
+    at async resources (file:///home/daz/workarea/iqterminal-perf-history/scripts/wall-budget-paint-bench.mjs:18:249)
+    at async file:///home/daz/workarea/iqterminal-perf-history/scripts/wall-budget-paint-bench.mjs:37:419
+    at async BindingCall.call (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:63573:27)
+    at async _Page._onBinding (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright-core@1.64.0/node_modules/playwright-core/lib/coreBundle.js:62982:11)
+    at /home/daz/workarea/iqterminal-perf-history/scripts/wall-budget-paint-bench.mjs:38:29 {
+  log: []
+}
+
+Node.js v22.19.0

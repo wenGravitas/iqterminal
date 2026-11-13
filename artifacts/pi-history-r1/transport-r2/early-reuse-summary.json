@@ -1,0 +1,275 @@
+{
+  "build": "a1477141622eb428b50fa2e65a0c32b15c5e76fc",
+  "scope": "One natural-GC persistent-browser open/close cohort, full30h USD-M Top8/side10%native. Not cold-client five-run acceptance or foreground UX. All nine cycles retained.",
+  "reference": {
+    "from": 1794281400000,
+    "to": 1794389400000,
+    "sourceFrom": 1794280500000,
+    "sourceTo": 1794390300000,
+    "sourceToken": "ceed41342616ff4f300901f35c89e765040a45dc079279785dde4bf791308544",
+    "segments": 21261,
+    "valueRuns": 87018,
+    "gaps": 1,
+    "financialHash": "7dd11c29296b501af0fe73bb0fc0b2fd413ebbd6b614fa0d737d104b0dd7fe6e",
+    "evidence": "transport-r2/fresh-reference.jsonl exact canonical fold and independent source proofs"
+  },
+  "samples": [
+    {
+      "cycle": 0,
+      "firstMs": null,
+      "completeMs": null,
+      "paintFailure": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded.",
+      "warmCachePresentBeforeReopen": false,
+      "activeJobs": 1,
+      "settledReadVerified": false,
+      "preparedRevisionReused": false,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 0,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 0,
+      "valueRuns": 0,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        2090428
+      ]
+    },
+    {
+      "cycle": 1,
+      "firstMs": 9832.199999999255,
+      "completeMs": null,
+      "paintFailure": "TimeoutError: page.waitForFunction: Timeout 12000ms exceeded.",
+      "warmCachePresentBeforeReopen": false,
+      "activeJobs": 0,
+      "settledReadVerified": false,
+      "preparedRevisionReused": false,
+      "projectionBatches": 4,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        35710104
+      ]
+    },
+    {
+      "cycle": 2,
+      "firstMs": 3942.60000000149,
+      "completeMs": 12107.20000000298,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": false,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": false,
+      "projectionBatches": 4,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        61768628
+      ]
+    },
+    {
+      "cycle": 3,
+      "firstMs": 1957.5,
+      "completeMs": 8105.800000000745,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        49906260
+      ]
+    },
+    {
+      "cycle": 4,
+      "firstMs": 1696.199999999255,
+      "completeMs": 9732.599999997765,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        44182168
+      ]
+    },
+    {
+      "cycle": 5,
+      "firstMs": 3079.60000000149,
+      "completeMs": 6194.699999999255,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        48331596
+      ]
+    },
+    {
+      "cycle": 6,
+      "firstMs": 527.6999999992549,
+      "completeMs": 6181,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        38271976
+      ]
+    },
+    {
+      "cycle": 7,
+      "firstMs": 288.70000000298023,
+      "completeMs": 4166.300000000745,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        53306812
+      ]
+    },
+    {
+      "cycle": 8,
+      "firstMs": 398.30000000074506,
+      "completeMs": 6030.20000000298,
+      "paintFailure": null,
+      "warmCachePresentBeforeReopen": true,
+      "activeJobs": 0,
+      "settledReadVerified": true,
+      "preparedRevisionReused": true,
+      "projectionBatches": 0,
+      "sourceValidationResponses": 1,
+      "nativeSlotsReported": {
+        "valid": true,
+        "capacityLimited": false,
+        "from": 1794281400000,
+        "to": 1794389400000,
+        "requestedSlots": 120,
+        "loadedSlots": 120,
+        "missing": []
+      },
+      "segments": 21261,
+      "valueRuns": 87018,
+      "forcedCollection": false,
+      "workerHeapUsedBytes": [
+        49723596
+      ]
+    }
+  ],
+  "warmFirstSamplesMs": [
+    1957.5,
+    1696.199999999255,
+    3079.60000000149,
+    527.6999999992549,
+    288.70000000298023,
+    398.30000000074506
+  ],
+  "warmFirstMedianMs": 1111.949999999255,
+  "warmFirstMaximumMs": 3079.60000000149,
+  "warmUseful1sGate": "FAIL",
+  "memoryPlateauGate": "INCOMPLETE",
+  "traceLimit": "Some Playwright worker response-finished traces remain pending despite parsed responses; header sizes are advertised sizes unless request.sizes succeeded. The initial discovery response header arrived but no history painted within the observation. Do not infer missing raw source.",
+  "nativeEvidenceLimit": "This cohort records the captured helper enumeration of all120 native slots; the report was subsequently strengthened to require saved raw native timestamps before certifying a pass."
+}

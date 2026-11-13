@@ -1,0 +1,1 @@
+/home/daz/iqterminal-perf-history/state /state writable=false

@@ -1,0 +1,80 @@
+{
+  "case": "footprint-4h-5m",
+  "build": "821092d83943b3e17bba88ee6a0a41657d17807a",
+  "route": "http://127.0.0.1:4185",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1793790000000,
+    "to": 1793804400000
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 4210.800000000745,
+      "completeMs": 4211,
+      "requestedSlots": 48,
+      "paintedSlots": 48,
+      "validatedSlots": 48,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": 3190.300000000745,
+      "completeMs": 3190.800000000745,
+      "requestedSlots": 48,
+      "paintedSlots": 48,
+      "validatedSlots": 48,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": 3509,
+      "completeMs": 3509.099999997765,
+      "requestedSlots": 48,
+      "paintedSlots": 48,
+      "validatedSlots": 48,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 3766.900000002235,
+      "completeMs": 3772.10000000149,
+      "requestedSlots": 48,
+      "paintedSlots": 48,
+      "validatedSlots": 48,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": 2821.699999999255,
+      "completeMs": 2822.10000000149,
+      "requestedSlots": 48,
+      "paintedSlots": 48,
+      "validatedSlots": 48,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    }
+  ],
+  "medianMs": 3509.099999997765,
+  "maximumMs": 4211,
+  "targets": {
+    "medianMs": 5000,
+    "maximumMs": 10000
+  },
+  "pass": true,
+  "scope": "Complete available footprint loading only; all five samples retained. No finite-subset median, p95, current/warm/wall/cold-build or foreground acceptance."
+}

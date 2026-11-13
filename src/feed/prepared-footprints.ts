@@ -1,3 +1,5 @@
+import {historyViewId,tracedHistoryJson} from './history-trace';
+import {readFootprintBatch,FootprintBatchUnsupported} from './footprint-batch';
 import { historyScheduler } from './history-scheduler';
 import { HistoryTileCache, type TileCache } from './history-tile-cache';
 import { duration, footprintAnalysisSourceKey, type FootprintAnalysisSummary, type FootprintBar, type Interval, type Market } from './protocol';
@@ -11,10 +13,19 @@ export interface PreparedFootprintAnalysisBatch {
   to: number;
   summaries: FootprintAnalysisSummary[];
   removedTimes: number[];
+  invalidatedTimes?: number[];
+}
+
+export interface PreparedFootprintProgress {
+  viewId?:string;firstUsefulMs?:number;completeMs?:number;
+  from: number; to: number; requestedSlots: number; loadedSlots: number; validatedSlots: number;
+  capacityLimited?: boolean;
+  slots: Array<{ from: number; to: number; validated: boolean; state: 'loading' | 'building' | 'ready' | 'empty' | 'gapped' | 'unavailable' | 'absent' }>;
 }
 
 type PreparedTile = { from: number; revision: number; bar?: FootprintBar | null; coverage?: unknown };
 const MAX_SUMMARY_SOURCES = 8;
+class PreparedCoverageUnavailable extends Error {}
 
 /** Loads full cells only for the visible range; older warmup is projected per 4h chunk. */
 export class PreparedFootprints {
@@ -28,15 +39,18 @@ export class PreparedFootprints {
     interval: Interval,
     rowPrice: number,
     signal: AbortSignal,
-    publish: (bars: FootprintBar[], complete: boolean, validated: boolean, analysis?: PreparedFootprintAnalysisBatch) => void,
+    publish: (bars: FootprintBar[], complete: boolean, validated: boolean, analysis?: PreparedFootprintAnalysisBatch, progress?: PreparedFootprintProgress) => void,
     market: Market = 'perpetual',
     analysisFrom = from,
+    retry = false,
   ) {
+    const viewId = historyViewId(), startedAt = performance.now();
+    let firstUsefulMs:number|undefined;
     const step = duration[interval];
     const feed = footprintFeed(market);
     const sourceKey = footprintAnalysisSourceKey(market, interval);
-    const summaryKey = `${sourceKey}:p${Math.round(rowPrice * 10)}`;
-    const tileKey = (start: number) => `footprint:${feed}:1:${step}:${Math.round(rowPrice * 10)}:${start}`;
+    const summaryKey = `${sourceKey}:p${String(rowPrice)}`;
+    const tileKey = (start: number) => `footprint:${feed}:2:${step}:${String(rowPrice)}:${start}`;
     const visibleFrom = Math.floor(from / step) * step;
     const visibleTo = Math.ceil(to / step) * step;
     const summaryFrom = Math.floor(Math.min(analysisFrom, visibleFrom) / step) * step;
@@ -49,7 +63,25 @@ export class PreparedFootprints {
       if (tile && validTileIdentity(tile, start)) visibleTiles.set(start, tile);
     }
 
+    const chunks = [...chunkRange(visibleFrom, visibleTo, 0, step).reverse(), ...chunkRange(summaryFrom, visibleFrom, 1, step)];
+    const retryChunks = new Set<number>();
+    const buildJobs = new Map<number,string>();
+    const chunkStates = new Map(chunks.map(chunk => [chunk.from, 'loading']));
     const validatedTimes = new Set<number>();
+    const revisionStates = new Map<number, 'building' | 'unavailable'>();
+    const visibleComplete = () => visibleStarts.every(start => validatedTimes.has(start / 1000))
+      && chunks.filter(chunk => chunk.priority === 0).every(chunk => chunkStates.get(chunk.from) === 'ready');
+    const progress = (): PreparedFootprintProgress => {
+      if(firstUsefulMs===undefined&&[...visibleTiles.values()].some(tile=>tile.bar))firstUsefulMs=performance.now()-startedAt;
+      return { viewId,firstUsefulMs,completeMs:visibleComplete()?performance.now()-startedAt:undefined,from: visibleFrom, to: visibleTo, requestedSlots: visibleStarts.length,
+      loadedSlots: visibleTiles.size, validatedSlots: visibleStarts.filter(at => validatedTimes.has(at / 1000)).length,
+      slots: visibleStarts.map(at => {
+        const tile = visibleTiles.get(at), validated = validatedTimes.has(at / 1000);
+        const chunk = chunks.find(chunk => chunk.priority === 0 && at >= chunk.from && at < chunk.to)!;
+        const state = revisionStates.get(at) ?? (tile ? (tile.coverage as any)?.gaps?.some((gap:any)=>gap.reason==='not retained/recorded') ? 'absent' : (tile.coverage as any)?.complete === false ? 'gapped' : tile.bar === null ? 'empty' : 'ready'
+          : chunkStates.get(chunk.from) === 'unavailable' ? 'unavailable' : chunkStates.get(chunk.from) === 'building' ? 'building' : 'loading');
+        return { from: at, to: at + step, validated, state };
+      }) }; };
     const removedTimes = new Set<number>();
     const cacheSummaries = this.summaryMap(summaryKey);
     for (const [start, tile] of visibleTiles) {
@@ -60,14 +92,13 @@ export class PreparedFootprints {
     }
     this.trimSummaries(summaryKey, summaryFrom, visibleTo);
     if (!signal.aborted && (visibleTiles.size || cacheSummaries.size)) {
-      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+      publish(this.visibleBars(visibleTiles), false, false, this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
     }
 
     for (;;) {
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
       let visiblePending = false, analysisPending = false, analysisFailed = false;
-      const chunks = [...chunkRange(visibleFrom, visibleTo, 0, step), ...chunkRange(summaryFrom, visibleFrom, 1, step)];
-      for (const { from: start, to: end, priority } of chunks) {
+      const chunkUrl = ({from:start,to:end}:typeof chunks[number]) => {
         const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         const known = chunkStarts.flatMap(at => {
           const visible = visibleTiles.get(at);
@@ -78,27 +109,38 @@ export class PreparedFootprints {
         }).join(',');
         const params = new URLSearchParams({ from: String(start), to: String(end), interval, rowPrice: String(rowPrice), known });
         if (market === 'spot') params.set('market', 'spot');
-        const url = `/market-data/v2/history/footprints?${params}`;
+        if (buildJobs.has(start)) params.set('job', buildJobs.get(start)!);
+        if (retry && !retryChunks.has(start)) { params.set('retry','1'); retryChunks.add(start); }
+        return `/market-data/v2/history/footprints?${params}`;
+      };
+      const applyChunk = async ({ from: start, to: end, priority }: typeof chunks[number],read?:()=>Promise<any>) => {
+        if (chunkStates.get(start) === 'ready') return;
+        const chunkStarts = analysisStarts.filter(at => at >= start && at < end);
         let data: any;
         try {
-          data = await historyScheduler.read(url, 'footprint', signal, async shared => {
-            const response = await this.request(url, { signal: AbortSignal.any([shared, AbortSignal.timeout(30_000)]) });
-            const payload = await response.json();
-            if (!response.ok) throw Error(payload.error ?? `Footprint history HTTP ${response.status}`);
-            return payload;
-          }, priority);
+          const eligibleAt = performance.now();
+          if(read)data=await read();
+          else{const url=chunkUrl({from:start,to:end,priority});data = await historyScheduler.read(url, 'footprint', signal, shared => tracedHistoryJson(this.request,url,
+            AbortSignal.any([shared, AbortSignal.timeout(30_000)]),viewId,eligibleAt), priority);}
         } catch (error) {
           if (signal.aborted) throw error;
-          if (priority === 1) { analysisFailed = true; break; }
+          if (priority === 1) { analysisFailed = true; return; }
           throw error;
         }
         if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-        if (data.state === 'unavailable' || data.version !== 1 || data.feed !== feed || !Array.isArray(data.tiles) || data.tiles.length > 300) {
-          if (priority === 1) { analysisFailed = true; break; }
-          if (data.state === 'unavailable') throw Error('Historical footprint build unavailable; inspect staging materializer backlog');
+        if (data.version !== 1 || data.feed !== feed || !['ready','building','unavailable'].includes(data.state) || !Array.isArray(data.tiles) || data.tiles.length > 300) {
+          if (priority === 1) { analysisFailed = true; return; }
           throw Error('Invalid prepared footprints');
         }
 
+        const seen=new Set<number>();
+        for(const tile of data.tiles as PreparedTile[]){
+          if(!validTileIdentity(tile)||tile.from<start||tile.from>=end||tile.from%step||seen.has(tile.from)
+            ||tile.bar!=null&&tile.bar.time!==tile.from/1000)throw Error('Invalid footprint tile identity');
+          seen.add(tile.from);
+        }
+        chunkStates.set(start, data.state);
+        if (retry && data.state === 'building' && data.jobs?.[0]?.id) buildJobs.set(start,data.jobs[0].id);
         const updates: Array<{ key: string; value: PreparedTile }> = [];
         for (const raw of data.tiles as PreparedTile[]) {
           if (!validTileIdentity(raw) || raw.from < start || raw.from >= end || raw.from % step) throw Error('Invalid footprint tile identity');
@@ -123,6 +165,11 @@ export class PreparedFootprints {
             }
             validatedTimes.add(raw.from / 1000);
           } else {
+            if(oldVisible?.revision===raw.revision&&oldVisible.bar===null){
+              const tile={...oldVisible,coverage:raw.coverage??oldVisible.coverage};
+              visibleTiles.set(raw.from,tile);cacheSummaries.delete(raw.from/1000);
+              removedTimes.add(raw.from/1000);validatedTimes.add(raw.from/1000);continue;
+            }
             const old = oldSummary?.revision === raw.revision ? oldSummary
               : oldVisible?.revision === raw.revision && oldVisible.bar ? summaryForTile(oldVisible, sourceKey, interval, true, market) : undefined;
             if (!old) throw Error('Missing validated footprint tile');
@@ -138,20 +185,75 @@ export class PreparedFootprints {
             validatedTimes.add(raw.from / 1000);
           }
         }
+        // A prepared tile remains useful while a canonical correction builds,
+        // but its previous content is not current validation or analysis evidence.
+        for (const at of chunkStarts) {
+          revisionStates.delete(at);
+          const pending = Array.isArray(data.revisionRanges) && data.revisionRanges.find((range:any) =>
+            Number.isSafeInteger(range.from) && Number.isSafeInteger(range.to) && range.from < at + step && range.to > at);
+          const allUnavailable = data.revisionState === 'unavailable' && (!Array.isArray(data.revisionRanges) || !data.revisionRanges.length);
+          if (pending || allUnavailable) {
+            revisionStates.set(at, allUnavailable || pending.state === 'unavailable' ? 'unavailable' : 'building');
+            validatedTimes.delete(at / 1000);
+          }
+        }
         await this.cache.putMany(updates);
         this.trimSummaries(summaryKey, summaryFrom, visibleTo);
         if (priority === 0) visiblePending ||= data.state === 'building';
         else analysisPending ||= data.state === 'building';
-        if (!signal.aborted) publish(this.visibleBars(visibleTiles), !visiblePending, true,
-          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+        if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
+          this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
+        if (priority === 0 && data.state === 'unavailable') throw new PreparedCoverageUnavailable(data.error ?? 'Historical footprint build unavailable; Retry available');
+        if (data.state === 'ready' && chunkStarts.some(at => !validatedTimes.has(at / 1000))) throw Error('Prepared footprint response omitted requested slots');
+      };
+      const runChunk=async(chunk:typeof chunks[number],read?:()=>Promise<any>)=>{
+        try{await applyChunk(chunk,read);}catch(error){
+          if(signal.aborted)throw error;
+          if(chunk.priority===1){analysisFailed=true;return;}
+          // A specific unavailable revision response already publishes its
+          // precise affected ranges. A failed read has no such fresh evidence.
+          if(!(error instanceof PreparedCoverageUnavailable)){
+            chunkStates.set(chunk.from,'unavailable');
+            for(const at of visibleStarts)if(at>=chunk.from&&at<chunk.to){validatedTimes.delete(at/1000);revisionStates.set(at,'unavailable');}
+            publish(this.visibleBars(visibleTiles),false,true,this.analysisBatch(summaryKey,summaryFrom,visibleTo,validatedTimes,removedTimes,revisionStates),progress());
+          }
+          throw error;
+        }
+      };
+      // Up to six individual 4h reads share one progressive transport. Larger
+      // viewports use more waves; this is not a total chart-history limit.
+      // Older APIs fall back only on an explicit unsupported HTTP status.
+      const pendingVisible=chunks.filter(chunk=>chunk.priority===0&&chunkStates.get(chunk.from)!=='ready');
+      const visibleResults:PromiseSettledResult<void>[]=[];
+      for(let offset=0;offset<pendingVisible.length;offset+=6){
+        const wave=pendingVisible.slice(offset,offset+6);
+        if(wave.length===1){visibleResults.push(...await Promise.allSettled(wave.map(chunk=>runChunk(chunk))));continue;}
+        const urls=wave.map(chunkUrl);
+        try{await readFootprintBatch(this.request,urls,signal,async(index,data,error)=>{
+          try{await runChunk(wave[index]!,()=>error?Promise.reject(error):Promise.resolve(data));visibleResults.push({status:'fulfilled',value:undefined});}
+          catch(reason){visibleResults.push({status:'rejected',reason});}
+        },viewId);}
+        catch(error){if(error instanceof FootprintBatchUnsupported){
+          // Retry commands were consumed when the batch URL was constructed.
+          // Use those exact commands on the legacy path, once per chunk.
+          visibleResults.push(...await Promise.allSettled(wave.map((chunk,i)=>runChunk(chunk,()=>{
+            const eligibleAt=performance.now(),url=urls[i]!;return historyScheduler.read(url,'footprint',signal,shared=>tracedHistoryJson(this.request,url,AbortSignal.any([shared,AbortSignal.timeout(30_000)]),viewId,eligibleAt));
+          }))));
+        }else visibleResults.push({status:'rejected',reason:error});}
+      }
+      const failed = visibleResults.find(result => result.status === 'rejected');
+      if (failed?.status === 'rejected') throw failed.reason;
+      for (const chunk of chunks.filter(chunk => chunk.priority === 1)) {
+        await runChunk(chunk);
+        if (analysisFailed) break;
       }
 
       if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-      if (!signal.aborted) publish(this.visibleBars(visibleTiles), !visiblePending, true,
-        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes));
+      if (!signal.aborted) publish(this.visibleBars(visibleTiles), visibleComplete(), true,
+        this.analysisBatch(summaryKey, summaryFrom, visibleTo, validatedTimes, removedTimes, revisionStates), progress());
       // Strength warmup is optional. A failed or still-building older chunk
       // leaves the visible tiles ready and lets the strength show unavailable.
-      if (analysisFailed || analysisPending || !visiblePending) return;
+      if (!visiblePending) return;
       await new Promise<void>((resolve, reject) => {
         const timer = setTimeout(done, 1000);
         function done() { signal.removeEventListener('abort', cancel); resolve(); }
@@ -181,12 +283,13 @@ export class PreparedFootprints {
     return [...tiles].sort(([a], [b]) => a - b).flatMap(([, tile]) => tile.bar ? [tile.bar] : []);
   }
 
-  private analysisBatch(key: string, from: number, to: number, validated: ReadonlySet<number>, removed: ReadonlySet<number>): PreparedFootprintAnalysisBatch {
+  private analysisBatch(key: string, from: number, to: number, validated: ReadonlySet<number>, removed: ReadonlySet<number>, invalidated: ReadonlyMap<number, unknown>): PreparedFootprintAnalysisBatch {
     const summaries = this.summaries.get(key);
     return { from, to,
       summaries: summaries ? [...summaries.values()].filter(item => item.time * 1000 >= from && item.time * 1000 < to)
         .map(item => validated.has(item.time) ? item : { ...item, coverageEvidence: { ...item.coverageEvidence, validated: false } }) : [],
-      removedTimes: [...removed].filter(time => time * 1000 >= from && time * 1000 < to) };
+      removedTimes: [...removed].filter(time => time * 1000 >= from && time * 1000 < to),
+      invalidatedTimes: [...invalidated.keys()].filter(at => at >= from && at < to).map(at => at / 1000) };
   }
 
   dispose() { this.summaries.clear(); this.cache.dispose?.(); }

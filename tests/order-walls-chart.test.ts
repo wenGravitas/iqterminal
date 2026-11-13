@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it,vi } from 'vitest';
 import type { PrimitiveRenderContext } from 'openalgo-charts';
 import { DEFAULT_ORDER_WALLS_SETTINGS, resolveAutoOrderWallPriceWidth, type OrderWallSegment } from '../src/feed/order-walls';
-import { OrderWallsPrimitive, orderWallsFitRange } from '../src/chart/order-walls';
+import { OrderWallsPrimitive, orderWallsFitRange, wallProjectionMappingKey } from '../src/chart/order-walls';
 
 const LEGACY_ORDER_WALLS_SETTINGS={...DEFAULT_ORDER_WALLS_SETTINGS,mode:'threshold' as const,aggregation:'auto' as const,thicknessPx:2};
 const base = 1_704_067_200_000;
@@ -35,6 +35,18 @@ function canvas(styles: string[] = [], paths: CapturedPath[] = []): CanvasRender
 }
 
 describe('Order Walls chart hit testing', () => {
+  it('does not certify a new input/status revision as painted until a completed draw',()=>{
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true},60_000),status={state:'live' as const,lastConfirmedAt:base+120_000};
+    const segment:OrderWallSegment={id:'paint-version',epoch:1,side:'bid',price:100,start:base,end:base+120_000,peakUsd:10000,meanUsd:10000,durationMs:120000,percentile:99,scopePartial:false,startKnown:true,valueRuns:[],valueRunsTruncated:false,endReason:'removed',endKnown:true};
+    primitive.setSnapshot([segment],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+    primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);expect(primitive.diagnostics().pendingProjectionSegments).toBe(0);
+    expect(primitive.diagnostics().paintedViewport).toMatchObject({fromMs:base,toMs:base+120000});
+    primitive.setStatus({...status,message:'Final source validation complete'});
+    // A pending status must not erase proof of historical content already drawn.
+    expect(primitive.diagnostics().paintedViewport).toMatchObject({fromMs:base,toMs:base+120000});expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+    primitive.draw(canvas(),context());expect(primitive.diagnostics().paintedRevision).toBe(primitive.diagnostics().inputRevision);
+    primitive.patch([{id:segment.id,segment:{...segment,peakUsd:20000}}],status);expect(primitive.diagnostics().paintedRevision).not.toBe(primitive.diagnostics().inputRevision);
+  });
   it('maps CSS pointer x to the same event time at DPR 2 used by projected geometry', () => {
     const primitive = new OrderWallsPrimitive({ ...LEGACY_ORDER_WALLS_SETTINGS, enabled: true }, 60_000);
     const segment: OrderWallSegment = {
@@ -289,6 +301,19 @@ describe('optional Order Walls price guides', () => {
     primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
     expect(render(primitive).texts).toEqual(['~B 125 · $750K']);
   });
+  it('uses open-episode geometry for guides without enumerating closed drawables after a tail update',()=>{
+    const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native',showPriceLines:true},60_000);
+    primitive.setSnapshot([...Array.from({length:100},(_,i)=>wall('closed-'+i,base+120_000)),wall()],{state:'live',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual(['B 100 · $1.2M']);
+    primitive.patch([{id:'active',segment:{...wall(),valueRuns:[{at:base,usd:750_000,percentile:95}]}}],{state:'stale',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual(['~B 100 · $750K']);
+    const model=primitive as any,texts:string[]=[],ctx=canvas() as any;
+    ctx.measureText=(text:string)=>({width:text.length*5});ctx.fillText=(text:string)=>texts.push(text);ctx.fillRect=()=>{};ctx.strokeRect=()=>{};
+    const scan=vi.spyOn(model.drawable,'values').mockImplementation(()=>{throw Error('Closed drawable scan');});
+    try{model.drawPriceLines(ctx,{...context(),theme:{background:'#000',axisText:'#ccc'}});expect(texts).toEqual(['~B 100 · $750K']);}finally{scan.mockRestore();}
+    primitive.patch([{id:'active',segment:{...wall(),end:base+120_000,endKnown:true,endReason:'removed'}}],{state:'live',lastConfirmedAt:base+120_000});
+    expect(render(primitive).texts).toEqual([]);
+  });
   it('suppresses overlapping tags without hiding guides or inventing history',()=>{
     const primitive=new OrderWallsPrimitive({...LEGACY_ORDER_WALLS_SETTINGS,enabled:true,showPriceLines:true},60_000);
     primitive.setSnapshot([wall(),wall('second')],{state:'live',lastConfirmedAt:base+120_000});
@@ -330,4 +355,305 @@ describe('Top Levels native rendering',()=>{
   const closed={...segment,end:base+120000,endReason:'rank-exit' as const};p.patch([{id:segment.id,segment:closed}],{state:'live',tickSize:.1,lastConfirmedAt:base+120000});p.draw(canvas(),context());
   expect(p.orderWallAt(150,100)?.segment).toMatchObject({end:base+120000,endReason:'rank-exit'});
  });
+});
+
+it('paints an instantaneous current selection without inventing a historical duration',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000);
+ const start=base+60000,segment:OrderWallSegment={id:'current-point',epoch:1,side:'bid',price:100,start,end:null,peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:true,startKnown:false,currentSelection:true,detectionMode:'top-levels',rank:1,valueRuns:[{at:start,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ const paths:CapturedPath[]=[];primitive.setSnapshot([segment],{state:'live',lastConfirmedAt:start});primitive.draw(canvas([],paths),context());
+ expect(primitive.diagnostics().visibleCurrent).toBe(1);expect(paths[0]!.points[1]![0]-paths[0]!.points[0]![0]).toBe(1);
+ expect(primitive.orderWallAt(150.1,100)?.at).toBe(start);
+ primitive.setSnapshot([{...segment,id:'historical-point',archiveEntryId:'old',currentSelection:false,end:start,endKnown:true}],{state:'live',lastConfirmedAt:start});primitive.draw(canvas(),context());
+ expect(primitive.diagnostics().visible).toBe(0);
+});
+
+it('a confirmation-only patch extends only open geometry and does not inspect closed history',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',visibleRangeOnly:false},60000);
+ const open:OrderWallSegment={id:'open-confirmation',epoch:1,side:'bid',price:100,start:base,end:null,peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:true,startKnown:false,currentSelection:true,detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ let closedReads=0;const closed:OrderWallSegment={...open,id:'closed-untouched',archiveEntryId:'old',currentSelection:false,end:base+1000};
+ Object.defineProperty(closed,'end',{get(){closedReads++;return base+1000;}});
+ primitive.setSnapshot([closed,open],{state:'live',lastConfirmedAt:base+1000});primitive.draw(canvas(),context());
+ const before=primitive.diagnostics(),reads=closedReads,paths:CapturedPath[]=[];
+ primitive.patch([],{state:'live',lastConfirmedAt:base+30000});primitive.draw(canvas([],paths),context());
+ expect(closedReads).toBe(reads);expect(primitive.diagnostics().patchProjects-before.patchProjects).toBe(1);expect(primitive.diagnostics().rebuilds).toBe(before.rebuilds);
+ const hit=primitive.orderWallAt(90,100);expect(hit?.segment.id).toBe('open-confirmation');expect(hit?.at).toBeGreaterThan(base+1000);
+});
+
+it('advances a delivered archive tail only with archive coverage, independently of current confirmation',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000);
+ const segment:OrderWallSegment={id:'archive-tail',archiveEntryId:'entry',epoch:1,side:'bid',price:100,start:base,end:null,peakUsd:1000,meanUsd:1000,durationMs:60000,percentile:null,scopePartial:true,startKnown:true,currentSelection:false,detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ const status:any={state:'live',lastConfirmedAt:base+30000,archive:{loadedThrough:base+1000}};
+ primitive.setSnapshot([segment],status);primitive.draw(canvas(),context());expect(primitive.orderWallAt(90,100)).toBeNull();
+ primitive.patch([],{...status,archive:{loadedThrough:base+30000}});primitive.draw(canvas(),context());expect(primitive.orderWallAt(90,100)?.segment.id).toBe('archive-tail');
+ const projects=primitive.diagnostics().patchProjects;
+ primitive.patch([],{...status,lastConfirmedAt:base+60000,archive:{loadedThrough:base+30000}});primitive.draw(canvas(),context());expect(primitive.diagnostics().patchProjects).toBe(projects);
+});
+
+for(const visibleRangeOnly of [false,true])it(`does not rescan closed wall strength when a current value changes (visible=${visibleRangeOnly})`,()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly,showHistory:true};
+ const wall=(id:string,end:number|null,usd:number):OrderWallSegment=>({id,archiveEntryId:id,epoch:1,side:'bid',price:100,start:base,end,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:end!==null,endReason:end===null?null:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false});
+ let closedRunReads=0,closedLineReads=0;
+ const closed=Array.from({length:100},(_,i)=>{const s=wall('closed-reference-'+i,base+120000,i+1);Object.defineProperty(s.valueRuns[0],'usd',{get(){closedRunReads++;return i+1;},enumerable:true});return s;});
+ const current={...wall('current-reference',null,200),currentSelection:true};
+ const primitive=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.1};
+ primitive.setSnapshot([...closed,current],status);primitive.draw(canvas(),context());
+ for(const line of (primitive as any).drawable.values())if(line.segment.id.startsWith('closed-reference-')){const usd=line.usd;Object.defineProperty(line,'usd',{get(){closedLineReads++;return usd;}});}
+ closedRunReads=0;closedLineReads=0;primitive.draw(canvas(),context());const paintReads=closedLineReads;
+ closedRunReads=0;closedLineReads=0;
+ primitive.patch([{id:current.id,segment:{...current,peakUsd:400,meanUsd:400,valueRuns:[{at:base,usd:400,percentile:null,rank:1,quantity:4}]}}],status);
+ primitive.draw(canvas(),context());
+ expect(closedRunReads).toBe(0);expect(closedLineReads).toBe(paintReads);
+ expect((primitive as any).reference).toEqual({min:1,max:400});
+});
+
+it('keeps strength extrema equal to an independent scan through revisions, viewport changes and retention',()=>{
+ const wall=(id:string,values:number[],closed=true):OrderWallSegment=>({id,epoch:1,side:'bid',price:100,start:base,end:closed?base+120000:null,peakUsd:Math.max(...values),meanUsd:values[0]!,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:closed,endReason:closed?'removed':null,detectionMode:'top-levels',rank:1,valueRuns:values.map((usd,i)=>({at:base+i*30000,usd,percentile:null,rank:1,quantity:1})),valueRunsTruncated:false});
+ let settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly:false,historyEpisodes:20};
+ const p=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.1};
+ let rc=context();
+ function verify(){
+  p.draw(canvas(),rc);const model=p as any;let values:number[]=[];
+  if(settings.visibleRangeOnly)values=[...model.drawable.values()].map((line:any)=>line.usd).filter((v:any)=>v!==null&&v>0);
+  else values=[...model.segments.values()].flatMap((s:any)=>settings.showHistory||s.end===null?s.valueRuns.map((v:any)=>v.usd).filter((v:any)=>v!==null&&v>0):[]);
+  expect(model.reference).toEqual({min:values.length?Math.min(...values):0,max:values.length?Math.max(...values):0});
+ }
+ p.setSnapshot([wall('min',[1,3]),wall('max',[1000,500]),wall('duplicate',[1,1000]),wall('current',[20],false)],status);verify();
+ p.patch([{id:'max',segment:wall('max',[50,60])}],status);verify();
+ p.patch([{id:'duplicate',segment:null}],status);verify();
+ p.patch([{id:'min',segment:wall('min',[25,30])}],status);verify();
+ p.patch([{id:'current',segment:wall('current',[20,2000],false)}],status);verify();
+ p.patch([{id:'current',segment:wall('current',[20,15],false)}],status);verify();
+ rc=context({from:.5,to:2});verify();expect(p.diagnostics().referenceSegments).toBe(0);
+ settings={...settings,visibleRangeOnly:true};p.setSettings(settings);verify();
+ rc=context({from:1,to:2});verify();
+ p.patch([{id:'current',segment:wall('current',[800],false)}],status);verify();
+ settings={...settings,visibleRangeOnly:false,showHistory:false};p.setSettings(settings);verify();
+ settings={...settings,showHistory:true,historyEpisodes:1};p.setSettings(settings);verify();
+ p.patch([...((p as any).segments.keys())].map(id=>({id,segment:null})),status);verify();
+ expect(p.diagnostics().retainedReferenceSegments).toBe(0);expect(p.diagnostics().retainedDrawables).toBe(0);expect(p.orderWallAt(100,100)).toBeNull();
+ p.patch([{id:'reopened',segment:wall('reopened',[7],false)}],status);verify();
+ p.setSnapshot([],status);expect(p.diagnostics().visibleHistorical).toBe(0);expect(p.diagnostics().visibleCurrent).toBe(0);expect(p.diagnostics().retainedReferenceSegments).toBe(0);
+ p.detached();expect(p.diagnostics().retainedReferenceSegments).toBe(0);
+});
+
+it('bounds pending strength/geometry work by retained data while a chart is not being drawn',()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native' as const,visibleRangeOnly:false,historyEpisodes:2};
+ const p=new OrderWallsPrimitive(settings,60000),status={state:'live' as const,lastConfirmedAt:base+120000};
+ const wall=(i:number):OrderWallSegment=>({id:'hidden-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:i+1,meanUsd:i+1,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:i+1,percentile:null,rank:1,quantity:1}],valueRunsTruncated:false});
+ p.setSnapshot([wall(0),wall(1)],status);p.draw(canvas(),context());
+ for(let i=2;i<1000;i++)p.patch([{id:'hidden-'+i,segment:wall(i)}],status);
+ const model=p as any;
+ expect(p.diagnostics().retainedSegments).toBe(2);expect(model.dirty.size).toBeLessThanOrEqual(2);expect(model.tailDirty.size).toBeLessThanOrEqual(2);
+ expect(model.referenceIds.size).toBeLessThanOrEqual(2);expect(model.referenceExtents.size).toBeLessThanOrEqual(2);expect(model.referenceCounts.size).toBeLessThanOrEqual(4);
+ p.draw(canvas(),context());expect(model.reference).toEqual({min:999,max:1000});
+ p.patch([{id:'hidden-998',segment:null},{id:'hidden-999',segment:null}],status);
+ expect(p.diagnostics().retainedDrawables).toBe(0);expect(p.diagnostics().retainedReferenceSegments).toBe(0);expect(p.orderWallAt(100,100)).toBeNull();
+});
+
+it('reprojects an earlier value revision when the canonical patch explicitly replaces its runs',()=>{
+ const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native',visibleRangeOnly:true},60000);
+ const segment:OrderWallSegment={id:'revised-runs',archiveEntryId:'entry-revised',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:500,meanUsd:300,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:100,percentile:null,rank:1},{at:base+60000,usd:500,percentile:null,rank:1}],valueRunsTruncated:false};
+ const status={state:'live' as const,lastConfirmedAt:base+120000};p.setSnapshot([segment],status);p.draw(canvas(),context());
+ p.patch([{id:segment.id,segment:{...segment,peakUsd:900,valueRuns:[{...segment.valueRuns[0]!,usd:900},segment.valueRuns[1]!]},replaceValueRuns:true}],status);p.draw(canvas(),context());
+ expect([...(p as any).drawable.values()].find((line:any)=>line.runIndex===0).usd).toBe(900);
+ expect((p as any).reference).toEqual({min:500,max:900});
+});
+
+it('cached native paths match immediate drawing and invalidate for updates, removal, view, style and detach',()=>{
+ class TestPath {points:Array<[number,number]>=[];moveTo(x:number,y:number){this.points.push([x,y]);}lineTo(x:number,y:number){this.points.push([x,y]);}}
+ const segment=(id:string,side:'bid'|'ask',usd:number):OrderWallSegment=>({id,archiveEntryId:id,epoch:1,side,price:100,start:base,end:base+120000,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,detectionMode:'top-levels',valueRuns:[{at:base,usd,percentile:null},{at:base+60000,usd:usd*2,percentile:null}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true});
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const},a=segment('A','bid',100),b=segment('B','ask',200);
+ const cached=new OrderWallsPrimitive(settings,60000),reference=new OrderWallsPrimitive(settings,60000,false),status={state:'stale' as const,lastConfirmedAt:base+120000,tickSize:.01};
+ const captured=()=>{const paths:Array<{color:string;points:Array<[number,number]>}>=[],ctx:any=canvas([],paths),old=ctx.stroke;ctx.stroke=(path?:TestPath)=>{if(path)paths.push({color:ctx.strokeStyle,points:[...path.points]});else old();};return {ctx,paths};};
+ vi.stubGlobal('Path2D',TestPath);
+ try{
+  cached.setSnapshot([a,b],status);reference.setSnapshot([a,b],status);
+  const compare=(rc=context())=>{const x=captured(),y=captured();cached.draw(x.ctx,rc);reference.draw(y.ctx,rc);expect(x.paths).toEqual(y.paths);expect(cached.orderWallAt(150,100)).toEqual(reference.orderWallAt(150,100));};
+  compare();const visits=cached.stats.paintStyleVisits;compare();expect(cached.stats.paintCacheHits).toBe(1);expect(cached.stats.paintStyleVisits).toBe(visits);
+  const outside={...segment('outside','bid',100),start:base+600000,end:base+720000,valueRuns:[{at:base+600000,usd:100,percentile:null}]};
+  for(const p of [cached,reference])p.patch([{id:outside.id,segment:outside,replaceValueRuns:true}],status);compare();expect(cached.stats.paintCacheHits).toBe(2);expect(cached.stats.paintStyleVisits).toBe(visits);
+  const next={...a,valueRuns:[...a.valueRuns,{at:base+90000,usd:1000,percentile:null}],peakUsd:1000};
+  for(const p of [cached,reference])p.patch([{id:a.id,segment:next,replaceValueRuns:true}],status);compare();expect(cached.stats.paintCacheBuilds).toBe(2);
+  for(const p of [cached,reference])p.patch([{id:b.id,segment:null}],status);compare();expect(cached.stats.paintCacheBuilds).toBe(3);
+  compare(context({from:1,to:3,dpr:1}));expect(cached.stats.paintCacheBuilds).toBe(4);
+  for(const p of [cached,reference])p.setSettings({...settings,colorMode:'bid-ask'});compare();expect(cached.stats.paintCacheBuilds).toBe(5);
+  expect(cached.diagnostics().retainedPaintPaths).toBeGreaterThan(0);cached.detached();expect(cached.diagnostics().retainedPaintPaths).toBe(0);expect(cached.diagnostics().retainedDrawables).toBe(0);
+ }finally{vi.unstubAllGlobals();}
+});
+
+it('received prepared walls paint their confirmed geometry while whole-view coverage stays incomplete',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'},60000);
+ const segment:OrderWallSegment={id:'prepared-active',archiveEntryId:'A',epoch:1,side:'bid',price:100,start:base,end:null,peakUsd:200,meanUsd:150,durationMs:120000,percentile:null,scopePartial:true,startKnown:false,detectionMode:'top-levels',valueRuns:[{at:base,usd:100,percentile:null},{at:base+60000,usd:200,percentile:null}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ const archive:any={profileId:'fixture',state:'loading',from:base,to:base+120000,loadedThrough:base,presentationThrough:base+120000,requestComplete:false,rangeComplete:false,gaps:[]};
+ primitive.setSnapshot([segment],{state:'loading',archive});const paths:CapturedPath[]=[];primitive.draw(canvas([],paths),context());
+ expect(primitive.orderWallAt(200,100)?.at).toBe(base+90000);expect(paths.flatMap(path=>path.points).some(([x])=>x===500)).toBe(true);
+ expect(archive.loadedThrough).toBe(base);expect(archive.requestComplete).toBe(false);
+ primitive.setStatus({state:'loading',archive:{...archive,presentationThrough:base+60000}});primitive.draw(canvas(),context());expect(primitive.orderWallAt(200,100)).toBeNull();
+});
+
+it('preserves exact nonlinear timestamp geometry and source values through pan',()=>{
+ const points=Array.from({length:1000},(_,i)=>({at:base+i*100,usd:100+i,percentile:null,quantity:i+1,rank:1}));
+ const walls=Array.from({length:10},(_,i):OrderWallSegment=>({id:'shared-time-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:1099,meanUsd:100,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',detectionMode:'top-levels',valueRuns:points,valueRunsTruncated:false}));
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,aggregation:'native'},60000);
+ primitive.setSnapshot(walls,{state:'live',tickSize:.1});
+ for(const from of [0,.25]){
+  const rc=context({from}),toIndex=vi.fn((seconds:number)=>{const t=(seconds-base/1000)/60;return t+.05*t*t;}),toPrice=vi.fn(()=>100);
+  (rc.dataLayer as any).timeToIndexFloat=toIndex;(rc.priceScale as any).priceToY=toPrice;
+  primitive.draw(canvas(),rc);
+  const model=primitive as any;
+  expect(model.drawable.size).toBe(from===0?10000:8510);
+  for(const line of model.drawable.values()){
+   const index=(t:number)=>{const v=(t/1000-base/1000)/60;return v+.05*v*v;};
+   expect(line.x).toBe(Math.max(0,rc.timeScale.indexToX(index(line.from))));expect(line.right).toBe(Math.min(rc.plotWidth,rc.timeScale.indexToX(index(line.to))));
+   expect(line.usd).toBe(points[line.runIndex]!.usd);
+  }
+ }
+});
+it('culls an off-price wall without discarding its retained source values',()=>{
+ const segment:OrderWallSegment={id:'off-price',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:10,meanUsd:10,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'removed',valueRuns:Array.from({length:5000},(_,i)=>({at:base+i*20,usd:10,percentile:null})),valueRunsTruncated:false};
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true},60000),rc=context(),time=vi.fn(()=>0);
+ (rc.dataLayer as any).timeToIndexFloat=time;(rc.priceScale as any).priceToY=()=>-1;
+ primitive.setSnapshot([segment],{state:'live'});primitive.draw(canvas(),rc);
+ expect(primitive.diagnostics()).toMatchObject({retainedSegments:1,retainedDrawables:0});
+ expect((primitive as any).segments.get(segment.id).valueRuns).toEqual(segment.valueRuns);
+});
+
+
+it('unchanged settings reconciliation retains closed geometry, references and painted revision',()=>{
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const};
+ const p=new OrderWallsPrimitive(settings,60000);
+ const segment:OrderWallSegment={id:'unchanged-settings',epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:1000,meanUsd:1000,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,archiveEntryId:'closed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true};
+ let reads=0;Object.defineProperty(segment,'valueRuns',{get(){reads++;return [{at:base,usd:1000,percentile:null,rank:1,quantity:10}];}});
+ p.setSnapshot([segment],{state:'live',tickSize:.1,lastConfirmedAt:base+120000});const paths:CapturedPath[]=[];p.draw(canvas([],paths),context());
+ const before=p.diagnostics(),initialReads=reads;
+ for(let i=0;i<3;i++)p.setSettings({...settings});
+ expect(p.diagnostics().inputRevision).toBe(before.inputRevision);
+ expect(p.diagnostics().paintedRevision).toBe(before.paintedRevision);
+ p.draw(canvas(),context());const after=p.diagnostics();
+ expect(after.rebuilds).toBe(before.rebuilds);expect(after.patchProjects).toBe(before.patchProjects);
+ expect(after.referenceRebuilds).toBe(before.referenceRebuilds);expect(reads).toBe(initialReads);expect(after.settingsNoops).toBe(3);
+ // A real visual change must still invalidate and repaint; the preserved path
+ // cannot hide an edited opacity or any other canonical flat setting.
+ p.setSettings({...settings,opacity:.2});expect(p.diagnostics().inputRevision).toBe(before.inputRevision+1);
+ p.draw(canvas(),context());expect(p.diagnostics().rebuilds).toBe(before.rebuilds+1);
+});
+
+
+describe('visible wall time-mapping identity',()=>{
+ function axis(times:number[],offset=0){
+  const rc=context(),range={from:offset,to:offset+2};
+  const at=(index:number)=>{const logical=index-offset,i=Math.max(0,Math.min(times.length-2,Math.floor(logical)));return times[i]!+(logical-i)*(times[i+1]!-times[i]!);};
+  Object.assign(rc.timeScale,{visibleRange:()=>range,indexToX:(index:number)=>50+(index-range.from)*100,xToIndex:(x:number)=>range.from+(x-50)/100});
+  Object.assign(rc.dataLayer,{length:times.length,baseIndex:times.length-1+offset,indexToTime:(index:number)=>times[index-offset],indexToTimeFloat:at,timeToIndexFloat:(t:number)=>{let i=0;while(i<times.length-2&&times[i+1]!<t)i++;return offset+i+(t-times[i]!)/(times[i+1]!-times[i]!);}});
+  return rc;
+ }
+ const times=[base/1000,base/1000+60,base/1000+120];
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const};
+ const wall:OrderWallSegment={id:'visible-mapping',epoch:1,side:'bid',price:100,start:base+30000,end:base+90000,peakUsd:1000,meanUsd:1000,durationMs:60000,percentile:null,scopePartial:false,startKnown:true,archiveEntryId:'closed',detectionMode:'top-levels',rank:1,valueRuns:[{at:base+30000,usd:1000,percentile:null,rank:1,quantity:10}],valueRunsTruncated:false,endReason:'rank-exit',endKnown:true};
+ const status={state:'live' as const,tickSize:.1,lastConfirmedAt:base+120000};
+ it('retains exact visible knots through integer axis padding and outside-tail growth',()=>{
+  const original=axis(times),padded=axis([...times,base/1000+1000],4);
+  expect(wallProjectionMappingKey(padded)).toBe(wallProjectionMappingKey(original));
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);const initial:CapturedPath[]=[];p.draw(canvas([],initial),original);const before=p.diagnostics();
+  const reused:CapturedPath[]=[];p.draw(canvas([],reused),padded);const after=p.diagnostics();
+  expect(reused).toEqual(initial);expect(after.rebuilds).toBe(before.rebuilds);expect(after.patchProjects).toBe(before.patchProjects);expect(after.referenceRebuilds).toBe(before.referenceRebuilds);
+  const fresh=new OrderWallsPrimitive(settings,60000),expected:CapturedPath[]=[];fresh.setSnapshot([wall],status);fresh.draw(canvas([],expected),padded);expect(reused).toEqual(expected);
+  expect(p.orderWallAt(150,100)?.at).toBe(base+60000);
+ });
+ it('invalidates an interior timestamp correction with unchanged length and endpoints',()=>{
+  const original=axis(times),corrected=axis([times[0]!,times[1]!+30,times[2]!]);expect(wallProjectionMappingKey(corrected)).not.toBe(wallProjectionMappingKey(original));
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);const initial:CapturedPath[]=[];p.draw(canvas([],initial),original);const before=p.diagnostics();
+  const changed:CapturedPath[]=[];p.draw(canvas([],changed),corrected);expect(p.diagnostics().rebuilds).toBe(before.rebuilds+1);expect(changed).not.toEqual(initial);
+  const fresh=new OrderWallsPrimitive(settings,60000),expected:CapturedPath[]=[];fresh.setSnapshot([wall],status);fresh.draw(canvas([],expected),corrected);expect(changed).toEqual(expected);
+ });
+ it('captures future whitespace changes and fractional viewport boundaries',()=>{
+  const a=axis(times),b=axis([...times,base/1000+300]);Object.assign(a.timeScale,{visibleRange:()=>({from:.25,to:3.25})});Object.assign(b.timeScale,{visibleRange:()=>({from:.25,to:3.25})});
+  expect(wallProjectionMappingKey(a)).not.toBe(wallProjectionMappingKey(b));
+  const shifted=axis(times,10);Object.assign(shifted.timeScale,{visibleRange:()=>({from:10.25,to:13.25}),indexToX:(i:number)=>50+(i-10)*100});expect(wallProjectionMappingKey(a)).toBe(wallProjectionMappingKey(shifted));
+ });
+ it('bounds mapping probes and disables reuse when a complete proof is unavailable',()=>{
+  const rc=axis(times);let calls=0;Object.assign(rc.timeScale,{visibleRange:()=>({from:0,to:5000})});Object.assign(rc.dataLayer,{indexToTimeFloat:()=>{calls++;return base/1000;}});
+  expect(wallProjectionMappingKey(rc)).toBeUndefined();expect(calls).toBe(0);
+  const p=new OrderWallsPrimitive(settings,60000);p.setSnapshot([wall],status);p.draw(canvas(),rc);p.draw(canvas(),rc);expect(p.diagnostics().mappingFallbacks).toBe(2);expect(p.diagnostics().rebuilds).toBe(2);
+  Object.assign(rc.timeScale,{visibleRange:()=>({from:0,to:2})});Object.assign(rc.dataLayer,{indexToTimeFloat:()=>NaN});expect(wallProjectionMappingKey(rc)).toBeUndefined();
+ });
+});
+
+it('retains closed native paint work through open-tail changes and preserves ordered styles, closure, corrections and fallback',()=>{
+ class TestPath {points:Array<[number,number]>=[];moveTo(x:number,y:number){this.points.push([x,y]);}lineTo(x:number,y:number){this.points.push([x,y]);}addPath(path:TestPath){this.points.push(...path.points);}}
+ const settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels' as const,aggregation:'native' as const,showPriceLines:false,visibleRangeOnly:true};
+ const wall=(id:string,usd:number,end:number|null,side:'bid'|'ask'='bid'):OrderWallSegment=>({id,archiveEntryId:id,epoch:1,side,price:100,start:base,end,peakUsd:usd,meanUsd:usd,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,detectionMode:'top-levels',currentSelection:end===null,valueRuns:[{at:base,usd,percentile:null},{at:base+60000,usd,percentile:null}],valueRunsTruncated:false,endReason:end===null?null:'rank-exit',endKnown:end!==null});
+ const closed=Array.from({length:1000},(_,i)=>wall('closed-'+i,i===0?1:1000+i,base+120000,i%2?'bid':'ask'));
+ let open=wall('open',300,null),other=wall('other',900,null,'ask');
+ const cached=new OrderWallsPrimitive(settings,60000),reference=new OrderWallsPrimitive(settings,60000,false);let status={state:'live' as const,lastConfirmedAt:base+120000,tickSize:.01};
+ const captured=()=>{const paths:Array<{color:string;points:Array<[number,number]>}>=[],ctx:any=canvas([],paths),old=ctx.stroke;ctx.stroke=(path?:TestPath)=>{if(path)paths.push({color:ctx.strokeStyle,points:[...path.points]});else old();};return {ctx,paths};};
+ const normalize=(paths:Array<{color:string;points:Array<[number,number]>}>)=>paths.map(path=>{
+  // One Canvas stroke paints the union of its same-style subpaths. Filtering
+  // closed/open groups can join the same interval without changing that union.
+  const rows=new Map<number,Array<[number,number]>>();
+  for(let i=0;i<path.points.length;i+=2){const [x,y]=path.points[i]!,right=path.points[i+1]![0],lines=rows.get(y)??[];lines.push([x,right]);rows.set(y,lines);}
+  return {color:path.color,rows:[...rows].sort((a,b)=>a[0]-b[0]).map(([y,lines])=>{const union:Array<[number,number]>=[];for(const line of lines.sort((a,b)=>a[0]-b[0]||a[1]-b[1])){const last=union.at(-1);if(last&&line[0]<=last[1])last[1]=Math.max(last[1],line[1]);else union.push([...line]);}return {y,union};})};
+ });
+ vi.stubGlobal('Path2D',TestPath);
+ try{
+  for(const p of [cached,reference])p.setSnapshot([open,...closed,other],status);
+  const compare=()=>{const a=captured(),b=captured();cached.draw(a.ctx,context());reference.draw(b.ctx,context());expect(normalize(a.paths)).toEqual(normalize(b.paths));expect(cached.stats.visibleHistorical).toBe(reference.stats.visibleHistorical);expect(cached.stats.visibleCurrent).toBe(reference.stats.visibleCurrent);expect(cached.orderWallAt(200,100)).toEqual(reference.orderWallAt(200,100));};
+  compare();const visits=cached.stats.closedPaintStyleVisits,builds=cached.stats.closedPaintCacheBuilds;
+  for(let i=0;i<8;i++){
+   open={...open,valueRuns:[...open.valueRuns,{at:base+70000+i*1000,usd:400+i,percentile:null}],durationMs:120000};
+   for(const p of [cached,reference])p.patch([{id:open.id,segment:open,valuePoints:[open.valueRuns.at(-1)!]}],status);
+   compare();expect(cached.stats.closedPaintStyleVisits).toBe(visits);expect(cached.stats.closedPaintCacheBuilds).toBe(builds);
+  }
+  expect(cached.stats.closedPaintCacheHits).toBe(8);expect(cached.diagnostics().retainedClosedPaintPaths).toBeLessThanOrEqual(9);expect(cached.diagnostics().retainedPaintPaths).toBeLessThanOrEqual(9);
+  // Closing a wall keeps its already projected prefix and invalidates closed
+  // paths even when those drawables still refer to the former open header.
+  open={...open,end:base+120000,endKnown:true,currentSelection:false};
+  for(const p of [cached,reference])p.patch([{id:open.id,segment:open}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds);expect(cached.stats.closedPaintCacheAppends).toBe(1);
+  expect(cached.stats.closedPaintStyleVisits-visits).toBeLessThanOrEqual(open.valueRuns.length);
+  const revised={...closed[1]!,valueRuns:[{...closed[1]!.valueRuns[0]!,usd:777},closed[1]!.valueRuns[1]!]};
+  for(const p of [cached,reference])p.patch([{id:revised.id,segment:revised,replaceValueRuns:true}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+1);
+  for(const p of [cached,reference])p.patch([{id:revised.id,segment:null}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+2);
+  // A changed strength reference must recolor historical paths, while a mixed
+  // Threshold tail retains the original immediate-first stroke ordering.
+  other={...other,valueRuns:[...other.valueRuns,{at:base+110000,usd:10000,percentile:null}]};
+  for(const p of [cached,reference])p.patch([{id:other.id,segment:other,valuePoints:[other.valueRuns.at(-1)!]}],status);
+  compare();expect(cached.stats.closedPaintCacheBuilds).toBe(builds+3);
+  const threshold={...wall('threshold',500,null),detectionMode:'threshold' as const,percentile:99,valueRuns:[]};
+  for(const p of [cached,reference])p.patch([{id:threshold.id,segment:threshold}],status);
+  compare();
+  cached.detached();expect(cached.diagnostics().retainedClosedPaintPaths).toBe(0);expect(cached.diagnostics().retainedPaintPaths).toBe(0);
+ }finally{vi.unstubAllGlobals();}
+});
+
+it('releases cached closed paths and membership when hidden retention removes their source segments',()=>{
+ class TestPath {moveTo(){}lineTo(){}addPath(){}}
+ vi.stubGlobal('Path2D',TestPath);
+ try{
+  const p=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',historyEpisodes:2,showPriceLines:false},60000);
+  const wall=(i:number):OrderWallSegment=>({id:'retained-paint-'+i,epoch:1,side:'bid',price:100,start:base,end:base+120000,peakUsd:100,meanUsd:100,durationMs:120000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',valueRuns:[{at:base,usd:100,percentile:null}],valueRunsTruncated:false});
+  const status={state:'live' as const,lastConfirmedAt:base+120000};p.setSnapshot([wall(0),wall(1)],status);p.draw(canvas(),context());
+  expect(p.diagnostics().retainedClosedPaintSegments).toBe(2);expect(p.diagnostics().retainedClosedPaintPaths).toBeGreaterThan(0);
+  for(let i=2;i<1000;i++){
+   p.patch([{id:'retained-paint-'+i,segment:wall(i)}],status);const d=p.diagnostics();
+   expect(d.retainedClosedPaintSegments).toBeLessThanOrEqual(d.retainedSegments);expect(d.pendingClosedPaintSegments).toBeLessThanOrEqual(d.retainedSegments);
+  }
+  expect(p.diagnostics().retainedSegments).toBe(2);expect(p.diagnostics().retainedClosedPaintPaths).toBe(0);expect(p.diagnostics().retainedPaintPaths).toBe(0);expect(p.diagnostics().retainedClosedPaintSegments).toBe(0);
+  p.draw(canvas(),context());expect(p.diagnostics().retainedClosedPaintSegments).toBe(2);expect(p.diagnostics().pendingClosedPaintSegments).toBe(0);
+  p.detached();expect(p.diagnostics().retainedClosedPaintSegments).toBe(0);expect(p.diagnostics().retainedClosedPaintPaths).toBe(0);
+ }finally{vi.unstubAllGlobals();}
+});
+
+it('keeps a selected snapshot at its own point time through later status confirmations and duration filters',()=>{
+ const primitive=new OrderWallsPrimitive({...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native',minDurationMs:2000,visibleRangeOnly:false},60000);
+ const point:OrderWallSegment={id:'current-only',presentationKind:'current-snapshot',currentSelection:true,epoch:1,side:'bid',price:100,start:base,end:null,
+  peakUsd:1000,meanUsd:1000,durationMs:0,percentile:null,scopePartial:false,startKnown:false,detectionMode:'top-levels',rank:1,
+  valueRuns:[{at:base,usd:1000,percentile:null,rank:1,quantityExact:'10.000',notionalExact:'1000.000'}],valueRunsTruncated:false,endReason:null,endKnown:false};
+ primitive.setSnapshot([point],{state:'live',lastConfirmedAt:base+60000});primitive.draw(canvas(),context());
+ expect(primitive.orderWallAt(50,100)).toMatchObject({at:base,segment:{presentationKind:'current-snapshot',durationMs:0}});
+ expect(primitive.orderWallAt(100,100)).toBeNull();
+ primitive.setStatus({state:'live',lastConfirmedAt:base+120000});primitive.draw(canvas(),context());
+ expect(primitive.orderWallAt(50,100)).toMatchObject({at:base});expect(primitive.orderWallAt(100,100)).toBeNull();
 });

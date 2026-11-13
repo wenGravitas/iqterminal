@@ -169,8 +169,8 @@ export class OrderWallsControls {
         const archive = status.archive;
         canResumeHistory = this.noticeAllowed && this.supported && this.current.mode === 'top-levels'
           && archive.market === this.currentMarket && archive.state === 'partial'
-          && archive.requestComplete === false && archive.resumeAfter !== undefined;
-        const live = status.state === 'live' ? `Live · confirmed ${archiveTime(status.lastConfirmedAt)}`
+          && archive.requestComplete === false && (archive.resumeAfter !== undefined || archive.retryable === true);
+        const live = status.currentSubscribed === false ? 'Historical view' : status.state === 'live' ? `Live · confirmed ${archiveTime(status.lastConfirmedAt)}`
           : status.state === 'stale' ? `Live stale · last confirmed ${archiveTime(status.lastConfirmedAt)}`
           : status.state === 'gap' ? 'Live has a continuity gap' : `Live ${status.state}`;
         const exactness = archive.exact ? 'exact profile' : archive.state === 'unavailable' || archive.profileStatus === 'unavailable'
@@ -182,7 +182,9 @@ export class OrderWallsControls {
         const historyRange = `${archiveTime(availableFrom)}–${archiveTime(confirmedTo)}`;
         const band = observedBandCoverage(status, archive.midpoint, archive.requestedBandPercent);
         const gaps = archive.gaps.length ? ` · ${archive.gaps.length} gap${archive.gaps.length === 1 ? '' : 's'}` : '';
-        const detail = `History ${historyRange} UTC · observed band ${band}${gaps}`;
+        const eligible = archive.eligibleTo === undefined ? '' : ` · eligible through ${archiveTime(archive.eligibleTo)}`;
+        const loaded = archive.loadedThrough === undefined ? '' : ` · loaded through ${archiveTime(archive.loadedThrough)}`;
+        const detail = `History ${historyRange} UTC · requested ${archiveTime(archive.from)}–${archiveTime(archive.to)}${eligible}${loaded} · observed band ${band}${gaps}`;
         const reason = archive.reason ?? status.message;
         message = `${line1}\n${detail}${reason && (archive.state === 'partial' || archive.state === 'unavailable') ? ` · ${reason}` : ''}`;
       } else if (replayPending) message = status.provisional
@@ -240,6 +242,7 @@ export class OrderWallsControls {
       : `Resting notional $${money(observedValue)} at ${utc(hit.at)} UTC`;
     const point=orderWallValuePointAt(segment,hit.at);
     const strengthText = segment.detectionMode==='top-levels' ? ` · ${point?.rank ? `observed rank #${point.rank}` : 'outside selected ranks'}${point?.quantity!==undefined ? ` · ${point.quantity.toLocaleString('en-US',{maximumFractionDigits:8})} BTC` : ''}` : typeof hit.percentile !== 'number' ? ' · historical rank unavailable' : ` · p${hit.percentile.toFixed(1)} at that time`;
+    if(segment.presentationKind==='current-snapshot')return `${segment.side.toUpperCase()} selected Top Level · ${instrumentLabel(series)}\n$${price(hit.priceLow)} · ${segment.scopePartial?'partial book scope':'observed book'}${currentState}\n${valueText}${strengthText}\nSelected snapshot ${utc(segment.start)} UTC · ${ageText(age)} ago`;
     const startText = segment.startKnown ? `Observed from ${utc(segment.start)} UTC` : `Observed since ${utc(segment.start)} UTC · start unknown`;
     const spanText = `${segment.startKnown ? 'Duration' : 'Observed span'} ${durationText(segment.durationMs)}`;
     const endText = segment.end === null

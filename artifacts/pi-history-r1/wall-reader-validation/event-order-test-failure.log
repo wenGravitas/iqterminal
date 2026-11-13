@@ -1,0 +1,65 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/prepared-wall-history.test.ts (32 tests | 1 failed) 2915ms
+   × reader holds and renews its advertised lease through blocked pages and independent final validation 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/prepared-wall-history.test.ts > reader holds and renews its advertised lease through blocked pages and independent final validation
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/prepared-wall-history.test.ts:365:119
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AbortError: This operation was aborted
+ ❯ new DOMException node:internal/per_context/domexception:76:18
+ ❯ AbortController.abort node:internal/abort_controller:504:18
+ ❯ Object.release src/feed/prepared-wall-read-lease.ts:12:102
+     10|  const combined=AbortSignal.any([signal,abort.signal]);
+     11|  const release=()=>{
+     12|   if(closed)return;closed=true;clearTimeout(timer);signal.removeEventL…
+       |                                                                                                      ^
+     13|   const url='/market-data/v2/history/walls/preparation?'+new URLSearch…
+     14|   void wallReadControlScheduler.read(url,'order-walls',AbortSignal.tim…
+ ❯ AbortSignal.consumer.addEventListener.once src/feed/prepared-wall-history.ts:92:47
+ ❯ [nodejs.internal.kHybridDispatch] node:internal/event_target:843:20
+ ❯ AbortSignal.dispatchEvent node:internal/event_target:776:26
+ ❯ runAbort node:internal/abort_controller:486:10
+ ❯ abortSignal node:internal/abort_controller:463:5
+ ❯ AbortController.abort node:internal/abort_controller:505:5
+ ❯ Object.dispose src/feed/prepared-wall-history.ts:124:54
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 20, INDEX_SIZE_ERR: 1, DOMSTRING_SIZE_ERR: 2, HIERARCHY_REQUEST_ERR: 3, WRONG_DOCUMENT_ERR: 4, INVALID_CHARACTER_ERR: 5, NO_DATA_ALLOWED_ERR: 6, NO_MODIFICATION_ALLOWED_ERR: 7, NOT_FOUND_ERR: 8, NOT_SUPPORTED_ERR: 9, INUSE_ATTRIBUTE_ERR: 10, INVALID_STATE_ERR: 11, SYNTAX_ERR: 12, INVALID_MODIFICATION_ERR: 13, NAMESPACE_ERR: 14, INVALID_ACCESS_ERR: 15, VALIDATION_ERR: 16, TYPE_MISMATCH_ERR: 17, SECURITY_ERR: 18, NETWORK_ERR: 19, ABORT_ERR: 20, URL_MISMATCH_ERR: 21, QUOTA_EXCEEDED_ERR: 22, TIMEOUT_ERR: 23, INVALID_NODE_TYPE_ERR: 24, DATA_CLONE_ERR: 25 }
+This error originated in "tests/prepared-wall-history.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The last test to run before this error was "reader holds and renews its advertised lease through blocked pages and independent final validation". This means either:
+- the error was thrown while Vitest was running this test, or
+- the error was thrown after the test completed, and this was the most recent test at that point.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 50 passed (51)
+     Errors  1 error
+   Start at  16:37:31
+   Duration  5.60s (tests 57%, transform 36%, import 7%, worker 1%)
+
+  Transform  transforming modules took 2.98s · 36% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

@@ -1,0 +1,10 @@
+{
+  "commit": "13730f76752ec9db7f2253aa541fd4131e578141",
+  "bundleSha256": "625c7a7480c5810e68e66d5c5b822fa0d20ce6a3eb14b145c5b78b6e0ccf939d",
+  "bytes": 184041,
+  "sourceChanges": [
+    "docs/wall-retention-reuse.md",
+    "src/wall-cache-retention.ts",
+    "tests/wall-cache-retention.test.ts"
+  ]
+}

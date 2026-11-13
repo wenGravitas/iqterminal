@@ -1,0 +1,257 @@
+{
+  "scope": "Five alternating offline Pi prototype samples over captured exact walls. Entire market payload, not actual bounded delivery frames. Exact decimal product omitted only when its canonical spelling matches; every restored JSON byte matches. Not protocol implementation, browser, route or loading acceptance. Decode timing includes final exact comparison.",
+  "results": [
+    {
+      "market": "spot",
+      "inputSha256": "174cb585ebc20dc236d3ee257eb91fce8b7ced405c381bab603a0625e54cee06",
+      "samples": [
+        {
+          "run": 1,
+          "variant": "incumbent",
+          "points": 49154,
+          "omitted": 0,
+          "encodeMs": 465.2848960000001,
+          "compressionMs": 1285.209527,
+          "decodeMs": 497.56523400000015,
+          "decodedBytes": 7137512,
+          "compressedBytes": 841992,
+          "exact": true
+        },
+        {
+          "run": 1,
+          "variant": "omit-proven-product",
+          "points": 49154,
+          "omitted": 49154,
+          "encodeMs": 891.1422040000002,
+          "compressionMs": 933.4522779999998,
+          "decodeMs": 845.0476449999996,
+          "decodedBytes": 6396684,
+          "compressedBytes": 615910,
+          "exact": true
+        },
+        {
+          "run": 2,
+          "variant": "omit-proven-product",
+          "points": 49154,
+          "omitted": 49154,
+          "encodeMs": 1037.006762,
+          "compressionMs": 852.8760810000003,
+          "decodeMs": 569.0251229999994,
+          "decodedBytes": 6396684,
+          "compressedBytes": 615910,
+          "exact": true
+        },
+        {
+          "run": 2,
+          "variant": "incumbent",
+          "points": 49154,
+          "omitted": 0,
+          "encodeMs": 156.36712799999987,
+          "compressionMs": 1236.829020000001,
+          "decodeMs": 643.9918300000008,
+          "decodedBytes": 7137512,
+          "compressedBytes": 841992,
+          "exact": true
+        },
+        {
+          "run": 3,
+          "variant": "incumbent",
+          "points": 49154,
+          "omitted": 0,
+          "encodeMs": 204.85635699999875,
+          "compressionMs": 1054.1038019999996,
+          "decodeMs": 645.538813000001,
+          "decodedBytes": 7137512,
+          "compressedBytes": 841992,
+          "exact": true
+        },
+        {
+          "run": 3,
+          "variant": "omit-proven-product",
+          "points": 49154,
+          "omitted": 49154,
+          "encodeMs": 697.1031569999996,
+          "compressionMs": 594.6818590000003,
+          "decodeMs": 541.6922350000004,
+          "decodedBytes": 6396684,
+          "compressedBytes": 615910,
+          "exact": true
+        },
+        {
+          "run": 4,
+          "variant": "omit-proven-product",
+          "points": 49154,
+          "omitted": 49154,
+          "encodeMs": 524.2723239999996,
+          "compressionMs": 479.5435069999985,
+          "decodeMs": 686.2601799999993,
+          "decodedBytes": 6396684,
+          "compressedBytes": 615910,
+          "exact": true
+        },
+        {
+          "run": 4,
+          "variant": "incumbent",
+          "points": 49154,
+          "omitted": 0,
+          "encodeMs": 175.0580030000001,
+          "compressionMs": 894.3647629999996,
+          "decodeMs": 334.26324600000225,
+          "decodedBytes": 7137512,
+          "compressedBytes": 841992,
+          "exact": true
+        },
+        {
+          "run": 5,
+          "variant": "incumbent",
+          "points": 49154,
+          "omitted": 0,
+          "encodeMs": 157.5358329999981,
+          "compressionMs": 703.9519259999979,
+          "decodeMs": 458.10222000000067,
+          "decodedBytes": 7137512,
+          "compressedBytes": 841992,
+          "exact": true
+        },
+        {
+          "run": 5,
+          "variant": "omit-proven-product",
+          "points": 49154,
+          "omitted": 49154,
+          "encodeMs": 705.9662610000014,
+          "compressionMs": 533.3382610000008,
+          "decodeMs": 448.657226000003,
+          "decodedBytes": 6396684,
+          "compressedBytes": 615910,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "market": "perpetual",
+      "inputSha256": "99113b6e91f6457f4b8546d33ac8ccf85dd9b0af90cb70efd4b94355799f10c4",
+      "samples": [
+        {
+          "run": 1,
+          "variant": "incumbent",
+          "points": 104112,
+          "omitted": 0,
+          "encodeMs": 879.5437249999995,
+          "compressionMs": 2064.758825000001,
+          "decodeMs": 1323.8463520000005,
+          "decodedBytes": 19687333,
+          "compressedBytes": 1735491,
+          "exact": true
+        },
+        {
+          "run": 1,
+          "variant": "omit-proven-product",
+          "points": 104112,
+          "omitted": 104112,
+          "encodeMs": 1391.9977739999995,
+          "compressionMs": 1954.6157019999991,
+          "decodeMs": 1007.7267609999981,
+          "decodedBytes": 18379855,
+          "compressedBytes": 1450255,
+          "exact": true
+        },
+        {
+          "run": 2,
+          "variant": "omit-proven-product",
+          "points": 104112,
+          "omitted": 104112,
+          "encodeMs": 791.4393329999984,
+          "compressionMs": 2117.081892000002,
+          "decodeMs": 1279.503886999999,
+          "decodedBytes": 18379855,
+          "compressedBytes": 1450255,
+          "exact": true
+        },
+        {
+          "run": 2,
+          "variant": "incumbent",
+          "points": 104112,
+          "omitted": 0,
+          "encodeMs": 554.990807000002,
+          "compressionMs": 1598.5923719999992,
+          "decodeMs": 933.8746279999978,
+          "decodedBytes": 19687333,
+          "compressedBytes": 1735491,
+          "exact": true
+        },
+        {
+          "run": 3,
+          "variant": "incumbent",
+          "points": 104112,
+          "omitted": 0,
+          "encodeMs": 406.81643100000656,
+          "compressionMs": 1612.6036129999993,
+          "decodeMs": 810.5933389999991,
+          "decodedBytes": 19687333,
+          "compressedBytes": 1735491,
+          "exact": true
+        },
+        {
+          "run": 3,
+          "variant": "omit-proven-product",
+          "points": 104112,
+          "omitted": 104112,
+          "encodeMs": 1248.9048299999995,
+          "compressionMs": 1518.9564539999992,
+          "decodeMs": 1080.0157420000032,
+          "decodedBytes": 18379855,
+          "compressedBytes": 1450255,
+          "exact": true
+        },
+        {
+          "run": 4,
+          "variant": "omit-proven-product",
+          "points": 104112,
+          "omitted": 104112,
+          "encodeMs": 875.1090699999986,
+          "compressionMs": 1451.9140349999943,
+          "decodeMs": 1772.174168999998,
+          "decodedBytes": 18379855,
+          "compressedBytes": 1450255,
+          "exact": true
+        },
+        {
+          "run": 4,
+          "variant": "incumbent",
+          "points": 104112,
+          "omitted": 0,
+          "encodeMs": 424.1452680000002,
+          "compressionMs": 2307.2520980000045,
+          "decodeMs": 914.198083000003,
+          "decodedBytes": 19687333,
+          "compressedBytes": 1735491,
+          "exact": true
+        },
+        {
+          "run": 5,
+          "variant": "incumbent",
+          "points": 104112,
+          "omitted": 0,
+          "encodeMs": 993.6244439999937,
+          "compressionMs": 2634.3258700000006,
+          "decodeMs": 857.3954730000041,
+          "decodedBytes": 19687333,
+          "compressedBytes": 1735491,
+          "exact": true
+        },
+        {
+          "run": 5,
+          "variant": "omit-proven-product",
+          "points": 104112,
+          "omitted": 104112,
+          "encodeMs": 1018.9654949999967,
+          "compressionMs": 1537.4511249999996,
+          "decodeMs": 1050.0751090000049,
+          "decodedBytes": 18379855,
+          "compressedBytes": 1450255,
+          "exact": true
+        }
+      ]
+    }
+  ]
+}

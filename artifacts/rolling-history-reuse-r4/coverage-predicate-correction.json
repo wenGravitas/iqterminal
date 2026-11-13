@@ -1,0 +1,51 @@
+{
+  "scope": "Executed frame predicate incorrectly compared inclusive loadedThrough to exclusive eligibleTo. Offline completion permits only the documented exact head boundary (loadedThrough===horizonAt && eligibleTo===horizonAt+1), while retaining range, exactness, rendered revision and budget checks. Executed source/raw null completion flags remain preserved. Published harness is corrected.",
+  "phases": {
+    "initial": {
+      "firstCurrentMs": 7636.70000000298,
+      "firstHistoryMs": 251918.80000000075,
+      "completion": {
+        "completeByMs": 272366.200000003,
+        "previousSampleMs": 270081.6000000015,
+        "sampleUtc": "2026-11-13T09:05:31.256Z",
+        "requestedFrom": 1794451500000,
+        "requestedTo": 1794560465222,
+        "eligibleTo": 1794560458243,
+        "horizonAt": 1794560458242,
+        "loadedThrough": 1794560458242,
+        "unconfirmedTailMs": 6979,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "gaps": [
+          {
+            "from": 1794483002255,
+            "to": 1794483002255,
+            "reason": "Depth disconnected"
+          },
+          {
+            "from": 1794529841331,
+            "to": 1794529841331,
+            "reason": "Observed book capacity: epoch invalidated"
+          },
+          {
+            "from": 1794545328626,
+            "to": 1794545328626,
+            "reason": "Observed book capacity: epoch invalidated"
+          }
+        ],
+        "render": {
+          "archiveSegments": 40025,
+          "archiveValueRuns": 187427,
+          "visibleHistorical": 147538,
+          "inputRevision": 641,
+          "paintedRevision": 641
+        }
+      }
+    },
+    "reopen": {
+      "firstCurrentMs": 5526.099999997765,
+      "firstHistoryMs": 990.3999999985099,
+      "completion": null
+    }
+  }
+}

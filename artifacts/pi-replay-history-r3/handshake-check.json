@@ -1,0 +1,1 @@
+{"result":{"open":true},"events":[{"type":"error","text":"Failed to load resource: the server responded with a status of 404 (Not Found)"},{"event":"created","url":"ws://127.0.0.1:4202/market-data/v1/stream"},{"event":"created","url":"ws://127.0.0.1:4202/market-data/v1/stream"}]}

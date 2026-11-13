@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "cases": {
+    "walls-30h-spot-5m": {
+      "to": 1794288600000,
+      "sourceFrom": 1794180300000,
+      "sourceTo": 1794288900000,
+      "sourceToken": "aaddfcbf86e76510d462d491b820100d54c1257e90d0e190b0eb4ea1fe7fc9c8",
+      "segments": 4500,
+      "valueRuns": 34534,
+      "gaps": 15,
+      "evidence": "0811e74 fresh canonical shared-projector fold exact-match; reference.jsonl",
+      "from": 1794180600000
+    },
+    "walls-30h-perp-15m": {
+      "to": 1794287700000,
+      "sourceFrom": 1794178800000,
+      "sourceTo": 1794288600000,
+      "sourceToken": "09e5611063306489c8a99ab60cbbc013356116794b6e752a1f2d2859b45fc1bd",
+      "segments": 36013,
+      "valueRuns": 117182,
+      "gaps": 4,
+      "evidence": "0811e74 fresh canonical shared-projector fold exact-match; reference.jsonl",
+      "from": 1794179700000
+    }
+  }
+}

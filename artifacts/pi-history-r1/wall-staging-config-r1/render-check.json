@@ -1,0 +1,18 @@
+{
+  "scope": "Compose render only; no service started or replaced; all passwords are validation placeholders.",
+  "protectedServicesUnchanged": [
+    "collector",
+    "spot-collector",
+    "materializer",
+    "spot-materializer",
+    "footprint-materializer",
+    "spot-footprint-materializer",
+    "sql-admission"
+  ],
+  "defaultRollingFlag": "0",
+  "explicitRollingFlag": "1",
+  "explicitRetentionFlag": "1",
+  "workerDeclaredBuild": "40d15aeb96d15811d9a35129bd141e1ca79359db",
+  "workerCpuLimit": 0.5,
+  "workerMemoryLimit": "402653184"
+}

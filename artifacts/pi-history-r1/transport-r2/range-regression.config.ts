@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'../../../tests/browser',testMatch:'native-candle-history.spec.ts',workers:1,timeout:45000,use:{baseURL:'http://127.0.0.1:4198',viewport:{width:1600,height:1000},headless:true,launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--ozone-platform=headless','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},reporter:'list'});

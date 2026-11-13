@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Vary: Origin
+x-iq-request-id: 1435e515-dc98-4bf8-8189-03c8ad726252
+content-type: application/json
+cache-control: no-store
+content-length: 1953
+x-iq-decoded-bytes: 1953
+x-iq-db-queries: 0
+x-iq-db-read-rows: 0
+x-iq-db-read-bytes: 0
+server-timing: admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.03, total;dur=2.60, proxyqueue;dur=4.09, proxyheader;dur=5952.67
+date: Sun, 08 Nov 2026 08:56:34 GMT
+connection: keep-alive
+keep-alive: timeout=60
+x-iq-proxy-queue-ms: 4.09
+x-iq-proxy-header-ms: 5952.67
+

@@ -1,0 +1,29 @@
+{
+  "utc": 1794560977.0325453,
+  "processes": [
+    {
+      "pid": 118681,
+      "cmdline": "ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o IPQoS=none -L 127.0.0.1:18881:127.0.0.1:18880 staging ",
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "2213656"
+    },
+    {
+      "pid": 118682,
+      "cmdline": "ssh -N -T -o BatchMode=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=15 -o ControlMaster=no -o ControlPath=none -o Compression=no -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o IPQoS=none -L 127.0.0.1:18880:127.0.0.1:18880 staging ",
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "2213656"
+    },
+    {
+      "pid": 118683,
+      "cmdline": "/bin/bash -c IQ_STARTUP_TRACE=1 VITE_HISTORY_API_URL=http://127.0.0.1:18880 VITE_CURRENT_API_URL=http://127.0.0.1:18881 VITE_NATIVE_HISTORY_API_URL=http://127.0.0.1:18880 node artifacts/rolling-history-reuse-r4/preview.mjs > artifacts/rolling-history-reuse-r4/preview.log 2>&1 ",
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "2213757"
+    },
+    {
+      "pid": 118684,
+      "cmdline": "node artifacts/rolling-history-reuse-r4/preview.mjs ",
+      "cwd": "/home/daz/workarea/iqterminal-integration-startup-r1",
+      "startTicks": "2213757"
+    }
+  ]
+}

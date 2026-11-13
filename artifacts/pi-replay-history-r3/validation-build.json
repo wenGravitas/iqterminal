@@ -1,0 +1,13 @@
+{
+  "commit": "cdbb020986f2d0737ed398505980be5195175b06",
+  "exitCode": 0,
+  "outDir": "artifacts/pi-replay-history-r3/dist-validation",
+  "served": false,
+  "flags": {
+    "VITE_BUILD_COMMIT": "cdbb020986f2d0737ed398505980be5195175b06",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  },
+  "scope": "Repository build gate only. Observations use unchanged457ac9a preview."
+}

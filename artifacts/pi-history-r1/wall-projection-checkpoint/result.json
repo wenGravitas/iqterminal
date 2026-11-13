@@ -1,0 +1,406 @@
+{
+  "kind": "real-wall-checkpoint-original-projector-equivalence",
+  "key": "0c59755f82338c16d9b012e1fd0e6214c521e39be58f809bc48def30b9112cbc",
+  "request": {
+    "market": "perpetual",
+    "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "from": 1793695500000,
+    "to": 1793805300000,
+    "watermark": 21355248,
+    "display": true,
+    "sourceRevision": "bcc9dedfaa7f064e0f99704cbc53d14319b0ab1d02d03e11ef13614c874cad4e"
+  },
+  "settings": {
+    "enabled": true,
+    "mode": "top-levels",
+    "topLevels": 8,
+    "searchRangePercent": 10,
+    "minimumNotionalEnabled": false,
+    "minimumNotionalUsd": 100000,
+    "highContrast": true,
+    "visibleRangeOnly": true,
+    "strengthThickness": true,
+    "historyEpisodes": 2000,
+    "showHistory": true,
+    "showPriceLines": false,
+    "method": "relative",
+    "thresholdUsd": 500000,
+    "relativeFloorUsd": 250000,
+    "relativePercentile": 95,
+    "exitRatio": 0.85,
+    "minDurationMs": 0,
+    "aggregation": "native",
+    "colorMode": "heat",
+    "opacity": 0.85,
+    "thicknessPx": 3
+  },
+  "exact": true,
+  "closedTransfer": true,
+  "pages": 66,
+  "checkpointBytes": 178601,
+  "segments": 23850,
+  "referenceModuleSha256": "d5dec6192f00f2582f79afe93f5fe011ccb757130e71ccb8c8ac96001bbc5c3d",
+  "portableSourceSha256": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+  "referenceActualValueRuns": 104112,
+  "referenceSegmentHash": "de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6",
+  "restoredSegmentHash": "de4d77b3712a30172b81c080bfad58bc6701e5c4261eb41a9d02242b2ac899c6",
+  "diagnostics": {
+    "retainedSegments": 23850,
+    "activeCandidates": 20,
+    "valueRuns": 104112,
+    "largestSegmentRuns": 2005,
+    "queuedValueRuns": 104112,
+    "episodeHistoryLimited": false,
+    "valueHistoryLimited": false
+  },
+  "referenceDiagnostics": {
+    "retainedSegments": 23850,
+    "activeCandidates": 20,
+    "valueRuns": 104086,
+    "largestSegmentRuns": 2005,
+    "queuedValueRuns": 104138,
+    "episodeHistoryLimited": false,
+    "valueHistoryLimited": false
+  },
+  "elapsedMs": 1974.0698949999999,
+  "peakRss": 247476224,
+  "memory": {
+    "rss": 273838080,
+    "heapTotal": 164995072,
+    "heapUsed": 130119008,
+    "external": 12201385,
+    "arrayBuffers": 102461
+  },
+  "samples": [
+    {
+      "part": 0,
+      "foldCompareMs": 22.199597999999995,
+      "rss": 111673344
+    },
+    {
+      "part": 1,
+      "foldCompareMs": 28.124570000000006,
+      "rss": 129187840
+    },
+    {
+      "part": 2,
+      "foldCompareMs": 16.973506999999984,
+      "rss": 139128832
+    },
+    {
+      "part": 3,
+      "foldCompareMs": 15.406469000000016,
+      "rss": 146202624
+    },
+    {
+      "part": 4,
+      "foldCompareMs": 15.270830000000018,
+      "rss": 156311552
+    },
+    {
+      "part": 5,
+      "foldCompareMs": 10.379509999999982,
+      "rss": 156450816
+    },
+    {
+      "part": 6,
+      "foldCompareMs": 11.41517600000003,
+      "rss": 156569600
+    },
+    {
+      "part": 7,
+      "foldCompareMs": 10.765135999999984,
+      "rss": 156848128
+    },
+    {
+      "part": 8,
+      "foldCompareMs": 12.678344999999979,
+      "rss": 161845248
+    },
+    {
+      "part": 9,
+      "foldCompareMs": 8.951685999999995,
+      "rss": 161263616
+    },
+    {
+      "part": 10,
+      "foldCompareMs": 11.259983000000034,
+      "rss": 161619968
+    },
+    {
+      "part": 11,
+      "foldCompareMs": 10.315539000000001,
+      "rss": 162402304
+    },
+    {
+      "part": 12,
+      "foldCompareMs": 11.63706000000002,
+      "rss": 165724160
+    },
+    {
+      "part": 13,
+      "foldCompareMs": 13.687958000000037,
+      "rss": 165916672
+    },
+    {
+      "part": 14,
+      "foldCompareMs": 8.599565000000041,
+      "rss": 168054784
+    },
+    {
+      "part": 15,
+      "foldCompareMs": 9.41436200000004,
+      "rss": 169336832
+    },
+    {
+      "part": 16,
+      "foldCompareMs": 10.343196000000034,
+      "rss": 170237952
+    },
+    {
+      "part": 17,
+      "foldCompareMs": 7.855470999999966,
+      "rss": 169848832
+    },
+    {
+      "part": 18,
+      "foldCompareMs": 9.311935000000062,
+      "rss": 171126784
+    },
+    {
+      "part": 19,
+      "foldCompareMs": 9.439448000000084,
+      "rss": 171003904
+    },
+    {
+      "part": 20,
+      "foldCompareMs": 10.20926499999996,
+      "rss": 173383680
+    },
+    {
+      "part": 21,
+      "foldCompareMs": 7.907235999999898,
+      "rss": 173547520
+    },
+    {
+      "part": 22,
+      "foldCompareMs": 8.253217000000063,
+      "rss": 174166016
+    },
+    {
+      "part": 23,
+      "foldCompareMs": 8.214174999999955,
+      "rss": 174419968
+    },
+    {
+      "part": 24,
+      "foldCompareMs": 10.640331999999944,
+      "rss": 178331648
+    },
+    {
+      "part": 25,
+      "foldCompareMs": 7.181430000000091,
+      "rss": 177295360
+    },
+    {
+      "part": 26,
+      "foldCompareMs": 8.421605,
+      "rss": 178839552
+    },
+    {
+      "part": 27,
+      "foldCompareMs": 15.994709000000057,
+      "rss": 189652992
+    },
+    {
+      "part": 28,
+      "foldCompareMs": 6.217546999999968,
+      "rss": 193708032
+    },
+    {
+      "part": 29,
+      "foldCompareMs": 11.159112999999934,
+      "rss": 183603200
+    },
+    {
+      "part": 30,
+      "foldCompareMs": 10.37459899999999,
+      "rss": 185659392
+    },
+    {
+      "part": 31,
+      "foldCompareMs": 6.820713000000069,
+      "rss": 184500224
+    },
+    {
+      "part": 32,
+      "foldCompareMs": 11.63941699999998,
+      "rss": 184832000
+    },
+    {
+      "part": 33,
+      "foldCompareMs": 15.580385999999976,
+      "rss": 194146304
+    },
+    {
+      "part": 34,
+      "foldCompareMs": 10.29953599999999,
+      "rss": 193060864
+    },
+    {
+      "part": 35,
+      "foldCompareMs": 10.325109999999995,
+      "rss": 194195456
+    },
+    {
+      "part": 36,
+      "foldCompareMs": 11.693173999999999,
+      "rss": 194519040
+    },
+    {
+      "part": 37,
+      "foldCompareMs": 11.69710299999997,
+      "rss": 198074368
+    },
+    {
+      "part": 38,
+      "foldCompareMs": 14.862823999999932,
+      "rss": 198774784
+    },
+    {
+      "part": 39,
+      "foldCompareMs": 9.789080999999896,
+      "rss": 200208384
+    },
+    {
+      "part": 40,
+      "foldCompareMs": 10.594659000000092,
+      "rss": 200413184
+    },
+    {
+      "part": 41,
+      "foldCompareMs": 12.639245999999957,
+      "rss": 207437824
+    },
+    {
+      "part": 42,
+      "foldCompareMs": 11.035695000000032,
+      "rss": 212033536
+    },
+    {
+      "part": 43,
+      "foldCompareMs": 12.105108999999857,
+      "rss": 207884288
+    },
+    {
+      "part": 44,
+      "foldCompareMs": 13.59288400000014,
+      "rss": 209121280
+    },
+    {
+      "part": 45,
+      "foldCompareMs": 10.916977999999972,
+      "rss": 212635648
+    },
+    {
+      "part": 46,
+      "foldCompareMs": 11.697994999999992,
+      "rss": 215093248
+    },
+    {
+      "part": 47,
+      "foldCompareMs": 15.749418999999989,
+      "rss": 216698880
+    },
+    {
+      "part": 48,
+      "foldCompareMs": 12.162910999999895,
+      "rss": 206901248
+    },
+    {
+      "part": 49,
+      "foldCompareMs": 18.817346000000043,
+      "rss": 216932352
+    },
+    {
+      "part": 50,
+      "foldCompareMs": 9.655316000000084,
+      "rss": 222609408
+    },
+    {
+      "part": 51,
+      "foldCompareMs": 15.90340500000002,
+      "rss": 222793728
+    },
+    {
+      "part": 52,
+      "foldCompareMs": 12.957556000000068,
+      "rss": 230223872
+    },
+    {
+      "part": 53,
+      "foldCompareMs": 20.58055300000001,
+      "rss": 234262528
+    },
+    {
+      "part": 54,
+      "foldCompareMs": 10.135250000000042,
+      "rss": 229978112
+    },
+    {
+      "part": 55,
+      "foldCompareMs": 12.220767999999907,
+      "rss": 231305216
+    },
+    {
+      "part": 56,
+      "foldCompareMs": 15.000385000000051,
+      "rss": 237666304
+    },
+    {
+      "part": 57,
+      "foldCompareMs": 12.095743999999968,
+      "rss": 237686784
+    },
+    {
+      "part": 58,
+      "foldCompareMs": 13.31601499999988,
+      "rss": 238612480
+    },
+    {
+      "part": 59,
+      "foldCompareMs": 12.74946,
+      "rss": 242659328
+    },
+    {
+      "part": 60,
+      "foldCompareMs": 19.446907999999894,
+      "rss": 246779904
+    },
+    {
+      "part": 61,
+      "foldCompareMs": 9.653569000000061,
+      "rss": 240803840
+    },
+    {
+      "part": 62,
+      "foldCompareMs": 12.312914999999975,
+      "rss": 240988160
+    },
+    {
+      "part": 63,
+      "foldCompareMs": 13.727253000000019,
+      "rss": 245444608
+    },
+    {
+      "part": 64,
+      "foldCompareMs": 11.203085999999985,
+      "rss": 247476224
+    },
+    {
+      "part": 65,
+      "foldCompareMs": 3.5429220000000896,
+      "rss": 245854208
+    }
+  ]
+}

@@ -1,0 +1,383 @@
+{
+  "scope": "Explicit deterministic transport in a real compiled chart; no source-data, latency or foreground acceptance.",
+  "environment": {
+    "historyTaskYield": "user-visible-post-task",
+    "historyBackgroundYield": "background-post-task",
+    "dataMode": "staging",
+    "historyTiles": true,
+    "build": "7eb4a00b60daf344188eebc0659a8a82862113e8"
+  },
+  "requests": [
+    {
+      "path": "/market-data/v1/native-candles",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-2",
+        "x-iq-wall-consumer": "437dd091-38db-4ddb-86d8-76a7c48e2f60",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/horizon",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-2"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-2",
+        "x-iq-wall-consumer": "3e5e570d-df59-499e-b4c5-54fd340b2f13",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-2"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/source",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-2"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-666fe5c4-5f56-4ee1-9923-0abafd08293f-3"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4201/assets/worker-BBeF2xOQ.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    }
+  ],
+  "actual": {
+    "segments": [
+      {
+        "id": "B:view-8:off:0:q4",
+        "archiveEntryId": "B",
+        "epoch": 2,
+        "side": "bid",
+        "price": 100.00000001,
+        "priceExact": "100.00000001",
+        "start": 1794286504000,
+        "end": null,
+        "peakUsd": 200.0000000001,
+        "meanUsd": 200.00000000009996,
+        "durationMs": 108596000,
+        "percentile": null,
+        "scopePartial": true,
+        "startKnown": true,
+        "detectionMode": "top-levels",
+        "rank": 1,
+        "valueRuns": [
+          {
+            "at": 1794286504000,
+            "usd": 200.0000000001,
+            "percentile": null,
+            "rank": 1,
+            "quantity": 2.000000000001,
+            "quantityExact": "2.000000000001",
+            "notionalExact": "200.0000000001"
+          }
+        ],
+        "valueRunsTruncated": false,
+        "endReason": null,
+        "endKnown": false
+      },
+      {
+        "id": "A:view-8:off:0:q1",
+        "archiveEntryId": "A",
+        "epoch": 1,
+        "side": "bid",
+        "price": 100.00000001,
+        "priceExact": "100.00000001",
+        "start": 1794286499000,
+        "end": 1794286501000,
+        "peakUsd": 300.0000000003,
+        "meanUsd": 200.0000000001,
+        "durationMs": 2000,
+        "percentile": null,
+        "scopePartial": true,
+        "startKnown": true,
+        "detectionMode": "top-levels",
+        "rank": 1,
+        "valueRuns": [
+          {
+            "at": 1794286499000,
+            "usd": 200.0000000001,
+            "percentile": null,
+            "rank": 1,
+            "quantity": 2.000000000001,
+            "quantityExact": "2.000000000001",
+            "notionalExact": "200.0000000001"
+          },
+          {
+            "at": 1794286501000,
+            "usd": 300.0000000003,
+            "percentile": null,
+            "rank": 1,
+            "quantity": 3.000000000003,
+            "quantityExact": "3.000000000003",
+            "notionalExact": "300.0000000003"
+          }
+        ],
+        "valueRunsTruncated": false,
+        "endReason": "censored",
+        "endKnown": false,
+        "censoredReason": "Observed disconnect"
+      }
+    ],
+    "status": {
+      "state": "gap",
+      "coverage": {
+        "from": 1794286500000,
+        "to": 1794395100000,
+        "complete": false,
+        "partial": true
+      },
+      "archive": {
+        "profileId": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "state": "partial",
+        "from": 1794286500000,
+        "to": 1794395100000,
+        "rangeComplete": false,
+        "market": "spot",
+        "feed": "binance:spot:BTCUSDT:spot-diff-depth",
+        "aggregation": "native",
+        "availableFrom": 1794286499000,
+        "confirmedTo": 1794395100000,
+        "gaps": [
+          {
+            "from": 1794286503000,
+            "to": 1794286503000,
+            "reason": "Observed disconnect"
+          }
+        ],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "requestComplete": true,
+        "loadedThrough": 1794395100000,
+        "profileVersion": 1,
+        "algorithmVersion": 1,
+        "schemaVersion": 1,
+        "midpoint": "100",
+        "eligibleTo": 1794395100000,
+        "horizonAt": 1794395102000
+      },
+      "currentSubscribed": false
+    },
+    "live": "live",
+    "view": {
+      "from": 1794286800,
+      "to": 1794394800
+    },
+    "render": {
+      "draws": 3,
+      "rebuilds": 2,
+      "patchProjects": 4,
+      "segments": 2,
+      "visible": 1,
+      "visibleHistorical": 1,
+      "visibleCurrent": 0,
+      "bytes": 504,
+      "renderMs": 9.899999998509884,
+      "maxRenderMs": 8,
+      "strokes": 1,
+      "lastProjectMs": 0,
+      "lastReferenceMs": 0,
+      "lastPaintMs": 0.10000000149011612,
+      "referenceRebuilds": 2,
+      "referenceSegments": 0,
+      "referenceValueScans": 0,
+      "paintCacheHits": 1,
+      "paintCacheBuilds": 2,
+      "paintStyleVisits": 2,
+      "closedPaintCacheHits": 0,
+      "closedPaintCacheBuilds": 2,
+      "closedPaintCacheAppends": 0,
+      "closedPaintStyleVisits": 0,
+      "settingsNoops": 7,
+      "mappingChecks": 3,
+      "mappingFallbacks": 0,
+      "paintedViewport": {
+        "fromMs": 1794286800000,
+        "toMs": 1794394800000,
+        "minPrice": 98.75,
+        "maxPrice": 101.25,
+        "plotWidth": 1436,
+        "plotHeight": 840
+      },
+      "inputRevision": 7,
+      "paintedRevision": 5,
+      "pendingProjectionSegments": 0,
+      "pendingPaintWork": false,
+      "queuedPreparation": false,
+      "preparation": {
+        "slices": 3,
+        "steps": 9,
+        "cancelled": 0,
+        "activeMs": 4.899999991059303,
+        "lastProjectionElapsedMs": 0,
+        "lastReferenceElapsedMs": 0.09999999403953552,
+        "lastSliceMs": 0.09999999403953552,
+        "maxSliceMs": 4,
+        "backgroundMs": 0,
+        "maxBackgroundMs": 0,
+        "yieldMode": "not-scheduled",
+        "phase": "idle"
+      },
+      "retainedPaintPaths": 1,
+      "retainedClosedPaintPaths": 0,
+      "retainedClosedPaintSegments": 0,
+      "pendingClosedPaintSegments": 0,
+      "retainedSegments": 2,
+      "openSegments": 1,
+      "retainedReferenceSegments": 1,
+      "referenceExtentValues": 1,
+      "pendingReferenceSegments": 0,
+      "referenceMinimum": 200.0000000001,
+      "referenceMaximum": 200.0000000001,
+      "retainedDrawables": 1,
+      "p95RenderMs": 1.3999999985098839,
+      "mounted": true,
+      "archiveSegments": 2,
+      "directSegments": 0,
+      "valueRuns": 3,
+      "archiveValueRuns": 3,
+      "directValueRuns": 0,
+      "valueHistoryLimited": false,
+      "episodeHistoryLimited": false
+    }
+  },
+  "canonicalReference": [
+    {
+      "id": "A:view-8:off:0:q1",
+      "archiveEntryId": "A",
+      "epoch": 1,
+      "side": "bid",
+      "price": 100.00000001,
+      "priceExact": "100.00000001",
+      "start": 1794286499000,
+      "end": 1794286501000,
+      "peakUsd": 300.0000000003,
+      "meanUsd": 200.0000000001,
+      "durationMs": 2000,
+      "percentile": null,
+      "scopePartial": true,
+      "startKnown": true,
+      "detectionMode": "top-levels",
+      "rank": 1,
+      "valueRuns": [
+        {
+          "at": 1794286499000,
+          "usd": 200.0000000001,
+          "percentile": null,
+          "rank": 1,
+          "quantity": 2.000000000001,
+          "quantityExact": "2.000000000001",
+          "notionalExact": "200.0000000001"
+        },
+        {
+          "at": 1794286501000,
+          "usd": 300.0000000003,
+          "percentile": null,
+          "rank": 1,
+          "quantity": 3.000000000003,
+          "quantityExact": "3.000000000003",
+          "notionalExact": "300.0000000003"
+        }
+      ],
+      "valueRunsTruncated": false,
+      "endReason": "censored",
+      "endKnown": false,
+      "censoredReason": "Observed disconnect"
+    },
+    {
+      "id": "B:view-8:off:0:q4",
+      "archiveEntryId": "B",
+      "epoch": 2,
+      "side": "bid",
+      "price": 100.00000001,
+      "priceExact": "100.00000001",
+      "start": 1794286504000,
+      "end": null,
+      "peakUsd": 200.0000000001,
+      "meanUsd": 200.00000000009996,
+      "durationMs": 108596000,
+      "percentile": null,
+      "scopePartial": true,
+      "startKnown": true,
+      "detectionMode": "top-levels",
+      "rank": 1,
+      "valueRuns": [
+        {
+          "at": 1794286504000,
+          "usd": 200.0000000001,
+          "percentile": null,
+          "rank": 1,
+          "quantity": 2.000000000001,
+          "quantityExact": "2.000000000001",
+          "notionalExact": "200.0000000001"
+        }
+      ],
+      "valueRunsTruncated": false,
+      "endReason": null,
+      "endKnown": false
+    }
+  ]
+}

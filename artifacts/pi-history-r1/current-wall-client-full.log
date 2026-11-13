@@ -1,0 +1,7 @@
+
+> terminal-t0@0.1.0 test
+> vitest run --maxWorkers=1
+
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+

@@ -1,0 +1,380 @@
+{
+  "scope": "Read-only staging readiness; no service mutation",
+  "at": 1794213958.4697008,
+  "commands": {
+    "compose": {
+      "exit": 0,
+      "stdout": "{\"Command\":\"\\\"/entrypoint.sh\\\"\",\"CreatedAt\":\"2026-10-12 09:15:51 +0200 CEST\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"fb960ae45303\",\"Image\":\"clickhouse/clickhouse-server:25.8.16.34\",\"Labels\":\"com.docker.compose.oneoff=False,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.project.working_dir=/opt/iqterminal,com.docker.compose.service=clickhouse,org.opencontainers.image.version=22.04,com.clickhouse.build.version=25.8.16.34,com.docker.compose.config-hash=f52df935cae34be826bc46233ddecc0bc8d1b87a72a1b3519c5aa62cca218707,com.docker.compose.depends_on=,com.docker.compose.image=sha256:86e6acceeacb49202fd694b77b4f7fcd6e022b52a29b0568fbfb4b05e8f6b2e7,com.docker.compose.project=iqterminal-server,com.docker.compose.version=5.1.4,org.opencontainers.image.ref.name=ubuntu,com.docker.compose.container-number=1\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026,/opt/iqtermina\u2026,/opt/iqtermina\u2026\",\"Name\":\"iqterminal-clickhouse\",\"Names\":\"iqterminal-clickhouse\",\"Networks\":\"iqterminal-server_default\",\"Ports\":\"9009/tcp, 127.0.0.1:18123-\\u003e8123/tcp, 127.0.0.1:19000-\\u003e9000/tcp\",\"Project\":\"iqterminal-server\",\"Publishers\":[{\"URL\":\"127.0.0.1\",\"TargetPort\":8123,\"PublishedPort\":18123,\"Protocol\":\"tcp\"},{\"URL\":\"127.0.0.1\",\"TargetPort\":9000,\"PublishedPort\":19000,\"Protocol\":\"tcp\"},{\"URL\":\"\",\"TargetPort\":9009,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"4 weeks ago\",\"Service\":\"clickhouse\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 4 weeks (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-10-22 18:02:04 +0200 CEST\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"0926dc4d3161\",\"Image\":\"iqterminal-effort-result:local\",\"Labels\":\"com.docker.compose.config-hash=771639427e996b943e61c707aacb81e1fb6b9e864f36c6c0fce3e6e19c04b1c6,com.docker.compose.depends_on=,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.project.working_dir=/opt/iqterminal,com.docker.compose.replace=iqterminal-effort-result,com.docker.compose.container-number=1,com.docker.compose.image=sha256:5ce36f73e0f814e18482dd960de87105587223417f9d1c558a0c4dd7a92de03b,com.docker.compose.oneoff=False,com.docker.compose.service=effort-result,com.docker.compose.version=5.1.4\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026\",\"Name\":\"iqterminal-effort-result\",\"Names\":\"iqterminal-effort-result\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 weeks ago\",\"Service\":\"effort-result\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 weeks (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-06 17:53:50 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"1df92fdc2ce0\",\"Image\":\"iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66\",\"Labels\":\"com.docker.compose.config-hash=73afa795e16060896314f5d5da64b22ed4ed1a60281d7f5e97dc90d827799a42,com.docker.compose.oneoff=False,com.docker.compose.project=iqterminal-server,com.docker.compose.project.working_dir=/home/daz/iqterminal-perf-history,com.docker.compose.replace=iqterminal-footprint-materializer,com.docker.compose.service=footprint-materializer,com.docker.compose.version=5.1.4,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec,com.docker.compose.project.config_files=/home/daz/iqterminal-perf-history/compose.yaml,/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-18579d938364e5fd5a9c7631bb19681a043f1b66/image-override.yaml,org.opencontainers.image.revision=18579d938364e5fd5a9c7631bb19681a043f1b66\",\"LocalVolumes\":\"0\",\"Mounts\":\"/home/daz/iqte\u2026\",\"Name\":\"iqterminal-footprint-materializer\",\"Names\":\"iqterminal-footprint-materializer\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 days ago\",\"Service\":\"footprint-materializer\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 days (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-09 07:01:50 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"7a90eb79945b\",\"Image\":\"iqterminal-perf-history:f82abdfae06c61f8bccff9fea0778bbaac491b5e\",\"Labels\":\"com.docker.compose.version=5.1.4,org.opencontainers.image.revision=f82abdfae06c61f8bccff9fea0778bbaac491b5e,com.docker.compose.config-hash=698b3e355a10cecbad4b5de3b18d4343d37191856b8383bbfa6c16f7b3a3c31f,com.docker.compose.container-number=1,com.docker.compose.image=sha256:178d6cadf955e9f57d9a259a9d9cdd2e3270ad9dfcb2e1e7a8adc60a06e19bbf,com.docker.compose.oneoff=False,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/home/daz/iqterminal-footprint-batch-proof/compose.yaml,/home/daz/iqterminal-footprint-batch-proof/artifacts/pi-history-r1/deploy-f82abdfae06c61f8bccff9fea0778bbaac491b5e-api/image-override.yaml,com.docker.compose.depends_on=,com.docker.compose.project.working_dir=/home/daz/iqterminal-footprint-batch-proof,com.docker.compose.replace=iqterminal-history-api,com.docker.compose.service=app\",\"LocalVolumes\":\"0\",\"Mounts\":\"/home/daz/iqte\u2026\",\"Name\":\"iqterminal-history-api\",\"Names\":\"iqterminal-history-api\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"3 hours ago\",\"Service\":\"app\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 3 hours (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-06 17:53:50 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"d7f786d6c833\",\"Image\":\"iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66\",\"Labels\":\"com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=/home/daz/iqterminal-perf-history/compose.yaml,/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-18579d938364e5fd5a9c7631bb19681a043f1b66/image-override.yaml,com.docker.compose.project.working_dir=/home/daz/iqterminal-perf-history,com.docker.compose.service=materializer,com.docker.compose.project=iqterminal-server,com.docker.compose.replace=iqterminal-history-materializer,com.docker.compose.version=5.1.4,org.opencontainers.image.revision=18579d938364e5fd5a9c7631bb19681a043f1b66,com.docker.compose.config-hash=f7443b8c984a46bd9e33e97c537be519a7d8b69e657eb001c9a4852b55ee38a4\",\"LocalVolumes\":\"0\",\"Mounts\":\"/home/daz/iqte\u2026\",\"Name\":\"iqterminal-history-materializer\",\"Names\":\"iqterminal-history-materializer\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 days ago\",\"Service\":\"materializer\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 days (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-10-12 18:34:24 +0200 CEST\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"60d0b8cde5d7\",\"Image\":\"iqterminal-server-level-watch\",\"Labels\":\"com.docker.compose.image=sha256:68bdb5a912b1c1141cf20bc5246c1c446b870b6cb20b44f480b5166561238492,com.docker.compose.project=iqterminal-server,com.docker.compose.project.working_dir=/opt/iqterminal,com.docker.compose.service=level-watch,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.replace=iqterminal-level-watch,com.docker.compose.version=5.1.4,com.docker.compose.config-hash=def34406ecf0020d16e90dad8a3a487975dd74ae4a6be91a44591060c6dcdd94,com.docker.compose.container-number=1,com.docker.compose.depends_on=\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026\",\"Name\":\"iqterminal-level-watch\",\"Names\":\"iqterminal-level-watch\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"3 weeks ago\",\"Service\":\"level-watch\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 3 weeks (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-10-27 13:08:00 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"3e2c4da29d50\",\"Image\":\"sha256:27240a2cf8045235fea419c784f6c434f63ee84aab53a49d2264d258f72ddc70\",\"Labels\":\"com.docker.compose.config-hash=c07035a51c5c46f67a4e08925dd6cf2c0688499a7136bc2d76b348d1967e291a,com.docker.compose.depends_on=,com.docker.compose.image=sha256:27240a2cf8045235fea419c784f6c434f63ee84aab53a49d2264d258f72ddc70,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.project.working_dir=/opt/iqterminal,com.docker.compose.service=liquidations,com.docker.compose.version=5.1.4,com.docker.compose.container-number=1,com.docker.compose.oneoff=False\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026\",\"Name\":\"iqterminal-liquidations\",\"Names\":\"iqterminal-liquidations\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"12 days ago\",\"Service\":\"liquidations\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 12 days (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-10-25 11:58:07 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"65471260a0cf\",\"Image\":\"sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a\",\"Labels\":\"com.docker.compose.service=collector,com.docker.compose.version=5.1.4,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:326ebdb8f50e61f1f87a43134d8dca8803aa84ab5b824a50920e471d407c6f6a,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.project.working_dir=/opt/iqterminal,com.docker.compose.replace=iqterminal-server,com.docker.compose.config-hash=fed96cdfff8a37dd72e3918edc41cfbc62211db26bce2d98b6bbe07e8cbf0df2,com.docker.compose.oneoff=False\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026\",\"Name\":\"iqterminal-server\",\"Names\":\"iqterminal-server\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 weeks ago\",\"Service\":\"collector\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 weeks (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-06 17:53:50 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"8257c2c80dbc\",\"Image\":\"iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66\",\"Labels\":\"com.docker.compose.version=5.1.4,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/home/daz/iqterminal-perf-history/compose.yaml,/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-18579d938364e5fd5a9c7631bb19681a043f1b66/image-override.yaml,com.docker.compose.project.working_dir=/home/daz/iqterminal-perf-history,com.docker.compose.service=spot-footprint-materializer,org.opencontainers.image.revision=18579d938364e5fd5a9c7631bb19681a043f1b66,com.docker.compose.config-hash=b617cfe8204f64099be33339439c9d0ef41a2a9e7b5871a3f24494e215efb507,com.docker.compose.oneoff=False,com.docker.compose.replace=iqterminal-spot-footprint-materializer\",\"LocalVolumes\":\"0\",\"Mounts\":\"/home/daz/iqte\u2026\",\"Name\":\"iqterminal-spot-footprint-materializer\",\"Names\":\"iqterminal-spot-footprint-materializer\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 days ago\",\"Service\":\"spot-footprint-materializer\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 days (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-06 17:53:50 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"12489deea96a\",\"Image\":\"iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66\",\"Labels\":\"com.docker.compose.depends_on=,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=/home/daz/iqterminal-perf-history/compose.yaml,/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-18579d938364e5fd5a9c7631bb19681a043f1b66/image-override.yaml,com.docker.compose.replace=iqterminal-spot-history-materializer,com.docker.compose.service=spot-materializer,com.docker.compose.config-hash=63cb21e17c617db9a9bba6c53ef645cb0d9d2fa2f919d41f9ff75d3baad1b6b3,com.docker.compose.container-number=1,com.docker.compose.image=sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec,com.docker.compose.project=iqterminal-server,com.docker.compose.project.working_dir=/home/daz/iqterminal-perf-history,com.docker.compose.version=5.1.4,org.opencontainers.image.revision=18579d938364e5fd5a9c7631bb19681a043f1b66\",\"LocalVolumes\":\"0\",\"Mounts\":\"/home/daz/iqte\u2026\",\"Name\":\"iqterminal-spot-history-materializer\",\"Names\":\"iqterminal-spot-history-materializer\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 days ago\",\"Service\":\"spot-materializer\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 days (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-10-25 11:58:52 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"a4be8d3c68a5\",\"Image\":\"sha256:474e135196dcb68166e3d7cf6573f35fc57aa285f3483663fc5a1918e501f819\",\"Labels\":\"com.docker.compose.replace=iqterminal-spot-server,com.docker.compose.service=spot-collector,com.docker.compose.version=5.1.4,com.docker.compose.depends_on=,com.docker.compose.image=sha256:474e135196dcb68166e3d7cf6573f35fc57aa285f3483663fc5a1918e501f819,com.docker.compose.project.config_files=/opt/iqterminal/compose.yaml,com.docker.compose.config-hash=2fcc1333e5727f91d63df5f3918f685ae84f18f9e9cabdcc2974fe94191de855,com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=iqterminal-server,com.docker.compose.project.working_dir=/opt/iqterminal\",\"LocalVolumes\":\"0\",\"Mounts\":\"/opt/iqtermina\u2026\",\"Name\":\"iqterminal-spot-server\",\"Names\":\"iqterminal-spot-server\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 weeks ago\",\"Service\":\"spot-collector\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 weeks (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s\u2026\\\"\",\"CreatedAt\":\"2026-11-06 17:53:48 +0100 CET\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"625825aa977b\",\"Image\":\"iqterminal-perf-history:18579d938364e5fd5a9c7631bb19681a043f1b66\",\"Labels\":\"com.docker.compose.container-number=1,com.docker.compose.image=sha256:326af2b760862d84f03e50f1a55a5829d64630307c499e5cf1a4f939c55ec6ec,com.docker.compose.oneoff=False,com.docker.compose.project=iqterminal-server,com.docker.compose.project.config_files=/home/daz/iqterminal-perf-history/compose.yaml,/home/daz/iqterminal-perf-history/artifacts/pi-history-r1/deploy-18579d938364e5fd5a9c7631bb19681a043f1b66/image-override.yaml,com.docker.compose.replace=iqterminal-sql-admission,com.docker.compose.version=5.1.4,org.opencontainers.image.revision=18579d938364e5fd5a9c7631bb19681a043f1b66,com.docker.compose.config-hash=44cf33c1d96cbbeae5d6eb3890c11a6efb50133119ff54669bc2c5e424905235,com.docker.compose.depends_on=,com.docker.compose.project.working_dir=/home/daz/iqterminal-perf-history,com.docker.compose.service=sql-admission\",\"LocalVolumes\":\"0\",\"Mounts\":\"\",\"Name\":\"iqterminal-sql-admission\",\"Names\":\"iqterminal-sql-admission\",\"Networks\":\"host\",\"Ports\":\"\",\"Project\":\"iqterminal-server\",\"Publishers\":[],\"RunningFor\":\"2 days ago\",\"Service\":\"sql-admission\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 2 days (healthy)\"}\n",
+      "stderr": ""
+    },
+    "disk": {
+      "exit": 0,
+      "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/md3        436G  235G  179G  57% /\n",
+      "stderr": ""
+    },
+    "uptime": {
+      "exit": 0,
+      "stdout": " 09:45:58 up 69 days,  4:14, 26 users,  load average: 4.93, 5.01, 5.14\n",
+      "stderr": ""
+    },
+    "failedUnits": {
+      "exit": 0,
+      "stdout": "  UNIT                         LOAD   ACTIVE SUB    DESCRIPTION\n\u25cf aide-check.service           loaded failed failed Run the root AIDE integrity check and send a bounded report\n\u25cf staging-restore-test.service loaded failed failed Weekly Squawkdeck staging restic restore test\n\nLOAD   = Reflects whether the unit definition was properly loaded.\nACTIVE = The high-level unit activation state, i.e. generalization of SUB.\nSUB    = The low-level unit activation state, values depend on unit type.\n2 loaded units listed.\n",
+      "stderr": ""
+    },
+    "identities": {
+      "exit": 0,
+      "stdout": "/iqterminal-server 65471260a0cf64311ed57f9b17f1e1daf6de26f073192e292cd07bfb1e193ece 2026-10-25T10:58:27.590796454Z\n/iqterminal-spot-server a4be8d3c68a52de305fd9e2eaa101f50b592b8b108aaf850ddfbc1b2f53428bb 2026-10-25T10:58:53.322433531Z\n/iqterminal-history-materializer d7f786d6c833ee776fc620b8f02209a1e1b1ed5fc3235968272631f3c4cc6a34 2026-11-06T16:53:52.644213859Z\n/iqterminal-spot-history-materializer 12489deea96a7d5918661f792e91bd819238696bc62b912308becbaa1bcb1763 2026-11-06T16:53:52.682114009Z\n/iqterminal-footprint-materializer 1df92fdc2ce05c4113df9ecd8cb99fbabcf101b3fa04447561116ba929d93698 2026-11-06T16:53:52.623715016Z\n/iqterminal-spot-footprint-materializer 8257c2c80dbcae7add967cb4571983e7639c8f96695e3d5d6302ec9b87ef6447 2026-11-06T16:53:52.693763579Z\n/iqterminal-sql-admission 625825aa977bcf8e18264ed69e3ed4ca1a9290c5c14416db797a8bf11999032b 2026-11-06T16:53:48.880958761Z\n",
+      "stderr": ""
+    }
+  },
+  "health": {
+    "http://127.0.0.1:18780/v2/history/health": {
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "build": "f82abdfae06c61f8bccff9fea0778bbaac491b5e",
+        "metrics": {
+          "requests": 511,
+          "rejected": 0,
+          "bytes": 57198329,
+          "serializeMs": 244.01347899440952,
+          "legacyHeatmap": 0,
+          "legacyFootprint": 0,
+          "closedTileReads": 0,
+          "manifests": 0,
+          "orderWallPages": 0,
+          "peakRss": 174473216,
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4,
+          "rss": 173453312
+        },
+        "wallProjectionEncoding": {
+          "active": 0,
+          "limit": 3,
+          "cacheEntries": 7,
+          "cacheBytes": 3103708
+        },
+        "materializer": {
+          "version": 1,
+          "head": {
+            "cursor": 23725004,
+            "at": 1794213955539,
+            "epoch": 1794212514141
+          },
+          "live": {
+            "cursor": 23725004,
+            "at": 1794213955539,
+            "from": 1794213900000,
+            "widths": [
+              10,
+              25,
+              50,
+              100,
+              250,
+              1000
+            ]
+          },
+          "archive": {
+            "pinned": {
+              "pages": 1,
+              "processed": 64,
+              "cursor": 23724960,
+              "lag": 0,
+              "caughtUp": true
+            },
+            "current": [
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+                "lane": "pinned",
+                "pages": 1,
+                "processed": 64,
+                "cursor": 23724960,
+                "lag": 0,
+                "caughtUp": true
+              },
+              {
+                "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+                "lane": "pinned",
+                "pages": 1,
+                "processed": 66,
+                "cursor": 19770918,
+                "lag": 0,
+                "caughtUp": true
+              },
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+                "lane": "custom",
+                "pages": 1,
+                "processed": 64,
+                "cursor": 23724960,
+                "lag": 0,
+                "caughtUp": true
+              }
+            ],
+            "custom": [
+              {
+                "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+                "state": "ready",
+                "progressCursor": 23724960,
+                "sourceHeadCursor": 23724960,
+                "lagCursors": 0,
+                "currentCursor": 23724960,
+                "currentAt": 1794213951048,
+                "currentValid": true
+              }
+            ],
+            "customWork": {
+              "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-3pct-agg-native-top10-a1-s1",
+              "pages": 1,
+              "processed": 64,
+              "cursor": 23724960,
+              "lag": 0,
+              "caughtUp": true
+            },
+            "customWorker": "perpetual-materializer"
+          },
+          "metrics": {
+            "startedAt": 1793984035129,
+            "lastPoll": 1794213956532,
+            "lastPersist": 1794213903922,
+            "records": 2253471,
+            "closedBuckets": 4602,
+            "liveLagMs": 0,
+            "derivedBytes": 1184237280,
+            "freeBytes": 192100282368,
+            "paused": false,
+            "error": "",
+            "pages": 112515,
+            "pageMs": 3514788.580201664,
+            "accumulateMs": 2056339.0710151806,
+            "persistMs": 324425.0691742938,
+            "peakRss": 615284736,
+            "sourceHeadAgeMs": 3133,
+            "liveAgeMs": 3133,
+            "rss": 510386176
+          },
+          "backlog": []
+        },
+        "sqlAdmission": {
+          "enabled": true,
+          "version": 1,
+          "build": "18579d938364e5fd5a9c7631bb19681a043f1b66",
+          "completed": 5016831,
+          "cancelled": 17,
+          "rejected": 0,
+          "peakActive": 2,
+          "peakQueued": 5,
+          "waitMs": 140629480.37839904,
+          "maxWaitMs": 830.0502929985523,
+          "active": 1,
+          "history": 1,
+          "queued": 1,
+          "waiting": {
+            "current": 0,
+            "visible": 0,
+            "background": 1
+          },
+          "limit": 2,
+          "reservedCurrent": 1,
+          "oldestWaitMs": 233.82601898908615,
+          "rss": 94801920
+        }
+      }
+    },
+    "http://127.0.0.1:18784/v1/health": {
+      "status": 200,
+      "body": {
+        "version": 1,
+        "market": "perpetual",
+        "instrument": "binance:perpetual:BTCUSDT",
+        "collector": {
+          "state": "live",
+          "message": "Durable WebSocket aggregate executions",
+          "lastUpdate": 1794213958226,
+          "retries": 0
+        },
+        "depth": {
+          "head": {
+            "cursor": 23725025,
+            "at": 1794213957681,
+            "epoch": 1794212514141
+          },
+          "status": {
+            "state": "live",
+            "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+            "epoch": 1794212514141,
+            "lastUpdate": 1794213958598,
+            "bidFloor": 73954.3,
+            "askCeiling": 74234.1,
+            "sequence": 12056207625225
+          },
+          "metrics": {
+            "events": 12596091,
+            "changes": 1462282270,
+            "wireBytes": 32767169048,
+            "storedPayloadBytes": 112750336239,
+            "overflows": 0,
+            "reconnects": 164,
+            "queue": 9,
+            "levels": 38922,
+            "startAt": 1792925907805
+          },
+          "retention": {
+            "lastRun": 1794212908347,
+            "error": null
+          }
+        },
+        "metrics": {
+          "transport": "websocket",
+          "queue": 3,
+          "overflows": 0,
+          "recoveries": 249,
+          "exchangeToReceiveMs": 132,
+          "receiveToDurableMs": 811,
+          "ingestionLagMs": 1291
+        },
+        "disk": {
+          "bytes": 6144654431,
+          "free": 192073125888,
+          "paused": false
+        },
+        "watermark": {
+          "id": 3513303850,
+          "timeMs": 1794213957384
+        },
+        "tickSize": 0.1,
+        "oi": {
+          "lastObservedAt": 1794213951901,
+          "error": null,
+          "stale": false
+        },
+        "netPositioning": {
+          "version": 1,
+          "pendingIntervals": 0,
+          "feeds": {
+            "binance": {
+              "state": "live",
+              "source": "binance:fapi/v1/openInterest",
+              "lastObservedAt": 1794213951901,
+              "lastError": null,
+              "epoch": 1794143724557,
+              "sourceTimeQuality": "exchange-event"
+            },
+            "hyperliquid": {
+              "state": "live",
+              "source": "hyperliquid:metaAndAssetCtxs",
+              "lastObservedAt": 1794213952499,
+              "lastError": null,
+              "epoch": 1794211480370,
+              "lastTradeAt": 1794213958025,
+              "overflows": 32,
+              "reconnects": 142,
+              "sourceTimeQuality": "collector-sampled"
+            }
+          },
+          "bufferedHyperliquidTrades": 1079,
+          "bufferCapacity": 10000
+        }
+      }
+    },
+    "http://127.0.0.1:18780/v1/health": {
+      "status": 200,
+      "body": {
+        "version": 1,
+        "market": "perpetual",
+        "instrument": "binance:perpetual:BTCUSDT",
+        "collector": {
+          "state": "live",
+          "message": "Durable WebSocket aggregate executions",
+          "lastUpdate": 1794213958226,
+          "retries": 0
+        },
+        "depth": {
+          "head": {
+            "cursor": 23725025,
+            "at": 1794213957681,
+            "epoch": 1794212514141
+          },
+          "status": {
+            "state": "live",
+            "message": "Durable standard diff-depth \u00b7 RPI excluded \u00b7 partial outer regions",
+            "epoch": 1794212514141,
+            "lastUpdate": 1794213958598,
+            "bidFloor": 73954.3,
+            "askCeiling": 74234.1,
+            "sequence": 12056207625225
+          },
+          "metrics": {
+            "events": 12596091,
+            "changes": 1462282270,
+            "wireBytes": 32767169048,
+            "storedPayloadBytes": 112750336239,
+            "overflows": 0,
+            "reconnects": 164,
+            "queue": 9,
+            "levels": 38922,
+            "startAt": 1792925907805
+          },
+          "retention": {
+            "lastRun": 1794212908347,
+            "error": null
+          }
+        },
+        "metrics": {
+          "transport": "websocket",
+          "queue": 3,
+          "overflows": 0,
+          "recoveries": 249,
+          "exchangeToReceiveMs": 132,
+          "receiveToDurableMs": 811,
+          "ingestionLagMs": 1293
+        },
+        "disk": {
+          "bytes": 6144654431,
+          "free": 192073125888,
+          "paused": false
+        },
+        "watermark": {
+          "id": 3513303850,
+          "timeMs": 1794213957384
+        },
+        "tickSize": 0.1,
+        "oi": {
+          "lastObservedAt": 1794213951901,
+          "error": null,
+          "stale": false
+        },
+        "netPositioning": {
+          "version": 1,
+          "pendingIntervals": 0,
+          "feeds": {
+            "binance": {
+              "state": "live",
+              "source": "binance:fapi/v1/openInterest",
+              "lastObservedAt": 1794213951901,
+              "lastError": null,
+              "epoch": 1794143724557,
+              "sourceTimeQuality": "exchange-event"
+            },
+            "hyperliquid": {
+              "state": "live",
+              "source": "hyperliquid:metaAndAssetCtxs",
+              "lastObservedAt": 1794213952499,
+              "lastError": null,
+              "epoch": 1794211480370,
+              "lastTradeAt": 1794213958025,
+              "overflows": 32,
+              "reconnects": 142,
+              "sourceTimeQuality": "collector-sampled"
+            }
+          },
+          "bufferedHyperliquidTrades": 1079,
+          "bufferCapacity": 10000
+        }
+      }
+    }
+  }
+}

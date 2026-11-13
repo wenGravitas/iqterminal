@@ -1,0 +1,920 @@
+{
+  "cold": {
+    "scope": "V8 sampled main-thread CPU profile. Self weights are exclusive samples; inclusive stacks overlap and must not be added as phases. Profile overhead prevents timing acceptance. No worker/GPU completion inference.",
+    "profileDurationMs": 11746.974,
+    "sampledMs": 11745.710000000014,
+    "topSelf": [
+      {
+        "ms": 3783.955,
+        "node": 3,
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 2610.716,
+        "node": 2,
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 536.142,
+        "node": 49,
+        "functionName": "frame",
+        "scriptId": "4",
+        "url": "",
+        "lineNumber": 4,
+        "columnNumber": 14
+      },
+      {
+        "ms": 451.205,
+        "node": 12,
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 356.126,
+        "node": 731,
+        "functionName": "worker.onmessage",
+        "scriptId": "6",
+        "url": "http://127.0.0.1:4185/assets/index-bbtRiD4o.js",
+        "lineNumber": 1,
+        "columnNumber": 7109
+      },
+      {
+        "ms": 346.246,
+        "node": 931,
+        "functionName": "projectIndex",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458114
+      },
+      {
+        "ms": 210.22,
+        "node": 929,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 450144
+      },
+      {
+        "ms": 144.174,
+        "node": 51,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      {
+        "ms": 119.606,
+        "node": 935,
+        "functionName": "updateReference",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 447934
+      },
+      {
+        "ms": 106.159,
+        "node": 940,
+        "functionName": "n",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 452670
+      },
+      {
+        "ms": 85.407,
+        "node": 928,
+        "functionName": "gr",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 87846
+      },
+      {
+        "ms": 85.1,
+        "node": 932,
+        "functionName": "project",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458729
+      },
+      {
+        "ms": 82.968,
+        "node": 690,
+        "functionName": "paintBase",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 138486
+      },
+      {
+        "ms": 62.285,
+        "node": 939,
+        "functionName": "lineStyle",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 456284
+      },
+      {
+        "ms": 58.377,
+        "node": 1038,
+        "functionName": "o",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 452960
+      },
+      {
+        "ms": 54.904,
+        "node": 941,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 140862
+      },
+      {
+        "ms": 48.711,
+        "node": 629,
+        "functionName": "_syncFloatingOverlayHost",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 383945
+      },
+      {
+        "ms": 43.602,
+        "node": 822,
+        "functionName": "update",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 173210
+      },
+      {
+        "ms": 39.36,
+        "node": 691,
+        "functionName": "beginFrame",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 122369
+      },
+      {
+        "ms": 39.256,
+        "node": 817,
+        "functionName": "rH",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 56,
+        "columnNumber": 31364
+      },
+      {
+        "ms": 38.852,
+        "node": 974,
+        "functionName": "measureOne",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 460857
+      },
+      {
+        "ms": 38.782,
+        "node": 668,
+        "functionName": "syncPaneLayoutControls",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 335216
+      },
+      {
+        "ms": 38.051,
+        "node": 816,
+        "functionName": "$l",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 14,
+        "columnNumber": 4239
+      },
+      {
+        "ms": 37.131,
+        "node": 763,
+        "functionName": "renderStatus",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 387246
+      },
+      {
+        "ms": 35.507,
+        "node": 726,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 415201
+      }
+    ],
+    "topInclusive": [
+      {
+        "ms": 11745.71,
+        "node": 1,
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 3783.955,
+        "node": 3,
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 2610.716,
+        "node": 2,
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 2004.028,
+        "node": 683,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 451049
+      },
+      {
+        "ms": 2001.249,
+        "node": 685,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 59526
+      },
+      {
+        "ms": 2001.249,
+        "node": 684,
+        "functionName": "drawChart",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 450678
+      },
+      {
+        "ms": 1986.048,
+        "node": 687,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 235661
+      },
+      {
+        "ms": 1986.048,
+        "node": 686,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 64293
+      },
+      {
+        "ms": 1984.802,
+        "node": 688,
+        "functionName": "_onFrame",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 259997
+      },
+      {
+        "ms": 1982.318,
+        "node": 689,
+        "functionName": "_paintFrame",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 260308
+      },
+      {
+        "ms": 1949.334,
+        "node": 690,
+        "functionName": "paintBase",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 138486
+      },
+      {
+        "ms": 1380.59,
+        "node": 929,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 450144
+      },
+      {
+        "ms": 862.816,
+        "node": 51,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      {
+        "ms": 753.675,
+        "node": 731,
+        "functionName": "worker.onmessage",
+        "scriptId": "6",
+        "url": "http://127.0.0.1:4185/assets/index-bbtRiD4o.js",
+        "lineNumber": 1,
+        "columnNumber": 7109
+      },
+      {
+        "ms": 576.895,
+        "node": 49,
+        "functionName": "frame",
+        "scriptId": "4",
+        "url": "",
+        "lineNumber": 4,
+        "columnNumber": 14
+      },
+      {
+        "ms": 501.533,
+        "node": 930,
+        "functionName": "projectAll",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 456882
+      },
+      {
+        "ms": 475.335,
+        "node": 208,
+        "functionName": "start",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 5721
+      },
+      {
+        "ms": 472.667,
+        "node": 211,
+        "functionName": "restore",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 60,
+        "columnNumber": 114449
+      },
+      {
+        "ms": 462.546,
+        "node": 931,
+        "functionName": "projectIndex",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458114
+      },
+      {
+        "ms": 455.669,
+        "node": 245,
+        "functionName": "mutation",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 403739
+      },
+      {
+        "ms": 455.669,
+        "node": 244,
+        "functionName": "fromJSON",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 389724
+      },
+      {
+        "ms": 455.669,
+        "node": 243,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 136162
+      },
+      {
+        "ms": 455.669,
+        "node": 242,
+        "functionName": "withOrigin",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 404791
+      },
+      {
+        "ms": 455.669,
+        "node": 241,
+        "functionName": "fromJSON",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 136124
+      },
+      {
+        "ms": 454.451,
+        "node": 246,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 389751
+      }
+    ]
+  },
+  "warm": {
+    "scope": "V8 sampled main-thread CPU profile. Self weights are exclusive samples; inclusive stacks overlap and must not be added as phases. Profile overhead prevents timing acceptance. No worker/GPU completion inference.",
+    "profileDurationMs": 11237.53,
+    "sampledMs": 11236.112000000005,
+    "topSelf": [
+      {
+        "ms": 1711.647,
+        "node": 2,
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 1378.111,
+        "node": 11,
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 977.842,
+        "node": 517,
+        "functionName": "projectIndex",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458114
+      },
+      {
+        "ms": 690.95,
+        "node": 397,
+        "functionName": "worker.onmessage",
+        "scriptId": "6",
+        "url": "http://127.0.0.1:4185/assets/index-bbtRiD4o.js",
+        "lineNumber": 1,
+        "columnNumber": 7109
+      },
+      {
+        "ms": 618.789,
+        "node": 464,
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 412.619,
+        "node": 446,
+        "functionName": "frame",
+        "scriptId": "4",
+        "url": "",
+        "lineNumber": 4,
+        "columnNumber": 14
+      },
+      {
+        "ms": 373.675,
+        "node": 521,
+        "functionName": "updateReference",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 447934
+      },
+      {
+        "ms": 372.422,
+        "node": 445,
+        "functionName": "",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 357.14,
+        "node": 518,
+        "functionName": "project",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458729
+      },
+      {
+        "ms": 308.235,
+        "node": 515,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 450144
+      },
+      {
+        "ms": 144.577,
+        "node": 522,
+        "functionName": "countReference",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 447766
+      },
+      {
+        "ms": 118.27,
+        "node": 352,
+        "functionName": "paintBase",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 138486
+      },
+      {
+        "ms": 90.216,
+        "node": 516,
+        "functionName": "projectAll",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 456882
+      },
+      {
+        "ms": 87.4,
+        "node": 344,
+        "functionName": "getBoundingClientRect",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 75.675,
+        "node": 364,
+        "functionName": "gr",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 87846
+      },
+      {
+        "ms": 73.21,
+        "node": 588,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 72.687,
+        "node": 535,
+        "functionName": "lineStyle",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 456284
+      },
+      {
+        "ms": 66.998,
+        "node": 507,
+        "functionName": "patchOrderWalls",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 40706
+      },
+      {
+        "ms": 66.831,
+        "node": 519,
+        "functionName": "fk",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 461602
+      },
+      {
+        "ms": 62.36,
+        "node": 793,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 43487
+      },
+      {
+        "ms": 53.247,
+        "node": 794,
+        "functionName": "setSnapshot",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 444920
+      },
+      {
+        "ms": 50.523,
+        "node": 511,
+        "functionName": "replaceChildren",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 48.226,
+        "node": 785,
+        "functionName": "setOrderWallSnapshot",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 39873
+      },
+      {
+        "ms": 46.457,
+        "node": 592,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 41.402,
+        "node": 628,
+        "functionName": "Ye",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1035
+      }
+    ],
+    "topInclusive": [
+      {
+        "ms": 11236.112,
+        "node": 1,
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 4389.545,
+        "node": 346,
+        "functionName": "drawChart",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 450678
+      },
+      {
+        "ms": 4389.545,
+        "node": 345,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 33,
+        "columnNumber": 451049
+      },
+      {
+        "ms": 4388.186,
+        "node": 347,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 32,
+        "columnNumber": 59526
+      },
+      {
+        "ms": 4324.979,
+        "node": 351,
+        "functionName": "_paintFrame",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 260308
+      },
+      {
+        "ms": 4324.979,
+        "node": 350,
+        "functionName": "_onFrame",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 259997
+      },
+      {
+        "ms": 4324.979,
+        "node": 349,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 12,
+        "columnNumber": 235661
+      },
+      {
+        "ms": 4324.979,
+        "node": 348,
+        "functionName": "",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 64293
+      },
+      {
+        "ms": 4292.94,
+        "node": 352,
+        "functionName": "paintBase",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 138486
+      },
+      {
+        "ms": 3783.811,
+        "node": 515,
+        "functionName": "draw",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 450144
+      },
+      {
+        "ms": 1711.647,
+        "node": 2,
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 1653.827,
+        "node": 516,
+        "functionName": "projectAll",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 456882
+      },
+      {
+        "ms": 1589.696,
+        "node": 521,
+        "functionName": "updateReference",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 447934
+      },
+      {
+        "ms": 1517.859,
+        "node": 397,
+        "functionName": "worker.onmessage",
+        "scriptId": "6",
+        "url": "http://127.0.0.1:4185/assets/index-bbtRiD4o.js",
+        "lineNumber": 1,
+        "columnNumber": 7109
+      },
+      {
+        "ms": 1467.149,
+        "node": 517,
+        "functionName": "projectIndex",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 458114
+      },
+      {
+        "ms": 1378.111,
+        "node": 11,
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      {
+        "ms": 1216.021,
+        "node": 522,
+        "functionName": "countReference",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 30,
+        "columnNumber": 447766
+      },
+      {
+        "ms": 1071.444,
+        "node": 523,
+        "functionName": "set",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1978
+      },
+      {
+        "ms": 1046.152,
+        "node": 524,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 1020.163,
+        "node": 525,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 1002.836,
+        "node": 526,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 989.526,
+        "node": 527,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 961.218,
+        "node": 528,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 953.282,
+        "node": 529,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      },
+      {
+        "ms": 904.28,
+        "node": 530,
+        "functionName": "Ze",
+        "scriptId": "9",
+        "url": "http://127.0.0.1:4185/assets/main-b1DU95CN.js",
+        "lineNumber": 1,
+        "columnNumber": 1464
+      }
+    ]
+  }
+}

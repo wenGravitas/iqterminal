@@ -1,15 +1,14 @@
 import { OrderWallRankIndex } from './order-wall-rank';
 import type { Series } from './protocol';
 
+import type {WallPreparationProgress} from './prepared-wall-admission';
 export const ORDER_WALLS_ID = 'native.order-walls';
 export const ORDER_WALL_MAX_LEVELS_PER_SIDE = 5_000;
 export const ORDER_WALL_MAX_SEGMENTS = 20_000;
 export const ORDER_WALL_MAX_VALUE_RUNS = 50_000;
 export const ORDER_WALL_MAX_VALUE_RUNS_PER_SEGMENT = 2_048;
 /** Larger, independent budgets for durable multi-hour Binance Top Levels archives. */
-export const ORDER_WALL_ARCHIVE_MAX_SEGMENTS = 100_000;
-export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS = 1_000_000;
-export const ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT = 100_000;
+export {ORDER_WALL_ARCHIVE_MAX_SEGMENTS,ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS,ORDER_WALL_ARCHIVE_MAX_VALUE_RUNS_PER_SEGMENT} from '../shared/order-walls-projection';
 
 export type OrderWallAggregation = 'auto' | 'native' | 10 | 25 | 50 | 100 | 250;
 export type OrderWallColorMode = 'heat' | 'bid-ask';
@@ -99,6 +98,8 @@ export function orderWallMarket(series: Pick<Series, 'venue' | 'market'>): Order
 }
 
 export interface OrderWallRequest {
+  /** Internal startup consumer; current group only, no archive work. */
+  currentOnly?:boolean;
   market: OrderWallMarket;
   from: number;
   to: number;
@@ -124,6 +125,10 @@ export interface OrderWallBookScope {
 }
 export interface OrderWallStatus {
   state: 'loading' | 'live' | 'stale' | 'gap' | 'unavailable';
+  /** False for a historical-only archive view with no current subscription. */
+  currentSubscribed?: boolean;
+  currentGaps?:Array<{from:number;to:number;reason:string}>;
+  currentGapsTruncated?:boolean;
   message?: string;
   tickSize?: number;
   /** Effective quote-price bucket width used for detection and display. */
@@ -147,6 +152,11 @@ export interface OrderWallStatus {
   archive?: OrderWallArchiveStatus;
 }
 export interface OrderWallArchiveStatus {
+  /** Build/source progress is separate from received/painted historical coverage. */
+  preparation?:WallPreparationProgress;
+  /** Eligible historical upper bound, distinct from requested future chart space. */
+  eligibleTo?:number;
+  horizonAt?:number;
   profileId: string;
   state: 'loading' | 'building' | 'backfilling' | 'complete' | 'partial' | 'unavailable';
   /** False while transport paging is incomplete, independently of source coverage gaps. */
@@ -155,6 +165,8 @@ export interface OrderWallArchiveStatus {
   rangeComplete?: boolean;
   /** Fixed-watermark cursor to resume after a transport interruption. */
   resumeAfter?: number;
+  /** Failed view may restart safely even when its old revision cannot resume. */
+  retryable?: boolean;
   /** Backend profile catch-up is independent of the requested interval's coverage state. */
   profileStatus?: 'building' | 'backfilling' | 'ready' | 'unavailable';
   from: number;
@@ -169,6 +181,8 @@ export interface OrderWallArchiveStatus {
   availableFrom?: number;
   confirmedTo?: number;
   loadedThrough?: number;
+  /** Confirmed extent of received prepared segments; not whole-view coverage. */
+  presentationThrough?: number;
   gaps: Array<{ from: number; to: number; reason: string }>;
   gapsTruncated?: boolean;
   requestedBandPercent: number;
@@ -183,6 +197,8 @@ export interface OrderWallSegment {
   archiveEntryId?: string;
   /** True only while this candidate is in the current live selected set; never inferred from end:null. */
   currentSelection?: boolean;
+  /** Independent selected state at one source fence, never a canonical episode. */
+  presentationKind?:'current-snapshot';
   /** Depth-book generation that bounds continuity for this segment. */
   epoch: string | number;
   side: 'bid' | 'ask';
@@ -222,7 +238,7 @@ export interface OrderWallHit {
   percentile: number | null;
 }
 /** Patch id is the segment id, including for a null removal. */
-export interface OrderWallPatch { id: string; segment: OrderWallSegment | null; valuePoints?: OrderWallValuePoint[]; replaceValueRuns?: boolean }
+export interface OrderWallPatch { revision?:number; id: string; segment: OrderWallSegment | null; valuePoints?: OrderWallValuePoint[]; replaceValueRuns?: boolean }
 export interface OrderWallBatch {
   kind: 'snapshot' | 'patch';
   segments?: OrderWallSegment[];

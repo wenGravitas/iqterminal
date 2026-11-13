@@ -1,0 +1,20 @@
+
+> terminal-t0@0.1.0 typecheck /home/daz/workarea/iqterminal-perf-history
+> tsc --noEmit
+
+vite.config.ts(18,130): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(19,172): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(20,165): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(21,170): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(22,170): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(23,160): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(24,159): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(25,172): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(26,158): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(27,151): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(28,157): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(31,151): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(32,182): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(33,98): error TS7006: Parameter 'path' implicitly has an 'any' type.
+vite.config.ts(34,127): error TS7006: Parameter 'path' implicitly has an 'any' type.
+ ELIFECYCLE  Command failed with exit code 1.

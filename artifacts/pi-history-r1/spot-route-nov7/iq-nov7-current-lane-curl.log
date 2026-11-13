@@ -1,0 +1,23 @@
+*   Trying 127.0.0.1:18781...
+* Connected to 127.0.0.1 (127.0.0.1) port 18781 (#0)
+> GET /v2/history/health HTTP/1.1
+> Host: 127.0.0.1:18781
+> User-Agent: curl/7.88.1
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< X-IQ-Request-Id: 87d7c1bd-3b87-4b7b-9023-fc79f12c5807
+< Content-Type: application/json
+< Cache-Control: no-store
+< Content-Length: 1949
+< X-IQ-Decoded-Bytes: 1949
+< X-IQ-Db-Queries: 0
+< X-IQ-Db-Read-Rows: 0
+< X-IQ-Db-Read-Bytes: 0
+< Server-Timing: admission;dur=0, db;dur=0.00, sqlqueue;dur=0.00, dbdecode;dur=0.00, project;dur=0.00, serialize;dur=0.04, total;dur=2.41
+< Date: Sat, 07 Nov 2026 09:02:34 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=60
+< 
+{ [1949 bytes data]
+* Connection #0 to host 127.0.0.1 left intact

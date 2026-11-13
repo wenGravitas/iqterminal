@@ -1,0 +1,1 @@
+Observer reached its configured bound after the failed proof process was terminal. No restart or signal.

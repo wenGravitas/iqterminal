@@ -1,0 +1,29 @@
+
+ RUN  v5.0.3 /home/daz/workarea/iqterminal-perf-history
+
+ ❯ tests/restore-bootstrap.test.ts (14 tests | 1 failed) 113ms
+   × saved wall chart preloads native context before derived requests only in early history phase (true) 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/restore-bootstrap.test.ts > saved wall chart preloads native context before derived requests only in early history phase (true)
+AssertionError: expected "vi.fn()" to be called once with arguments: [ 'restore-10:native:a', …(3) ]
+
+Number of calls: 0
+
+ ❯ tests/restore-bootstrap.test.ts:46:82
+     44|  const release=startVisibleChartFeeds(feed,layout({a:{contentComponent…
+     45|  if(preload){
+     46|   const token=feed.subscribe.mock.calls[0][0];expect(feed.requestCandl…
+       |                                                                                  ^
+     47|   expect(feed.subscribe.mock.invocationCallOrder[0]).toBeLessThan(feed…
+     48|   expect(feed.requestCandleViewport.mock.invocationCallOrder[0]).toBeL…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 60 passed (61)
+   Start at  18:26:43
+   Duration  3.57s (transform 47%, tests 45%, import 8%, worker 1%)
+

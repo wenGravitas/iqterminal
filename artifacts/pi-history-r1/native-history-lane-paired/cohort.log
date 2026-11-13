@@ -1,0 +1,30 @@
+{"sample": 1, "variant": "control", "phase": "start", "at": 1794125652.857162}
+{"run":1,"coldPaint":9270.199999999255,"coldComplete":15262.39999999851,"warmPaint":1940.9000000022352,"warmComplete":4498.400000002235}
+{"sample": 1, "variant": "control", "phase": "terminal", "at": 1794125698.3448687, "exit": 0}
+{"sample": 1, "variant": "candidate", "phase": "start", "at": 1794125698.3452387}
+{"run":1,"coldPaint":8550.199999999255,"coldComplete":16021.39999999851,"warmPaint":2060.699999999255,"warmComplete":5596.699999999255}
+{"sample": 1, "variant": "candidate", "phase": "terminal", "at": 1794125746.0635514, "exit": 0}
+{"sample": 2, "variant": "candidate", "phase": "start", "at": 1794125746.0641332}
+{"run":1,"coldPaint":7089.5,"coldComplete":22834.70000000298,"warmPaint":3333.39999999851,"warmComplete":4525.39999999851}
+{"sample": 2, "variant": "candidate", "phase": "terminal", "at": 1794125797.8354173, "exit": 0}
+{"sample": 2, "variant": "control", "phase": "start", "at": 1794125797.8358057}
+{"run":1,"coldPaint":3444.800000000745,"coldComplete":22033.60000000149,"warmPaint":7780.699999999255,"warmComplete":null}
+{"sample": 2, "variant": "control", "phase": "terminal", "at": 1794125847.287363, "exit": 0}
+{"sample": 3, "variant": "control", "phase": "start", "at": 1794125847.2875957}
+{"run":1,"coldPaint":23321,"coldComplete":35482.099999997765,"warmPaint":2542,"warmComplete":4433.5}
+{"sample": 3, "variant": "control", "phase": "terminal", "at": 1794125912.4551353, "exit": 0}
+{"sample": 3, "variant": "candidate", "phase": "start", "at": 1794125912.4553654}
+{"run":1,"coldPaint":6065.199999999255,"coldComplete":16673.099999997765,"warmPaint":3667.39999999851,"warmComplete":5132.199999999255}
+{"sample": 3, "variant": "candidate", "phase": "terminal", "at": 1794125959.4301026, "exit": 0}
+{"sample": 4, "variant": "candidate", "phase": "start", "at": 1794125959.43033}
+{"run":1,"coldPaint":7402.39999999851,"coldComplete":19618,"warmPaint":2871.10000000149,"warmComplete":4219.199999999255}
+{"sample": 4, "variant": "candidate", "phase": "terminal", "at": 1794126008.998692, "exit": 0}
+{"sample": 4, "variant": "control", "phase": "start", "at": 1794126008.9989161}
+{"run":1,"coldPaint":3714.599999997765,"coldComplete":8295.79999999702,"warmPaint":3807.89999999851,"warmComplete":5368.800000000745}
+{"sample": 4, "variant": "control", "phase": "terminal", "at": 1794126048.7219634, "exit": 0}
+{"sample": 5, "variant": "control", "phase": "start", "at": 1794126048.7224329}
+{"run":1,"coldPaint":5824.400000002235,"coldComplete":11527.400000002235,"warmPaint":1537,"warmComplete":4318}
+{"sample": 5, "variant": "control", "phase": "terminal", "at": 1794126090.2328327, "exit": 0}
+{"sample": 5, "variant": "candidate", "phase": "start", "at": 1794126090.233113}
+{"run":1,"coldPaint":2618.39999999851,"coldComplete":7892.199999999255,"warmPaint":2659.699999999255,"warmComplete":4312.300000000745}
+{"sample": 5, "variant": "candidate", "phase": "terminal", "at": 1794126127.3279188, "exit": 0}

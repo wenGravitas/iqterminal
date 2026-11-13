@@ -1,0 +1,40 @@
+
+> iqterminal-server@0.1.0 build
+> esbuild src/server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.mjs && esbuild src/depth-worker.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/depth-worker.mjs && esbuild src/watch-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/watch-server.mjs && esbuild src/history-gateway.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-gateway.mjs && esbuild src/history-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/history-materializer.mjs && esbuild src/effort-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/effort-server.mjs && esbuild src/liquidation-server.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/liquidation-server.mjs && esbuild src/footprint-materializer.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/footprint-materializer.mjs && esbuild src/sql-proxy-main.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/sql-proxy-main.mjs
+
+
+  dist/server.mjs  151.7kb
+
+⚡ Done in 30ms
+
+  dist/depth-worker.mjs  9.8kb
+
+⚡ Done in 4ms
+
+  dist/watch-server.mjs  45.6kb
+
+⚡ Done in 7ms
+
+  dist/history-gateway.mjs  76.3kb
+
+⚡ Done in 16ms
+
+  dist/history-materializer.mjs  146.9kb
+
+⚡ Done in 19ms
+
+  dist/effort-server.mjs  41.2kb
+
+⚡ Done in 11ms
+
+  dist/liquidation-server.mjs  34.3kb
+
+⚡ Done in 6ms
+
+  dist/footprint-materializer.mjs  55.4kb
+
+⚡ Done in 13ms
+
+  dist/sql-proxy-main.mjs  6.2kb
+
+⚡ Done in 8ms

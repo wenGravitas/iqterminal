@@ -1,0 +1,15 @@
+{
+  "cpuPlatform": [
+    "Linux",
+    "pi",
+    "6.12.109+rpt-rpi-v8",
+    "#1 SMP PREEMPT Debian 1:6.12.109-1+rpt1 (2026-09-11)",
+    "aarch64"
+  ],
+  "node": "v22.19.0",
+  "applicationBase": "e78c34529c98f3765c4ac1ea7c42e9521b5abc10",
+  "codecSha256": "f5ff08c822ff92588df760898ad6c45af279171abdc31e16d1eb7d24c43fc83b",
+  "scope": "Candidate uncommitted codec on recorded base; immutable frames captured from unchanged f82 API. Snapshot during benchmark, not full resource trace. No deploy or browser launch.",
+  "meminfo": "MemTotal:        8142664 kB\nMemFree:         1578232 kB\nMemAvailable:    2182032 kB\nBuffers:           28444 kB\nCached:          1390216 kB\nSwapCached:          528 kB\nActive:          2727224 kB\nInactive:        1830124 kB\nActive(anon):    2296648 kB\nInactive(anon):  1397576 kB\nActive(file):     430576 kB\nInactive(file):   432548 kB\nUnevictable:      472316 kB\nMlocked:             136 kB\nSwapTotal:      25680684 kB\nSwapFree:       23264616 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1332 kB\nWriteback:             0 kB\nAnonPages:       3610848 kB\nMapped:           575624 kB\nShmem:            554952 kB\nKReclaimable:     159488 kB\nSlab:             265916 kB\nSReclaimable:     159488 kB\nSUnreclaim:       106428 kB\nKernelStack:       18808 kB\nPageTables:        73916 kB\nSecPageTables:        92 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    29023596 kB\nCommitted_AS:   22799268 kB\nVmallocTotal:   261087232 kB\nVmallocUsed:      329412 kB\nVmallocChunk:          0 kB\nPercpu:             1200 kB\nCmaTotal:          65536 kB\nCmaFree:            7424 kB\n",
+  "loadavg": "8.33 8.81 7.26 7/1175 230893\n"
+}

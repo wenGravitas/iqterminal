@@ -1,0 +1,552 @@
+{
+  "before": {
+    "focused": 3,
+    "windows": []
+  },
+  "samples": [
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "about:blank - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-5HyDc7)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "about:blank - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115185280,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-t7yyEw)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "about:blank - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "focused": 3,
+      "windows": [
+        {
+          "id": 367115062720,
+          "workspace": 9,
+          "properties": {
+            "class": "IQTerminalPerf",
+            "instance": "chromium (/tmp/playwright_chromiumdev_profile-hJnA2h)",
+            "window_role": "browser",
+            "machine": "pi",
+            "title": "IQTerminal workspace routing check - Chromium",
+            "transient_for": null
+          }
+        }
+      ]
+    }
+  ],
+  "after": {
+    "focused": 3,
+    "windows": []
+  }
+}

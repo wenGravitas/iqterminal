@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: a canceled response with an unresolved trace cannot prevent sample finalization
+ok 1 - a canceled response with an unresolved trace cannot prevent sample finalization
+  ---
+  duration_ms: 40.070637
+  type: 'test'
+  ...
+# Subtest: completed and failed traces finish without retaining a cleanup timer
+ok 2 - completed and failed traces finish without retaining a cleanup timer
+  ---
+  duration_ms: 6.824538
+  type: 'test'
+  ...
+# Subtest: ready closed history cannot end a current-display observation before healthy current paint
+ok 3 - ready closed history cannot end a current-display observation before healthy current paint
+  ---
+  duration_ms: 5.508535
+  type: 'test'
+  ...
+# Subtest: extended current observation remains active after both current and history paint
+ok 4 - extended current observation remains active after both current and history paint
+  ---
+  duration_ms: 0.87804
+  type: 'test'
+  ...
+# Subtest: wall history observation stays open until native closed coverage is inspected
+ok 5 - wall history observation stays open until native closed coverage is inspected
+  ---
+  duration_ms: 0.62128
+  type: 'test'
+  ...
+# Subtest: native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+ok 6 - native coverage cannot hide a missing interior candle behind endpoints, extra bars or a forming bar
+  ---
+  duration_ms: 2.710174
+  type: 'test'
+  ...
+# Subtest: future whitespace leaves five eligible closed slots and requires independent forming paint
+ok 7 - future whitespace leaves five eligible closed slots and requires independent forming paint
+  ---
+  duration_ms: 1.07117
+  type: 'test'
+  ...
+# Subtest: only the exact equivalence-tested scheduling source retains the prepared format identity
+ok 8 - only the exact equivalence-tested scheduling source retains the prepared format identity
+  ---
+  duration_ms: 8.894248
+  type: 'test'
+  ...
+# Subtest: canonical experiment removes only optional transport capabilities
+ok 9 - canonical experiment removes only optional transport capabilities
+  ---
+  duration_ms: 8.951971
+  type: 'test'
+  ...
+# Subtest: building work is unchanged and unsupported experiment fails explicitly
+ok 10 - building work is unchanged and unsupported experiment fails explicitly
+  ---
+  duration_ms: 6.624204
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 424.037999

@@ -1,0 +1,80 @@
+{
+  "case": "footprint-24h-1h",
+  "build": "6fc990f28fe9736d8b6270fd786996006da24702",
+  "route": "http://127.0.0.1:4187",
+  "rendering": "headless-gles",
+  "requested": {
+    "from": 1793718000000,
+    "to": 1793804400000
+  },
+  "samples": [
+    {
+      "run": 1,
+      "firstUsefulHistoryMs": 2998.100000000559,
+      "completeMs": 3654.2000000001863,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 2,
+      "firstUsefulHistoryMs": 2342.7999999998137,
+      "completeMs": 5515.700000000186,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 3,
+      "firstUsefulHistoryMs": 3087.4000000003725,
+      "completeMs": 3417.5,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 4,
+      "firstUsefulHistoryMs": 3627.600000000559,
+      "completeMs": 3734.9000000003725,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    },
+    {
+      "run": 5,
+      "firstUsefulHistoryMs": 2645.600000000559,
+      "completeMs": 2721.800000000745,
+      "requestedSlots": 24,
+      "paintedSlots": 24,
+      "validatedSlots": 24,
+      "missing": [],
+      "unvalidated": [],
+      "failures": [],
+      "coverageValid": true
+    }
+  ],
+  "medianMs": 3654.2000000001863,
+  "maximumMs": 5515.700000000186,
+  "targets": {
+    "medianMs": 5000,
+    "maximumMs": 10000
+  },
+  "pass": true,
+  "scope": "Complete available footprint loading only; all five samples retained. No finite-subset median, p95, current/warm/wall/cold-build or foreground acceptance."
+}

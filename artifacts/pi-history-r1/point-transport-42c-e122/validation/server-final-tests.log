@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: point tuples restore byte-identical JSON, decimal spelling, ordering, tiny values and negative offsets
+ok 1 - point tuples restore byte-identical JSON, decimal spelling, ordering, tiny values and negative offsets
+  ---
+  duration_ms: 4.66424
+  type: 'test'
+  ...
+# Subtest: unknown fields, scalar mismatches and fractional timestamps remain unchanged native objects
+ok 2 - unknown fields, scalar mismatches and fractional timestamps remain unchanged native objects
+  ---
+  duration_ms: 2.864049
+  type: 'test'
+  ...
+# Subtest: malformed tuples and decoded expansion past the canonical byte budget fail explicitly
+ok 3 - malformed tuples and decoded expansion past the canonical byte budget fail explicitly
+  ---
+  duration_ms: 2.068771
+  type: 'test'
+  ...
+# Subtest: bounded work checkpoints can cancel encoding and decoding without publishing a fragment
+ok 4 - bounded work checkpoints can cancel encoding and decoding without publishing a fragment
+  ---
+  duration_ms: 6.840033
+  type: 'test'
+  ...
+# Subtest: bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+ok 5 - bounded closed-record preparation resumes and exactly restores original walls and subsequent patches
+  ---
+  duration_ms: 183.486968
+  type: 'test'
+  ...
+# Subtest: source and content failures preserve the validated prefix and explicit gaps through retry
+ok 6 - source and content failures preserve the validated prefix and explicit gaps through retry
+  ---
+  duration_ms: 85.220116
+  type: 'test'
+  ...
+# Subtest: aggregate retained capacity includes closed records outside the active checkpoint
+ok 7 - aggregate retained capacity includes closed records outside the active checkpoint
+  ---
+  duration_ms: 67.196947
+  type: 'test'
+  ...
+# Subtest: a closed wall larger than one transport part preserves every exact point across fragments
+ok 8 - a closed wall larger than one transport part preserves every exact point across fragments
+  ---
+  duration_ms: 1201.098287
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2135.522747

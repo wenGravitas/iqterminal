@@ -1,0 +1,10 @@
+{
+  "clientBuild": "2bcf73d3e757adb6e4367f8c18531207c992a9d8",
+  "runningProxySourceCommit": "2bcf73d3e757adb6e4367f8c18531207c992a9d8",
+  "indexSha256": "8b0725e08c08c8856f7b285ec689d1da5532a5bdbaa049a2d2b5de805ab8e1ca",
+  "asset": "/theme-init.js",
+  "mainSha256": "ee0ad566d7fcb052323fccff72e6abb2bdb6c5a0dcff2e45fa4e565146371cae",
+  "proxyConfigSha256": "48b3c2d2661be12f4c33b02e779bcd7ead7caeb7af70de0bdd849731fed2a00f",
+  "url": "http://127.0.0.1:4187",
+  "scope": "Owned4187 preview restarted to load current-route config. Existing18780/18781 SSH PIDs unchanged; no server replacement. Worker mode/build must pass each sample."
+}

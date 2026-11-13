@@ -1,0 +1,9 @@
+{"cycle":0,"firstMs":3553.89999999851,"completeMs":13089.099999997765,"projectors":1,"workerHeap":[44577892],"paintFailure":null}
+{"cycle":1,"firstMs":403.80000000074506,"completeMs":8404.39999999851,"projectors":1,"workerHeap":[45139596],"paintFailure":null}
+{"cycle":2,"firstMs":1814.8999999985099,"completeMs":10063.10000000149,"projectors":1,"workerHeap":[49240944],"paintFailure":null}
+{"cycle":3,"firstMs":1536.0999999977648,"completeMs":7655.5,"projectors":1,"workerHeap":[50917720],"paintFailure":null}
+{"cycle":4,"firstMs":1284.6000000014901,"completeMs":9249.60000000149,"projectors":1,"workerHeap":[45269520],"paintFailure":null}
+{"cycle":5,"firstMs":564.8999999985099,"completeMs":7169.89999999851,"projectors":1,"workerHeap":[49419500],"paintFailure":null}
+{"cycle":6,"firstMs":429.5999999977648,"completeMs":9105.699999999255,"projectors":1,"workerHeap":[49388228],"paintFailure":null}
+{"cycle":7,"firstMs":597.8000000007451,"completeMs":8198.20000000298,"projectors":1,"workerHeap":[45301840],"paintFailure":null}
+{"cycle":8,"firstMs":2701.89999999851,"completeMs":7833.300000000745,"projectors":1,"workerHeap":[50854292],"paintFailure":null}
