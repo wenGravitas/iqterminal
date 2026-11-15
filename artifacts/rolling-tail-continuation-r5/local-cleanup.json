@@ -17,5 +17,11 @@
       "signal": "TERM"
     }
   ],
-  "smallSyntheticRootRemoved": true
+  "smallSyntheticRootRemoved": true,
+  "supervisorCorrection": {
+    "pid": 40068,
+    "reason": "Initial child TERM was supervised and respawned; stopped owned supervisor instead",
+    "utc": 1794726434.9273508,
+    "listenersAfter": "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n"
+  }
 }
