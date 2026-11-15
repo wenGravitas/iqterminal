@@ -70,3 +70,5 @@ Prioritized next actions:
 3. Short manual foreground check on **i3workspace9** after live candidate validation: USD-M15m Top8/10%native, two small same-start end pans, old walls visible while pending, validated horizon advances, current stays live, reopen, shifted-start honest fallback. No unattended foreground browser was launched.
 
 Backend implementation and detailed evidence: `wenGravitas/iqterminal-server`, `docs/ROLLING-TAIL-CONTINUATION-R5.md`. [R4 historical report](rolling-history-reuse-r4.md) remains unchanged apart from this follow-up link.
+
+Subsequent independent recovery task: [R6](archive-recovery-and-live-continuation-r6.md). Its archive diagnosis and live-validation blocker do not change R5's fixture scope, result or deadline.

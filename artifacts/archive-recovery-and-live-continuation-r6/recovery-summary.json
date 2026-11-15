@@ -1,0 +1,435 @@
+{
+  "scope": "Five-minute metadata-only window after two recovery interventions; no candidate continuation cohort",
+  "durationMs": 300000.09447336197,
+  "markets": {
+    "perpetual": {
+      "baselineUtc": 1794734169.1466038,
+      "baselineProgress": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "cursor": 28050121,
+        "epoch": 1794650187134,
+        "at": 1794653828671,
+        "availableFrom": 1793506604584
+      },
+      "terminalUtc": 1794734870.5245767,
+      "terminalProgress": {
+        "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "cursor": 28060995,
+        "epoch": 1794654883699,
+        "at": 1794654938546,
+        "availableFrom": 1793506604584
+      },
+      "terminalLagMs": 79931978.57666016,
+      "progressedCursors": 10874,
+      "progressedEventMs": 1109875,
+      "wallElapsedMs": 701377.9728412628,
+      "samples": 11,
+      "unavailableSamples": 7,
+      "window": [
+        {
+          "utc": 1794734557.375693,
+          "rawHead": {
+            "cursor": 28838049,
+            "at": 1794734548099,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28052937,
+            "at": 1794654114985,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734587.3790412,
+          "rawHead": {
+            "cursor": 28838369,
+            "at": 1794734580639,
+            "epoch": 1794734373793
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 318,
+            "cursor": 28054279,
+            "lag": 783979,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734617.389175,
+          "rawHead": {
+            "cursor": 28838708,
+            "at": 1794734615121,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28054535,
+            "at": 1794654277369,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734647.392885,
+          "rawHead": {
+            "cursor": 28838976,
+            "at": 1794734642361,
+            "epoch": 1794734373793
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 28055559,
+            "lag": 783321,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734677.3967369,
+          "rawHead": {
+            "cursor": 28839277,
+            "at": 1794734672961,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28056071,
+            "at": 1794654433539,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734707.4016097,
+          "rawHead": {
+            "cursor": 28839576,
+            "at": 1794734703358,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28056583,
+            "at": 1794654485559,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734737.4046202,
+          "rawHead": {
+            "cursor": 28839870,
+            "at": 1794734733246,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28056839,
+            "at": 1794654511671,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734767.4071271,
+          "rawHead": {
+            "cursor": 28840140,
+            "at": 1794734760686,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28057351,
+            "at": 1794654563691,
+            "epoch": 1794650187134
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734797.4130583,
+          "rawHead": {
+            "cursor": 28840379,
+            "at": 1794734784968,
+            "epoch": 1794734373793
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 28058631,
+            "lag": 781748,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734827.4429648,
+          "rawHead": {
+            "cursor": 28840732,
+            "at": 1794734820878,
+            "epoch": 1794734373793
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 28059655,
+            "lag": 780961,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734857.375786,
+          "rawHead": {
+            "cursor": 28841003,
+            "at": 1794734848423,
+            "epoch": 1794734373793
+          },
+          "archiveHead": {
+            "cursor": 28060739,
+            "at": 1794654912536,
+            "epoch": 1794654883699
+          },
+          "archivePinned": null,
+          "unavailable": true
+        }
+      ],
+      "illustrativeCatchupHoursAtObservedRate": 38.1224922446035
+    },
+    "spot": {
+      "baselineUtc": 1794734169.1466038,
+      "baselineProgress": {
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "cursor": 24129518,
+        "epoch": 1794649742287,
+        "at": 1794649871250,
+        "availableFrom": 1793521565645
+      },
+      "terminalUtc": 1794734870.5245767,
+      "terminalProgress": {
+        "profile": "binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1",
+        "cursor": 24161421,
+        "epoch": 1794652484469,
+        "at": 1794653077341,
+        "availableFrom": 1793521565645
+      },
+      "terminalLagMs": 81793183.57666016,
+      "progressedCursors": 31903,
+      "progressedEventMs": 3206091,
+      "wallElapsedMs": 701377.9728412628,
+      "samples": 11,
+      "unavailableSamples": 6,
+      "window": [
+        {
+          "utc": 1794734557.375693,
+          "rawHead": {
+            "cursor": 24970550,
+            "at": 1794734554849,
+            "epoch": 1794734406637
+          },
+          "archiveHead": {
+            "cursor": 24139786,
+            "at": 1794650903448,
+            "epoch": 1794650567898
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734587.3790412,
+          "rawHead": {
+            "cursor": 24970811,
+            "at": 1794734580850,
+            "epoch": 1794734406637
+          },
+          "archiveHead": {
+            "cursor": 24142090,
+            "at": 1794651133850,
+            "epoch": 1794650567898
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734617.389175,
+          "rawHead": {
+            "cursor": 24971145,
+            "at": 1794734614150,
+            "epoch": 1794734406637
+          },
+          "archiveHead": {
+            "cursor": 24144650,
+            "at": 1794651390152,
+            "epoch": 1794650567898
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734647.392885,
+          "rawHead": {
+            "cursor": 24971451,
+            "at": 1794734644653,
+            "epoch": 1794734406637
+          },
+          "archiveHead": {
+            "cursor": 24147210,
+            "at": 1794651647552,
+            "epoch": 1794650567898
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734677.3967369,
+          "rawHead": {
+            "cursor": 24971731,
+            "at": 1794734672553,
+            "epoch": 1794734406637
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 24149002,
+            "lag": 822672,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734707.4016097,
+          "rawHead": {
+            "cursor": 24971982,
+            "at": 1794734702143,
+            "epoch": 1794734687106
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 24150538,
+            "lag": 821384,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734737.4046202,
+          "rawHead": {
+            "cursor": 24972307,
+            "at": 1794734734543,
+            "epoch": 1794734687106
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 24152842,
+            "lag": 819407,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734767.4071271,
+          "rawHead": {
+            "cursor": 24972621,
+            "at": 1794734765943,
+            "epoch": 1794734687106
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 24155146,
+            "lag": 817408,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734797.4130583,
+          "rawHead": {
+            "cursor": 24972892,
+            "at": 1794734792943,
+            "epoch": 1794734687106
+          },
+          "archiveHead": {
+            "cursor": 24156301,
+            "at": 1794652563645,
+            "epoch": 1794652484469
+          },
+          "archivePinned": null,
+          "unavailable": true
+        },
+        {
+          "utc": 1794734827.4429648,
+          "rawHead": {
+            "cursor": 24973182,
+            "at": 1794734821843,
+            "epoch": 1794734687106
+          },
+          "archiveHead": null,
+          "archivePinned": {
+            "pages": 2,
+            "processed": 512,
+            "cursor": 24158605,
+            "lag": 814513,
+            "caughtUp": false
+          },
+          "unavailable": false
+        },
+        {
+          "utc": 1794734857.375786,
+          "rawHead": {
+            "cursor": 24973511,
+            "at": 1794734854743,
+            "epoch": 1794734687106
+          },
+          "archiveHead": {
+            "cursor": 24160909,
+            "at": 1794653025840,
+            "epoch": 1794652484469
+          },
+          "archivePinned": null,
+          "unavailable": true
+        }
+      ],
+      "illustrativeCatchupHoursAtObservedRate": 6.3622211259763715
+    }
+  },
+  "terminalMemory": [
+    {
+      "metric": "Merge",
+      "value": 8
+    },
+    {
+      "metric": "MemoryTracking",
+      "value": 2980786071
+    },
+    {
+      "metric": "MergesMutationsMemoryTracking",
+      "value": 881916587
+    },
+    {
+      "metric": "IndexMarkCacheBytes",
+      "value": 134217696
+    }
+  ],
+  "decision": {
+    "archiveQueryAvailability": "BLOCKED: required source proof fails after both interventions",
+    "horizon": "RECOVERING, NOT FRESH",
+    "continuation": "IMPLEMENTED, VALIDATION INCOMPLETE",
+    "release": "BLOCKED",
+    "checkpointUtc": "2026-11-15T09:28:10.374826+00:00",
+    "checkpointReason": "Early decision: two permitted recovery interventions exhausted; remaining diagnostic proposal needs additional authority; no wait to consume budget."
+  },
+  "rateCaveat": "Illustrative constant-rate arithmetic over11.69min, not a forecast or latency certification; neither archive would catch up within the remaining R6 budget at that rate."
+}
