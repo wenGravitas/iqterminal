@@ -5,8 +5,8 @@ import{hash,fixture,from,to,profile,normalized}from'./helpers/prepared-wall-fixt
 import{WALL_PROJECTION_CORE_SHA256}from'../src/shared/order-walls-projection-version';
 const frozen=()=>Object.freeze([{value:'immutable'}]);
 const part=(s:string)=>({hash:s.repeat(64),bytes:500,records:1});
-test('transactions charge pending members; abort, leases, eviction and expiration stay bounded',()=>{
- let clock=0;const cache=new PreparedWallPartCache(4000,2,()=>clock),parts=[part('a'),part('b'),part('c')];
+test('transactions charge pending members; abort, leases, invalidation and eviction stay bounded',()=>{
+ const cache=new PreparedWallPartCache(4000,2),parts=[part('a'),part('b'),part('c')];
  const seed=cache.begin('family',parts);seed.stage(0,frozen(),0);seed.stage(1,frozen(),0);
  expect(cache.diagnostics()).toMatchObject({stagedEntries:2,accountedBytes:3024});
  const concurrent=cache.begin('family',parts);expect(concurrent.get(0)).toBeUndefined();concurrent.release();seed.commit();seed.release();
@@ -15,7 +15,7 @@ test('transactions charge pending members; abort, leases, eviction and expiratio
  const aborted=cache.begin('family',parts);aborted.stage(0,frozen(),0);aborted.release();expect(cache.diagnostics()).toMatchObject({entries:0,stagedEntries:0,pinnedEntries:0});
  const full=cache.begin('family',parts);full.stage(0,frozen(),0);full.stage(1,frozen(),0);full.commit();full.release();
  const replacement=cache.begin('other',[parts[2]!]);replacement.stage(0,frozen(),0);replacement.commit();replacement.release();expect(cache.diagnostics().evictions).toBe(1);
- clock=61000;const expired=cache.begin('other',[parts[2]!]);expect(expired.get(0)).toBeUndefined();expired.release();cache.dispose();expect(cache.diagnostics().accountedBytes).toBe(0);
+ const retained=cache.begin('other',[parts[2]!]);expect(retained.get(0)).toEqual(frozen());retained.release();cache.dispose();expect(cache.diagnostics().accountedBytes).toBe(0);
 });
 function generation(n:number){
  const at=to+1000,B=fixture().page.patches[2].bids.upserts[0],C={...B,entryId:'C',startedAt:at,startCursor:5,startEpoch:2},D={...C,entryId:'D',startedAt:at+60000,startCursor:6};
