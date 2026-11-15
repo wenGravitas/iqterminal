@@ -1,0 +1,11 @@
+{
+  "commit": "38722d962e09628bb886b452e711edf433feed9a",
+  "exitCode": 0,
+  "outDir": "artifacts/archive-capacity-recovery-and-live-validation/dist-validation",
+  "flags": {
+    "VITE_BUILD_COMMIT": "38722d962e09628bb886b452e711edf433feed9a",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  }
+}

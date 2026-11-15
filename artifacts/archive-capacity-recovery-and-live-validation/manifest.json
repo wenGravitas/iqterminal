@@ -1,0 +1,33 @@
+{
+  "task": "archive-capacity-recovery-and-live-validation",
+  "startUtc": "2026-11-15T10:00:44Z",
+  "experimentCutoffUtc": "2026-11-15T11:40:44Z",
+  "deadlineUtc": "2026-11-15T12:00:44Z",
+  "frontendBaseline": "38722d962e09628bb886b452e711edf433feed9a",
+  "backendBaseline": "79a72b36a278788f09886207234860d224155bd8",
+  "priorTaskFound": false,
+  "testedClient": "5a09b80039af79051c21310a48d9fe4715f4674e",
+  "testedBackend": "63ce16c5383fb343d2b793a2c404a38f6901abdd",
+  "host": {
+    "name": "pi",
+    "architecture": "aarch64",
+    "chromium": "155.0.8059.79 Debian12",
+    "node": "v22.19.0",
+    "mode": "headless --use-angle=gles; renderer not independently captured; foreground manual i3workspace9"
+  },
+  "storageAllowanceApproval": {
+    "receivedUtc": "2026-11-15T11:05:00Z",
+    "receivedUtcPrecision": "approximate; first tool clock after reply11:05:19",
+    "scope": "explicit user approval bounded2.5GiB isolated candidate only",
+    "bytes": 2684354560
+  },
+  "experimentsEndedUtc": "2026-11-15T11:16:02.234095376Z",
+  "cleanupObservedUtc": "2026-11-15T11:19:01.154115+00:00",
+  "decision": {
+    "archiveAvailability": "recovered in bounded normal-load checks",
+    "spotFreshness": "fresh at cleanup",
+    "usdMFreshnessLagHours": 12.185249754299587,
+    "continuation": "VERIFIED two real nonempty same-start extensions, exact reference equality and painted ordinary client delivery",
+    "release": "BLOCKED; fresh-now/normal-route capacity and existing manual/reliability gates remain"
+  }
+}

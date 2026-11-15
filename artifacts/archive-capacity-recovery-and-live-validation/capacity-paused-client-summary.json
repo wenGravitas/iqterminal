@@ -1,0 +1,41 @@
+{
+  "scope": "Compiled5a09b8/backendb8be081, fresh browser context over ready parent; attempted first extension storage-paused; no second extension/reopen completion claim. Sampling1s; static worker metadata overlay only.",
+  "samples": 131,
+  "elapsedMs": 136672.09528,
+  "parentPaintObservedUpperBoundMs": 9603.513968,
+  "confirmedFootprintAcks": 217,
+  "firstConfirmed": 3525736097,
+  "lastConfirmed": 3525737585,
+  "longestObservedConfirmationGapMs": 1829.3999999985099,
+  "currentWallsSamples": 130,
+  "currentWallLastConfirmed": [
+    1794739350751,
+    1794739481117
+  ],
+  "pendingValidatedHorizons": [
+    1794651300000
+  ],
+  "retainedSegmentCounts": [
+    46225
+  ],
+  "zeroProjectedCountWhileReprojectionPending": 2,
+  "socketCloses": [
+    {
+      "seq": 20,
+      "event": "close",
+      "mono": 4019,
+      "id": 1,
+      "code": 1008,
+      "reason": "Invalid command"
+    },
+    {
+      "seq": 65,
+      "event": "close",
+      "mono": 9993.699999999255,
+      "id": 3,
+      "code": 1008,
+      "reason": "Invalid command"
+    }
+  ],
+  "errors": "Error: extension-1 observation cutoff {\"state\":\"loading\",\"message\":\"Wall history preparation paused: Derived cache budget or filesystem headroom. Resumes automatically when capacity recovers. (source; 0 canonical / 0 selected parts.)\",\"coverage\":{\"from\":1794541500000,\"to\":1794651300000,\"complete\":false,\"partial\":true,\"reason\":\"Depth continuity gaps are present in the requested range\"},\"archive\":{\"profileId\":\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",\"state\":\"building\",\"from\":1794541500000,\"to\":1794653100000,\"rangeComplete\":false,\"market\":\"perpetual\",\"feed\":\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\",\"aggregation\":\"native\",\"availableFrom\":1793506604584,\"confirmedTo\":1794651300000,\"gaps\":[{\"from\":1794545328626,\"to\":1794545328626,\"reason\":\"Observed book capacity: epoch invalidated\"},{\"from\":1794583867958,\"to\":1794583867958,\"reason\":\"Observed book capacity: epoch invalidated\"},{\"from\":1794597874175,\"to\":1794597874175,\"reason\":\"Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\\n\"},{\"from\":1794614640485,\"to\":1794614640485,\"reason\":\"ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w\"},{\"from\":1794646205549,\"to\":1794646205549,\"reason\":\"Shared disk watermark\"},{\"from\":1794648909582,\"to\":1794648909582,\"reason\":\"ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w\"},{\"from\":1794649562919,\"to\":1794649562919,\"reason\":\"ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w\"},{\"from\":1794650185461,\"to\":1794650185461,\"reason\":\"ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w\"}],\"requestedBandPercent\":10,\"profileBandPercent\":10,\"requestedTopN\":8,\"exact\":true,\"reason\":\"Wall history preparation paused: Derived cache budget or filesystem headroom. Resumes automatically when capacity recovers. (source; 0 canonical / 0 selected parts.)\",\"requestComplete\":false,\"loadedThrough\":1794651300000,\"profileVersion\":1,\"algorithmVersion\":1,\"schemaVersion\":1,\"midpoint\":\"67223.65\",\"eligibleTo\":1794651300000,\"horizonAt\":1794679707568,\"preparation\":{\"id\":\"4f4a13dc26aab1d52b2d2c3e0f79362362d78e6b964707d6f78ebb884dafd946\",\"phase\":\"source\",\"state\":\"paused\",\"pages\":0,\"projectionPages\":0,\"category\":\"capacity\",\"error\":\"Derived cache budget or filesystem headroom. Resumes automatically when capacity recovers.\",\"retryable\":true}},\"currentSubscribed\":false}"
+}

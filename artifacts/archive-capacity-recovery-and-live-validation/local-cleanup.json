@@ -1,0 +1,11 @@
+{
+  "utc": "2026-11-15T11:22:25.073382+00:00",
+  "ownedPortsClosed": [
+    4204,
+    18990,
+    18991
+  ],
+  "browser": "Playwright browser.close completed in cohort finally",
+  "mode": "headless, no foreground browser opened",
+  "ordinaryFrontendUntouched": true
+}

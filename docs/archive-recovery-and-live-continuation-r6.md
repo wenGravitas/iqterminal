@@ -59,3 +59,8 @@ The backend **R6-ARCHIVE-RECOVERY-PROPOSAL.md** contains exact commands, precond
 That third intervention was **not authorized or executed**, because the user's R6 limit is two. No vague healthy-window request, shared-limit increase, raw-capture stop or speculative restart is substituted. After a durable verified dependency correction, run the isolated protocol5 real parent/two-extension/reopen cohort. Foreground checking remains manual on **i3workspace9** after live validation.
 
 Detailed diagnosis, raw receipts, resource identities, proposed diagnostic and rollback: backend `docs/ARCHIVE-RECOVERY-AND-LIVE-CONTINUATION-R6.md` and `artifacts/archive-recovery-and-live-continuation-r6/`. [R5 handoff](rolling-tail-continuation-r5.md) remains valid under its original scope.
+
+
+## Subsequent separately authorized recovery
+
+[archive-capacity-recovery-and-live-validation](archive-capacity-recovery-and-live-validation.md) records the new archive allocation, source proofs and candidate checks. R6 above retains its original deadline, failed results and scope.
