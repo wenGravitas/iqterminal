@@ -191,7 +191,7 @@ export class OrderWallsArchiveService {
       }
       sub.pendingViewport = undefined; return;
     }
-    if (canCoalesceLiveViewport(previousViewport, nextViewport)) {
+    if (canCoalesceHistoryViewport(previousViewport, nextViewport)) {
       sub.pendingViewport = nextViewport;
       if (sub.historyJob?.settled) this.tryStartPendingViewportHistory(sub);
       return;
@@ -868,9 +868,12 @@ export class OrderWallsArchiveService {
   }
 }
 
-function canCoalesceLiveViewport(previous: { from: number; to: number; followLive?: boolean },
+function canCoalesceHistoryViewport(previous: { from: number; to: number; followLive?: boolean },
   next: { from: number; to: number; followLive?: boolean }) {
-  if (!previous.followLive || !next.followLive || next.to <= previous.to || next.from < previous.from) return false;
+  // A fixed-start retained view also extends the same validated prefix. Keep
+  // its presentation/current group while independently validating the new end.
+  const fixedStart=next.from===previous.from;
+  if ((!previous.followLive||!next.followLive)&&!fixedStart||next.to<=previous.to||next.from<previous.from) return false;
   const previousSpan = previous.to - previous.from, nextSpan = next.to - next.from;
   if (previousSpan <= 0 || nextSpan <= 0 || next.to - previous.to > Math.max(60_000, previousSpan * 0.1)) return false;
   const overlap = Math.max(0, Math.min(previous.to, next.to) - Math.max(previous.from, next.from));

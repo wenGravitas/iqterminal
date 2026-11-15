@@ -3,8 +3,8 @@ import{projectionOnlyFixture,profile,settings}from'./helpers/prepared-wall-fixtu
 import{OrderWallsArchiveService}from'../src/feed/order-walls-archive-service';
 const from=1800000000000,to=from+30*3600000,ends=[to,to+7429,to+14858];
 const usdm={...profile,id:'binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1',market:'perpetual',instrument:'binance:perpetual:BTCUSDT',feed:'binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded'};
-test('ordinary viewport commands keep the validated prefix through two pending same-start projection extensions and advance only after validation',async()=>{
- vi.stubEnv('VITE_HISTORY_TILES','1');const fixtures=ends.map(end=>projectionOnlyFixture(true,end,from,usdm)),events:any[]=[],discoveries:number[]=[],releases:Array<()=>void>=[],entered=new Set<number>();let now=to;const gates=[Promise.resolve(),new Promise<void>(r=>releases[1]=r),new Promise<void>(r=>releases[2]=r)];
+for(const followLive of [true,false])test(`ordinary ${followLive?'live':'historical'} viewport commands keep the validated prefix through two pending same-start extensions`,async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const fixtures=ends.map(end=>projectionOnlyFixture(true,end,from,usdm)),events:any[]=[],discoveries:number[]=[],releases:Array<()=>void>=[],entered=new Set<number>();let now=followLive?to:to+24*3600000;const gates=[Promise.resolve(),new Promise<void>(r=>releases[1]=r),new Promise<void>(r=>releases[2]=r)];
  const fetcher:typeof fetch=async(input,init)=>{
   const url=new URL(String(input),'http://fixture'),index=Math.max(0,ends.indexOf(Number(url.searchParams.get('to'))));
   if(init?.method==='DELETE'||url.pathname.endsWith('/reader'))return Response.json({version:1,leaseMs:15000});
@@ -18,14 +18,14 @@ test('ordinary viewport commands keep the validated prefix through two pending s
  const service=new OrderWallsArchiveService(e=>events.push(e),fetcher,()=>now);
  const latest=()=>events.filter(e=>e.type==='order-wall-batch').at(-1);
  try{
-  service.subscribe('r5-view',{market:'binance-perp',from,to,settings,followLive:true});await vi.waitFor(()=>expect(latest()?.status.archive?.requestComplete,JSON.stringify(latest()?.status)).toBe(true));
+  service.subscribe('r5-view',{market:'binance-perp',from,to,settings,followLive});await vi.waitFor(()=>expect(latest()?.status.archive?.requestComplete,JSON.stringify(latest()?.status)).toBe(true));
   for(let i=1;i<ends.length;i++){
-   const before=events.length,oldLoaded=latest().status.archive.loadedThrough;now=ends[i];service.command({type:'order-wall-viewport',id:'r5-view',from,to:ends[i],autoPriceWidth:0});
+   const before=events.length,oldLoaded=latest().status.archive.loadedThrough;if(followLive)now=ends[i];service.command({type:'order-wall-viewport',id:'r5-view',from,to:ends[i],autoPriceWidth:0});
    await vi.waitFor(()=>expect(entered.has(i)).toBe(true));const pending=latest();expect(pending.status.archive).toMatchObject({from,to:ends[i],requestComplete:false,loadedThrough:oldLoaded});
    expect(events.slice(before).filter(e=>e.kind==='snapshot')).toHaveLength(0);expect(service.diagnostics().historyJobs).toBe(1);
    releases[i]();await vi.waitFor(()=>expect(latest().status.archive.requestComplete).toBe(true));expect(latest().status.archive).toMatchObject({from,to:ends[i],loadedThrough:ends[i],exact:true});expect(latest().status.archive.gaps).toHaveLength(1);
   }
-  expect(discoveries).toEqual(ends);expect(service.diagnostics().groups).toBe(1);
+  expect(discoveries).toEqual(ends);expect(service.diagnostics().groups).toBe(followLive?1:0);
   service.unsubscribe('r5-view');expect(service.diagnostics()).toMatchObject({subscriptions:0,historyJobs:0,historyConsumers:0,historyActiveJobs:0});
  }finally{releases.forEach(r=>r?.());service.dispose();vi.unstubAllEnvs();}
 });
