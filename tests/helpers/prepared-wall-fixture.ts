@@ -7,11 +7,11 @@ export const from=1800000000000,to=from+30*3600000,settings=orderWallsSettings({
 export const normalized={topLevels:8,minimumNotionalEnabled:false,minimumNotionalUsd:0,minDurationMs:0};
 export const profile:any={id:'binance-spot-btcusdt-feed-spot-diff-depth-band-10pct-agg-native-top10-a1-s1',version:1,market:'spot',venue:'binance',instrument:'binance:spot:BTCUSDT',feed:'binance:spot:BTCUSDT:spot-diff-depth',aggregation:'native',bandPercent:10,midpointBasis:'best-observed-bid-ask',topN:10,algorithmVersion:1,schemaVersion:1,confirmationMs:0,selectionTopN:10,minimumNotionalUsd:null,exactDerivations:{bandPercent:[10],topNMax:10,minimumNotional:true,confirmation:true}};
 export const oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
-export function fixture(split=false,end=to,start=from){
- const from=start,to=end,oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
+export function fixture(split=false,end=to,start=from,sourceProfile=profile){
+ const profile=sourceProfile;const from=start,to=end,oldHead={cursor:30,epoch:2,at:to+1000},head={cursor:40,epoch:3,at:to+2000};
  const coverage:any={availableFrom:from-1000,requestedFrom:from,requestedTo:to,confirmedTo:to,gaps:[{at:from+3000,reason:'Observed disconnect'}],partial:true,status:'partial'};
  const candidate=(id:string)=>({entryId:id,side:'bid',price:'100.00000001',quantity:'2.000000000001',notional:'200.0000000001',rank:1,startedAt:from-1000,startCursor:1,startEpoch:1,startKnown:true});
- const page:any={version:1,profile,market:'spot',instrument:profile.instrument,feed:profile.feed,from,to,watermark:30,head:oldHead,
+ const page:any={version:1,profile,market:profile.market,instrument:profile.instrument,feed:profile.feed,from,to,watermark:30,head:oldHead,
   page:{after:1,nextAfter:30,hasMore:false,lastAt:to,limit:4096,sameMillisecondClosed:true},seed:{at:from-1,cursor:1,epoch:1,midpoint:'100',bids:[candidate('A')],asks:[]},
   patches:[{kind:'patch',cursor:2,epoch:1,at:from+1000,midpoint:'100',bids:{upserts:[{...candidate('A'),quantity:'3.000000000003',notional:'300.0000000003'}],removals:[]},asks:{upserts:[],removals:[]}},
    {kind:'gap',cursor:3,epoch:2,at:from+3000,midpoint:'100',reason:'Observed disconnect',bids:{upserts:[],removals:[]},asks:{upserts:[],removals:[]}},
@@ -27,16 +27,16 @@ export function fixture(split=false,end=to,start=from){
  const coordinates=groups.map(group=>group.map(()=>[index++,0]));
  const sourceKey='b'.repeat(64),sourceToken='a'.repeat(64),key=hash(JSON.stringify({version:2,sourceKey,core:WALL_PROJECTION_CORE_SHA256,settings:normalized}));
  const manifest:any={version:2,key,sourceKey,sourceToken,core:WALL_PROJECTION_CORE_SHA256,complete:true,settings:normalized,parts,closed:coordinates,active,activeOrder:active.segments.map(s=>full.segments.findIndex(v=>v.id===s.id)),coverage,profile};
- const source:any={version:1,kind:'wall-source-sha256-xor-v1',market:'spot',profile:profile.id,from,to,token:sourceToken,eligible:true,watermark:40,head};
+ const source:any={version:1,kind:'wall-source-sha256-xor-v1',market:profile.market,profile:profile.id,from,to,token:sourceToken,eligible:true,watermark:40,head};
  const canonicalText=JSON.stringify(page),canonicalPart={index:0,hash:hash(canonicalText),canonicalHash:hash(canonicalText),bytes:Buffer.byteLength(canonicalText),after:1,nextAfter:30};
- const canonical:any={version:5,key:sourceKey,complete:true,watermark:30,head:oldHead,after:30,request:{market:'spot',profile:profile.id,from,to,watermark:30,sourceRevision:hash(JSON.stringify([canonicalPart.canonicalHash]))},parts:[canonicalPart],sourceProof:{...source,watermark:30,head:oldHead}};
+ const canonical:any={version:5,key:sourceKey,complete:true,watermark:30,head:oldHead,after:30,request:{market:profile.market,profile:profile.id,from,to,watermark:30,sourceRevision:hash(JSON.stringify([canonicalPart.canonicalHash]))},parts:[canonicalPart],sourceProof:{...source,watermark:30,head:oldHead}};
  const advertised={manifest,delivery:{version:1,maxParts:32,maxDecodedBytes:8*1024*1024}};
- return {manifest,texts,source,canonical,advertised,full,page,context:{restoreProjector:true,sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:'spot' as const,settings}};
+ return {manifest,texts,source,canonical,advertised,full,page,context:{restoreProjector:true,sourceKey,sourceToken,watermark:30,epoch:2,from,to,profile:profile.id,market:profile.market as 'spot'|'perpetual',settings}};
 }
 
 /** Real pinned-source identity used by the negotiated projection response. */
-export function projectionOnlyFixture(split=true,end=to,start=from){
- const f=fixture(split,end,start),proof=f.canonical.sourceProof;
+export function projectionOnlyFixture(split=true,end=to,start=from,sourceProfile=profile){
+ const f=fixture(split,end,start,sourceProfile),proof=f.canonical.sourceProof;
  const key=hash(JSON.stringify({version:5,market:proof.market,profile:proof.profile,from:proof.from,to:proof.to,watermark:proof.watermark,sourceToken:proof.token}));
  f.canonical.key=key;f.context.sourceKey=key;f.manifest.sourceKey=key;
  f.manifest.key=hash(JSON.stringify({version:2,sourceKey:key,core:WALL_PROJECTION_CORE_SHA256,settings:normalized}));
