@@ -1,0 +1,1980 @@
+{
+  "scope": "Compiled chart and real panel/worker with explicit deterministic source/clock fixture. No live backend producer, source freshness, ACK or latency certification.",
+  "requests": [
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794617100000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-1"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725684590,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-3",
+        "x-iq-wall-consumer": "bbd32711-eb44-44bd-8b45-d1d1886db10d",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725684590,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-4",
+        "x-iq-wall-consumer": "2de451a5-b93d-421b-9c4b-a0d02c77a267",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-4"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/source",
+      "from": 1794616200000,
+      "to": 1794725684590,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-4"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725692019,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-5",
+        "x-iq-wall-consumer": "0b019cbf-9880-48a7-b8b5-14633e24679b",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725692019,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-5",
+        "x-iq-wall-consumer": "0b019cbf-9880-48a7-b8b5-14633e24679b",
+        "x-iq-wall-job": "3c172084b0135cf8ec7993881469d2b6284a0864bddc7af08e08bbf881d33605",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/preparation",
+      "from": 0,
+      "to": 0,
+      "method": "DELETE",
+      "headers": {
+        "accept": "*/*",
+        "origin": "http://127.0.0.1:4203",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-5"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-5"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/source",
+      "from": 1794616200000,
+      "to": 1794725692019,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-5"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-7",
+        "x-iq-wall-consumer": "a904ae67-ae74-451d-b785-4fe168a01177",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-7",
+        "x-iq-wall-consumer": "a904ae67-ae74-451d-b785-4fe168a01177",
+        "x-iq-wall-job": "8170a14b3b7f1374f920232585042c00a85442ea1f5fd4dc8ce3ce03d5854c8a",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/preparation",
+      "from": 0,
+      "to": 0,
+      "method": "DELETE",
+      "headers": {
+        "accept": "*/*",
+        "origin": "http://127.0.0.1:4203",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-7"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/projection-batch",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-7"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/source",
+      "from": 1794616200000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-7"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794617100000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-11"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794616200000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-13",
+        "x-iq-wall-consumer": "409e3e3f-ce34-4854-8252-efd717b60462",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/source",
+      "from": 1794616200000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-13"
+      }
+    },
+    {
+      "path": "/market-data/v1/level-watches",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794615300000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-14",
+        "x-iq-wall-consumer": "ec561c38-a2b0-4cfb-b3ba-382ad8a7a103",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794616200000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-15"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794614400000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-16",
+        "x-iq-wall-consumer": "8e91d961-eb5f-4057-a664-9775d3bd35c4",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/preparation",
+      "from": 0,
+      "to": 0,
+      "method": "DELETE",
+      "headers": {
+        "accept": "*/*",
+        "origin": "http://127.0.0.1:4203",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-14"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794615300000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-17"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794613500000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-18",
+        "x-iq-wall-consumer": "fc2b0e5d-8991-4796-b725-25fa998107a6",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/preparation",
+      "from": 0,
+      "to": 0,
+      "method": "DELETE",
+      "headers": {
+        "accept": "*/*",
+        "origin": "http://127.0.0.1:4203",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-16"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794614400000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-19"
+      }
+    },
+    {
+      "path": "/market-data/v1/order-walls/archive/current",
+      "from": 0,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/discover",
+      "from": 1794612600000,
+      "to": 1794725699448,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-20",
+        "x-iq-wall-consumer": "7a7736a4-e378-4538-8b16-4e17883f4cfd",
+        "x-iq-wall-projection": "c49394053a3cb680a12c9d0cd8d985e4f1a1ffe34cd20290aa4c4dcb6859938c",
+        "x-iq-wall-projection-only": "1",
+        "x-iq-wall-resolve-eligible": "1"
+      }
+    },
+    {
+      "path": "/market-data/v2/history/walls/preparation",
+      "from": 0,
+      "to": 0,
+      "method": "DELETE",
+      "headers": {
+        "accept": "*/*",
+        "origin": "http://127.0.0.1:4203",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-18"
+      }
+    },
+    {
+      "path": "/market-data/v1/native-candles",
+      "from": 1794613500000,
+      "to": 0,
+      "method": "GET",
+      "headers": {
+        "accept": "*/*",
+        "referer": "http://127.0.0.1:4203/assets/worker-DQrMwNKB.js",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "x-iq-view-id": "view-cbe515de-be4a-4fa5-8515-da5fec23822b-21"
+      }
+    }
+  ],
+  "captures": [
+    {
+      "phase": "initial",
+      "snapshot": {
+        "status": {
+          "state": "live",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725684590,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "partial",
+            "from": 1794616200000,
+            "to": 1794725684590,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725684590,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794725684590,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725684590,
+            "horizonAt": 1794725686590,
+            "profileStatus": "ready"
+          },
+          "message": "Current selected-profile walls are updating while archive history loads.",
+          "lastConfirmedAt": 1794725684589,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794617550,
+          "to": 1794729284.59
+        },
+        "render": {
+          "draws": 1,
+          "rebuilds": 1,
+          "patchProjects": 3,
+          "segments": 3,
+          "visible": 2,
+          "visibleHistorical": 1,
+          "visibleCurrent": 1,
+          "bytes": 736,
+          "renderMs": 10.5,
+          "maxRenderMs": 10.5,
+          "strokes": 2,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0.2999999998137355,
+          "referenceRebuilds": 1,
+          "referenceSegments": 2,
+          "referenceValueScans": 2,
+          "paintCacheHits": 0,
+          "paintCacheBuilds": 1,
+          "paintStyleVisits": 2,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 1,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 6,
+          "mappingChecks": 1,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794617550000,
+            "toMs": 1794729284590,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 11,
+          "paintedRevision": 11,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 1,
+            "steps": 6,
+            "cancelled": 0,
+            "activeMs": 7.900000000372529,
+            "lastProjectionElapsedMs": 3.199999999254942,
+            "lastReferenceElapsedMs": 2,
+            "lastSliceMs": 7.900000000372529,
+            "maxSliceMs": 7.900000000372529,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 2,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 3,
+          "openSegments": 2,
+          "retainedReferenceSegments": 2,
+          "referenceExtentValues": 2,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 2,
+          "p95RenderMs": 10.5,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 1,
+          "valueRuns": 4,
+          "archiveValueRuns": 3,
+          "directValueRuns": 1,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109480590,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          },
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "pending-1",
+      "snapshot": {
+        "status": {
+          "state": "live",
+          "message": "Preparing wall history: projection; 0 canonical / 0 selected parts.",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725684590,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "building",
+            "from": 1794616200000,
+            "to": 1794725692019,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725684590,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1794725684590,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725684590,
+            "horizonAt": 1794725686590,
+            "reason": "Preparing wall history: projection; 0 canonical / 0 selected parts.",
+            "preparation": {
+              "id": "3c172084b0135cf8ec7993881469d2b6284a0864bddc7af08e08bbf881d33605",
+              "phase": "projection",
+              "state": "building",
+              "pages": 0,
+              "projectionPages": 0,
+              "sourceCoverage": {
+                "availableFrom": 1794613950000,
+                "confirmedTo": 1794725684590,
+                "gapCount": 1,
+                "gapsTruncated": false
+              }
+            },
+            "profileStatus": "ready"
+          },
+          "lastConfirmedAt": 1794725684589,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794618449.9964757,
+          "to": 1794730184.5864756
+        },
+        "render": {
+          "draws": 8,
+          "rebuilds": 6,
+          "patchProjects": 18,
+          "segments": 3,
+          "visible": 2,
+          "visibleHistorical": 1,
+          "visibleCurrent": 1,
+          "bytes": 736,
+          "renderMs": 15.30000000167638,
+          "maxRenderMs": 10.5,
+          "strokes": 2,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0,
+          "referenceRebuilds": 6,
+          "referenceSegments": 2,
+          "referenceValueScans": 2,
+          "paintCacheHits": 2,
+          "paintCacheBuilds": 6,
+          "paintStyleVisits": 12,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 6,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 6,
+          "mappingChecks": 8,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794618449996.4756,
+            "toMs": 1794730184586.4756,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 13,
+          "paintedRevision": 13,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 8,
+            "steps": 38,
+            "cancelled": 0,
+            "activeMs": 10.700000001117587,
+            "lastProjectionElapsedMs": 0.20000000018626451,
+            "lastReferenceElapsedMs": 0,
+            "lastSliceMs": 0.40000000037252903,
+            "maxSliceMs": 7.900000000372529,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 2,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 3,
+          "openSegments": 2,
+          "retainedReferenceSegments": 2,
+          "referenceExtentValues": 2,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 2,
+          "p95RenderMs": 1.2999999998137355,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 1,
+          "valueRuns": 4,
+          "archiveValueRuns": 3,
+          "directValueRuns": 1,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109480590,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          },
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "complete-1",
+      "snapshot": {
+        "status": {
+          "state": "gap",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725692019,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "partial",
+            "from": 1794616200000,
+            "to": 1794725692019,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725692019,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794725692019,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725692019,
+            "horizonAt": 1794725694019,
+            "profileStatus": "ready"
+          },
+          "message": "Order Walls current delta page must not replace its bootstrap state",
+          "lastConfirmedAt": 1794725684589,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794618449.9964757,
+          "to": 1794730184.5864756
+        },
+        "render": {
+          "draws": 13,
+          "rebuilds": 7,
+          "patchProjects": 20,
+          "segments": 2,
+          "visible": 1,
+          "visibleHistorical": 1,
+          "visibleCurrent": 0,
+          "bytes": 504,
+          "renderMs": 17.100000001490116,
+          "maxRenderMs": 10.5,
+          "strokes": 1,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0,
+          "referenceRebuilds": 7,
+          "referenceSegments": 0,
+          "referenceValueScans": 0,
+          "paintCacheHits": 5,
+          "paintCacheBuilds": 8,
+          "paintStyleVisits": 14,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 8,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 6,
+          "mappingChecks": 13,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794618449996.4756,
+            "toMs": 1794730184586.4756,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 19,
+          "paintedRevision": 19,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 13,
+            "steps": 46,
+            "cancelled": 0,
+            "activeMs": 11.200000000186265,
+            "lastProjectionElapsedMs": 0,
+            "lastReferenceElapsedMs": 0,
+            "lastSliceMs": 0,
+            "maxSliceMs": 7.900000000372529,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 1,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 2,
+          "openSegments": 1,
+          "retainedReferenceSegments": 1,
+          "referenceExtentValues": 1,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200.0000000001,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 1,
+          "p95RenderMs": 1.2999999998137355,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 0,
+          "valueRuns": 3,
+          "archiveValueRuns": 3,
+          "directValueRuns": 0,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109488019,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          },
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "pending-2",
+      "snapshot": {
+        "status": {
+          "state": "gap",
+          "message": "Order Walls current delta page must not replace its bootstrap state",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725692019,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "building",
+            "from": 1794616200000,
+            "to": 1794725699448,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725692019,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": false,
+            "loadedThrough": 1794725692019,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725692019,
+            "horizonAt": 1794725694019,
+            "reason": "Preparing wall history: projection; 0 canonical / 0 selected parts.",
+            "preparation": {
+              "id": "8170a14b3b7f1374f920232585042c00a85442ea1f5fd4dc8ce3ce03d5854c8a",
+              "phase": "projection",
+              "state": "building",
+              "pages": 0,
+              "projectionPages": 0,
+              "sourceCoverage": {
+                "availableFrom": 1794613950000,
+                "confirmedTo": 1794725692019,
+                "gapCount": 1,
+                "gapsTruncated": false
+              }
+            },
+            "profileStatus": "ready"
+          },
+          "lastConfirmedAt": 1794725684589,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794619349.9929514,
+          "to": 1794731084.5829513
+        },
+        "render": {
+          "draws": 18,
+          "rebuilds": 12,
+          "patchProjects": 30,
+          "segments": 2,
+          "visible": 1,
+          "visibleHistorical": 1,
+          "visibleCurrent": 0,
+          "bytes": 504,
+          "renderMs": 19.200000000186265,
+          "maxRenderMs": 10.5,
+          "strokes": 1,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0.19999999925494194,
+          "referenceRebuilds": 12,
+          "referenceSegments": 1,
+          "referenceValueScans": 1,
+          "paintCacheHits": 5,
+          "paintCacheBuilds": 13,
+          "paintStyleVisits": 19,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 13,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 6,
+          "mappingChecks": 18,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794619349992.9514,
+            "toMs": 1794731084582.9514,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 22,
+          "paintedRevision": 22,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 18,
+            "steps": 66,
+            "cancelled": 0,
+            "activeMs": 12.399999999441206,
+            "lastProjectionElapsedMs": 0.09999999962747097,
+            "lastReferenceElapsedMs": 0,
+            "lastSliceMs": 0.20000000018626451,
+            "maxSliceMs": 7.900000000372529,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 1,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 2,
+          "openSegments": 1,
+          "retainedReferenceSegments": 1,
+          "referenceExtentValues": 1,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200.0000000001,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 1,
+          "p95RenderMs": 1.2999999998137355,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 0,
+          "valueRuns": 3,
+          "archiveValueRuns": 3,
+          "directValueRuns": 0,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109488019,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          },
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "complete-2",
+      "snapshot": {
+        "status": {
+          "state": "gap",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725699448,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "partial",
+            "from": 1794616200000,
+            "to": 1794725699448,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725699448,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794725699448,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725699448,
+            "horizonAt": 1794725701448,
+            "profileStatus": "ready"
+          },
+          "message": "Order Walls current delta page must not replace its bootstrap state",
+          "lastConfirmedAt": 1794725684589,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794619349.9929514,
+          "to": 1794731084.5829513
+        },
+        "render": {
+          "draws": 21,
+          "rebuilds": 13,
+          "patchProjects": 32,
+          "segments": 2,
+          "visible": 1,
+          "visibleHistorical": 1,
+          "visibleCurrent": 0,
+          "bytes": 504,
+          "renderMs": 20.299999999813735,
+          "maxRenderMs": 10.5,
+          "strokes": 1,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0,
+          "referenceRebuilds": 13,
+          "referenceSegments": 1,
+          "referenceValueScans": 1,
+          "paintCacheHits": 7,
+          "paintCacheBuilds": 14,
+          "paintStyleVisits": 20,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 14,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 6,
+          "mappingChecks": 21,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794619349992.9514,
+            "toMs": 1794731084582.9514,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 27,
+          "paintedRevision": 27,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 21,
+            "steps": 72,
+            "cancelled": 0,
+            "activeMs": 12.899999999441206,
+            "lastProjectionElapsedMs": 0.09999999962747097,
+            "lastReferenceElapsedMs": 0.10000000055879354,
+            "lastSliceMs": 0.2999999998137355,
+            "maxSliceMs": 7.900000000372529,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 1,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 2,
+          "openSegments": 1,
+          "retainedReferenceSegments": 1,
+          "referenceExtentValues": 1,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200.0000000001,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 1,
+          "p95RenderMs": 1.2999999998137355,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 0,
+          "valueRuns": 3,
+          "archiveValueRuns": 3,
+          "directValueRuns": 0,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109495448,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          },
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "reopen",
+      "snapshot": {
+        "status": {
+          "state": "live",
+          "coverage": {
+            "from": 1794616200000,
+            "to": 1794725699448,
+            "complete": false,
+            "partial": true
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "partial",
+            "from": 1794616200000,
+            "to": 1794725699448,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "availableFrom": 1794616199000,
+            "confirmedTo": 1794725699448,
+            "gaps": [
+              {
+                "from": 1794616203000,
+                "to": 1794616203000,
+                "reason": "Observed disconnect"
+              }
+            ],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": true,
+            "loadedThrough": 1794725699448,
+            "profileVersion": 1,
+            "algorithmVersion": 1,
+            "schemaVersion": 1,
+            "midpoint": "100",
+            "eligibleTo": 1794725699448,
+            "horizonAt": 1794725701448,
+            "profileStatus": "ready"
+          },
+          "message": "Current selected-profile walls are updating while archive history loads.",
+          "lastConfirmedAt": 1794725699447,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794617550,
+          "to": 1794729284.59
+        },
+        "render": {
+          "draws": 3,
+          "rebuilds": 3,
+          "patchProjects": 7,
+          "segments": 3,
+          "visible": 2,
+          "visibleHistorical": 1,
+          "visibleCurrent": 1,
+          "bytes": 736,
+          "renderMs": 1.2999999998137355,
+          "maxRenderMs": 0.599999999627471,
+          "strokes": 2,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0,
+          "referenceRebuilds": 3,
+          "referenceSegments": 2,
+          "referenceValueScans": 2,
+          "paintCacheHits": 0,
+          "paintCacheBuilds": 3,
+          "paintStyleVisits": 4,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 3,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 7,
+          "mappingChecks": 3,
+          "mappingFallbacks": 0,
+          "paintedViewport": {
+            "fromMs": 1794617550000,
+            "toMs": 1794729284590,
+            "minPrice": 98.75,
+            "maxPrice": 101.25,
+            "plotWidth": 1436,
+            "plotHeight": 840
+          },
+          "inputRevision": 9,
+          "paintedRevision": 9,
+          "pendingProjectionSegments": 0,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 3,
+            "steps": 14,
+            "cancelled": 0,
+            "activeMs": 0.6999999983236194,
+            "lastProjectionElapsedMs": 0.19999999925494194,
+            "lastReferenceElapsedMs": 0.10000000055879354,
+            "lastSliceMs": 0.39999999944120646,
+            "maxSliceMs": 0.39999999944120646,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 2,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 3,
+          "openSegments": 2,
+          "retainedReferenceSegments": 2,
+          "referenceExtentValues": 2,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 200,
+          "referenceMaximum": 200.0000000001,
+          "retainedDrawables": 2,
+          "p95RenderMs": 0.5,
+          "mounted": true,
+          "archiveSegments": 2,
+          "directSegments": 1,
+          "valueRuns": 4,
+          "archiveValueRuns": 3,
+          "directValueRuns": 1,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [
+          {
+            "id": "A:view-8:off:0:q1",
+            "archiveEntryId": "A",
+            "epoch": 1,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616199000,
+            "end": 1794616201000,
+            "peakUsd": 300.0000000003,
+            "meanUsd": 200.0000000001,
+            "durationMs": 2000,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616199000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              },
+              {
+                "at": 1794616201000,
+                "usd": 300.0000000003,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 3.000000000003,
+                "quantityExact": "3.000000000003",
+                "notionalExact": "300.0000000003"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": "censored",
+            "endKnown": false,
+            "censoredReason": "Observed disconnect",
+            "currentSelection": false
+          },
+          {
+            "id": "B:view-8:off:0:q4",
+            "archiveEntryId": "B",
+            "epoch": 2,
+            "side": "bid",
+            "price": 100.00000001,
+            "priceExact": "100.00000001",
+            "start": 1794616204000,
+            "end": null,
+            "peakUsd": 200.0000000001,
+            "meanUsd": 200.0000000001,
+            "durationMs": 109495448,
+            "percentile": null,
+            "scopePartial": true,
+            "startKnown": true,
+            "detectionMode": "top-levels",
+            "rank": 1,
+            "valueRuns": [
+              {
+                "at": 1794616204000,
+                "usd": 200.0000000001,
+                "percentile": null,
+                "rank": 1,
+                "quantity": 2.000000000001,
+                "quantityExact": "2.000000000001",
+                "notionalExact": "200.0000000001"
+              }
+            ],
+            "valueRunsTruncated": false,
+            "endReason": null,
+            "endKnown": false,
+            "currentSelection": false
+          }
+        ],
+        "native": "live"
+      }
+    },
+    {
+      "phase": "shifted-start-fallback",
+      "snapshot": {
+        "status": {
+          "state": "live",
+          "message": "Preparing wall history: canonical; 0 canonical / 0 selected parts.",
+          "coverage": {
+            "from": 1794612600000,
+            "to": 1794725699448,
+            "complete": false,
+            "partial": true,
+            "reason": "Preparing wall history: canonical; 0 canonical / 0 selected parts."
+          },
+          "archive": {
+            "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+            "state": "building",
+            "from": 1794612600000,
+            "to": 1794725699448,
+            "rangeComplete": false,
+            "market": "perpetual",
+            "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+            "aggregation": "native",
+            "gaps": [],
+            "requestedBandPercent": 10,
+            "profileBandPercent": 10,
+            "requestedTopN": 8,
+            "exact": true,
+            "requestComplete": false,
+            "eligibleTo": 1794725699448,
+            "horizonAt": 1794725701448,
+            "loadedThrough": 1794612600000,
+            "preparation": {
+              "id": "9ca71b440d2b87fd40389e32d8c843ab4f4edf4f28cd933b20ff8f2a1a37a89c",
+              "phase": "canonical",
+              "state": "building",
+              "pages": 0,
+              "projectionPages": 0,
+              "sourceCoverage": {
+                "availableFrom": 1794613950000,
+                "confirmedTo": 1794725692019,
+                "gapCount": 1,
+                "gapsTruncated": false
+              }
+            },
+            "reason": "Preparing wall history: canonical; 0 canonical / 0 selected parts.",
+            "profileStatus": "ready",
+            "midpoint": "100"
+          },
+          "lastConfirmedAt": 1794725699447,
+          "currentSubscribed": true
+        },
+        "view": {
+          "from": 1794613949.99985,
+          "to": 1794725684.58985
+        },
+        "render": {
+          "draws": 7,
+          "rebuilds": 7,
+          "patchProjects": 13,
+          "segments": 0,
+          "visible": 0,
+          "visibleHistorical": 0,
+          "visibleCurrent": 0,
+          "bytes": 232,
+          "renderMs": 2.4999999990686774,
+          "maxRenderMs": 0.599999999627471,
+          "strokes": 1,
+          "lastProjectMs": 0,
+          "lastReferenceMs": 0,
+          "lastPaintMs": 0,
+          "referenceRebuilds": 7,
+          "referenceSegments": 0,
+          "referenceValueScans": 0,
+          "paintCacheHits": 0,
+          "paintCacheBuilds": 7,
+          "paintStyleVisits": 9,
+          "closedPaintCacheHits": 0,
+          "closedPaintCacheBuilds": 7,
+          "closedPaintCacheAppends": 0,
+          "closedPaintStyleVisits": 0,
+          "settingsNoops": 11,
+          "mappingChecks": 7,
+          "mappingFallbacks": 0,
+          "inputRevision": 25,
+          "paintedRevision": 17,
+          "pendingProjectionSegments": 1,
+          "pendingPaintWork": false,
+          "queuedPreparation": false,
+          "preparation": {
+            "slices": 7,
+            "steps": 29,
+            "cancelled": 0,
+            "activeMs": 1.4999999962747097,
+            "lastProjectionElapsedMs": 0,
+            "lastReferenceElapsedMs": 0.09999999962747097,
+            "lastSliceMs": 0.19999999925494194,
+            "maxSliceMs": 0.39999999944120646,
+            "backgroundMs": 0,
+            "maxBackgroundMs": 0,
+            "yieldMode": "not-scheduled",
+            "phase": "idle"
+          },
+          "retainedPaintPaths": 0,
+          "retainedClosedPaintPaths": 0,
+          "retainedClosedPaintSegments": 0,
+          "pendingClosedPaintSegments": 0,
+          "retainedSegments": 1,
+          "openSegments": 1,
+          "retainedReferenceSegments": 0,
+          "referenceExtentValues": 0,
+          "pendingReferenceSegments": 0,
+          "referenceMinimum": 0,
+          "referenceMaximum": 0,
+          "retainedDrawables": 0,
+          "p95RenderMs": 0.5,
+          "mounted": true,
+          "archiveSegments": 0,
+          "directSegments": 1,
+          "valueRuns": 1,
+          "archiveValueRuns": 0,
+          "directValueRuns": 1,
+          "valueHistoryLimited": false,
+          "episodeHistoryLimited": false
+        },
+        "rows": [],
+        "native": "live"
+      }
+    }
+  ],
+  "currentPolls": 9
+}

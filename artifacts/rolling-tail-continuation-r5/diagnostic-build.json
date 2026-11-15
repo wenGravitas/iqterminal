@@ -1,0 +1,12 @@
+{
+  "commit": "981d206e438b202be4622862eb2f843dcd1d27b2",
+  "exitCode": 0,
+  "elapsedMs": 6206.815114999699,
+  "outDir": "artifacts/rolling-tail-continuation-r5/dist-validation",
+  "flags": {
+    "VITE_BUILD_COMMIT": "981d206e438b202be4622862eb2f843dcd1d27b2",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  }
+}

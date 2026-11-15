@@ -1,0 +1,11 @@
+{
+  "task": "rolling-tail-continuation-r5",
+  "startUtc": "2026-11-15T06:13:14+00:00",
+  "experimentCutoffUtc": "2026-11-15T08:43:14+00:00",
+  "deadlineUtc": "2026-11-15T09:13:14+00:00",
+  "cutoffEpoch": 1794732194.0,
+  "deadlineEpoch": 1794733994.0,
+  "initialFrontend": "01b021973013ca597a99d67dca668fca84de352f",
+  "initialBackend": "71a4798f87482d37948b0ecadabcec5bf111173b",
+  "priorR5Found": false
+}

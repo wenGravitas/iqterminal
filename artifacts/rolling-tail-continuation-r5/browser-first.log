@@ -1,0 +1,22 @@
+Error: Cannot find module '../../../scripts/test-browser-i3-setup.mjs'
+Require stack:
+- /home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js
+- /home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/program.js
+- /home/daz/workarea/iqterminal/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    at Function.resolve (node:internal/modules/helpers:157:19)
+    at resolveScript (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js:700:18)
+    at /home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js:497:128
+    at Array.map (<anonymous>)
+    at new FullConfigInternal (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js:497:117)
+    at loadConfig (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js:1292:22)
+    at Object.loadConfigFromFile (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js:1508:10)
+    at runTests (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/cli/testActions.js:44:18)
+    at _Command.<anonymous> (/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/program.js:55:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/common/index.js',
+    '/home/daz/workarea/iqterminal/node_modules/.pnpm/playwright@1.64.0/node_modules/playwright/lib/program.js',
+    '/home/daz/workarea/iqterminal/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js'
+  ]
+}

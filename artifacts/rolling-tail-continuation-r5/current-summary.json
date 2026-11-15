@@ -1,0 +1,165 @@
+{
+  "scope": "Real incumbent route, one120s smoke; not candidate history continuation or replay acceptance",
+  "client": "981d206e438b202be4622862eb2f843dcd1d27b2",
+  "gateway": "f1fb0d696312a6019f9194edba61a2dc225bc6c3",
+  "confirmedAcks": 177,
+  "firstConfirmed": {
+    "seq": 22,
+    "event": "ack-accepted",
+    "mono": 3724.7999999998137,
+    "id": 2,
+    "cursor": 3525227239
+  },
+  "lastConfirmed": {
+    "seq": 1023,
+    "event": "ack-accepted",
+    "mono": 117999.29999999981,
+    "id": 2,
+    "cursor": 3525228835
+  },
+  "closes": [
+    {
+      "seq": 18,
+      "event": "close",
+      "mono": 3036.9000000003725,
+      "id": 1,
+      "code": 1008,
+      "reason": "Invalid command"
+    }
+  ],
+  "lastCurrent": {
+    "history": {
+      "views": 0,
+      "ready": true,
+      "validated": true,
+      "ranges": [],
+      "capacityLimited": false
+    },
+    "state": "live",
+    "message": "Staging \u00b7 durable execution stream \u00b7 delivery 92ms",
+    "lastUpdate": 1794725469692,
+    "tickSize": 0.1,
+    "rowSize": 25,
+    "collectionStartedAt": 1794120665638,
+    "firstTradeAt": 1794725100000,
+    "lastTradeAt": 1794725468849,
+    "eventTime": null,
+    "outages": 0,
+    "capacityDrops": 0,
+    "unknownSideRecords": 0,
+    "unknownSideVolume": 0,
+    "lateRecords": 0,
+    "retentionStart": 1794725100,
+    "coverage": "partial",
+    "transport": {
+      "cursor": 3525228836,
+      "backendSentAtMs": 1794725469696,
+      "workerReceivedAtMs": 1794725469788,
+      "workerAppliedAtMs": 1794725469788
+    }
+  },
+  "lastWalls": {
+    "state": "live",
+    "message": "Order Walls history request failed: ClickHouse 500: {\"exception\": \"Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 16.25 MiB bytes), current RSS: 2.47 GiB, maximum: 2.79 GiB. OvercommitTracker d",
+    "coverage": {
+      "from": 1794616200000,
+      "to": 1794725354224,
+      "complete": false,
+      "partial": true,
+      "reason": "ClickHouse 500: {\"exception\": \"Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 16.25 MiB bytes), current RSS: 2.47 GiB, maximum: 2.79 GiB. OvercommitTracker d"
+    },
+    "archive": {
+      "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "state": "partial",
+      "requestComplete": false,
+      "rangeComplete": false,
+      "from": 1794616200000,
+      "to": 1794725354224,
+      "market": "perpetual",
+      "aggregation": "native",
+      "gaps": [],
+      "requestedBandPercent": 10,
+      "profileBandPercent": 10,
+      "requestedTopN": 8,
+      "exact": true,
+      "reason": "ClickHouse 500: {\"exception\": \"Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 16.25 MiB bytes), current RSS: 2.47 GiB, maximum: 2.79 GiB. OvercommitTracker d",
+      "eligibleTo": 1794653828672,
+      "horizonAt": 1794653828671,
+      "retryable": false,
+      "profileStatus": "backfilling",
+      "midpoint": "64380.55"
+    },
+    "lastConfirmedAt": 1794725467341,
+    "bookScope": {
+      "maxLevelsPerSide": 1000,
+      "bidComplete": false,
+      "askComplete": false,
+      "bidFloor": 64282.2,
+      "askCeiling": 64568.9
+    },
+    "currentSubscribed": true
+  },
+  "traceSockets": [
+    {
+      "id": 0,
+      "url": "ws://127.0.0.1:4203/market-data/v1/stream",
+      "readyState": 1,
+      "subscription": {
+        "type": "subscribe",
+        "after": 0,
+        "from": 1794724452822,
+        "interval": "15m"
+      },
+      "openMono": 1032.7999999998137,
+      "lastCompleteMono": 117898.20000000019
+    },
+    {
+      "id": 1,
+      "url": "ws://127.0.0.1:4203/market-data/v1/level-watches/stream",
+      "readyState": 3,
+      "subscription": {
+        "type": "subscribe",
+        "after": 4740
+      },
+      "openMono": 2235.2999999998137,
+      "lastCompleteMono": 2474.0999999996275,
+      "pendingAck": 4740,
+      "appliedViaAck": 4740,
+      "close": {
+        "code": 1008,
+        "reason": "Invalid command",
+        "mono": 3036.9000000003725
+      }
+    },
+    {
+      "id": 2,
+      "url": "ws://127.0.0.1:4203/market-data/v1/stream",
+      "readyState": 1,
+      "subscription": {
+        "type": "subscribe",
+        "after": 3525227234,
+        "from": 1794725100000
+      },
+      "openMono": 2957.2000000001863,
+      "lastCompleteMono": 117999.29999999981,
+      "pendingAck": 3525228836,
+      "confirmedAck": 3525228835,
+      "appliedViaAck": 3525228836
+    },
+    {
+      "id": 3,
+      "url": "ws://127.0.0.1:4203/market-data/v1/level-watches/stream",
+      "readyState": 1,
+      "subscription": {
+        "type": "subscribe",
+        "after": 4740
+      },
+      "openMono": 4978.299999999814,
+      "lastCompleteMono": 117516.40000000037,
+      "pendingAck": 4740,
+      "appliedViaAck": 4740
+    }
+  ],
+  "firstCurrentVisibleSampleMs": 3811.9549420000003,
+  "firstHistoryVisibleSampleMs": null
+}

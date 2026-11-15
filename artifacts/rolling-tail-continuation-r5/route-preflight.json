@@ -1,0 +1,23 @@
+{
+  "utc": 1794725282.6414664,
+  "elapsedMs": 638.0828890005432,
+  "build": "f1fb0d696312a6019f9194edba61a2dc225bc6c3",
+  "metrics": {
+    "requests": 801,
+    "rejected": 0,
+    "bytes": 7260505,
+    "serializeMs": 193.7293899933895,
+    "legacyHeatmap": 0,
+    "legacyFootprint": 0,
+    "closedTileReads": 0,
+    "manifests": 0,
+    "orderWallPages": 389,
+    "peakRss": 188178432,
+    "active": 1,
+    "history": 0,
+    "reservedCurrent": 1,
+    "limit": 4,
+    "rss": 184774656
+  },
+  "scope": "Owned split forward to unchanged incumbent gateway; archive dependency remains separately unhealthy."
+}
