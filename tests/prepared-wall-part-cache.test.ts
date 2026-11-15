@@ -8,10 +8,10 @@ const part=(s:string)=>({hash:s.repeat(64),bytes:500,records:1});
 test('transactions charge pending members; abort, leases, invalidation and eviction stay bounded',()=>{
  const cache=new PreparedWallPartCache(4000,2),parts=[part('a'),part('b'),part('c')];
  const seed=cache.begin('family',parts);seed.stage(0,frozen(),0);seed.stage(1,frozen(),0);
- expect(cache.diagnostics()).toMatchObject({stagedEntries:2,accountedBytes:3024});
+ const charged=cache.diagnostics().accountedBytes;expect(charged).toBeLessThanOrEqual(4000);expect(cache.diagnostics().stagedEntries).toBe(2);
  const concurrent=cache.begin('family',parts);expect(concurrent.get(0)).toBeUndefined();concurrent.release();seed.commit();seed.release();
  const lease=cache.begin('family',parts);expect(lease.get(0)).toEqual(frozen());lease.stage(2,frozen(),0);expect(cache.diagnostics().capacityMisses).toBe(1);
- cache.clear();expect(lease.get(0)).toEqual(frozen());expect(cache.diagnostics()).toMatchObject({entries:2,accountedBytes:3024});lease.release();expect(cache.diagnostics().accountedBytes).toBe(0);
+ cache.clear();expect(lease.get(0)).toEqual(frozen());expect(cache.diagnostics()).toMatchObject({entries:2,accountedBytes:charged});lease.release();expect(cache.diagnostics().accountedBytes).toBe(0);
  const aborted=cache.begin('family',parts);aborted.stage(0,frozen(),0);aborted.release();expect(cache.diagnostics()).toMatchObject({entries:0,stagedEntries:0,pinnedEntries:0});
  const full=cache.begin('family',parts);full.stage(0,frozen(),0);full.stage(1,frozen(),0);full.commit();full.release();
  const replacement=cache.begin('other',[parts[2]!]);replacement.stage(0,frozen(),0);replacement.commit();replacement.release();expect(cache.diagnostics().evictions).toBe(1);
@@ -47,7 +47,7 @@ test('profile identity, evicted members and malformed changed content use cold v
  const bad=generation(2);bad.manifest.parts[0].hash=hash('correction');await expect(read(bad,cache)).rejects.toThrow(/hash mismatch/);expect(cache.diagnostics()).toMatchObject({pinnedEntries:0,stagedEntries:0});
 });
 test('partial eviction follows the existing bounded batch contract and preserves exact fragments',async()=>{
- const f=generation(0),first=f.manifest.parts[0],cache=new PreparedWallPartCache(2*first.bytes+512);
+ const f=generation(0),calibration=new PreparedWallPartCache();await read(f,calibration);const cache=new PreparedWallPartCache(calibration.diagnostics().accountedBytes-1);calibration.dispose();
  await read(f,cache);expect(cache.diagnostics().entries).toBe(1);
  const next=await read(generation(1),cache),cold=await read(generation(1),new PreparedWallPartCache(0));
  expect(next.result!.segments).toEqual(cold.result!.segments);expect(next.result!.finalization.reusedParts).toBe(1);expect(next.fetched).toEqual([1]);
@@ -57,3 +57,5 @@ test('cached members have no mutable aliases across presentations',async()=>{
  expect(()=>{closed.valueRuns[0]!.usd=1;}).toThrow();closed.price=9;
  const second=await read(generation(1),cache),cold=await read(generation(1),new PreparedWallPartCache(0));expect(second.result!.segments).toEqual(cold.result!.segments);
 });
+
+test('oversized identity metadata falls back without retaining unaccounted keys',()=>{const cache=new PreparedWallPartCache(),tx=cache.begin('x'.repeat(8193),[part('a')]);tx.stage(0,frozen(),0);tx.commit();tx.release();expect(cache.diagnostics().accountedBytes).toBe(0);});

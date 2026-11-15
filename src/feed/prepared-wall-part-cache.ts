@@ -15,10 +15,10 @@ export class PreparedWallPartCache {
  clear(){for(const e of this.entries.values()){e.valid=false;if(!e.refs)this.remove(e);}}
  dispose(){this.disposed=true;this.clear();}
  begin(family:string,parts:readonly WallPartIdentity[]){
-  const held=new Map<number,Entry>(),staged=new Set<Entry>();let committed=false,released=false;
+  const enabled=!this.disposed&&family.length<=8192;const held=new Map<number,Entry>(),staged=new Set<Entry>();let committed=false,released=false;
   // Pin all present members before sequential reads. A scan of cold misses must
   // not evict the later warm members before the importer reaches them.
-  for(const [i,p]of parts.entries()){const e=this.entries.get(family+':'+p.hash+':'+p.bytes+':'+p.records);if(e&&e.valid&&e.committed&&!this.disposed){e.refs++;held.set(i,e);}else{this.stats.misses++;if(e&&!e.refs)this.remove(e);}}
+  for(const [i,p]of parts.entries()){const e=enabled?this.entries.get(family+':'+p.hash+':'+p.bytes+':'+p.records):undefined;if(e&&e.valid&&e.committed&&!this.disposed){e.refs++;held.set(i,e);}else{this.stats.misses++;if(e&&!e.refs)this.remove(e);}}
   const active=()=>{if(released)throw Error('Released prepared wall cache transaction');};
   return {
    // Invalidation blocks new leases; an existing authenticated immutable lease
@@ -26,8 +26,8 @@ export class PreparedWallPartCache {
    get:<T>(index:number):T|undefined=>{active();const e=held.get(index);if(!e||!e.committed){this.stats.misses++;return;}
     this.stats.hits++;this.stats.reusedCanonicalBytes+=parts[index]!.bytes;this.entries.delete(e.key);this.entries.set(e.key,e);return e.value as T;},
    has:(index:number)=>held.has(index),
-   stage:(index:number,value:unknown,runCount:number)=>{active();if(this.disposed||held.has(index))return;const p=parts[index]!,key=family+':'+p.hash+':'+p.bytes+':'+p.records;
-    if(this.entries.has(key))return;const bytes=Math.max(2*p.bytes,p.records*512+runCount*256)+512;
+   stage:(index:number,value:unknown,runCount:number)=>{active();if(!enabled||held.has(index))return;const p=parts[index]!,key=family+':'+p.hash+':'+p.bytes+':'+p.records;
+    if(this.entries.has(key))return;const bytes=Math.max(2*p.bytes,p.records*512+runCount*256)+key.length*2+512;
     if(!Number.isSafeInteger(bytes)||bytes>this.maxBytes){this.stats.capacityMisses++;return;}
     while(this.bytes+bytes>this.maxBytes||this.entries.size>=this.maxEntries){const old=[...this.entries.values()].find(e=>e.refs===0);if(!old){this.stats.capacityMisses++;return;}this.remove(old);this.stats.evictions++;}
     const e:Entry={key,value,bytes,refs:1,committed:false,valid:true};this.entries.set(key,e);this.bytes+=bytes;staged.add(e);held.set(index,e);
