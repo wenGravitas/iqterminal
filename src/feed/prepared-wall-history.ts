@@ -1,3 +1,4 @@
+import type {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
 import {historyHttpError} from './history-http-error';
 import {acquireWallBatch} from './prepared-wall-batch';
@@ -89,7 +90,7 @@ export type PreparedWallReuseLookup=(revision:string,segments:number)=>Promise<R
 interface ReusedProjection {projector?:undefined;presentation:ReadonlyMap<string,OrderWallSegment>;presentationRevision:string;coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile;head:Head;confirmedAt:number;midpoint:string|null;parts:0;bytes:0}
 export interface PreparedWallReader {sourceToken:string;read:(after:number)=>Promise<PreparedWallFetched>;dispose:()=>void;
  reuseProjection:(settings:OrderWallsProjectionSettings,lookup:PreparedWallReuseLookup,validateProfile:(profile:OrderWallsArchiveProfile)=>void)=>Promise<ReusedProjection|null>;
- readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
+ readProjection:(settings:OrderWallsProjectionSettings,onProgress:(value:ProjectionProgress)=>void,validateProfile?:(profile:OrderWallsArchiveProfile)=>void,partCache?:PreparedWallPartCache)=>Promise<(NonNullable<Awaited<ReturnType<typeof readPreparedWallProjection>>>&{head:Head})|null>}
 function waitCached<T>(value:Promise<T>,signal:AbortSignal):Promise<T>{
  signal.throwIfAborted();return new Promise((resolve,reject)=>{
   const cancel=()=>{signal.removeEventListener('abort',cancel);reject(signal.reason);};signal.addEventListener('abort',cancel,{once:true});
@@ -171,9 +172,9 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   const [presentation]=await Promise.all([waitCached(cached,consumer),validation]);assertActive();
   if(!presentation||presentation.size!==m.closed.length+m.active.segments.length)return null;
   return {presentation,presentationRevision:revision,coverage:m.coverage,profile:m.profile,head:target!,confirmedAt:m.active.confirmedTo,midpoint:m.active.midpoint,parts:0,bytes:0};
- },readProjection:async(settings,onProgress,validateProfile)=>{
+ },readProjection:async(settings,onProgress,validateProfile,partCache)=>{
   const result=await readPreparedWallProjection(found.projection,{sourceKey:manifest.key,sourceToken:source.token,watermark:manifest.watermark,epoch:manifest.head.epoch,
-   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
+   from:request.from,to:request.to,profile:request.profile,market:request.market,settings,fetcher,partCache,signal:consumer,outputHead:{cursor:target!.cursor,epoch:target!.epoch},validateProfile,validateCompletion:validateRevision},value=>{assertActive();onProgress(value);}).catch(leaseFailure);
   assertActive();return result?{...result,head:target!}:null;
  },read:async after=>{
   assertActive();const manifest=canonicalManifest;if(!manifest)throw Error('Canonical wall pages were not advertised');

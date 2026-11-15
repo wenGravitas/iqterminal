@@ -1,3 +1,4 @@
+import type {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {yieldHistoryTask} from './history-task-yield';
 import {OrderWallsArchiveProjector,type OrderWallsProjectionSettings,type OrderWallSegment,type WallProjectionCheckpoint,type OrderWallsArchiveCoverage,type OrderWallsArchiveProfile} from '../shared/order-walls-projection';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
@@ -5,8 +6,8 @@ import {acquireWallBatch} from './prepared-wall-batch';
 interface Part {hash:string;bytes:number;records:number}
 interface RecordRow {order:number;segment:OrderWallSegment;valueRunOrder:number[];offset:number;totalRuns:number}
 export interface PreparedWallProjectionManifest {version:2;key:string;sourceKey:string;sourceToken:string;core:string;complete:true;settings:OrderWallsProjectionSettings;active:WallProjectionCheckpoint;activeOrder:number[];closed:Array<Array<[number,number]>>;parts:Part[];coverage:OrderWallsArchiveCoverage;profile:OrderWallsArchiveProfile}
-interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>;restoreProjector?:boolean}
-export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;requestId?:string}}
+interface Context {sourceKey:string;sourceToken:string;watermark:number;epoch:number;from:number;to:number;profile:string;market:'spot'|'perpetual';settings:OrderWallsProjectionSettings;fetcher:typeof fetch;signal:AbortSignal;outputHead?:{cursor:number;epoch:number};validateProfile?:(profile:OrderWallsArchiveProfile)=>void;validateCompletion?:()=>Promise<void>;restoreProjector?:boolean;partCache?:PreparedWallPartCache}
+export interface ProjectionProgress {segments:OrderWallSegment[];presentation:ReadonlyMap<string,OrderWallSegment>;presentationThrough:number;parts:number;bytes:number;decodeMs:number;mergeMs:number;metrics?:{attempts:number;responseHeadersMs:number;bodyReadMs:number;jsonParseMs:number;validationMs:number;mergeMs:number;yieldMs:number;encodedBytes:number;cacheHit?:boolean;partHash?:string;partIndex?:number;reusedCanonicalBytes?:number;decodedTransportBytes?:number;requestId?:string}}
 const integer=(v:unknown)=>typeof v==='number'&&Number.isSafeInteger(v)&&v>=0;
 const hex=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const digest=async(bytes:Uint8Array)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>))].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -22,6 +23,7 @@ async function sortedRecords<T>(input:T[],compare:(a:T,b:T)=>number,signal:Abort
   }[source,target]=[target,source];
  }signal.throwIfAborted();return source;
 }
+async function freezeMember(value:unknown,signal:AbortSignal){const stack:unknown[]=[value];let at=performance.now(),units=0;while(stack.length){const item=stack.pop();if(item&&typeof item==='object'&&!Object.isFrozen(item)){Object.freeze(item);for(const value of Object.values(item))stack.push(value);}if(++units%256===0){signal.throwIfAborted();if(performance.now()-at>=8){await yieldTask(signal);at=performance.now();}}}signal.throwIfAborted();}
 /** Configuration mismatch is a compatible fallback. A malformed advertised
  * snapshot is an explicit failure, never an excuse to claim empty coverage. */
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){
@@ -63,7 +65,12 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  }
  let bytes=0,parts=0,decodeMs=0,mergeMs=0,runs=manifest.active.segments.reduce((n,segment)=>n+segment.valueRuns.length,0);
  context.signal.throwIfAborted();onProgress({segments:manifest.active.segments,presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs});
+ const cached=context.partCache?.begin(JSON.stringify([manifest.core,manifest.profile,manifest.settings,context.from]),manifest.parts);
+ let reusedParts=0,reusedCanonicalBytes=0,fetchedParts=0;
+ try{
  function acquire(start:number){
+  while(start<manifest.parts.length&&cached?.has(start))start++;
+
   if(start>=manifest.parts.length)return undefined;
   const selected:Array<Part&{index:number}>=[];let size=0;
   for(let i=start;i<Math.min(start+32,manifest.parts.length);i++){const part=manifest.parts[i]!;if(size+part.bytes+1>8*1024*1024)break;selected.push({...part,index:i});size+=part.bytes+1;}
@@ -72,15 +79,16 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
   return {selected,next:start+selected.length,handle:acquireWallBatch({url,key:manifest.key,revision:manifest.sourceToken,parts:selected,fetcher:context.fetcher,signal:context.signal,maxParts:32,pointTransport:pointTransport===2?2:pointTransport===1})};
  }
  let current=acquire(0),next:ReturnType<typeof acquire>;
- try{while(current){
-  context.signal.throwIfAborted();
-  for(const part of current.selected){
-   const fetched=await current.handle.read(part.index),rows=fetched.body as RecordRow[];decodeMs+=fetched.jsonParseMs+(fetched.validationMs??0);bytes+=fetched.bytes;parts++;
+ try{for(let index=0;index<manifest.parts.length;index++){
+   context.signal.throwIfAborted();const part={...manifest.parts[index]!,index},scheduled=Boolean(current&&index>=current.selected[0]!.index&&index<=current.selected.at(-1)!.index),hit=scheduled?undefined:cached?.get<RecordRow[]>(index),cacheHit=hit!==undefined;
+   const fetched=cacheHit?{body:hit,bytes:0,response:new Response(null),responseHeadersMs:0,bodyReadMs:0,jsonParseMs:0,validationMs:0,validationYieldMs:0,attempts:0}:await current!.handle.read(index),rows=fetched.body as RecordRow[];
+   if(cacheHit){reusedParts++;reusedCanonicalBytes+=part.bytes;}else fetchedParts++;
+   decodeMs+=fetched.jsonParseMs+(fetched.validationMs??0);bytes+=fetched.bytes;parts++;
    if(!Array.isArray(rows)||rows.length!==part.records)throw Error('Prepared wall projection record count mismatch');
    // Do not fill both shared history slots before the first authenticated
    // member arrives. Visible native prices can enter the free slot while the
    // first wall response waits for headers/body; later batches still pipeline.
-   if(part.index===current.selected[0]!.index)next=acquire(current.next);
+   if(!cacheHit&&part.index===current!.selected[0]!.index)next=acquire(current!.next);
    const began=performance.now(),ready:Array<Omit<RecordRow,'offset'|'totalRuns'>>=[];let yielded=performance.now(),yieldMs=0;
    for(const [row,value] of rows.entries()){
     const coordinate=coordinates.get(part.index+':'+row);if(!coordinate)continue;
@@ -104,9 +112,9 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
     yieldMs+=restoreYieldMs-priorYield;
     for(const record of ready){if(presentation.has(record.segment.id))throw Error('Prepared wall projection duplicate identity');presentation.set(record.segment.id,record.segment);}
    }
-   const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask(context.signal);
-  }
-  current.handle.release();current=next;next=undefined;
+   if(!cacheHit&&cached){const before=performance.now();await freezeMember(rows,context.signal);yieldMs+=performance.now()-before;cached.stage(index,rows,rows.reduce((n,row)=>n+(Array.isArray(row?.segment?.valueRuns)?row.segment.valueRuns.length:0),0));}
+   const partMergeMs=performance.now()-began-yieldMs;mergeMs+=partMergeMs;context.signal.throwIfAborted();onProgress({segments:ready.map(row=>row.segment),presentation,presentationThrough:manifest.active.confirmedTo,parts,bytes,decodeMs,mergeMs,metrics:{cacheHit,partHash:part.hash,partIndex:index,reusedCanonicalBytes:cacheHit?part.bytes:0,decodedTransportBytes:Number(fetched.response.headers.get('x-iq-decoded-bytes')??0)*(fetched.response.headers.get('content-length')==='0'?0:1),attempts:fetched.attempts,responseHeadersMs:fetched.responseHeadersMs,bodyReadMs:fetched.bodyReadMs,jsonParseMs:fetched.jsonParseMs,validationMs:fetched.validationMs??0,mergeMs:partMergeMs,yieldMs:yieldMs+(fetched.validationYieldMs??0),encodedBytes:Number(fetched.response.headers.get('content-length')??0),requestId:fetched.response.headers.get('x-iq-request-id')??undefined}});await yieldTask(context.signal);
+   if(!cacheHit&&index===current!.selected.at(-1)!.index){current!.handle.release();current=next;next=undefined;}
  }}finally{current?.handle.release();next?.handle.release();}
  if(retained.length!==manifest.closed.length+manifest.active.segments.length||new Set(retained.map(record=>record.order)).size!==retained.length)throw Error('Prepared wall projection incomplete identities');
  // All immutable records have passed content and per-part financial checks. Start the
@@ -127,10 +135,11 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  if(context.restoreProjector)projector=await restore(checkpoint);else await validate(checkpoint);
  const validationElapsedMs=performance.now()-validateAt,presentationAt=performance.now();
  const segments=await sortedRecords(checkpoint.segments,(a,b)=>a.start-b.start||a.side.localeCompare(b.side)||a.price-b.price,context.signal);
- const finalization={checkpointOrderElapsedMs,validationElapsedMs,validationYieldMs:restoreYieldMs-yieldBefore,presentationOrderElapsedMs:performance.now()-presentationAt,mutableProjectorRestored:Boolean(projector)};
+ const finalization={importedParts:parts,fetchedParts,reusedParts,reusedCanonicalBytes,assemblyRecords:retained.length,checkpointOrderElapsedMs,validationElapsedMs,validationYieldMs:restoreYieldMs-yieldBefore,presentationOrderElapsedMs:performance.now()-presentationAt,mutableProjectorRestored:Boolean(projector)};
  // Authenticate the complete presentation description, not merely its source
  // input token: corrections can change part hashes or selected metadata.
- const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));
- await validation;context.signal.throwIfAborted();
- return {projector,segments,finalization,confirmedAt:manifest.active.confirmedTo,midpoint:manifest.active.midpoint,valueHistoryLimited:manifest.active.valueHistoryLimited,episodeHistoryLimited:manifest.active.episodeHistoryLimited,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
+ const fingerprintAt=performance.now();const presentationRevision=await digest(new TextEncoder().encode(JSON.stringify(manifest)));
+ const manifestFingerprintMs=performance.now()-fingerprintAt;await validation;context.signal.throwIfAborted();cached?.commit();
+ return {projector,segments,finalization:{...finalization,manifestFingerprintMs},confirmedAt:manifest.active.confirmedTo,midpoint:manifest.active.midpoint,valueHistoryLimited:manifest.active.valueHistoryLimited,episodeHistoryLimited:manifest.active.episodeHistoryLimited,coverage:manifest.coverage,profile:manifest.profile,presentation,presentationRevision,parts,bytes,decodeMs,mergeMs};
+ }finally{cached?.release();}
 }

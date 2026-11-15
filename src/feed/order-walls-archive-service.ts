@@ -1,3 +1,4 @@
+import {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {compactWallPresentation,replayCompactWallPresentation,type CompactWallPresentation} from './compact-wall-presentation';
 import {wallHistoryPresentation,wallCompactPresentation} from './wall-history-presentation-cache';
 import {wallReadControlScheduler} from './prepared-wall-read-lease';
@@ -122,6 +123,7 @@ export class OrderWallsArchiveService {
   private recordWarmTiming(timing:WarmTiming){this.warmTimings.push(timing);if(this.warmTimings.length>16)this.warmTimings.shift();}
   private sequence = 0;
   private disposed = false;
+  private readonly preparedPartCache=new PreparedWallPartCache();
   readonly stats = { warmAdmissions:0,warmPrefixHits:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
@@ -245,7 +247,7 @@ export class OrderWallsArchiveService {
   }
 
   dispose() {
-    if (this.disposed) return; this.disposed = true;
+    if (this.disposed) return; this.disposed = true;this.preparedPartCache.dispose();
     for (const sub of [...this.subscriptions.values()]) this.unsubscribe(sub.id);
     for (const group of this.groups.values()) group.poller.stop();
     this.groups.clear(); this.stats.groups = 0;
@@ -258,7 +260,7 @@ export class OrderWallsArchiveService {
     for(const sub of this.subscriptions.values())for(const p of [sub.historyProjector,sub.tailProjector])if(p)projectors.add(p);
     for(const group of this.groups.values())if(group.projector)projectors.add(group.projector);
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
-    return { ...this.stats, projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
+    return { ...this.stats, preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
       historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
@@ -505,7 +507,7 @@ export class OrderWallsArchiveService {
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
     const reusePrepared=[...job.subscribers].some(sub=>sub.warmReplay?.key===warmHistoryKey(job.request)&&!sub.warmReplay.entry.expired&&sub.warmReplay.entry.signature?.startsWith('manifest:'));
-    void loadOrderWallsArchive({ eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+    void loadOrderWallsArchive({ preparedPartCache:this.preparedPartCache,eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(reusePrepared?{reusePreparedPresentation:(revision:string,count:number)=>this.reusePreparedPresentation(job,revision,count)}:{}),
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {

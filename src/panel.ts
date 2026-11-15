@@ -5390,6 +5390,15 @@ export class CandlePanel implements IContentRenderer {
     this.updateOrderWallsViewport();
   }
 
+  /** Workspace snapshots capture ordinary wall-chart viewports explicitly;
+   * saving a view is not a statement that its history has been validated. */
+  captureHistoryViewport() {
+    const instance=this.nativeIndicator(ORDER_WALLS_ID),settings=orderWallsSettings(instance?.settings);
+    if(this.selection.type!=='candle'||this.selection.venue!=='binance'||!instance?.visible||!settings.enabled||!settings.showHistory)return;
+    const range=this.engine?.visibleTimeRange();
+    return range?validHistoryViewport({from:Math.round(range.from*1000),to:Math.round(range.to*1000)}):undefined;
+  }
+
   private retryOrderWallsHistory() {
     const instance = this.nativeIndicator(ORDER_WALLS_ID), archive = this.orderWallsStatus?.archive;
     const market = this.selection.market === 'spot' ? 'spot' : 'perpetual';

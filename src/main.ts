@@ -276,7 +276,11 @@ dock = createDockview(root, {
 });
 
 workspaceManager = new WorkspaceManager(browserWorkspaceStorage(), {
-  capture: () => dock.toJSON(),
+  capture: () => {
+    const layout=dock.toJSON();
+    for(const [id,panel]of panels){const historyViewport=panel.captureHistoryViewport(),saved=layout.panels[id];if(historyViewport&&saved)saved.params={...saved.params,historyViewport};}
+    return layout;
+  },
   cancelPending: () => { clearTimeout(saveTimer); saveTimer = undefined; },
   restore: layout => { startupFeed.reconcile(layout,chartConfig);const release=import.meta.env.VITE_DATA_MODE==='staging'&&!fixture?startVisibleChartFeeds(feed,layout,chartConfig):()=>{};try{dock.clear();editor=undefined;watchPanel=undefined;tradingPanel=undefined;dock.fromJSON(layout);}finally{release();} },
 });

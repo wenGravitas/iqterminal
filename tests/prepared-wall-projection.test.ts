@@ -411,7 +411,7 @@ test('a failed cached replay falls back to full authenticated prepared records',
   service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');const before=t.calls.length;
   spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockRejectedValueOnce(Error('Corrupt cached presentation'));
   service.subscribe('warm',request);await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
-  expect(t.calls.slice(before).some(path=>path.endsWith('/projection-batch'))).toBe(true);
+  expect(t.calls.slice(before).some(path=>path.endsWith('/projection-batch'))).toBe(false);expect(service.diagnostics().preparedPartCache.hits).toBeGreaterThan(0);
   expect(service.diagnostics().warmDecodeFailures).toBe(1);
   expect([...displayedWalls(events,'warm').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual([...f.full.segments].sort((a,b)=>a.id.localeCompare(b.id)));
  }finally{service.dispose();spy?.mockRestore();}
@@ -499,7 +499,7 @@ test.each([false,true])('advancing same-start warm view preserves its financial 
   const reference=old.full.segments.map(segment=>({...segment,currentSelection:false}));
   expect([...displayedWalls(events,'a').values()]).toEqual(reference);
   expect(events.filter(e=>e.ids?.includes('a')).at(-1).status.archive).toMatchObject({to:to+60000,loadedThrough:to,presentationThrough:to,requestComplete:false,rangeComplete:false});
-  expect(fresh.calls.some(path=>path.endsWith('/projection-batch'))).toBe(true);
+  expect(fresh.calls.some(path=>path.endsWith('/projection-batch'))).toBe(false);expect(service.diagnostics().preparedPartCache.hits).toBeGreaterThan(0);
   const [key,entry]=[...(service as any).warmHistory][0];
   (service as any).expireWarm(key,entry);expect(entry.expired).not.toBe(true);
   service.unsubscribe('a');expect(service.diagnostics().warmReplayConsumers).toBe(1);

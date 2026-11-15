@@ -250,6 +250,7 @@ export interface OrderWallsArchiveResult extends OrderWallsArchiveUpdate {
 }
 
 export interface OrderWallsArchiveLoadOptions {
+  preparedPartCache?:import('./prepared-wall-part-cache').PreparedWallPartCache;
   request: OrderWallsArchiveRequest;
   signal?: AbortSignal;
   pageLimit?: number;
@@ -273,7 +274,7 @@ export interface OrderWallsArchiveLoadOptions {
 }
 
 export interface OrderWallsArchivePageMetrics {
-  delivery?:'projection'|'canonical';receivedSegments?:number;
+  delivery?:'projection'|'canonical';receivedSegments?:number;cacheHit?:boolean;partHash?:string;partIndex?:number;reusedCanonicalBytes?:number;decodedTransportBytes?:number;
   viewId?:string;requestId?:string;dbQueries?:number;dbReadRows?:number;dbReadBytes?:number;encodedBytes?:number;
   requestedAfter: number;
   pageAfter: number;
@@ -464,11 +465,11 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const update:OrderWallsArchiveUpdate={kind:painted?'patch':'snapshot',...(painted?{patches:progress.segments.map(segment=>({id:segment.id,segment,replaceValueRuns:true}))}:{segments:progress.segments}),
         presentation:progress.presentation,status,pages:progress.parts,bytes:progress.bytes};
       const at=performance.now();options.onUpdate?.(update);painted=true;
-      if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
+      if(progress.metrics)options.onPageMetrics?.({viewId,delivery:'projection',cacheHit:progress.metrics.cacheHit,partHash:progress.metrics.partHash,partIndex:progress.metrics.partIndex,reusedCanonicalBytes:progress.metrics.reusedCanonicalBytes,decodedTransportBytes:progress.metrics.decodedTransportBytes,receivedSegments:progress.segments.length,requestId:progress.metrics.requestId,encodedBytes:progress.metrics.encodedBytes,
         requestedAfter:progress.parts-1,pageAfter:progress.parts-1,nextAfter:progress.parts,patchCount:0,responseBytes:progress.bytes-bytes,responseHeadersMs:progress.metrics.responseHeadersMs,
         responseBodyReadMs:progress.metrics.bodyReadMs,jsonParseMs:progress.metrics.jsonParseMs,validationMs:progress.metrics.validationMs,projectorApplyMs:progress.metrics.mergeMs,updateCallbackMs:performance.now()-at,eventLoopYieldDelayMs:progress.metrics.yieldMs,attempts:progress.metrics.attempts});
       bytes=progress.bytes;
-    },validateProjectionProfile);
+    },validateProjectionProfile,options.preparedPartCache);
     if(projected){
       const head=projected.head,coverage=projected.coverage;
       validatePage({version:1,profile:projected.profile,market:projected.profile.market,instrument:projected.profile.instrument,feed:projected.profile.feed,from:queryFrom,to:request.to,watermark:head.cursor,head,
