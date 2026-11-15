@@ -36,8 +36,8 @@ export function fixture(split=false,end=to,start=from,sourceProfile=profile,extr
 }
 
 /** Real pinned-source identity used by the negotiated projection response. */
-export function projectionOnlyFixture(split=true,end=to,start=from,sourceProfile=profile){
- const f=fixture(split,end,start,sourceProfile),proof=f.canonical.sourceProof;
+export function projectionOnlyFixture(split=true,end=to,start=from,sourceProfile=profile,extraPatches:any[]=[]){
+ const f=fixture(split,end,start,sourceProfile,extraPatches),proof=f.canonical.sourceProof;
  const key=hash(JSON.stringify({version:5,market:proof.market,profile:proof.profile,from:proof.from,to:proof.to,watermark:proof.watermark,sourceToken:proof.token}));
  f.canonical.key=key;f.context.sourceKey=key;f.manifest.sourceKey=key;
  f.manifest.key=hash(JSON.stringify({version:2,sourceKey:key,core:WALL_PROJECTION_CORE_SHA256,settings:normalized}));

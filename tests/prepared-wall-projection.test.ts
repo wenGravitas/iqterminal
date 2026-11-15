@@ -562,3 +562,16 @@ test.each(['valid','late-input','late-anchor','changed-anchor'] as const)('proje
  try{const result=await reader!.readProjection(settings,()=>{});expect(result!.head).toEqual(target);expect(result!.segments).toEqual(OrderWallsArchiveProjector.restoreCheckpoint(f.full,settings,from,to).snapshot());}
  finally{reader?.dispose();}
 });
+
+
+test('two validated same-start service extensions publish exact deltas without whole-history snapshots',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const B=fixture().page.patches[2].bids.upserts[0],at=to+1000;
+ const C={...B,entryId:'C',startedAt:at,startCursor:5,startEpoch:2},D={...C,entryId:'D',startedAt:at+60000,startCursor:6};
+ const removal=(entryId:string,cursor:number,when:number)=>({entryId,side:'bid',price:B.price,at:when,cursor,epoch:2,reason:'rank-exit',lastConfirmedAt:when-1,lastConfirmedCursor:cursor-1});
+ const patches=[{kind:'patch',cursor:5,epoch:2,at,midpoint:'100',bids:{removals:[removal('B',5,at)],upserts:[C]},asks:{removals:[],upserts:[]}}, {kind:'patch',cursor:6,epoch:2,at:at+60000,midpoint:'100',bids:{removals:[removal('C',6,at+60000)],upserts:[D]},asks:{removals:[],upserts:[]}}];
+ const fixtures=[0,1,2].map(n=>projectionOnlyFixture(true,to+n*60000,from,profile,patches.slice(0,n))),io=fixtures.map(f=>transport(f));let phase=0;const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>io[phase]!.fetcher(input,init),()=>to+180000);
+ try{service.subscribe('delta',{market:'binance-spot',from,to,settings,followLive:false});await vi.waitFor(()=>expect(events.at(-1)?.status.archive.requestComplete).toBe(true));const afterSeed=events.length;
+  for(phase=1;phase<=2;phase++){const end=to+phase*60000;service.updateViewport('delta',from,end,false);await vi.waitFor(()=>expect(events.at(-1)?.status.archive).toMatchObject({requestComplete:true,loadedThrough:end}));expect([...displayedWalls(events,'delta').values()].sort((a,b)=>a.id.localeCompare(b.id))).toEqual(fixtures[phase]!.full.segments.slice().sort((a,b)=>a.id.localeCompare(b.id)));}
+  expect(events.slice(afterSeed).filter(e=>e.kind==='snapshot')).toHaveLength(0);expect(service.diagnostics().preparedDeltaPublications).toBe(2);expect(service.diagnostics().preparedDeltaPatches).toBeLessThan(8);
+ }finally{service.dispose();expect(service.diagnostics().preparedPartCache).toMatchObject({accountedBytes:0,pinnedEntries:0,stagedEntries:0});}
+});

@@ -56,6 +56,7 @@ interface Subscription {
   historyJob?: SharedHistoryJob;
   historyProjector?: OrderWallsArchiveProjector;
   historyPresentation?:ReadonlyMap<string,OrderWallSegment>;
+  historyRevision?:string;
   cachedHistory?: boolean;
   replacingHistory?: {status:OrderWallStatus};
   currentSnapshotIds:Set<string>;
@@ -124,7 +125,7 @@ export class OrderWallsArchiveService {
   private sequence = 0;
   private disposed = false;
   private readonly preparedPartCache=new PreparedWallPartCache();
-  readonly stats = { warmAdmissions:0,warmPrefixHits:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
+  readonly stats = { preparedDeltaPublications:0,preparedDeltaPatches:0,preparedDeltaComparedSegments:0,preparedDeltaComparedRuns:0,preparedDeltaMs:0,preparedDeltaYieldMs:0,warmAdmissions:0,warmPrefixHits:0,warmCapacityMisses:0,warmInvalidMisses:0,warmCompactBuilds:0,warmRevisionReuses:0,warmValidatedReuses:0,warmBuildFailures:0,warmDecodeFailures:0,incrementalSegments:0,fullReconciliations:0,comparisonVisits:0,subscriptions: 0, groups: 0, historyRequests: 0, currentPages: 0, historyPages: 0, bytes: 0,
     historyBytes: 0, historyResponseHeadersMs: 0, historyBodyReadMs: 0, historyJsonParseMs: 0, historyValidationMs: 0,
     historyProjectorApplyMs: 0, historyUpdateCallbackMs: 0, historyEventLoopYieldDelayMs: 0,
     currentPatches: 0, ringDrops: 0, failures: 0 };
@@ -262,7 +263,7 @@ export class OrderWallsArchiveService {
     for(const job of this.historyJobs.values())for(const p of [job.latest?.projector,job.resume?.projector])if(p)projectors.add(p);
     return { ...this.stats, preparedPartCache:this.preparedPartCache.diagnostics(),projections:[...projectors].map(projector=>projector.diagnostics()), subscriptions: this.subscriptions.size, groups: this.groups.size,
       historyJobs: this.historyJobs.size,historyActiveJobs:[...this.historyJobs.values()].filter(job=>!job.settled).length,
-      historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
+      historyJobStates:[...this.historyJobs.values()].map(job=>({request:{market:job.request.market,from:job.request.from,to:job.request.to,profileId:job.request.profileId},settled:job.settled,failed:Boolean(job.failure),hasProjector:Boolean(job.latest?.projector),preparedRevisionReused:Boolean(job.latest?.preparedRevisionReused),preparedFinalization:job.latest?.preparedFinalization,preparedDelta:job.latest?.preparedDelta?{...job.latest.preparedDelta,patches:job.latest.preparedDelta.patches.length}:undefined,eligibleRange:job.eligibleRange})),readerControl:wallReadControlScheduler.diagnostics(),
       warmTimings:this.warmTimings.map(timing=>({...timing})),warmEntries:this.warmHistory.size,warmBuilds:this.warmBuilds.size,warmReplayJobs:this.warmReplays.size,warmReplaySegments:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.presentation.size??0),0),warmReplayRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.runs??0),0),warmCompactEntries:[...this.warmHistory.values()].filter(entry=>entry.compact).length,warmReplayConsumers:[...this.warmHistory.values()].reduce((n,entry)=>n+(entry.replay?.subscribers.size??0),0),warmSegments:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.segments,0),warmRuns:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.runs,0),warmBytes:[...this.warmHistory.values()].reduce((n,entry)=>n+entry.bytes,0),
       historyConsumers: [...this.historyJobs.values()].reduce((sum, job) => sum + job.subscribers.size, 0),
       ringPages: 0,
@@ -507,7 +508,8 @@ export class OrderWallsArchiveService {
         ...(previous.archive?{archive:{...previous.archive,state:'loading',requestComplete:false,rangeComplete:false,reason:undefined,retryable:undefined}}:{})}};
     }
     const reusePrepared=[...job.subscribers].some(sub=>sub.warmReplay?.key===warmHistoryKey(job.request)&&!sub.warmReplay.entry.expired&&sub.warmReplay.entry.signature?.startsWith('manifest:'));
-    void loadOrderWallsArchive({ preparedPartCache:this.preparedPartCache,eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+    const base=[...job.subscribers].find(sub=>sub.replacingHistory?.status.archive?.from===job.request.from&&sub.historyPresentation&&sub.historyRevision);
+    void loadOrderWallsArchive({ preparedPartCache:this.preparedPartCache,...(base?{preparedPresentationBase:{revision:base.historyRevision!,through:base.replacingHistory!.status.archive!.loadedThrough??job.request.from,presentation:base.historyPresentation!}}:{}),eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(reusePrepared?{reusePreparedPresentation:(revision:string,count:number)=>this.reusePreparedPresentation(job,revision,count)}:{}),
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
@@ -727,6 +729,16 @@ export class OrderWallsArchiveService {
 
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
+    const delta=update.preparedDelta;
+    if(!forceSnapshot&&sub.replacingHistory&&delta&&delta.baseRevision===sub.historyRevision&&sub.historyPresentation?.size===delta.baseCount
+      &&sub.replacingHistory.status.archive?.loadedThrough===delta.baseThrough&&update.preparedPresentationComplete&&update.preparedPresentationRevision
+      &&update.presentation&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable'
+      &&!delta.patches.some(p=>sub.currentSnapshotIds.has(p.id))){
+      sub.replacingHistory=undefined;sub.cachedHistory=false;this.releaseWarmReplay(sub);sub.historyStatus=update.status;
+      sub.historyProjector=undefined;sub.historyPresentation=update.presentation;sub.historyRevision=update.preparedPresentationRevision;
+      this.stats.preparedDeltaPublications++;this.stats.preparedDeltaPatches+=delta.patches.length;this.stats.preparedDeltaComparedSegments+=delta.comparedSegments;this.stats.preparedDeltaComparedRuns+=delta.comparedValueRuns;this.stats.preparedDeltaMs+=delta.elapsedMs;this.stats.preparedDeltaYieldMs+=delta.yieldMs;
+      this.publish(sub,'patch',sub.group?this.markPatches(sub,delta.patches,false):delta.patches,this.status(sub));return;
+    }
     if(sub.replacingHistory){
       const archive=update.status.archive,prior=sub.replacingHistory.status;
       if(!archive?.requestComplete||!archive.exact||archive.state==='unavailable'){
@@ -772,6 +784,7 @@ export class OrderWallsArchiveService {
     if(alreadyPresented)update={...update,kind:'patch',patches:[],segments:undefined};
     if (update.projector) {sub.historyProjector = update.projector;sub.historyPresentation=undefined;}
     else if(update.presentation)sub.historyPresentation=update.presentation;
+    if(update.preparedPresentationComplete&&update.status.archive?.requestComplete)sub.historyRevision=update.preparedPresentationRevision;
     if (!sub.group) { this.publishArchiveUpdate(sub, update); return; }
     const status=this.status(sub);
     if(update.kind==='snapshot')this.publish(sub,'snapshot',this.visibleSegments(sub),status);

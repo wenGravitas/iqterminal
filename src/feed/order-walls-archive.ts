@@ -1,3 +1,4 @@
+import{preparedWallDelta,type PreparedWallBase,type PreparedWallDelta}from './prepared-wall-delta';
 import {readWallHistoryHorizon,eligibleWallHistoryRange} from './wall-history-horizon';
 import {wallPreparationReason} from './prepared-wall-admission';
 import {OrderWallsArchiveProjector} from '../shared/order-walls-projection';
@@ -227,6 +228,7 @@ export interface OrderWallsArchiveUpdate {
   /** Worker-local elapsed stages include cooperative waits; source I/O overlaps. */
   preparedFinalization?:{checkpointOrderElapsedMs:number;validationElapsedMs:number;validationYieldMs:number;presentationOrderElapsedMs:number;mutableProjectorRestored:boolean};
   preparedRevisionReused?:true;
+  preparedDelta?:PreparedWallDelta;
 }
 
 export interface OrderWallsArchiveCurrentPollerOptions {
@@ -250,6 +252,7 @@ export interface OrderWallsArchiveResult extends OrderWallsArchiveUpdate {
 }
 
 export interface OrderWallsArchiveLoadOptions {
+  preparedPresentationBase?:PreparedWallBase;
   preparedPartCache?:import('./prepared-wall-part-cache').PreparedWallPartCache;
   request: OrderWallsArchiveRequest;
   signal?: AbortSignal;
@@ -484,7 +487,8 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const status={...statusForArchive(archive,state,reason),...('valueHistoryLimited' in projected&&projected.valueHistoryLimited?{valueHistoryLimited:true}:{}),
         ...('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited?{episodeHistoryLimited:true}:{})};
       const segments=projected.projector?projected.projector.snapshot():'segments' in projected?projected.segments:[...projected.presentation.values()];
-      const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,
+      const delta=options.preparedPresentationBase&&projected.presentation?await preparedWallDelta(options.preparedPresentationBase,projected.presentation,consumerSignal):undefined;consumerSignal.throwIfAborted();
+      const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,...(delta?{preparedDelta:delta}:{}),
         ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status,
         watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};
       options.onUpdate?.(result);return result;
