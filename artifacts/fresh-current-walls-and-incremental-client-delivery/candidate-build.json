@@ -1,0 +1,11 @@
+{
+  "commit": "5903ab796cdcd2e7d5dd4cf2162d8af5b4d5e69b",
+  "exitCode": 0,
+  "outDir": "artifacts/fresh-current-walls-and-incremental-client-delivery/dist-candidate",
+  "flags": {
+    "VITE_BUILD_COMMIT": "5903ab796cdcd2e7d5dd4cf2162d8af5b4d5e69b",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  }
+}

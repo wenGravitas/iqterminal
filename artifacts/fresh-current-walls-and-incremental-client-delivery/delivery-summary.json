@@ -1,0 +1,1081 @@
+[
+  {
+    "label": "strict-baseline",
+    "phases": {
+      "parent": {
+        "firstUsefulSampleMs": 14446.834771000002,
+        "completePaintMs": 29440.798486,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794651300000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794651300000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794651300000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67223.65",
+          "eligibleTo": 1794651300000,
+          "horizonAt": 1794746795267
+        },
+        "finalization": {
+          "checkpointOrderElapsedMs": 83.5,
+          "validationElapsedMs": 519.8999999985099,
+          "validationYieldMs": 57.70000001788139,
+          "presentationOrderElapsedMs": 135.5,
+          "mutableProjectorRestored": false
+        },
+        "delta": null,
+        "partCache": null,
+        "mainApply": {
+          "messages": 121,
+          "snapshots": 7,
+          "segments": 32,
+          "patches": 46353,
+          "runs": 178208,
+          "ms": 2141.3000000081956,
+          "maxMs": 101.10000000149012
+        },
+        "chartPreparation": {
+          "slices": 548,
+          "steps": 129245,
+          "cancelled": 0,
+          "activeMs": 4388.299999989569,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.10000000149011612,
+          "maxSliceMs": 149.39999999850988,
+          "backgroundMs": 3941.500000040978,
+          "maxBackgroundMs": 149.5,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-1": {
+        "firstUsefulSampleMs": 3908.8765119999953,
+        "completePaintMs": 24028.290616,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794653100000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794653100000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794653100000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67268.35",
+          "eligibleTo": 1794653100000,
+          "horizonAt": 1794746818318
+        },
+        "finalization": {
+          "checkpointOrderElapsedMs": 43.79999999701977,
+          "validationElapsedMs": 478.3999999985099,
+          "validationYieldMs": 49.19999999552965,
+          "presentationOrderElapsedMs": 139.5,
+          "mutableProjectorRestored": false
+        },
+        "delta": null,
+        "partCache": null,
+        "mainApply": {
+          "messages": 244,
+          "snapshots": 8,
+          "segments": 46341,
+          "patches": 46498,
+          "runs": 356788,
+          "ms": 4724.400000024587,
+          "maxMs": 2472.699999999255
+        },
+        "chartPreparation": {
+          "slices": 1240,
+          "steps": 307633,
+          "cancelled": 0,
+          "activeMs": 8693.499999973923,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 149.39999999850988,
+          "backgroundMs": 8227.599999990314,
+          "maxBackgroundMs": 149.5,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-2": {
+        "firstUsefulSampleMs": 5176.588217999997,
+        "completePaintMs": 30136.312577999997,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794654000000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794654000000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794654000000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67272.05",
+          "eligibleTo": 1794654000000,
+          "horizonAt": 1794746846369
+        },
+        "finalization": {
+          "checkpointOrderElapsedMs": 86.5,
+          "validationElapsedMs": 700.5,
+          "validationYieldMs": 104.29999999701977,
+          "presentationOrderElapsedMs": 174,
+          "mutableProjectorRestored": false
+        },
+        "delta": null,
+        "partCache": null,
+        "mainApply": {
+          "messages": 372,
+          "snapshots": 9,
+          "segments": 92695,
+          "patches": 46708,
+          "runs": 535769,
+          "ms": 9087.500000011176,
+          "maxMs": 4250.39999999851
+        },
+        "chartPreparation": {
+          "slices": 2031,
+          "steps": 486338,
+          "cancelled": 0,
+          "activeMs": 14121.00000000745,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 149.39999999850988,
+          "backgroundMs": 13612.599999971688,
+          "maxBackgroundMs": 149.5,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    },
+    "traceEventCount": 659,
+    "ackEventExamples": [],
+    "eventKinds": [
+      "ack-accepted",
+      "attempt",
+      "close",
+      "message",
+      "open",
+      "send"
+    ]
+  },
+  {
+    "label": "strict-candidate",
+    "phases": {
+      "parent": {
+        "firstUsefulSampleMs": 8640.358660999998,
+        "completePaintMs": 19091.958187,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794651300000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794651300000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794651300000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67223.65",
+          "eligibleTo": 1794651300000,
+          "horizonAt": 1794746896144
+        },
+        "finalization": {
+          "importedParts": 86,
+          "fetchedParts": 86,
+          "reusedParts": 0,
+          "reusedCanonicalBytes": 0,
+          "assemblyRecords": 46225,
+          "checkpointOrderElapsedMs": 86.10000000149012,
+          "validationElapsedMs": 495.30000000074506,
+          "validationYieldMs": 54.19999999180436,
+          "presentationOrderElapsedMs": 107.5,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 12
+        },
+        "delta": null,
+        "partCache": {
+          "hits": 0,
+          "misses": 86,
+          "reusedCanonicalBytes": 0,
+          "admissions": 86,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 86,
+          "accountedBytes": 120930774,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 108,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 46289,
+          "runs": 178144,
+          "ms": 2325.3000000305474,
+          "maxMs": 122.59999999776483
+        },
+        "chartPreparation": {
+          "slices": 513,
+          "steps": 124785,
+          "cancelled": 0,
+          "activeMs": 4050.199999947101,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 112.10000000149012,
+          "backgroundMs": 3788.7999999411404,
+          "maxBackgroundMs": 112.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-1": {
+        "firstUsefulSampleMs": 3966.3737839999994,
+        "completePaintMs": 7215.472315000003,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794653100000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794653100000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794653100000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67268.35",
+          "eligibleTo": 1794653100000,
+          "horizonAt": 1794746911139
+        },
+        "finalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46309,
+          "checkpointOrderElapsedMs": 65.90000000223517,
+          "validationElapsedMs": 341.79999999701977,
+          "validationYieldMs": 24.900000017136335,
+          "presentationOrderElapsedMs": 104,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 11.300000000745058
+        },
+        "delta": {
+          "baseRevision": "44aa5a03db6350e4c630730d7acd505f92682a1993f3a8c2381720ce3b2dfeea",
+          "baseCount": 46225,
+          "baseThrough": 1794651300000,
+          "patches": 100,
+          "comparedSegments": 46309,
+          "comparedValueRuns": 177875,
+          "elapsedMs": 485.5,
+          "yieldMs": 76.40000000596046
+        },
+        "partCache": {
+          "hits": 85,
+          "misses": 87,
+          "reusedCanonicalBytes": 60136586,
+          "admissions": 86,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 87,
+          "accountedBytes": 121617480,
+          "pinnedEntries": 86,
+          "stagedEntries": 1,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 210,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 46421,
+          "runs": 178737,
+          "ms": 2438.4000000096858,
+          "maxMs": 122.59999999776483
+        },
+        "chartPreparation": {
+          "slices": 873,
+          "steps": 214132,
+          "cancelled": 0,
+          "activeMs": 6396.299999970943,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 112.10000000149012,
+          "backgroundMs": 6159.099999949336,
+          "maxBackgroundMs": 112.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "extension-2": {
+        "firstUsefulSampleMs": 3842.6591999999982,
+        "completePaintMs": 5939.141461000003,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794654000000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794654000000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794654000000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67272.05",
+          "eligibleTo": 1794654000000,
+          "horizonAt": 1794746917870
+        },
+        "finalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46354,
+          "checkpointOrderElapsedMs": 85.10000000149012,
+          "validationElapsedMs": 395.5,
+          "validationYieldMs": 29.399999979883432,
+          "presentationOrderElapsedMs": 62.80000000074506,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 14.699999999254942
+        },
+        "delta": {
+          "baseRevision": "ccd1b5bf9d6ef556bca013f8c759a32322510d3109ffed8e8576e9810b93c06f",
+          "baseCount": 46309,
+          "baseThrough": 1794653100000,
+          "patches": 61,
+          "comparedSegments": 46354,
+          "comparedValueRuns": 178188,
+          "elapsedMs": 421.19999999925494,
+          "yieldMs": 29.69999999552965
+        },
+        "partCache": {
+          "hits": 170,
+          "misses": 88,
+          "reusedCanonicalBytes": 120273172,
+          "admissions": 87,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 88,
+          "accountedBytes": 122426124,
+          "pinnedEntries": 86,
+          "stagedEntries": 1,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 308,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 46514,
+          "runs": 179354,
+          "ms": 2533.3000000193715,
+          "maxMs": 122.59999999776483
+        },
+        "chartPreparation": {
+          "slices": 1230,
+          "steps": 303562,
+          "cancelled": 0,
+          "activeMs": 8822.299999967217,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 112.10000000149012,
+          "backgroundMs": 8560.999999914318,
+          "maxBackgroundMs": 112.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      "reopen": {
+        "firstUsefulSampleMs": 1266.3864130000002,
+        "completePaintMs": 1266.3864130000002,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "loading",
+          "from": 1794541500000,
+          "to": 1794654000000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794651300000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Cached history 8051/46225 walls; validating the current revision.",
+          "requestComplete": false,
+          "loadedThrough": 1794541500000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67223.65",
+          "eligibleTo": 1794651300000,
+          "horizonAt": 1794746896144,
+          "presentationThrough": 1794651300000
+        },
+        "finalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46354,
+          "checkpointOrderElapsedMs": 85.10000000149012,
+          "validationElapsedMs": 395.5,
+          "validationYieldMs": 29.399999979883432,
+          "presentationOrderElapsedMs": 62.80000000074506,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 14.699999999254942
+        },
+        "delta": {
+          "baseRevision": "ccd1b5bf9d6ef556bca013f8c759a32322510d3109ffed8e8576e9810b93c06f",
+          "baseCount": 46309,
+          "baseThrough": 1794653100000,
+          "patches": 61,
+          "comparedSegments": 46354,
+          "comparedValueRuns": 178188,
+          "elapsedMs": 421.19999999925494,
+          "yieldMs": 29.69999999552965
+        },
+        "partCache": {
+          "hits": 170,
+          "misses": 88,
+          "reusedCanonicalBytes": 120273172,
+          "admissions": 88,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 88,
+          "accountedBytes": 122426124,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 396,
+          "snapshots": 9,
+          "segments": 40,
+          "patches": 54614,
+          "runs": 224427,
+          "ms": 3266.600000012666,
+          "maxMs": 122.59999999776483
+        },
+        "chartPreparation": {
+          "slices": 42,
+          "steps": 9019,
+          "cancelled": 2,
+          "activeMs": 288.2000000104308,
+          "lastProjectionElapsedMs": 583.7999999970198,
+          "lastReferenceElapsedMs": 77.90000000223517,
+          "lastSliceMs": 7.699999999254942,
+          "maxSliceMs": 15.300000000745058,
+          "backgroundMs": 220.69999999552965,
+          "maxBackgroundMs": 21.099999997764826,
+          "yieldMode": "user-visible-post-task",
+          "phase": "projection"
+        }
+      },
+      "reopen-validation": {
+        "firstUsefulSampleMs": 0.0,
+        "completePaintMs": 12039.773860000001,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "from": 1794541500000,
+          "to": 1794654000000,
+          "rangeComplete": false,
+          "market": "perpetual",
+          "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+          "aggregation": "native",
+          "availableFrom": 1793506604584,
+          "confirmedTo": 1794654000000,
+          "gaps": [
+            {
+              "from": 1794545328626,
+              "to": 1794545328626,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794583867958,
+              "to": 1794583867958,
+              "reason": "Observed book capacity: epoch invalidated"
+            },
+            {
+              "from": 1794597874175,
+              "to": 1794597874175,
+              "reason": "Depth persistence unavailable: ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+            },
+            {
+              "from": 1794614640485,
+              "to": 1794614640485,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.28 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794646205549,
+              "to": 1794646205549,
+              "reason": "Shared disk watermark"
+            },
+            {
+              "from": 1794648909582,
+              "to": 1794648909582,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.56 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794649562919,
+              "to": 1794649562919,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.58 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            },
+            {
+              "from": 1794650185461,
+              "to": 1794650185461,
+              "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+            }
+          ],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Depth continuity gaps are present in the requested range",
+          "requestComplete": true,
+          "loadedThrough": 1794654000000,
+          "profileVersion": 1,
+          "algorithmVersion": 1,
+          "schemaVersion": 1,
+          "midpoint": "67272.05",
+          "eligibleTo": 1794654000000,
+          "horizonAt": 1794746929601
+        },
+        "finalization": {
+          "importedParts": 86,
+          "fetchedParts": 1,
+          "reusedParts": 85,
+          "reusedCanonicalBytes": 60136586,
+          "assemblyRecords": 46354,
+          "checkpointOrderElapsedMs": 85.10000000149012,
+          "validationElapsedMs": 395.5,
+          "validationYieldMs": 29.399999979883432,
+          "presentationOrderElapsedMs": 62.80000000074506,
+          "mutableProjectorRestored": false,
+          "manifestFingerprintMs": 14.699999999254942
+        },
+        "delta": {
+          "baseRevision": "ccd1b5bf9d6ef556bca013f8c759a32322510d3109ffed8e8576e9810b93c06f",
+          "baseCount": 46309,
+          "baseThrough": 1794653100000,
+          "patches": 61,
+          "comparedSegments": 46354,
+          "comparedValueRuns": 178188,
+          "elapsedMs": 421.19999999925494,
+          "yieldMs": 29.69999999552965
+        },
+        "partCache": {
+          "hits": 256,
+          "misses": 88,
+          "reusedCanonicalBytes": 180812986,
+          "admissions": 88,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 88,
+          "accountedBytes": 122426124,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 607,
+          "snapshots": 10,
+          "segments": 46394,
+          "patches": 65527,
+          "runs": 448780,
+          "ms": 5507.20000000298,
+          "maxMs": 1552.199999999255
+        },
+        "chartPreparation": {
+          "slices": 544,
+          "steps": 136843,
+          "cancelled": 2,
+          "activeMs": 3839.8000000081956,
+          "lastProjectionElapsedMs": 0.09999999776482582,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.09999999776482582,
+          "maxSliceMs": 105.80000000074506,
+          "backgroundMs": 3589.999999988824,
+          "maxBackgroundMs": 105.90000000223517,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    },
+    "traceEventCount": 386,
+    "ackEventExamples": [],
+    "eventKinds": [
+      "ack-accepted",
+      "attempt",
+      "client-close",
+      "close",
+      "message",
+      "open",
+      "send"
+    ]
+  },
+  {
+    "label": "fresh-current",
+    "phases": {
+      "parent": {
+        "firstUsefulSampleMs": null,
+        "completePaintMs": 130224.169407,
+        "archive": {
+          "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+          "state": "partial",
+          "requestComplete": false,
+          "rangeComplete": false,
+          "from": 1794637800000,
+          "to": 1794747030218,
+          "market": "perpetual",
+          "aggregation": "native",
+          "gaps": [],
+          "requestedBandPercent": 10,
+          "profileBandPercent": 10,
+          "requestedTopN": 8,
+          "exact": true,
+          "reason": "Prepared wall view part capacity; validated prefix retained",
+          "eligibleTo": 1794747027725,
+          "horizonAt": 1794747027724,
+          "retryable": false,
+          "profileStatus": "backfilling",
+          "midpoint": "65425.95"
+        },
+        "finalization": null,
+        "delta": null,
+        "partCache": {
+          "hits": 0,
+          "misses": 0,
+          "reusedCanonicalBytes": 0,
+          "admissions": 0,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 0,
+          "accountedBytes": 0,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "mainApply": {
+          "messages": 425,
+          "snapshots": 7,
+          "segments": 32,
+          "patches": 1224,
+          "runs": 1248,
+          "ms": 168.19999999552965,
+          "maxMs": 8.799999997019768
+        },
+        "chartPreparation": {
+          "slices": 360,
+          "steps": 1650,
+          "cancelled": 0,
+          "activeMs": 45.60000001266599,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 5.599999997764826,
+          "backgroundMs": 0,
+          "maxBackgroundMs": 0,
+          "yieldMode": "not-scheduled",
+          "phase": "idle"
+        }
+      }
+    },
+    "traceEventCount": 980,
+    "ackEventExamples": [],
+    "eventKinds": [
+      "ack-accepted",
+      "attempt",
+      "client-close",
+      "close",
+      "message",
+      "open",
+      "send"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "commit": "241406ed1367fb0fb973200e8edc2f24252fc471",
+  "exitCode": 0,
+  "outDir": "artifacts/fresh-current-walls-and-incremental-client-delivery/dist-final",
+  "flags": {
+    "VITE_BUILD_COMMIT": "241406ed1367fb0fb973200e8edc2f24252fc471",
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1"
+  }
+}

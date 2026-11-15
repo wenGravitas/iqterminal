@@ -1,0 +1,360 @@
+[
+  {
+    "label": "strict-baseline",
+    "observedMs": 85339.147864,
+    "advancingExactACKAcceptances": 112,
+    "first": {
+      "socket": 2,
+      "mono": 8068.39999999851,
+      "cursor": 3525863371
+    },
+    "last": {
+      "socket": 2,
+      "mono": 82727.5,
+      "cursor": 3525864087
+    },
+    "longestConfirmedGapMs": 2145.0,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 18,
+        "event": "close",
+        "mono": 6702.199999999255,
+        "id": 1,
+        "code": 1008,
+        "reason": "Invalid command"
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794744997210,
+        "to": 1794746797210,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794744997210,
+        "to": 1794746797210,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "65430.65"
+      },
+      "lastConfirmedAt": 1794746874622,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65316.6,
+        "askCeiling": 65611.3
+      },
+      "currentSubscribed": true
+    },
+    "health": []
+  },
+  {
+    "label": "strict-candidate",
+    "observedMs": 51812.547011,
+    "advancingExactACKAcceptances": 61,
+    "first": {
+      "socket": 2,
+      "mono": 4222,
+      "cursor": 3525864317
+    },
+    "last": {
+      "socket": 2,
+      "mono": 48828.800000000745,
+      "cursor": 3525865326
+    },
+    "longestConfirmedGapMs": 3478.5,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 284,
+        "event": "close",
+        "mono": 33652.900000002235,
+        "id": 0,
+        "code": 1005,
+        "reason": ""
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794745100533,
+        "to": 1794746900533,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794745100533,
+        "to": 1794746900533,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "65403.65"
+      },
+      "lastConfirmedAt": 1794746942249,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65316.6,
+        "askCeiling": 65611.3
+      },
+      "currentSubscribed": true
+    },
+    "health": []
+  },
+  {
+    "label": "fresh-current",
+    "observedMs": 130224.169407,
+    "advancingExactACKAcceptances": 166,
+    "first": {
+      "socket": 1,
+      "mono": 3137.199999999255,
+      "cursor": 3525866077
+    },
+    "last": {
+      "socket": 1,
+      "mono": 128662.80000000075,
+      "cursor": 3525867104
+    },
+    "longestConfirmedGapMs": 6051.0,
+    "executionResetEvents": [],
+    "closes": [
+      {
+        "seq": 26,
+        "event": "close",
+        "mono": 3714.199999999255,
+        "id": 2,
+        "code": 1008,
+        "reason": "Invalid command"
+      },
+      {
+        "seq": 711,
+        "event": "close",
+        "mono": 97457.89999999851,
+        "id": 3,
+        "code": 1005,
+        "reason": ""
+      }
+    ],
+    "currentWallsFirst": {
+      "state": "loading",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794745230505,
+        "to": 1794747030505,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true
+      },
+      "currentSubscribed": true
+    },
+    "currentWallsLast": {
+      "state": "live",
+      "message": "Waiting for the current selected-profile archive.",
+      "archive": {
+        "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+        "state": "loading",
+        "requestComplete": false,
+        "rangeComplete": false,
+        "from": 1794745230505,
+        "to": 1794747030505,
+        "market": "perpetual",
+        "aggregation": "native",
+        "gaps": [],
+        "requestedBandPercent": 10,
+        "profileBandPercent": 10,
+        "requestedTopN": 8,
+        "exact": true,
+        "profileStatus": "backfilling",
+        "midpoint": "65425.95"
+      },
+      "lastConfirmedAt": 1794747151042,
+      "bookScope": {
+        "maxLevelsPerSide": 1000,
+        "bidComplete": false,
+        "askComplete": false,
+        "bidFloor": 65316.6,
+        "askCeiling": 65611.3
+      },
+      "currentSubscribed": true
+    },
+    "health": [
+      {
+        "status": 200,
+        "elapsedMs": 325.54493699999966,
+        "requestId": "246ca838-2443-4ae1-ac02-4c10af0ed6f8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 648.3138179999987,
+        "requestId": "3ca1eee5-6726-4303-8b12-93164beec164"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 408.1749259999997,
+        "requestId": "bcf308b2-ddd9-4516-b2f8-8208db8f199d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 322.80669900000066,
+        "requestId": "68915871-74e7-4d0c-9076-655dac4143b8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 289.3671809999978,
+        "requestId": "fd30f414-2529-4ff7-a74e-29301fc5f4f1"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 239.06614900000568,
+        "requestId": "2d2dfa2c-45de-4f09-8879-8e761c887a4b"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 1072.712897999998,
+        "requestId": "929a753d-02ed-44d7-aea3-604dfe2a6232"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 339.48224300000584,
+        "requestId": "31a00e58-ae5f-4ecc-a9f0-de01bdb577e4"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 293.4259129999991,
+        "requestId": "6fcaab58-4a55-4086-ae32-3dded3445af1"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 289.7775929999989,
+        "requestId": "12507510-dde9-46ff-af34-370cf2e274e9"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 333.8388979999945,
+        "requestId": "e7d4729d-e7ea-41b3-b504-986504fea273"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 327.939483999995,
+        "requestId": "f80cd7d4-353e-40d4-a044-6758ef9c508f"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 783.2609460000094,
+        "requestId": "0b06da8e-db21-4cd3-ba0f-34f90f65f7c8"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 485.2859840000019,
+        "requestId": "84bc6765-e3eb-42b9-91ed-6829b9e03212"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 385.5934050000069,
+        "requestId": "29ebbcf5-db87-4ad8-b2ab-55f0b671f13d"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 670.8939810000011,
+        "requestId": "d36f9d2c-014a-4d69-a622-9493a12c51e3"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 6304.349732000002,
+        "requestId": "b1d5b1a7-280e-4a7f-8483-68e158009de2"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 767.9883189999964,
+        "requestId": "7ed5b496-3a20-44ed-a0af-dced38650e38"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 296.1381599999877,
+        "requestId": "0c449580-8e62-4508-9fb6-b8210b6ecfda"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 283.9039130000019,
+        "requestId": "ae9cd5c6-be61-4e34-8a10-c7a3365ebe97"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 274.7387549999985,
+        "requestId": "d82aabe8-9c3d-4e9d-9853-4a3025b3609f"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 405.75693399999,
+        "requestId": "26026f1a-aa43-4202-9300-227b9f031e0e"
+      },
+      {
+        "status": 200,
+        "elapsedMs": 2013.9620659999928,
+        "requestId": "a47eba8b-08e0-4efe-92f4-ab584da891aa"
+      }
+    ]
+  }
+]
