@@ -16,9 +16,9 @@ export async function acquirePreparedWallReadLease(identity:{canonicalKey:string
   }).catch(()=>{});
  };
  const assertActive=()=>{if(failure)throw failure;combined.throwIfAborted();if(closed||performance.now()>=expires){failure=Error('Wall history reader lease expired; Retry available with good bars retained');release();throw failure;}};
- async function renew(){
+ async function renew(retried=false):Promise<void>{
   const sent=performance.now();
-  const response=await wallReadControlScheduler.read(endpoint+'#'+consumer,'order-walls',AbortSignal.any([combined,AbortSignal.timeout(3000)]),async upstream=>{
+  let response;try{response=await wallReadControlScheduler.read(endpoint+'#'+consumer,'order-walls',AbortSignal.any([combined,AbortSignal.timeout(3000)]),async upstream=>{
    const r=await fetcher(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({consumer,...identity}),signal:upstream});
    if(!r.ok){await r.body?.cancel();throw Error('Wall reader lease HTTP '+r.status);}
    const reader=r.body?.getReader();let text='',bytes=0;const decoder=new TextDecoder();
@@ -26,6 +26,7 @@ export async function acquirePreparedWallReadLease(identity:{canonicalKey:string
    try{for(;;){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>4096){await reader.cancel();throw Error('Invalid wall reader lease response size');}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}
    return JSON.parse(text);
   });
+  }catch(error){const transient=error instanceof TypeError||['AbortError','TimeoutError'].includes((error as Error)?.name);if(!retried&&transient&&!combined.aborted&&expires-performance.now()>3000)return renew(true);throw error;}
   if(response.version!==1||response.leaseMs!==15000||response.canonicalKey!==identity.canonicalKey||response.projectionKey!==identity.projectionKey)throw Error('Invalid wall reader lease identity');
   // The send clock is conservative: no cross-host timestamp subtraction.
   expires=sent+response.leaseMs;assertActive();
