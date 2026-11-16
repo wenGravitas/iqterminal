@@ -32,3 +32,11 @@ export class NativeCandleVersions {
  clear(){this.values.clear();}
  size(){return this.values.size;}
 }
+/** Restoring future whitespace must survive both the closed bootstrap and the
+ * first forming knot. Once that knot arrives, ordinary live rollover follows. */
+export class NativeCandleStartupView {
+ private awaitingCurrent=false;
+ reset(saved:boolean){this.awaitingCurrent=saved;}
+ release(){this.awaitingCurrent=false;}
+ consume(recent:boolean,historical:boolean,forming:boolean){const preserve=recent&&(historical||this.awaitingCurrent);if(recent&&forming)this.awaitingCurrent=false;return preserve;}
+}

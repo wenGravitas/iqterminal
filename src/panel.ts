@@ -1,5 +1,5 @@
 import {pastCandleViewport} from './feed/candle-viewport';
-import {NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
+import {NativeCandleStartupView,NativeCandleVersions,retainNativeViewport} from './feed/native-candle-state';
 import { workspacePanelStorage } from './workspaces/panel-storage';
 import {restoredHistoryViewport} from './feed/restore-bootstrap';
 import { currentTheme } from './theme';
@@ -310,6 +310,7 @@ export class CandlePanel implements IContentRenderer {
   private orderWallsAutoPriceWidth = 50;
   private orderWallsStatus?: OrderWallStatus;
   private nativeCandleVersions=new NativeCandleVersions();
+  private nativeStartupView=new NativeCandleStartupView();
   private nativeCandleDataEpoch=0;
   private nativeCandleDemand?:{from:number;to:number};
   private nativeCandleViewKey='';
@@ -829,6 +830,7 @@ export class CandlePanel implements IContentRenderer {
     this.element.dataset.panelId = params.api.id;
     this.selection = config(params.params, true);
     this.pendingHistoryView = restoredHistoryViewport(this.selection);
+    this.nativeStartupView.reset(Boolean(this.pendingHistoryView));
     if (this.tradingController) {
       const release = this.tradingController.subscribe(() => this.syncTradingOverlay(), this.abort.signal);
       this.subscriptions.push({ dispose: release });
@@ -5164,6 +5166,7 @@ export class CandlePanel implements IContentRenderer {
     }
     this.selection = nextSelection;
     this.pendingHistoryView = restoredHistoryViewport(this.selection);
+    this.nativeStartupView.reset(Boolean(this.pendingHistoryView));
     this.syncTradingOverlay();
     this.cancelWatchPick?.();this.setWatchZones(this.watchList);
     this.params.api.updateParameters(this.selection);
@@ -5207,6 +5210,7 @@ export class CandlePanel implements IContentRenderer {
   /** A saved range may exceed the chart's minimum zoom spacing. Keep loading
    * it honestly, but let an explicit gesture supersede pending restoration. */
   private takeNativeHistoryViewControl(){
+    this.nativeStartupView.release();
     if(this.selection.type==='candle'&&this.pendingHistoryView&&this.candles.length){
       this.pendingHistoryView=undefined;this.resetViewOnSnapshot=false;
     }
@@ -5260,7 +5264,7 @@ export class CandlePanel implements IContentRenderer {
         // indices. Preserve an actually historical time window on every such
         // arrival, including views only one candle back. A prior closed candle
         // is not proof that the forming knot has already reached this chart.
-        preserveNativeTimeView=recentNative&&Boolean(visible&&visible.to*1000<closed);
+        preserveNativeTimeView=this.nativeStartupView.consume(recentNative,Boolean(visible&&visible.to*1000<closed),event.candles.some(c=>c.t>=closed));
         firstPrice=this.nativeCandleDataEpoch!==epoch;
         if(firstPrice){this.nativeCandleVersions.clear();this.nativeCandleDataEpoch=epoch;if(event.merge||event.type==='patch')this.candles=[];}
         if(event.nativeVersion){const version=event.nativeVersion;event={...event,candles:event.candles.filter(c=>{
