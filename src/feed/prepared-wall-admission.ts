@@ -1,3 +1,4 @@
+import {wallInputCapacity} from './wall-input-capacity';
 import {validateWallEligibleDiscovery,type WallEligibleDiscovery} from './wall-history-horizon';
 import {wallReadControlScheduler} from './prepared-wall-read-lease';
 import {historyHttpError} from './history-http-error';
@@ -19,7 +20,7 @@ export class PreparedWallPreparationError extends Error {
 }
 const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 function progress(raw:any,request:PreparedWallRequest):WallPreparationProgress {
- const r=raw?.request,c=raw?.inputCapacity;const inputLimit=c?.version===1&&integer(c.canonicalParts)&&integer(c.metadataBytes)&&c.canonicalParts>0&&c.metadataBytes<=8*1024*1024&&c.canonicalParts<=c.metadataBytes/64?c.canonicalParts:128;
+ const r=raw?.request,inputLimit=raw?.inputCapacity===undefined?128:wallInputCapacity(raw.inputCapacity).canonicalParts;
  if(!raw||! /^[a-f0-9]{64}$/.test(raw.id??'')||!r||r.market!==request.market||r.profile!==request.profile||r.from!==request.from||r.to!==request.to
   ||!['source','canonical','projection','ready'].includes(raw.phase)||!['building','paused','failed','ready'].includes(raw.state)
   ||!integer(raw.pages)||raw.pages>inputLimit||!integer(raw.projectionPages)||raw.projectionPages>inputLimit||raw.state==='ready'&&raw.phase!=='ready'

@@ -1,3 +1,4 @@
+import {wallInputCapacity} from './wall-input-capacity';
 import type {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {acquirePreparedWallReadLease} from './prepared-wall-read-lease';
 import {historyHttpError} from './history-http-error';
@@ -50,10 +51,11 @@ async function readBody(response:Response,max:number,expectedHash?:string){
  const body:unknown=JSON.parse(new TextDecoder().decode(bytes));return {body,bytes:bytes.byteLength,bodyReadMs,jsonParseMs:performance.now()-parse};
 }
 async function validateManifest(value:any,source:Source,r:PreparedWallRequest):Promise<Manifest>{
+ const inputLimit=value?.version===6?Math.min(wallInputCapacity(value.inputCapacity).canonicalParts,8*1024*1024/64):128;
  if(![5,6].includes(value?.version)||!hex(value.key)||value.complete!==true||!sameRequest(value.request??{},r)||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token
   ||!integer(value.watermark)||value.watermark>source.watermark||value.request.watermark!==value.watermark||value.sourceProof.watermark!==value.watermark
   ||!head(value.head)||value.head.cursor!==value.watermark||value.head.at<r.to-1||JSON.stringify(value.head)!==JSON.stringify(value.sourceProof.head)||value.after!==value.watermark
-  ||!hex(value.request.sourceRevision)||!Array.isArray(value.parts)||!value.parts.length||value.parts.length>(value.version===6&&value.inputCapacity?.version===1&&integer(value.inputCapacity.canonicalParts)&&integer(value.inputCapacity.metadataBytes)&&value.inputCapacity.metadataBytes<=8*1024*1024?Math.floor(value.inputCapacity.metadataBytes/64):128))throw Error('Invalid prepared wall manifest identity');
+  ||!hex(value.request.sourceRevision)||!Array.isArray(value.parts)||!value.parts.length||value.parts.length>inputLimit)throw Error('Invalid prepared wall manifest identity');
  for(let i=0;i<value.parts.length;i++){
   const part=value.parts[i];if(part.index!==i||!hex(part.hash)||!hex(part.canonicalHash)||!integer(part.bytes)||part.bytes<1||part.bytes>4*1024*1024
    ||!integer(part.after)||!integer(part.nextAfter)||part.nextAfter<part.after||part.nextAfter>value.watermark||i&&part.after!==value.parts[i-1].nextAfter
