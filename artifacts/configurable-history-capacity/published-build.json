@@ -1,0 +1,22 @@
+{
+  "commit": "d103072bbfae3a0d72f61f72d4306c226d688be5",
+  "exitCode": 0,
+  "outDir": "artifacts/configurable-history-capacity/dist-published",
+  "flags": {
+    "VITE_DATA_MODE": "staging",
+    "VITE_HISTORY_TILES": "1",
+    "VITE_DIAGNOSTICS": "1",
+    "VITE_BUILD_COMMIT": "d103072bbfae3a0d72f61f72d4306c226d688be5",
+    "VITE_WALL_SELECTED_MAX_BYTES": "134217728"
+  },
+  "scope": "Built/typechecked/focused-tested; progress-label-only change after full c31browser cohort. Not claimed as a rerun of that cohort.",
+  "assetHashes": {
+    "worker-BKSmN_Bs.js": "a4a6ce6a89338368aae66ca167f53ee803f95d70c7d89c555eaae9c5aa2f9b6e",
+    "main-DuadqPLo.css": "5caf8d6e3ccd3ef234c5ab99dfea43b02956db4856703f631771e9ac864e94ac",
+    "editor-TlqhgGrm.js": "2b93f51d9d53d42624a02582da289d8e2929ec6dcccac79681fbacf5c7fdd793",
+    "worker-BVC0dT8j.js": "abbd646abaed59a32307bc9fa40c28f07912706a98a2e188afab1dc88677c70a",
+    "index-DNg7mzVA.js": "4ca399171fe41ea17d715434d880034912420b840e1cefeb60b1f8b5c6966811",
+    "main-CusC5HU9.js": "87188356f9a5f9c5ff326a1211cae144fd048701686f50c59b49ba0a64d00f5e",
+    "worker-DaWyXJKB.js": "fe771eaf11363d6e8085639c9d4cd9172c5a0475016d73c3f595aeb2667f56b9"
+  }
+}

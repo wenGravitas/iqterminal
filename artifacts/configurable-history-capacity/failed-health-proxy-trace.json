@@ -1,0 +1,200 @@
+[
+  [
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "arrival",
+      "ms": 0.03587000000698026,
+      "path": "/market-data/v2/history/health",
+      "counts": {
+        "active": 2,
+        "historicalActive": 0,
+        "currentActive": 2,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "admitted",
+      "ms": 0.16388700000243261,
+      "path": "/market-data/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "proxy-start",
+      "ms": 0.2546450000081677,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "upstream-request",
+      "ms": 0.898657000012463,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0,
+      "reusedSocket": false
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "socket-assigned",
+      "ms": 0.9614160000055563,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0,
+      "connecting": true,
+      "reusedSocket": false
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "socket-connected",
+      "ms": 1.2323390000092331,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "upstream-request-finish",
+      "ms": 1.390337000004365,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 3,
+        "historicalActive": 0,
+        "currentActive": 3,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "response-close",
+      "ms": 12000.300451999996,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 2,
+        "historicalActive": 0,
+        "currentActive": 2,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0,
+      "finished": false,
+      "status": 200
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "upstream-error",
+      "ms": 12002.68422200001,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 1,
+        "historicalActive": 0,
+        "currentActive": 1,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0,
+      "code": "ECONNRESET"
+    },
+    {
+      "kind": "startup-proxy",
+      "id": "193175ca-5b29-42cb-800e-7477b902e275",
+      "event": "upstream-close",
+      "ms": 12002.943849000003,
+      "path": "/v2/history/health",
+      "counts": {
+        "active": 1,
+        "historicalActive": 0,
+        "currentActive": 1,
+        "nativeActive": 0,
+        "bulkActive": 0,
+        "waitingCurrent": 0,
+        "waitingHistorical": 0,
+        "closed": false
+      },
+      "eventLoopMaxMs": 61.308927,
+      "dropped": 0
+    }
+  ]
+]

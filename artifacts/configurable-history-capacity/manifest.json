@@ -1,0 +1,10 @@
+{
+  "task": "configurable-history-capacity",
+  "startUtc": "2026-11-16T08:54:20Z",
+  "experimentCutoffUtc": "2026-11-16T11:24:20Z",
+  "deadlineUtc": "2026-11-16T11:54:20Z",
+  "frontendBaseline": "1e338cfbad34fe9febd0e264d1d49839b20de974",
+  "backendBaseline": "d7a8041bacf8fbe97701fa36d077f537c57d59ea",
+  "experimentsEndedUtc": "2026-11-16T11:21:59Z",
+  "outcome": "Capacity and fresh-current workflow verified; release blocked by captured current-route health deadline failure; latency targets not certified"
+}

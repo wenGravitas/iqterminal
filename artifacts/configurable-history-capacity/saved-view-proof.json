@@ -1,0 +1,525 @@
+{
+  "beforeVisibleSeconds": {
+    "from": 1794718269.1504183,
+    "to": 1794829600.0354047
+  },
+  "afterVisibleSeconds": {
+    "from": 1794718269.15,
+    "to": 1794829600.035
+  },
+  "savedHistoryViewports": [
+    {
+      "key": "basis.layout.v1",
+      "historyViewports": [
+        "\"historyViewport\":{\"from\":1794718350000,\"to\":1794826980885}"
+      ]
+    }
+  ],
+  "beforeArchive": {
+    "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "state": "partial",
+    "from": 1794717000000,
+    "to": 1794826431924,
+    "rangeComplete": false,
+    "market": "perpetual",
+    "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+    "aggregation": "native",
+    "availableFrom": 1793506604584,
+    "confirmedTo": 1794826429016,
+    "gaps": [
+      {
+        "from": 1794717519606,
+        "to": 1794717519606,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.07 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794717644150,
+        "to": 1794717644150,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.16 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794717976572,
+        "to": 1794717976572,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.39 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794718663434,
+        "to": 1794718663434,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.23 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794718895993,
+        "to": 1794718895993,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1794719103567,
+        "to": 1794719103567,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.18 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794719470919,
+        "to": 1794719470919,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.82 MiB bytes), current RSS: 2.09 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794719775300,
+        "to": 1794719775300,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.12 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794721010081,
+        "to": 1794721010081,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.26 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794721168281,
+        "to": 1794721168281,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.10 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794722042029,
+        "to": 1794722042029,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794722551028,
+        "to": 1794722551028,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794723043451,
+        "to": 1794723043451,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.46 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794724938821,
+        "to": 1794724938821,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725315649,
+        "to": 1794725315649,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725557611,
+        "to": 1794725557611,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.64 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725905134,
+        "to": 1794725905134,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.50 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794726763072,
+        "to": 1794726763072,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.46 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794726782255,
+        "to": 1794726782255,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.51 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727029600,
+        "to": 1794727029600,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.70 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727491087,
+        "to": 1794727491087,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727820553,
+        "to": 1794727820553,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.48 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727994254,
+        "to": 1794727994254,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794728901836,
+        "to": 1794728901836,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794729828892,
+        "to": 1794729828892,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730038814,
+        "to": 1794730038814,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.41 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730062582,
+        "to": 1794730062582,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.39 MiB bytes), current RSS: 2.43 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730274232,
+        "to": 1794730274232,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.33 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730745817,
+        "to": 1794730745817,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.36 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794731385021,
+        "to": 1794731385021,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.59 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794731562940,
+        "to": 1794731562940,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794731658527,
+        "to": 1794731658527,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.66 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794732328374,
+        "to": 1794732328374,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.67 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794732465083,
+        "to": 1794732465083,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.27 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794733266679,
+        "to": 1794733266679,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.47 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794733639929,
+        "to": 1794733639929,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.42 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734090708,
+        "to": 1794734090708,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734266148,
+        "to": 1794734266148,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.40 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734325009,
+        "to": 1794734325009,
+        "reason": "The operation was aborted due to timeout"
+      },
+      {
+        "from": 1794734365304,
+        "to": 1794734365304,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.11 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.80 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734372037,
+        "to": 1794734372037,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.43 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794735066333,
+        "to": 1794735066333,
+        "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "from": 1794736018345,
+        "to": 1794736018345,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.10 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794736974357,
+        "to": 1794736974357,
+        "reason": "Depth persistence unavailable: The operation was aborted due to timeout"
+      },
+      {
+        "from": 1794748806309,
+        "to": 1794748806309,
+        "reason": "Shared disk watermark"
+      }
+    ],
+    "requestedBandPercent": 10,
+    "profileBandPercent": 10,
+    "requestedTopN": 8,
+    "exact": true,
+    "reason": "Depth continuity gaps are present in the requested range History is loaded through the archive horizon; later chart time is not covered.",
+    "requestComplete": true,
+    "loadedThrough": 1794826429016,
+    "profileVersion": 1,
+    "algorithmVersion": 1,
+    "schemaVersion": 1,
+    "midpoint": "64473.75",
+    "eligibleTo": 1794826429016,
+    "horizonAt": 1794826429015,
+    "profileStatus": "backfilling"
+  },
+  "afterArchive": {
+    "profileId": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+    "state": "partial",
+    "from": 1794717000000,
+    "to": 1794826452038,
+    "rangeComplete": false,
+    "market": "perpetual",
+    "feed": "binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded",
+    "aggregation": "native",
+    "availableFrom": 1793506604584,
+    "confirmedTo": 1794826450034,
+    "gaps": [
+      {
+        "from": 1794717519606,
+        "to": 1794717519606,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.07 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794717644150,
+        "to": 1794717644150,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.16 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794717976572,
+        "to": 1794717976572,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.39 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794718663434,
+        "to": 1794718663434,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.23 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794718895993,
+        "to": 1794718895993,
+        "reason": "Shared disk watermark"
+      },
+      {
+        "from": 1794719103567,
+        "to": 1794719103567,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.18 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794719470919,
+        "to": 1794719470919,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.82 MiB bytes), current RSS: 2.09 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794719775300,
+        "to": 1794719775300,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.12 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794721010081,
+        "to": 1794721010081,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.26 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794721168281,
+        "to": 1794721168281,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.10 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794722042029,
+        "to": 1794722042029,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794722551028,
+        "to": 1794722551028,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794723043451,
+        "to": 1794723043451,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.46 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794724938821,
+        "to": 1794724938821,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725315649,
+        "to": 1794725315649,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725557611,
+        "to": 1794725557611,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.64 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794725905134,
+        "to": 1794725905134,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.50 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794726763072,
+        "to": 1794726763072,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.46 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794726782255,
+        "to": 1794726782255,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.51 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727029600,
+        "to": 1794727029600,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.70 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727491087,
+        "to": 1794727491087,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727820553,
+        "to": 1794727820553,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.48 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794727994254,
+        "to": 1794727994254,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794728901836,
+        "to": 1794728901836,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794729828892,
+        "to": 1794729828892,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730038814,
+        "to": 1794730038814,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.41 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730062582,
+        "to": 1794730062582,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.39 MiB bytes), current RSS: 2.43 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730274232,
+        "to": 1794730274232,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.33 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794730745817,
+        "to": 1794730745817,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.36 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794731385021,
+        "to": 1794731385021,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.59 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794731562940,
+        "to": 1794731562940,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794731658527,
+        "to": 1794731658527,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.66 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794732328374,
+        "to": 1794732328374,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.67 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794732465083,
+        "to": 1794732465083,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.27 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794733266679,
+        "to": 1794733266679,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.47 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794733639929,
+        "to": 1794733639929,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.42 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734090708,
+        "to": 1794734090708,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734266148,
+        "to": 1794734266148,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.40 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734325009,
+        "to": 1794734325009,
+        "reason": "The operation was aborted due to timeout"
+      },
+      {
+        "from": 1794734365304,
+        "to": 1794734365304,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.11 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.80 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794734372037,
+        "to": 1794734372037,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.43 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+      },
+      {
+        "from": 1794735066333,
+        "to": 1794735066333,
+        "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+      },
+      {
+        "from": 1794736018345,
+        "to": 1794736018345,
+        "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.10 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+      },
+      {
+        "from": 1794736974357,
+        "to": 1794736974357,
+        "reason": "Depth persistence unavailable: The operation was aborted due to timeout"
+      },
+      {
+        "from": 1794748806309,
+        "to": 1794748806309,
+        "reason": "Shared disk watermark"
+      }
+    ],
+    "requestedBandPercent": 10,
+    "profileBandPercent": 10,
+    "requestedTopN": 8,
+    "exact": true,
+    "reason": "Depth continuity gaps are present in the requested range History is loaded through the archive horizon; later chart time is not covered.",
+    "requestComplete": true,
+    "loadedThrough": 1794826450034,
+    "profileVersion": 1,
+    "algorithmVersion": 1,
+    "schemaVersion": 1,
+    "midpoint": "64460.45",
+    "eligibleTo": 1794826450034,
+    "horizonAt": 1794826450033,
+    "profileStatus": "backfilling"
+  },
+  "fullyPainted": true
+}
