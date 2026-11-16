@@ -63,3 +63,17 @@ test('capacity pauses remain visible, yield sockets and clear on automatic recov
  await vi.advanceTimersByTimeAsync(250);await pending;await vi.advanceTimersByTimeAsync(0);
  expect(new Set(headers.map(h=>h.get('X-IQ-Wall-Consumer'))).size).toBe(1);expect(headers.every(h=>!h.has('X-IQ-Wall-Retry'))).toBe(true);
 });
+
+test('reader handoff retains preparation until acknowledged ownership, with cancellation and idempotent release',async()=>{
+ vi.useFakeTimers();const calls:Array<{url:string;method?:string}>=[];let reads=0;
+ const fetcher=(async(input,init)=>{calls.push({url:String(input),method:init?.method});return Response.json(init?.method==='DELETE'?{}:++reads===1?reply():{...reply(job('ready')),state:'ready',readerLease:{version:1,leaseMs:15000}});}) as typeof fetch;
+ const abort=new AbortController(),pending=run(fetcher,abort.signal,{retainForReader:true});await vi.advanceTimersByTimeAsync(250);const found=await pending;
+ expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(0);
+ const {releasePreparedWallHandoff}=await import('../src/feed/prepared-wall-admission');
+ releasePreparedWallHandoff(found);releasePreparedWallHandoff(found);abort.abort();await vi.advanceTimersByTimeAsync(0);
+ expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
+});
+test('abandoning a handed-off result releases only its preparation consumer',async()=>{
+ const calls:RequestInit[]=[];const fetcher=(async(_input,init)=>{calls.push(init!);return Response.json(init?.method==='DELETE'?{}:{...reply(job('ready')),state:'ready',readerLease:{version:1,leaseMs:15000}});}) as typeof fetch;
+ const abort=new AbortController();await run(fetcher,abort.signal,{retainForReader:true});expect(calls).toHaveLength(1);abort.abort();await vi.waitFor(()=>expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1));
+});

@@ -1,3 +1,4 @@
+import {releasePreparedWallHandoff} from './prepared-wall-admission';
 import{preparedWallDelta,type PreparedWallBase,type PreparedWallDelta}from './prepared-wall-delta';
 import {readWallHistoryHorizon,eligibleWallHistoryRange} from './wall-history-horizon';
 import {wallPreparationReason} from './prepared-wall-admission';
@@ -253,6 +254,7 @@ export interface OrderWallsArchiveResult extends OrderWallsArchiveUpdate {
 
 export interface OrderWallsArchiveLoadOptions {
   preparedPresentationBase?:PreparedWallBase;
+  resolvePreparedPresentationBase?:()=>Promise<PreparedWallBase|undefined>;
   preparedPartCache?:import('./prepared-wall-part-cache').PreparedWallPartCache;
   request: OrderWallsArchiveRequest;
   signal?: AbortSignal;
@@ -411,8 +413,9 @@ export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions
    ...(a?{archive:{...a,to:original.to,eligibleTo:to,...(horizonAt===undefined?{}:{horizonAt}),rangeComplete:!clipped&&a.rangeComplete,
     ...(clipped&&complete?{state:'partial' as const,reason}:{})}}:{})}};
  };
- const result=await loadBoundedOrderWallsArchive({...options,preparedDiscovery,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
+ try{const result=await loadBoundedOrderWallsArchive({...options,preparedDiscovery,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
  return annotate(result);
+ }finally{releasePreparedWallHandoff(preparedDiscovery);}
 }
 
 async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOptions,viewId=historyViewId()): Promise<OrderWallsArchiveResult> {
@@ -487,7 +490,8 @@ async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOption
       const status={...statusForArchive(archive,state,reason),...('valueHistoryLimited' in projected&&projected.valueHistoryLimited?{valueHistoryLimited:true}:{}),
         ...('episodeHistoryLimited' in projected&&projected.episodeHistoryLimited?{episodeHistoryLimited:true}:{})};
       const segments=projected.projector?projected.projector.snapshot():'segments' in projected?projected.segments:[...projected.presentation.values()];
-      const delta=options.preparedPresentationBase&&projected.presentation?await preparedWallDelta(options.preparedPresentationBase,projected.presentation,consumerSignal):undefined;consumerSignal.throwIfAborted();
+      const presentationBase=reused?undefined:options.preparedPresentationBase??await options.resolvePreparedPresentationBase?.();
+      const delta=presentationBase&&projected.presentation?await preparedWallDelta(presentationBase,projected.presentation,consumerSignal):undefined;consumerSignal.throwIfAborted();
       const result:OrderWallsArchiveResult={kind:'snapshot',segments,projector:projected.projector,presentation:projected.presentation,preparedPresentationComplete:true,...(delta?{preparedDelta:delta}:{}),
         ...(reused?{preparedRevisionReused:true as const}:{}),...('finalization' in projected?{preparedFinalization:projected.finalization}:{}),preparedSourceToken:prepared.sourceToken,preparedPresentationRevision:projected.presentationRevision,status,
         watermark:head.cursor,head,cursor:head.cursor,pages:projected.parts,bytes:projected.bytes};

@@ -1,3 +1,4 @@
+import type {PreparedWallBase} from './prepared-wall-delta';
 import {PreparedWallPartCache} from './prepared-wall-part-cache';
 import {compactWallPresentation,replayCompactWallPresentation,type CompactWallPresentation} from './compact-wall-presentation';
 import {wallHistoryPresentation,wallCompactPresentation} from './wall-history-presentation-cache';
@@ -509,7 +510,7 @@ export class OrderWallsArchiveService {
     }
     const reusePrepared=[...job.subscribers].some(sub=>sub.warmReplay?.key===warmHistoryKey(job.request)&&!sub.warmReplay.entry.expired&&sub.warmReplay.entry.signature?.startsWith('manifest:'));
     const base=[...job.subscribers].find(sub=>sub.replacingHistory?.status.archive?.from===job.request.from&&sub.historyPresentation&&sub.historyRevision);
-    void loadOrderWallsArchive({ preparedPartCache:this.preparedPartCache,...(base?{preparedPresentationBase:{revision:base.historyRevision!,through:base.replacingHistory!.status.archive!.loadedThrough??job.request.from,presentation:base.historyPresentation!}}:{}),eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
+    void loadOrderWallsArchive({ resolvePreparedPresentationBase:()=>this.warmPreparedDeltaBase(job),preparedPartCache:this.preparedPartCache,...(base?{preparedPresentationBase:{revision:base.historyRevision!,through:base.replacingHistory!.status.archive!.loadedThrough??job.request.from,presentation:base.historyPresentation!}}:{}),eligibleHistory:true,eligibleRange:job.eligibleRange,onEligibility:range=>{job.eligibleRange=range;},request: job.request, signal: job.abort.signal, fetcher: this.request, resume,
       ...(reusePrepared?{reusePreparedPresentation:(revision:string,count:number)=>this.reusePreparedPresentation(job,revision,count)}:{}),
       ...(job.preparationRetryToken?{preparationRetry:{token:job.preparationRetryToken,newRevision:job.preparationNeedsRevision===true}}:{}),
       onUpdate: update => {
@@ -615,6 +616,27 @@ export class OrderWallsArchiveService {
         if(replay.entry.expired)this.warmHistory.delete(replay.key);
         else replay.entry.timer=setTimeout(()=>this.expireWarm(replay.key,replay.entry),60000);
       }}
+  }
+
+  /** Wait only at completed fresh validation, in parallel with preparation/import.
+   * A prefix replay is presentation evidence, never a source validation bypass. */
+  private async warmPreparedDeltaBase(job:SharedHistoryJob):Promise<PreparedWallBase|undefined>{
+    const replay=[...job.subscribers].map(sub=>sub.warmReplay).find(active=>active&&!active.entry.expired
+      &&active.entry.family===warmHistoryFamily(job.request)&&active.entry.requestedTo<=job.request.to
+      &&active.entry.signature?.startsWith('manifest:'));
+    if(!replay)return;
+    job.abort.signal.throwIfAborted();
+    await new Promise<void>((resolve,reject)=>{
+      const cancel=()=>{job.abort.signal.removeEventListener('abort',cancel);reject(new DOMException('Aborted','AbortError'));};
+      job.abort.signal.addEventListener('abort',cancel,{once:true});
+      void(replay.ready??Promise.resolve()).then(()=>{job.abort.signal.removeEventListener('abort',cancel);resolve();},error=>{job.abort.signal.removeEventListener('abort',cancel);reject(error);});
+    });
+    job.abort.signal.throwIfAborted();
+    const through=replay.entry.status.archive?.loadedThrough;
+    if(!replay.settled||replay.abort.signal.aborted||replay.entry.expired||replay.presentation.size!==replay.entry.segments
+      ||replay.runs!==replay.entry.runs||through===undefined||through<job.request.from
+      ||![...job.subscribers].some(sub=>sub.cachedHistory&&sub.warmReplay===replay&&sub.historyPresentation===replay.presentation))return;
+    return{revision:replay.entry.signature!.slice('manifest:'.length),through,presentation:new Map(replay.presentation)};
   }
 
   private reusePreparedPresentation(job:SharedHistoryJob,revision:string,count:number){
@@ -730,8 +752,11 @@ export class OrderWallsArchiveService {
   private publishSharedHistoryUpdate(sub: Subscription, job: SharedHistoryJob, update: OrderWallsArchiveUpdate, forceSnapshot=false) {
     if (this.disposed || this.subscriptions.get(sub.id) !== sub || sub.historyJob !== job) return;
     const delta=update.preparedDelta;
-    if(!forceSnapshot&&sub.replacingHistory&&delta&&delta.baseRevision===sub.historyRevision&&sub.historyPresentation?.size===delta.baseCount
-      &&sub.replacingHistory.status.archive?.loadedThrough===delta.baseThrough&&update.preparedPresentationComplete&&update.preparedPresentationRevision
+    const warmBase=sub.cachedHistory&&sub.warmReplay?.settled&&!sub.warmReplay.entry.expired
+      &&sub.historyPresentation===sub.warmReplay.presentation&&sub.warmReplay.entry.signature==='manifest:'+delta?.baseRevision
+      &&sub.warmReplay.entry.status.archive?.loadedThrough===delta?.baseThrough;
+    const replacingBase=sub.replacingHistory&&delta?.baseRevision===sub.historyRevision&&sub.replacingHistory.status.archive?.loadedThrough===delta?.baseThrough;
+    if(!forceSnapshot&&(replacingBase||warmBase)&&delta&&sub.historyPresentation?.size===delta.baseCount&&update.preparedPresentationComplete&&update.preparedPresentationRevision
       &&update.presentation&&update.status.archive?.requestComplete&&update.status.archive.exact&&update.status.archive.state!=='unavailable'
       &&!delta.patches.some(p=>sub.currentSnapshotIds.has(p.id))){
       sub.replacingHistory=undefined;sub.cachedHistory=false;this.releaseWarmReplay(sub);sub.historyStatus=update.status;

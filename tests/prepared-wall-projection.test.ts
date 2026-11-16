@@ -417,7 +417,7 @@ test('a failed cached replay falls back to full authenticated prepared records',
  }finally{service.dispose();spy?.mockRestore();}
 });
 
-test('changed presentation metadata with the same source token cannot reuse warm geometry',async()=>{
+test('changed coverage is freshly validated while exact warm financial rows use a delta',async()=>{
  vi.stubEnv('VITE_HISTORY_TILES','1');const old=fixture(true),revised=fixture(true);revised.manifest.coverage.gaps[0].reason='Corrected coverage detail';expect(revised.manifest.sourceToken).toBe(old.manifest.sourceToken);
  const seed=transport(old);let release!:()=>void;const gateSource=new Promise<void>(r=>release=r),fresh=transport(revised,{gateSource});let phase=0;
  const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+1000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};
@@ -426,7 +426,8 @@ test('changed presentation metadata with the same source token cannot reuse warm
   service.subscribe('warm',request);await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));
   const before=events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length;release();
   await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('warm')).at(-1)?.status.archive.requestComplete).toBe(true));
-  expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length).toBeGreaterThan(before);expect(service.diagnostics().warmValidatedReuses).toBe(0);
+  expect(events.filter(e=>e.ids?.includes('warm')&&e.kind==='snapshot').length).toBe(before);expect(service.diagnostics().warmValidatedReuses).toBe(0);expect(service.diagnostics().preparedDeltaPublications).toBe(1);
+  expect([...displayedWalls(events,'warm').values()].map(({currentSelection:_current,...row})=>row)).toEqual(revised.full.segments);
   expect(events.filter(e=>e.ids?.includes('warm')).at(-1).status.archive.gaps[0].reason).toBe('Corrected coverage detail');
  }finally{release();service.dispose();}
 });
@@ -507,7 +508,8 @@ test.each([false,true])('advancing same-start warm view preserves its financial 
   release();await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('b')).at(-1).status.archive.requestComplete).toBe(true));
   expect([...displayedWalls(events,'b').values()].map(({currentSelection:_current,...row})=>row)).toEqual(next.full.segments);
   expect(events.filter(e=>e.ids?.includes('b')).at(-1).status.archive.loadedThrough).toBe(to+60000);
-  expect(service.diagnostics()).toMatchObject({warmPrefixHits:2,warmValidatedReuses:0});
+  expect(service.diagnostics()).toMatchObject({warmPrefixHits:2,warmValidatedReuses:0,preparedDeltaPublications:1});
+  expect(events.filter(e=>e.ids?.includes('b')&&e.status.archive.requestComplete&&e.kind==='snapshot')).toHaveLength(0);
   service.unsubscribe('b');expect(service.diagnostics()).toMatchObject({warmReplayConsumers:0,historyJobs:0});
  }finally{release();service.dispose();}
 });
