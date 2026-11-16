@@ -6,13 +6,13 @@ import {historyScheduler} from './history-scheduler';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import type {PreparedWallRequest} from './prepared-wall-history';
 export interface WallPreparationProgress {
- id:string;phase:'source'|'canonical'|'projection'|'ready';state:'building'|'paused'|'failed'|'ready';pages:number;projectionPages:number;
+ id:string;phase:'source'|'canonical'|'projection'|'ready';state:'building'|'paused'|'failed'|'ready';pages:number;projectionPages:number;selectedParts?:number;
  category?:string;error?:string;retryable?:boolean;
  sourceCoverage?:{availableFrom:number|null;confirmedTo:number|null;gapCount:number;gapsTruncated:boolean};
 }
 /** History progress stays separate from the live feed's freshness state. */
 export function wallPreparationReason(value:WallPreparationProgress){
- const parts=`${value.phase}; ${value.pages} canonical / ${value.projectionPages} selected parts.`;
+ const parts=`${value.phase}; ${value.pages} canonical / ${value.projectionPages} projected input pages${value.selectedParts===undefined?'':` / ${value.selectedParts} selected parts`}.`;
  return value.state==='paused'?`Wall history preparation paused: ${value.error??'waiting for processing capacity; resumes automatically.'} (${parts})`:`Preparing wall history: ${parts}`;
 }
 export class PreparedWallPreparationError extends Error {
@@ -24,12 +24,13 @@ function progress(raw:any,request:PreparedWallRequest):WallPreparationProgress {
  if(!raw||! /^[a-f0-9]{64}$/.test(raw.id??'')||!r||r.market!==request.market||r.profile!==request.profile||r.from!==request.from||r.to!==request.to
   ||!['source','canonical','projection','ready'].includes(raw.phase)||!['building','paused','failed','ready'].includes(raw.state)
   ||!integer(raw.pages)||raw.pages>inputLimit||!integer(raw.projectionPages)||raw.projectionPages>inputLimit||raw.state==='ready'&&raw.phase!=='ready'
+  ||raw.parts!==undefined&&(!integer(raw.parts)||raw.parts>512)
   ||raw.retryable!==undefined&&typeof raw.retryable!=='boolean'
   ||raw.category!==undefined&&!['source-changed','source-unavailable','capacity','invalid-content','query'].includes(raw.category))throw Error('Invalid wall preparation progress identity');
  let sourceCoverage:WallPreparationProgress['sourceCoverage'];
  if(raw.coverage){const c=raw.coverage;if(![c.availableFrom,c.confirmedTo].every(v=>v===null||integer(v))||!integer(c.gapCount)||typeof c.gapsTruncated!=='boolean')throw Error('Invalid wall preparation source coverage');
   sourceCoverage={availableFrom:c.availableFrom,confirmedTo:c.confirmedTo,gapCount:c.gapCount,gapsTruncated:c.gapsTruncated};}
- return {id:raw.id,phase:raw.phase,state:raw.state,pages:raw.pages,projectionPages:raw.projectionPages,...(raw.category?{category:raw.category}:{}),
+ return {id:raw.id,phase:raw.phase,state:raw.state,pages:raw.pages,projectionPages:raw.projectionPages,...(raw.parts===undefined?{}:{selectedParts:raw.parts}),...(raw.category?{category:raw.category}:{}),
   ...(raw.error?{error:String(raw.error).slice(0,500)}:{}),...(raw.retryable!==undefined?{retryable:raw.retryable}:{}),...(sourceCoverage?{sourceCoverage}:{})};
 }
 function delay(ms:number,signal:AbortSignal){return new Promise<void>((resolve,reject)=>{
