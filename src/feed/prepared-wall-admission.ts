@@ -19,10 +19,10 @@ export class PreparedWallPreparationError extends Error {
 }
 const integer=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 function progress(raw:any,request:PreparedWallRequest):WallPreparationProgress {
- const r=raw?.request;
+ const r=raw?.request,c=raw?.inputCapacity;const inputLimit=c?.version===1&&integer(c.canonicalParts)&&integer(c.metadataBytes)&&c.canonicalParts>0&&c.metadataBytes<=8*1024*1024&&c.canonicalParts<=c.metadataBytes/64?c.canonicalParts:128;
  if(!raw||! /^[a-f0-9]{64}$/.test(raw.id??'')||!r||r.market!==request.market||r.profile!==request.profile||r.from!==request.from||r.to!==request.to
   ||!['source','canonical','projection','ready'].includes(raw.phase)||!['building','paused','failed','ready'].includes(raw.state)
-  ||!integer(raw.pages)||raw.pages>128||!integer(raw.projectionPages)||raw.projectionPages>128||raw.state==='ready'&&raw.phase!=='ready'
+  ||!integer(raw.pages)||raw.pages>inputLimit||!integer(raw.projectionPages)||raw.projectionPages>inputLimit||raw.state==='ready'&&raw.phase!=='ready'
   ||raw.retryable!==undefined&&typeof raw.retryable!=='boolean'
   ||raw.category!==undefined&&!['source-changed','source-unavailable','capacity','invalid-content','query'].includes(raw.category))throw Error('Invalid wall preparation progress identity');
  let sourceCoverage:WallPreparationProgress['sourceCoverage'];
@@ -55,7 +55,7 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
     ...(options.retry?{'X-IQ-Wall-Retry':options.retry.token,...(options.retry.newRevision?{'X-IQ-Wall-New-Revision':'1'}:{})}:{})};
    const response=await fetcher(url,{signal:upstream,headers});
    if(!response.ok){if(response.status===404){await response.body?.cancel();return null;}throw await historyHttpError(response,upstream,'Prepared wall discovery');}
-   return options.decode(response,projection?8*1024*1024:128*1024);
+   return options.decode(response,8*1024*1024);
   });
   if(found?.preparation)leased=true;
   signal.throwIfAborted();

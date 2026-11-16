@@ -11,7 +11,7 @@ import type {OrderWallsArchivePage} from './order-walls-archive';
 type Head={cursor:number;epoch:number;at:number};
 export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;from:number;to:number;watermark?:number;head?:Head}
 interface Part {index:number;hash:string;canonicalHash:string;bytes:number;after:number;nextAfter:number}
-interface Manifest {version:5;key:string;complete:true;watermark:number;head:Head;after:number;request:PreparedWallRequest&{sourceRevision:string};sourceProof:Source;parts:Part[]}
+interface Manifest {version:5|6;inputCapacity?:{version:1;canonicalParts:number;metadataBytes:number};key:string;complete:true;watermark:number;head:Head;after:number;request:PreparedWallRequest&{sourceRevision:string};sourceProof:Source;parts:Part[]}
 interface ProjectionSource {version:1;kind:'wall-projection-source-v1';key:string;request:PreparedWallRequest;sourceProof:Source;watermark:number;head:Head}
 type SourceSnapshot=Manifest|ProjectionSource;
 interface Source extends PreparedWallRequest {version:1;kind:'wall-source-sha256-xor-v1';token:string;eligible:boolean;watermark:number;head:Head;maxCursor?:number;anchor?:{cursor:number;epoch:number;at:number;hash:string}|null}
@@ -50,10 +50,10 @@ async function readBody(response:Response,max:number,expectedHash?:string){
  const body:unknown=JSON.parse(new TextDecoder().decode(bytes));return {body,bytes:bytes.byteLength,bodyReadMs,jsonParseMs:performance.now()-parse};
 }
 async function validateManifest(value:any,source:Source,r:PreparedWallRequest):Promise<Manifest>{
- if(value?.version!==5||!hex(value.key)||value.complete!==true||!sameRequest(value.request??{},r)||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token
+ if(![5,6].includes(value?.version)||!hex(value.key)||value.complete!==true||!sameRequest(value.request??{},r)||!validSource(value.sourceProof,r)||value.sourceProof.token!==source.token
   ||!integer(value.watermark)||value.watermark>source.watermark||value.request.watermark!==value.watermark||value.sourceProof.watermark!==value.watermark
   ||!head(value.head)||value.head.cursor!==value.watermark||value.head.at<r.to-1||JSON.stringify(value.head)!==JSON.stringify(value.sourceProof.head)||value.after!==value.watermark
-  ||!hex(value.request.sourceRevision)||!Array.isArray(value.parts)||!value.parts.length||value.parts.length>128)throw Error('Invalid prepared wall manifest identity');
+  ||!hex(value.request.sourceRevision)||!Array.isArray(value.parts)||!value.parts.length||value.parts.length>(value.version===6&&value.inputCapacity?.version===1&&integer(value.inputCapacity.canonicalParts)&&integer(value.inputCapacity.metadataBytes)&&value.inputCapacity.metadataBytes<=8*1024*1024?Math.floor(value.inputCapacity.metadataBytes/64):128))throw Error('Invalid prepared wall manifest identity');
  for(let i=0;i<value.parts.length;i++){
   const part=value.parts[i];if(part.index!==i||!hex(part.hash)||!hex(part.canonicalHash)||!integer(part.bytes)||part.bytes<1||part.bytes>4*1024*1024
    ||!integer(part.after)||!integer(part.nextAfter)||part.nextAfter<part.after||part.nextAfter>value.watermark||i&&part.after!==value.parts[i-1].nextAfter
