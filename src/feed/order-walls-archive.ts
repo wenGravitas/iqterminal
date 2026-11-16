@@ -1,4 +1,3 @@
-import {releasePreparedWallHandoff} from './prepared-wall-admission';
 import{preparedWallDelta,type PreparedWallBase,type PreparedWallDelta}from './prepared-wall-delta';
 import {readWallHistoryHorizon,eligibleWallHistoryRange} from './wall-history-horizon';
 import {wallPreparationReason} from './prepared-wall-admission';
@@ -413,9 +412,8 @@ export async function loadOrderWallsArchive(options:OrderWallsArchiveLoadOptions
    ...(a?{archive:{...a,to:original.to,eligibleTo:to,...(horizonAt===undefined?{}:{horizonAt}),rangeComplete:!clipped&&a.rangeComplete,
     ...(clipped&&complete?{state:'partial' as const,reason}:{})}}:{})}};
  };
- try{const result=await loadBoundedOrderWallsArchive({...options,preparedDiscovery,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
+ const result=await loadBoundedOrderWallsArchive({...options,preparedDiscovery,request:{...original,to},onUpdate:update=>options.onUpdate?.(annotate(update))},viewId);
  return annotate(result);
- }finally{releasePreparedWallHandoff(preparedDiscovery);}
 }
 
 async function loadBoundedOrderWallsArchive(options: OrderWallsArchiveLoadOptions,viewId=historyViewId()): Promise<OrderWallsArchiveResult> {

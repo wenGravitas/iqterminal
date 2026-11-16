@@ -38,22 +38,12 @@ function delay(ms:number,signal:AbortSignal){return new Promise<void>((resolve,r
  const done=()=>{signal.removeEventListener('abort',cancel);resolve();},timer=setTimeout(done,ms);
  const cancel=()=>{clearTimeout(timer);signal.removeEventListener('abort',cancel);reject(new DOMException('Aborted','AbortError'));};signal.addEventListener('abort',cancel,{once:true});
 });}
-const readerHandoffs=new WeakMap<object,()=>void>();
-/** Local ownership only; never serialized or inferred from untrusted discovery fields. */
-export function releasePreparedWallHandoff(found:unknown){if(found&&typeof found==='object')readerHandoffs.get(found)?.();}
 /** Waiting never holds a scheduler/socket slot. A unique interest identity avoids
  * coalescing requests with different lease ownership into one admitted consumer. */
 export async function discoverPreparedWallAdmission(options:{request:PreparedWallRequest;url:string;projection:boolean;fetcher:typeof fetch;signal:AbortSignal;
- retainForReader?:boolean;resolveEligibility?:boolean;onEligibility?:(value:WallEligibleDiscovery)=>void;decode:(response:Response,max:number)=>Promise<any>;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}){
+ resolveEligibility?:boolean;onEligibility?:(value:WallEligibleDiscovery)=>void;decode:(response:Response,max:number)=>Promise<any>;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}){
  const {projection,fetcher,signal}=options,consumer=crypto.randomUUID();let request=options.request,url=options.url,eligibility:WallEligibleDiscovery|undefined,job:string|undefined,leased=false;
- let transferred=false;
- const result=(found:any)=>{
-  const value=eligibility?{...found,eligibility}:found;
-  if(options.retainForReader&&leased&&value?.state==='ready'&&value.readerLease){
-   let done=false;let timer:ReturnType<typeof setTimeout>;const finish=()=>{if(done)return;done=true;clearTimeout(timer);signal.removeEventListener('abort',finish);readerHandoffs.delete(value);release();};
-   readerHandoffs.set(value,finish);signal.addEventListener('abort',finish,{once:true});timer=setTimeout(finish,15000);transferred=true;
-  }return value;
- };
+ const result=(found:any)=>eligibility?{...found,eligibility}:found;
  const release=()=>{
   const cancel='/market-data/v2/history/walls/preparation?'+new URLSearchParams({consumer});
   void wallReadControlScheduler.read(cancel,'order-walls',AbortSignal.timeout(2000),async upstream=>{
@@ -90,5 +80,5 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
    return result(found);
   }
   options.onPreparation?.(value);await delay(p.pollMs,signal);
- }}finally{if(leased&&!transferred)release();}
+ }}finally{if(leased)release();}
 }

@@ -7,7 +7,7 @@ import {readPreparedWallProjection,type ProjectionProgress} from './prepared-wal
 import {type OrderWallsProjectionSettings,type OrderWallsArchiveProfile,type OrderWallSegment,type OrderWallsArchiveCoverage} from '../shared/order-walls-projection';
 import {WALL_PROJECTION_CORE_SHA256} from '../shared/order-walls-projection-version';
 import {historyScheduler} from './history-scheduler';
-import {releasePreparedWallHandoff,discoverPreparedWallAdmission,type WallPreparationProgress} from './prepared-wall-admission';
+import {discoverPreparedWallAdmission,type WallPreparationProgress} from './prepared-wall-admission';
 import type {OrderWallsArchivePage} from './order-walls-archive';
 type Head={cursor:number;epoch:number;at:number};
 export interface PreparedWallRequest {market:'spot'|'perpetual';profile:string;from:number;to:number;watermark?:number;head?:Head}
@@ -103,12 +103,11 @@ function waitCached<T>(value:Promise<T>,signal:AbortSignal):Promise<T>{
  * scheduler and a consumer-specific cancellation signal; no outer admission is
  * held while waiting for another admitted request. */
 export async function discoverPreparedWallHistory(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,settings?:OrderWallsProjectionSettings,options:Omit<Parameters<typeof discoverPreparedWallAdmission>[0],'request'|'url'|'projection'|'fetcher'|'signal'|'decode'>={}){
- return discoverPreparedWallAdmission({request,url:sourceUrl('discover',request),projection:Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0),fetcher,signal,retainForReader:true,...options,decode:async(response,max)=>(await readBody(response,max)).body});
+ return discoverPreparedWallAdmission({request,url:sourceUrl('discover',request),projection:Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0),fetcher,signal,...options,decode:async(response,max)=>(await readBody(response,max)).body});
 }
 export async function preparedWallReader(request:PreparedWallRequest,fetcher:typeof fetch,signal:AbortSignal,resumeSourceToken?:string,settings?:OrderWallsProjectionSettings,options:{discovery?:unknown;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}={}):Promise<PreparedWallReader|null>{
  const projection=Boolean(settings&&settings.topLevels===8&&!settings.minimumNotionalEnabled&&settings.minDurationMs===0);
  const found:any=options.discovery??await discoverPreparedWallHistory(request,fetcher,signal,settings,options);
- try{
  if(!found||found.state!=='ready'){if(resumeSourceToken)throw new PreparedWallSourceChangedError();return null;}
  if(!validSource(found.source,request))throw Error('Invalid prepared wall source validation');
  const source:Source=found.source;if(resumeSourceToken&&source.token!==resumeSourceToken)throw new PreparedWallSourceChangedError();
@@ -199,5 +198,4 @@ export async function preparedWallReader(request:PreparedWallRequest,fetcher:typ
   }
   assertActive();return {...result,body};
  }};
- }finally{releasePreparedWallHandoff(found);}
 }
