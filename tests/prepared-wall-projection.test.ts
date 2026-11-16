@@ -577,3 +577,16 @@ test('two validated same-start service extensions publish exact deltas without w
   expect(events.slice(afterSeed).filter(e=>e.kind==='snapshot')).toHaveLength(0);expect(service.diagnostics().preparedDeltaPublications).toBe(2);expect(service.diagnostics().preparedDeltaPatches).toBeLessThan(8);
  }finally{service.dispose();expect(service.diagnostics().preparedPartCache).toMatchObject({accountedBytes:0,pinnedEntries:0,stagedEntries:0});}
 });
+
+test('a fresh newer revision never waits for unfinished optional warm replay',async()=>{
+ vi.stubEnv('VITE_HISTORY_TILES','1');const old=fixture(true),next=fixture(true,to+60000),seed=transport(old);let releaseSource!:()=>void,releaseReplay!:()=>void;
+ const sourceGate=new Promise<void>(r=>releaseSource=r),replayGate=new Promise<void>(r=>releaseReplay=r),fresh=transport(next,{gateSource:sourceGate});let phase=0;const events:any[]=[],service=new OrderWallsArchiveService(e=>events.push(e),(input,init)=>(phase?fresh:seed).fetcher(input,init),()=>to+61000,0),request={market:'binance-spot' as const,from,to,settings,followLive:false};let spy:ReturnType<typeof vi.spyOn>|undefined;
+ try{
+  service.subscribe('seed',request);await vi.waitFor(()=>expect(service.diagnostics()).toMatchObject({warmCompactEntries:1,warmBuilds:0}));service.unsubscribe('seed');phase=1;
+  spy=vi.spyOn(compactCodec,'replayCompactWallPresentation').mockImplementationOnce(async(_value,_identity,signal,publish)=>{publish(old.full.segments.slice(0,1));await replayGate;signal.throwIfAborted();publish(old.full.segments.slice(1));});
+  service.subscribe('fresh',{...request,to:to+60000});await vi.waitFor(()=>expect(fresh.calls.at(-1)).toMatch(/\/source$/));releaseSource();
+  await vi.waitFor(()=>expect(events.filter(e=>e.ids?.includes('fresh')).at(-1)?.status.archive.requestComplete).toBe(true),{timeout:1500});
+  expect([...displayedWalls(events,'fresh').values()].map(({currentSelection:_current,...row})=>row)).toEqual(next.full.segments);expect(service.diagnostics().preparedDeltaPublications).toBe(0);
+  const before=events.length;releaseReplay();await vi.waitFor(()=>expect(service.diagnostics().warmReplayJobs).toBe(0));expect(events.slice(before).some(e=>e.status.archive?.requestComplete===false)).toBe(false);
+ }finally{releaseSource();releaseReplay();service.dispose();spy?.mockRestore();}
+});

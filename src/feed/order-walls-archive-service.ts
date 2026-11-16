@@ -618,19 +618,16 @@ export class OrderWallsArchiveService {
       }}
   }
 
-  /** Wait only at completed fresh validation, in parallel with preparation/import.
+  /** Inspect completed replay only after fresh validation; never wait for optional cache work.
    * A prefix replay is presentation evidence, never a source validation bypass. */
   private async warmPreparedDeltaBase(job:SharedHistoryJob):Promise<PreparedWallBase|undefined>{
     const replay=[...job.subscribers].map(sub=>sub.warmReplay).find(active=>active&&!active.entry.expired
       &&active.entry.family===warmHistoryFamily(job.request)&&active.entry.requestedTo<=job.request.to
       &&active.entry.signature?.startsWith('manifest:'));
-    if(!replay)return;
-    job.abort.signal.throwIfAborted();
-    await new Promise<void>((resolve,reject)=>{
-      const cancel=()=>{job.abort.signal.removeEventListener('abort',cancel);reject(new DOMException('Aborted','AbortError'));};
-      job.abort.signal.addEventListener('abort',cancel,{once:true});
-      void(replay.ready??Promise.resolve()).then(()=>{job.abort.signal.removeEventListener('abort',cancel);resolve();},error=>{job.abort.signal.removeEventListener('abort',cancel);reject(error);});
-    });
+    // Fresh validated data must not wait for optional compact replay. Only an
+    // already completed replay can supply this fast path; otherwise preserve
+    // the full authenticated replacement fallback.
+    if(!replay||!replay.settled)return;
     job.abort.signal.throwIfAborted();
     const through=replay.entry.status.archive?.loadedThrough;
     if(!replay.settled||replay.abort.signal.aborted||replay.entry.expired||replay.presentation.size!==replay.entry.segments
