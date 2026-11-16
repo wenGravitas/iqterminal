@@ -75,3 +75,6 @@ Final consolidated client suite: **142passed** across10files, including capacity
 All measurement browsers/previews/tunnel supervisor/children, reference containers/tools and candidate roles are stopped; consumers/readers/pins0, no running lock. Useful protocol6state remains. All35protected entry service IDs/start times and unrelated limits match. Incumbentf1/root4/flags0, main/production, raw collectors/history, frozen refs and comparison-control are preserved; recovered CHsettings remain.
 
 Rollback uses the untouched incumbent route18880/18791. Candidate18890/18792is stopped, not promoted. Never open protocol6rootwith an older binary or rewrite markers; lowering allowances reports capacity and preserves artifacts. Future larger deployment changes are configuration changes with fresh resource/reservation checks, not another hard-coded capacity patch. See the backend report for exact settings/defaults, build receipts and compatible restart/rollback steps.
+
+
+Follow-up, with its own budget and build scope: [Wall-history latency and route follow-up](wall-history-latency-route.md). This preserves the results and deadlines above.

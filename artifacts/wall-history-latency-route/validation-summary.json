@@ -1,0 +1,3137 @@
+{
+  "comparison-base": {
+    "completion": [
+      {
+        "phase": "parent",
+        "actionToPaintMs": 18396.79999999702,
+        "navigationToPaintMs": 18740.79999999702,
+        "witnessLagMs": 46.70000000298023,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794828600000
+      },
+      {
+        "phase": "extension-1",
+        "actionToPaintMs": 8940.0,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 60.600000001490116,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "from": 1794717000000,
+        "to": 1794830400000,
+        "loadedThrough": 1794830400000
+      },
+      {
+        "phase": "extension-2",
+        "actionToPaintMs": 6861.39999999851,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 135.80000000074506,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794831300000
+      },
+      {
+        "phase": "reopen",
+        "actionToPaintMs": 12984.39999999851,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 15.300000000745058,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794831300000
+      }
+    ],
+    "firstUsefulPaintWitnesses": [
+      {
+        "phase": "parent",
+        "kind": "history",
+        "witnessMono": 7008.199999999255,
+        "paintedMono": 0,
+        "actionMono": 344,
+        "elapsedMs": 6664.199999999255,
+        "paintedRevision": -1,
+        "inputRevision": 5,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794717000000
+      },
+      {
+        "phase": "extension-1",
+        "kind": "history",
+        "witnessMono": 21508.199999999255,
+        "paintedMono": 21408.29999999702,
+        "actionMono": 21492.099999997765,
+        "elapsedMs": 16.100000001490116,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794828600000
+      },
+      {
+        "phase": "extension-2",
+        "kind": "history",
+        "witnessMono": 32142.29999999702,
+        "paintedMono": 31469.199999999255,
+        "actionMono": 32137.199999999255,
+        "elapsedMs": 5.099999997764826,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "from": 1794717000000,
+        "to": 1794830400000,
+        "loadedThrough": 1794830400000
+      },
+      {
+        "phase": "reopen",
+        "kind": "history",
+        "witnessMono": 46547.39999999851,
+        "paintedMono": 0,
+        "actionMono": 42843.89999999851,
+        "elapsedMs": 3703.5,
+        "paintedRevision": -1,
+        "inputRevision": 65,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794717000000
+      }
+    ],
+    "phaseEvidence": [
+      {
+        "phase": "parent",
+        "from": 1794717000000,
+        "requestedTo": 1794828600000,
+        "eligibleTo": 1794828600000,
+        "horizonAt": 1794839576471,
+        "loadedThrough": 1794828600000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "apply": {
+          "messages": 71,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 19845,
+          "runs": 97280,
+          "ms": 1946.6000000052154,
+          "maxMs": 293.6000000014901
+        },
+        "preparedDeltaPublications": 0,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 0,
+          "misses": 55,
+          "reusedCanonicalBytes": 0,
+          "admissions": 55,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 55,
+          "accountedBytes": 54519392,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794828600000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 55,
+              "fetchedParts": 55,
+              "reusedParts": 0,
+              "reusedCanonicalBytes": 0,
+              "assemblyRecords": 19796,
+              "checkpointOrderElapsedMs": 46.5,
+              "validationElapsedMs": 294.80000000074506,
+              "validationYieldMs": 29.800000000745058,
+              "presentationOrderElapsedMs": 153.39999999850988,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 28.800000000745058
+            },
+            "eligibleRange": {
+              "to": 1794828600000,
+              "horizonAt": 1794839576471
+            }
+          }
+        ],
+        "heap": {
+          "used": 65881428,
+          "total": 126582168
+        },
+        "chartPreparation": {
+          "slices": 299,
+          "steps": 59605,
+          "cancelled": 0,
+          "activeMs": 2335.5999999828637,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 92.79999999701977,
+          "backgroundMs": 2073.500000014901,
+          "maxBackgroundMs": 60.099999997764826,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-1",
+        "from": 1794717000000,
+        "requestedTo": 1794830400000,
+        "eligibleTo": 1794830400000,
+        "horizonAt": 1794839594423,
+        "loadedThrough": 1794830400000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "apply": {
+          "messages": 140,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 19965,
+          "runs": 109627,
+          "ms": 2048.800000000745,
+          "maxMs": 293.6000000014901
+        },
+        "preparedDeltaPublications": 1,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6365.199999999255,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 54,
+          "misses": 56,
+          "reusedCanonicalBytes": 26995116,
+          "admissions": 56,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 56,
+          "accountedBytes": 55161558,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794830400000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 55,
+              "fetchedParts": 1,
+              "reusedParts": 54,
+              "reusedCanonicalBytes": 26995116,
+              "assemblyRecords": 19868,
+              "checkpointOrderElapsedMs": 27.099999997764826,
+              "validationElapsedMs": 298.5999999977648,
+              "validationYieldMs": 57.400000005960464,
+              "presentationOrderElapsedMs": 53.400000002235174,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 27.699999999254942
+            },
+            "preparedDelta": {
+              "baseRevision": "9c4710c36f3e014131c3b94f63bff8c808fa1cd57a330bc965df540dcd4b2ad2",
+              "baseCount": 19796,
+              "baseThrough": 1794828600000,
+              "patches": 88,
+              "comparedSegments": 19868,
+              "comparedValueRuns": 85311,
+              "elapsedMs": 220,
+              "yieldMs": 14.800000000745058
+            },
+            "eligibleRange": {
+              "to": 1794830400000,
+              "horizonAt": 1794839594423
+            }
+          }
+        ],
+        "heap": {
+          "used": 111020528,
+          "total": 160111284
+        },
+        "chartPreparation": {
+          "slices": 533,
+          "steps": 100265,
+          "cancelled": 0,
+          "activeMs": 3840.5999999940395,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 159.30000000074506,
+          "backgroundMs": 3543.0999999791384,
+          "maxBackgroundMs": 159.60000000149012,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-2",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794831300000,
+        "horizonAt": 1794839604929,
+        "loadedThrough": 1794831300000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "apply": {
+          "messages": 210,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 20036,
+          "runs": 122002,
+          "ms": 2189.999999988824,
+          "maxMs": 293.6000000014901
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6365.199999999255,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 108,
+          "misses": 58,
+          "reusedCanonicalBytes": 53990232,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 56,
+              "fetchedParts": 2,
+              "reusedParts": 54,
+              "reusedCanonicalBytes": 26995116,
+              "assemblyRecords": 19907,
+              "checkpointOrderElapsedMs": 39.099999997764826,
+              "validationElapsedMs": 290.8999999985099,
+              "validationYieldMs": 21.399999998509884,
+              "presentationOrderElapsedMs": 47.30000000074506,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 53.30000000074506
+            },
+            "preparedDelta": {
+              "baseRevision": "eedc0e844f9dc30ea97ee7a5bbbf14acf78abbe530616411dcc2db3db6ffa18a",
+              "baseCount": 19868,
+              "baseThrough": 1794830400000,
+              "patches": 55,
+              "comparedSegments": 19907,
+              "comparedValueRuns": 85746,
+              "elapsedMs": 240.69999999925494,
+              "yieldMs": 33.00000000745058
+            },
+            "eligibleRange": {
+              "to": 1794831300000,
+              "horizonAt": 1794839604929
+            }
+          }
+        ],
+        "heap": {
+          "used": 129556885,
+          "total": 189447289
+        },
+        "chartPreparation": {
+          "slices": 771,
+          "steps": 140948,
+          "cancelled": 0,
+          "activeMs": 5725.400000013411,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 159.30000000074506,
+          "backgroundMs": 5204.300000008196,
+          "maxBackgroundMs": 159.60000000149012,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794831300000,
+        "horizonAt": 1794839614215,
+        "loadedThrough": 1794717000000,
+        "gaps": 45,
+        "gapsTruncated": false,
+        "requestComplete": false,
+        "rangeComplete": false,
+        "pendingPaintWork": true,
+        "queuedPreparation": true,
+        "pendingProjectionSegments": 865,
+        "paintedRevision": -1,
+        "inputRevision": 78,
+        "apply": {
+          "messages": 303,
+          "snapshots": 9,
+          "segments": 1350,
+          "patches": 27787,
+          "runs": 153161,
+          "ms": 2965.8999999910593,
+          "maxMs": 293.6000000014901
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 3,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6365.199999999255,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 0.4000000022351742,
+            "elapsedMs": 9368.699999999255,
+            "segments": 19868,
+            "runs": 97626,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 108,
+          "misses": 58,
+          "reusedCanonicalBytes": 53990232,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": false,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false
+          }
+        ],
+        "heap": {
+          "used": 151323941,
+          "total": 206628937
+        },
+        "chartPreparation": {
+          "slices": 58,
+          "steps": 12196,
+          "cancelled": 3,
+          "activeMs": 493.4000000208616,
+          "lastProjectionElapsedMs": 388.5,
+          "lastReferenceElapsedMs": 381.70000000298023,
+          "lastSliceMs": 6,
+          "maxSliceMs": 71.19999999925494,
+          "backgroundMs": 350.9000000022352,
+          "maxBackgroundMs": 71.39999999850988,
+          "yieldMode": "user-visible-post-task",
+          "phase": "projection"
+        }
+      },
+      {
+        "phase": "reopen-complete",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794831300000,
+        "horizonAt": 1794839614215,
+        "loadedThrough": 1794831300000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "apply": {
+          "messages": 418,
+          "snapshots": 10,
+          "segments": 21257,
+          "patches": 33866,
+          "runs": 267747,
+          "ms": 5052.799999970943,
+          "maxMs": 1694
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 3,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6365.199999999255,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 0.4000000022351742,
+            "elapsedMs": 9368.699999999255,
+            "segments": 19868,
+            "runs": 97626,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 7339,
+            "firstContentMs": 36.599999997764826,
+            "segments": 13567,
+            "runs": 42529,
+            "state": "cancelled"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794831300000,0,null,null]",
+            "queueMs": 971.0999999977648,
+            "elapsedMs": 10890.400000002235,
+            "segments": 19907,
+            "runs": 98105,
+            "state": "cancelled"
+          }
+        ],
+        "cache": {
+          "hits": 164,
+          "misses": 58,
+          "reusedCanonicalBytes": 81985973,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 56,
+              "fetchedParts": 0,
+              "reusedParts": 56,
+              "reusedCanonicalBytes": 27995741,
+              "assemblyRecords": 19907,
+              "checkpointOrderElapsedMs": 18,
+              "validationElapsedMs": 642.5,
+              "validationYieldMs": 322.9999999925494,
+              "presentationOrderElapsedMs": 44.20000000298023,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 22.699999999254942
+            },
+            "eligibleRange": {
+              "to": 1794831300000,
+              "horizonAt": 1794839614215
+            }
+          }
+        ],
+        "heap": {
+          "used": 93895262,
+          "total": 173892406
+        },
+        "chartPreparation": {
+          "slices": 393,
+          "steps": 72391,
+          "cancelled": 3,
+          "activeMs": 3341.7000000178814,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 108.90000000223517,
+          "backgroundMs": 3017.3999999687076,
+          "maxBackgroundMs": 109.10000000149012,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    ],
+    "ack": {
+      "advancingExactConfirmations": 50,
+      "longestConfirmedGapMs": 3784.10000000149,
+      "first": [
+        {
+          "socket": 2,
+          "mono": 9185.199999999255,
+          "cursor": 3527737710
+        }
+      ],
+      "last": [
+        {
+          "socket": 2,
+          "mono": 54167.099999997765,
+          "cursor": 3527751140
+        }
+      ],
+      "resets": [],
+      "closes": [
+        {
+          "seq": 29,
+          "event": "close",
+          "mono": 6394.39999999851,
+          "id": 1,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 78,
+          "event": "close",
+          "mono": 13081.79999999702,
+          "id": 3,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 127,
+          "event": "close",
+          "mono": 21040.599999997765,
+          "id": 4,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 163,
+          "event": "close",
+          "mono": 24397.5,
+          "id": 5,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 289,
+          "event": "close",
+          "mono": 40603.099999997765,
+          "id": 0,
+          "code": 1005,
+          "reason": ""
+        }
+      ]
+    },
+    "health": {
+      "samples": 12,
+      "failures": [],
+      "cleanupCancellations": [],
+      "maxBodyMs": 2395.1713130000026,
+      "maxObserverLoopMs": 148.897791
+    },
+    "errors": []
+  },
+  "comparison-final": {
+    "completion": [
+      {
+        "phase": "parent",
+        "actionToPaintMs": 17906.89999999851,
+        "navigationToPaintMs": 18179.800000000745,
+        "witnessLagMs": 45.69999999925494,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794828600000
+      },
+      {
+        "phase": "extension-1",
+        "actionToPaintMs": 6565.0,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 199.30000000074506,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "from": 1794717000000,
+        "to": 1794830400000,
+        "loadedThrough": 1794830400000
+      },
+      {
+        "phase": "extension-2",
+        "actionToPaintMs": 5506.29999999702,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 147.80000000074506,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794831300000
+      },
+      {
+        "phase": "reopen",
+        "actionToPaintMs": 12068.5,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 265.3999999985099,
+        "paintedRevision": 193,
+        "inputRevision": 193,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794831300000
+      }
+    ],
+    "firstUsefulPaintWitnesses": [
+      {
+        "phase": "parent",
+        "kind": "history",
+        "witnessMono": 9073.400000002235,
+        "paintedMono": 0,
+        "actionMono": 272.9000000022352,
+        "elapsedMs": 8800.5,
+        "paintedRevision": -1,
+        "inputRevision": 5,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794717000000
+      },
+      {
+        "phase": "extension-1",
+        "kind": "history",
+        "witnessMono": 21287.10000000149,
+        "paintedMono": 21179.5,
+        "actionMono": 21230.10000000149,
+        "elapsedMs": 57,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "from": 1794717000000,
+        "to": 1794828600000,
+        "loadedThrough": 1794828600000
+      },
+      {
+        "phase": "extension-2",
+        "kind": "history",
+        "witnessMono": 30971,
+        "paintedMono": 30707.300000000745,
+        "actionMono": 30965.400000002235,
+        "elapsedMs": 5.599999997764826,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "from": 1794717000000,
+        "to": 1794830400000,
+        "loadedThrough": 1794830400000
+      },
+      {
+        "phase": "reopen",
+        "kind": "history",
+        "witnessMono": 42926.300000000745,
+        "paintedMono": 0,
+        "actionMono": 41327.300000000745,
+        "elapsedMs": 1599,
+        "paintedRevision": -1,
+        "inputRevision": 28,
+        "from": 1794717000000,
+        "to": 1794831300000,
+        "loadedThrough": 1794717000000
+      }
+    ],
+    "phaseEvidence": [
+      {
+        "phase": "parent",
+        "from": 1794717000000,
+        "requestedTo": 1794828600000,
+        "eligibleTo": 1794828600000,
+        "horizonAt": 1794839822681,
+        "loadedThrough": 1794828600000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 62,
+        "inputRevision": 62,
+        "apply": {
+          "messages": 71,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 19831,
+          "runs": 97264,
+          "ms": 1633.3999999798834,
+          "maxMs": 251.5
+        },
+        "preparedDeltaPublications": 0,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 0,
+          "misses": 55,
+          "reusedCanonicalBytes": 0,
+          "admissions": 55,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 55,
+          "accountedBytes": 54519392,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794828600000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 55,
+              "fetchedParts": 55,
+              "reusedParts": 0,
+              "reusedCanonicalBytes": 0,
+              "assemblyRecords": 19796,
+              "checkpointOrderElapsedMs": 171.5,
+              "validationElapsedMs": 599.8999999985099,
+              "validationYieldMs": 84.09999998286366,
+              "presentationOrderElapsedMs": 95.69999999925494,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 68.10000000149012
+            },
+            "eligibleRange": {
+              "to": 1794828600000,
+              "horizonAt": 1794839822681
+            }
+          }
+        ],
+        "heap": {
+          "used": 62455079,
+          "total": 138472271
+        },
+        "chartPreparation": {
+          "slices": 318,
+          "steps": 53207,
+          "cancelled": 0,
+          "activeMs": 2521.4000000096858,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0.10000000149011612,
+          "lastSliceMs": 0.10000000149011612,
+          "maxSliceMs": 83.89999999850988,
+          "backgroundMs": 2274.2999999821186,
+          "maxBackgroundMs": 81.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-1",
+        "from": 1794717000000,
+        "requestedTo": 1794830400000,
+        "eligibleTo": 1794830400000,
+        "horizonAt": 1794839838736,
+        "loadedThrough": 1794830400000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 121,
+        "inputRevision": 121,
+        "apply": {
+          "messages": 140,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 19952,
+          "runs": 109611,
+          "ms": 1785.8999999463558,
+          "maxMs": 251.5
+        },
+        "preparedDeltaPublications": 1,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 54,
+          "misses": 56,
+          "reusedCanonicalBytes": 26995116,
+          "admissions": 56,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 56,
+          "accountedBytes": 55161558,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794830400000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 55,
+              "fetchedParts": 1,
+              "reusedParts": 54,
+              "reusedCanonicalBytes": 26995116,
+              "assemblyRecords": 19868,
+              "checkpointOrderElapsedMs": 77.5,
+              "validationElapsedMs": 514.6999999992549,
+              "validationYieldMs": 85.80000001192093,
+              "presentationOrderElapsedMs": 47.100000001490116,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 57.69999999925494
+            },
+            "preparedDelta": {
+              "baseRevision": "9c4710c36f3e014131c3b94f63bff8c808fa1cd57a330bc965df540dcd4b2ad2",
+              "baseCount": 19796,
+              "baseThrough": 1794828600000,
+              "patches": 88,
+              "comparedSegments": 19868,
+              "comparedValueRuns": 85311,
+              "elapsedMs": 289.6000000014901,
+              "yieldMs": 63.30000000447035
+            },
+            "eligibleRange": {
+              "to": 1794830400000,
+              "horizonAt": 1794839838736
+            }
+          }
+        ],
+        "heap": {
+          "used": 104305080,
+          "total": 159234576
+        },
+        "chartPreparation": {
+          "slices": 537,
+          "steps": 93856,
+          "cancelled": 0,
+          "activeMs": 3926.500000026077,
+          "lastProjectionElapsedMs": 0.10000000149011612,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.10000000149011612,
+          "maxSliceMs": 83.89999999850988,
+          "backgroundMs": 3650.7999999932945,
+          "maxBackgroundMs": 81.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-2",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794831300000,
+        "horizonAt": 1794839848723,
+        "loadedThrough": 1794831300000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 181,
+        "inputRevision": 181,
+        "apply": {
+          "messages": 210,
+          "snapshots": 3,
+          "segments": 32,
+          "patches": 20040,
+          "runs": 122002,
+          "ms": 1935.4999999180436,
+          "maxMs": 251.5
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 9756.39999999851,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 550.5,
+            "elapsedMs": 9227.89999999851,
+            "segments": 19868,
+            "runs": 97626,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 108,
+          "misses": 58,
+          "reusedCanonicalBytes": 53990232,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 56,
+              "fetchedParts": 2,
+              "reusedParts": 54,
+              "reusedCanonicalBytes": 26995116,
+              "assemblyRecords": 19907,
+              "checkpointOrderElapsedMs": 51.80000000074506,
+              "validationElapsedMs": 468.0999999977648,
+              "validationYieldMs": 203.4999999962747,
+              "presentationOrderElapsedMs": 27,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 23.800000000745058
+            },
+            "preparedDelta": {
+              "baseRevision": "eedc0e844f9dc30ea97ee7a5bbbf14acf78abbe530616411dcc2db3db6ffa18a",
+              "baseCount": 19868,
+              "baseThrough": 1794830400000,
+              "patches": 55,
+              "comparedSegments": 19907,
+              "comparedValueRuns": 85746,
+              "elapsedMs": 193.39999999850988,
+              "yieldMs": 23.69999999180436
+            },
+            "eligibleRange": {
+              "to": 1794831300000,
+              "horizonAt": 1794839848723
+            }
+          }
+        ],
+        "heap": {
+          "used": 119996658,
+          "total": 188595134
+        },
+        "chartPreparation": {
+          "slices": 758,
+          "steps": 134538,
+          "cancelled": 0,
+          "activeMs": 5575.700000032783,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 83.89999999850988,
+          "backgroundMs": 5237.70000000298,
+          "maxBackgroundMs": 81.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794830400000,
+        "horizonAt": 1794839838736,
+        "loadedThrough": 1794717000000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": false,
+        "rangeComplete": false,
+        "pendingPaintWork": true,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 1919,
+        "paintedRevision": -1,
+        "inputRevision": 24,
+        "apply": {
+          "messages": 250,
+          "snapshots": 9,
+          "segments": 1443,
+          "patches": 22743,
+          "runs": 136777,
+          "ms": 2363.999999925494,
+          "maxMs": 298.80000000074506
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 9756.39999999851,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 550.5,
+            "elapsedMs": 9227.89999999851,
+            "segments": 19868,
+            "runs": 97626,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 108,
+          "misses": 58,
+          "reusedCanonicalBytes": 53990232,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 56,
+              "fetchedParts": 2,
+              "reusedParts": 54,
+              "reusedCanonicalBytes": 26995116,
+              "assemblyRecords": 19907,
+              "checkpointOrderElapsedMs": 51.80000000074506,
+              "validationElapsedMs": 468.0999999977648,
+              "validationYieldMs": 203.4999999962747,
+              "presentationOrderElapsedMs": 27,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 23.800000000745058
+            },
+            "preparedDelta": {
+              "baseRevision": "eedc0e844f9dc30ea97ee7a5bbbf14acf78abbe530616411dcc2db3db6ffa18a",
+              "baseCount": 19868,
+              "baseThrough": 1794830400000,
+              "patches": 55,
+              "comparedSegments": 19907,
+              "comparedValueRuns": 85746,
+              "elapsedMs": 193.39999999850988,
+              "yieldMs": 23.69999999180436
+            },
+            "eligibleRange": {
+              "to": 1794831300000,
+              "horizonAt": 1794839848723
+            }
+          }
+        ],
+        "heap": {
+          "used": 139443244,
+          "total": 189675348
+        },
+        "chartPreparation": {
+          "slices": 4,
+          "steps": 1370,
+          "cancelled": 1,
+          "activeMs": 24.799999997019768,
+          "lastProjectionElapsedMs": 240.59999999776483,
+          "lastReferenceElapsedMs": 0.4000000022351742,
+          "lastSliceMs": 3.699999999254942,
+          "maxSliceMs": 8.100000001490116,
+          "backgroundMs": 3.800000000745058,
+          "maxBackgroundMs": 3.800000000745058,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen-complete",
+        "from": 1794717000000,
+        "requestedTo": 1794831300000,
+        "eligibleTo": 1794831300000,
+        "horizonAt": 1794839862396,
+        "loadedThrough": 1794831300000,
+        "gaps": 45,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 193,
+        "inputRevision": 193,
+        "apply": {
+          "messages": 433,
+          "snapshots": 10,
+          "segments": 21350,
+          "patches": 34876,
+          "runs": 273082,
+          "ms": 4114.599999979138,
+          "maxMs": 1168.0999999977648
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 3,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794828600000,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 9756.39999999851,
+            "segments": 19796,
+            "runs": 97200,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 550.5,
+            "elapsedMs": 9227.89999999851,
+            "segments": 19868,
+            "runs": 97626,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794830400000,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 5919.599999997765,
+            "firstContentMs": 29.199999999254942,
+            "segments": 14754,
+            "runs": 48220,
+            "state": "cancelled"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794717000000,1794831300000,0,null,null]",
+            "queueMs": 1302.7000000029802,
+            "elapsedMs": 10491.29999999702,
+            "segments": 19907,
+            "runs": 98105,
+            "state": "cancelled"
+          }
+        ],
+        "cache": {
+          "hits": 164,
+          "misses": 58,
+          "reusedCanonicalBytes": 81985973,
+          "admissions": 58,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 58,
+          "accountedBytes": 57167182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794717000000,
+              "to": 1794831300000
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 56,
+              "fetchedParts": 0,
+              "reusedParts": 56,
+              "reusedCanonicalBytes": 27995741,
+              "assemblyRecords": 19907,
+              "checkpointOrderElapsedMs": 15.400000002235174,
+              "validationElapsedMs": 323,
+              "validationYieldMs": 121.80000000819564,
+              "presentationOrderElapsedMs": 70.79999999701977,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 23.300000000745058
+            },
+            "eligibleRange": {
+              "to": 1794831300000,
+              "horizonAt": 1794839862396
+            }
+          }
+        ],
+        "heap": {
+          "used": 87321403,
+          "total": 199361275
+        },
+        "chartPreparation": {
+          "slices": 411,
+          "steps": 77339,
+          "cancelled": 2,
+          "activeMs": 3626.8999999947846,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 295.5,
+          "backgroundMs": 3440.300000049174,
+          "maxBackgroundMs": 295.6000000014901,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    ],
+    "ack": {
+      "advancingExactConfirmations": 75,
+      "longestConfirmedGapMs": 2039.8999999985099,
+      "first": [
+        {
+          "socket": 2,
+          "mono": 7518,
+          "cursor": 3527786917
+        }
+      ],
+      "last": [
+        {
+          "socket": 2,
+          "mono": 52654.79999999702,
+          "cursor": 3527799253
+        }
+      ],
+      "resets": [],
+      "closes": [
+        {
+          "seq": 27,
+          "event": "close",
+          "mono": 6761,
+          "id": 1,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 66,
+          "event": "close",
+          "mono": 10451.39999999851,
+          "id": 3,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 110,
+          "event": "close",
+          "mono": 14899.599999997765,
+          "id": 4,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 153,
+          "event": "close",
+          "mono": 20127.29999999702,
+          "id": 5,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 382,
+          "event": "close",
+          "mono": 39819.099999997765,
+          "id": 0,
+          "code": 1005,
+          "reason": ""
+        }
+      ]
+    },
+    "health": {
+      "samples": 11,
+      "failures": [],
+      "cleanupCancellations": [],
+      "maxBodyMs": 2709.368152,
+      "maxObserverLoopMs": 89.653247
+    },
+    "errors": []
+  },
+  "fresh-current": {
+    "completion": [
+      {
+        "phase": "parent",
+        "actionToPaintMs": 70895.30000000075,
+        "navigationToPaintMs": 71205.69999999925,
+        "witnessLagMs": 5.599999997764826,
+        "paintedRevision": 167,
+        "inputRevision": 167,
+        "from": 1794729600000,
+        "to": 1794838580650,
+        "loadedThrough": 1794838579378
+      },
+      {
+        "phase": "extension-1",
+        "actionToPaintMs": 11060.400000002235,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 34.19999999925494,
+        "paintedRevision": 257,
+        "inputRevision": 257,
+        "from": 1794729600000,
+        "to": 1794838689495,
+        "loadedThrough": 1794838686633
+      },
+      {
+        "phase": "extension-2",
+        "actionToPaintMs": 17746.099999997765,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 22.199999999254942,
+        "paintedRevision": 354,
+        "inputRevision": 354,
+        "from": 1794729600000,
+        "to": 1794838752594,
+        "loadedThrough": 1794838749613
+      },
+      {
+        "phase": "reopen",
+        "actionToPaintMs": 12612.79999999702,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 161.30000000074506,
+        "paintedRevision": 186,
+        "inputRevision": 186,
+        "from": 1794729600000,
+        "to": 1794838819884,
+        "loadedThrough": 1794838817107
+      }
+    ],
+    "firstUsefulPaintWitnesses": [
+      {
+        "phase": "parent",
+        "kind": "current",
+        "witnessMono": 5396.199999999255,
+        "paintedMono": 5264.099999997765,
+        "actionMono": 310.3999999985099,
+        "elapsedMs": 5085.800000000745,
+        "paintedRevision": 6,
+        "inputRevision": 7,
+        "from": 1794729600000,
+        "to": 1794838580650,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "parent",
+        "kind": "history",
+        "witnessMono": 60803.699999999255,
+        "paintedMono": 60797.5,
+        "actionMono": 310.3999999985099,
+        "elapsedMs": 60493.300000000745,
+        "paintedRevision": 110,
+        "inputRevision": 112,
+        "from": 1794729600000,
+        "to": 1794838580650,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "extension-1",
+        "kind": "current",
+        "witnessMono": 111681.39999999851,
+        "paintedMono": 111166.29999999702,
+        "actionMono": 111534.59999999776,
+        "elapsedMs": 146.80000000074506,
+        "paintedRevision": 192,
+        "inputRevision": 192,
+        "from": 1794729600000,
+        "to": 1794838580650,
+        "loadedThrough": 1794838579378
+      },
+      {
+        "phase": "extension-1",
+        "kind": "history",
+        "witnessMono": 111681.39999999851,
+        "paintedMono": 111166.29999999702,
+        "actionMono": 111534.59999999776,
+        "elapsedMs": 146.80000000074506,
+        "paintedRevision": 192,
+        "inputRevision": 192,
+        "from": 1794729600000,
+        "to": 1794838580650,
+        "loadedThrough": 1794838579378
+      },
+      {
+        "phase": "extension-2",
+        "kind": "current",
+        "witnessMono": 174453.29999999702,
+        "paintedMono": 174176.8999999985,
+        "actionMono": 174422.5,
+        "elapsedMs": 30.799999997019768,
+        "paintedRevision": 281,
+        "inputRevision": 281,
+        "from": 1794729600000,
+        "to": 1794838689495,
+        "loadedThrough": 1794838686633
+      },
+      {
+        "phase": "extension-2",
+        "kind": "history",
+        "witnessMono": 174453.29999999702,
+        "paintedMono": 174176.8999999985,
+        "actionMono": 174422.5,
+        "elapsedMs": 30.799999997019768,
+        "paintedRevision": 281,
+        "inputRevision": 281,
+        "from": 1794729600000,
+        "to": 1794838689495,
+        "loadedThrough": 1794838686633
+      },
+      {
+        "phase": "reopen",
+        "kind": "current",
+        "witnessMono": 243486.5,
+        "paintedMono": 242961.5,
+        "actionMono": 241939,
+        "elapsedMs": 1547.5,
+        "paintedRevision": 8,
+        "inputRevision": 48,
+        "from": 1794729600000,
+        "to": 1794838819884,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "reopen",
+        "kind": "history",
+        "witnessMono": 244848.19999999925,
+        "paintedMono": 242961.5,
+        "actionMono": 241939,
+        "elapsedMs": 2909.199999999255,
+        "paintedRevision": 8,
+        "inputRevision": 82,
+        "from": 1794729600000,
+        "to": 1794838819884,
+        "loadedThrough": 1794729600000
+      }
+    ],
+    "phaseEvidence": [
+      {
+        "phase": "parent",
+        "from": 1794729600000,
+        "requestedTo": 1794838580650,
+        "eligibleTo": 1794838579379,
+        "horizonAt": 1794838579378,
+        "loadedThrough": 1794838579378,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 169,
+        "inputRevision": 169,
+        "apply": {
+          "messages": 254,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 11203,
+          "runs": 71722,
+          "ms": 1468.400000013411,
+          "maxMs": 137.60000000149012
+        },
+        "preparedDeltaPublications": 0,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 0,
+          "misses": 43,
+          "reusedCanonicalBytes": 0,
+          "admissions": 43,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 43,
+          "accountedBytes": 35411984,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794838580650
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 43,
+              "reusedParts": 0,
+              "reusedCanonicalBytes": 0,
+              "assemblyRecords": 10367,
+              "checkpointOrderElapsedMs": 71.70000000298023,
+              "validationElapsedMs": 549,
+              "validationYieldMs": 50.80000000819564,
+              "presentationOrderElapsedMs": 68.10000000149012,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 21.100000001490116
+            },
+            "eligibleRange": {
+              "to": 1794838579379,
+              "horizonAt": 1794838579378
+            }
+          }
+        ],
+        "heap": {
+          "used": 52612541,
+          "total": 101514773
+        },
+        "chartPreparation": {
+          "slices": 467,
+          "steps": 46728,
+          "cancelled": 0,
+          "activeMs": 2961.800000015646,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 223.80000000074506,
+          "backgroundMs": 2624.7000000178814,
+          "maxBackgroundMs": 223.89999999850988,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-1",
+        "from": 1794729600000,
+        "requestedTo": 1794838689495,
+        "eligibleTo": 1794838686634,
+        "horizonAt": 1794838686633,
+        "loadedThrough": 1794838686633,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 259,
+        "inputRevision": 259,
+        "apply": {
+          "messages": 383,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 11700,
+          "runs": 73770,
+          "ms": 1608.7000000104308,
+          "maxMs": 137.60000000149012
+        },
+        "preparedDeltaPublications": 1,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838580650,0,null,null]",
+            "queueMs": 0.8999999985098839,
+            "elapsedMs": 8065.699999999255,
+            "segments": 10367,
+            "runs": 70842,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 42,
+          "misses": 44,
+          "reusedCanonicalBytes": 17436110,
+          "admissions": 44,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 44,
+          "accountedBytes": 35904866,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794838689495
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 1,
+              "reusedParts": 42,
+              "reusedCanonicalBytes": 17436110,
+              "assemblyRecords": 10390,
+              "checkpointOrderElapsedMs": 104.09999999776483,
+              "validationElapsedMs": 371.5,
+              "validationYieldMs": 36.29999999329448,
+              "presentationOrderElapsedMs": 20.699999999254942,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 15.899999998509884
+            },
+            "preparedDelta": {
+              "baseRevision": "57a7f1a86ff2163f390bdf84e176e91e820cc51a7e0a6cf9abdb6c85c2640869",
+              "baseCount": 10367,
+              "baseThrough": 1794838579378,
+              "patches": 39,
+              "comparedSegments": 10390,
+              "comparedValueRuns": 69328,
+              "elapsedMs": 268.4000000022352,
+              "yieldMs": 28.400000009685755
+            },
+            "eligibleRange": {
+              "to": 1794838686634,
+              "horizonAt": 1794838686633
+            }
+          }
+        ],
+        "heap": {
+          "used": 62358191,
+          "total": 77911467
+        },
+        "chartPreparation": {
+          "slices": 730,
+          "steps": 90867,
+          "cancelled": 2,
+          "activeMs": 4204.700000014156,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 223.80000000074506,
+          "backgroundMs": 3830.6000000201166,
+          "maxBackgroundMs": 223.89999999850988,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-2",
+        "from": 1794729600000,
+        "requestedTo": 1794838752594,
+        "eligibleTo": 1794838749614,
+        "horizonAt": 1794838749613,
+        "loadedThrough": 1794838749613,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 356,
+        "inputRevision": 356,
+        "apply": {
+          "messages": 526,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 12246,
+          "runs": 75890,
+          "ms": 1825.9000000357628,
+          "maxMs": 137.60000000149012
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838580650,0,null,null]",
+            "queueMs": 0.8999999985098839,
+            "elapsedMs": 8065.699999999255,
+            "segments": 10367,
+            "runs": 70842,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838689495,0,null,null]",
+            "queueMs": 1.1000000014901161,
+            "elapsedMs": 4174.89999999851,
+            "segments": 10390,
+            "runs": 70960,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 84,
+          "misses": 45,
+          "reusedCanonicalBytes": 34872220,
+          "admissions": 45,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 45,
+          "accountedBytes": 36409052,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794838752594
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 1,
+              "reusedParts": 42,
+              "reusedCanonicalBytes": 17436110,
+              "assemblyRecords": 10396,
+              "checkpointOrderElapsedMs": 28.900000002235174,
+              "validationElapsedMs": 698.6999999992549,
+              "validationYieldMs": 108.09999999776483,
+              "presentationOrderElapsedMs": 72.59999999776483,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 20.200000002980232
+            },
+            "preparedDelta": {
+              "baseRevision": "87834cf6bea5e5addc0b3410f70e74fa6b45c739f53606828f4d63854ad21852",
+              "baseCount": 10390,
+              "baseThrough": 1794838686633,
+              "patches": 22,
+              "comparedSegments": 10396,
+              "comparedValueRuns": 69364,
+              "elapsedMs": 488.80000000074506,
+              "yieldMs": 85.40000000223517
+            },
+            "eligibleRange": {
+              "to": 1794838749614,
+              "horizonAt": 1794838749613
+            }
+          }
+        ],
+        "heap": {
+          "used": 58730739,
+          "total": 129148603
+        },
+        "chartPreparation": {
+          "slices": 1090,
+          "steps": 129299,
+          "cancelled": 3,
+          "activeMs": 6962.200000040233,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 240.90000000223517,
+          "backgroundMs": 6389.099999982864,
+          "maxBackgroundMs": 241,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen",
+        "from": 1794729600000,
+        "requestedTo": 1794838819884,
+        "eligibleTo": 1794838817108,
+        "horizonAt": 1794838817107,
+        "loadedThrough": 1794729600000,
+        "gaps": 22,
+        "gapsTruncated": false,
+        "requestComplete": false,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": true,
+        "pendingProjectionSegments": 758,
+        "paintedRevision": 8,
+        "inputRevision": 104,
+        "apply": {
+          "messages": 688,
+          "snapshots": 13,
+          "segments": 64,
+          "patches": 20967,
+          "runs": 130044,
+          "ms": 2520.700000010431,
+          "maxMs": 137.60000000149012
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838580650,0,null,null]",
+            "queueMs": 0.8999999985098839,
+            "elapsedMs": 8065.699999999255,
+            "segments": 10367,
+            "runs": 70842,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838689495,0,null,null]",
+            "queueMs": 1.1000000014901161,
+            "elapsedMs": 4174.89999999851,
+            "segments": 10390,
+            "runs": 70960,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838752594,0,null,null]",
+            "queueMs": 0.6000000014901161,
+            "elapsedMs": 7921.89999999851,
+            "segments": 10396,
+            "runs": 71004,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838752594,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 45.80000000074506,
+            "segments": 0,
+            "runs": 0,
+            "state": "cancelled"
+          }
+        ],
+        "cache": {
+          "hits": 84,
+          "misses": 45,
+          "reusedCanonicalBytes": 34872220,
+          "admissions": 45,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 45,
+          "accountedBytes": 36409052,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794838819884
+            },
+            "settled": false,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "eligibleRange": {
+              "to": 1794838817108,
+              "horizonAt": 1794838817107
+            }
+          }
+        ],
+        "heap": {
+          "used": 125477603,
+          "total": 176396659
+        },
+        "chartPreparation": {
+          "slices": 80,
+          "steps": 18168,
+          "cancelled": 1,
+          "activeMs": 741.8999999985099,
+          "lastProjectionElapsedMs": 476.5,
+          "lastReferenceElapsedMs": 102.90000000223517,
+          "lastSliceMs": 1.5999999977648258,
+          "maxSliceMs": 92.40000000223517,
+          "backgroundMs": 685.9000000059605,
+          "maxBackgroundMs": 92.40000000223517,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen-complete",
+        "from": 1794729600000,
+        "requestedTo": 1794838819884,
+        "eligibleTo": 1794838817108,
+        "horizonAt": 1794838817107,
+        "loadedThrough": 1794838817107,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 188,
+        "inputRevision": 188,
+        "apply": {
+          "messages": 784,
+          "snapshots": 13,
+          "segments": 64,
+          "patches": 23196,
+          "runs": 149088,
+          "ms": 2781.099999997765,
+          "maxMs": 137.60000000149012
+        },
+        "preparedDeltaPublications": 3,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838580650,0,null,null]",
+            "queueMs": 0.8999999985098839,
+            "elapsedMs": 8065.699999999255,
+            "segments": 10367,
+            "runs": 70842,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838689495,0,null,null]",
+            "queueMs": 1.1000000014901161,
+            "elapsedMs": 4174.89999999851,
+            "segments": 10390,
+            "runs": 70960,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838752594,0,null,null]",
+            "queueMs": 0.6000000014901161,
+            "elapsedMs": 7921.89999999851,
+            "segments": 10396,
+            "runs": 71004,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838752594,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 45.80000000074506,
+            "segments": 0,
+            "runs": 0,
+            "state": "cancelled"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794838752594,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 3980.5,
+            "firstContentMs": 40.29999999701977,
+            "segments": 10396,
+            "runs": 71004,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 126,
+          "misses": 46,
+          "reusedCanonicalBytes": 52308330,
+          "admissions": 46,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 46,
+          "accountedBytes": 36932046,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794838819884
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 1,
+              "reusedParts": 42,
+              "reusedCanonicalBytes": 17436110,
+              "assemblyRecords": 10406,
+              "checkpointOrderElapsedMs": 7.300000000745058,
+              "validationElapsedMs": 94.89999999850988,
+              "validationYieldMs": 3.400000002235174,
+              "presentationOrderElapsedMs": 17.300000000745058,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 7.199999999254942
+            },
+            "preparedDelta": {
+              "baseRevision": "2f9c0797dd39295fece9d5ee6bba272ba862636d68a943ec5a49b7ee4b3428cd",
+              "baseCount": 10396,
+              "baseThrough": 1794838749613,
+              "patches": 26,
+              "comparedSegments": 10406,
+              "comparedValueRuns": 69372,
+              "elapsedMs": 574,
+              "yieldMs": 98.90000000223517
+            },
+            "eligibleRange": {
+              "to": 1794838817108,
+              "horizonAt": 1794838817107
+            }
+          }
+        ],
+        "heap": {
+          "used": 149224598,
+          "total": 201612010
+        },
+        "chartPreparation": {
+          "slices": 226,
+          "steps": 45989,
+          "cancelled": 2,
+          "activeMs": 1956.7000000067055,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0,
+          "maxSliceMs": 92.40000000223517,
+          "backgroundMs": 1768.2000000178814,
+          "maxBackgroundMs": 92.40000000223517,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    ],
+    "ack": {
+      "advancingExactConfirmations": 435,
+      "longestConfirmedGapMs": 4127.599999997765,
+      "first": [
+        {
+          "socket": 2,
+          "mono": 5638.900000002235,
+          "cursor": 3527691567
+        }
+      ],
+      "last": [
+        {
+          "socket": 2,
+          "mono": 253968.1000000015,
+          "cursor": 3527698581
+        }
+      ],
+      "resets": [],
+      "closes": [
+        {
+          "seq": 779,
+          "event": "close",
+          "mono": 76450.90000000224,
+          "id": 1,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 855,
+          "event": "close",
+          "mono": 84484.40000000224,
+          "id": 3,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 1243,
+          "event": "close",
+          "mono": 128438.30000000075,
+          "id": 4,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 1318,
+          "event": "close",
+          "mono": 136469.69999999925,
+          "id": 5,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 1880,
+          "event": "close",
+          "mono": 199452.40000000224,
+          "id": 6,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 1965,
+          "event": "close",
+          "mono": 208454,
+          "id": 7,
+          "code": 1005,
+          "reason": ""
+        },
+        {
+          "seq": 2224,
+          "event": "close",
+          "mono": 240331.80000000075,
+          "id": 0,
+          "code": 1005,
+          "reason": ""
+        }
+      ]
+    },
+    "health": {
+      "samples": 45,
+      "failures": [
+        {
+          "id": "paint-health-4e420878-4397-4094-8dc5-6b657603fb9e",
+          "utc": "2026-11-16T14:17:56.909Z",
+          "error": "TypeError: fetch failed",
+          "elapsedMs": 10185.794559999995
+        },
+        {
+          "id": "paint-health-c9d4b104-182a-4626-93a1-5c07206d1486",
+          "utc": "2026-11-16T14:18:53.684Z",
+          "error": "TypeError: fetch failed",
+          "elapsedMs": 16160.90905799999
+        },
+        {
+          "id": "paint-health-1bd6d983-54c4-4d0c-8c96-20f1a2e2d321",
+          "utc": "2026-11-16T14:20:02.845Z",
+          "error": "TypeError: fetch failed",
+          "elapsedMs": 13429.535837000003
+        },
+        {
+          "id": "paint-health-f46e8bb4-d607-4bdb-a384-8907f8b9a80d",
+          "utc": "2026-11-16T14:21:01.524Z",
+          "error": "TypeError: fetch failed",
+          "elapsedMs": 11120.478257999988
+        }
+      ],
+      "cleanupCancellations": [],
+      "maxBodyMs": 2133.039017000001,
+      "maxObserverLoopMs": 0
+    },
+    "errors": []
+  },
+  "fresh-current-isolated-health": {
+    "completion": [
+      {
+        "phase": "parent",
+        "actionToPaintMs": 22973.199999999255,
+        "navigationToPaintMs": 23251.699999999255,
+        "witnessLagMs": 118.39999999850988,
+        "paintedRevision": 79,
+        "inputRevision": 79,
+        "from": 1794729600000,
+        "to": 1794839131505,
+        "loadedThrough": 1794839130332
+      },
+      {
+        "phase": "extension-1",
+        "actionToPaintMs": 15635.10000000149,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 86.80000000074506,
+        "paintedRevision": 156,
+        "inputRevision": 156,
+        "from": 1794729600000,
+        "to": 1794839155165,
+        "loadedThrough": 1794839151158
+      },
+      {
+        "phase": "extension-2",
+        "actionToPaintMs": 12293.5,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 34.900000002235174,
+        "paintedRevision": 224,
+        "inputRevision": 224,
+        "from": 1794729600000,
+        "to": 1794839171832,
+        "loadedThrough": 1794839168909
+      },
+      {
+        "phase": "reopen",
+        "actionToPaintMs": 14490.300000000745,
+        "navigationToPaintMs": null,
+        "witnessLagMs": 130.89999999850988,
+        "paintedRevision": 193,
+        "inputRevision": 193,
+        "from": 1794729600000,
+        "to": 1794839189502,
+        "loadedThrough": 1794839186155
+      }
+    ],
+    "firstUsefulPaintWitnesses": [
+      {
+        "phase": "parent",
+        "kind": "current",
+        "witnessMono": 6129.29999999702,
+        "paintedMono": 5630.699999999255,
+        "actionMono": 278.5,
+        "elapsedMs": 5850.79999999702,
+        "paintedRevision": 6,
+        "inputRevision": 7,
+        "from": 1794729600000,
+        "to": 1794839131505,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "parent",
+        "kind": "history",
+        "witnessMono": 13833.099999997765,
+        "paintedMono": 13623.89999999851,
+        "actionMono": 278.5,
+        "elapsedMs": 13554.599999997765,
+        "paintedRevision": 21,
+        "inputRevision": 24,
+        "from": 1794729600000,
+        "to": 1794839131505,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "extension-1",
+        "kind": "current",
+        "witnessMono": 26678.099999997765,
+        "paintedMono": 26272.199999999255,
+        "actionMono": 26677.29999999702,
+        "elapsedMs": 0.8000000007450581,
+        "paintedRevision": 83,
+        "inputRevision": 83,
+        "from": 1794729600000,
+        "to": 1794839131505,
+        "loadedThrough": 1794839130332
+      },
+      {
+        "phase": "extension-1",
+        "kind": "history",
+        "witnessMono": 26678.099999997765,
+        "paintedMono": 26272.199999999255,
+        "actionMono": 26677.29999999702,
+        "elapsedMs": 0.8000000007450581,
+        "paintedRevision": 83,
+        "inputRevision": 83,
+        "from": 1794729600000,
+        "to": 1794839131505,
+        "loadedThrough": 1794839130332
+      },
+      {
+        "phase": "extension-2",
+        "kind": "current",
+        "witnessMono": 43450.099999997765,
+        "paintedMono": 43293.39999999851,
+        "actionMono": 43390.099999997765,
+        "elapsedMs": 60,
+        "paintedRevision": 156,
+        "inputRevision": 156,
+        "from": 1794729600000,
+        "to": 1794839155165,
+        "loadedThrough": 1794839151158
+      },
+      {
+        "phase": "extension-2",
+        "kind": "history",
+        "witnessMono": 43450.099999997765,
+        "paintedMono": 43293.39999999851,
+        "actionMono": 43390.099999997765,
+        "elapsedMs": 60,
+        "paintedRevision": 156,
+        "inputRevision": 156,
+        "from": 1794729600000,
+        "to": 1794839155165,
+        "loadedThrough": 1794839151158
+      },
+      {
+        "phase": "reopen",
+        "kind": "current",
+        "witnessMono": 63066.5,
+        "paintedMono": 61705.599999997765,
+        "actionMono": 60758.099999997765,
+        "elapsedMs": 2308.400000002235,
+        "paintedRevision": 6,
+        "inputRevision": 69,
+        "from": 1794729600000,
+        "to": 1794839189502,
+        "loadedThrough": 1794729600000
+      },
+      {
+        "phase": "reopen",
+        "kind": "history",
+        "witnessMono": 63066.5,
+        "paintedMono": 61705.599999997765,
+        "actionMono": 60758.099999997765,
+        "elapsedMs": 2308.400000002235,
+        "paintedRevision": 6,
+        "inputRevision": 69,
+        "from": 1794729600000,
+        "to": 1794839189502,
+        "loadedThrough": 1794729600000
+      }
+    ],
+    "phaseEvidence": [
+      {
+        "phase": "parent",
+        "from": 1794729600000,
+        "requestedTo": 1794839131505,
+        "eligibleTo": 1794839130332,
+        "horizonAt": 1794839130331,
+        "loadedThrough": 1794839130332,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 79,
+        "inputRevision": 79,
+        "apply": {
+          "messages": 104,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 10666,
+          "runs": 71503,
+          "ms": 1984.6999999769032,
+          "maxMs": 417.3999999985099
+        },
+        "preparedDeltaPublications": 0,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [],
+        "cache": {
+          "hits": 0,
+          "misses": 43,
+          "reusedCanonicalBytes": 0,
+          "admissions": 43,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 43,
+          "accountedBytes": 35531286,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794839131505
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 43,
+              "reusedParts": 0,
+              "reusedCanonicalBytes": 0,
+              "assemblyRecords": 10426,
+              "checkpointOrderElapsedMs": 291,
+              "validationElapsedMs": 1193.5999999977648,
+              "validationYieldMs": 193.40000002458692,
+              "presentationOrderElapsedMs": 55.600000001490116,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 23.699999999254942
+            },
+            "eligibleRange": {
+              "to": 1794839130332,
+              "horizonAt": 1794839130331
+            }
+          }
+        ],
+        "heap": {
+          "used": 55056203,
+          "total": 84557491
+        },
+        "chartPreparation": {
+          "slices": 225,
+          "steps": 31187,
+          "cancelled": 2,
+          "activeMs": 1895.9999999888241,
+          "lastProjectionElapsedMs": 18.399999998509884,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 1,
+          "maxSliceMs": 99.89999999850988,
+          "backgroundMs": 1491.2000000178814,
+          "maxBackgroundMs": 46.899999998509884,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-1",
+        "from": 1794729600000,
+        "requestedTo": 1794839155165,
+        "eligibleTo": 1794839151158,
+        "horizonAt": 1794839151157,
+        "loadedThrough": 1794839151158,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 154,
+        "inputRevision": 154,
+        "apply": {
+          "messages": 201,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 10908,
+          "runs": 73499,
+          "ms": 2081.799999963492,
+          "maxMs": 417.3999999985099
+        },
+        "preparedDeltaPublications": 1,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839131505,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6644,
+            "segments": 10426,
+            "runs": 71199,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 43,
+          "misses": 43,
+          "reusedCanonicalBytes": 17718631,
+          "admissions": 43,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 43,
+          "accountedBytes": 35531286,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794839155165
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 0,
+              "reusedParts": 43,
+              "reusedCanonicalBytes": 17718631,
+              "assemblyRecords": 10426,
+              "checkpointOrderElapsedMs": 50.600000001490116,
+              "validationElapsedMs": 451.5999999977648,
+              "validationYieldMs": 64.99999999627471,
+              "presentationOrderElapsedMs": 17,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 9.900000002235174
+            },
+            "preparedDelta": {
+              "baseRevision": "52d99d79546bc7387208aa21a5a4fa38c905432218cec32a2ff93ea1e82597dc",
+              "baseCount": 10426,
+              "baseThrough": 1794839130332,
+              "patches": 16,
+              "comparedSegments": 10426,
+              "comparedValueRuns": 69434,
+              "elapsedMs": 131.19999999925494,
+              "yieldMs": 18.49999999627471
+            },
+            "eligibleRange": {
+              "to": 1794839151158,
+              "horizonAt": 1794839151157
+            }
+          }
+        ],
+        "heap": {
+          "used": 41538903,
+          "total": 129593651
+        },
+        "chartPreparation": {
+          "slices": 443,
+          "steps": 69815,
+          "cancelled": 4,
+          "activeMs": 3068.600000012666,
+          "lastProjectionElapsedMs": 1,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 2.900000002235174,
+          "maxSliceMs": 99.89999999850988,
+          "backgroundMs": 2606.700000025332,
+          "maxBackgroundMs": 46.899999998509884,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "extension-2",
+        "from": 1794729600000,
+        "requestedTo": 1794839171832,
+        "eligibleTo": 1794839168909,
+        "horizonAt": 1794839168908,
+        "loadedThrough": 1794839168909,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 226,
+        "inputRevision": 226,
+        "apply": {
+          "messages": 293,
+          "snapshots": 8,
+          "segments": 64,
+          "patches": 11119,
+          "runs": 75471,
+          "ms": 2187.0999999828637,
+          "maxMs": 417.3999999985099
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 0,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839131505,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6644,
+            "segments": 10426,
+            "runs": 71199,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839155165,0,null,null]",
+            "queueMs": 0.5,
+            "elapsedMs": 4115.5,
+            "segments": 10426,
+            "runs": 71206,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 85,
+          "misses": 44,
+          "reusedCanonicalBytes": 35154741,
+          "admissions": 44,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 44,
+          "accountedBytes": 36101182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794839171832
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 1,
+              "reusedParts": 42,
+              "reusedCanonicalBytes": 17436110,
+              "assemblyRecords": 10427,
+              "checkpointOrderElapsedMs": 15.699999999254942,
+              "validationElapsedMs": 249.80000000074506,
+              "validationYieldMs": 26,
+              "presentationOrderElapsedMs": 20.300000000745058,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 8.399999998509884
+            },
+            "preparedDelta": {
+              "baseRevision": "bc83f75b0c39571dcba6361fb23b9d9d5d7d2533cccf80531bb6a94dc07c02a5",
+              "baseCount": 10426,
+              "baseThrough": 1794839151158,
+              "patches": 17,
+              "comparedSegments": 10427,
+              "comparedValueRuns": 69434,
+              "elapsedMs": 285,
+              "yieldMs": 41.20000000298023
+            },
+            "eligibleRange": {
+              "to": 1794839168909,
+              "horizonAt": 1794839168908
+            }
+          }
+        ],
+        "heap": {
+          "used": 75074617,
+          "total": 135701969
+        },
+        "chartPreparation": {
+          "slices": 646,
+          "steps": 108753,
+          "cancelled": 6,
+          "activeMs": 4529.000000040978,
+          "lastProjectionElapsedMs": 0,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 0.10000000149011612,
+          "maxSliceMs": 193,
+          "backgroundMs": 3968.4000000432134,
+          "maxBackgroundMs": 193.19999999925494,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      },
+      {
+        "phase": "reopen",
+        "from": 1794729600000,
+        "requestedTo": 1794839189502,
+        "eligibleTo": 1794839186155,
+        "horizonAt": 1794839186154,
+        "loadedThrough": 1794729600000,
+        "gaps": 22,
+        "gapsTruncated": false,
+        "requestComplete": false,
+        "rangeComplete": false,
+        "pendingPaintWork": true,
+        "queuedPreparation": true,
+        "pendingProjectionSegments": 2092,
+        "paintedRevision": 6,
+        "inputRevision": 70,
+        "apply": {
+          "messages": 377,
+          "snapshots": 13,
+          "segments": 64,
+          "patches": 17737,
+          "runs": 98389,
+          "ms": 2614.899999976158,
+          "maxMs": 417.3999999985099
+        },
+        "preparedDeltaPublications": 2,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839131505,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6644,
+            "segments": 10426,
+            "runs": 71199,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839155165,0,null,null]",
+            "queueMs": 0.5,
+            "elapsedMs": 4115.5,
+            "segments": 10426,
+            "runs": 71206,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839171832,0,null,null]",
+            "queueMs": 0.30000000074505806,
+            "elapsedMs": 5007.699999999255,
+            "segments": 10427,
+            "runs": 71214,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839171832,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 52.5,
+            "segments": 0,
+            "runs": 0,
+            "state": "cancelled"
+          }
+        ],
+        "cache": {
+          "hits": 85,
+          "misses": 44,
+          "reusedCanonicalBytes": 35154741,
+          "admissions": 44,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 44,
+          "accountedBytes": 36101182,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794839189502
+            },
+            "settled": false,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false
+          }
+        ],
+        "heap": {
+          "used": 94004781,
+          "total": 138524337
+        },
+        "chartPreparation": {
+          "slices": 31,
+          "steps": 9734,
+          "cancelled": 0,
+          "activeMs": 256.1000000089407,
+          "lastProjectionElapsedMs": 473.3999999985099,
+          "lastReferenceElapsedMs": 38.900000002235174,
+          "lastSliceMs": 6.300000000745058,
+          "maxSliceMs": 23.300000000745058,
+          "backgroundMs": 247.59999999403954,
+          "maxBackgroundMs": 32.600000001490116,
+          "yieldMode": "user-visible-post-task",
+          "phase": "projection"
+        }
+      },
+      {
+        "phase": "reopen-complete",
+        "from": 1794729600000,
+        "requestedTo": 1794839189502,
+        "eligibleTo": 1794839186155,
+        "horizonAt": 1794839186154,
+        "loadedThrough": 1794839186155,
+        "gaps": 22,
+        "gapsTruncated": null,
+        "requestComplete": true,
+        "rangeComplete": false,
+        "pendingPaintWork": false,
+        "queuedPreparation": false,
+        "pendingProjectionSegments": 0,
+        "paintedRevision": 195,
+        "inputRevision": 195,
+        "apply": {
+          "messages": 522,
+          "snapshots": 13,
+          "segments": 64,
+          "patches": 21851,
+          "runs": 148759,
+          "ms": 2987.8999999798834,
+          "maxMs": 417.3999999985099
+        },
+        "preparedDeltaPublications": 3,
+        "warmPrefixHits": 2,
+        "warmValidatedReuses": 0,
+        "warmTimings": [
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839131505,0,null,null]",
+            "queueMs": 1,
+            "elapsedMs": 6644,
+            "segments": 10426,
+            "runs": 71199,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839155165,0,null,null]",
+            "queueMs": 0.5,
+            "elapsedMs": 4115.5,
+            "segments": 10426,
+            "runs": 71206,
+            "state": "ready"
+          },
+          {
+            "kind": "encode",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839171832,0,null,null]",
+            "queueMs": 0.30000000074505806,
+            "elapsedMs": 5007.699999999255,
+            "segments": 10427,
+            "runs": 71214,
+            "state": "ready"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839171832,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 52.5,
+            "segments": 0,
+            "runs": 0,
+            "state": "cancelled"
+          },
+          {
+            "kind": "replay",
+            "identity": "[\"binance-perp\",\"[\\\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\\\",\\\"perpetual\\\",\\\"binance:perpetual:BTCUSDT\\\",\\\"binance:perpetual:BTCUSDT:usd-m-standard-diff-depth-rpi-excluded\\\",\\\"native\\\",10,10,1,1,8,null,0]\",\"binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1\",1794729600000,1794839171832,0,null,null]",
+            "queueMs": 0,
+            "elapsedMs": 3155.699999999255,
+            "firstContentMs": 73,
+            "segments": 10427,
+            "runs": 71214,
+            "state": "ready"
+          }
+        ],
+        "cache": {
+          "hits": 127,
+          "misses": 45,
+          "reusedCanonicalBytes": 52590851,
+          "admissions": 45,
+          "evictions": 0,
+          "capacityMisses": 0,
+          "abortedAdmissions": 0,
+          "entries": 45,
+          "accountedBytes": 36672888,
+          "pinnedEntries": 0,
+          "stagedEntries": 0,
+          "maxBytes": 134217728,
+          "maxEntries": 256,
+          "warmPresentationBudgetBytes": 33554432
+        },
+        "jobs": [
+          {
+            "request": {
+              "market": "binance-perp",
+              "from": 1794729600000,
+              "to": 1794839189502
+            },
+            "settled": true,
+            "failed": false,
+            "hasProjector": false,
+            "preparedRevisionReused": false,
+            "preparedFinalization": {
+              "importedParts": 43,
+              "fetchedParts": 1,
+              "reusedParts": 42,
+              "reusedCanonicalBytes": 17436110,
+              "assemblyRecords": 10428,
+              "checkpointOrderElapsedMs": 35.399999998509884,
+              "validationElapsedMs": 165.80000000074506,
+              "validationYieldMs": 20.99999999627471,
+              "presentationOrderElapsedMs": 16,
+              "mutableProjectorRestored": false,
+              "manifestFingerprintMs": 10.699999999254942
+            },
+            "preparedDelta": {
+              "baseRevision": "d0aa5ee5bd9c2a99d12b7b80de59182fc2e9832e8511695409767e1e65930fcd",
+              "baseCount": 10427,
+              "baseThrough": 1794839168909,
+              "patches": 17,
+              "comparedSegments": 10428,
+              "comparedValueRuns": 69438,
+              "elapsedMs": 414.30000000074506,
+              "yieldMs": 102.30000000074506
+            },
+            "eligibleRange": {
+              "to": 1794839186155,
+              "horizonAt": 1794839186154
+            }
+          }
+        ],
+        "heap": {
+          "used": 110109754,
+          "total": 175401082
+        },
+        "chartPreparation": {
+          "slices": 204,
+          "steps": 43343,
+          "cancelled": 1,
+          "activeMs": 1322.500000026077,
+          "lastProjectionElapsedMs": 0.8000000007450581,
+          "lastReferenceElapsedMs": 0,
+          "lastSliceMs": 2.100000001490116,
+          "maxSliceMs": 67.19999999925494,
+          "backgroundMs": 1199.5999999977648,
+          "maxBackgroundMs": 67.29999999701977,
+          "yieldMode": "user-visible-post-task",
+          "phase": "idle"
+        }
+      }
+    ],
+    "ack": {
+      "advancingExactConfirmations": 120,
+      "longestConfirmedGapMs": 1518.0,
+      "first": [
+        {
+          "socket": 2,
+          "mono": 3223.10000000149,
+          "cursor": 3527704788
+        }
+      ],
+      "last": [
+        {
+          "socket": 2,
+          "mono": 72360.60000000149,
+          "cursor": 3527706478
+        }
+      ],
+      "resets": [],
+      "closes": [
+        {
+          "seq": 16,
+          "event": "close",
+          "mono": 2747.199999999255,
+          "id": 1,
+          "code": 1008,
+          "reason": "Invalid command"
+        },
+        {
+          "seq": 567,
+          "event": "close",
+          "mono": 57106.400000002235,
+          "id": 0,
+          "code": 1005,
+          "reason": ""
+        }
+      ]
+    },
+    "health": {
+      "samples": 16,
+      "failures": [],
+      "cleanupCancellations": [],
+      "maxBodyMs": 1020.130797,
+      "maxObserverLoopMs": 267.386879
+    },
+    "errors": []
+  }
+}

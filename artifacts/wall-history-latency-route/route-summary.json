@@ -1,0 +1,33 @@
+{
+  "preview": {
+    "samples": 36,
+    "errors": [],
+    "late4s": [
+      "latency-route-preview-5"
+    ],
+    "maxBodyMs": 5529.939277000001,
+    "gatewayPairs": 36
+  },
+  "forward": {
+    "samples": 36,
+    "errors": [],
+    "late4s": [
+      "latency-route-forward-5"
+    ],
+    "maxBodyMs": 5526.142757999998,
+    "gatewayPairs": 36
+  },
+  "server": {
+    "samples": 36,
+    "errors": [],
+    "late4s": [],
+    "maxBodyMs": 1171.443197876215,
+    "gatewayPairs": 36
+  },
+  "traceRows": {
+    "gateway": 1425,
+    "proxy": 1552,
+    "gatewayMaxDropped": 0,
+    "proxyMaxDropped": 0
+  }
+}

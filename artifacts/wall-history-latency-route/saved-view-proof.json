@@ -1,0 +1,25 @@
+{
+  "before": {
+    "from": 1794730869.1504166,
+    "to": 1794842343.9994564
+  },
+  "after": {
+    "from": 1794730869.15,
+    "to": 1794842343.999
+  },
+  "withinOneSecond": true,
+  "beforeArchive": {
+    "from": 1794729600000,
+    "to": 1794839171832,
+    "eligibleTo": 1794839168909,
+    "loadedThrough": 1794839168909,
+    "horizonAt": 1794839168908
+  },
+  "afterArchive": {
+    "from": 1794729600000,
+    "to": 1794839189502,
+    "eligibleTo": 1794839186155,
+    "loadedThrough": 1794839186155,
+    "horizonAt": 1794839186154
+  }
+}

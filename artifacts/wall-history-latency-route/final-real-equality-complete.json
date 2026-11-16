@@ -1,0 +1,11 @@
+{
+  "phases": [
+    "parent",
+    "extension-1",
+    "extension-2",
+    "reopen-complete"
+  ],
+  "producer": "Unchanged canonical/financial producer from prior capacity proof; only HTTP encoding changes",
+  "reference": "Unchanged task-baseline0ff6b61 financial importer",
+  "scope": "All final-cohort prepared financial rows exact. Chart financial dump is separately verified on predecessor2cb; value/producer algorithms unchanged, final nonblocking publication guard has focused equality regressions."
+}

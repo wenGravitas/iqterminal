@@ -1,0 +1,2127 @@
+[
+  {
+    "to": 1794828600000,
+    "key": "3a695b98c1fcf74f602bc5a3f3a45e6dbc4ad8cb0024f6b2f8889893a14d3fda",
+    "sourceKey": "b291d0bcc5c76c46867cc288f54264ad887593ce4e6f7c6f0d02e3490d04aebb",
+    "sourceToken": "860fd76ae983f4b2091db26b9d5e7b45ee5a5b58007c1b2af4b23392b05f924a",
+    "manifestSha256": "9c4710c36f3e014131c3b94f63bff8c808fa1cd57a330bc965df540dcd4b2ad2",
+    "parts": [
+      {
+        "hash": "0f9e9ea5e12cbc928374136452b97e8555391974b34d309daabe86fba517b0f0",
+        "compressedHash": "0cd88a5cc4098604fc314556c72535681003b58399181025b12aaaef41409763",
+        "bytes": 222824,
+        "compressedBytes": 19294,
+        "records": 202
+      },
+      {
+        "hash": "92cfa6d27482888450b2cde28472055374c00e68556a21a68334751f81e59ef1",
+        "compressedHash": "60fd5d7b2f913e1c3bd3ebcbc56b4f4c90a653b926b25b66fb782f82db7abace",
+        "bytes": 698395,
+        "compressedBytes": 61050,
+        "records": 554
+      },
+      {
+        "hash": "9a9c97e97bd30248e050901a5421e4d5b16e31030df6c27bb4c4e27d34e0c889",
+        "compressedHash": "18f955e0c474f650247711c57e813ed6c6a87a034efb4900de57ceb8d4e9781f",
+        "bytes": 639696,
+        "compressedBytes": 61756,
+        "records": 463
+      },
+      {
+        "hash": "ff87ca4c850b023638bda74f7c42763a4b1e41e78f3db885be9fe07243910fcd",
+        "compressedHash": "15259f703ca19e2fcba0ca00fa865d02fe7157709d8ae70654b83d4a117c019f",
+        "bytes": 682873,
+        "compressedBytes": 63186,
+        "records": 516
+      },
+      {
+        "hash": "4c8e3431257b99c19155b97cb8944dc36a54eb833fd36fe9f547de9d0fb6a338",
+        "compressedHash": "327e03e4da86da9a375cc44b73051dfe250ed5318d77717c27c2a6328155dbbf",
+        "bytes": 618144,
+        "compressedBytes": 57058,
+        "records": 465
+      },
+      {
+        "hash": "799dfb43c31a82c83156a2355d8d0cbdaf463b5a749a1044a8649573370bbe5e",
+        "compressedHash": "756802fe7e4e828e2dcd1aacc0b8e9b3ac9012cb02afa6a8017991f65c8ab374",
+        "bytes": 737416,
+        "compressedBytes": 64629,
+        "records": 588
+      },
+      {
+        "hash": "be1a5c80e354728f7b3356bf2736704f4c5a89441efcd95a6472cac69278d93d",
+        "compressedHash": "4fbfcea824c6c39b64f73f1142d235ca596506fdce09f37a732f2bec8e8eac09",
+        "bytes": 600165,
+        "compressedBytes": 55525,
+        "records": 445
+      },
+      {
+        "hash": "caded0e0fa76613d037eeccaf4c3ed586e49b0581915c6159cb7f6a127092d7d",
+        "compressedHash": "cff0c824d86674c51066430cc23e23d914fd4782a1b96deab45864885a214866",
+        "bytes": 670009,
+        "compressedBytes": 62634,
+        "records": 490
+      },
+      {
+        "hash": "d8fe332bd99c670d6519e2dac83134128852bfd37e683198b22736611521c2ea",
+        "compressedHash": "5ce24948f71ee6a8e81a4dc0cdbdcd01c169c6875e168755eedd9b2359fef816",
+        "bytes": 875317,
+        "compressedBytes": 70185,
+        "records": 784
+      },
+      {
+        "hash": "ec27d6a49c51a7fc0eb5056f5d69e1ce67ddcf70c4686b1684f90f993f74a787",
+        "compressedHash": "d3ea7ee881c1c59dea427d950ae1afcb4f3ea38cb4ba7671f4cfabc259144545",
+        "bytes": 740141,
+        "compressedBytes": 63466,
+        "records": 583
+      },
+      {
+        "hash": "63baff0e08c551de8a7a936aa70d96a58c21258849ad846b2bccd03032f9a780",
+        "compressedHash": "d4b5e06c0e164f7fdbd2b6a078668497a359a09e8fdc789b02a2479d810120c0",
+        "bytes": 919166,
+        "compressedBytes": 70101,
+        "records": 794
+      },
+      {
+        "hash": "89264c39188ce611db5b106ceca96df4a0ab1b88a2ae0efc94a771e8391f496b",
+        "compressedHash": "493db75acabf0841e6597620cfcf6db8da2b439d964179aaece9117ffa56b556",
+        "bytes": 818182,
+        "compressedBytes": 67860,
+        "records": 686
+      },
+      {
+        "hash": "a10e1d4aabea0b9102ea4f9703a7565c22dcf19b9d1983a08fd622a5512c9193",
+        "compressedHash": "c31c4c4dee0cb40b282ecfb0acf7a4e531775b140bad8bd1e5b2fa8120c7e222",
+        "bytes": 776247,
+        "compressedBytes": 53316,
+        "records": 712
+      },
+      {
+        "hash": "0b0375c215f9894d8659a2759b71f0c132a916a3190bef55ee03334ec5ba4877",
+        "compressedHash": "d2494451f454737f638142103ace6a75c6010803446b6ef272395835db9cfdb1",
+        "bytes": 1060316,
+        "compressedBytes": 68604,
+        "records": 984
+      },
+      {
+        "hash": "135fd3deac0daf5c0dab6173f2bb80afd4194f4a3e96d8c70e019925d6e95e80",
+        "compressedHash": "4d77597f063e2236bf092e6679cd54f501020afed921e5daac99f60c8bb5a263",
+        "bytes": 864672,
+        "compressedBytes": 55950,
+        "records": 873
+      },
+      {
+        "hash": "cc8df49bbeada30b128ad99e7962abff4f04c0990f0cc286447fc585101045a1",
+        "compressedHash": "06ab5e4c03f1b998c5f6e573dd8f04ff2763eeeb5ce659da450c47744fe8eb7e",
+        "bytes": 992658,
+        "compressedBytes": 72936,
+        "records": 825
+      },
+      {
+        "hash": "374d7cb2ebe81b720c4c54aeb5d3387e4f8010ba6df2b34fb578b252ce4e4856",
+        "compressedHash": "ed72c2e50f90eb4f19f8d06ee16a559b716fc24c699002f5aa786df3fc3a98ff",
+        "bytes": 848834,
+        "compressedBytes": 67308,
+        "records": 712
+      },
+      {
+        "hash": "f277be83ec54ae6c89d45bec4e8e3c7f2fb9d094c1a65c806837a16f8d8554a0",
+        "compressedHash": "84340b7c6bdecd740219e61c09c3a954b34344041ec54b2652ac1f8f5f0150a5",
+        "bytes": 994722,
+        "compressedBytes": 73268,
+        "records": 860
+      },
+      {
+        "hash": "2313fece4991d8fc731c286574d1d3b1c41faf791d80a14f32f34a42ad01c4c0",
+        "compressedHash": "c50dc41cbf7b362dd6c798955615292744481951cb60f3937f023c8e5d2d8beb",
+        "bytes": 750209,
+        "compressedBytes": 63993,
+        "records": 576
+      },
+      {
+        "hash": "93f1b9fdc69b04e8185ee71d091dcec2e7d8205e1c232360cb7a6832581e8ded",
+        "compressedHash": "c7c67a7866eefe4c6783dd0cc3f054be1b774990390cc9bd2386601de032bd40",
+        "bytes": 724972,
+        "compressedBytes": 64308,
+        "records": 530
+      },
+      {
+        "hash": "24623f7ec3f82e6b9a20dbf830ead7425142e4d12ba100ea4cb7fe208154b0d1",
+        "compressedHash": "06f19e0a9739e6e7861d7ad1fb171841cd2161677993df532a2235e3f880f670",
+        "bytes": 661568,
+        "compressedBytes": 61215,
+        "records": 486
+      },
+      {
+        "hash": "67853636470d5353872b809783644a4ea922e1abcf54dac53a23b57d7a9f03bb",
+        "compressedHash": "9881c96087106b1b6ecc27c68042244316cc0c71c8a38c19dbc5f6da3caf3f05",
+        "bytes": 690251,
+        "compressedBytes": 57793,
+        "records": 603
+      },
+      {
+        "hash": "e1addf2d6c134b3d7b14f4a286288112ac5e0264cf327c66ad2726e59c5ddb94",
+        "compressedHash": "94f0082018aec9a82ba1d00684a91050fd1115e0c5c8a10cf7de1f69e233e6b9",
+        "bytes": 563314,
+        "compressedBytes": 58324,
+        "records": 364
+      },
+      {
+        "hash": "559001bb363ab8ab28963b1179eb513bb87ff20a45e45d2592803a438e427391",
+        "compressedHash": "5b40dc0764ccaef1a19180c12ef5407658c474b5f2776a7262e78caa49278851",
+        "bytes": 321264,
+        "compressedBytes": 35054,
+        "records": 183
+      },
+      {
+        "hash": "ec402c83278ae215dc6942b6a2938748b2322831543861bba0dbf15d4f29dd40",
+        "compressedHash": "ef5b11f381d4f569df74928b88a4a1aef8238894609f3e094c3c37c3e2deaad3",
+        "bytes": 819655,
+        "compressedBytes": 77851,
+        "records": 577
+      },
+      {
+        "hash": "caf629e163d4051f7e12c3c55f12b5354af3af13ac5d07f1960fae76e74fc8f4",
+        "compressedHash": "52367e3135f2cd4426e07ea9d3c0e608c50773a8a980bd8acef7ebd287f5066f",
+        "bytes": 498764,
+        "compressedBytes": 46245,
+        "records": 374
+      },
+      {
+        "hash": "7d96431bac8c07e4a34b2a9ab272413effbcb81924cfef05225660187ae45ef0",
+        "compressedHash": "909ada57445e208e0e13cf92b12ba04049399effa38c22792bdf0eff0cc6e5c3",
+        "bytes": 490901,
+        "compressedBytes": 43546,
+        "records": 404
+      },
+      {
+        "hash": "fbb2f36031ea9e7687e7716d3503cd5a670e8e8161b6418d85a7b8496a84c3ff",
+        "compressedHash": "4cfa68a5b7be532446d5f4ab48c2bb6cb2b5949ca8c2eca65e829b264235584f",
+        "bytes": 794071,
+        "compressedBytes": 54471,
+        "records": 825
+      },
+      {
+        "hash": "53be72da9bfc00f53292ce46a7c05cc6e750f5850fe4badda456e07c8f729a36",
+        "compressedHash": "b078353870e98194ab9445c5d1e0d5a32468b24316a826cb9b3f543d326219e7",
+        "bytes": 680568,
+        "compressedBytes": 56619,
+        "records": 582
+      },
+      {
+        "hash": "0aa310655ff8c77384e2474230cfa432f5eb27b0235add5ce1c987f298aaa5ac",
+        "compressedHash": "7124e814932fec5f7c13e320009a4d39b7e3f081c11b59156ee939196374735a",
+        "bytes": 375117,
+        "compressedBytes": 31988,
+        "records": 311
+      },
+      {
+        "hash": "bf5ec457bcc80b970324fcebf5bf56cd3749e85c77404d8e24387210e319397e",
+        "compressedHash": "2a9290e490e1c8fd3d05e5097d7b08ce546f10649654c4d3fea205889d373e61",
+        "bytes": 253160,
+        "compressedBytes": 22156,
+        "records": 211
+      },
+      {
+        "hash": "d3295b8e0cde06640f2562d5f518f26cccec5f1bd9019506b71e224e31838471",
+        "compressedHash": "889f05ae75a85f0ed9a8d51ecf2e08b43899af09f3aaa442de63a7d23a280e8f",
+        "bytes": 140435,
+        "compressedBytes": 12608,
+        "records": 123
+      },
+      {
+        "hash": "b9fb7f1a11a8142696f6ed5959ce81c5b3120500ae8518b5aa11e1a6597b13a9",
+        "compressedHash": "a36d4beb8932082a55103afe1041d48cbf85f0217fd6b3cad3171799b05bb3b7",
+        "bytes": 820374,
+        "compressedBytes": 78552,
+        "records": 153
+      },
+      {
+        "hash": "61a15f3399c6526cd4f1b4e875f8e82bfeb529b1d7bf4ebcab7b54f569e002a2",
+        "compressedHash": "f2887e4be528817674bd24cf588d47ec3934bb436805d1d07c273d397d0384cc",
+        "bytes": 290003,
+        "compressedBytes": 25208,
+        "records": 196
+      },
+      {
+        "hash": "f25d166a877dae5d1a73ac601738bf56bfa6cace6637c3d865cf10c7b86e0916",
+        "compressedHash": "27721d4fad8ff78a9bd79548fb0cd96a87f06434a1b340dca0978e89faab5b75",
+        "bytes": 352097,
+        "compressedBytes": 29360,
+        "records": 109
+      },
+      {
+        "hash": "b81dbe8ddda0ae4b76c5d444755f387b48c328023a0dfae1972138fdd0548a0e",
+        "compressedHash": "d9027ee2883cf048ef8b121241d776e11e0dd9a545c962e933dcfdd6a582dc44",
+        "bytes": 196468,
+        "compressedBytes": 18818,
+        "records": 70
+      },
+      {
+        "hash": "d27696180a8e5e6b6bbda3563ca75f97990a2e3abf420c22b23734edc081b018",
+        "compressedHash": "e28f2a80003260b6f301c3aac037b7839c306efcc941f76e3c2f5d96bc746848",
+        "bytes": 63006,
+        "compressedBytes": 6823,
+        "records": 52
+      },
+      {
+        "hash": "69d2e13acb475c08bd1cdc31b15326a9176b3afac47d8dd03bfb31e589e848d4",
+        "compressedHash": "572add06a54d86e7f125b20a1a5c86449bed7e932260e3717983ee72dc2a69dc",
+        "bytes": 83277,
+        "compressedBytes": 8107,
+        "records": 72
+      },
+      {
+        "hash": "b929ce06de5702bfd6bcaf17c9fc6bde085884974330080e3ed7783d0c2b3c68",
+        "compressedHash": "0b0be0b06ce0a23fad84f365be2dbfba6a677df73553aa978be509cc75dfa5f9",
+        "bytes": 73556,
+        "compressedBytes": 8052,
+        "records": 45
+      },
+      {
+        "hash": "c101d4f9227db55a05a79be3bc0c03ddcf5f8256eee767f636a3ee169fb09967",
+        "compressedHash": "d1058b46e3a97542bf471fb34fe724318220488800a9d59eaf3f93d3aeba7319",
+        "bytes": 41528,
+        "compressedBytes": 3822,
+        "records": 30
+      },
+      {
+        "hash": "24fdaedeaf93337046378fd469f00accb95ed1b530abffb2017478ad12f3a9e5",
+        "compressedHash": "10d995406188b5e4babb9083fabfd2bd12901e986b718cf7ecc2947be4a9b4fc",
+        "bytes": 641936,
+        "compressedBytes": 51683,
+        "records": 26
+      },
+      {
+        "hash": "f9474b018a11f315ee97bfdf7b28efafc0e94d5b8430991db70f29b4ba6df99f",
+        "compressedHash": "14d181b6933467899697390426e9b55edf06da36f2018d50ce8e5ca0c67c0c96",
+        "bytes": 72917,
+        "compressedBytes": 6973,
+        "records": 5
+      },
+      {
+        "hash": "fbdb1982d6bbc568bf544716f12b59e6452bb5a6f6a7c45373c5a7eb38ea057d",
+        "compressedHash": "12c183316b571677bb0c135467119db63a75bd73851f1237186e137e678842b0",
+        "bytes": 86274,
+        "compressedBytes": 7185,
+        "records": 24
+      },
+      {
+        "hash": "7a81419a31927b8f28de91aa01e09539f4ee7be475e3c7f391a33d50cf3b7ed9",
+        "compressedHash": "ad965de1dee620629081d35bbaef0b936c3741b78347b24d459547595df09686",
+        "bytes": 14966,
+        "compressedBytes": 2410,
+        "records": 6
+      },
+      {
+        "hash": "8e03a326b2219a3e9352f70c5acb2d500c12138dd413d8ecdad0e004e8462d85",
+        "compressedHash": "dd0b4ae840608af44650a6c986de0bfcc94a0d8d272b6b4fb63ba736f1f08ef8",
+        "bytes": 82419,
+        "compressedBytes": 13300,
+        "records": 8
+      },
+      {
+        "hash": "a2ab1cea254e647c01edcb5db3213369adcb4bc843d10a294a27fa4cb6e2f945",
+        "compressedHash": "03532dfbe8927231334fcdccd0b40e87171ed43e28854f383c649f6388a0d26b",
+        "bytes": 1786,
+        "compressedBytes": 553,
+        "records": 2
+      },
+      {
+        "hash": "ba65ac0d29afdcbec939d60cf0cc0dda8100434ad1404aea17e0965d20663d9a",
+        "compressedHash": "4b51f376812f56571bd0d293b3e379b29773d7cb2d4f4e55e9174443680c59f3",
+        "bytes": 73368,
+        "compressedBytes": 12022,
+        "records": 5
+      },
+      {
+        "hash": "cf972a15021130ede10f740bd14af4a26b25ff1ec1690d02a6f435a56b80261a",
+        "compressedHash": "1adf1158646e958ce082e7251207e147b7c945f38827505f19affe5649aa4ae7",
+        "bytes": 176635,
+        "compressedBytes": 20521,
+        "records": 87
+      },
+      {
+        "hash": "db3252c1ca7022132786e3640bfcb5c6f067df8797a9b5ad071d0b88095925fe",
+        "compressedHash": "3159bb7f929f141bd813b3b98cd19a2d5dbb8f3cb7b59a8f5695597ffb0b1ebe",
+        "bytes": 226479,
+        "compressedBytes": 23289,
+        "records": 163
+      },
+      {
+        "hash": "a1920b3a83c315fa764a40a0d87b3ca0e04e7dd366faf4f39d0dfa08781ba26c",
+        "compressedHash": "8e7e5be0e1b8cca062c21ca5854ff036d5977c39725be79c8038d4fcb9adb98c",
+        "bytes": 1253355,
+        "compressedBytes": 89818,
+        "records": 122
+      },
+      {
+        "hash": "83b436ad0877ef7680f95153ea1426cd3b5e575e5e3acb11f424efacc77d3daf",
+        "compressedHash": "009b66da47631c8e6f84bc98636285db1ad9d235903d9bdad7104ad0f2679910",
+        "bytes": 197075,
+        "compressedBytes": 17645,
+        "records": 182
+      },
+      {
+        "hash": "9ce4eea8fd85ee0f5539ac4001f2ea08a47ebc394375583b0ea117f20372a7ee",
+        "compressedHash": "1c6e52821281a52531accb43371e6bac8fc212a3e2735701dbc6f2c275ee13c6",
+        "bytes": 203517,
+        "compressedBytes": 17114,
+        "records": 199
+      },
+      {
+        "hash": "10dbb3edbcd8e82ac5047f4ce9dc750379a2546fdb9c0cdba4df0b65c9668ea3",
+        "compressedHash": "4749c23d8822ba4715bc5c1a2364848dad297cc38950c1eb25279ba877eee8b9",
+        "bytes": 240191,
+        "compressedBytes": 21731,
+        "records": 219
+      },
+      {
+        "hash": "e8012e71287703380db2a3892be76a632931902242967a9b20ee46af87b9e96a",
+        "compressedHash": "e850bc1c99cf5fb2667d53504370175529261747565c2a35b3cfbf6275de2c91",
+        "bytes": 279863,
+        "compressedBytes": 31934,
+        "records": 144
+      },
+      {
+        "hash": "504b4473ccebc4005b6434562caf3511e62d33e9247c79fa93ee6f523add08a5",
+        "compressedHash": "3d9d2c30973992f08e0be7df1c04b30b477da24ab4cea4b714dddc07c661c7db",
+        "bytes": 204437,
+        "compressedBytes": 18662,
+        "records": 176
+      }
+    ],
+    "closed": 19780,
+    "coverage": {
+      "availableFrom": 1793506604584,
+      "requestedFrom": 1794717000000,
+      "requestedTo": 1794828600000,
+      "confirmedTo": 1794828600000,
+      "gaps": [
+        {
+          "cursor": 28672654,
+          "epoch": 1794716825959,
+          "at": 1794717519606,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.07 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28673853,
+          "epoch": 1794717521087,
+          "at": 1794717644150,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.16 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28677079,
+          "epoch": 1794717645947,
+          "at": 1794717976572,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.39 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28683796,
+          "epoch": 1794717977959,
+          "at": 1794718663434,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.23 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28686049,
+          "epoch": 1794718664879,
+          "at": 1794718895993,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "cursor": 28687752,
+          "epoch": 1794718927788,
+          "at": 1794719103567,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.18 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28691336,
+          "epoch": 1794719105310,
+          "at": 1794719470919,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.82 MiB bytes), current RSS: 2.09 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28694287,
+          "epoch": 1794719472678,
+          "at": 1794719775300,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.12 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28706390,
+          "epoch": 1794719777020,
+          "at": 1794721010081,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.26 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28707905,
+          "epoch": 1794721011699,
+          "at": 1794721168281,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.10 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28716472,
+          "epoch": 1794721169886,
+          "at": 1794722042029,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28721438,
+          "epoch": 1794722043602,
+          "at": 1794722551028,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28726238,
+          "epoch": 1794722552806,
+          "at": 1794723043451,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.46 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28744845,
+          "epoch": 1794723045101,
+          "at": 1794724938821,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28748507,
+          "epoch": 1794724940503,
+          "at": 1794725315649,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28750846,
+          "epoch": 1794725317192,
+          "at": 1794725557611,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.64 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28754221,
+          "epoch": 1794725559246,
+          "at": 1794725905134,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.50 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762620,
+          "epoch": 1794725906581,
+          "at": 1794726763072,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.46 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762739,
+          "epoch": 1794726767589,
+          "at": 1794726782255,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.51 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28765138,
+          "epoch": 1794726783911,
+          "at": 1794727029600,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.70 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28769636,
+          "epoch": 1794727031201,
+          "at": 1794727491087,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28772834,
+          "epoch": 1794727492749,
+          "at": 1794727820553,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.48 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28774502,
+          "epoch": 1794727822042,
+          "at": 1794727994254,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28783396,
+          "epoch": 1794727995969,
+          "at": 1794728901836,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28792474,
+          "epoch": 1794728903397,
+          "at": 1794729828892,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794495,
+          "epoch": 1794729830665,
+          "at": 1794730038814,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.41 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794687,
+          "epoch": 1794730040450,
+          "at": 1794730062582,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.39 MiB bytes), current RSS: 2.43 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28796726,
+          "epoch": 1794730064257,
+          "at": 1794730274232,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.33 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28801323,
+          "epoch": 1794730275854,
+          "at": 1794730745817,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.36 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28807567,
+          "epoch": 1794730747425,
+          "at": 1794731385021,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.59 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28809275,
+          "epoch": 1794731386643,
+          "at": 1794731562940,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28810173,
+          "epoch": 1794731564611,
+          "at": 1794731658527,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.66 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28816726,
+          "epoch": 1794731660215,
+          "at": 1794732328374,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.67 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28818027,
+          "epoch": 1794732330148,
+          "at": 1794732465083,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.27 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28825870,
+          "epoch": 1794732466740,
+          "at": 1794733266679,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.47 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28829515,
+          "epoch": 1794733268373,
+          "at": 1794733639929,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.42 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28833907,
+          "epoch": 1794733641526,
+          "at": 1794734090708,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28835607,
+          "epoch": 1794734092483,
+          "at": 1794734266148,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.40 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836159,
+          "epoch": 1794734267767,
+          "at": 1794734325009,
+          "reason": "The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28836327,
+          "epoch": 1794734347409,
+          "at": 1794734365304,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.11 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.80 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836361,
+          "epoch": 1794734367063,
+          "at": 1794734372037,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.43 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28843147,
+          "epoch": 1794734373793,
+          "at": 1794735066333,
+          "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+        },
+        {
+          "cursor": 28852481,
+          "epoch": 1794735068348,
+          "at": 1794736018345,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.10 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28861840,
+          "epoch": 1794736020167,
+          "at": 1794736974357,
+          "reason": "Depth persistence unavailable: The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28977722,
+          "epoch": 1794737024509,
+          "at": 1794748806309,
+          "reason": "Shared disk watermark"
+        }
+      ],
+      "gapsTruncated": false,
+      "partial": true,
+      "status": "partial",
+      "reason": "Depth continuity gaps are present in the requested range",
+      "bookScope": null,
+      "midpoint": null
+    },
+    "source": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794717000000,
+      "to": 1794828600000,
+      "version": 1,
+      "kind": "wall-source-sha256-xor-v1",
+      "watermark": 29857839,
+      "head": {
+        "cursor": 29857839,
+        "epoch": 1794831641444,
+        "at": 1794838323135
+      },
+      "availableFrom": 1793506604584,
+      "anchor": {
+        "cursor": 28665858,
+        "epoch": 1794716825959,
+        "at": 1794716828774,
+        "hash": "a3d47861f8aaaafecc8db69d0573bbd33768f992607b7f716847dbe502b13a9a"
+      },
+      "records": 74299,
+      "maxCursor": 29762174,
+      "hash": "3710153327843402534125039013578882360930351481271446363297399309267703004576",
+      "token": "860fd76ae983f4b2091db26b9d5e7b45ee5a5b58007c1b2af4b23392b05f924a",
+      "eligible": true
+    },
+    "requestId": "latency-pinned-final-pair-1794828600000"
+  },
+  {
+    "to": 1794830400000,
+    "key": "e297ecb3589aa21504a111859be55e1ccfadaeec2c1852541c919db9d720e323",
+    "sourceKey": "e4a9d599fb8a337ebe6e776c6282c48e7de47890a219768753a0a15201308ad7",
+    "sourceToken": "dac4a72c82bb741eb7efc9c4a7562779326b85f392e730268350ff68c1c4543f",
+    "manifestSha256": "eedc0e844f9dc30ea97ee7a5bbbf14acf78abbe530616411dcc2db3db6ffa18a",
+    "parts": [
+      {
+        "hash": "0f9e9ea5e12cbc928374136452b97e8555391974b34d309daabe86fba517b0f0",
+        "compressedHash": "0cd88a5cc4098604fc314556c72535681003b58399181025b12aaaef41409763",
+        "bytes": 222824,
+        "compressedBytes": 19294,
+        "records": 202
+      },
+      {
+        "hash": "92cfa6d27482888450b2cde28472055374c00e68556a21a68334751f81e59ef1",
+        "compressedHash": "60fd5d7b2f913e1c3bd3ebcbc56b4f4c90a653b926b25b66fb782f82db7abace",
+        "bytes": 698395,
+        "compressedBytes": 61050,
+        "records": 554
+      },
+      {
+        "hash": "9a9c97e97bd30248e050901a5421e4d5b16e31030df6c27bb4c4e27d34e0c889",
+        "compressedHash": "18f955e0c474f650247711c57e813ed6c6a87a034efb4900de57ceb8d4e9781f",
+        "bytes": 639696,
+        "compressedBytes": 61756,
+        "records": 463
+      },
+      {
+        "hash": "ff87ca4c850b023638bda74f7c42763a4b1e41e78f3db885be9fe07243910fcd",
+        "compressedHash": "15259f703ca19e2fcba0ca00fa865d02fe7157709d8ae70654b83d4a117c019f",
+        "bytes": 682873,
+        "compressedBytes": 63186,
+        "records": 516
+      },
+      {
+        "hash": "4c8e3431257b99c19155b97cb8944dc36a54eb833fd36fe9f547de9d0fb6a338",
+        "compressedHash": "327e03e4da86da9a375cc44b73051dfe250ed5318d77717c27c2a6328155dbbf",
+        "bytes": 618144,
+        "compressedBytes": 57058,
+        "records": 465
+      },
+      {
+        "hash": "799dfb43c31a82c83156a2355d8d0cbdaf463b5a749a1044a8649573370bbe5e",
+        "compressedHash": "756802fe7e4e828e2dcd1aacc0b8e9b3ac9012cb02afa6a8017991f65c8ab374",
+        "bytes": 737416,
+        "compressedBytes": 64629,
+        "records": 588
+      },
+      {
+        "hash": "be1a5c80e354728f7b3356bf2736704f4c5a89441efcd95a6472cac69278d93d",
+        "compressedHash": "4fbfcea824c6c39b64f73f1142d235ca596506fdce09f37a732f2bec8e8eac09",
+        "bytes": 600165,
+        "compressedBytes": 55525,
+        "records": 445
+      },
+      {
+        "hash": "caded0e0fa76613d037eeccaf4c3ed586e49b0581915c6159cb7f6a127092d7d",
+        "compressedHash": "cff0c824d86674c51066430cc23e23d914fd4782a1b96deab45864885a214866",
+        "bytes": 670009,
+        "compressedBytes": 62634,
+        "records": 490
+      },
+      {
+        "hash": "d8fe332bd99c670d6519e2dac83134128852bfd37e683198b22736611521c2ea",
+        "compressedHash": "5ce24948f71ee6a8e81a4dc0cdbdcd01c169c6875e168755eedd9b2359fef816",
+        "bytes": 875317,
+        "compressedBytes": 70185,
+        "records": 784
+      },
+      {
+        "hash": "ec27d6a49c51a7fc0eb5056f5d69e1ce67ddcf70c4686b1684f90f993f74a787",
+        "compressedHash": "d3ea7ee881c1c59dea427d950ae1afcb4f3ea38cb4ba7671f4cfabc259144545",
+        "bytes": 740141,
+        "compressedBytes": 63466,
+        "records": 583
+      },
+      {
+        "hash": "63baff0e08c551de8a7a936aa70d96a58c21258849ad846b2bccd03032f9a780",
+        "compressedHash": "d4b5e06c0e164f7fdbd2b6a078668497a359a09e8fdc789b02a2479d810120c0",
+        "bytes": 919166,
+        "compressedBytes": 70101,
+        "records": 794
+      },
+      {
+        "hash": "89264c39188ce611db5b106ceca96df4a0ab1b88a2ae0efc94a771e8391f496b",
+        "compressedHash": "493db75acabf0841e6597620cfcf6db8da2b439d964179aaece9117ffa56b556",
+        "bytes": 818182,
+        "compressedBytes": 67860,
+        "records": 686
+      },
+      {
+        "hash": "a10e1d4aabea0b9102ea4f9703a7565c22dcf19b9d1983a08fd622a5512c9193",
+        "compressedHash": "c31c4c4dee0cb40b282ecfb0acf7a4e531775b140bad8bd1e5b2fa8120c7e222",
+        "bytes": 776247,
+        "compressedBytes": 53316,
+        "records": 712
+      },
+      {
+        "hash": "0b0375c215f9894d8659a2759b71f0c132a916a3190bef55ee03334ec5ba4877",
+        "compressedHash": "d2494451f454737f638142103ace6a75c6010803446b6ef272395835db9cfdb1",
+        "bytes": 1060316,
+        "compressedBytes": 68604,
+        "records": 984
+      },
+      {
+        "hash": "135fd3deac0daf5c0dab6173f2bb80afd4194f4a3e96d8c70e019925d6e95e80",
+        "compressedHash": "4d77597f063e2236bf092e6679cd54f501020afed921e5daac99f60c8bb5a263",
+        "bytes": 864672,
+        "compressedBytes": 55950,
+        "records": 873
+      },
+      {
+        "hash": "cc8df49bbeada30b128ad99e7962abff4f04c0990f0cc286447fc585101045a1",
+        "compressedHash": "06ab5e4c03f1b998c5f6e573dd8f04ff2763eeeb5ce659da450c47744fe8eb7e",
+        "bytes": 992658,
+        "compressedBytes": 72936,
+        "records": 825
+      },
+      {
+        "hash": "374d7cb2ebe81b720c4c54aeb5d3387e4f8010ba6df2b34fb578b252ce4e4856",
+        "compressedHash": "ed72c2e50f90eb4f19f8d06ee16a559b716fc24c699002f5aa786df3fc3a98ff",
+        "bytes": 848834,
+        "compressedBytes": 67308,
+        "records": 712
+      },
+      {
+        "hash": "f277be83ec54ae6c89d45bec4e8e3c7f2fb9d094c1a65c806837a16f8d8554a0",
+        "compressedHash": "84340b7c6bdecd740219e61c09c3a954b34344041ec54b2652ac1f8f5f0150a5",
+        "bytes": 994722,
+        "compressedBytes": 73268,
+        "records": 860
+      },
+      {
+        "hash": "2313fece4991d8fc731c286574d1d3b1c41faf791d80a14f32f34a42ad01c4c0",
+        "compressedHash": "c50dc41cbf7b362dd6c798955615292744481951cb60f3937f023c8e5d2d8beb",
+        "bytes": 750209,
+        "compressedBytes": 63993,
+        "records": 576
+      },
+      {
+        "hash": "93f1b9fdc69b04e8185ee71d091dcec2e7d8205e1c232360cb7a6832581e8ded",
+        "compressedHash": "c7c67a7866eefe4c6783dd0cc3f054be1b774990390cc9bd2386601de032bd40",
+        "bytes": 724972,
+        "compressedBytes": 64308,
+        "records": 530
+      },
+      {
+        "hash": "24623f7ec3f82e6b9a20dbf830ead7425142e4d12ba100ea4cb7fe208154b0d1",
+        "compressedHash": "06f19e0a9739e6e7861d7ad1fb171841cd2161677993df532a2235e3f880f670",
+        "bytes": 661568,
+        "compressedBytes": 61215,
+        "records": 486
+      },
+      {
+        "hash": "67853636470d5353872b809783644a4ea922e1abcf54dac53a23b57d7a9f03bb",
+        "compressedHash": "9881c96087106b1b6ecc27c68042244316cc0c71c8a38c19dbc5f6da3caf3f05",
+        "bytes": 690251,
+        "compressedBytes": 57793,
+        "records": 603
+      },
+      {
+        "hash": "e1addf2d6c134b3d7b14f4a286288112ac5e0264cf327c66ad2726e59c5ddb94",
+        "compressedHash": "94f0082018aec9a82ba1d00684a91050fd1115e0c5c8a10cf7de1f69e233e6b9",
+        "bytes": 563314,
+        "compressedBytes": 58324,
+        "records": 364
+      },
+      {
+        "hash": "559001bb363ab8ab28963b1179eb513bb87ff20a45e45d2592803a438e427391",
+        "compressedHash": "5b40dc0764ccaef1a19180c12ef5407658c474b5f2776a7262e78caa49278851",
+        "bytes": 321264,
+        "compressedBytes": 35054,
+        "records": 183
+      },
+      {
+        "hash": "ec402c83278ae215dc6942b6a2938748b2322831543861bba0dbf15d4f29dd40",
+        "compressedHash": "ef5b11f381d4f569df74928b88a4a1aef8238894609f3e094c3c37c3e2deaad3",
+        "bytes": 819655,
+        "compressedBytes": 77851,
+        "records": 577
+      },
+      {
+        "hash": "caf629e163d4051f7e12c3c55f12b5354af3af13ac5d07f1960fae76e74fc8f4",
+        "compressedHash": "52367e3135f2cd4426e07ea9d3c0e608c50773a8a980bd8acef7ebd287f5066f",
+        "bytes": 498764,
+        "compressedBytes": 46245,
+        "records": 374
+      },
+      {
+        "hash": "7d96431bac8c07e4a34b2a9ab272413effbcb81924cfef05225660187ae45ef0",
+        "compressedHash": "909ada57445e208e0e13cf92b12ba04049399effa38c22792bdf0eff0cc6e5c3",
+        "bytes": 490901,
+        "compressedBytes": 43546,
+        "records": 404
+      },
+      {
+        "hash": "fbb2f36031ea9e7687e7716d3503cd5a670e8e8161b6418d85a7b8496a84c3ff",
+        "compressedHash": "4cfa68a5b7be532446d5f4ab48c2bb6cb2b5949ca8c2eca65e829b264235584f",
+        "bytes": 794071,
+        "compressedBytes": 54471,
+        "records": 825
+      },
+      {
+        "hash": "53be72da9bfc00f53292ce46a7c05cc6e750f5850fe4badda456e07c8f729a36",
+        "compressedHash": "b078353870e98194ab9445c5d1e0d5a32468b24316a826cb9b3f543d326219e7",
+        "bytes": 680568,
+        "compressedBytes": 56619,
+        "records": 582
+      },
+      {
+        "hash": "0aa310655ff8c77384e2474230cfa432f5eb27b0235add5ce1c987f298aaa5ac",
+        "compressedHash": "7124e814932fec5f7c13e320009a4d39b7e3f081c11b59156ee939196374735a",
+        "bytes": 375117,
+        "compressedBytes": 31988,
+        "records": 311
+      },
+      {
+        "hash": "bf5ec457bcc80b970324fcebf5bf56cd3749e85c77404d8e24387210e319397e",
+        "compressedHash": "2a9290e490e1c8fd3d05e5097d7b08ce546f10649654c4d3fea205889d373e61",
+        "bytes": 253160,
+        "compressedBytes": 22156,
+        "records": 211
+      },
+      {
+        "hash": "d3295b8e0cde06640f2562d5f518f26cccec5f1bd9019506b71e224e31838471",
+        "compressedHash": "889f05ae75a85f0ed9a8d51ecf2e08b43899af09f3aaa442de63a7d23a280e8f",
+        "bytes": 140435,
+        "compressedBytes": 12608,
+        "records": 123
+      },
+      {
+        "hash": "b9fb7f1a11a8142696f6ed5959ce81c5b3120500ae8518b5aa11e1a6597b13a9",
+        "compressedHash": "a36d4beb8932082a55103afe1041d48cbf85f0217fd6b3cad3171799b05bb3b7",
+        "bytes": 820374,
+        "compressedBytes": 78552,
+        "records": 153
+      },
+      {
+        "hash": "61a15f3399c6526cd4f1b4e875f8e82bfeb529b1d7bf4ebcab7b54f569e002a2",
+        "compressedHash": "f2887e4be528817674bd24cf588d47ec3934bb436805d1d07c273d397d0384cc",
+        "bytes": 290003,
+        "compressedBytes": 25208,
+        "records": 196
+      },
+      {
+        "hash": "f25d166a877dae5d1a73ac601738bf56bfa6cace6637c3d865cf10c7b86e0916",
+        "compressedHash": "27721d4fad8ff78a9bd79548fb0cd96a87f06434a1b340dca0978e89faab5b75",
+        "bytes": 352097,
+        "compressedBytes": 29360,
+        "records": 109
+      },
+      {
+        "hash": "b81dbe8ddda0ae4b76c5d444755f387b48c328023a0dfae1972138fdd0548a0e",
+        "compressedHash": "d9027ee2883cf048ef8b121241d776e11e0dd9a545c962e933dcfdd6a582dc44",
+        "bytes": 196468,
+        "compressedBytes": 18818,
+        "records": 70
+      },
+      {
+        "hash": "d27696180a8e5e6b6bbda3563ca75f97990a2e3abf420c22b23734edc081b018",
+        "compressedHash": "e28f2a80003260b6f301c3aac037b7839c306efcc941f76e3c2f5d96bc746848",
+        "bytes": 63006,
+        "compressedBytes": 6823,
+        "records": 52
+      },
+      {
+        "hash": "69d2e13acb475c08bd1cdc31b15326a9176b3afac47d8dd03bfb31e589e848d4",
+        "compressedHash": "572add06a54d86e7f125b20a1a5c86449bed7e932260e3717983ee72dc2a69dc",
+        "bytes": 83277,
+        "compressedBytes": 8107,
+        "records": 72
+      },
+      {
+        "hash": "b929ce06de5702bfd6bcaf17c9fc6bde085884974330080e3ed7783d0c2b3c68",
+        "compressedHash": "0b0be0b06ce0a23fad84f365be2dbfba6a677df73553aa978be509cc75dfa5f9",
+        "bytes": 73556,
+        "compressedBytes": 8052,
+        "records": 45
+      },
+      {
+        "hash": "c101d4f9227db55a05a79be3bc0c03ddcf5f8256eee767f636a3ee169fb09967",
+        "compressedHash": "d1058b46e3a97542bf471fb34fe724318220488800a9d59eaf3f93d3aeba7319",
+        "bytes": 41528,
+        "compressedBytes": 3822,
+        "records": 30
+      },
+      {
+        "hash": "24fdaedeaf93337046378fd469f00accb95ed1b530abffb2017478ad12f3a9e5",
+        "compressedHash": "10d995406188b5e4babb9083fabfd2bd12901e986b718cf7ecc2947be4a9b4fc",
+        "bytes": 641936,
+        "compressedBytes": 51683,
+        "records": 26
+      },
+      {
+        "hash": "f9474b018a11f315ee97bfdf7b28efafc0e94d5b8430991db70f29b4ba6df99f",
+        "compressedHash": "14d181b6933467899697390426e9b55edf06da36f2018d50ce8e5ca0c67c0c96",
+        "bytes": 72917,
+        "compressedBytes": 6973,
+        "records": 5
+      },
+      {
+        "hash": "fbdb1982d6bbc568bf544716f12b59e6452bb5a6f6a7c45373c5a7eb38ea057d",
+        "compressedHash": "12c183316b571677bb0c135467119db63a75bd73851f1237186e137e678842b0",
+        "bytes": 86274,
+        "compressedBytes": 7185,
+        "records": 24
+      },
+      {
+        "hash": "7a81419a31927b8f28de91aa01e09539f4ee7be475e3c7f391a33d50cf3b7ed9",
+        "compressedHash": "ad965de1dee620629081d35bbaef0b936c3741b78347b24d459547595df09686",
+        "bytes": 14966,
+        "compressedBytes": 2410,
+        "records": 6
+      },
+      {
+        "hash": "8e03a326b2219a3e9352f70c5acb2d500c12138dd413d8ecdad0e004e8462d85",
+        "compressedHash": "dd0b4ae840608af44650a6c986de0bfcc94a0d8d272b6b4fb63ba736f1f08ef8",
+        "bytes": 82419,
+        "compressedBytes": 13300,
+        "records": 8
+      },
+      {
+        "hash": "a2ab1cea254e647c01edcb5db3213369adcb4bc843d10a294a27fa4cb6e2f945",
+        "compressedHash": "03532dfbe8927231334fcdccd0b40e87171ed43e28854f383c649f6388a0d26b",
+        "bytes": 1786,
+        "compressedBytes": 553,
+        "records": 2
+      },
+      {
+        "hash": "ba65ac0d29afdcbec939d60cf0cc0dda8100434ad1404aea17e0965d20663d9a",
+        "compressedHash": "4b51f376812f56571bd0d293b3e379b29773d7cb2d4f4e55e9174443680c59f3",
+        "bytes": 73368,
+        "compressedBytes": 12022,
+        "records": 5
+      },
+      {
+        "hash": "cf972a15021130ede10f740bd14af4a26b25ff1ec1690d02a6f435a56b80261a",
+        "compressedHash": "1adf1158646e958ce082e7251207e147b7c945f38827505f19affe5649aa4ae7",
+        "bytes": 176635,
+        "compressedBytes": 20521,
+        "records": 87
+      },
+      {
+        "hash": "db3252c1ca7022132786e3640bfcb5c6f067df8797a9b5ad071d0b88095925fe",
+        "compressedHash": "3159bb7f929f141bd813b3b98cd19a2d5dbb8f3cb7b59a8f5695597ffb0b1ebe",
+        "bytes": 226479,
+        "compressedBytes": 23289,
+        "records": 163
+      },
+      {
+        "hash": "a1920b3a83c315fa764a40a0d87b3ca0e04e7dd366faf4f39d0dfa08781ba26c",
+        "compressedHash": "8e7e5be0e1b8cca062c21ca5854ff036d5977c39725be79c8038d4fcb9adb98c",
+        "bytes": 1253355,
+        "compressedBytes": 89818,
+        "records": 122
+      },
+      {
+        "hash": "83b436ad0877ef7680f95153ea1426cd3b5e575e5e3acb11f424efacc77d3daf",
+        "compressedHash": "009b66da47631c8e6f84bc98636285db1ad9d235903d9bdad7104ad0f2679910",
+        "bytes": 197075,
+        "compressedBytes": 17645,
+        "records": 182
+      },
+      {
+        "hash": "9ce4eea8fd85ee0f5539ac4001f2ea08a47ebc394375583b0ea117f20372a7ee",
+        "compressedHash": "1c6e52821281a52531accb43371e6bac8fc212a3e2735701dbc6f2c275ee13c6",
+        "bytes": 203517,
+        "compressedBytes": 17114,
+        "records": 199
+      },
+      {
+        "hash": "10dbb3edbcd8e82ac5047f4ce9dc750379a2546fdb9c0cdba4df0b65c9668ea3",
+        "compressedHash": "4749c23d8822ba4715bc5c1a2364848dad297cc38950c1eb25279ba877eee8b9",
+        "bytes": 240191,
+        "compressedBytes": 21731,
+        "records": 219
+      },
+      {
+        "hash": "e8012e71287703380db2a3892be76a632931902242967a9b20ee46af87b9e96a",
+        "compressedHash": "e850bc1c99cf5fb2667d53504370175529261747565c2a35b3cfbf6275de2c91",
+        "bytes": 279863,
+        "compressedBytes": 31934,
+        "records": 144
+      },
+      {
+        "hash": "52ede4aaa54fcc12dd6506b2166982d8108b05a47436d05c1f1cc461acaa51bd",
+        "compressedHash": "61650543b286a8319092c4c41d4bc59b50c5b16efe9fc55feae07049d0f232d9",
+        "bytes": 319989,
+        "compressedBytes": 27772,
+        "records": 248
+      }
+    ],
+    "closed": 19852,
+    "coverage": {
+      "availableFrom": 1793506604584,
+      "requestedFrom": 1794717000000,
+      "requestedTo": 1794830400000,
+      "confirmedTo": 1794830400000,
+      "gaps": [
+        {
+          "cursor": 28672654,
+          "epoch": 1794716825959,
+          "at": 1794717519606,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.07 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28673853,
+          "epoch": 1794717521087,
+          "at": 1794717644150,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.16 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28677079,
+          "epoch": 1794717645947,
+          "at": 1794717976572,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.39 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28683796,
+          "epoch": 1794717977959,
+          "at": 1794718663434,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.23 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28686049,
+          "epoch": 1794718664879,
+          "at": 1794718895993,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "cursor": 28687752,
+          "epoch": 1794718927788,
+          "at": 1794719103567,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.18 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28691336,
+          "epoch": 1794719105310,
+          "at": 1794719470919,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.82 MiB bytes), current RSS: 2.09 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28694287,
+          "epoch": 1794719472678,
+          "at": 1794719775300,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.12 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28706390,
+          "epoch": 1794719777020,
+          "at": 1794721010081,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.26 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28707905,
+          "epoch": 1794721011699,
+          "at": 1794721168281,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.10 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28716472,
+          "epoch": 1794721169886,
+          "at": 1794722042029,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28721438,
+          "epoch": 1794722043602,
+          "at": 1794722551028,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28726238,
+          "epoch": 1794722552806,
+          "at": 1794723043451,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.46 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28744845,
+          "epoch": 1794723045101,
+          "at": 1794724938821,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28748507,
+          "epoch": 1794724940503,
+          "at": 1794725315649,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28750846,
+          "epoch": 1794725317192,
+          "at": 1794725557611,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.64 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28754221,
+          "epoch": 1794725559246,
+          "at": 1794725905134,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.50 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762620,
+          "epoch": 1794725906581,
+          "at": 1794726763072,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.46 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762739,
+          "epoch": 1794726767589,
+          "at": 1794726782255,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.51 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28765138,
+          "epoch": 1794726783911,
+          "at": 1794727029600,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.70 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28769636,
+          "epoch": 1794727031201,
+          "at": 1794727491087,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28772834,
+          "epoch": 1794727492749,
+          "at": 1794727820553,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.48 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28774502,
+          "epoch": 1794727822042,
+          "at": 1794727994254,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28783396,
+          "epoch": 1794727995969,
+          "at": 1794728901836,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28792474,
+          "epoch": 1794728903397,
+          "at": 1794729828892,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794495,
+          "epoch": 1794729830665,
+          "at": 1794730038814,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.41 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794687,
+          "epoch": 1794730040450,
+          "at": 1794730062582,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.39 MiB bytes), current RSS: 2.43 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28796726,
+          "epoch": 1794730064257,
+          "at": 1794730274232,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.33 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28801323,
+          "epoch": 1794730275854,
+          "at": 1794730745817,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.36 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28807567,
+          "epoch": 1794730747425,
+          "at": 1794731385021,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.59 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28809275,
+          "epoch": 1794731386643,
+          "at": 1794731562940,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28810173,
+          "epoch": 1794731564611,
+          "at": 1794731658527,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.66 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28816726,
+          "epoch": 1794731660215,
+          "at": 1794732328374,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.67 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28818027,
+          "epoch": 1794732330148,
+          "at": 1794732465083,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.27 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28825870,
+          "epoch": 1794732466740,
+          "at": 1794733266679,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.47 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28829515,
+          "epoch": 1794733268373,
+          "at": 1794733639929,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.42 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28833907,
+          "epoch": 1794733641526,
+          "at": 1794734090708,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28835607,
+          "epoch": 1794734092483,
+          "at": 1794734266148,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.40 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836159,
+          "epoch": 1794734267767,
+          "at": 1794734325009,
+          "reason": "The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28836327,
+          "epoch": 1794734347409,
+          "at": 1794734365304,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.11 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.80 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836361,
+          "epoch": 1794734367063,
+          "at": 1794734372037,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.43 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28843147,
+          "epoch": 1794734373793,
+          "at": 1794735066333,
+          "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+        },
+        {
+          "cursor": 28852481,
+          "epoch": 1794735068348,
+          "at": 1794736018345,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.10 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28861840,
+          "epoch": 1794736020167,
+          "at": 1794736974357,
+          "reason": "Depth persistence unavailable: The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28977722,
+          "epoch": 1794737024509,
+          "at": 1794748806309,
+          "reason": "Shared disk watermark"
+        }
+      ],
+      "gapsTruncated": false,
+      "partial": true,
+      "status": "partial",
+      "reason": "Depth continuity gaps are present in the requested range",
+      "bookScope": null,
+      "midpoint": null
+    },
+    "source": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794717000000,
+      "to": 1794830400000,
+      "version": 1,
+      "kind": "wall-source-sha256-xor-v1",
+      "watermark": 29857839,
+      "head": {
+        "cursor": 29857839,
+        "epoch": 1794831641444,
+        "at": 1794838323135
+      },
+      "availableFrom": 1793506604584,
+      "anchor": {
+        "cursor": 28665858,
+        "epoch": 1794716825959,
+        "at": 1794716828774,
+        "hash": "a3d47861f8aaaafecc8db69d0573bbd33768f992607b7f716847dbe502b13a9a"
+      },
+      "records": 74655,
+      "maxCursor": 29779907,
+      "hash": "26377559398312447518917124574529405947018660685079294545271440208700614505651",
+      "token": "dac4a72c82bb741eb7efc9c4a7562779326b85f392e730268350ff68c1c4543f",
+      "eligible": true
+    },
+    "requestId": "latency-pinned-final-pair-1794830400000"
+  },
+  {
+    "to": 1794831300000,
+    "key": "336a6221d4492e7276d74a552219453f6e6bc98cbeab554f69cb9ccc13f7f354",
+    "sourceKey": "e89ce5eae88ce71c65c19ea4d4bb43b078bd6dfe1694a0f0d9180ce81bf946cc",
+    "sourceToken": "72c998e337afe58f67cf77e7fb668b61e8aa0081a3e0d4db18bf1bb8dcc357d2",
+    "manifestSha256": "2551d39eb985b16659af9ac277d340cbb6c97fd808083b30c37861f0e28d2c52",
+    "parts": [
+      {
+        "hash": "0f9e9ea5e12cbc928374136452b97e8555391974b34d309daabe86fba517b0f0",
+        "compressedHash": "0cd88a5cc4098604fc314556c72535681003b58399181025b12aaaef41409763",
+        "bytes": 222824,
+        "compressedBytes": 19294,
+        "records": 202
+      },
+      {
+        "hash": "92cfa6d27482888450b2cde28472055374c00e68556a21a68334751f81e59ef1",
+        "compressedHash": "60fd5d7b2f913e1c3bd3ebcbc56b4f4c90a653b926b25b66fb782f82db7abace",
+        "bytes": 698395,
+        "compressedBytes": 61050,
+        "records": 554
+      },
+      {
+        "hash": "9a9c97e97bd30248e050901a5421e4d5b16e31030df6c27bb4c4e27d34e0c889",
+        "compressedHash": "18f955e0c474f650247711c57e813ed6c6a87a034efb4900de57ceb8d4e9781f",
+        "bytes": 639696,
+        "compressedBytes": 61756,
+        "records": 463
+      },
+      {
+        "hash": "ff87ca4c850b023638bda74f7c42763a4b1e41e78f3db885be9fe07243910fcd",
+        "compressedHash": "15259f703ca19e2fcba0ca00fa865d02fe7157709d8ae70654b83d4a117c019f",
+        "bytes": 682873,
+        "compressedBytes": 63186,
+        "records": 516
+      },
+      {
+        "hash": "4c8e3431257b99c19155b97cb8944dc36a54eb833fd36fe9f547de9d0fb6a338",
+        "compressedHash": "327e03e4da86da9a375cc44b73051dfe250ed5318d77717c27c2a6328155dbbf",
+        "bytes": 618144,
+        "compressedBytes": 57058,
+        "records": 465
+      },
+      {
+        "hash": "799dfb43c31a82c83156a2355d8d0cbdaf463b5a749a1044a8649573370bbe5e",
+        "compressedHash": "756802fe7e4e828e2dcd1aacc0b8e9b3ac9012cb02afa6a8017991f65c8ab374",
+        "bytes": 737416,
+        "compressedBytes": 64629,
+        "records": 588
+      },
+      {
+        "hash": "be1a5c80e354728f7b3356bf2736704f4c5a89441efcd95a6472cac69278d93d",
+        "compressedHash": "4fbfcea824c6c39b64f73f1142d235ca596506fdce09f37a732f2bec8e8eac09",
+        "bytes": 600165,
+        "compressedBytes": 55525,
+        "records": 445
+      },
+      {
+        "hash": "caded0e0fa76613d037eeccaf4c3ed586e49b0581915c6159cb7f6a127092d7d",
+        "compressedHash": "cff0c824d86674c51066430cc23e23d914fd4782a1b96deab45864885a214866",
+        "bytes": 670009,
+        "compressedBytes": 62634,
+        "records": 490
+      },
+      {
+        "hash": "d8fe332bd99c670d6519e2dac83134128852bfd37e683198b22736611521c2ea",
+        "compressedHash": "5ce24948f71ee6a8e81a4dc0cdbdcd01c169c6875e168755eedd9b2359fef816",
+        "bytes": 875317,
+        "compressedBytes": 70185,
+        "records": 784
+      },
+      {
+        "hash": "ec27d6a49c51a7fc0eb5056f5d69e1ce67ddcf70c4686b1684f90f993f74a787",
+        "compressedHash": "d3ea7ee881c1c59dea427d950ae1afcb4f3ea38cb4ba7671f4cfabc259144545",
+        "bytes": 740141,
+        "compressedBytes": 63466,
+        "records": 583
+      },
+      {
+        "hash": "63baff0e08c551de8a7a936aa70d96a58c21258849ad846b2bccd03032f9a780",
+        "compressedHash": "d4b5e06c0e164f7fdbd2b6a078668497a359a09e8fdc789b02a2479d810120c0",
+        "bytes": 919166,
+        "compressedBytes": 70101,
+        "records": 794
+      },
+      {
+        "hash": "89264c39188ce611db5b106ceca96df4a0ab1b88a2ae0efc94a771e8391f496b",
+        "compressedHash": "493db75acabf0841e6597620cfcf6db8da2b439d964179aaece9117ffa56b556",
+        "bytes": 818182,
+        "compressedBytes": 67860,
+        "records": 686
+      },
+      {
+        "hash": "a10e1d4aabea0b9102ea4f9703a7565c22dcf19b9d1983a08fd622a5512c9193",
+        "compressedHash": "c31c4c4dee0cb40b282ecfb0acf7a4e531775b140bad8bd1e5b2fa8120c7e222",
+        "bytes": 776247,
+        "compressedBytes": 53316,
+        "records": 712
+      },
+      {
+        "hash": "0b0375c215f9894d8659a2759b71f0c132a916a3190bef55ee03334ec5ba4877",
+        "compressedHash": "d2494451f454737f638142103ace6a75c6010803446b6ef272395835db9cfdb1",
+        "bytes": 1060316,
+        "compressedBytes": 68604,
+        "records": 984
+      },
+      {
+        "hash": "135fd3deac0daf5c0dab6173f2bb80afd4194f4a3e96d8c70e019925d6e95e80",
+        "compressedHash": "4d77597f063e2236bf092e6679cd54f501020afed921e5daac99f60c8bb5a263",
+        "bytes": 864672,
+        "compressedBytes": 55950,
+        "records": 873
+      },
+      {
+        "hash": "cc8df49bbeada30b128ad99e7962abff4f04c0990f0cc286447fc585101045a1",
+        "compressedHash": "06ab5e4c03f1b998c5f6e573dd8f04ff2763eeeb5ce659da450c47744fe8eb7e",
+        "bytes": 992658,
+        "compressedBytes": 72936,
+        "records": 825
+      },
+      {
+        "hash": "374d7cb2ebe81b720c4c54aeb5d3387e4f8010ba6df2b34fb578b252ce4e4856",
+        "compressedHash": "ed72c2e50f90eb4f19f8d06ee16a559b716fc24c699002f5aa786df3fc3a98ff",
+        "bytes": 848834,
+        "compressedBytes": 67308,
+        "records": 712
+      },
+      {
+        "hash": "f277be83ec54ae6c89d45bec4e8e3c7f2fb9d094c1a65c806837a16f8d8554a0",
+        "compressedHash": "84340b7c6bdecd740219e61c09c3a954b34344041ec54b2652ac1f8f5f0150a5",
+        "bytes": 994722,
+        "compressedBytes": 73268,
+        "records": 860
+      },
+      {
+        "hash": "2313fece4991d8fc731c286574d1d3b1c41faf791d80a14f32f34a42ad01c4c0",
+        "compressedHash": "c50dc41cbf7b362dd6c798955615292744481951cb60f3937f023c8e5d2d8beb",
+        "bytes": 750209,
+        "compressedBytes": 63993,
+        "records": 576
+      },
+      {
+        "hash": "93f1b9fdc69b04e8185ee71d091dcec2e7d8205e1c232360cb7a6832581e8ded",
+        "compressedHash": "c7c67a7866eefe4c6783dd0cc3f054be1b774990390cc9bd2386601de032bd40",
+        "bytes": 724972,
+        "compressedBytes": 64308,
+        "records": 530
+      },
+      {
+        "hash": "24623f7ec3f82e6b9a20dbf830ead7425142e4d12ba100ea4cb7fe208154b0d1",
+        "compressedHash": "06f19e0a9739e6e7861d7ad1fb171841cd2161677993df532a2235e3f880f670",
+        "bytes": 661568,
+        "compressedBytes": 61215,
+        "records": 486
+      },
+      {
+        "hash": "67853636470d5353872b809783644a4ea922e1abcf54dac53a23b57d7a9f03bb",
+        "compressedHash": "9881c96087106b1b6ecc27c68042244316cc0c71c8a38c19dbc5f6da3caf3f05",
+        "bytes": 690251,
+        "compressedBytes": 57793,
+        "records": 603
+      },
+      {
+        "hash": "e1addf2d6c134b3d7b14f4a286288112ac5e0264cf327c66ad2726e59c5ddb94",
+        "compressedHash": "94f0082018aec9a82ba1d00684a91050fd1115e0c5c8a10cf7de1f69e233e6b9",
+        "bytes": 563314,
+        "compressedBytes": 58324,
+        "records": 364
+      },
+      {
+        "hash": "559001bb363ab8ab28963b1179eb513bb87ff20a45e45d2592803a438e427391",
+        "compressedHash": "5b40dc0764ccaef1a19180c12ef5407658c474b5f2776a7262e78caa49278851",
+        "bytes": 321264,
+        "compressedBytes": 35054,
+        "records": 183
+      },
+      {
+        "hash": "ec402c83278ae215dc6942b6a2938748b2322831543861bba0dbf15d4f29dd40",
+        "compressedHash": "ef5b11f381d4f569df74928b88a4a1aef8238894609f3e094c3c37c3e2deaad3",
+        "bytes": 819655,
+        "compressedBytes": 77851,
+        "records": 577
+      },
+      {
+        "hash": "caf629e163d4051f7e12c3c55f12b5354af3af13ac5d07f1960fae76e74fc8f4",
+        "compressedHash": "52367e3135f2cd4426e07ea9d3c0e608c50773a8a980bd8acef7ebd287f5066f",
+        "bytes": 498764,
+        "compressedBytes": 46245,
+        "records": 374
+      },
+      {
+        "hash": "7d96431bac8c07e4a34b2a9ab272413effbcb81924cfef05225660187ae45ef0",
+        "compressedHash": "909ada57445e208e0e13cf92b12ba04049399effa38c22792bdf0eff0cc6e5c3",
+        "bytes": 490901,
+        "compressedBytes": 43546,
+        "records": 404
+      },
+      {
+        "hash": "fbb2f36031ea9e7687e7716d3503cd5a670e8e8161b6418d85a7b8496a84c3ff",
+        "compressedHash": "4cfa68a5b7be532446d5f4ab48c2bb6cb2b5949ca8c2eca65e829b264235584f",
+        "bytes": 794071,
+        "compressedBytes": 54471,
+        "records": 825
+      },
+      {
+        "hash": "53be72da9bfc00f53292ce46a7c05cc6e750f5850fe4badda456e07c8f729a36",
+        "compressedHash": "b078353870e98194ab9445c5d1e0d5a32468b24316a826cb9b3f543d326219e7",
+        "bytes": 680568,
+        "compressedBytes": 56619,
+        "records": 582
+      },
+      {
+        "hash": "0aa310655ff8c77384e2474230cfa432f5eb27b0235add5ce1c987f298aaa5ac",
+        "compressedHash": "7124e814932fec5f7c13e320009a4d39b7e3f081c11b59156ee939196374735a",
+        "bytes": 375117,
+        "compressedBytes": 31988,
+        "records": 311
+      },
+      {
+        "hash": "bf5ec457bcc80b970324fcebf5bf56cd3749e85c77404d8e24387210e319397e",
+        "compressedHash": "2a9290e490e1c8fd3d05e5097d7b08ce546f10649654c4d3fea205889d373e61",
+        "bytes": 253160,
+        "compressedBytes": 22156,
+        "records": 211
+      },
+      {
+        "hash": "d3295b8e0cde06640f2562d5f518f26cccec5f1bd9019506b71e224e31838471",
+        "compressedHash": "889f05ae75a85f0ed9a8d51ecf2e08b43899af09f3aaa442de63a7d23a280e8f",
+        "bytes": 140435,
+        "compressedBytes": 12608,
+        "records": 123
+      },
+      {
+        "hash": "b9fb7f1a11a8142696f6ed5959ce81c5b3120500ae8518b5aa11e1a6597b13a9",
+        "compressedHash": "a36d4beb8932082a55103afe1041d48cbf85f0217fd6b3cad3171799b05bb3b7",
+        "bytes": 820374,
+        "compressedBytes": 78552,
+        "records": 153
+      },
+      {
+        "hash": "61a15f3399c6526cd4f1b4e875f8e82bfeb529b1d7bf4ebcab7b54f569e002a2",
+        "compressedHash": "f2887e4be528817674bd24cf588d47ec3934bb436805d1d07c273d397d0384cc",
+        "bytes": 290003,
+        "compressedBytes": 25208,
+        "records": 196
+      },
+      {
+        "hash": "f25d166a877dae5d1a73ac601738bf56bfa6cace6637c3d865cf10c7b86e0916",
+        "compressedHash": "27721d4fad8ff78a9bd79548fb0cd96a87f06434a1b340dca0978e89faab5b75",
+        "bytes": 352097,
+        "compressedBytes": 29360,
+        "records": 109
+      },
+      {
+        "hash": "b81dbe8ddda0ae4b76c5d444755f387b48c328023a0dfae1972138fdd0548a0e",
+        "compressedHash": "d9027ee2883cf048ef8b121241d776e11e0dd9a545c962e933dcfdd6a582dc44",
+        "bytes": 196468,
+        "compressedBytes": 18818,
+        "records": 70
+      },
+      {
+        "hash": "d27696180a8e5e6b6bbda3563ca75f97990a2e3abf420c22b23734edc081b018",
+        "compressedHash": "e28f2a80003260b6f301c3aac037b7839c306efcc941f76e3c2f5d96bc746848",
+        "bytes": 63006,
+        "compressedBytes": 6823,
+        "records": 52
+      },
+      {
+        "hash": "69d2e13acb475c08bd1cdc31b15326a9176b3afac47d8dd03bfb31e589e848d4",
+        "compressedHash": "572add06a54d86e7f125b20a1a5c86449bed7e932260e3717983ee72dc2a69dc",
+        "bytes": 83277,
+        "compressedBytes": 8107,
+        "records": 72
+      },
+      {
+        "hash": "b929ce06de5702bfd6bcaf17c9fc6bde085884974330080e3ed7783d0c2b3c68",
+        "compressedHash": "0b0be0b06ce0a23fad84f365be2dbfba6a677df73553aa978be509cc75dfa5f9",
+        "bytes": 73556,
+        "compressedBytes": 8052,
+        "records": 45
+      },
+      {
+        "hash": "c101d4f9227db55a05a79be3bc0c03ddcf5f8256eee767f636a3ee169fb09967",
+        "compressedHash": "d1058b46e3a97542bf471fb34fe724318220488800a9d59eaf3f93d3aeba7319",
+        "bytes": 41528,
+        "compressedBytes": 3822,
+        "records": 30
+      },
+      {
+        "hash": "24fdaedeaf93337046378fd469f00accb95ed1b530abffb2017478ad12f3a9e5",
+        "compressedHash": "10d995406188b5e4babb9083fabfd2bd12901e986b718cf7ecc2947be4a9b4fc",
+        "bytes": 641936,
+        "compressedBytes": 51683,
+        "records": 26
+      },
+      {
+        "hash": "f9474b018a11f315ee97bfdf7b28efafc0e94d5b8430991db70f29b4ba6df99f",
+        "compressedHash": "14d181b6933467899697390426e9b55edf06da36f2018d50ce8e5ca0c67c0c96",
+        "bytes": 72917,
+        "compressedBytes": 6973,
+        "records": 5
+      },
+      {
+        "hash": "fbdb1982d6bbc568bf544716f12b59e6452bb5a6f6a7c45373c5a7eb38ea057d",
+        "compressedHash": "12c183316b571677bb0c135467119db63a75bd73851f1237186e137e678842b0",
+        "bytes": 86274,
+        "compressedBytes": 7185,
+        "records": 24
+      },
+      {
+        "hash": "7a81419a31927b8f28de91aa01e09539f4ee7be475e3c7f391a33d50cf3b7ed9",
+        "compressedHash": "ad965de1dee620629081d35bbaef0b936c3741b78347b24d459547595df09686",
+        "bytes": 14966,
+        "compressedBytes": 2410,
+        "records": 6
+      },
+      {
+        "hash": "8e03a326b2219a3e9352f70c5acb2d500c12138dd413d8ecdad0e004e8462d85",
+        "compressedHash": "dd0b4ae840608af44650a6c986de0bfcc94a0d8d272b6b4fb63ba736f1f08ef8",
+        "bytes": 82419,
+        "compressedBytes": 13300,
+        "records": 8
+      },
+      {
+        "hash": "a2ab1cea254e647c01edcb5db3213369adcb4bc843d10a294a27fa4cb6e2f945",
+        "compressedHash": "03532dfbe8927231334fcdccd0b40e87171ed43e28854f383c649f6388a0d26b",
+        "bytes": 1786,
+        "compressedBytes": 553,
+        "records": 2
+      },
+      {
+        "hash": "ba65ac0d29afdcbec939d60cf0cc0dda8100434ad1404aea17e0965d20663d9a",
+        "compressedHash": "4b51f376812f56571bd0d293b3e379b29773d7cb2d4f4e55e9174443680c59f3",
+        "bytes": 73368,
+        "compressedBytes": 12022,
+        "records": 5
+      },
+      {
+        "hash": "cf972a15021130ede10f740bd14af4a26b25ff1ec1690d02a6f435a56b80261a",
+        "compressedHash": "1adf1158646e958ce082e7251207e147b7c945f38827505f19affe5649aa4ae7",
+        "bytes": 176635,
+        "compressedBytes": 20521,
+        "records": 87
+      },
+      {
+        "hash": "db3252c1ca7022132786e3640bfcb5c6f067df8797a9b5ad071d0b88095925fe",
+        "compressedHash": "3159bb7f929f141bd813b3b98cd19a2d5dbb8f3cb7b59a8f5695597ffb0b1ebe",
+        "bytes": 226479,
+        "compressedBytes": 23289,
+        "records": 163
+      },
+      {
+        "hash": "a1920b3a83c315fa764a40a0d87b3ca0e04e7dd366faf4f39d0dfa08781ba26c",
+        "compressedHash": "8e7e5be0e1b8cca062c21ca5854ff036d5977c39725be79c8038d4fcb9adb98c",
+        "bytes": 1253355,
+        "compressedBytes": 89818,
+        "records": 122
+      },
+      {
+        "hash": "83b436ad0877ef7680f95153ea1426cd3b5e575e5e3acb11f424efacc77d3daf",
+        "compressedHash": "009b66da47631c8e6f84bc98636285db1ad9d235903d9bdad7104ad0f2679910",
+        "bytes": 197075,
+        "compressedBytes": 17645,
+        "records": 182
+      },
+      {
+        "hash": "9ce4eea8fd85ee0f5539ac4001f2ea08a47ebc394375583b0ea117f20372a7ee",
+        "compressedHash": "1c6e52821281a52531accb43371e6bac8fc212a3e2735701dbc6f2c275ee13c6",
+        "bytes": 203517,
+        "compressedBytes": 17114,
+        "records": 199
+      },
+      {
+        "hash": "10dbb3edbcd8e82ac5047f4ce9dc750379a2546fdb9c0cdba4df0b65c9668ea3",
+        "compressedHash": "4749c23d8822ba4715bc5c1a2364848dad297cc38950c1eb25279ba877eee8b9",
+        "bytes": 240191,
+        "compressedBytes": 21731,
+        "records": 219
+      },
+      {
+        "hash": "e8012e71287703380db2a3892be76a632931902242967a9b20ee46af87b9e96a",
+        "compressedHash": "e850bc1c99cf5fb2667d53504370175529261747565c2a35b3cfbf6275de2c91",
+        "bytes": 279863,
+        "compressedBytes": 31934,
+        "records": 144
+      },
+      {
+        "hash": "29f24659bfa6cb06f4ea3c028f6e41b919905b83505dd814d05ca7444509f693",
+        "compressedHash": "1c5fdf066f9db66553aaa865dd2d845824d0417bf147cdcd54a84b1dd0a70e8b",
+        "bytes": 329800,
+        "compressedBytes": 28665,
+        "records": 257
+      },
+      {
+        "hash": "b0d2c8058e8f14b6260605f0eafea97b5cbcf5ab5b91e14597106d0b04053ecf",
+        "compressedHash": "d7aa591f2fb7b85e0df5058f4b5043ffa6b8bb2d81642690733c9a771e908015",
+        "bytes": 670825,
+        "compressedBytes": 96926,
+        "records": 30
+      }
+    ],
+    "closed": 19891,
+    "coverage": {
+      "availableFrom": 1793506604584,
+      "requestedFrom": 1794717000000,
+      "requestedTo": 1794831300000,
+      "confirmedTo": 1794831300000,
+      "gaps": [
+        {
+          "cursor": 28672654,
+          "epoch": 1794716825959,
+          "at": 1794717519606,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.07 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28673853,
+          "epoch": 1794717521087,
+          "at": 1794717644150,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.16 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28677079,
+          "epoch": 1794717645947,
+          "at": 1794717976572,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.39 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28683796,
+          "epoch": 1794717977959,
+          "at": 1794718663434,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.23 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28686049,
+          "epoch": 1794718664879,
+          "at": 1794718895993,
+          "reason": "Shared disk watermark"
+        },
+        {
+          "cursor": 28687752,
+          "epoch": 1794718927788,
+          "at": 1794719103567,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.18 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28691336,
+          "epoch": 1794719105310,
+          "at": 1794719470919,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.82 MiB bytes), current RSS: 2.09 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28694287,
+          "epoch": 1794719472678,
+          "at": 1794719775300,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.12 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28706390,
+          "epoch": 1794719777020,
+          "at": 1794721010081,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.26 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28707905,
+          "epoch": 1794721011699,
+          "at": 1794721168281,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.10 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28716472,
+          "epoch": 1794721169886,
+          "at": 1794722042029,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28721438,
+          "epoch": 1794722043602,
+          "at": 1794722551028,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28726238,
+          "epoch": 1794722552806,
+          "at": 1794723043451,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.46 MiB bytes), current RSS: 2.55 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28744845,
+          "epoch": 1794723045101,
+          "at": 1794724938821,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28748507,
+          "epoch": 1794724940503,
+          "at": 1794725315649,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28750846,
+          "epoch": 1794725317192,
+          "at": 1794725557611,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.64 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28754221,
+          "epoch": 1794725559246,
+          "at": 1794725905134,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.50 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762620,
+          "epoch": 1794725906581,
+          "at": 1794726763072,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.46 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28762739,
+          "epoch": 1794726767589,
+          "at": 1794726782255,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.51 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28765138,
+          "epoch": 1794726783911,
+          "at": 1794727029600,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.70 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28769636,
+          "epoch": 1794727031201,
+          "at": 1794727491087,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.53 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28772834,
+          "epoch": 1794727492749,
+          "at": 1794727820553,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.48 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28774502,
+          "epoch": 1794727822042,
+          "at": 1794727994254,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.61 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28783396,
+          "epoch": 1794727995969,
+          "at": 1794728901836,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28792474,
+          "epoch": 1794728903397,
+          "at": 1794729828892,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.33 MiB bytes), current RSS: 2.49 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794495,
+          "epoch": 1794729830665,
+          "at": 1794730038814,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.41 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28794687,
+          "epoch": 1794730040450,
+          "at": 1794730062582,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.39 MiB bytes), current RSS: 2.43 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28796726,
+          "epoch": 1794730064257,
+          "at": 1794730274232,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.33 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28801323,
+          "epoch": 1794730275854,
+          "at": 1794730745817,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.36 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28807567,
+          "epoch": 1794730747425,
+          "at": 1794731385021,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.59 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28809275,
+          "epoch": 1794731386643,
+          "at": 1794731562940,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.38 MiB bytes), current RSS: 2.44 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28810173,
+          "epoch": 1794731564611,
+          "at": 1794731658527,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.66 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28816726,
+          "epoch": 1794731660215,
+          "at": 1794732328374,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.67 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28818027,
+          "epoch": 1794732330148,
+          "at": 1794732465083,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.27 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28825870,
+          "epoch": 1794732466740,
+          "at": 1794733266679,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.47 MiB bytes), current RSS: 2.57 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28829515,
+          "epoch": 1794733268373,
+          "at": 1794733639929,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.80 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.42 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28833907,
+          "epoch": 1794733641526,
+          "at": 1794734090708,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.35 MiB bytes), current RSS: 2.54 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28835607,
+          "epoch": 1794734092483,
+          "at": 1794734266148,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.79 GiB (attempt to allocate chunk of 4.34 MiB bytes), current RSS: 2.40 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836159,
+          "epoch": 1794734267767,
+          "at": 1794734325009,
+          "reason": "The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28836327,
+          "epoch": 1794734347409,
+          "at": 1794734365304,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.11 GiB (attempt to allocate chunk of 4.31 MiB bytes), current RSS: 2.80 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28836361,
+          "epoch": 1794734367063,
+          "at": 1794734372037,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.43 GiB (attempt to allocate chunk of 4.36 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Memory "
+        },
+        {
+          "cursor": 28843147,
+          "epoch": 1794734373793,
+          "at": 1794735066333,
+          "reason": "ClickHouse 500: Code: 202. DB::Exception: Too many simultaneous queries. Maximum: 8. (TOO_MANY_SIMULTANEOUS_QUERIES) (version 25.8.16.34 (official build))\n"
+        },
+        {
+          "cursor": 28852481,
+          "epoch": 1794735068348,
+          "at": 1794736018345,
+          "reason": "ClickHouse 500: Code: 241. DB::Exception: (total) memory limit exceeded: would use 2.10 GiB (attempt to allocate chunk of 4.32 MiB bytes), current RSS: 2.81 GiB, maximum: 2.79 GiB. OvercommitTracker decision: Query w"
+        },
+        {
+          "cursor": 28861840,
+          "epoch": 1794736020167,
+          "at": 1794736974357,
+          "reason": "Depth persistence unavailable: The operation was aborted due to timeout"
+        },
+        {
+          "cursor": 28977722,
+          "epoch": 1794737024509,
+          "at": 1794748806309,
+          "reason": "Shared disk watermark"
+        }
+      ],
+      "gapsTruncated": false,
+      "partial": true,
+      "status": "partial",
+      "reason": "Depth continuity gaps are present in the requested range",
+      "bookScope": null,
+      "midpoint": null
+    },
+    "source": {
+      "market": "perpetual",
+      "profile": "binance-usdm-btcusdt-feed-usd-m-standard-diff-depth-rpi-excluded-band-10pct-agg-native-top10-a1-s1",
+      "from": 1794717000000,
+      "to": 1794831300000,
+      "version": 1,
+      "kind": "wall-source-sha256-xor-v1",
+      "watermark": 29857839,
+      "head": {
+        "cursor": 29857839,
+        "epoch": 1794831641444,
+        "at": 1794838323135
+      },
+      "availableFrom": 1793506604584,
+      "anchor": {
+        "cursor": 28665858,
+        "epoch": 1794716825959,
+        "at": 1794716828774,
+        "hash": "a3d47861f8aaaafecc8db69d0573bbd33768f992607b7f716847dbe502b13a9a"
+      },
+      "records": 75117,
+      "maxCursor": 29788740,
+      "hash": "6852065302031359942157552138754078509306755865790302122322889107833652427847",
+      "token": "72c998e337afe58f67cf77e7fb668b61e8aa0081a3e0d4db18bf1bb8dcc357d2",
+      "eligible": true
+    },
+    "requestId": "latency-pinned-final-pair-1794831300000"
+  }
+]

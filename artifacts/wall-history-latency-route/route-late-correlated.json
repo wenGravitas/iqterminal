@@ -1,0 +1,524 @@
+[
+  {
+    "requestId": "latency-route-preview-5",
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "arrival",
+        "ms": 0.016296000001602806,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "admitted",
+        "ms": 0.29935200000181794,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "fa731bff-390b-41b6-97cb-b56c87347168"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "health-dependencies-start",
+        "ms": 0.4656269999977667,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "health-dependencies-end",
+        "ms": 7.939003000006778,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "response-finish",
+        "ms": 11.036135999995167,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-preview-5",
+        "event": "response-close",
+        "ms": 11.20672800000466,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ],
+    "proxy": [
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "arrival",
+        "ms": 0.03181600000243634,
+        "path": "/market-data/v2/history/health",
+        "counts": {
+          "active": 3,
+          "historicalActive": 2,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "admitted",
+        "ms": 0.21634099999209866,
+        "path": "/market-data/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "proxy-start",
+        "ms": 0.39103299999260344,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "upstream-request",
+        "ms": 1.5339660000026925,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0,
+        "reusedSocket": true
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "socket-assigned",
+        "ms": 1.6767870000039693,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0,
+        "connecting": false,
+        "reusedSocket": true
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "upstream-request-finish",
+        "ms": 2.316107999999076,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "upstream-headers",
+        "ms": 5497.78463899999,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0,
+        "status": 200,
+        "queueMs": 1.51,
+        "headerMs": 5496.17
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "upstream-response-end",
+        "ms": 5498.6565249999985,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "upstream-close",
+        "ms": 5504.432359999992,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "response-finish",
+        "ms": 5505.1326839999965,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 4,
+          "historicalActive": 2,
+          "currentActive": 2,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-proxy",
+        "id": "latency-route-preview-5",
+        "event": "response-close",
+        "ms": 5505.455732999995,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 3,
+          "historicalActive": 2,
+          "currentActive": 1,
+          "nativeActive": 0,
+          "bulkActive": 2,
+          "waitingCurrent": 0,
+          "waitingHistorical": 0,
+          "closed": false
+        },
+        "eventLoopMaxMs": 121.176063,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ]
+  },
+  {
+    "requestId": "latency-route-forward-5",
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "arrival",
+        "ms": 0.006376000004820526,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "admitted",
+        "ms": 0.10902800000621937,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "e7391048-8913-4f65-be9c-dec661499e45"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "health-dependencies-start",
+        "ms": 0.15318400000978727,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "health-dependencies-end",
+        "ms": 1.3893930000049295,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "response-finish",
+        "ms": 1.8917230000079144,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-forward-5",
+        "event": "response-close",
+        "ms": 1.93333800000255,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ],
+    "proxy": []
+  },
+  {
+    "requestId": "latency-route-local-5",
+    "gateway": [
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "arrival",
+        "ms": 0.002275999984703958,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "admitted",
+        "ms": 0.05792799999471754,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "managed": true,
+        "operationId": "7c895306-ab47-467d-a7f4-d3eef5619ab2"
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "health-dependencies-start",
+        "ms": 0.08239799999864772,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "health-dependencies-end",
+        "ms": 0.9065019999979995,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "response-finish",
+        "ms": 1.0921420000086073,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 1,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "status": 200
+      },
+      {
+        "kind": "startup-gateway",
+        "id": "latency-route-local-5",
+        "event": "response-close",
+        "ms": 1.1135190000059083,
+        "path": "/v2/history/health",
+        "counts": {
+          "active": 0,
+          "history": 0,
+          "reservedCurrent": 1,
+          "limit": 4
+        },
+        "eventLoopMaxMs": 44.007423,
+        "dropped": 0,
+        "finished": true,
+        "status": 200
+      }
+    ],
+    "proxy": []
+  }
+]

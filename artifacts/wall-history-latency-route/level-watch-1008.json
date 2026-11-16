@@ -1,0 +1,92 @@
+{
+  "close": {
+    "seq": 16,
+    "event": "close",
+    "mono": 2747.199999999255,
+    "id": 1,
+    "code": 1008,
+    "reason": "Invalid command"
+  },
+  "sequence": [
+    {
+      "seq": 4,
+      "event": "attempt",
+      "mono": 1341.300000000745,
+      "id": 1,
+      "readyState": 0
+    },
+    {
+      "seq": 9,
+      "event": "open",
+      "mono": 2119.699999999255,
+      "id": 1,
+      "readyState": 1
+    },
+    {
+      "seq": 10,
+      "event": "send",
+      "mono": 2120,
+      "id": 1,
+      "readyState": 1,
+      "command": {
+        "type": "subscribe",
+        "after": 4973
+      }
+    },
+    {
+      "seq": 11,
+      "event": "message",
+      "mono": 2215.5,
+      "id": 1,
+      "bytes": 2743,
+      "type": "level-watch"
+    },
+    {
+      "seq": 12,
+      "event": "send",
+      "mono": 2236.400000002235,
+      "id": 1,
+      "readyState": 1,
+      "command": {
+        "type": "ack",
+        "cursor": 4973
+      }
+    },
+    {
+      "seq": 16,
+      "event": "close",
+      "mono": 2747.199999999255,
+      "id": 1,
+      "code": 1008,
+      "reason": "Invalid command"
+    }
+  ],
+  "scope": "Independent watch stream, early startup. Current walls subsequently advance and execution ACKs continue; not investigated further in this goal.",
+  "initialSocketMetadata": [
+    {
+      "id": 1,
+      "url": "ws://127.0.0.1:4204/market-data/v1/level-watches/stream",
+      "readyState": 0
+    }
+  ],
+  "lastSocketMetadata": [
+    {
+      "id": 1,
+      "url": "ws://127.0.0.1:4204/market-data/v1/level-watches/stream",
+      "readyState": 3,
+      "subscription": {
+        "type": "subscribe",
+        "after": 4973
+      },
+      "openMono": 2119.699999999255,
+      "lastCompleteMono": 2207.10000000149,
+      "pendingAck": 4973,
+      "appliedViaAck": 4973,
+      "close": {
+        "code": 1008,
+        "reason": "Invalid command",
+        "mono": 2747.199999999255
+      }
+    }
+  ]
+}

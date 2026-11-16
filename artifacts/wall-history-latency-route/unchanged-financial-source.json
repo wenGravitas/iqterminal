@@ -1,0 +1,65 @@
+[
+  {
+    "repository": "frontend",
+    "path": "src/feed/prepared-wall-projection.ts",
+    "baseline": "0ff6b61439a12fdc572aeae1996f66bac1516fa8",
+    "same": true,
+    "sha256": "ef74b3ba3a582f61ea4fc118044579075a3a3bbffd9e49c9c9ba35ca8d28e45d"
+  },
+  {
+    "repository": "frontend",
+    "path": "src/feed/prepared-wall-delta.ts",
+    "baseline": "0ff6b61439a12fdc572aeae1996f66bac1516fa8",
+    "same": true,
+    "sha256": "2b8e5ad4530d906ed7f8c922c020e1e1412524be83dda3d74a35c4103060471a"
+  },
+  {
+    "repository": "frontend",
+    "path": "src/feed/prepared-wall-part-cache.ts",
+    "baseline": "0ff6b61439a12fdc572aeae1996f66bac1516fa8",
+    "same": true,
+    "sha256": "73ca4e5d200c5a0ecdfbfef248937fb12357662cea39337824b303cefb87cfd0"
+  },
+  {
+    "repository": "frontend",
+    "path": "src/shared/order-walls-projection.ts",
+    "baseline": "0ff6b61439a12fdc572aeae1996f66bac1516fa8",
+    "same": true,
+    "sha256": "1a86cb47e20943c9c71f4614e267abe22ae507c84834cd184559ff97df041c73"
+  },
+  {
+    "repository": "backend",
+    "path": "src/shared/order-walls-projection.ts",
+    "baseline": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+    "same": true,
+    "sha256": "1a86cb47e20943c9c71f4614e267abe22ae507c84834cd184559ff97df041c73"
+  },
+  {
+    "repository": "backend",
+    "path": "src/wall-preparation-jobs.ts",
+    "baseline": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+    "same": true,
+    "sha256": "fdba6ad876fe6e09b4f5d8ca4b3fa880017317a276dfefbe053a70d8172925ab"
+  },
+  {
+    "repository": "backend",
+    "path": "src/wall-projection-tail.ts",
+    "baseline": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+    "same": true,
+    "sha256": "745147f6fd4c85203388e67f42a63b26f529935e09f491cc5949910a7cfce681"
+  },
+  {
+    "repository": "backend",
+    "path": "src/wall-history-projection.ts",
+    "baseline": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+    "same": true,
+    "sha256": "083ad6866f9143acf3f74d323968743183bb5adc6e42b64941f2fd1ff463e254"
+  },
+  {
+    "repository": "backend",
+    "path": "src/wall-source-version.ts",
+    "baseline": "e2618286f4e5a0bc553338e06eefac9a5a7ecaa3",
+    "same": true,
+    "sha256": "fa968e0c75c57121f9cecc4af67184296103eefc6c5eee728ecb634fa3ed6c73"
+  }
+]
