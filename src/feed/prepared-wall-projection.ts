@@ -29,6 +29,7 @@ async function freezeMember(value:unknown,signal:AbortSignal){const stack:unknow
 export async function readPreparedWallProjection(advertised:any,context:Context,onProgress:(value:ProjectionProgress)=>void){
  if(!advertised)return null;
  const {manifest:m,delivery}=advertised;
+ const selectedBudget=Number(import.meta.env.VITE_WALL_SELECTED_MAX_BYTES??64*1024*1024);if(!Number.isSafeInteger(selectedBudget)||selectedBudget<4*1024*1024)throw Error('Invalid VITE_WALL_SELECTED_MAX_BYTES');
  const pointTransport=delivery?.productTransport===1?2:delivery?.pointTransport===1?1:0;
  if(m?.core!==WALL_PROJECTION_CORE_SHA256||JSON.stringify(m.settings)!==JSON.stringify(normalized(context.settings)))return null;
  if(delivery?.version!==1||delivery.maxParts!==32||delivery.maxDecodedBytes!==8*1024*1024)return null;
@@ -47,7 +48,7 @@ export async function readPreparedWallProjection(advertised:any,context:Context,
  const validate=(value:unknown)=>OrderWallsArchiveProjector.validateCheckpointCooperatively(value,context.settings,context.from,context.to,work());
  context.validateProfile?.(manifest.profile);
  for(const p of manifest.parts){if(!hex(p.hash)||hashes.has(p.hash)||!integer(p.bytes)||p.bytes<1||p.bytes>4*1024*1024||!integer(p.records)||p.records<1)throw Error('Invalid prepared wall projection part');hashes.add(p.hash);decodedBytes+=p.bytes;}
- if(decodedBytes>64*1024*1024)throw Error('Prepared wall projection byte capacity');
+ if(decodedBytes>selectedBudget)throw Error('Prepared wall projection byte capacity');
  const coordinates=new Map<string,{group:number;fragment:number}>(),fragments:Array<Array<RecordRow|undefined>>=[];
  for(const [group,pairs] of manifest.closed.entries()){
   if(!Array.isArray(pairs)||!pairs.length)throw Error('Invalid prepared wall projection coordinates');fragments.push(new Array(pairs.length).fill(undefined));
