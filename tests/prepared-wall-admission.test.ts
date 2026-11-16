@@ -77,3 +77,8 @@ test('abandoning a handed-off result releases only its preparation consumer',asy
  const calls:RequestInit[]=[];const fetcher=(async(_input,init)=>{calls.push(init!);return Response.json(init?.method==='DELETE'?{}:{...reply(job('ready')),state:'ready',readerLease:{version:1,leaseMs:15000}});}) as typeof fetch;
  const abort=new AbortController();await run(fetcher,abort.signal,{retainForReader:true});expect(calls).toHaveLength(1);abort.abort();await vi.waitFor(()=>expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1));
 });
+test('an unused handoff expires locally without retaining its manifest or consumer indefinitely',async()=>{
+ vi.useFakeTimers();const calls:RequestInit[]=[];const fetcher=(async(_input,init)=>{calls.push(init!);return Response.json(init?.method==='DELETE'?{}:{...reply(job('ready')),state:'ready',readerLease:{version:1,leaseMs:15000}});}) as typeof fetch;
+ const found=await run(fetcher,new AbortController().signal,{retainForReader:true});await vi.advanceTimersByTimeAsync(14999);expect(calls).toHaveLength(1);await vi.advanceTimersByTimeAsync(1);expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
+ const {releasePreparedWallHandoff}=await import('../src/feed/prepared-wall-admission');releasePreparedWallHandoff(found);await vi.advanceTimersByTimeAsync(0);expect(calls.filter(c=>c.method==='DELETE')).toHaveLength(1);
+});

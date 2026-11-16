@@ -50,8 +50,8 @@ export async function discoverPreparedWallAdmission(options:{request:PreparedWal
  const result=(found:any)=>{
   const value=eligibility?{...found,eligibility}:found;
   if(options.retainForReader&&leased&&value?.state==='ready'&&value.readerLease){
-   let done=false;const finish=()=>{if(done)return;done=true;signal.removeEventListener('abort',finish);readerHandoffs.delete(value);release();};
-   readerHandoffs.set(value,finish);signal.addEventListener('abort',finish,{once:true});transferred=true;
+   let done=false;let timer:ReturnType<typeof setTimeout>;const finish=()=>{if(done)return;done=true;clearTimeout(timer);signal.removeEventListener('abort',finish);readerHandoffs.delete(value);release();};
+   readerHandoffs.set(value,finish);signal.addEventListener('abort',finish,{once:true});timer=setTimeout(finish,15000);transferred=true;
   }return value;
  };
  const release=()=>{
