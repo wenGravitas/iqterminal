@@ -74,6 +74,27 @@ window.checkWallGpuCorrectness=async()=>{
  const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');return {results,resources:wallGpuResourceUsage()};
 };
 
+// Exercise Canvas -> retained GPU -> corrected GPU -> mixed Canvas without
+// changing the camera/settings. Fallback must not reuse stale Canvas geometry.
+window.checkWallMixedTransition=async()=>{
+ const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');canvas.width=1200;canvas.height=600;
+ const rc={timeScale:{visibleRange:()=>({from:0,to:12}),indexToX:i=>i*100,xToIndex:x=>x/100},priceScale:{priceRange:()=>({min:90,max:110}),options:{mode:'linear'},priceToY:p=>(110-p)*30,yToPrice:y=>110-y/30},dataLayer:{indexToTimeFloat:i=>base/1000+i*900,timeToIndexFloat:t=>(t-base/1000)/900},plotWidth:1200,plotHeight:600,dpr:1,theme:{background:'#000',axisText:'#aaa'}};
+ const row={id:'top',epoch:1,side:'bid',price:95,start:base,end:base+9000000,peakUsd:1000,meanUsd:1000,durationMs:9000000,percentile:null,scopePartial:false,startKnown:true,endKnown:true,endReason:'rank-exit',detectionMode:'top-levels',rank:1,valueRunsTruncated:false,valueRuns:[{at:base,usd:1000,quantity:10,rank:1,percentile:null}]};
+ const legacy={...row,id:'legacy',price:105,detectionMode:'threshold',percentile:100,valueRuns:[{at:base,usd:1000,percentile:100}]};
+ const status={state:'live',tickSize:.1,lastConfirmedAt:base+9000000},settings={...DEFAULT_ORDER_WALLS_SETTINGS,enabled:true,mode:'top-levels',aggregation:'native'};
+ const p=new OrderWallsPrimitive(settings,900000,true,6,()=>true,false,true);p.attached({requestUpdate(){}});
+ const draw=()=>{for(let i=0;i<100;i++){ctx.clearRect(0,0,1200,600);p.draw(ctx,rc);if(!p.diagnostics().pendingPaintWork)return;}throw Error('Mixed transition did not drain');};
+ try{
+  p.setSnapshot([row,legacy],status);draw();if(p.orderWallAt(300,450)?.segment.price!==95)throw Error('Initial Canvas row missing');
+  p.patch([{id:'legacy',segment:null}],status);draw();if(!p.diagnostics().retainedRenderer.active)throw Error('GPU route not exercised');
+  const corrected={...row,price:97};p.patch([{id:'top',segment:corrected,replaceValueRuns:true}],status);draw();if(p.orderWallAt(300,390)?.segment.price!==97)throw Error('GPU correction missing');
+  p.patch([{id:'legacy',segment:legacy}],status);draw();if(p.diagnostics().retainedRenderer.active)throw Error('Mixed route did not fall back');
+  const correctedHit=p.orderWallAt(300,390),staleHit=p.orderWallAt(300,450),legacyHit=p.orderWallAt(300,150);
+  if(correctedHit?.segment.price!==97||staleHit!==null||legacyHit?.segment.id!=='legacy')throw Error('Mixed fallback reused stale geometry '+JSON.stringify({correctedHit,staleHit,legacyHit}));
+  return {correctedPrice:correctedHit.segment.price,staleHit,legacyId:legacyHit.segment.id,pending:p.diagnostics().pendingPaintWork};
+ }finally{p.detached();}
+};
+
 window.checkWallResourceLifecycle=async()=>{
  const {wallGpuResourceUsage}=await import('/src/chart/wall-gpu-resources.ts');
  const canvas=document.querySelector('canvas');canvas.width=1200;canvas.height=600;const ctx=canvas.getContext('2d');

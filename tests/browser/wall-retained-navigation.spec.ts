@@ -9,6 +9,12 @@ test('retained GPU component preserves exact source, mapped positions, styles, h
  expect(result.results).toHaveLength(32);expect(result.resources).toMatchObject({contexts:0,owners:0,bufferBytes:0});
 });
 
+test('mixed fallback preserves corrections across Canvas and retained GPU transitions',async({page})=>{
+ await page.goto('/tests/browser/fixtures/wall-navigation.html');
+ const result=await page.evaluate(()=>(window as any).checkWallMixedTransition());
+ expect(result).toEqual({correctedPrice:97,staleHit:null,legacyId:'legacy',pending:false});
+});
+
 test('eight charts share bounded resources and release them through reopen and current updates',async({page})=>{
  await page.goto('/tests/browser/fixtures/wall-navigation.html');
  const session=await page.context().newCDPSession(page),heap:any[]=[];

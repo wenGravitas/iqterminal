@@ -647,6 +647,10 @@ export class OrderWallsPrimitive implements IPrimitive {
       this.retainedFailure=this.retained.stats.failure;this.retainedFailedRevision=this.inputRevision;this.retained.dispose();this.retained=undefined;this.transformKey='';return false;
     }
     this.retainedActive=true;this.retainedFailure='';this.cancelPreparation();
+    // GPU updates do not maintain the old Canvas drawables. If mixed data or
+    // context loss selects Canvas later, rebuild it from the current exact rows
+    // even when the camera/settings have not changed in between.
+    this.transformKey='';
     this.dirty.clear();this.tailDirty.clear();this.referenceIds.clear();this.referenceDirty=false;
     const metrics=this.retained.stats;
     this.reference={min:metrics.referenceMin,max:metrics.referenceMax};

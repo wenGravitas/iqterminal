@@ -1,0 +1,219 @@
+{
+  "config": {
+    "argv": [
+      "/home/daz/.nvm/versions/node/v22.23.4/bin/node",
+      "/home/daz/workarea/iqterminal-persistent-walls/node_modules/.pnpm/@playwright+test@1.64.0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.wall-navigation.config.ts",
+      "--grep",
+      "mixed fallback"
+    ],
+    "configFile": "/home/daz/workarea/iqterminal-persistent-walls/playwright.wall-navigation.config.ts",
+    "rootDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/daz/workarea/iqterminal-persistent-walls/scripts/test-browser-i3-setup.mjs",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "wall-retained-navigation.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/daz/workarea/iqterminal-persistent-walls/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "snapshotDir": "/home/daz/workarea/iqterminal-persistent-walls/tests/browser",
+        "testIgnore": [],
+        "testMatch": "wall-retained-navigation.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4189",
+          "storageState": {
+            "cookies": [],
+            "origins": [
+              {
+                "origin": "http://127.0.0.1:4173",
+                "localStorage": [
+                  {
+                    "name": "basis.layout.v1",
+                    "value": "{\"version\":5,\"layout\":{\"grid\":{\"root\":{\"type\":\"branch\",\"data\":[{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-binance\"],\"activeView\":\"chart-binance\",\"id\":\"1\"},\"size\":680},{\"type\":\"leaf\",\"data\":{\"views\":[\"chart-hyperliquid\"],\"activeView\":\"chart-hyperliquid\",\"id\":\"2\"},\"size\":680}],\"size\":700},\"width\":1366,\"height\":700,\"orientation\":\"HORIZONTAL\"},\"panels\":{\"chart-binance\":{\"id\":\"chart-binance\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"binance\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220},\"chart-hyperliquid\":{\"id\":\"chart-hyperliquid\",\"contentComponent\":\"candle\",\"tabComponent\":\"compact-chart\",\"title\":\"Candles\",\"params\":{\"venue\":\"hyperliquid\",\"market\":\"perpetual\",\"interval\":\"1m\",\"type\":\"candle\",\"studies\":[]},\"minimumHeight\":140,\"minimumWidth\":220}},\"activeGroup\":\"2\"}}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-binance",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  },
+                  {
+                    "name": "iqterminal:object-tree-sidebar:v1:chart-hyperliquid",
+                    "value": "{\"version\":1,\"width\":280,\"collapsed\":false}"
+                  }
+                ]
+              }
+            ]
+          },
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--class=IQTerminalPerf",
+              "--name=IQTerminalPerf",
+              "--ozone-platform=x11",
+              "--no-sandbox",
+              "--enable-webgl",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/persistent-wall-navigation/compiled-browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm exec vite preview --outDir dist-wall-navigation --host 127.0.0.1 --port 4189 --strictPort",
+      "url": "http://127.0.0.1:4189",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "wall-retained-navigation.spec.ts",
+      "file": "wall-retained-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mixed fallback preserves corrections across Canvas and retained GPU transitions",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4684,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: Mixed fallback reused stale geometry {\"correctedHit\":null,\"staleHit\":{\"segment\":{\"id\":\"top\",\"epoch\":1,\"side\":\"bid\",\"price\":97,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":null,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"top-levels\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"quantity\":10,\"rank\":1,\"percentile\":null}]},\"x\":300,\"y\":450,\"at\":1704069900000,\"priceLow\":95,\"priceHigh\":95.1,\"percentile\":null},\"legacyHit\":{\"segment\":{\"id\":\"legacy\",\"epoch\":1,\"side\":\"bid\",\"price\":105,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":100,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"threshold\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"percentile\":100}]},\"x\":300,\"y\":150,\"at\":1704069900000,\"priceLow\":105,\"priceHigh\":105.1,\"percentile\":100}}\n    at window.checkWallMixedTransition (http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js:2:109568)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.evaluate: Error: Mixed fallback reused stale geometry {\"correctedHit\":null,\"staleHit\":{\"segment\":{\"id\":\"top\",\"epoch\":1,\"side\":\"bid\",\"price\":97,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":null,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"top-levels\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"quantity\":10,\"rank\":1,\"percentile\":null}]},\"x\":300,\"y\":450,\"at\":1704069900000,\"priceLow\":95,\"priceHigh\":95.1,\"percentile\":null},\"legacyHit\":{\"segment\":{\"id\":\"legacy\",\"epoch\":1,\"side\":\"bid\",\"price\":105,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":100,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"threshold\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"percentile\":100}]},\"x\":300,\"y\":150,\"at\":1704069900000,\"priceLow\":105,\"priceHigh\":105.1,\"percentile\":100}}\n    at window.checkWallMixedTransition (http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js:2:109568)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at window.checkWallMixedTransition (http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js:2:109568)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:14:26",
+                    "location": {
+                      "file": "http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js",
+                      "column": 109568,
+                      "line": 2
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js",
+                        "column": 109568,
+                        "line": 2
+                      },
+                      "message": "Error: page.evaluate: Error: Mixed fallback reused stale geometry {\"correctedHit\":null,\"staleHit\":{\"segment\":{\"id\":\"top\",\"epoch\":1,\"side\":\"bid\",\"price\":97,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":null,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"top-levels\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"quantity\":10,\"rank\":1,\"percentile\":null}]},\"x\":300,\"y\":450,\"at\":1704069900000,\"priceLow\":95,\"priceHigh\":95.1,\"percentile\":null},\"legacyHit\":{\"segment\":{\"id\":\"legacy\",\"epoch\":1,\"side\":\"bid\",\"price\":105,\"start\":1704067200000,\"end\":1704076200000,\"peakUsd\":1000,\"meanUsd\":1000,\"durationMs\":9000000,\"percentile\":100,\"scopePartial\":false,\"startKnown\":true,\"endKnown\":true,\"endReason\":\"rank-exit\",\"detectionMode\":\"threshold\",\"rank\":1,\"valueRunsTruncated\":false,\"valueRuns\":[{\"at\":1704067200000,\"usd\":1000,\"percentile\":100}]},\"x\":300,\"y\":150,\"at\":1704069900000,\"priceLow\":105,\"priceHigh\":105.1,\"percentile\":100}}\n    at window.checkWallMixedTransition (http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js:2:109568)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at window.checkWallMixedTransition (http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js:2:109568)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:14)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /home/daz/workarea/iqterminal-persistent-walls/tests/browser/wall-retained-navigation.spec.ts:14:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T14:55:51.719Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/daz/workarea/iqterminal-persistent-walls/test-results/wall-retained-navigation-m-5e6b4-nd-retained-GPU-transitions/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:4189/assets/wallNavigation-CwrcVKLv.js",
+                    "column": 109568,
+                    "line": 2
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0ac1a25df7f985d8b4fc-a5486b02a659020ea151",
+          "file": "wall-retained-navigation.spec.ts",
+          "line": 12,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T14:55:44.560Z",
+    "duration": 16394.239999999998,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
