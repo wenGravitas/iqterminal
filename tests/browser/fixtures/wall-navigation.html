@@ -83,7 +83,7 @@ window.checkWallResourceLifecycle=async()=>{
   const p=charts[0],before=p.diagnostics().retainedRenderer;
   p.setSettings({...settings,opacity:.5,colorMode:'side',highContrast:true});drain(p);
   if(p.diagnostics().retainedRenderer.builds!==before.builds||p.diagnostics().retainedRenderer.bufferUploads!==before.bufferUploads)throw Error('Style rebuilt immutable resources');
-  const changed={...source[599],currentSelection:true,presentationKind:'current-snapshot',end:null,valueRuns:[{...source[599].valueRuns[0],at:base+100000000,usd:2000}]};
+  const changed={...source[599],currentSelection:true,presentationKind:'current-snapshot',start:base+100000000,durationMs:0,end:null,valueRuns:[{...source[599].valueRuns[0],at:base+100000000,usd:2000}]};
   p.patch([{id:changed.id,segment:changed,replaceValueRuns:true}],{...status,lastConfirmedAt:base+100001000});drain(p);
   const after=p.diagnostics().retainedRenderer;if(after.builds-before.builds!==1||after.visibleCurrent<1)throw Error('Current change rebuilt unchanged history or did not paint');
   charts[3].detached();charts[3].detached();const partial=wallGpuResourceUsage();if(partial.owners!==7||partial.bufferBytes>=full.bufferBytes)throw Error('One chart disposal did not release its ownership');
