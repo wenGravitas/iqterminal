@@ -177,6 +177,17 @@ export class OrderWallsArchiveService {
     const previousViewport = sub.viewport;
     sub.viewport = nextViewport;
     if (from >= sub.request.from && to <= sub.request.to) {
+      // A failed wider request does not cover a newly narrowed viewport. Admit
+      // that view independently, retaining good history and the current lane.
+      // Identical viewport notifications must not continuously retry a failure.
+      if(sub.historyJob?.failure&&(from!==sub.request.from||to!==sub.request.to)){
+        const previous=sub.request,displayed=sub.historyStatus;
+        this.detachHistoryJob(sub);this.releaseWarmInterests(previous);
+        sub.request={...sub.request,...nextViewport};sub.pendingViewport=undefined;sub.archiveStarted=false;
+        if(displayed&&(sub.historyPresentation||sub.historyProjector))sub.replacingHistory={status:displayed};
+        this.startHistory(sub);
+        this.publish(sub,'snapshot',this.visibleSegments(sub),this.status(sub));return;
+      }
       // The initial native-candle range can be much wider than a restored/panned
       // view. Do not replay hours of offscreen prefixes before useful content.
       const loading=!sub.archiveStarted||sub.historyJob&&!sub.historyJob.settled;

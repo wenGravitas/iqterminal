@@ -867,6 +867,25 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
     }finally{service.dispose();}
   });
 
+  it('retargets a failed containing request even when the new viewport is only slightly narrower',async()=>{
+    const urls:string[]=[],events:any[]=[];
+    const fetcher:any=(url:unknown,init:any)=>{
+      urls.push(String(url));
+      if(urls.length===1)return Promise.resolve(new Response('Invalid bounded wall source version request',{status:400}));
+      return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    };
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+    const hour=3600000,flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('failed-range',{...request(),from:to-62*hour,followLive:false});await flush();
+      expect(events.at(-1)?.status.message).toContain('400');
+      service.updateViewport('failed-range',to-47*hour,to,false);await flush();
+      expect(service.diagnostics().historyRequests).toBe(2);
+      expect(new URL(urls.at(-1)!,'http://localhost').searchParams.get('from')).toBe(String(to-47*hour));
+      expect(events.at(-1)?.status.archive.requestComplete).toBe(false);
+    }finally{service.dispose();}
+  });
+
   it('cancels an offscreen initial prefix when a much narrower visible viewport arrives',async()=>{
     const signals:AbortSignal[]=[];
     const fetcher:any=(_url:unknown,init:any)=>{signals.push(init.signal);return new Promise((_resolve,reject)=>{init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});});};
@@ -904,6 +923,30 @@ describe('OrderWallsArchiveService fixed-watermark identity bridge', () => {
       service.unsubscribe('warm-two');expect(service.diagnostics()).toMatchObject({historyJobs:0,historyConsumers:0,groups:0});
     }finally{service.dispose();}
     expect(service.diagnostics()).toMatchObject({warmEntries:0,warmBytes:0});
+  });
+
+  it('retains good warm walls while a failed view is narrowed, without retrying unchanged notifications',async()=>{
+    const initial=candidate({entryId:'retained-narrow',startedAt:from-100,startCursor:1,startKnown:false});
+    const ready=page({page:{after:1,nextAfter:20,hasMore:false,lastAt:to-1,limit:256,sameMillisecondClosed:true},seed:{at:from,cursor:1,epoch:1,midpoint:'78016.00',bids:[initial],asks:[],bookScope:{bidComplete:true,askComplete:true}}});
+    let calls=0;const events:any[]=[];
+    const fetcher:any=(_url:unknown,init:any)=>{
+      calls++;
+      if(calls===1)return Promise.resolve(new Response(JSON.stringify(ready)));
+      if(calls===2)return Promise.resolve(new Response(JSON.stringify({error:'bounded request rejected HTTP 400'}),{status:400}));
+      return new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+    };
+    const service=new OrderWallsArchiveService(event=>events.push(event),fetcher,()=>to);
+    const subscription={...request(),followLive:false},flush=async()=>{for(let i=0;i<100;i++)await Promise.resolve();};
+    try{
+      service.subscribe('original',subscription);await flush();service.unsubscribe('original');
+      service.subscribe('narrow',subscription);await flush();
+      await vi.waitFor(()=>expect(events.some(event=>event.status?.message?.includes('400'))).toBe(true));
+      service.updateViewport('narrow',from,to,false);await flush();expect(calls).toBe(2);
+      service.updateViewport('narrow',from+1000,to,false);await flush();
+      expect(calls).toBe(3);
+      expect(events.at(-1)?.segments.map((s:any)=>s.archiveEntryId)).toContain('retained-narrow');
+      expect(events.at(-1)?.status.archive.requestComplete).toBe(false);
+    }finally{service.dispose();}
   });
 
   it('retains active wall presentation across long-open peers and expires only after final idle release',async()=>{

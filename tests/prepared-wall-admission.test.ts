@@ -63,3 +63,12 @@ test('capacity pauses remain visible, yield sockets and clear on automatic recov
  await vi.advanceTimersByTimeAsync(250);await pending;await vi.advanceTimersByTimeAsync(0);
  expect(new Set(headers.map(h=>h.get('X-IQ-Wall-Consumer'))).size).toBe(1);expect(headers.every(h=>!h.has('X-IQ-Wall-Retry'))).toBe(true);
 });
+
+test('oversized views explain the source-proof bound without fetching or silently clipping',async()=>{
+ const fetcher=vi.fn(async()=>new Response('{}',{status:404}));
+ await expect(run(fetcher as typeof fetch,undefined,{request:{...request,to:request.from+48*3600000+1}})).rejects.toMatchObject({
+  category:'capacity',retryable:false,message:expect.stringContaining('48 hours')});
+ expect(fetcher).not.toHaveBeenCalled();
+ await expect(run(fetcher as typeof fetch,undefined,{request:{...request,to:request.from+48*3600000}})).resolves.toBeNull();
+ expect(fetcher).toHaveBeenCalledOnce();
+});

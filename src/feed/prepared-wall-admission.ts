@@ -42,6 +42,10 @@ function delay(ms:number,signal:AbortSignal){return new Promise<void>((resolve,r
  * coalescing requests with different lease ownership into one admitted consumer. */
 export async function discoverPreparedWallAdmission(options:{request:PreparedWallRequest;url:string;projection:boolean;fetcher:typeof fetch;signal:AbortSignal;
  resolveEligibility?:boolean;onEligibility?:(value:WallEligibleDiscovery)=>void;decode:(response:Response,max:number)=>Promise<any>;onPreparation?:(value:WallPreparationProgress)=>void;retry?:{token:string;newRevision?:boolean}}){
+ // Match the source-proof endpoint's bounded request contract. Never silently
+ // truncate the visible range or misreport a capacity rejection as source loss.
+ if(options.request.to-options.request.from>48*3600000)throw new PreparedWallPreparationError(
+  'Wall history supports up to 48 hours per request. Zoom in to a smaller visible range to load history.', 'capacity',false);
  const {projection,fetcher,signal}=options,consumer=crypto.randomUUID();let request=options.request,url=options.url,eligibility:WallEligibleDiscovery|undefined,job:string|undefined,leased=false;
  const result=(found:any)=>eligibility?{...found,eligibility}:found;
  const release=()=>{
