@@ -99,3 +99,12 @@ The missing-interval work described as pending above is now partially implemente
 The eight-chart fixture was instrumented with opt-in CDP collection/sampling outside paint timing, using application `fdf0654` and the working observer subsequently committed with this evidence. Four open/dispose cycles used600 exact source rows shared by eight renderer owners. Open JavaScript used-heap samples were4,242,788 /4,291,372 /4,349,732 /4,353,096bytes; disposed samples2,326,740 /2,372,604 /2,423,260 /2,431,096bytes. The final increment was3,364bytes open and7,836bytes disposed. After warmup, each phase varied by less than62KiB. This supports a bounded renderer lifecycle on this small fixture; it does not prove a representative multi-chart worker/RSS plateau.
 
 GPU allocation stayed211,200buffer bytes across eight owners,184,800after one removal, and zero contexts/owners/buffers/surface after all disposals. Current updates and styles retained their existing no-history-rebuild checks. One targeted browser check passed, as did typecheck and the dedicated compiled build. Raw observer output: `compiled-resource-heap-fdf0654-working-observer.json`. No application source changed for this observation.
+
+
+## Mixed fallback correction
+
+A new compiled regression on `9f57def` reproduced a transition defect: Canvas mixed rows → remove Threshold row → retained GPU → correct Top Level price95 to97 → add Threshold row without a camera change. The final Canvas draw/hit still used95, although its source row already said97. The failure capture is `compiled-mixed-9f57def-failed-stale-canvas.json`.
+
+Application `82714c01aa60a278372ccf6930bede2e4552a088` invalidates the old Canvas transform key after retained rendering. GPU updates intentionally do not maintain old Canvas geometry; switching back must rebuild from current exact rows. This does not invalidate GPU resources or alter ordinary camera behavior. The regression checks the corrected97hit, absence of the old95hit, the Threshold105hit, and completed fallback paint. This is a concrete correctness correction, not a performance claim for mixed mode.
+
+At the exact `82714c0` build, both targeted browser checks passed: the mixed transition and the existing32-case GPU mapping/color/hover/disposal comparison. Typecheck and dedicated build passed. Raw result: `compiled-mixed-82714c0.json`. The owned preview stopped after the tests. Real-route observations above retain their earlier `fdf0654` scope; no new real-source timing claim is inferred from this targeted fallback fix.
