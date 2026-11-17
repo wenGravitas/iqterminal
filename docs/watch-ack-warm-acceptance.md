@@ -1,5 +1,7 @@
 # Watch ACK ownership, compact warm codec and foreground acceptance
 
+**Launcher tooling follow-up:** use the [hardened cleanup/manual instructions](foreground-launcher-cleanup.md). They supersede unconditional cleanup wording below; application results and their build/window scope are unchanged.
+
 **Watch races are fixed and verified in isolation. Compact warm encoding/replay has a measured component improvement. The real current-ending workflow passes; foreground acceptance is ready to run, not yet observed.** Recommend review and merge after that foreground check, with the latency/admission limitations explicitly accepted. Production release additionally needs controlled protected-watch rollout and representative serving-route acceptance. An explanation of every historical SSH delay is not a new merge gate.
 
 ## Identity and scope
@@ -90,14 +92,14 @@ Successful slow requests are also attributable at the bounded route boundary: ex
 
 ## Foreground handoff: ready, still manual
 
-The **same launcher was started and stopped successfully without a browser**. In this preserved workspace:
+The **pre-hardening launcher startup/shutdown path was exercised without a browser in this phase**. The later session-owned cleanup changes have focused offline validation, as described in the linked follow-up; they are not a new live smoke or foreground result. In this preserved workspace:
 
 ```sh
 cd /home/daz/workarea/iqterminal-integration-startup-r1
 python3 scripts/watch-warm-foreground.py
 ```
 
-It verifies exact retained build hashes, free ports/current allocation/reserves and compatible root; starts only the isolated pair, split tunnels, read-only watch harness and preview. It creates a separate user-invoked20min manual receipt, never edits this task's budget. It launches **no browser, build, headless cohort or reference job**. Its automatic active window ends after20min plus bounded cleanup.
+It verifies exact retained build hashes, free ports/current allocation/reserves and compatible root; starts only the isolated pair, split tunnels, read-only watch harness and preview. It creates a separate user-invoked20min manual receipt, never edits this task's budget. It launches **no browser, build, headless cohort or reference job**. Its20min local active window is followed by bounded cleanup attempts; it is not an unconditional remote lifetime guarantee.
 
 Manually select **i3workspace9**, open `http://127.0.0.1:4204` in normal Chromium, and:
 
@@ -106,7 +108,7 @@ Manually select **i3workspace9**, open `http://127.0.0.1:4204` in normal Chromiu
 3. Explicit Save Workspace, switch away, reopen latest saved view. Separate cached paint from fresh validated completion. Check restored bounds. Add a separate current5mUSD-M footprint panel (or Footprint Totals on a candle chart) with $25rows, and verify forming-bar/totals and current walls keep advancing.
 4. Watch traffic on this preview is an explicitly labelled **empty-watch protocol harness**, not the user's real monitor. Real watches remain on the incumbent. Do not create/arm/change any real watch.
 
-Close the candidate tab, then **Ctrl-C in the launcher terminal** to shut it down. It stops only its own local children and exact candidate build, saves logs, and preserves prepared state. Existing ordinary client/production/collectors remain untouched. Do not claim acceptance until these observations are made.
+Close the candidate tab, then **Ctrl-C in the launcher terminal** to request cleanup. Read the new session-scoped cleanup report: capture is best-effort and remote shutdown can remain unconfirmed if access fails. Use only the printed recovery command for that session; prepared state is preserved. Existing ordinary client/production/collectors remain untouched. Do not claim acceptance until these observations are made.
 
 ## Separate decisions
 
