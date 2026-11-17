@@ -2,7 +2,9 @@ import type {OrderWallSegment} from '../shared/order-walls-projection';
 import {yieldHistoryTask} from './history-task-yield';
 export interface CompactWallPresentation {version:1;identity:string;segments:number;runs:number;bytes:number;retainedBytes:number;decodedBytes:number;chunks:Array<{body:Uint8Array;hash:string;decodedBytes:number;rows:number}>}
 interface Row {index:number;offset:number;total:number;segment:OrderWallSegment}
-const MAX_DECODED=64*1024*1024,MAX_ENCODED=16*1024*1024,MAX_PART=1024*1024,TARGET=128*1024;
+const MAX_DECODED=64*1024*1024,MAX_ENCODED=16*1024*1024,MAX_PART=1024*1024,TARGET=256*1024;
+// Fixed real-input trials halve stream setup/chunk count at 256KiB. Keep the
+// 1MiB hard read bound, fragment limit, total budgets and per-chunk yields.
 const hash=async(bytes:Uint8Array)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>)),v=>v.toString(16).padStart(2,'0')).join('');
 const integer=(n:unknown):n is number=>Number.isSafeInteger(n)&&Number(n)>=0;
 async function transform(bytes:Uint8Array,compress:boolean,max:number,signal:AbortSignal){
